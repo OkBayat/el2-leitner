@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import { JSDOM } from 'jsdom';
 
 await import('../leitner-status.js');
 const leitner = globalThis.VocoraLeitnerStatus;
@@ -51,14 +52,19 @@ const words = [
   { id: 'h5-s5-e', box: 5, due: today }
 ];
 
-const model = leitner.buildDistribution(words, today, waits);
-assert.deepEqual(model.houses[0].segments, [2], 'House 1 must contain exactly one section and count every box-1 word');
-assert.deepEqual(model.houses[1].segments, [1, 2], 'House 2 must contain two correctly bucketed sections');
-assert.deepEqual(model.houses[2].segments, [1, 2, 3], 'House 3 must contain three correctly bucketed sections');
-assert.deepEqual(model.houses[3].segments, [1, 2, 3, 4], 'House 4 must contain four correctly bucketed sections');
-assert.deepEqual(model.houses[4].segments, [1, 2, 3, 4, 5], 'House 5 must contain five correctly bucketed sections');
+const expectedByHouse = [
+  [2],
+  [1, 2],
+  [1, 2, 3],
+  [1, 2, 3, 4],
+  [1, 2, 3, 4, 5]
+];
 
-model.houses.forEach((house) => {
+const model = leitner.buildDistribution(words, today, waits);
+expectedByHouse.forEach((expectedSegments, index) => {
+  const house = model.houses[index];
+  assert.equal(house.box, index + 1, `House ${index + 1} must stay in its correct position`);
+  assert.deepEqual(house.segments, expectedSegments, `House ${index + 1} must bucket every section correctly`);
   assert.equal(house.segments.length, house.box, `House ${house.box} must render exactly ${house.box} sections`);
   assert.equal(house.segments.reduce((sum, count) => sum + count, 0), house.total, `House ${house.box} section totals must equal the house total`);
 });
@@ -67,12 +73,26 @@ assert.equal(model.total, words.length, 'Overall total must equal all words curr
 assert.equal(leitner.segmentIndexForWord({ due: '2026-08-01' }, 5, today, waits), 4, 'Overdue words must stay in the final section until reviewed');
 assert.equal(leitner.segmentIndexForWord({ due: null }, 5, today, waits), 0, 'Missing legacy due dates must fall back safely to the first section');
 
-const markup = leitner.renderDistributionHtml(model);
-for (let box = 1; box <= 5; box += 1) {
-  assert.match(markup, new RegExp(`data-house="${box}"`), `House ${box} row must be present in the rendered markup`);
-}
-assert.equal((markup.match(/class="leitner-segment /g) || []).length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
-assert.match(markup, /data-tooltip="خانه ۵ · بخش ۵ از ۵ · ۵ لغت"/, 'Every section must expose its count in an accessible hover tooltip');
+const dom = new JSDOM('<div id="root"></div><div id="total"><span data-leitner-total-text></span></div>');
+const root = dom.window.document.querySelector('#root');
+const total = dom.window.document.querySelector('#total');
+leitner.render(root, model);
+leitner.updateTotal(total, model.total);
+
+expectedByHouse.forEach((expectedSegments, index) => {
+  const houseNumber = index + 1;
+  const row = root.querySelector(`[data-house="${houseNumber}"]`);
+  assert.ok(row, `House ${houseNumber} row must exist in the DOM`);
+  const segments = [...row.querySelectorAll('.leitner-segment')];
+  assert.equal(segments.length, houseNumber, `House ${houseNumber} DOM must have exactly ${houseNumber} visual sections`);
+  segments.forEach((segment, segmentIndex) => {
+    assert.equal(Number(segment.dataset.stage), segmentIndex + 1, `House ${houseNumber}, section ${segmentIndex + 1} must preserve its stage number`);
+    assert.equal(Number(segment.dataset.count), expectedSegments[segmentIndex], `House ${houseNumber}, section ${segmentIndex + 1} must show the correct word count`);
+    assert.match(segment.getAttribute('aria-label'), new RegExp(`بخش ${new Intl.NumberFormat('fa-IR').format(segmentIndex + 1)} از ${new Intl.NumberFormat('fa-IR').format(houseNumber)}`), `House ${houseNumber}, section ${segmentIndex + 1} must expose accessible detail`);
+  });
+});
+assert.equal(root.querySelectorAll('.leitner-segment').length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
+assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
 
 const appSource = fs.readFileSync(new URL('../app-v2.js', import.meta.url), 'utf8');
 assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual section timing must stay aligned with the app scheduling rules');
