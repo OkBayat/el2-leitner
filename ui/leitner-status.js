@@ -69,16 +69,12 @@
     return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.75 10.25 12 4.5l7.25 5.75v8.5a1.75 1.75 0 0 1-1.75 1.75h-11a1.75 1.75 0 0 1-1.75-1.75v-8.5Z"/><path d="M9.25 20.5v-6.25h5.5v6.25"/></svg>';
   }
 
-  function layersIcon() {
-    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4M4 16l8 4 8-4"/></svg>';
-  }
-
   function renderDistributionHtml(model) {
     return model.houses.map((house) => {
       const segments = house.segments.map((count, index) => {
         const stage = index + 1;
         const tooltip = `خانه ${faNumber.format(house.box)} · بخش ${faNumber.format(stage)} از ${faNumber.format(house.box)} · ${faNumber.format(count)} لغت`;
-        return `<span class="leitner-segment leitner-segment--${stage}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img"><b>${faNumber.format(count)}</b></span>`;
+        return `<span class="leitner-segment leitner-segment--${stage}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img" tabindex="0"><b>${faNumber.format(count)}</b></span>`;
       }).join('');
       return `<div class="leitner-row leitner-house--${house.box}" data-house="${house.box}"><div class="leitner-house-label"><span class="leitner-house-icon">${houseIcon()}</span><strong>خانه ${faNumber.format(house.box)}</strong></div><div class="leitner-segments" style="--segment-count:${house.box}">${segments}</div><div class="leitner-row-total"><strong>${faNumber.format(house.total)}</strong><span>لغت</span></div></div>`;
     }).join('');
@@ -134,8 +130,7 @@
     renderDistributionHtml,
     render,
     updateTotal,
-    attach,
-    layersIcon
+    attach
   };
 
   globalThis.VocoraLeitnerStatus = api;
