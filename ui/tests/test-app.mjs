@@ -149,8 +149,11 @@ assert.equal(document.querySelector('#setupNew').textContent, '۱۰');
 assert.equal(document.querySelector('#setupDue').textContent, '۰');
 document.querySelector('#beginSessionBtn').click();
 assert.equal(document.querySelector('#reviewSession').classList.contains('hidden'), false);
+assert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۱ از ۱۰.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۰/);
 document.querySelector('#dontKnowBtn').click();
 assert.match(document.querySelector('#feedbackTitle').textContent, /۱‌مین خطا/);
+assert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۱ از ۱۱.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۱/);
+assert.equal(document.querySelector('#sessionProgressBar').style.width, '9%');
 
 let saved = await readServerState();
 assert.equal(saved.history.length, 1);
@@ -186,8 +189,12 @@ for (let index = 0; index < 2; index += 1) {
 }
 document.querySelector('#nextCardBtn').click();
 assert.equal(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong card should be shown once more in the same session');
+assert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/);
+assert.equal(document.querySelector('#sessionProgressBar').style.width, '36%');
 document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
 document.querySelector('#answerForm button[type="submit"]').click();
+assert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/);
+assert.equal(document.querySelector('#sessionProgressBar').style.width, '45%');
 saved = await readServerState();
 assert.equal(saved.words.find((word) => word.id === mistakenId).box, 1, 'A later correct answer on the same day must not unlock promotion');
 assert.equal(saved.history.at(-1).promoted, false);
