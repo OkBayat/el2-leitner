@@ -62,6 +62,7 @@ const expectedByHouse = [
 ];
 
 const model = leitner.buildDistribution(words, today, waits);
+assert.equal(model.houses.length, 5, 'The distribution must always contain all five Leitner houses');
 expectedByHouse.forEach((expectedSegments, index) => {
   const house = model.houses[index];
   assert.equal(house.box, index + 1, `House ${index + 1} must stay in its correct position`);
