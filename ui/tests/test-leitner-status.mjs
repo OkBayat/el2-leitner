@@ -8,6 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
+const faNumber = new Intl.NumberFormat('fa-IR');
 
 const words = [
   { id: 'h1-a', box: 1, due: today },
@@ -88,7 +89,8 @@ expectedByHouse.forEach((expectedSegments, index) => {
   segments.forEach((segment, segmentIndex) => {
     assert.equal(Number(segment.dataset.stage), segmentIndex + 1, `House ${houseNumber}, section ${segmentIndex + 1} must preserve its stage number`);
     assert.equal(Number(segment.dataset.count), expectedSegments[segmentIndex], `House ${houseNumber}, section ${segmentIndex + 1} must show the correct word count`);
-    assert.match(segment.getAttribute('aria-label'), new RegExp(`بخش ${new Intl.NumberFormat('fa-IR').format(segmentIndex + 1)} از ${new Intl.NumberFormat('fa-IR').format(houseNumber)}`), `House ${houseNumber}, section ${segmentIndex + 1} must expose accessible detail`);
+    assert.equal(segment.tabIndex, 0, `House ${houseNumber}, section ${segmentIndex + 1} must be keyboard focusable`);
+    assert.match(segment.getAttribute('aria-label'), new RegExp(`بخش ${faNumber.format(segmentIndex + 1)} از ${faNumber.format(houseNumber)}`), `House ${houseNumber}, section ${segmentIndex + 1} must expose accessible detail`);
   });
 });
 assert.equal(root.querySelectorAll('.leitner-segment').length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
