@@ -1,0 +1,114 @@
+name: Apply review retry progress patch
+
+on:
+  push:
+    branches:
+      - agent/review-retry-progress
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Apply focused progress patch
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one match, found {count}')
+              return text.replace(old, new, 1)
+
+          app_path = Path('ui/app-v2.js')
+          app = app_path.read_text()
+
+          app = replace_once(
+              app,
+              "    session = { mode, startedAt: Date.now(), initialCount: reviewQueue.length, answered: 0, correct: 0, wrong: 0, completed: false, retryCounts: {}, recorded: false };",
+              "    session = { mode, startedAt: Date.now(), initialCount: reviewQueue.length, answered: 0, correct: 0, wrong: 0, completed: false, retryCounts: {}, retryTotal: 0, retryAnswered: 0, currentIsRetry: false, pendingRetryIds: [], recorded: false };",
+              'session counters'
+          )
+
+          app = replace_once(
+              app,
+              "    const id = reviewQueue.shift();\n    currentWord = state.words.find((word) => word.id === id);\n    if (!currentWord) return showNextCard();",
+              "    const id = reviewQueue.shift();\n    const pendingRetryIndex = session.pendingRetryIds.indexOf(id);\n    session.currentIsRetry = pendingRetryIndex >= 0;\n    if (session.currentIsRetry) session.pendingRetryIds.splice(pendingRetryIndex, 1);\n    currentWord = state.words.find((word) => word.id === id);\n    if (!currentWord) return showNextCard();",
+              'retry card identity'
+          )
+
+          app = replace_once(
+              app,
+              "    const completedUnique = Math.min(session.answered, session.initialCount);\n    const current = Math.min(session.initialCount, completedUnique + 1);\n    $('#sessionCounter').textContent = `کارت ${faNumber.format(current)} از ${faNumber.format(session.initialCount)}`;\n    const sessionAcc = accuracy(session.correct, session.answered);\n    $('#sessionAccuracy').textContent = `دقت: ${sessionAcc === null ? '—' : `${faNumber.format(sessionAcc)}٪`}`;\n    $('#sessionProgressBar').style.width = `${Math.round((completedUnique / session.initialCount) * 100)}%`;",
+              "    if (session.mode !== 'scheduled') {\n      const completedUnique = Math.min(session.answered, session.initialCount);\n      const current = Math.min(session.initialCount, completedUnique + 1);\n      $('#sessionCounter').textContent = `کارت ${faNumber.format(current)} از ${faNumber.format(session.initialCount)}`;\n      const sessionAcc = accuracy(session.correct, session.answered);\n      $('#sessionAccuracy').textContent = `دقت: ${sessionAcc === null ? '—' : `${faNumber.format(sessionAcc)}٪`}`;\n      $('#sessionProgressBar').style.width = `${Math.round((completedUnique / session.initialCount) * 100)}%`;\n      return;\n    }\n\n    const total = session.initialCount + session.retryTotal;\n    const originalAnswered = session.answered - session.retryAnswered;\n    const includeCurrent = currentWord && !feedbackOpen ? 1 : 0;\n    const originalCurrent = Math.min(\n      session.initialCount,\n      originalAnswered + (includeCurrent && !session.currentIsRetry ? 1 : 0)\n    );\n    const retryCurrent = Math.min(\n      session.retryTotal,\n      session.retryAnswered + (includeCurrent && session.currentIsRetry ? 1 : 0)\n    );\n    const current = originalCurrent + retryCurrent;\n    $('#sessionCounter').textContent = `مجموع ${faNumber.format(current)} از ${faNumber.format(total)} · اصلی ${faNumber.format(originalCurrent)} از ${faNumber.format(session.initialCount)} · تکرار خطا ${faNumber.format(retryCurrent)} از ${faNumber.format(session.retryTotal)}`;\n    const sessionAcc = accuracy(session.correct, session.answered);\n    $('#sessionAccuracy').textContent = `دقت: ${sessionAcc === null ? '—' : `${faNumber.format(sessionAcc)}٪`}`;\n    const completed = Math.min(session.answered, total);\n    $('#sessionProgressBar').style.width = `${total ? Math.round((completed / total) * 100) : 0}%`;",
+              'scheduled progress display'
+          )
+
+          app = replace_once(
+              app,
+              "    feedbackOpen = true;\n    session.answered += 1;",
+              "    feedbackOpen = true;\n    session.answered += 1;\n    if (session.currentIsRetry) session.retryAnswered += 1;",
+              'retry completion count'
+          )
+
+          app = replace_once(
+              app,
+              "          session.retryCounts[currentWord.id] = repeats + 1;\n          reviewQueue.splice(Math.min(3, reviewQueue.length), 0, currentWord.id);",
+              "          session.retryCounts[currentWord.id] = repeats + 1;\n          session.retryTotal += 1;\n          session.pendingRetryIds.push(currentWord.id);\n          reviewQueue.splice(Math.min(3, reviewQueue.length), 0, currentWord.id);",
+              'retry scheduling count'
+          )
+
+          app_path.write_text(app)
+
+          test_path = Path('ui/tests/test-app.mjs')
+          test = test_path.read_text()
+
+          test = replace_once(
+              test,
+              "document.querySelector('#beginSessionBtn').click();\nassert.equal(document.querySelector('#reviewSession').classList.contains('hidden'), false);\ndocument.querySelector('#dontKnowBtn').click();\nassert.match(document.querySelector('#feedbackTitle').textContent, /۱‌مین خطا/);",
+              "document.querySelector('#beginSessionBtn').click();\nassert.equal(document.querySelector('#reviewSession').classList.contains('hidden'), false);\nassert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۱ از ۱۰.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۰/);\ndocument.querySelector('#dontKnowBtn').click();\nassert.match(document.querySelector('#feedbackTitle').textContent, /۱‌مین خطا/);\nassert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۱ از ۱۱.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۱/);\nassert.equal(document.querySelector('#sessionProgressBar').style.width, '9%');",
+              'initial progress assertions'
+          )
+
+          test = replace_once(
+              test,
+              "document.querySelector('#nextCardBtn').click();\nassert.equal(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong card should be shown once more in the same session');\ndocument.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;\ndocument.querySelector('#answerForm button[type=\"submit\"]').click();\nsaved = await readServerState();",
+              "document.querySelector('#nextCardBtn').click();\nassert.equal(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong card should be shown once more in the same session');\nassert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/);\nassert.equal(document.querySelector('#sessionProgressBar').style.width, '36%');\ndocument.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;\ndocument.querySelector('#answerForm button[type=\"submit\"]').click();\nassert.match(document.querySelector('#sessionCounter').textContent, /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/);\nassert.equal(document.querySelector('#sessionProgressBar').style.width, '45%');\nsaved = await readServerState();",
+              'retry progress assertions'
+          )
+
+          test_path.write_text(test)
+          Path('.github/workflows/apply-review-retry-progress.yml').unlink()
+          PY
+
+      - name: Install UI dependencies
+        working-directory: ui
+        run: npm ci
+
+      - name: Run UI tests
+        working-directory: ui
+        run: npm test
+
+      - name: Commit focused change
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ui/app-v2.js ui/tests/test-app.mjs .github/workflows/apply-review-retry-progress.yml
+          git commit -m "Show retry progress in scheduled reviews"
+          git push origin HEAD:${GITHUB_REF_NAME}
