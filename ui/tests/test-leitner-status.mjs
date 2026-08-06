@@ -72,6 +72,11 @@ expectedByHouse.forEach((expectedSegments, index) => {
 });
 assert.equal(model.total, words.length, 'Overall total must equal all words currently stored in houses 1–5');
 
+const emptyModel = leitner.buildDistribution([], today, waits);
+assert.equal(emptyModel.total, 0, 'An empty Leitner box must have a zero total');
+assert.deepEqual(emptyModel.houses.map((house) => house.segments.length), [1, 2, 3, 4, 5], 'Empty houses must still keep their complete visual structure');
+assert.ok(emptyModel.houses.every((house) => house.segments.every((count) => count === 0)), 'Every empty house section must display zero');
+
 assert.equal(leitner.segmentIndexForWord({ due: '2026-08-01' }, 5, today, waits), 4, 'Overdue words must stay in the final section until reviewed');
 assert.equal(leitner.segmentIndexForWord({ due: null }, 5, today, waits), 0, 'Missing legacy due dates must fall back safely to the first section');
 
@@ -96,6 +101,21 @@ expectedByHouse.forEach((expectedSegments, index) => {
 });
 assert.equal(root.querySelectorAll('.leitner-segment').length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
 assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
+
+const liveDom = new JSDOM('<div id="boxDistribution"></div><div id="boxDistributionTotal"><span data-leitner-total-text></span></div>');
+const liveRoot = liveDom.window.document.querySelector('#boxDistribution');
+const attachment = leitner.attach({
+  document: liveDom.window.document,
+  getState: () => ({ words }),
+  getToday: () => today,
+  MutationObserver: liveDom.window.MutationObserver
+});
+assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The live dashboard enhancer must render the complete visualization immediately');
+liveRoot.innerHTML = '<div class="box-row">legacy render</div>';
+await new Promise((resolve) => liveDom.window.setTimeout(resolve, 0));
+assert.equal(liveRoot.querySelector('.box-row'), null, 'A later legacy dashboard render must be replaced by the segmented visualization');
+assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The enhanced visualization must stay synchronized after dashboard refreshes');
+attachment?.observer?.disconnect();
 
 const appSource = fs.readFileSync(new URL('../app-v2.js', import.meta.url), 'utf8');
 assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual section timing must stay aligned with the app scheduling rules');
