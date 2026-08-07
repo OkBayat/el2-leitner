@@ -143,11 +143,10 @@
         hint.setAttribute('aria-live', 'polite');
       }
 
-      // The hint is intentionally part of the answer stack, directly below the
-      // input and above the primary action. Keeping this order in the component
-      // prevents the keyboard layout and remediation screens from duplicating it.
-      if (this.answerInput.nextElementSibling !== hint) {
-        this.answerInput.insertAdjacentElement('afterend', hint);
+      // Keep one semantic stack everywhere: input -> primary action -> hint.
+      // DOM and visual order now match on desktop, mobile, and keyboard layouts.
+      if (button.nextElementSibling !== hint) {
+        button.insertAdjacentElement('afterend', hint);
       }
       button.setAttribute('aria-describedby', hint.id);
       return button;
