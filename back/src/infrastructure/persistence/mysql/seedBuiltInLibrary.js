@@ -16,7 +16,7 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
          (public_id, slug, title, description, kind, visibility, status, content_version,
           source_hash, is_default, published_at, metadata_json)
        VALUES (?, ?, '1500 IELTS Listening Words',
-         '۱۵۰۰ واژه و عبارت پرتکرار برای تقویت املای IELTS Listening.',
+         '۱۵۰۰ مورد منبع که پس از یکی‌سازی املاهای هم‌ارز، به واژه‌های یکتای IELTS Listening تبدیل می‌شوند.',
          'exam', 'public', 'published', 0, NULL, TRUE, CURRENT_TIMESTAMP(3),
          JSON_OBJECT('language', 'en', 'spelling', 'British'))`,
       [IELTS_COLLECTION_ID, IELTS_COLLECTION_ID]
@@ -38,9 +38,21 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
   await pool.execute(
     `UPDATE collections
      SET source_hash = ?, is_default = TRUE, visibility = 'public', status = 'published',
-         published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3))
+         published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3)),
+         metadata_json = JSON_SET(
+           COALESCE(metadata_json, JSON_OBJECT()),
+           '$.sourceItemCount', CAST(? AS UNSIGNED),
+           '$.uniqueVocabularyCount', CAST(? AS UNSIGNED),
+           '$.duplicateAliasCount', CAST(? AS UNSIGNED)
+         )
      WHERE public_id = ?`,
-    [sourceHash, IELTS_COLLECTION_ID]
+    [
+      sourceHash,
+      parsed.sourceItemCount,
+      parsed.entries.length,
+      parsed.duplicateCount,
+      IELTS_COLLECTION_ID
+    ]
   );
 
   const [countRows] = await pool.execute(
@@ -54,5 +66,12 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
   if (total !== parsed.entries.length) {
     throw new Error(`Built-in library seed verification failed: expected ${parsed.entries.length}, found ${total}.`);
   }
-  return { changed: true, sourceHash, total, ...result };
+  return {
+    changed: true,
+    sourceHash,
+    sourceItemCount: parsed.sourceItemCount,
+    duplicateCount: parsed.duplicateCount,
+    total,
+    ...result
+  };
 }
