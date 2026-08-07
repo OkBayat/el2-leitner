@@ -1,0 +1,9 @@
+/*
+ * Compatibility stylesheet entrypoint.
+ *
+ * The current Vocora base UI is defined in styles-v2.css. index.html and
+ * library.html still load styles.css before styles-v2.css, so this file must
+ * exist as a real CSS asset. Without it, the SPA/static fallback returns HTML
+ * for /styles.css and browsers reject the response because of its text/html
+ * MIME type.
+ */
