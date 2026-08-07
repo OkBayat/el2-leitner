@@ -17,6 +17,8 @@ export class VocabularyFileParser {
     const sectionsByPath = new Map();
     const entries = [];
     const seenForms = new Set();
+    let sourceItemCount = 0;
+    let duplicateCount = 0;
 
     for (const rawLine of text.split(/\r?\n/u)) {
       const line = rawLine.trim();
@@ -45,14 +47,18 @@ export class VocabularyFileParser {
 
       const numbered = rawLine.match(/^\s*(\d+)[.)]\s+(.+?)\s*$/u);
       if (!numbered) continue;
-      if (entries.length >= MAX_IMPORT_ITEMS) {
+      sourceItemCount += 1;
+      if (sourceItemCount > MAX_IMPORT_ITEMS) {
         throw new ValidationError("TOO_MANY_IMPORT_ITEMS", `A collection can import at most ${MAX_IMPORT_ITEMS} items at once.`);
       }
 
       const rawForms = numbered[2].split(/\s+\/\s+/u).map((value) => value.trim()).filter(Boolean);
       const forms = cleanVocabularyForms(rawForms[0], rawForms.slice(1));
       const normalizedForms = forms.map(({ form }) => normalizeVocabularyForm(form));
-      if (normalizedForms.some((normalized) => seenForms.has(normalized))) continue;
+      if (normalizedForms.some((normalized) => seenForms.has(normalized))) {
+        duplicateCount += 1;
+        continue;
+      }
       normalizedForms.forEach((normalized) => seenForms.add(normalized));
 
       const sectionPath = sectionStack.filter(Boolean).join(" / ") || null;
@@ -69,7 +75,12 @@ export class VocabularyFileParser {
       throw new ValidationError("EMPTY_IMPORT", "No numbered vocabulary items were found in the file.");
     }
 
-    return { sections: [...sectionsByPath.values()], entries };
+    return {
+      sections: [...sectionsByPath.values()],
+      entries,
+      sourceItemCount,
+      duplicateCount
+    };
   }
 }
 
