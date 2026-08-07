@@ -10,7 +10,6 @@ function importMode(value) {
   return mode;
 }
 
-
 function assertManageableCollectionDraft(draft) {
   if (draft.kind === "personal") {
     throw new ValidationError("RESERVED_COLLECTION_KIND", "The personal collection kind is reserved for learner-owned vocabulary.");
@@ -71,8 +70,14 @@ export class LibraryCommands {
   async import(user, collectionId, { text, mode } = {}) {
     this.adminPolicy.assertCanManage(user);
     const parsed = this.vocabularyFileParser.parse(text);
+    const persisted = await this.libraryRepository.importEntries(collectionId, parsed, importMode(mode));
     return {
-      result: await this.libraryRepository.importEntries(collectionId, parsed, importMode(mode))
+      result: {
+        ...persisted,
+        sourceItemCount: parsed.sourceItemCount,
+        uniqueVocabularyCount: parsed.entries.length,
+        duplicatesSkipped: parsed.duplicateCount
+      }
     };
   }
 
