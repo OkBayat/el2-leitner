@@ -160,10 +160,10 @@ assert.ok(document.documentElement.classList.contains('vocora-session-active'));
 assert.equal(document.querySelector('#sessionAccuracy').parentElement.id, 'vocoraSessionAccuracy');
 assertStage('answer');
 
-// Component structure: hint belongs directly below input, then the one primary CTA.
+// Component structure: input, then the primary action, then its double-tap hint.
 assert.equal(input.getAttribute('aria-label'), 'پاسخ');
-assert.equal(input.nextElementSibling, hint, 'The double-tap hint must be directly below the answer input.');
-assert.equal(hint.nextElementSibling, primary, 'The primary action must follow the hint in the shared answer stack.');
+assert.equal(input.nextElementSibling, primary, 'The primary action must be directly below the answer input.');
+assert.equal(primary.nextElementSibling, hint, 'The double-tap hint must be below the primary action.');
 assert.ok(primary.classList.contains('is-empty'));
 assert.ok(!primary.disabled, 'Empty primary remains clickable only for the deliberate double-tap gesture.');
 assert.equal(document.querySelectorAll('#vocoraDoubleTapHint').length, 1, 'The hint must never be duplicated.');
