@@ -13,10 +13,21 @@ export const DEFAULT_STATIC_DIRECTORY = path.resolve(currentDirectory, "../../ui
 function setStaticCacheHeaders(res, filePath) {
   const extension = path.extname(filePath).toLowerCase();
   if (extension === ".html") {
-    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("CDN-Cache-Control", "no-store");
+    res.setHeader("Surrogate-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
   } else if (extension === ".css" || extension === ".js") {
-    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
   }
+}
+
+function isHtmlNavigationRequest(req) {
+  if (req.method !== "GET") return false;
+  const extension = path.extname(req.path).toLowerCase();
+  if (extension && extension !== ".html") return false;
+  return Boolean(req.accepts("html"));
 }
 
 export function createApp({
@@ -61,8 +72,12 @@ export function createApp({
   if (staticDirectory && existsSync(staticDirectory)) {
     app.use(express.static(staticDirectory, { index: "index.html", setHeaders: setStaticCacheHeaders }));
     app.use((req, res, next) => {
-      if (req.method !== "GET" || !req.accepts("html")) return next();
-      res.set("Cache-Control", "no-store");
+      if (!isHtmlNavigationRequest(req)) return next();
+      res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      res.set("CDN-Cache-Control", "no-store");
+      res.set("Surrogate-Control", "no-store");
+      res.set("Pragma", "no-cache");
+      res.set("Expires", "0");
       res.sendFile(path.join(staticDirectory, "index.html"), (error) => {
         if (error) next(error);
       });

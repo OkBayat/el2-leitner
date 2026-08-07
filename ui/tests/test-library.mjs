@@ -14,6 +14,14 @@ function installDialogSupport(window) {
   window.HTMLDialogElement.prototype.close = function close() { this.removeAttribute("open"); };
 }
 
+function jsonResponse(payload, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    async text() { return status === 204 ? "" : JSON.stringify(payload); }
+  };
+}
+
 {
   const { document } = new JSDOM(indexMarkup).window;
   const libraryLink = document.querySelector('.main-nav a.library-nav-link[href="library.html"]');
@@ -33,6 +41,10 @@ function installDialogSupport(window) {
   assert.ok(document.querySelector("#subscribedWordCount"), "library must expose subscribed word statistics");
   assert.ok(document.querySelector(".library-detail-summary"), "detail modal must use the compact summary layout");
   assert.ok(document.querySelector(".library-file-drop"), "import modal must keep a dedicated file drop target");
+  assert.equal(document.querySelector('link[rel="stylesheet"][href^="styles.css"]'), null, "library must not request the obsolete styles.css path");
+  assert.ok(document.querySelector('link[rel="stylesheet"][href^="styles-v2.css?v="]'), "base stylesheet must be cache-busted");
+  assert.ok(document.querySelector('link[rel="stylesheet"][href^="library.css?v="]'), "library stylesheet must be cache-busted");
+  assert.ok(document.querySelector('script[src^="library.js?v="]'), "library runtime must be cache-busted with the matching HTML release");
   assert.match(libraryCss, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/u, "desktop library must use compact three-column cards");
   assert.match(libraryCss, /max-height:calc\(100dvh - 42px\)/u, "dialogs must stay inside the viewport");
 }
@@ -74,11 +86,7 @@ function installDialogSupport(window) {
     const path = new URL(typeof input === "string" ? input : input.url, window.location.href).pathname;
     const payload = payloads[path];
     assert.ok(payload || path === "/api/auth/logout", `Unexpected request: ${path} ${options.method || "GET"}`);
-    return {
-      ok: true,
-      status: path === "/api/auth/logout" ? 204 : 200,
-      async text() { return path === "/api/auth/logout" ? "" : JSON.stringify(payload); }
-    };
+    return jsonResponse(payload, path === "/api/auth/logout" ? 204 : 200);
   };
   window.eval(libraryScript);
   await new Promise((resolve) => setTimeout(resolve, 15));
@@ -102,6 +110,62 @@ function installDialogSupport(window) {
   await new Promise((resolve) => setTimeout(resolve, 15));
   assert.match(window.document.querySelector("#libraryGrid").textContent, /اضافه شده/u);
   assert.equal(window.document.querySelector("#subscribedWordCount").textContent, "۱۲۰");
+}
+
+{
+  const dom = new JSDOM(libraryMarkup, {
+    runScripts: "outside-only",
+    url: "http://localhost/library.html"
+  });
+  const { window } = dom;
+  installDialogSupport(window);
+
+  // Simulate a CDN/browser still holding the pre-redesign HTML while it has
+  // already revalidated and downloaded the newer library.js runtime.
+  [
+    "#libraryDate",
+    "#libraryWordCount",
+    "#subscribedWordCount",
+    "#detailIcon",
+    "#detailMainName",
+    "#detailLevel",
+    "#detailSummaryLine",
+    "#collectionLevelInput"
+  ].forEach((selector) => window.document.querySelector(selector)?.remove());
+  const legacySubscribedCount = window.document.createElement("span");
+  legacySubscribedCount.id = "subscribedCount";
+  window.document.body.appendChild(legacySubscribedCount);
+
+  const collection = {
+    id: "legacy-aef3",
+    slug: "american-english-file-3",
+    title: "American English File 3",
+    description: "Course vocabulary",
+    kind: "book",
+    visibility: "public",
+    status: "published",
+    contentVersion: 2,
+    wordCount: 120,
+    subscribed: true,
+    metadata: { level: "B1" }
+  };
+  window.fetch = async (input) => {
+    const path = new URL(typeof input === "string" ? input : input.url, window.location.href).pathname;
+    if (path === "/api/auth/me") return jsonResponse({ user: { id: "7", email: "legacy@example.com" } });
+    if (path === "/api/library") return jsonResponse({ capabilities: { canManage: false }, collections: [collection] });
+    if (path === "/api/library/legacy-aef3") return jsonResponse({ capabilities: { canManage: false }, collection: { ...collection, sections: [], entries: [] } });
+    throw new Error(`Unexpected request: ${path}`);
+  };
+
+  window.eval(libraryScript);
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.match(window.document.querySelector("#libraryGrid").textContent, /American English File 3/u, "new runtime must still render on stale markup");
+  assert.equal(legacySubscribedCount.textContent, "۱", "legacy summary id must remain supported during cache skew");
+  assert.equal(window.document.querySelector("#libraryNotice").textContent, "", "optional stale fields must not crash the library");
+
+  window.document.querySelector(".detail-card").click();
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.ok(window.document.querySelector("#collectionDialog").hasAttribute("open"), "detail view must tolerate missing redesign-only fields");
 }
 
 {

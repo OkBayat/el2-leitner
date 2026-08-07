@@ -19,19 +19,32 @@ describe("HTTP API", () => {
     const { app } = createTestContext({}, { staticDirectory });
 
     const html = await request(app).get("/").expect(200);
-    assert.equal(html.headers["cache-control"], "no-store");
+    assert.match(html.headers["cache-control"], /no-store/);
+    assert.equal(html.headers["cdn-cache-control"], "no-store");
 
     const stylesheet = await request(app).get("/styles-v2.css").expect(200);
-    assert.equal(stylesheet.headers["cache-control"], "no-cache, must-revalidate");
+    assert.equal(stylesheet.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(stylesheet.headers["content-type"], /^text\/css/);
 
     const script = await request(app).get("/app-v2.js").expect(200);
-    assert.equal(script.headers["cache-control"], "no-cache, must-revalidate");
+    assert.equal(script.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(script.headers["content-type"], /javascript/);
 
     const logo = await request(app).get("/assets/vocora-logo.png").expect(200);
     assert.match(logo.headers["content-type"], /^image\/png/);
 
     const icon = await request(app).get("/assets/vocora-icon.png").expect(200);
     assert.match(icon.headers["content-type"], /^image\/png/);
+
+    const missingStylesheet = await request(app)
+      .get("/definitely-missing.css")
+      .set("Accept", "text/css,*/*;q=0.1")
+      .expect(404);
+    assert.match(missingStylesheet.headers["content-type"], /^application\/json/);
+    assert.deepEqual(missingStylesheet.body, {
+      error: { code: "NOT_FOUND", message: "Resource not found." }
+    });
+    assert.doesNotMatch(missingStylesheet.text, /<!doctype html>/iu);
   });
 
   it("registers, authenticates, reports the user, and logs out", async () => {

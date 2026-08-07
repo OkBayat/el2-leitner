@@ -17,6 +17,30 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+  function setText(selector, value) {
+    const element = $(selector);
+    if (element) element.textContent = value;
+    return element;
+  }
+
+  function setValue(selector, value) {
+    const element = $(selector);
+    if (element) element.value = value;
+    return element;
+  }
+
+  function setHidden(selector, hidden) {
+    const element = $(selector);
+    if (element) element.classList.toggle("hidden", Boolean(hidden));
+    return element;
+  }
+
+  function on(selector, type, handler) {
+    const element = $(selector);
+    if (element) element.addEventListener(type, handler);
+    return element;
+  }
+
   class ApiError extends Error {
     constructor(message, status = 0, code = "API_ERROR") {
       super(message);
@@ -120,6 +144,7 @@
 
   function showToast(message, isError = false) {
     const toast = $("#toast");
+    if (!toast) return;
     clearTimeout(state.toastTimer);
     toast.textContent = message;
     toast.classList.toggle("error", Boolean(isError));
@@ -129,6 +154,7 @@
 
   function showNotice(message = "", isError = false) {
     const notice = $("#libraryNotice");
+    if (!notice) return;
     notice.textContent = message;
     notice.classList.toggle("error", isError);
     notice.classList.toggle("hidden", !message);
@@ -180,9 +206,18 @@
   }
 
   function renderLibrary() {
-    const search = normalize($("#librarySearch").value);
-    const kind = $("#libraryKindFilter").value;
-    const status = $("#libraryStatusFilter").value;
+    const searchInput = $("#librarySearch");
+    const kindInput = $("#libraryKindFilter");
+    const statusInput = $("#libraryStatusFilter");
+    const grid = $("#libraryGrid");
+    if (!searchInput || !kindInput || !statusInput || !grid) {
+      showNotice("نسخه‌ی صفحه و فایل‌های کتابخانه با هم هماهنگ نیستند. صفحه را یک‌بار تازه‌سازی کن.", true);
+      return;
+    }
+
+    const search = normalize(searchInput.value);
+    const kind = kindInput.value;
+    const status = statusInput.value;
     const visible = state.collections.filter((collection) => {
       const level = collectionLevel(collection);
       const matchesSearch = !search || normalize(`${collection.title} ${collection.description || ""} ${collection.kind} ${level}`).includes(search);
@@ -192,13 +227,15 @@
     });
 
     const totalWords = state.collections.reduce((sum, collection) => sum + Number(collection.wordCount || 0), 0);
-    const subscribedWords = state.collections.reduce((sum, collection) => sum + (collection.subscribed ? Number(collection.wordCount || 0) : 0), 0);
-    $("#collectionCount").textContent = faNumber.format(state.collections.length);
-    $("#libraryWordCount").textContent = faNumber.format(totalWords);
-    $("#subscribedWordCount").textContent = faNumber.format(subscribedWords);
-    $("#createCollectionBtn").classList.toggle("hidden", !state.canManage);
-    $("#libraryGrid").innerHTML = visible.map(collectionCard).join("");
-    $("#libraryEmpty").classList.toggle("hidden", visible.length > 0);
+    const subscribedCollections = state.collections.filter((collection) => collection.subscribed);
+    const subscribedWords = subscribedCollections.reduce((sum, collection) => sum + Number(collection.wordCount || 0), 0);
+    setText("#collectionCount", faNumber.format(state.collections.length));
+    setText("#libraryWordCount", faNumber.format(totalWords));
+    setText("#subscribedWordCount", faNumber.format(subscribedWords));
+    setText("#subscribedCount", faNumber.format(subscribedCollections.length));
+    setHidden("#createCollectionBtn", !state.canManage);
+    grid.innerHTML = visible.map(collectionCard).join("");
+    setHidden("#libraryEmpty", visible.length > 0);
     syncKindChips(kind);
   }
 
@@ -208,7 +245,7 @@
     state.currentUser = me.user;
     state.collections = library.collections || [];
     state.canManage = Boolean(library.capabilities?.canManage);
-    $("#userEmail").textContent = state.currentUser.email;
+    setText("#userEmail", state.currentUser.email);
     showNotice("");
     renderLibrary();
   }
@@ -233,7 +270,8 @@
       state.currentCollection = response.collection;
       state.canManage = Boolean(response.capabilities?.canManage);
       renderDetail();
-      if (!$("#collectionDialog").open) $("#collectionDialog").showModal();
+      const dialog = $("#collectionDialog");
+      if (dialog && !dialog.open) dialog.showModal();
     } finally {
       showNotice("");
     }
@@ -243,37 +281,42 @@
     const collection = state.currentCollection;
     if (!collection) return;
     const level = collectionLevel(collection);
-    $("#detailIcon").textContent = kindIcon(collection.kind);
-    $("#detailKind").textContent = kindLabel(collection.kind);
-    $("#detailTitle").textContent = collection.title;
-    $("#detailMainName").textContent = collection.title;
-    $("#detailDescription").textContent = collection.description || "";
-    $("#detailWordCount").textContent = faNumber.format(collection.wordCount || 0);
-    $("#detailLevel").textContent = level;
-    $("#detailVersion").textContent = faNumber.format(collection.contentVersion || 1);
+    setText("#detailIcon", kindIcon(collection.kind));
+    setText("#detailKind", kindLabel(collection.kind));
+    setText("#detailTitle", collection.title);
+    setText("#detailMainName", collection.title);
+    setText("#detailDescription", collection.description || "");
+    setText("#detailWordCount", faNumber.format(collection.wordCount || 0));
+    setText("#detailLevel", level);
+    setText("#detailVersion", faNumber.format(collection.contentVersion || 1));
+    setText("#detailStatus", statusLabel(collection.status));
     const updated = safeDate(collection.updatedAt);
-    $("#detailSummaryLine").textContent = [kindLabel(collection.kind), visibilityLabel(collection.visibility), statusLabel(collection.status), updated ? `ویرایش ${updated}` : null].filter(Boolean).join(" · ");
+    setText("#detailSummaryLine", [kindLabel(collection.kind), visibilityLabel(collection.visibility), statusLabel(collection.status), updated ? `ویرایش ${updated}` : null].filter(Boolean).join(" · "));
 
     const subscribeButton = $("#detailSubscribeBtn");
-    subscribeButton.textContent = collection.subscribed ? "✓ اضافه شده به جعبه" : "افزودن به جعبه";
-    subscribeButton.classList.toggle("btn-primary", !collection.subscribed);
-    subscribeButton.classList.toggle("btn-light", collection.subscribed);
-    ["#editCollectionBtn", "#importCollectionBtn", "#addCollectionEntryBtn"].forEach((selector) => $(selector).classList.toggle("hidden", !state.canManage));
+    if (subscribeButton) {
+      subscribeButton.textContent = collection.subscribed ? "✓ اضافه شده به جعبه" : "افزودن به جعبه";
+      subscribeButton.classList.toggle("btn-primary", !collection.subscribed);
+      subscribeButton.classList.toggle("btn-light", collection.subscribed);
+    }
+    ["#editCollectionBtn", "#importCollectionBtn", "#addCollectionEntryBtn"].forEach((selector) => setHidden(selector, !state.canManage));
     $$(".admin-entry-column").forEach((element) => element.classList.toggle("hidden", !state.canManage));
 
     const sections = collection.sections || [];
     const select = $("#detailSectionFilter");
-    const selected = select.value;
-    select.innerHTML = `<option value="all">همه‌ی بخش‌ها</option>${sections.map((section) => `<option value="${escapeHtml(section.id)}">${escapeHtml(section.path || section.title)}</option>`).join("")}`;
-    if ([...select.options].some((option) => option.value === selected)) select.value = selected;
+    if (select) {
+      const selected = select.value;
+      select.innerHTML = `<option value="all">همه‌ی بخش‌ها</option>${sections.map((section) => `<option value="${escapeHtml(section.id)}">${escapeHtml(section.path || section.title)}</option>`).join("")}`;
+      if ([...select.options].some((option) => option.value === selected)) select.value = selected;
+    }
     renderEntries();
   }
 
   function filteredEntries() {
     const collection = state.currentCollection;
     if (!collection) return [];
-    const search = normalize($("#detailSearch").value);
-    const section = $("#detailSectionFilter").value;
+    const search = normalize($("#detailSearch")?.value || "");
+    const section = $("#detailSectionFilter")?.value || "all";
     return (collection.entries || []).filter((entry) => {
       const matchesSearch = !search || normalize(`${entry.term} ${(entry.acceptedForms || []).join(" ")} ${entry.sectionPath || ""}`).includes(search);
       const matchesSection = section === "all" || entry.sectionId === section;
@@ -283,84 +326,91 @@
 
   function renderEntries() {
     const entries = filteredEntries();
-    $("#collectionEntriesBody").innerHTML = entries.map((entry) => `<tr data-entry-id="${escapeHtml(entry.id)}">
-      <td class="word-cell" dir="ltr">${escapeHtml(entry.term)}</td>
-      <td>${entry.sectionPath ? `<span class="section-chip">${escapeHtml(entry.sectionPath)}</span>` : "—"}</td>
-      <td class="accepted-forms">${escapeHtml((entry.acceptedForms || []).join(" / "))}</td>
-      <td class="admin-entry-column ${state.canManage ? "" : "hidden"}"><div class="entry-actions"><button data-action="edit-entry" data-id="${escapeHtml(entry.id)}" type="button">ویرایش</button><button class="danger" data-action="remove-entry" data-id="${escapeHtml(entry.id)}" type="button">حذف</button></div></td>
-    </tr>`).join("");
-    $("#detailEmpty").classList.toggle("hidden", entries.length > 0);
-    $("#detailEmpty").textContent = (state.currentCollection?.entries || []).length ? "واژه‌ای با این جست‌وجو پیدا نشد." : "هنوز واژه‌ای در این مجموعه نیست.";
+    const body = $("#collectionEntriesBody");
+    if (body) {
+      body.innerHTML = entries.map((entry) => `<tr data-entry-id="${escapeHtml(entry.id)}">
+        <td class="word-cell" dir="ltr">${escapeHtml(entry.term)}</td>
+        <td>${entry.sectionPath ? `<span class="section-chip">${escapeHtml(entry.sectionPath)}</span>` : "—"}</td>
+        <td class="accepted-forms">${escapeHtml((entry.acceptedForms || []).join(" / "))}</td>
+        <td class="admin-entry-column ${state.canManage ? "" : "hidden"}"><div class="entry-actions"><button data-action="edit-entry" data-id="${escapeHtml(entry.id)}" type="button">ویرایش</button><button class="danger" data-action="remove-entry" data-id="${escapeHtml(entry.id)}" type="button">حذف</button></div></td>
+      </tr>`).join("");
+    }
+    setHidden("#detailEmpty", entries.length > 0);
+    setText("#detailEmpty", (state.currentCollection?.entries || []).length ? "واژه‌ای با این جست‌وجو پیدا نشد." : "هنوز واژه‌ای در این مجموعه نیست.");
   }
 
   function openCollectionForm(collection = null) {
     state.editingMetadata = { ...(collection?.metadata || {}) };
     state.slugTouched = Boolean(collection);
-    $("#collectionFormTitle").textContent = collection ? "ویرایش مجموعه" : "مجموعه‌ی جدید";
-    $("#collectionEditingId").value = collection?.id || "";
-    $("#collectionTitleInput").value = collection?.title || "";
-    $("#collectionSlugInput").value = collection?.slug || "";
-    $("#collectionDescriptionInput").value = collection?.description || "";
-    $("#collectionKindInput").value = collection?.kind || "book";
-    $("#collectionLevelInput").value = collection?.metadata?.level || "";
-    $("#collectionVisibilityInput").value = collection?.visibility || "public";
-    $("#collectionStatusInput").value = collection?.status || "published";
-    $("#collectionFormDialog").showModal();
-    setTimeout(() => $("#collectionTitleInput").focus(), 30);
+    setText("#collectionFormTitle", collection ? "ویرایش مجموعه" : "مجموعه‌ی جدید");
+    setValue("#collectionEditingId", collection?.id || "");
+    setValue("#collectionTitleInput", collection?.title || "");
+    setValue("#collectionSlugInput", collection?.slug || "");
+    setValue("#collectionDescriptionInput", collection?.description || "");
+    setValue("#collectionKindInput", collection?.kind || "book");
+    setValue("#collectionLevelInput", collection?.metadata?.level || "");
+    setValue("#collectionVisibilityInput", collection?.visibility || "public");
+    setValue("#collectionStatusInput", collection?.status || "published");
+    const dialog = $("#collectionFormDialog");
+    if (dialog) dialog.showModal();
+    setTimeout(() => $("#collectionTitleInput")?.focus(), 30);
   }
 
   async function saveCollection(event) {
     event.preventDefault();
-    const editingId = $("#collectionEditingId").value;
-    const level = $("#collectionLevelInput").value;
+    const editingId = $("#collectionEditingId")?.value || "";
     const metadata = { ...state.editingMetadata };
-    if (level) metadata.level = level;
-    else delete metadata.level;
+    const levelInput = $("#collectionLevelInput");
+    if (levelInput) {
+      const level = levelInput.value;
+      if (level) metadata.level = level;
+      else delete metadata.level;
+    }
     const payload = {
-      title: $("#collectionTitleInput").value.trim(),
-      slug: $("#collectionSlugInput").value.trim(),
-      description: $("#collectionDescriptionInput").value.trim(),
-      kind: $("#collectionKindInput").value,
-      visibility: $("#collectionVisibilityInput").value,
-      status: $("#collectionStatusInput").value,
+      title: $("#collectionTitleInput")?.value.trim() || "",
+      slug: $("#collectionSlugInput")?.value.trim() || "",
+      description: $("#collectionDescriptionInput")?.value.trim() || "",
+      kind: $("#collectionKindInput")?.value || "book",
+      visibility: $("#collectionVisibilityInput")?.value || "public",
+      status: $("#collectionStatusInput")?.value || "published",
       metadata
     };
     const response = await apiRequest(editingId ? `/api/library/${encodeURIComponent(editingId)}` : "/api/library", {
       method: editingId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
-    $("#collectionFormDialog").close();
+    $("#collectionFormDialog")?.close();
     await loadLibrary();
     if (editingId) await openDetail(response.collection.id);
     showToast(editingId ? "مشخصات مجموعه به‌روزرسانی شد." : "مجموعه ساخته شد. حالا می‌توانی واژه‌ها را وارد کنی.");
   }
 
   function openEntryForm(entry = null) {
-    $("#entryFormTitle").textContent = entry ? "ویرایش واژه" : "افزودن واژه";
-    $("#entryEditingId").value = entry?.id || "";
-    $("#entryTermInput").value = entry?.term || "";
-    $("#entryVariantsInput").value = entry ? (entry.acceptedForms || []).filter((form) => normalize(form) !== normalize(entry.term)).join(" / ") : "";
-    $("#entrySectionInput").value = entry?.sectionPath || "";
-    $("#entryNoteInput").value = entry?.note || "";
-    $("#entryFormDialog").showModal();
+    setText("#entryFormTitle", entry ? "ویرایش واژه" : "افزودن واژه");
+    setValue("#entryEditingId", entry?.id || "");
+    setValue("#entryTermInput", entry?.term || "");
+    setValue("#entryVariantsInput", entry ? (entry.acceptedForms || []).filter((form) => normalize(form) !== normalize(entry.term)).join(" / ") : "");
+    setValue("#entrySectionInput", entry?.sectionPath || "");
+    setValue("#entryNoteInput", entry?.note || "");
+    $("#entryFormDialog")?.showModal();
   }
 
   async function saveEntry(event) {
     event.preventDefault();
     const collection = state.currentCollection;
-    const entryId = $("#entryEditingId").value;
-    const variants = $("#entryVariantsInput").value.split(/\s*\/\s*/).map((value) => value.trim()).filter(Boolean);
+    const entryId = $("#entryEditingId")?.value || "";
+    const variants = ($("#entryVariantsInput")?.value || "").split(/\s*\/\s*/).map((value) => value.trim()).filter(Boolean);
     const payload = {
-      term: $("#entryTermInput").value.trim(),
+      term: $("#entryTermInput")?.value.trim() || "",
       acceptedForms: variants,
-      sectionPath: $("#entrySectionInput").value.trim() || null,
-      note: $("#entryNoteInput").value.trim() || null
+      sectionPath: $("#entrySectionInput")?.value.trim() || null,
+      note: $("#entryNoteInput")?.value.trim() || null
     };
     await apiRequest(`/api/library/${encodeURIComponent(collection.id)}/entries${entryId ? `/${encodeURIComponent(entryId)}` : ""}`, {
       method: entryId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
-    $("#entryFormDialog").close();
+    $("#entryFormDialog")?.close();
     await refreshCurrentCollection();
     showToast(entryId ? "واژه به‌روزرسانی شد." : "واژه به مجموعه اضافه شد.");
   }
@@ -384,23 +434,24 @@
   }
 
   function openImportDialog() {
-    $("#collectionFileInput").value = "";
-    $("#selectedFileName").textContent = "انتخاب فایل MD / TXT";
-    $("#importModeInput").value = "append";
-    $("#importDialog").showModal();
+    const fileInput = $("#collectionFileInput");
+    if (fileInput) fileInput.value = "";
+    setText("#selectedFileName", "انتخاب فایل MD / TXT");
+    setValue("#importModeInput", "append");
+    $("#importDialog")?.showModal();
   }
 
   async function importCollection(event) {
     event.preventDefault();
-    const file = $("#collectionFileInput").files[0];
+    const file = $("#collectionFileInput")?.files?.[0];
     if (!file) return showToast("یک فایل MD یا TXT انتخاب کن.", true);
-    const mode = $("#importModeInput").value;
+    const mode = $("#importModeInput")?.value || "append";
     if (mode === "replace" && !confirm("مجموعه دقیقاً با این فایل همگام شود؟ واژه‌های حذف‌شده فقط از مجموعه کنار می‌روند و پیشرفت کاربران حفظ می‌شود.")) return;
     const result = await apiRequest(`/api/library/${encodeURIComponent(state.currentCollection.id)}/import`, {
       method: "POST",
       body: JSON.stringify({ text: await file.text(), mode })
     });
-    $("#importDialog").close();
+    $("#importDialog")?.close();
     await refreshCurrentCollection();
     const stats = result.result;
     showToast(`${faNumber.format(stats.added)} افزوده، ${faNumber.format(stats.updated)} به‌روزرسانی و ${faNumber.format(stats.removed)} حذف از مجموعه.`);
@@ -411,7 +462,7 @@
     document.documentElement.dataset.theme = saved === "system"
       ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
       : saved;
-    $("#themeToggle").addEventListener("click", () => {
+    on("#themeToggle", "click", () => {
       const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
       document.documentElement.dataset.theme = next;
       localStorage.setItem("vocora-library-theme", next);
@@ -420,13 +471,13 @@
 
   function bindEvents() {
     ["#librarySearch", "#libraryKindFilter", "#libraryStatusFilter"].forEach((selector) => {
-      $(selector).addEventListener(selector.includes("Search") ? "input" : "change", renderLibrary);
+      on(selector, selector.includes("Search") ? "input" : "change", renderLibrary);
     });
     $$('[data-kind-chip]').forEach((chip) => chip.addEventListener("click", () => {
-      $("#libraryKindFilter").value = chip.dataset.kindChip;
+      setValue("#libraryKindFilter", chip.dataset.kindChip);
       renderLibrary();
     }));
-    $("#libraryGrid").addEventListener("click", async (event) => {
+    on("#libraryGrid", "click", async (event) => {
       const detail = event.target.closest(".detail-card");
       if (detail) return openDetail(detail.dataset.id).catch((error) => showToast(error.message, true));
       const edit = event.target.closest(".edit-card");
@@ -441,48 +492,51 @@
         if (collection) await setSubscription(collection.id, !collection.subscribed).catch((error) => showToast(error.message, true));
       }
     });
-    $("#detailSubscribeBtn").addEventListener("click", () => {
+    on("#detailSubscribeBtn", "click", () => {
       if (!state.currentCollection) return;
       setSubscription(state.currentCollection.id, !state.currentCollection.subscribed).catch((error) => showToast(error.message, true));
     });
-    $("#createCollectionBtn").addEventListener("click", () => openCollectionForm());
-    $("#editCollectionBtn").addEventListener("click", () => openCollectionForm(state.currentCollection));
-    $("#collectionForm").addEventListener("submit", (event) => saveCollection(event).catch((error) => showToast(error.message, true)));
-    $("#collectionTitleInput").addEventListener("input", (event) => {
-      if ($("#collectionEditingId").value || state.slugTouched) return;
+    on("#createCollectionBtn", "click", () => openCollectionForm());
+    on("#editCollectionBtn", "click", () => openCollectionForm(state.currentCollection));
+    on("#collectionForm", "submit", (event) => saveCollection(event).catch((error) => showToast(error.message, true)));
+    on("#collectionTitleInput", "input", (event) => {
+      if ($("#collectionEditingId")?.value || state.slugTouched) return;
       const slug = slugifyAscii(event.target.value);
-      if (slug) $("#collectionSlugInput").value = slug;
+      if (slug) setValue("#collectionSlugInput", slug);
     });
-    $("#collectionSlugInput").addEventListener("input", () => { state.slugTouched = true; });
-    $("#addCollectionEntryBtn").addEventListener("click", () => openEntryForm());
-    $("#entryForm").addEventListener("submit", (event) => saveEntry(event).catch((error) => showToast(error.message, true)));
-    $("#importCollectionBtn").addEventListener("click", openImportDialog);
-    $("#importForm").addEventListener("submit", (event) => importCollection(event).catch((error) => showToast(error.message, true)));
-    $("#collectionFileInput").addEventListener("change", (event) => {
-      $("#selectedFileName").textContent = event.target.files[0]?.name || "انتخاب فایل MD / TXT";
+    on("#collectionSlugInput", "input", () => { state.slugTouched = true; });
+    on("#addCollectionEntryBtn", "click", () => openEntryForm());
+    on("#entryForm", "submit", (event) => saveEntry(event).catch((error) => showToast(error.message, true)));
+    on("#importCollectionBtn", "click", openImportDialog);
+    on("#importForm", "submit", (event) => importCollection(event).catch((error) => showToast(error.message, true)));
+    on("#collectionFileInput", "change", (event) => {
+      setText("#selectedFileName", event.target.files[0]?.name || "انتخاب فایل MD / TXT");
     });
     const drop = $(".library-file-drop");
-    ["dragenter", "dragover"].forEach((type) => drop.addEventListener(type, (event) => {
-      event.preventDefault();
-      drop.classList.add("is-dragging");
-    }));
-    ["dragleave", "drop"].forEach((type) => drop.addEventListener(type, (event) => {
-      event.preventDefault();
-      drop.classList.remove("is-dragging");
-    }));
-    drop.addEventListener("drop", (event) => {
-      const file = event.dataTransfer?.files?.[0];
-      if (!file) return;
-      if (typeof DataTransfer === "function") {
-        const transfer = new DataTransfer();
-        transfer.items.add(file);
-        $("#collectionFileInput").files = transfer.files;
-      }
-      $("#selectedFileName").textContent = file.name;
-    });
-    $("#detailSearch").addEventListener("input", renderEntries);
-    $("#detailSectionFilter").addEventListener("change", renderEntries);
-    $("#collectionEntriesBody").addEventListener("click", (event) => {
+    if (drop) {
+      ["dragenter", "dragover"].forEach((type) => drop.addEventListener(type, (event) => {
+        event.preventDefault();
+        drop.classList.add("is-dragging");
+      }));
+      ["dragleave", "drop"].forEach((type) => drop.addEventListener(type, (event) => {
+        event.preventDefault();
+        drop.classList.remove("is-dragging");
+      }));
+      drop.addEventListener("drop", (event) => {
+        const file = event.dataTransfer?.files?.[0];
+        if (!file) return;
+        const fileInput = $("#collectionFileInput");
+        if (fileInput && typeof DataTransfer === "function") {
+          const transfer = new DataTransfer();
+          transfer.items.add(file);
+          fileInput.files = transfer.files;
+        }
+        setText("#selectedFileName", file.name);
+      });
+    }
+    on("#detailSearch", "input", renderEntries);
+    on("#detailSectionFilter", "change", renderEntries);
+    on("#collectionEntriesBody", "click", (event) => {
       const button = event.target.closest("[data-action]");
       if (!button) return;
       const entry = state.currentCollection?.entries?.find((item) => item.id === button.dataset.id);
@@ -496,13 +550,13 @@
     $$(".library-dialog").forEach((dialog) => dialog.addEventListener("click", (event) => {
       if (event.target === dialog) dialog.close();
     }));
-    $("#logoutBtn").addEventListener("click", async () => {
+    on("#logoutBtn", "click", async () => {
       try { await apiRequest("/api/auth/logout", { method: "POST" }); } finally { location.replace("login.html"); }
     });
   }
 
   async function boot() {
-    $("#libraryDate").textContent = faToday.format(new Date());
+    setText("#libraryDate", faToday.format(new Date()));
     setupTheme();
     bindEvents();
     try {
