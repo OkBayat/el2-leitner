@@ -111,8 +111,14 @@ async function loadDefaultVocabularyMap(pool) {
 
 export async function repairLegacyAliasProgress(pool) {
   const vocabularyByForm = await loadDefaultVocabularyMap(pool);
-  const [legacyRows] = await pool.execute(
-    `SELECT ls.user_id, ls.state_json
+
+  // Do not include state_json in the candidate-list query. Legacy state rows can
+  // be several megabytes; asking MySQL to ORDER BY while carrying those JSON
+  // payloads can exhaust the per-session sort buffer on otherwise healthy
+  // installations. First select only the indexed user ids, then read one JSON
+  // document at a time by primary key.
+  const [legacyUserRows] = await pool.execute(
+    `SELECT ls.user_id
      FROM learning_states ls
      JOIN user_state_revisions usr ON usr.user_id = ls.user_id
      WHERE COALESCE(JSON_UNQUOTE(JSON_EXTRACT(usr.metadata_json, '$.legacyAliasProgressMerged')), 'false') NOT IN ('true', '1')
@@ -121,8 +127,15 @@ export async function repairLegacyAliasProgress(pool) {
 
   let repairedUsers = 0;
   let repairedGroups = 0;
-  for (const legacyRow of legacyRows) {
-    const state = parseJson(legacyRow.state_json, {}) || {};
+  for (const { user_id: userId } of legacyUserRows) {
+    const [stateRows] = await pool.execute(
+      "SELECT state_json FROM learning_states WHERE user_id = ? LIMIT 1",
+      [userId]
+    );
+    const legacyState = stateRows[0];
+    if (!legacyState) continue;
+
+    const state = parseJson(legacyState.state_json, {}) || {};
     const groups = new Map();
     for (const word of Array.isArray(state.words) ? state.words : []) {
       const vocabularyId = vocabularyIdForWord(word, vocabularyByForm);
@@ -145,7 +158,7 @@ export async function repairLegacyAliasProgress(pool) {
         if (!shouldStore) {
           await connection.execute(
             "DELETE FROM user_vocabulary_progress WHERE user_id = ? AND vocabulary_entry_id = ?",
-            [legacyRow.user_id, group.vocabularyId]
+            [userId, group.vocabularyId]
           );
           repairedGroups += 1;
           continue;
@@ -163,7 +176,7 @@ export async function repairLegacyAliasProgress(pool) {
              blocked_until = VALUES(blocked_until), mastered_at = VALUES(mastered_at),
              personal_note = VALUES(personal_note), legacy_category = COALESCE(legacy_category, VALUES(legacy_category))`,
           [
-            legacyRow.user_id,
+            userId,
             group.vocabularyId,
             merged.box,
             merged.due,
@@ -187,7 +200,7 @@ export async function repairLegacyAliasProgress(pool) {
         `UPDATE user_state_revisions
          SET metadata_json = JSON_SET(COALESCE(metadata_json, JSON_OBJECT()), '$.legacyAliasProgressMerged', true)
          WHERE user_id = ?`,
-        [legacyRow.user_id]
+        [userId]
       );
       await connection.commit();
       repairedUsers += 1;
