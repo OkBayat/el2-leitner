@@ -68,24 +68,18 @@ const baseCss = cssSource.slice(0, cssSource.indexOf('@media (max-width:760px)')
 assert.match(
   baseCss,
   /data-vocora-stage\^="feedback-"\]\s+#practiceRemediation[\s\S]*display:\s*none\s*!important/,
-  'Feedback/remediation exclusivity must apply on desktop, not only inside the mobile media query.'
+  'Feedback/remediation CSS exclusivity remains a visual fallback on desktop.'
 );
-assert.match(
-  cssSource,
-  /grid-template-rows:\s*72px\s+58px\s+auto/,
-  'Mobile answer stack must render input, button, then hint.'
-);
-assert.match(
-  cssSource,
-  /grid-template-rows:\s*60px\s+52px\s+auto/,
-  'Keyboard/short-height stack must preserve input, button, then hint.'
-);
+assert.match(cssSource, /grid-template-rows:\s*72px\s+58px\s+auto/);
+assert.match(cssSource, /grid-template-rows:\s*60px\s+52px\s+auto/);
 
 const form = document.querySelector('#answerForm');
 const feedback = document.querySelector('#answerFeedback');
 const remediation = document.querySelector('#practiceRemediation');
 const flashCard = document.querySelector('#flashCard');
 
+// Reproduce the real adapter order: app feedback is visible, then the remediation
+// view renders correction and removes .hidden before emitting the start event.
 form.classList.add('hidden');
 feedback.classList.remove('hidden');
 feedback.classList.add('wrong');
@@ -98,12 +92,25 @@ document.dispatchEvent(new window.CustomEvent('vocora:spelling-remediation-start
 }));
 controller.sync();
 
-assert.equal(controller.getState().delayedRemediation, true, 'Immediate remediation must wait behind the wrong-result stage on desktop.');
+assert.equal(controller.getState().delayedRemediation, true, 'Immediate remediation must wait behind wrong feedback.');
 assert.equal(controller.getState().stage, 'feedback-wrong');
 assert.ok(remediation.classList.contains('vocora-remediation-delayed'));
-assert.ok(!flashCard.classList.contains('remediation-active'), 'Feedback stage must not inherit the remediation-only hiding class.');
+assert.ok(remediation.classList.contains('hidden'), 'Remediation must be physically hidden on desktop while feedback owns the stage.');
+assert.ok(!flashCard.classList.contains('remediation-active'), 'Feedback stage must clear remediation-only card state.');
+assert.ok(!feedback.classList.contains('hidden'));
 assert.equal(document.querySelector('#feedbackTitle').textContent, 'اشتباه بود');
 assert.equal(document.querySelector('#correctAnswer').textContent, 'specialist');
+
+// This is the exact regression from the screenshot: a later remediation render can
+// try to show itself again. Component normalization must re-hide it without relying
+// on CSS or viewport width.
+remediation.classList.remove('hidden');
+flashCard.classList.add('remediation-active');
+controller.sync();
+assert.equal(controller.getState().stage, 'feedback-wrong');
+assert.ok(remediation.classList.contains('hidden'), 'A re-render cannot make remediation coexist with feedback.');
+assert.ok(!flashCard.classList.contains('remediation-active'));
+assert.ok(!feedback.classList.contains('hidden'));
 
 const next = document.querySelector('#nextCardBtn');
 next.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true }));
@@ -111,10 +118,11 @@ controller.sync();
 assert.equal(controller.getState().delayedRemediation, false);
 assert.equal(controller.getState().stage, 'remediation-correction', 'Continue must switch to correction instead of rendering both stages together.');
 assert.ok(!remediation.classList.contains('vocora-remediation-delayed'));
+assert.ok(!remediation.classList.contains('hidden'), 'Correction becomes visible only after Continue.');
+assert.ok(feedback.classList.contains('hidden'), 'Wrong feedback must be physically hidden once correction owns the stage.');
+assert.ok(form.classList.contains('hidden'));
 assert.ok(flashCard.classList.contains('remediation-active'));
 
 console.log('Desktop review session UX tests passed.');
 window.close();
-// This file is a standalone regression executable. Force termination only after
-// every synchronous assertion above has passed so JSDOM internals cannot hold CI.
 process.exit(0);
