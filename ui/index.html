@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="styles-v2.css">
   <link rel="stylesheet" href="practice-remediation.css">
+  <link rel="stylesheet" href="leitner-status.css">
   <style>
     .brand-logo {
       display: block;
@@ -95,8 +96,14 @@
             <div class="panel-head"><div><h3>روند ۱۴ روزه</h3><p>تعداد پاسخ‌های درست روزانه</p></div><span id="trendSummary" class="trend-chip">بدون داده</span></div>
             <div id="activityChart" class="activity-chart" role="img" aria-label="نمودار فعالیت چهارده روز اخیر"></div>
           </article>
-          <article class="panel">
-            <div class="panel-head"><div><h3>وضعیت خانه‌ها</h3><p>فاصله تا تسلط کامل</p></div></div>
+          <article class="panel leitner-status-panel">
+            <div class="panel-head leitner-panel-head">
+              <div><h3>وضعیت خانه‌ها</h3><p>توزیع لغت‌ها در مراحل یادگیری</p></div>
+              <span id="boxDistributionTotal" class="leitner-total-chip" aria-live="polite">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4M4 16l8 4 8-4"/></svg>
+                <span data-leitner-total-text>مجموع: ۰ لغت</span>
+              </span>
+            </div>
             <div id="boxDistribution" class="box-list"></div>
           </article>
         </div>
@@ -312,6 +319,7 @@
   <script src="practice-remediation.js"></script>
   <script src="practice-remediation-keyboard-guard.js"></script>
   <script src="app-v2.js"></script>
+  <script src="leitner-status.js"></script>
   <script src="practice-remediation-adapter.js"></script>
   <script src="practice-remediation-recheck-prompt.js"></script>
 </body>
