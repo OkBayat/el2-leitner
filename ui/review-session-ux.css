@@ -64,6 +64,7 @@
 }
 
 .vocora-double-tap-hint {
+  margin-top:8px;
   color:var(--muted);
   text-align:center;
   font-size:11px;
@@ -73,6 +74,18 @@
 
 #answerForm.vocora-has-answer .vocora-double-tap-hint {
   display:none;
+}
+
+/* Component stage exclusivity applies at every viewport width. This prevents
+   desktop from rendering feedback and the prepared remediation panel together. */
+body.vocora-session-active #reviewSession[data-vocora-stage^="feedback-"] #practiceRemediation,
+body.vocora-session-active #practiceRemediation.vocora-remediation-delayed {
+  display:none!important;
+}
+
+body.vocora-session-active #reviewSession[data-vocora-stage^="remediation-"] #answerForm,
+body.vocora-session-active #reviewSession[data-vocora-stage^="remediation-"] #answerFeedback {
+  display:none!important;
 }
 
 @media (max-width:760px) {
@@ -296,7 +309,7 @@
     text-underline-offset:4px;
   }
 
-  /* Input -> hint -> primary action. The DOM is reordered by the component once. */
+  /* Input -> primary action -> hint. DOM and visual order are identical. */
   body.vocora-session-active #answerForm {
     position:absolute;
     z-index:20;
@@ -305,7 +318,7 @@
     left:20px;
     display:grid;
     width:auto;
-    grid-template-rows:72px auto 58px;
+    grid-template-rows:72px 58px auto;
     gap:8px;
     margin:0;
   }
@@ -734,7 +747,7 @@
     right:16px;
     bottom:calc(8px + env(safe-area-inset-bottom));
     left:16px;
-    grid-template-rows:60px auto 52px;
+    grid-template-rows:60px 52px auto;
     gap:6px;
   }
 
@@ -860,7 +873,7 @@
     }
 
     body.vocora-session-active #answerForm {
-      grid-template-rows:60px auto 52px;
+      grid-template-rows:60px 52px auto;
       gap:6px;
     }
 
