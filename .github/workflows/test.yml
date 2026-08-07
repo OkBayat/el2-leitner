@@ -76,18 +76,51 @@ jobs:
           test "$IELTS_UNIQUE" -gt 0
           test "$IELTS_UNIQUE" -le 1500
 
-          # A new learner is projected from normalized shared catalog data without copying 1500 source rows into user state storage.
-          curl --fail --silent --show-error \
-            --cookie /tmp/admin-cookies \
-            http://127.0.0.1:3000/api/state > /tmp/admin-state.json
-          jq -e --argjson unique "$IELTS_UNIQUE" '.revision == 0 and (.state.words | length) == $unique' /tmp/admin-state.json
+          # Reproduce defaultState() from the browser: all 1500 source items are submitted once,
+          # then the normalized persistence layer collapses equivalent aliases to shared identities.
+          node --input-type=module > /tmp/admin-save.json <<'NODE'
+          globalThis.window = {};
+          await import('./ui/vocabulary.js');
+          const words = window.IELTS_CORE_WORDS.map((source, index) => ({
+            id: `ci-source-${index + 1}`,
+            number: source.number || index + 1,
+            term: source.term,
+            accepted: source.accepted,
+            category: source.category,
+            notes: '',
+            box: 0,
+            due: null,
+            attempts: 0,
+            correct: 0,
+            mistakes: 0,
+            currentStreak: 0,
+            introducedOn: null,
+            addedSource: null,
+            lastReviewed: null,
+            lastPromotedDay: null,
+            blockedUntil: null,
+            masteredAt: null
+          }));
+          const monday = words.find((word) => word.term === 'Monday');
+          Object.assign(monday, {
+            box: 1,
+            due: '2026-08-07',
+            attempts: 1,
+            correct: 1,
+            introducedOn: '2026-08-07'
+          });
+          process.stdout.write(JSON.stringify({
+            revision: 0,
+            state: {
+              schemaVersion: 2,
+              words,
+              history: [],
+              daily: {},
+              settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: 'system' }
+            }
+          }));
+          NODE
 
-          # Save the real full state shape used by the browser, changing only Monday.
-          jq '{
-            revision: .revision,
-            state: (.state
-              | .words = [.words[] | if .term == "Monday" then .box = 1 | .attempts = 1 | .correct = 1 | .introducedOn = "2026-08-07" | .due = "2026-08-07" else . end])
-          }' /tmp/admin-state.json > /tmp/admin-save.json
           curl --fail --silent --show-error \
             --cookie /tmp/admin-cookies \
             --request PUT \
