@@ -259,7 +259,7 @@ export class MySqlEfficientLearningStateRepository extends MySqlLearningStateRep
       `SELECT uc.collection_id
        FROM user_collections uc
        JOIN collections c ON c.id = uc.collection_id
-       WHERE uc.user_id = ? AND uc.status = 'active' AND c.is_default = TRUE AND c.archived_at IS NULL
+       WHERE uc.user_id = ? AND c.is_default = TRUE AND c.archived_at IS NULL
        LIMIT 1`,
       [userId]
     );
@@ -271,7 +271,7 @@ export class MySqlEfficientLearningStateRepository extends MySqlLearningStateRep
     await connection.execute(
       `INSERT INTO user_collections (user_id, collection_id, status, subscribed_at, removed_at, last_seen_version)
        VALUES (?, ?, 'active', CURRENT_TIMESTAMP(3), NULL, 0)
-       ON DUPLICATE KEY UPDATE status = 'active', removed_at = NULL`,
+       ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)`,
       [userId, defaultRows[0].id]
     );
   }
