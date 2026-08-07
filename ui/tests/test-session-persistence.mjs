@@ -13,24 +13,94 @@ const dom = new JSDOM(`<!doctype html><body>
 const { window } = dom;
 window.Headers = globalThis.Headers;
 const requests = [];
+
+const persistedEvent = {
+  at: "2026-08-07T10:00:00.000Z",
+  day: "2026-08-07",
+  term: "Monday",
+  answer: "monday",
+  correct: true,
+  mode: "review",
+  previousBox: 1,
+  newBox: 2,
+  mistakeNumber: null
+};
+
+function responseFor(payload, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    async json() { return structuredClone(payload); },
+    clone() { return responseFor(payload, status); }
+  };
+}
+
 window.fetch = async (input, options = {}) => {
   const path = new URL(typeof input === "string" ? input : input.url, window.location.href).pathname;
   requests.push({ path, options });
+  if (path === "/api/state" && String(options.method || "GET").toUpperCase() === "GET") {
+    return responseFor({
+      revision: 4,
+      state: {
+        history: [persistedEvent],
+        persistenceCursor: {
+          historyLength: 1,
+          lastReviewFingerprint: JSON.stringify([
+            persistedEvent.at,
+            persistedEvent.day,
+            persistedEvent.term,
+            persistedEvent.answer,
+            true,
+            persistedEvent.mode,
+            1,
+            2,
+            null
+          ])
+        }
+      }
+    });
+  }
+  if (path === "/api/state") return responseFor({ revision: 5 });
   const payload = path === "/api/learning/sessions"
     ? { session: { id: "session-123", status: "active" } }
     : { session: { id: "session-123", status: "completed" } };
-  return { ok: true, status: 200, async json() { return payload; } };
+  return responseFor(payload);
 };
 window.eval(script);
 
 assert.equal(window.VocoraSessionPersistenceTest.parseLocalizedInteger("۱۲۳ کارت"), 123);
+
+await window.fetch("/api/state");
+assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor()?.historyLength, 1);
+
 window.document.querySelector("#boxOnePracticeBtn").click();
 await new Promise((resolve) => setTimeout(resolve, 10));
 assert.equal(window.VocoraSessionPersistenceTest.getActiveSession()?.id, "session-123");
 
-await window.fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: "{}" });
-const stateRequest = requests.find((request) => request.path === "/api/state");
-assert.equal(new window.Headers(stateRequest.options.headers).get("X-Vocora-Session-Id"), "session-123");
+const secondEvent = { ...persistedEvent, at: "2026-08-07T10:01:00.000Z", term: "Tuesday", answer: "tuesday" };
+await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 4, state: { history: [persistedEvent, secondEvent] } })
+});
+const firstStateWrite = requests.filter((request) => request.path === "/api/state" && request.options.method === "PUT")[0];
+assert.equal(new window.Headers(firstStateWrite.options.headers).get("X-Vocora-Session-Id"), "session-123");
+const firstWriteBody = JSON.parse(firstStateWrite.options.body);
+assert.equal(firstWriteBody.state.persistenceCursor.historyLength, 1);
+assert.equal(firstWriteBody.state.normalizedPersistenceVersion, 2);
+assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor()?.historyLength, 2);
+
+const thirdEvent = { ...persistedEvent, at: "2026-08-07T10:02:00.000Z", term: "Wednesday", answer: "wednesday" };
+await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 5, state: { history: [persistedEvent, secondEvent, thirdEvent] } })
+});
+const stateWrites = requests.filter((request) => request.path === "/api/state" && request.options.method === "PUT");
+const secondWriteBody = JSON.parse(stateWrites[1].options.body);
+assert.equal(secondWriteBody.state.persistenceCursor.historyLength, 2,
+  "the next save must tell the server exactly how much review history is already persisted");
+assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor()?.historyLength, 3);
 
 window.document.querySelector("#sessionComplete").classList.remove("hidden");
 await new Promise((resolve) => setTimeout(resolve, 10));
