@@ -298,6 +298,36 @@ jobs:
             --execute="SELECT COUNT(*) FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='learner2@example.com' AND usr.learning_reset_at IS NOT NULL;" \
             | grep -qx '1'
 
+          # An explicit unsubscribe from the default collection must survive later state saves.
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --request DELETE \
+            http://127.0.0.1:3000/api/library/ielts-listening-core-1500/subscription \
+            | jq -e '.removed == true'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/admin-unsubscribed-state.json
+          jq -e '(.state.words | length) == 0' /tmp/admin-unsubscribed-state.json
+          jq '{revision:.revision,state:.state}' /tmp/admin-unsubscribed-state.json > /tmp/admin-unsubscribed-save.json
+          UNSUBSCRIBE_NEXT=$(( $(jq -r '.revision' /tmp/admin-unsubscribed-state.json) + 1 ))
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/admin-unsubscribed-save.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e --argjson next "$UNSUBSCRIBE_NEXT" '.revision == $next'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/library \
+            | jq -e '.collections[] | select(.id == "ielts-listening-core-1500" and .subscribed == false)'
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '(.state.words | length) == 0'
+
           docker compose exec -T app npm run db:verify
       - name: Print container logs after a failure
         if: failure()
