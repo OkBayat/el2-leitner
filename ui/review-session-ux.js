@@ -41,6 +41,7 @@
     const body = documentObject.body;
     const root = documentObject.documentElement;
     const reviewSession = documentObject.querySelector('#reviewSession');
+    const reviewView = documentObject.querySelector('#view-review');
     const flashCard = documentObject.querySelector('#flashCard');
     const answerForm = documentObject.querySelector('#answerForm');
     const answerInput = documentObject.querySelector('#answerInput');
@@ -387,7 +388,8 @@
     }
 
     function syncSessionMode() {
-      if (isVisible(reviewSession)) enterSessionMode();
+      const reviewIsActive = Boolean(reviewView?.classList.contains('active'));
+      if (reviewIsActive && isVisible(reviewSession)) enterSessionMode();
       else leaveSessionMode();
     }
 
@@ -435,6 +437,9 @@
         subtree: true,
         characterData: true
       });
+      if (reviewView) {
+        state.observer.observe(reviewView, { attributes: true, attributeFilter: ['class'] });
+      }
     }
 
     answerInput.addEventListener('input', updatePrimaryState);
