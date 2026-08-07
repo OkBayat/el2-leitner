@@ -4,7 +4,8 @@
   const INSTALLATION = Symbol.for('vocora.practiceRemediation.keyboardGuard');
   const REVIEW_UX_LOADER = Symbol.for('vocora.reviewSessionUx.loader');
   const REMEDIATION_ROOT = '#practiceRemediation';
-  const DELAYED_CONTINUE = '#practiceRemediation.vocora-remediation-delayed #vocoraRemediationPreviewContinue';
+  const DELAYED_REMEDIATION = '#practiceRemediation.vocora-remediation-delayed';
+  const FEEDBACK_CONTINUE = '#answerFeedback #nextCardBtn';
   const REVIEW_UX_SCRIPT_ID = 'vocora-review-session-ux-script';
   const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js';
 
@@ -18,18 +19,22 @@
     if (documentObject[INSTALLATION]) return false;
 
     const handler = (event) => {
-      const delayedContinue = event?.key === 'Enter'
-        ? documentObject.querySelector?.(DELAYED_CONTINUE)
+      const delayedRemediation = event?.key === 'Enter'
+        ? documentObject.querySelector?.(DELAYED_REMEDIATION)
         : null;
-      if (!ownsEnter(event) && !delayedContinue) return;
+      if (!ownsEnter(event) && !delayedRemediation) return;
 
-      // When the initial red/yellow result is waiting for acknowledgement,
-      // Enter must open remediation instead of reaching app-v2's "next card"
-      // shortcut. If focus is already inside remediation, preserve the native
-      // button/form action and only stop the later document shortcut.
-      if (delayedContinue && !event.target?.closest?.(REMEDIATION_ROOT)) {
-        event.preventDefault();
-        delayedContinue.click();
+      // review-session-ux reuses #nextCardBtn as the single Continue action for
+      // the initial red/yellow result. Pressing Enter there must reveal the
+      // already-active remediation flow instead of reaching app-v2's global
+      // "next card" shortcut. Inside remediation we preserve native form/button
+      // behaviour and only stop the later document-level shortcut.
+      if (delayedRemediation && !event.target?.closest?.(REMEDIATION_ROOT)) {
+        const continueButton = documentObject.querySelector?.(FEEDBACK_CONTINUE);
+        if (continueButton) {
+          event.preventDefault();
+          continueButton.click();
+        }
       }
       event.stopImmediatePropagation();
     };
