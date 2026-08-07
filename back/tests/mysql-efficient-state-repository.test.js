@@ -122,6 +122,35 @@ describe("MySqlEfficientLearningStateRepository sparse writes", () => {
     );
   });
 
+  it("treats an existing default subscription row as an explicit user decision", async () => {
+    const connection = new PatternConnection();
+    const repository = new MySqlEfficientLearningStateRepository(new PatternPool(connection));
+
+    await repository.save("7", stateFor({
+      id: "vocab-monday",
+      term: "Monday",
+      accepted: ["Monday"],
+      category: "Calendar and time",
+      box: 0,
+      attempts: 0,
+      correct: 0,
+      mistakes: 0,
+      currentStreak: 0
+    }), 4);
+
+    const defaultProbe = connection.calls.find(({ sql }) =>
+      /FROM user_collections uc[\s\S]+c\.is_default = TRUE/u.test(sql)
+    );
+    assert.ok(defaultProbe);
+    assert.doesNotMatch(defaultProbe.sql, /uc\.status\s*=\s*'active'/u,
+      "a removed default subscription must not be treated as missing and silently reactivated");
+    assert.equal(
+      connection.calls.some(({ sql }) => /INSERT INTO user_collections/u.test(sql)),
+      false,
+      "an existing default subscription row must never be re-created during state persistence"
+    );
+  });
+
   it("writes exactly one progress mutation when one prefetched word changes", async () => {
     const connection = new PatternConnection();
     const repository = new MySqlEfficientLearningStateRepository(new PatternPool(connection));
