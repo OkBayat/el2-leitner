@@ -154,7 +154,10 @@ function showFeedback({ answer, wrong = false }) {
   controller.sync();
 }
 
-assert.equal(document.querySelector('#vocora-review-session-ux-style')?.getAttribute('href'), 'review-session-ux.css');
+assert.equal(
+  document.querySelector('#vocora-review-session-ux-style')?.getAttribute('href'),
+  'review-session-ux.css?v=20260807-2317'
+);
 assert.ok(document.body.classList.contains('vocora-session-active'));
 assert.ok(document.documentElement.classList.contains('vocora-session-active'));
 assert.equal(document.querySelector('#sessionAccuracy').parentElement.id, 'vocoraSessionAccuracy');
@@ -202,6 +205,7 @@ assert.equal(document.querySelector('#feedbackIcon').textContent, '!');
 assert.equal(correctAnswer.textContent, "haven't");
 assert.equal(input.readOnly, true);
 assert.equal(next.textContent, 'ادامه');
+assert.ok(remediation.classList.contains('hidden'), 'Warning feedback must own the screen; remediation stays hidden.');
 
 // Wrong result.
 resetToAnswer();
@@ -217,6 +221,7 @@ assert.equal(title.textContent, 'اشتباه بود');
 assert.equal(detail.textContent, 'پاسخ درست را یک بار با دقت ببین.');
 assert.equal(correctAnswer.textContent, "haven't");
 assert.equal(input.readOnly, true);
+assert.ok(remediation.classList.contains('hidden'), 'Wrong feedback must not show remediation at the same time.');
 
 // Correct result keeps useful Leitner detail and uses the same component.
 resetToAnswer();
@@ -229,6 +234,7 @@ assertStage('feedback-correct');
 assert.equal(title.textContent, 'عالیه!');
 assert.equal(detail.textContent, 'از خانهٔ ۱ به خانهٔ ۲ رفت.', 'Useful Leitner transition detail must be preserved.');
 assert.equal(input.readOnly, true);
+assert.ok(remediation.classList.contains('hidden'));
 
 // Immediate wrong assessment -> same feedback Continue -> correction component.
 resetToAnswer();
@@ -247,8 +253,20 @@ controller.sync();
 assert.equal(controller.getState().delayedRemediation, true);
 assertStage('feedback-wrong');
 assert.ok(remediation.classList.contains('vocora-remediation-delayed'));
+assert.ok(remediation.classList.contains('hidden'), 'Prepared immediate remediation must be physically hidden, not only CSS-hidden.');
 assert.ok(!flashCard.classList.contains('remediation-active'), 'Feedback preview must remain visible before correction.');
 assert.equal(document.querySelectorAll('#nextCardBtn').length, 1, 'The existing feedback Continue is the only CTA.');
+
+// Regression for the reported desktop screenshot: the remediation adapter may
+// render again while feedback is still waiting. The shared stage must immediately
+// reassert DOM exclusivity and never leave both panels visible together.
+remediation.classList.remove('hidden');
+flashCard.classList.add('remediation-active');
+controller.sync();
+assertStage('feedback-wrong');
+assert.ok(remediation.classList.contains('hidden'), 'A remediation re-render must be hidden again while feedback owns the stage.');
+assert.ok(!flashCard.classList.contains('remediation-active'), 'Feedback stage must remove remediation-only card presentation.');
+assert.ok(!feedback.classList.contains('hidden'), 'Wrong feedback must remain visible after the race is normalized.');
 
 const continueEvent = new window.MouseEvent('click', { bubbles: true, cancelable: true });
 next.dispatchEvent(continueEvent);
@@ -256,6 +274,9 @@ assert.equal(continueEvent.defaultPrevented, true, 'Shared Continue must be inte
 assert.equal(controller.getState().delayedRemediation, false);
 assert.ok(flashCard.classList.contains('remediation-active'));
 assertStage('remediation-correction');
+assert.ok(!remediation.classList.contains('hidden'), 'Continue must reveal remediation.');
+assert.ok(feedback.classList.contains('hidden'), 'Remediation stage must physically hide feedback.');
+assert.ok(form.classList.contains('hidden'), 'Remediation stage must physically hide the primary form.');
 
 // Every internal remediation page is a stage of the exact same component.
 for (const phase of ['recall', 'copy', 'completed']) {
@@ -264,6 +285,8 @@ for (const phase of ['recall', 'copy', 'completed']) {
   flashCard.classList.add('remediation-active');
   controller.sync();
   assertStage(`remediation-${phase}`);
+  assert.ok(feedback.classList.contains('hidden'));
+  assert.ok(form.classList.contains('hidden'));
 }
 
 // Same-session recheck uses the same component too, not a second page model.
