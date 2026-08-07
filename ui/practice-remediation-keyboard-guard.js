@@ -7,7 +7,7 @@
   const DELAYED_REMEDIATION = '#practiceRemediation.vocora-remediation-delayed';
   const FEEDBACK_CONTINUE = '#answerFeedback #nextCardBtn';
   const REVIEW_UX_SCRIPT_ID = 'vocora-review-session-ux-script';
-  const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js';
+  const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js?v=20260807-2317';
 
   function ownsEnter(event) {
     return event?.key === 'Enter'
