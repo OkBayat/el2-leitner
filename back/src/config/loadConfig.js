@@ -13,6 +13,13 @@ function booleanFromEnv(value, fallback = false) {
   return String(value).toLowerCase() === "true";
 }
 
+function emailListFromEnv(value) {
+  return [...new Set(String(value || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean))];
+}
+
 export function loadConfig(env = process.env) {
   const nodeEnv = env.NODE_ENV ?? "development";
   const jwtSecret = env.JWT_SECRET ?? (nodeEnv === "test" ? "test-secret-at-least-thirty-two-characters" : null);
@@ -66,6 +73,9 @@ export function loadConfig(env = process.env) {
           path: "/"
         }
       }
+    },
+    library: {
+      adminEmails: emailListFromEnv(env.LIBRARY_ADMIN_EMAILS)
     }
   };
 }

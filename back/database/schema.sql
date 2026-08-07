@@ -1,26 +1,10 @@
-CREATE TABLE IF NOT EXISTS users (
-  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  email VARCHAR(320) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (id),
-  UNIQUE KEY users_email_unique (email)
-) ENGINE = InnoDB
-  DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS learning_states (
-  user_id BIGINT UNSIGNED NOT NULL,
-  state_json JSON NOT NULL,
-  revision BIGINT UNSIGNED NOT NULL DEFAULT 0,
-  created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (user_id),
-  CONSTRAINT learning_states_user_fk
-    FOREIGN KEY (user_id) REFERENCES users (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
-) ENGINE = InnoDB
-  DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+-- Vocora database schema is migration-driven.
+--
+-- Do not add tables or columns directly to this file. Add an immutable,
+-- numbered migration under back/database/migrations/ and run:
+--
+--   npm run db:setup
+--
+-- `db:setup` records each migration checksum in `schema_migrations`, seeds the
+-- built-in IELTS collection, and migrates legacy JSON learning states into the
+-- normalized persistence model.

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles-v2.css">
   <link rel="stylesheet" href="practice-remediation.css">
   <link rel="stylesheet" href="leitner-status.css">
+  <link rel="stylesheet" href="library-integration.css">
   <style>
     .brand-logo {
       display: block;
@@ -37,6 +38,7 @@
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> خانه</button>
         <button class="nav-item" data-view="review"><span>◎</span> مرور امروز <b id="navDueBadge" class="nav-badge">۰</b></button>
         <button class="nav-item" data-view="words"><span>≡</span> واژه‌ها</button>
+        <a class="library-nav-link" href="library.html"><span>▦</span> کتابخانه</a>
         <button class="nav-item" data-view="reports"><span>↗</span> گزارش رشد</button>
         <button class="nav-item" data-view="settings"><span>⚙</span> تنظیمات</button>
       </nav>
@@ -185,7 +187,7 @@
             <select id="boxFilter" aria-label="فیلتر خانه"><option value="all">همه خانه‌ها</option><option value="0">هنوز وارد نشده</option><option value="1">خانهٔ ۱</option><option value="2">خانهٔ ۲</option><option value="3">خانهٔ ۳</option><option value="4">خانهٔ ۴</option><option value="5">خانهٔ ۵</option></select>
             <select id="sortWords" aria-label="مرتب‌سازی"><option value="number">ترتیب اصلی</option><option value="mistakes">بیشترین خطا</option><option value="due">نزدیک‌ترین مرور</option><option value="alpha">الفبایی</option></select>
           </div>
-          <div class="table-wrap"><table><thead><tr><th>کلمه</th><th>دسته</th><th>خانه</th><th>تلاش‌ها</th><th>خطا</th><th>مرور بعدی</th><th></th></tr></thead><tbody id="wordsTableBody"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>کلمه</th><th>دسته</th><th data-vocora-source-column="true">مجموعه‌ها</th><th>خانه</th><th>تلاش‌ها</th><th>خطا</th><th>مرور بعدی</th><th></th></tr></thead><tbody id="wordsTableBody"></tbody></table></div>
           <div class="pagination"><button class="btn btn-light" id="prevPage">قبلی</button><span id="pageInfo">صفحه ۱</span><button class="btn btn-light" id="nextPage">بعدی</button></div>
         </article>
       </section>
@@ -319,6 +321,8 @@
   <script src="practice-remediation.js"></script>
   <script src="practice-remediation-keyboard-guard.js"></script>
   <script src="app-v2.js"></script>
+  <script src="session-persistence.js"></script>
+  <script src="word-collections.js"></script>
   <script src="leitner-status.js"></script>
   <script src="practice-remediation-adapter.js"></script>
   <script src="practice-remediation-recheck-prompt.js"></script>

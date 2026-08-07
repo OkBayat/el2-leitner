@@ -67,6 +67,93 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json({ user: req.auth.user });
   });
 
+  router.get("/library/vocabulary-sources", authenticate, async (req, res) => {
+    const result = await useCases.libraryQueries.vocabularySources(req.auth.user);
+    res.status(200).json(result);
+  });
+
+  router.get("/library", authenticate, async (req, res) => {
+    const result = await useCases.libraryQueries.list(req.auth.user);
+    res.status(200).json(result);
+  });
+
+  router.post("/library", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.create(req.auth.user, req.body ?? {});
+    res.status(201).json(result);
+  });
+
+  router.get("/library/:collectionId", authenticate, async (req, res) => {
+    const result = await useCases.libraryQueries.get(req.auth.user, req.params.collectionId);
+    res.status(200).json(result);
+  });
+
+  router.put("/library/:collectionId", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.update(req.auth.user, req.params.collectionId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
+  router.post("/library/:collectionId/subscription", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.subscribe(req.auth.user, req.params.collectionId);
+    res.status(200).json(result);
+  });
+
+  router.delete("/library/:collectionId/subscription", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.unsubscribe(req.auth.user, req.params.collectionId);
+    res.status(200).json(result);
+  });
+
+  router.post("/library/:collectionId/import", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.import(req.auth.user, req.params.collectionId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
+  router.post("/library/:collectionId/entries", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.addEntry(req.auth.user, req.params.collectionId, req.body ?? {});
+    res.status(201).json(result);
+  });
+
+  router.put("/library/:collectionId/entries/:entryId", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.updateEntry(
+      req.auth.user,
+      req.params.collectionId,
+      req.params.entryId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
+  router.delete("/library/:collectionId/entries/:entryId", authenticate, async (req, res) => {
+    const result = await useCases.libraryCommands.removeEntry(
+      req.auth.user,
+      req.params.collectionId,
+      req.params.entryId
+    );
+    res.status(200).json(result);
+  });
+
+  router.post("/learning/sessions", authenticate, async (req, res) => {
+    const result = await useCases.learningSessionCommands.start(req.auth.userId, req.body ?? {});
+    res.status(201).json(result);
+  });
+
+  router.put("/learning/sessions/:sessionId/complete", authenticate, async (req, res) => {
+    const result = await useCases.learningSessionCommands.complete(
+      req.auth.userId,
+      req.params.sessionId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
+  router.post("/learning/sessions/:sessionId/abandon", authenticate, async (req, res) => {
+    const result = await useCases.learningSessionCommands.abandon(
+      req.auth.userId,
+      req.params.sessionId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
   router.get("/state", authenticate, async (req, res) => {
     const result = await useCases.getLearningState.execute(req.auth.userId);
     res.status(200).json(result);
@@ -76,7 +163,8 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     const result = await useCases.saveLearningState.execute(
       req.auth.userId,
       req.body?.state,
-      req.body?.revision
+      req.body?.revision,
+      { practiceSessionId: req.get("X-Vocora-Session-Id") || null }
     );
     res.status(200).json(result);
   });

@@ -11,6 +11,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "db:setup": "node scripts/setup-database.js",
+    "db:verify": "node scripts/verify-database.js",
     "test": "node --test",
     "test:watch": "node --test --watch"
   },
