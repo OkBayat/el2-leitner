@@ -50,8 +50,15 @@ describe("legacy duplicate alias progress", () => {
     assert.equal(merged.notes, "British spelling\nUS alias");
   });
 
-  it("repairs each legacy user once and marks the reconciliation idempotently", async () => {
+  it("repairs each legacy user once without sorting multi-megabyte state JSON", async () => {
     const connectionCalls = [];
+    const poolCalls = [];
+    const stateJson = JSON.stringify({
+      words: [
+        { term: "centre", accepted: ["centre", "center"], box: 2, attempts: 3, correct: 2, mistakes: 1 },
+        { term: "center", accepted: ["center"], box: 1, attempts: 2, correct: 1, mistakes: 1 }
+      ]
+    });
     const connection = {
       async beginTransaction() {},
       async commit() { connectionCalls.push({ sql: "COMMIT", parameters: [] }); },
@@ -65,23 +72,21 @@ describe("legacy duplicate alias progress", () => {
       }
     };
     const pool = {
-      async execute(sql) {
+      async execute(sql, parameters = []) {
+        poolCalls.push({ sql, parameters });
         if (/SELECT ce\.vocabulary_entry_id, vf\.normalized_form/u.test(sql)) {
           return [[
             { vocabulary_entry_id: 55, normalized_form: "centre" },
             { vocabulary_entry_id: 55, normalized_form: "center" }
           ], []];
         }
-        if (/SELECT ls\.user_id, ls\.state_json/u.test(sql)) {
-          return [[{
-            user_id: 7,
-            state_json: JSON.stringify({
-              words: [
-                { term: "centre", accepted: ["centre", "center"], box: 2, attempts: 3, correct: 2, mistakes: 1 },
-                { term: "center", accepted: ["center"], box: 1, attempts: 2, correct: 1, mistakes: 1 }
-              ]
-            })
-          }], []];
+        if (/SELECT ls\.user_id\s+FROM learning_states/u.test(sql)) {
+          assert.doesNotMatch(sql, /state_json/u, "candidate query must not carry large JSON through ORDER BY");
+          return [[{ user_id: 7 }], []];
+        }
+        if (/SELECT state_json FROM learning_states WHERE user_id/u.test(sql)) {
+          assert.deepEqual(parameters, [7]);
+          return [[{ state_json: stateJson }], []];
         }
         throw new Error(`Unexpected pool SQL: ${sql}`);
       },
@@ -97,6 +102,11 @@ describe("legacy duplicate alias progress", () => {
     assert.equal(progressWrite.parameters[4], 5, "attempts from both legacy cards must be preserved");
     assert.equal(progressWrite.parameters[5], 3, "correct answers from both legacy cards must be preserved");
     assert.equal(progressWrite.parameters[6], 2, "mistakes from both legacy cards must be preserved");
+    assert.equal(
+      poolCalls.filter(({ sql }) => /SELECT state_json FROM learning_states WHERE user_id/u.test(sql)).length,
+      1,
+      "legacy JSON should be loaded one user at a time by primary key"
+    );
     assert.ok(connectionCalls.some(({ sql }) => /legacyAliasProgressMerged/u.test(sql)));
     assert.ok(connectionCalls.some(({ sql }) => sql === "COMMIT"));
   });
