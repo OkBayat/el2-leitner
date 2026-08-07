@@ -23,6 +23,7 @@ class PatternConnection {
     if (/SELECT revision, learning_reset_at FROM user_state_revisions/u.test(sql)) {
       return [[{ revision: 4, learning_reset_at: null }], []];
     }
+    if (/SELECT id FROM review_events/u.test(sql)) return [[], []];
     if (/FROM user_collections uc[\s\S]+c\.is_default = TRUE/u.test(sql)) {
       return [[{ collection_id: 10 }], []];
     }
