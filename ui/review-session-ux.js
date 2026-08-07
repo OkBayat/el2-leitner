@@ -8,6 +8,19 @@
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
 
+  const PracticeStage = Object.freeze({
+    ANSWER: 'answer',
+    FEEDBACK_CORRECT: 'feedback-correct',
+    FEEDBACK_WRONG: 'feedback-wrong',
+    FEEDBACK_WARNING: 'feedback-warning',
+    REMEDIATION_CORRECTION: 'remediation-correction',
+    REMEDIATION_RECALL: 'remediation-recall',
+    REMEDIATION_COPY: 'remediation-copy',
+    REMEDIATION_COMPLETED: 'remediation-completed'
+  });
+
+  const VALID_STAGES = new Set(Object.values(PracticeStage));
+
   function isVisible(element) {
     return Boolean(element && !element.classList.contains('hidden'));
   }
@@ -35,6 +48,192 @@
     return accepted.filter(Boolean).join(' / ');
   }
 
+  function activeRemediation(windowObject = globalThis.window) {
+    return windowObject?.VocoraPracticeRemediation?.snapshot?.()?.active || null;
+  }
+
+  function stageForRemediationPhase(phase) {
+    if (phase === 'correction') return PracticeStage.REMEDIATION_CORRECTION;
+    if (phase === 'recall') return PracticeStage.REMEDIATION_RECALL;
+    if (phase === 'copy') return PracticeStage.REMEDIATION_COPY;
+    if (phase === 'completed') return PracticeStage.REMEDIATION_COMPLETED;
+    return null;
+  }
+
+  class PracticeSessionComponent {
+    constructor({ window: windowObject, document: documentObject }) {
+      this.window = windowObject;
+      this.document = documentObject;
+      this.body = documentObject.body;
+      this.root = documentObject.documentElement;
+      this.reviewSession = documentObject.querySelector('#reviewSession');
+      this.flashCard = documentObject.querySelector('#flashCard');
+      this.answerForm = documentObject.querySelector('#answerForm');
+      this.answerInput = documentObject.querySelector('#answerInput');
+      this.feedback = documentObject.querySelector('#answerFeedback');
+      this.dontKnowButton = documentObject.querySelector('#dontKnowBtn');
+      this.stage = null;
+    }
+
+    get remediationRoot() {
+      return this.document.querySelector('#practiceRemediation');
+    }
+
+    mount() {
+      this.reviewSession?.classList.add('vocora-practice-component');
+      this.ensureSessionChrome();
+      this.ensurePrimaryControls();
+      this.configurePracticeInputs();
+      return this;
+    }
+
+    ensureSessionChrome() {
+      const sessionBar = this.document.querySelector('.session-bar');
+      const accuracy = this.document.querySelector('#sessionAccuracy');
+      if (!sessionBar || !accuracy) return null;
+
+      let badge = this.document.querySelector('#vocoraSessionAccuracy');
+      if (!badge) {
+        badge = this.document.createElement('div');
+        badge.id = 'vocoraSessionAccuracy';
+        badge.className = 'vocora-session-accuracy';
+        badge.setAttribute('aria-label', 'دقت جلسه');
+        sessionBar.append(badge);
+      }
+      if (accuracy.parentElement !== badge) badge.append(accuracy);
+      return badge;
+    }
+
+    configureInput(input) {
+      if (!input) return;
+      input.setAttribute('autocomplete', 'off');
+      input.setAttribute('autocorrect', 'off');
+      input.setAttribute('autocapitalize', 'none');
+      input.setAttribute('spellcheck', 'false');
+      input.setAttribute('inputmode', 'text');
+      input.setAttribute('enterkeyhint', 'done');
+      input.setAttribute('aria-autocomplete', 'none');
+      input.setAttribute('data-form-type', 'other');
+      input.setAttribute('data-lpignore', 'true');
+      input.setAttribute('data-1p-ignore', 'true');
+      input.setAttribute('data-bwignore', 'true');
+      input.dataset.vocoraSpellingInput = 'true';
+      input.form?.setAttribute('autocomplete', 'off');
+    }
+
+    configurePracticeInputs() {
+      this.document.querySelectorAll(PRACTICE_INPUT_SELECTOR).forEach((input) => this.configureInput(input));
+    }
+
+    ensurePrimaryControls() {
+      const button = this.document.querySelector(PRIMARY_SELECTOR);
+      if (!button || !this.answerInput) return null;
+
+      button.classList.add('vocora-primary-review-action');
+      button.removeAttribute('disabled');
+      this.answerInput.setAttribute('aria-label', 'پاسخ');
+      this.configureInput(this.answerInput);
+
+      let hint = this.document.querySelector('#vocoraDoubleTapHint');
+      if (!hint) {
+        hint = this.document.createElement('div');
+        hint.id = 'vocoraDoubleTapHint';
+        hint.className = 'vocora-double-tap-hint';
+        hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
+        hint.setAttribute('aria-live', 'polite');
+      }
+
+      // The hint is intentionally part of the answer stack, directly below the
+      // input and above the primary action. Keeping this order in the component
+      // prevents the keyboard layout and remediation screens from duplicating it.
+      if (this.answerInput.nextElementSibling !== hint) {
+        this.answerInput.insertAdjacentElement('afterend', hint);
+      }
+      button.setAttribute('aria-describedby', hint.id);
+      return button;
+    }
+
+    setStage(stage) {
+      if (!VALID_STAGES.has(stage) || !this.reviewSession) return false;
+      const changed = this.stage !== stage || this.reviewSession.dataset.vocoraStage !== stage;
+      this.stage = stage;
+      this.reviewSession.dataset.vocoraStage = stage;
+      this.body.dataset.vocoraPracticeStage = stage;
+      this.normalizeStage(stage);
+      return changed;
+    }
+
+    normalizeStage(stage) {
+      const remediationStage = stage.startsWith('remediation-');
+      const feedbackStage = stage.startsWith('feedback-');
+      const remediation = activeRemediation(this.window);
+      const remediationRoot = this.remediationRoot;
+
+      if (remediationStage) {
+        this.flashCard?.classList.add('remediation-active');
+        if (remediation && remediationRoot) remediationRoot.classList.remove('hidden');
+        this.answerInput?.blur();
+        return;
+      }
+
+      // A new primary card must never inherit the remediation-active class. That
+      // stale class used to hide every direct child of the card and produced the
+      // intermittent all-white card reported on mobile.
+      this.flashCard?.classList.remove('remediation-active');
+
+      if (stage === PracticeStage.ANSWER) {
+        if (!remediation && remediationRoot) remediationRoot.classList.add('hidden');
+        this.answerForm?.classList.remove('hidden');
+        this.feedback?.classList.add('hidden');
+        if (this.answerInput) {
+          this.answerInput.disabled = false;
+          this.answerInput.readOnly = false;
+        }
+        return;
+      }
+
+      if (feedbackStage && this.answerInput) {
+        this.answerInput.readOnly = true;
+        this.answerInput.blur();
+      }
+    }
+
+    clearStage() {
+      this.stage = null;
+      this.reviewSession?.removeAttribute('data-vocora-stage');
+      delete this.body.dataset.vocoraPracticeStage;
+      this.answerInput?.removeAttribute('readonly');
+    }
+
+    recoverPrimaryCard() {
+      if (!currentWord(this.window) || activeRemediation(this.window)) return false;
+      if (!this.reviewSession || !isVisible(this.reviewSession)) return false;
+
+      this.flashCard?.classList.remove('remediation-active');
+      this.remediationRoot?.classList.add('hidden');
+      this.feedback?.classList.add('hidden');
+      this.answerForm?.classList.remove('hidden');
+      this.dontKnowButton?.classList.remove('hidden');
+      if (this.answerInput) {
+        this.answerInput.disabled = false;
+        this.answerInput.readOnly = false;
+      }
+      this.setStage(PracticeStage.ANSWER);
+      this.document.dispatchEvent(new this.window.CustomEvent('vocora:review-ui-recovered', {
+        detail: { reason: 'blank-primary-card' }
+      }));
+      return true;
+    }
+
+    hasRenderableStage() {
+      if (!this.stage) return false;
+      if (this.stage === PracticeStage.ANSWER) return isVisible(this.answerForm);
+      if (this.stage.startsWith('feedback-')) return isVisible(this.feedback);
+      if (this.stage.startsWith('remediation-')) return isVisible(this.remediationRoot);
+      return false;
+    }
+  }
+
   function createController(windowObject = globalThis.window, documentObject = globalThis.document) {
     if (!windowObject || !documentObject) return null;
 
@@ -52,6 +251,7 @@
       return null;
     }
 
+    const component = new PracticeSessionComponent({ window: windowObject, document: documentObject }).mount();
     const state = {
       active: false,
       savedScrollY: 0,
@@ -63,44 +263,6 @@
       observer: null,
       syncQueued: false
     };
-
-    function ensureSessionChrome() {
-      const sessionBar = documentObject.querySelector('.session-bar');
-      const accuracy = documentObject.querySelector('#sessionAccuracy');
-      if (!sessionBar || !accuracy) return;
-
-      let badge = documentObject.querySelector('#vocoraSessionAccuracy');
-      if (!badge) {
-        badge = documentObject.createElement('div');
-        badge.id = 'vocoraSessionAccuracy';
-        badge.className = 'vocora-session-accuracy';
-        badge.setAttribute('aria-label', 'دقت جلسه');
-        sessionBar.append(badge);
-      }
-      if (accuracy.parentElement !== badge) badge.append(accuracy);
-    }
-
-    function ensurePrimaryControls() {
-      const button = documentObject.querySelector(PRIMARY_SELECTOR);
-      if (!button) return null;
-
-      button.classList.add('vocora-primary-review-action');
-      button.removeAttribute('disabled');
-      answerInput.setAttribute('aria-label', 'پاسخ');
-
-      let hint = documentObject.querySelector('#vocoraDoubleTapHint');
-      if (!hint) {
-        hint = documentObject.createElement('div');
-        hint.id = 'vocoraDoubleTapHint';
-        hint.className = 'vocora-double-tap-hint';
-        hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
-        hint.setAttribute('aria-live', 'polite');
-        button.insertAdjacentElement('afterend', hint);
-      }
-
-      button.setAttribute('aria-describedby', hint.id);
-      return button;
-    }
 
     function clearSkipTapState({ keepTriggered = false } = {}) {
       state.skipTapCount = 0;
@@ -117,7 +279,7 @@
     }
 
     function updatePrimaryState() {
-      const button = ensurePrimaryControls();
+      const button = component.ensurePrimaryControls();
       if (!button) return;
       const hasAnswer = answerInput.value.trim().length > 0;
       answerForm.classList.toggle('vocora-has-answer', hasAnswer);
@@ -133,7 +295,7 @@
     }
 
     function armSkip() {
-      const button = ensurePrimaryControls();
+      const button = component.ensurePrimaryControls();
       const hint = documentObject.querySelector('#vocoraDoubleTapHint');
       if (!button) return;
 
@@ -150,10 +312,32 @@
       clearSkipTapState({ keepTriggered: true });
       state.skipTriggered = true;
       answerInput.blur();
-      if (dontKnowButton) dontKnowButton.click();
+      dontKnowButton?.click();
     }
 
-    function handlePrimaryClick(event) {
+    function revealDelayedRemediation() {
+      if (!state.delayedRemediation) return false;
+      const remediationRoot = component.remediationRoot;
+      state.delayedRemediation = false;
+      state.skipTriggered = false;
+      remediationRoot?.classList.remove('vocora-remediation-delayed');
+      flashCard.classList.add('remediation-active');
+      syncStableStage();
+      windowObject.setTimeout(() => {
+        remediationRoot?.querySelector('#remediationAcknowledgeBtn:not(.hidden), #remediationInput:not(:disabled)')?.focus();
+      }, 0);
+      return true;
+    }
+
+    function handleClick(event) {
+      const nextButton = event.target?.closest?.('#nextCardBtn');
+      if (state.active && state.delayedRemediation && nextButton) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        revealDelayedRemediation();
+        return;
+      }
+
       const button = event.target?.closest?.(PRIMARY_SELECTOR);
       if (!button || !state.active) return;
 
@@ -187,6 +371,13 @@
       if (!isVisible(feedback)) return null;
       if (state.skipTriggered) return 'warning';
       return feedback.classList.contains('wrong') ? 'wrong' : 'correct';
+    }
+
+    function feedbackStage(type) {
+      if (type === 'warning') return PracticeStage.FEEDBACK_WARNING;
+      if (type === 'wrong') return PracticeStage.FEEDBACK_WRONG;
+      if (type === 'correct') return PracticeStage.FEEDBACK_CORRECT;
+      return null;
     }
 
     function setTextIfChanged(element, text) {
@@ -223,102 +414,57 @@
       setTextIfChanged(next, 'ادامه');
     }
 
-    function clearFeedbackClasses() {
-      body.classList.remove(
-        'vocora-feedback-open',
-        'vocora-review-correct',
-        'vocora-review-wrong',
-        'vocora-review-warning'
-      );
-      answerInput.classList.remove(
-        'vocora-answer-correct',
-        'vocora-answer-wrong',
-        'vocora-answer-warning'
-      );
-      answerForm.classList.remove('vocora-feedback-form');
-    }
-
-    function syncFeedback() {
-      const remediationActive = flashCard.classList.contains('remediation-active');
-      if (remediationActive && !state.delayedRemediation) {
-        clearFeedbackClasses();
-        return;
-      }
-
-      const type = feedbackType();
-      if (!type) {
-        clearFeedbackClasses();
-        answerInput.readOnly = false;
-        if (!state.delayedRemediation) state.skipTriggered = false;
-        return;
-      }
-
-      body.classList.add('vocora-feedback-open');
-      body.classList.toggle('vocora-review-correct', type === 'correct');
-      body.classList.toggle('vocora-review-wrong', type === 'wrong');
-      body.classList.toggle('vocora-review-warning', type === 'warning');
-      answerInput.classList.toggle('vocora-answer-correct', type === 'correct');
-      answerInput.classList.toggle('vocora-answer-wrong', type === 'wrong');
-      answerInput.classList.toggle('vocora-answer-warning', type === 'warning');
-      answerForm.classList.add('vocora-feedback-form');
-      answerInput.readOnly = true;
-      answerInput.blur();
-      applyFeedbackCopy(type);
-    }
-
-    function ensureRemediationPreviewButton(remediationRoot) {
-      if (!remediationRoot) return null;
-      let button = remediationRoot.querySelector('#vocoraRemediationPreviewContinue');
-      if (button) return button;
-
-      button = documentObject.createElement('button');
-      button.id = 'vocoraRemediationPreviewContinue';
-      button.className = 'btn btn-primary wide vocora-remediation-preview-continue';
-      button.type = 'button';
-      button.textContent = 'ادامه';
-      button.addEventListener('click', revealDelayedRemediation);
-      remediationRoot.append(button);
-      return button;
-    }
-
-    function delayImmediateRemediation() {
-      const remediationRoot = documentObject.querySelector('#practiceRemediation');
+    function delayImmediateRemediation(event) {
+      if (event?.detail?.context && event.detail.context !== 'immediate') return;
+      const remediationRoot = component.remediationRoot;
       if (!remediationRoot || !isVisible(remediationRoot)) return;
 
       state.delayedRemediation = true;
       flashCard.classList.remove('remediation-active');
       remediationRoot.classList.add('vocora-remediation-delayed');
-      feedback.classList.add('vocora-previewing-remediation');
-      ensureRemediationPreviewButton(remediationRoot)?.classList.remove('hidden');
       restoreCorrectSpelling();
-      syncFeedback();
+      syncStableStage();
     }
 
-    function revealDelayedRemediation() {
-      if (!state.delayedRemediation) return;
-      const remediationRoot = documentObject.querySelector('#practiceRemediation');
-      state.delayedRemediation = false;
-      state.skipTriggered = false;
-      feedback.classList.remove('vocora-previewing-remediation');
-      remediationRoot?.classList.remove('vocora-remediation-delayed');
-      remediationRoot?.querySelector('#vocoraRemediationPreviewContinue')?.classList.add('hidden');
-      flashCard.classList.add('remediation-active');
-      clearFeedbackClasses();
-      windowObject.setTimeout(() => {
-        remediationRoot?.querySelector('#remediationAcknowledgeBtn:not(.hidden)')?.focus();
-      }, 0);
+    function remediationStage() {
+      if (state.delayedRemediation) return null;
+      const snapshot = activeRemediation(windowObject);
+      if (!snapshot) return null;
+      return stageForRemediationPhase(snapshot.phase);
     }
 
-    function syncRemediation() {
-      const remediationRoot = documentObject.querySelector('#practiceRemediation');
-      if (!remediationRoot) return;
-      if (state.delayedRemediation) {
-        ensureRemediationPreviewButton(remediationRoot);
-        return;
+    function syncStableStage() {
+      if (!state.active) return null;
+      component.configurePracticeInputs();
+
+      const remediation = remediationStage();
+      if (remediation) {
+        component.setStage(remediation);
+        return remediation;
       }
-      if (remediationRoot.classList.contains('hidden')) {
-        feedback.classList.remove('vocora-previewing-remediation');
+
+      const type = feedbackType();
+      if (type) {
+        applyFeedbackCopy(type);
+        const stage = feedbackStage(type);
+        component.setStage(stage);
+        return stage;
       }
+
+      if (isVisible(answerForm)) {
+        state.skipTriggered = false;
+        component.setStage(PracticeStage.ANSWER);
+        return PracticeStage.ANSWER;
+      }
+
+      // Stable review sessions must always render exactly one component stage.
+      // If legacy remediation left a stale class or hidden form behind, normalize
+      // it here instead of allowing an empty white card to remain on screen.
+      if (component.recoverPrimaryCard()) {
+        state.skipTriggered = false;
+        return PracticeStage.ANSWER;
+      }
+      return null;
     }
 
     function practiceInputFocused() {
@@ -361,8 +507,7 @@
       state.savedScrollY = Number(windowObject.scrollY) || 0;
       body.classList.add('vocora-session-active');
       root.classList.add('vocora-session-active');
-      ensureSessionChrome();
-      ensurePrimaryControls();
+      component.mount();
       syncVisualViewport();
     }
 
@@ -372,13 +517,11 @@
       state.delayedRemediation = false;
       state.skipTriggered = false;
       clearSkipTapState();
-      clearFeedbackClasses();
       body.classList.remove('vocora-session-active', 'vocora-keyboard-open');
       root.classList.remove('vocora-session-active');
-      const remediationRoot = documentObject.querySelector('#practiceRemediation');
-      remediationRoot?.classList.remove('vocora-remediation-delayed');
-      feedback.classList.remove('vocora-previewing-remediation');
-      answerInput.readOnly = false;
+      component.remediationRoot?.classList.remove('vocora-remediation-delayed');
+      component.clearStage();
+      if (answerInput) answerInput.readOnly = false;
 
       if (typeof windowObject.scrollTo === 'function') {
         windowObject.setTimeout(() => {
@@ -397,11 +540,9 @@
       state.syncQueued = false;
       syncSessionMode();
       if (!state.active) return;
-      ensureSessionChrome();
-      ensurePrimaryControls();
+      component.mount();
       updatePrimaryState();
-      syncRemediation();
-      syncFeedback();
+      syncStableStage();
       syncVisualViewport();
     }
 
@@ -417,6 +558,7 @@
 
     function handleFocusIn(event) {
       if (event.target?.matches?.(PRACTICE_INPUT_SELECTOR)) {
+        component.configureInput(event.target);
         body.classList.add('vocora-keyboard-open');
         requestSync();
       }
@@ -443,11 +585,13 @@
     }
 
     answerInput.addEventListener('input', updatePrimaryState);
-    documentObject.addEventListener('click', handlePrimaryClick, true);
+    documentObject.addEventListener('click', handleClick, true);
     documentObject.addEventListener('submit', handleAnswerSubmit, true);
     documentObject.addEventListener('focusin', handleFocusIn, true);
     documentObject.addEventListener('focusout', handleFocusOut, true);
     documentObject.addEventListener('vocora:spelling-remediation-started', delayImmediateRemediation);
+    documentObject.addEventListener('vocora:same-session-recheck-started', requestSync);
+    documentObject.addEventListener('vocora:spelling-remediation-completed', requestSync);
 
     windowObject.addEventListener?.('resize', syncVisualViewport, { passive: true });
     windowObject.addEventListener?.('orientationchange', syncVisualViewport, { passive: true });
@@ -455,13 +599,12 @@
     windowObject.visualViewport?.addEventListener?.('scroll', syncVisualViewport, { passive: true });
 
     installObserver();
-    ensureSessionChrome();
-    ensurePrimaryControls();
-    updatePrimaryState();
     syncAll();
 
     return Object.freeze({
+      component,
       sync: syncAll,
+      syncStableStage,
       syncVisualViewport,
       updatePrimaryState,
       delayImmediateRemediation,
@@ -469,7 +612,9 @@
       getState: () => ({
         active: state.active,
         skipTriggered: state.skipTriggered,
-        delayedRemediation: state.delayedRemediation
+        delayedRemediation: state.delayedRemediation,
+        stage: component.stage,
+        renderable: component.hasRenderableStage()
       })
     });
   }
@@ -495,6 +640,9 @@
     STYLE_ID,
     STYLE_HREF,
     SKIP_WINDOW_MS,
+    PracticeStage,
+    PracticeSessionComponent,
+    stageForRemediationPhase,
     ensureStyles,
     createController,
     install
