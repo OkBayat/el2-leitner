@@ -27,14 +27,14 @@
       </nav>
       <div class="sidebar-progress library-sidebar-note">
         <strong>مجموعه‌های یادگیری</strong>
-        <small>کتاب‌ها و موضوع‌هایی که اضافه می‌کنی، بدون کپی‌شدن واژه‌ها به پیشرفت فعلی تو متصل می‌شوند.</small>
+        <small>کتاب، آزمون یا موضوع دلخواهت را به جعبه اضافه کن؛ پیشرفت هر واژه برای خودت حفظ می‌شود.</small>
       </div>
     </aside>
 
-    <main class="main-content">
-      <header class="topbar">
+    <main class="main-content library-main">
+      <header class="topbar library-topbar">
         <div>
-          <p class="eyebrow">مجموعه‌های آماده برای یادگیری</p>
+          <p class="eyebrow" id="libraryDate">مجموعه‌های آماده برای یادگیری</p>
           <h1>کتابخانه</h1>
         </div>
         <div class="top-actions">
@@ -44,71 +44,119 @@
         </div>
       </header>
 
-      <section class="library-hero" aria-labelledby="libraryHeroTitle">
+      <section class="library-intro-row">
         <div>
-          <span class="library-kicker">VOCORA LIBRARY</span>
-          <h2 id="libraryHeroTitle">هر مسیر یادگیری را به جعبهٔ خودت اضافه کن.</h2>
-          <p>واژه‌های کتاب‌ها و موضوع‌های مختلف یک‌بار در کتابخانه نگهداری می‌شوند و پیشرفت هر کاربر جداگانه روی همان واژه‌ها ثبت می‌شود.</p>
+          <h2>کتابخانه‌ی واژه‌ها</h2>
+          <p>مجموعه‌های آماده را ببین و هرکدام را که می‌خواهی به جعبه‌ی لایتنر خودت اضافه کن.</p>
         </div>
-        <div class="library-hero-stats" aria-live="polite">
-          <div><strong id="collectionCount">۰</strong><span>مجموعه</span></div>
-          <div><strong id="subscribedCount">۰</strong><span>اضافه‌شده</span></div>
+        <div class="library-intro-actions">
+          <button class="btn btn-primary hidden" id="createCollectionBtn" type="button">＋ مجموعه‌ی جدید</button>
         </div>
       </section>
 
-      <section class="library-toolbar" aria-label="فیلتر کتابخانه">
-        <label class="search-field library-search"><span>⌕</span><input id="librarySearch" type="search" placeholder="جست‌وجوی کتاب، آزمون یا موضوع…"></label>
-        <select id="libraryKindFilter" aria-label="نوع مجموعه">
-          <option value="all">همهٔ انواع</option>
-          <option value="book">کتاب</option>
-          <option value="exam">آزمون</option>
-          <option value="topic">موضوع</option>
-          <option value="course">دوره</option>
-          <option value="personal">شخصی</option>
-        </select>
-        <select id="libraryStatusFilter" aria-label="وضعیت مجموعه">
-          <option value="all">همه</option>
-          <option value="subscribed">اضافه‌شده به جعبه</option>
-          <option value="available">هنوز اضافه نشده</option>
-        </select>
-        <button class="btn btn-primary hidden" id="createCollectionBtn" type="button">＋ مجموعهٔ جدید</button>
+      <section class="library-stats" aria-label="آمار کتابخانه">
+        <article class="library-stat-card">
+          <span class="library-stat-icon tone-blue" aria-hidden="true">▤</span>
+          <div><small>مجموعه‌های کتابخانه</small><strong id="collectionCount">۰</strong></div>
+        </article>
+        <article class="library-stat-card">
+          <span class="library-stat-icon tone-teal" aria-hidden="true">≡</span>
+          <div><small>واژه‌های قابل افزودن</small><strong id="libraryWordCount">۰</strong></div>
+        </article>
+        <article class="library-stat-card">
+          <span class="library-stat-icon tone-orange" aria-hidden="true">✓</span>
+          <div><small>واژه‌های مجموعه‌های من</small><strong id="subscribedWordCount">۰</strong></div>
+        </article>
       </section>
 
-      <div id="libraryNotice" class="library-notice hidden" role="status" aria-live="polite"></div>
-      <section id="libraryGrid" class="library-grid" aria-live="polite"></section>
-      <div id="libraryEmpty" class="empty-state hidden">
-        <span class="empty-icon">⌕</span>
-        <h2>مجموعه‌ای پیدا نشد</h2>
-        <p>عبارت جست‌وجو یا فیلترها را تغییر بده.</p>
-      </div>
+      <section class="library-panel" aria-label="مجموعه‌های واژگان">
+        <div class="library-toolbar" aria-label="فیلتر کتابخانه">
+          <label class="library-search-field">
+            <span aria-hidden="true">⌕</span>
+            <input id="librarySearch" type="search" placeholder="جست‌وجوی کتاب، درس یا موضوع…">
+          </label>
+          <label class="library-select-field">
+            <span class="sr-only">نوع مجموعه</span>
+            <select id="libraryKindFilter" aria-label="نوع مجموعه">
+              <option value="all">همه‌ی نوع‌ها</option>
+              <option value="book">کتاب</option>
+              <option value="exam">آزمون</option>
+              <option value="topic">موضوعی</option>
+              <option value="course">دوره</option>
+              <option value="personal">شخصی</option>
+            </select>
+          </label>
+          <label class="library-select-field">
+            <span class="sr-only">وضعیت مجموعه</span>
+            <select id="libraryStatusFilter" aria-label="وضعیت مجموعه">
+              <option value="all">همه‌ی وضعیت‌ها</option>
+              <option value="subscribed">اضافه‌شده به جعبه</option>
+              <option value="available">قابل افزودن</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="library-filter-chips" aria-label="دسترسی سریع به نوع مجموعه">
+          <button class="library-filter-chip active" type="button" data-kind-chip="all">همه</button>
+          <button class="library-filter-chip" type="button" data-kind-chip="exam">IELTS / آزمون</button>
+          <button class="library-filter-chip" type="button" data-kind-chip="book">کتاب‌ها</button>
+          <button class="library-filter-chip" type="button" data-kind-chip="topic">موضوعی</button>
+        </div>
+
+        <div id="libraryNotice" class="library-notice hidden" role="status" aria-live="polite"></div>
+        <section id="libraryGrid" class="library-grid" aria-live="polite"></section>
+        <div id="libraryEmpty" class="empty-state hidden">
+          <span class="empty-icon">⌕</span>
+          <h2>مجموعه‌ای پیدا نشد</h2>
+          <p>عبارت جست‌وجو یا فیلترها را تغییر بده.</p>
+        </div>
+      </section>
     </main>
   </div>
 
-  <dialog id="collectionDialog" class="library-dialog">
-    <div class="library-detail-card">
-      <div class="dialog-head library-detail-head">
-        <div>
-          <span class="library-kicker" id="detailKind">مجموعه</span>
-          <h3 id="detailTitle">مجموعه</h3>
-          <p id="detailDescription"></p>
+  <dialog id="collectionDialog" class="library-dialog library-detail-dialog">
+    <div class="library-dialog-surface library-detail-surface">
+      <header class="library-modal-head">
+        <div class="library-modal-title">
+          <span class="library-modal-icon" id="detailIcon" aria-hidden="true">▤</span>
+          <div>
+            <span class="library-modal-eyebrow" id="detailKind">مجموعه</span>
+            <h3 id="detailTitle">مجموعه</h3>
+            <p id="detailDescription"></p>
+          </div>
         </div>
-        <button class="icon-btn" data-close-dialog="collectionDialog" type="button" aria-label="بستن">×</button>
-      </div>
-      <div class="detail-summary">
-        <span><b id="detailWordCount">۰</b> واژه</span>
-        <span>نسخهٔ محتوا <b id="detailVersion">۱</b></span>
-        <span id="detailStatus"></span>
-      </div>
-      <div class="detail-actions">
+        <button class="library-close-btn" data-close-dialog="collectionDialog" type="button" aria-label="بستن">×</button>
+      </header>
+
+      <section class="library-detail-summary" aria-label="مشخصات مجموعه">
+        <article class="detail-main-card">
+          <small>مجموعه</small>
+          <strong id="detailMainName" dir="auto">—</strong>
+          <span id="detailSummaryLine">—</span>
+        </article>
+        <article><small>تعداد واژه</small><strong id="detailWordCount">۰</strong></article>
+        <article><small>سطح</small><strong id="detailLevel">—</strong></article>
+        <article><small>نسخه محتوا</small><strong id="detailVersion">۱</strong></article>
+      </section>
+
+      <div class="detail-actions library-detail-actions">
         <button class="btn btn-primary" id="detailSubscribeBtn" type="button">افزودن به جعبه</button>
-        <button class="btn btn-light hidden" id="editCollectionBtn" type="button">ویرایش مشخصات</button>
+        <button class="btn btn-light hidden" id="editCollectionBtn" type="button">ویرایش مجموعه</button>
         <button class="btn btn-light hidden" id="importCollectionBtn" type="button">ورود / به‌روزرسانی فایل</button>
         <button class="btn btn-light hidden" id="addCollectionEntryBtn" type="button">＋ افزودن واژه</button>
       </div>
+
       <div class="detail-filter-row">
-        <label class="search-field"><span>⌕</span><input id="detailSearch" type="search" placeholder="جست‌وجو در واژه‌های این مجموعه…"></label>
-        <select id="detailSectionFilter" aria-label="فیلتر بخش"><option value="all">همهٔ بخش‌ها</option></select>
+        <label class="library-search-field">
+          <span aria-hidden="true">⌕</span>
+          <input id="detailSearch" type="search" placeholder="جست‌وجو داخل این مجموعه…">
+        </label>
+        <label class="library-select-field">
+          <span class="sr-only">فیلتر بخش</span>
+          <select id="detailSectionFilter" aria-label="فیلتر بخش"><option value="all">همه‌ی بخش‌ها</option></select>
+        </label>
       </div>
+
       <div class="table-wrap library-entry-table-wrap">
         <table class="library-entry-table">
           <thead><tr><th>واژه</th><th>بخش</th><th>املای پذیرفته</th><th class="admin-entry-column hidden">مدیریت</th></tr></thead>
@@ -119,46 +167,86 @@
     </div>
   </dialog>
 
-  <dialog id="collectionFormDialog" class="library-dialog small-dialog">
-    <form id="collectionForm" class="dialog-card">
-      <div class="dialog-head"><h3 id="collectionFormTitle">مجموعهٔ جدید</h3><button class="icon-btn" data-close-dialog="collectionFormDialog" type="button">×</button></div>
+  <dialog id="collectionFormDialog" class="library-dialog library-form-dialog">
+    <form id="collectionForm" class="library-dialog-surface library-form-surface">
+      <header class="library-modal-head">
+        <div class="library-modal-title">
+          <span class="library-modal-icon" aria-hidden="true">＋</span>
+          <div><span class="library-modal-eyebrow">مدیریت کتابخانه</span><h3 id="collectionFormTitle">مجموعه‌ی جدید</h3><p>اطلاعات مجموعه را مشخص کن؛ واژه‌ها را هر زمان می‌توانی کم و زیاد کنی.</p></div>
+        </div>
+        <button class="library-close-btn" data-close-dialog="collectionFormDialog" type="button" aria-label="بستن">×</button>
+      </header>
+
       <input type="hidden" id="collectionEditingId">
-      <label class="field">نام مجموعه<input id="collectionTitleInput" maxlength="255" required></label>
-      <label class="field">شناسهٔ URL <small>مثال: american-english-file-3</small><input id="collectionSlugInput" dir="ltr" maxlength="160" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required></label>
-      <label class="field">نوع
-        <select id="collectionKindInput"><option value="book">کتاب</option><option value="exam">آزمون</option><option value="topic">موضوع</option><option value="course">دوره</option><option value="collection">مجموعه</option></select>
-      </label>
-      <label class="field">توضیح<textarea id="collectionDescriptionInput" rows="3" maxlength="10000"></textarea></label>
-      <div class="form-grid-two">
-        <label class="field">نمایش<select id="collectionVisibilityInput"><option value="public">عمومی</option><option value="unlisted">فقط با لینک</option><option value="private">خصوصی</option></select></label>
-        <label class="field">وضعیت<select id="collectionStatusInput"><option value="published">منتشرشده</option><option value="draft">پیش‌نویس</option><option value="archived">آرشیو</option></select></label>
+      <div class="library-form-grid">
+        <label class="library-form-field full">نام مجموعه
+          <input id="collectionTitleInput" maxlength="255" placeholder="مثلاً American English File 3" required>
+        </label>
+        <label class="library-form-field">نوع مجموعه
+          <select id="collectionKindInput"><option value="book">کتاب</option><option value="exam">آزمون</option><option value="topic">موضوعی</option><option value="course">دوره</option><option value="collection">مجموعه</option></select>
+        </label>
+        <label class="library-form-field">سطح
+          <select id="collectionLevelInput">
+            <option value="">بدون سطح مشخص</option>
+            <option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2</option><option value="B1-C1">B1–C1</option><option value="Mixed">چندسطحی</option>
+          </select>
+        </label>
+        <label class="library-form-field full">توضیح کوتاه
+          <textarea id="collectionDescriptionInput" rows="3" maxlength="10000" placeholder="این مجموعه شامل چه واژه‌هایی است؟"></textarea>
+        </label>
+        <label class="library-form-field">شناسه URL
+          <small>مثال: american-english-file-3</small>
+          <input id="collectionSlugInput" dir="ltr" maxlength="160" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="american-english-file-3" required>
+        </label>
+        <label class="library-form-field">نمایش
+          <select id="collectionVisibilityInput"><option value="public">عمومی</option><option value="unlisted">فقط با لینک</option><option value="private">خصوصی</option></select>
+        </label>
+        <label class="library-form-field">وضعیت
+          <select id="collectionStatusInput"><option value="published">منتشرشده</option><option value="draft">پیش‌نویس</option><option value="archived">آرشیو</option></select>
+        </label>
       </div>
-      <div class="dialog-actions"><button class="btn btn-light" data-close-dialog="collectionFormDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">ذخیره</button></div>
+
+      <p class="library-form-note">سطح داخل مشخصات مجموعه ذخیره می‌شود و روی کارت کتابخانه و پنجره‌ی جزئیات نمایش داده خواهد شد.</p>
+      <div class="library-modal-actions"><button class="btn btn-light" data-close-dialog="collectionFormDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">ذخیره مجموعه</button></div>
     </form>
   </dialog>
 
-  <dialog id="entryFormDialog" class="library-dialog small-dialog">
-    <form id="entryForm" class="dialog-card">
-      <div class="dialog-head"><h3 id="entryFormTitle">افزودن واژه</h3><button class="icon-btn" data-close-dialog="entryFormDialog" type="button">×</button></div>
+  <dialog id="entryFormDialog" class="library-dialog library-form-dialog compact-dialog">
+    <form id="entryForm" class="library-dialog-surface library-form-surface">
+      <header class="library-modal-head">
+        <div class="library-modal-title"><span class="library-modal-icon" aria-hidden="true">＋</span><div><span class="library-modal-eyebrow">واژه‌های مجموعه</span><h3 id="entryFormTitle">افزودن واژه</h3><p>واژه، املای جایگزین و بخش مربوطه را ثبت کن.</p></div></div>
+        <button class="library-close-btn" data-close-dialog="entryFormDialog" type="button" aria-label="بستن">×</button>
+      </header>
       <input type="hidden" id="entryEditingId">
-      <label class="field">واژه یا عبارت<input id="entryTermInput" dir="ltr" lang="en" maxlength="512" required></label>
-      <label class="field">املای جایگزین <small>با / جدا کن</small><input id="entryVariantsInput" dir="ltr" lang="en"></label>
-      <label class="field">بخش <small>مثال: Unit 2 / Lesson A</small><input id="entrySectionInput"></label>
-      <label class="field">یادداشت<textarea id="entryNoteInput" rows="2"></textarea></label>
-      <div class="dialog-actions"><button class="btn btn-light" data-close-dialog="entryFormDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">ذخیره</button></div>
+      <div class="library-form-grid">
+        <label class="library-form-field full">واژه یا عبارت<input id="entryTermInput" dir="ltr" lang="en" maxlength="512" required></label>
+        <label class="library-form-field full">املای جایگزین <small>با / جدا کن</small><input id="entryVariantsInput" dir="ltr" lang="en"></label>
+        <label class="library-form-field">بخش <small>مثال: Unit 2 / Lesson A</small><input id="entrySectionInput"></label>
+        <label class="library-form-field">یادداشت<textarea id="entryNoteInput" rows="2"></textarea></label>
+      </div>
+      <div class="library-modal-actions"><button class="btn btn-light" data-close-dialog="entryFormDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">ذخیره واژه</button></div>
     </form>
   </dialog>
 
-  <dialog id="importDialog" class="library-dialog small-dialog">
-    <form id="importForm" class="dialog-card">
-      <div class="dialog-head"><div><h3>ورود فایل واژگان</h3><p>فایل Markdown یا TXT با همان استاندارد شماره‌گذاری Vocora.</p></div><button class="icon-btn" data-close-dialog="importDialog" type="button">×</button></div>
-      <label class="library-file-drop" for="collectionFileInput"><span>⇧</span><strong id="selectedFileName">انتخاب فایل MD / TXT</strong><small>حداکثر ۲ مگابایت</small></label>
+  <dialog id="importDialog" class="library-dialog library-form-dialog compact-dialog">
+    <form id="importForm" class="library-dialog-surface library-form-surface">
+      <header class="library-modal-head">
+        <div class="library-modal-title"><span class="library-modal-icon" aria-hidden="true">⇧</span><div><span class="library-modal-eyebrow">ورود استاندارد Vocora</span><h3>ورود فایل واژگان</h3><p>فایل Markdown یا TXT را با همان استاندارد فعلی وارد کن.</p></div></div>
+        <button class="library-close-btn" data-close-dialog="importDialog" type="button" aria-label="بستن">×</button>
+      </header>
+
+      <label class="library-file-drop" for="collectionFileInput">
+        <span class="library-upload-icon" aria-hidden="true">⇧</span>
+        <strong id="selectedFileName">انتخاب فایل MD / TXT</strong>
+        <small>برای انتخاب کلیک کن یا فایل را روی این کادر رها کن · حداکثر ۲ مگابایت</small>
+      </label>
       <input id="collectionFileInput" type="file" accept=".md,.txt,text/plain,text/markdown" hidden required>
-      <label class="field">روش به‌روزرسانی
+
+      <label class="library-form-field">روش به‌روزرسانی
         <select id="importModeInput"><option value="append">افزودن و به‌روزرسانی موارد موجود</option><option value="replace">همگام‌سازی کامل با فایل</option></select>
       </label>
-      <p class="import-help">در حالت «همگام‌سازی کامل»، واژه‌هایی که دیگر در فایل نیستند از این مجموعه کنار گذاشته می‌شوند؛ پیشرفت کاربران حذف نمی‌شود.</p>
-      <div class="dialog-actions"><button class="btn btn-light" data-close-dialog="importDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">شروع ورود</button></div>
+      <p class="library-import-help">در «همگام‌سازی کامل»، واژه‌هایی که دیگر داخل فایل نیستند فقط از این مجموعه کنار گذاشته می‌شوند؛ پیشرفت کاربران حذف نمی‌شود.</p>
+      <div class="library-modal-actions"><button class="btn btn-light" data-close-dialog="importDialog" type="button">انصراف</button><button class="btn btn-primary" type="submit">شروع ورود</button></div>
     </form>
   </dialog>
 
