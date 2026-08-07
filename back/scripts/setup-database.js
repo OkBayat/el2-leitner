@@ -7,6 +7,7 @@ import mysql from "mysql2/promise";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
+import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
 
 const DEFAULT_RETRIES = 30;
@@ -166,6 +167,13 @@ async function setupDatabase() {
     const learningRepository = new MySqlLearningStateRepository(applicationPool);
     const migrated = await learningRepository.migrateAllLegacyStates();
     if (migrated) console.info(`Migrated ${migrated} legacy learning state(s) to normalized tables.`);
+
+    const repaired = await repairLegacyAliasProgress(applicationPool);
+    if (repaired.repairedUsers) {
+      console.info(
+        `Reconciled ${repaired.repairedGroups} duplicate alias group(s) across ${repaired.repairedUsers} legacy learner(s).`
+      );
+    }
 
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
