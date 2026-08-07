@@ -448,8 +448,8 @@ export class MySqlEfficientLearningStateRepository extends MySqlLearningStateRep
         [
           userId, vocabulary.id, desired.box, desired.dueDate, desired.attempts,
           desired.correctCount, desired.mistakeCount, desired.currentStreak, desired.introducedOn,
-          desired.introducedVia, desired.lastReviewedAt, desired.lastPromotedOn, desired.blockedUntil,
-          desired.masteredAt, desired.personalNote, desired.legacyCategory
+          desired.introducedVia, asDate(desired.lastReviewedAt), desired.lastPromotedOn, desired.blockedUntil,
+          asDate(desired.masteredAt), desired.personalNote, desired.legacyCategory
         ]
       );
       context.progressByVocabularyId.set(vocabularyKey, {
