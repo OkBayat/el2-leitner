@@ -113,7 +113,8 @@ assert.equal(controller.getState().stage, 'remediation-correction', 'Continue mu
 assert.ok(!remediation.classList.contains('vocora-remediation-delayed'));
 assert.ok(flashCard.classList.contains('remediation-active'));
 
-// Explicitly dispose the visual JSDOM window so rAF/observer resources from the
-// component can never keep this regression test process alive after assertions.
-window.close();
 console.log('Desktop review session UX tests passed.');
+window.close();
+// This file is a standalone regression executable. Force termination only after
+// every synchronous assertion above has passed so JSDOM internals cannot hold CI.
+process.exit(0);
