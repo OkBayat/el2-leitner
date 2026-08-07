@@ -1,0 +1,267 @@
+/* Focused review-session presentation. Learning rules remain in app-v2/remediation. */
+:root {
+  --review-green:#78c92f; --review-green-deep:#5aa91c; --review-green-soft:#eff9e8;
+  --review-red:#ef5658; --review-red-deep:#ce3f42; --review-red-soft:#fff0f0;
+  --review-yellow:#f4b438; --review-yellow-deep:#d4921f; --review-yellow-soft:#fff7e4;
+  --review-disabled:#dbe2e4; --review-disabled-deep:#c8d1d4; --review-disabled-text:#8c999d;
+  --review-sheet-height:min(245px,39vh);
+}
+[data-theme="dark"] {
+  --review-green-soft:#20351b; --review-red-soft:#3b2224; --review-yellow-soft:#3b3019;
+  --review-disabled:#34413d; --review-disabled-deep:#2a3532; --review-disabled-text:#81908a;
+}
+
+/* Visually remove the requested label while keeping the input accessible. */
+#answerForm .answer-label {
+  position:absolute!important; width:1px!important; height:1px!important; overflow:hidden!important;
+  clip:rect(0,0,0,0)!important; clip-path:inset(50%)!important; white-space:nowrap!important;
+}
+/* Existing business action stays in DOM; the user reaches it by double-tapping the primary CTA. */
+#dontKnowBtn { display:none!important; }
+
+#answerForm .vocora-primary-review-action {
+  min-height:58px; border-radius:18px; font-size:18px; font-weight:850;
+  touch-action:manipulation; user-select:none; -webkit-user-select:none;
+}
+#answerForm .vocora-primary-review-action.is-empty {
+  border-color:var(--review-disabled); background:var(--review-disabled); color:var(--review-disabled-text);
+  box-shadow:0 5px 0 var(--review-disabled-deep); cursor:pointer;
+}
+#answerForm .vocora-primary-review-action.skip-armed {
+  border-color:var(--review-yellow); background:var(--review-yellow); color:#6f4b08;
+  box-shadow:0 5px 0 var(--review-yellow-deep);
+}
+.vocora-double-tap-hint {
+  color:var(--muted); text-align:center; font-size:11px; line-height:1.5;
+  transition:opacity .15s ease,max-height .15s ease,margin .15s ease;
+}
+#answerForm.vocora-has-answer .vocora-double-tap-hint { max-height:0; overflow:hidden; margin:0; opacity:0; }
+
+#answerInput.vocora-answer-correct {
+  border-color:var(--review-green)!important; background:var(--review-green-soft)!important; color:#4b8f1d!important;
+  box-shadow:0 0 0 7px rgba(120,201,47,.10)!important; font-weight:750;
+}
+#answerInput.vocora-answer-wrong {
+  border-color:var(--review-red)!important; background:var(--review-red-soft)!important; color:#c33e41!important;
+  box-shadow:0 0 0 7px rgba(239,86,88,.09)!important; font-weight:750;
+}
+#answerInput.vocora-answer-warning {
+  border-color:var(--review-yellow)!important; background:var(--review-yellow-soft)!important;
+  box-shadow:0 0 0 7px rgba(244,180,56,.09)!important;
+}
+.vocora-remediation-preview-continue { display:none; }
+
+@media (max-width:760px) {
+  html.vocora-session-active { overflow:hidden; overscroll-behavior:none; }
+  body.vocora-session-active {
+    position:fixed; inset:0; width:100%; height:var(--vocora-review-viewport-height,100dvh); min-height:0;
+    overflow:hidden; overscroll-behavior:none; background:var(--surface);
+  }
+  body.vocora-session-active .sidebar,
+  body.vocora-session-active .main-content>.topbar { display:none!important; }
+  body.vocora-session-active .app-shell,
+  body.vocora-session-active .main-content {
+    width:100%; height:var(--vocora-review-viewport-height,100dvh); min-height:0; margin:0; padding:0;
+    overflow:hidden; background:var(--surface);
+  }
+  body.vocora-session-active .main-content {
+    position:fixed; top:var(--vocora-review-viewport-top,0); right:0; bottom:auto; left:0;
+  }
+  body.vocora-session-active #view-review { position:absolute; inset:0; display:block; height:100%; overflow:hidden; animation:none; }
+  body.vocora-session-active #reviewSetup,
+  body.vocora-session-active #reviewEmpty,
+  body.vocora-session-active #sessionComplete { display:none!important; }
+  body.vocora-session-active #reviewSession {
+    position:absolute; inset:0; width:100%; max-width:none; height:100%; min-height:0; margin:0;
+    overflow:hidden; background:var(--surface);
+  }
+
+  /* Fixed session header: close, progress, accuracy. */
+  body.vocora-session-active .session-bar {
+    position:absolute; z-index:60; top:0; right:0; left:0; display:grid; height:88px;
+    grid-template-columns:46px minmax(0,1fr) 66px; align-items:center; gap:10px; margin:0;
+    padding:14px 14px 10px; background:var(--surface);
+  }
+  body.vocora-session-active #exitSessionBtn { width:44px; height:44px; border-radius:15px; color:var(--muted); font-size:28px; line-height:1; }
+  body.vocora-session-active .session-progress { min-width:0; color:var(--muted); }
+  body.vocora-session-active .session-progress .row-between { display:block; min-width:0; margin-bottom:7px; }
+  body.vocora-session-active #sessionCounter {
+    display:block; overflow:hidden; color:var(--muted); font-size:11px; font-weight:650; line-height:1.4;
+    text-overflow:ellipsis; white-space:nowrap;
+  }
+  body.vocora-session-active .session-progress .progress-track { height:10px; margin:0; background:var(--line); }
+  body.vocora-session-active .session-progress .progress-track i { background:linear-gradient(90deg,#50b3ed,var(--primary)); }
+  body.vocora-session-active .vocora-session-accuracy {
+    display:grid; min-width:64px; min-height:54px; place-items:center; border-radius:15px;
+    background:var(--surface-2); color:var(--muted); padding:6px; text-align:center;
+  }
+  body.vocora-session-active #sessionAccuracy { color:var(--primary-2); font-size:11px; font-weight:800; line-height:1.4; }
+
+  /* The old card becomes the full practice surface. */
+  body.vocora-session-active #flashCard {
+    position:absolute; inset:88px 0 0; display:flex; min-height:0; flex-direction:column; align-items:center;
+    overflow:hidden; border:0; border-radius:0; background:var(--surface); padding:24px 20px 18px;
+    box-shadow:none; text-align:center;
+  }
+  body.vocora-session-active #flashCard>.card-meta { display:none; }
+  body.vocora-session-active #cardInstruction {
+    width:min(100%,590px); margin:0 auto; color:var(--muted); font-size:13px; line-height:1.75; text-align:right;
+  }
+  body.vocora-session-active #cardInstruction::before {
+    content:"کلمه‌ای را که می‌شنوی بنویس"; display:block; margin-bottom:8px; color:var(--text);
+    font-size:clamp(27px,7vw,36px); font-weight:850; line-height:1.45; letter-spacing:-.35px;
+  }
+  body.vocora-session-active #listenWordBtn {
+    width:116px; height:116px; flex:0 0 116px; margin:clamp(28px,6vh,54px) auto 10px;
+    border-radius:50%; background:var(--primary-soft); color:var(--primary);
+    box-shadow:0 0 0 14px rgba(34,152,223,.06); transition:transform .15s ease;
+  }
+  body.vocora-session-active #listenWordBtn:active { transform:scale(.96); }
+  body.vocora-session-active #listenWordBtn span { font-size:36px; }
+  body.vocora-session-active #listenWordBtn small { margin-top:-18px; font-size:10px; font-weight:650; }
+  body.vocora-session-active #slowListenBtn { margin:5px 0 0; color:var(--muted); font-size:11px; text-decoration:underline; text-underline-offset:4px; }
+
+  /* Reserved input + CTA stack prevents overlap even with the software keyboard. */
+  body.vocora-session-active #answerForm {
+    position:absolute; z-index:20; right:20px; bottom:calc(14px + env(safe-area-inset-bottom)); left:20px;
+    display:block; width:auto; height:170px; margin:0;
+  }
+  body.vocora-session-active #answerForm.vocora-has-answer { height:150px; }
+  body.vocora-session-active #answerInput {
+    position:absolute; top:0; right:0; left:0; width:100%; height:72px; margin:0;
+    border:2px solid #bcddec; border-radius:19px; background:var(--surface); padding:0 20px;
+    box-shadow:0 0 0 7px rgba(34,152,223,.07); font-size:20px;
+  }
+  body.vocora-session-active #answerForm .vocora-double-tap-hint {
+    position:absolute; right:0; bottom:64px; left:0; height:18px; margin:0; line-height:18px;
+  }
+  body.vocora-session-active #answerForm .vocora-primary-review-action {
+    position:absolute; right:0; bottom:0; left:0; width:100%; height:58px; min-height:58px; margin:0;
+    border-radius:18px; font-size:18px; box-shadow:0 5px 0 var(--primary-2);
+  }
+  body.vocora-session-active #answerForm .vocora-primary-review-action.is-empty { box-shadow:0 5px 0 var(--review-disabled-deep); }
+  body.vocora-session-active #answerForm .vocora-primary-review-action.skip-armed { box-shadow:0 5px 0 var(--review-yellow-deep); }
+
+  /* The app hides the form after answering; restore only its locked input above the result sheet. */
+  body.vocora-session-active.vocora-feedback-open #answerForm.hidden { display:block!important; }
+  body.vocora-session-active.vocora-feedback-open #answerForm { bottom:calc(var(--review-sheet-height) + 12px); height:76px; }
+  body.vocora-session-active.vocora-feedback-open #answerForm .vocora-primary-review-action,
+  body.vocora-session-active.vocora-feedback-open #answerForm .vocora-double-tap-hint { display:none!important; }
+
+  /* Correct / wrong / warning result sheets stay inside the same visible viewport. */
+  body.vocora-session-active #answerFeedback {
+    position:absolute; z-index:42; right:0; bottom:0; left:0; display:flex; height:var(--review-sheet-height);
+    max-height:46%; flex-direction:column; overflow:hidden; margin:0; border-radius:26px 26px 0 0;
+    padding:20px 20px calc(18px + env(safe-area-inset-bottom)); box-shadow:0 -18px 42px rgba(33,55,63,.10); text-align:right;
+  }
+  body.vocora-session-active.vocora-review-correct { --review-sheet-height:min(225px,36vh); }
+  body.vocora-session-active.vocora-review-wrong { --review-sheet-height:min(300px,44vh); }
+  body.vocora-session-active.vocora-review-warning { --review-sheet-height:min(290px,43vh); }
+  body.vocora-session-active.vocora-review-correct #answerFeedback { background:var(--review-green-soft); color:#4d8f1d; }
+  body.vocora-session-active.vocora-review-wrong #answerFeedback { background:var(--review-red-soft); color:#c23d40; }
+  body.vocora-session-active.vocora-review-warning #answerFeedback { background:var(--review-yellow-soft); color:#a46b08; }
+  body.vocora-session-active #answerFeedback .feedback-heading { display:flex; align-items:center; gap:12px; flex:0 0 auto; border-radius:0; background:transparent; padding:0; }
+  body.vocora-session-active #answerFeedback .feedback-heading>span {
+    width:40px; height:40px; flex:0 0 40px; border-radius:50%; color:#fff; font-size:23px; font-weight:900;
+  }
+  body.vocora-session-active.vocora-review-correct #answerFeedback .feedback-heading>span { background:var(--review-green); }
+  body.vocora-session-active.vocora-review-wrong #answerFeedback .feedback-heading>span { background:var(--review-red); }
+  body.vocora-session-active.vocora-review-warning #answerFeedback .feedback-heading>span { background:var(--review-yellow); }
+  body.vocora-session-active #feedbackTitle { color:currentColor; font-size:21px; font-weight:900; }
+  body.vocora-session-active #feedbackDetail { margin-top:4px; color:var(--muted); font-size:12px; line-height:1.65; }
+  body.vocora-session-active #answerFeedback .correct-spelling { flex:0 0 auto; margin:12px 50px 10px 0; border:0; background:transparent; padding:0; text-align:right; }
+  body.vocora-session-active #answerFeedback .correct-spelling small { color:var(--muted); font-size:10px; }
+  body.vocora-session-active #answerFeedback .correct-spelling strong { margin-top:2px; color:var(--text); direction:ltr; text-align:left; font-size:20px; }
+  body.vocora-session-active.vocora-review-correct #answerFeedback .correct-spelling { display:none; }
+  body.vocora-session-active #answerFeedback #wordNote { display:none!important; }
+  body.vocora-session-active #nextCardBtn {
+    height:58px; min-height:58px; flex:0 0 58px; margin-top:auto; border-radius:18px; font-size:18px; font-weight:900;
+  }
+  body.vocora-session-active.vocora-review-correct #nextCardBtn { border-color:var(--review-green); background:var(--review-green); color:#fff; box-shadow:0 5px 0 var(--review-green-deep); }
+  body.vocora-session-active.vocora-review-wrong #nextCardBtn { border-color:var(--review-red); background:var(--review-red); color:#fff; box-shadow:0 5px 0 var(--review-red-deep); }
+  body.vocora-session-active.vocora-review-warning #nextCardBtn { border-color:var(--review-yellow); background:var(--review-yellow); color:#fff; box-shadow:0 5px 0 var(--review-yellow-deep); }
+  body.vocora-session-active #answerFeedback.vocora-previewing-remediation #nextCardBtn { visibility:hidden; pointer-events:none; }
+
+  /* On modes with spelling remediation: assessment first, correction workflow second. */
+  body.vocora-session-active #practiceRemediation.vocora-remediation-delayed {
+    position:absolute; z-index:46; inset:0; display:block!important; margin:0; background:transparent; padding:0; pointer-events:none;
+  }
+  body.vocora-session-active #practiceRemediation.vocora-remediation-delayed>* { display:none!important; }
+  body.vocora-session-active #practiceRemediation.vocora-remediation-delayed>.vocora-remediation-preview-continue {
+    position:absolute; right:20px; bottom:calc(18px + env(safe-area-inset-bottom)); left:20px; display:block!important;
+    width:auto; height:58px; border-color:var(--review-red); border-radius:18px; background:var(--review-red); color:#fff;
+    padding:0 18px; box-shadow:0 5px 0 var(--review-red-deep); pointer-events:auto; font-size:18px; font-weight:900;
+  }
+  body.vocora-session-active.vocora-review-warning #practiceRemediation.vocora-remediation-delayed>.vocora-remediation-preview-continue {
+    border-color:var(--review-yellow); background:var(--review-yellow); box-shadow:0 5px 0 var(--review-yellow-deep);
+  }
+
+  /* Existing remediation steps reuse the focused, non-scrolling practice shell. */
+  body.vocora-session-active #flashCard.remediation-active { padding:14px 20px calc(16px + env(safe-area-inset-bottom)); }
+  body.vocora-session-active #flashCard.remediation-active>.card-meta { display:none; }
+  body.vocora-session-active #practiceRemediation:not(.vocora-remediation-delayed) {
+    position:absolute; inset:10px 20px calc(16px + env(safe-area-inset-bottom)); display:flex; min-height:0;
+    flex-direction:column; gap:12px; overflow:hidden; margin:0; text-align:right;
+  }
+  body.vocora-session-active #practiceRemediation .remediation-heading { flex:0 0 auto; border-radius:18px; padding:15px 16px; }
+  body.vocora-session-active #practiceRemediation .remediation-heading h3 { font-size:18px; }
+  body.vocora-session-active #practiceRemediation .remediation-heading p { line-height:1.65; }
+  body.vocora-session-active #practiceRemediation .remediation-comparison { flex:0 0 auto; gap:8px; }
+  body.vocora-session-active #practiceRemediation .remediation-spelling-row { padding:10px 12px; }
+  body.vocora-session-active #practiceRemediation .remediation-listen { min-height:38px; flex:0 0 auto; padding:7px 14px; }
+  body.vocora-session-active #practiceRemediation .remediation-form { min-height:0; flex:1 1 auto; align-content:start; }
+  body.vocora-session-active #practiceRemediation .remediation-form .answer-input { min-height:58px; border-width:2px; border-radius:17px; background:var(--surface); font-size:18px; }
+  body.vocora-session-active #practiceRemediation .remediation-form .btn,
+  body.vocora-session-active #practiceRemediation .remediation-actions .btn { min-height:56px; border-radius:18px; font-size:16px; }
+  body.vocora-session-active #practiceRemediation .remediation-actions { margin-top:auto; }
+  body.vocora-session-active .toast { z-index:100; }
+
+  /* Keyboard mode uses visualViewport and reallocates vertical space instead of scrolling. */
+  body.vocora-session-active.vocora-keyboard-open .session-bar { height:76px; padding-top:8px; padding-bottom:7px; }
+  body.vocora-session-active.vocora-keyboard-open #flashCard { top:76px; padding-top:10px; }
+  body.vocora-session-active.vocora-keyboard-open #cardInstruction { color:transparent; font-size:0; line-height:0; }
+  body.vocora-session-active.vocora-keyboard-open #cardInstruction::before { margin-bottom:0; color:var(--text); font-size:22px; line-height:1.35; }
+  body.vocora-session-active.vocora-keyboard-open #listenWordBtn { width:54px; height:54px; flex-basis:54px; margin:12px auto 5px; box-shadow:0 0 0 6px rgba(34,152,223,.06); }
+  body.vocora-session-active.vocora-keyboard-open #listenWordBtn span { font-size:24px; }
+  body.vocora-session-active.vocora-keyboard-open #listenWordBtn small { display:none; }
+  body.vocora-session-active.vocora-keyboard-open #slowListenBtn { margin-top:2px; font-size:10px; }
+  body.vocora-session-active.vocora-keyboard-open #answerForm { right:16px; bottom:calc(8px + env(safe-area-inset-bottom)); left:16px; height:140px; }
+  body.vocora-session-active.vocora-keyboard-open #answerForm.vocora-has-answer { height:124px; }
+  body.vocora-session-active.vocora-keyboard-open #answerInput { height:60px; border-radius:17px; font-size:18px; }
+  body.vocora-session-active.vocora-keyboard-open #answerForm .vocora-double-tap-hint { bottom:58px; height:16px; line-height:16px; font-size:10px; }
+  body.vocora-session-active.vocora-keyboard-open #answerForm .vocora-primary-review-action { height:52px; min-height:52px; border-radius:16px; font-size:17px; }
+
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation:not(.vocora-remediation-delayed) { inset:8px 16px calc(8px + env(safe-area-inset-bottom)); gap:7px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-heading { padding:9px 11px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-kicker { font-size:8px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-heading h3 { font-size:15px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-heading p { display:none; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-comparison { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-spelling-row { padding:7px 8px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-spelling { min-height:24px; font-size:16px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-hint { min-height:0; margin:0; font-size:10px; line-height:1.35; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-listen { min-height:32px; padding:5px 10px; font-size:10px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-form { gap:5px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-form label { font-size:9px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-form .answer-input { min-height:50px; padding:8px 12px; font-size:17px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-form .btn,
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-actions .btn { min-height:48px; font-size:14px; }
+  body.vocora-session-active.vocora-keyboard-open #practiceRemediation .remediation-validation { min-height:0; font-size:9px; }
+
+  @media (max-height:650px) {
+    body.vocora-session-active .session-bar { height:76px; padding-top:8px; padding-bottom:7px; }
+    body.vocora-session-active #flashCard { top:76px; padding-top:10px; }
+    body.vocora-session-active #cardInstruction { font-size:11px; line-height:1.45; }
+    body.vocora-session-active #cardInstruction::before { margin-bottom:4px; font-size:23px; }
+    body.vocora-session-active #listenWordBtn { width:82px; height:82px; flex-basis:82px; margin-top:15px; box-shadow:0 0 0 9px rgba(34,152,223,.06); }
+    body.vocora-session-active #listenWordBtn small { display:none; }
+    body.vocora-session-active #answerForm { height:146px; }
+    body.vocora-session-active #answerForm.vocora-has-answer { height:128px; }
+    body.vocora-session-active #answerInput { height:60px; }
+    body.vocora-session-active #answerForm .vocora-primary-review-action { height:52px; min-height:52px; }
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  #answerForm .vocora-primary-review-action,.vocora-double-tap-hint,#answerInput { transition:none!important; }
+}
