@@ -61,6 +61,16 @@ async function verify() {
       throw new Error(`${legacyRows[0].total} legacy learning state(s) have not been normalized.`);
     }
 
+    const [unreconciledAliasRows] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM learning_states ls
+       JOIN user_state_revisions usr ON usr.user_id = ls.user_id
+       WHERE COALESCE(JSON_UNQUOTE(JSON_EXTRACT(usr.metadata_json, '$.legacyAliasProgressMerged')), 'false') NOT IN ('true', '1')`
+    );
+    if (Number(unreconciledAliasRows[0].total) !== 0) {
+      throw new Error(`${unreconciledAliasRows[0].total} legacy learner(s) have not completed alias-progress reconciliation.`);
+    }
+
     const [duplicateRows] = await pool.execute(
       `SELECT COUNT(*) AS total FROM (
          SELECT collection_id, vocabulary_entry_id
@@ -75,7 +85,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; migration coverage and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
