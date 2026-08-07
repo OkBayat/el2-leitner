@@ -1,78 +1,143 @@
 # Vocora
 
-یک اپ full-stack برای تمرین واژگان با جعبهٔ لایتنر؛ در نسخهٔ فعلی با تمرکز بر املای IELTS Listening. حساب‌ها و تمام وضعیت یادگیری کاربران در MySQL ذخیره می‌شود و با ورود از دستگاه‌های مختلف قابل دسترسی است.
+Vocora یک اپ full-stack برای تمرین واژگان با جعبهٔ لایتنر است. حساب‌ها، کتابخانهٔ واژگان، پیشرفت کاربران و تاریخچهٔ تمرین در MySQL ذخیره می‌شوند و با ورود از دستگاه‌های مختلف قابل دسترسی‌اند.
 
 ## ساختار پروژه
 
 ```text
 .
-├── ui/                  # HTML, CSS, JavaScript, Login و Register
-├── back/                # Node.js + Express با معماری لایه‌ای
-│   ├── database/        # schema.sql
-│   ├── scripts/         # ساخت خودکار database و tableها
+├── ui/                       # HTML, CSS, JavaScript, Login/Register/Library
+├── back/
+│   ├── database/
+│   │   └── migrations/       # schema source of truth
+│   ├── scripts/              # setup + integrity verification
 │   ├── src/
 │   │   ├── domain/
-│   │   ├── application/
+│   │   ├── application/      # Commands / Queries / use cases
 │   │   ├── infrastructure/
 │   │   └── interfaces/
 │   └── tests/
-├── docker-compose.yml   # App + MySQL + phpMyAdmin
+├── docs/
+│   └── DATABASE_ARCHITECTURE.md
+├── docker-compose.yml
 └── .env.example
 ```
 
-لایه‌های Domain و Application به Express یا MySQL وابسته نیستند. Repositoryها و سرویس‌های امنیتی از طریق dependency injection به use caseها داده می‌شوند تا منطق مستقل، قابل‌تست و قابل‌تعویض بماند.
+Domain و Application به Express یا MySQL وابسته نیستند. Repositoryها و سرویس‌ها با dependency injection وارد use caseها می‌شوند. برای کتابخانه، readها در `LibraryQueries` و writeها در `LibraryCommands` جدا هستند؛ lifecycle جلسه نیز command مستقل دارد.
+
+## مدل داده
+
+Vocora محتوای مشترک را از پیشرفت هر کاربر جدا می‌کند:
+
+- `collections`: کتاب، آزمون، موضوع، دوره یا مجموعهٔ شخصی
+- `collection_sections`: ساختار سلسله‌مراتبی مثل Unit / Lesson
+- `vocabulary_entries` + `vocabulary_forms`: هویت واژه و املاهای پذیرفته
+- `collection_entries`: رابطهٔ many-to-many مجموعه و واژه
+- `user_collections`: مجموعه‌های فعال هر کاربر
+- `user_vocabulary_progress`: خانه، موعد، خطا، streak و وضعیت لایتنر هر کاربر
+- `review_events`: تاریخچهٔ append-only پاسخ‌ها
+- `practice_sessions`: شروع/پایان/انصراف صریح جلسه
+- `user_daily_stats`: aggregate روزانه
+- `user_settings`: تنظیمات پایدار
+- `user_state_revisions`: optimistic concurrency برای API سازگار با UI فعلی
+
+جدول قدیمی `learning_states` فقط برای migration/backup کاربران قدیمی نگه داشته می‌شود و state جدید در آن نوشته نمی‌شود. جزئیات، invariants و نمودار روابط در `docs/DATABASE_ARCHITECTURE.md` آمده است.
+
+## کتابخانه
+
+در منوی اصلی صفحهٔ «کتابخانه» وجود دارد. مجموعهٔ پیش‌فرض `1500 IELTS Listening Words` هنگام setup از فایل موجود پروژه seed می‌شود. فایل منبع دقیقاً ۱۵۰۰ ردیف شماره‌دار دارد؛ املاهای هم‌ارز مثل aliasها به یک هویت واژگانی مشترک normalize می‌شوند، بنابراین تعداد vocabulary identityهای یکتا می‌تواند کمتر از ۱۵۰۰ باشد. هر دو عدد (`sourceItemCount` و `uniqueVocabularyCount`) همراه تعداد aliasهای ادغام‌شده در metadata مجموعه ثبت و verify می‌شوند.
+
+مدیر می‌تواند مجموعهٔ جدیدی مثل `American English File 3` بسازد، فایل MD/TXT وارد کند، مجموعه را append یا replace کند، و بعداً واژه‌ها را تک‌به‌تک اضافه/ویرایش/حذف کند.
+
+کاربر با «افزودن به جعبه» فقط یک subscription می‌سازد؛ هزاران واژه برای او کپی نمی‌شوند. پیشرفت هم به‌صورت lazy ساخته می‌شود و حذف یک واژه از کتاب یا حذف subscription، تاریخچه و progress قبلی را نابود نمی‌کند. اگر کاربر حتی مجموعهٔ پیش‌فرض را صریحاً کنار بگذارد، saveهای بعدی learning state آن تصمیم را برنمی‌گردانند؛ فقط subscribe صریح کاربر دوباره آن را فعال می‌کند.
+
+در صفحهٔ «واژه‌ها» ستون «مجموعه‌ها» نشان می‌دهد هر واژه از کدام کتاب/موضوع آمده است. یک واژه می‌تواند همزمان عضو چند مجموعه باشد.
+
+### دسترسی مدیریت کتابخانه
+
+ایمیل مدیرها را به شکل comma-separated تنظیم کنید:
+
+```env
+LIBRARY_ADMIN_EMAILS=owner@example.com,editor@example.com
+```
+
+نبودن این مقدار، مدیریت محتوای عمومی را غیرفعال می‌کند؛ استفاده و subscribe کتابخانه برای کاربران لاگین‌شده همچنان فعال است.
+
+### فرمت فایل واژگان
+
+```md
+# American English File 3
+
+## Unit 1
+### Lesson A
+1. crowded
+2. centre / center
+
+### Lesson B
+3. get along with
+```
+
+Headingهای `##` تا `######` به sectionهای سلسله‌مراتبی تبدیل می‌شوند. شماره‌ها ترتیب واژه را تعیین می‌کنند. عبارت‌های جداشده با ` / ` به عنوان accepted spelling ذخیره می‌شوند. normalization و duplicate detection در Domain انجام می‌شود. پاسخ import علاوه بر تعداد اضافه/ویرایش/حذف، تعداد ردیف‌های منبع، تعداد واژه‌های یکتا و تعداد duplicate aliasهای ردشده را نیز گزارش می‌کند.
 
 ## اجرای سریع با Docker
 
-پیش‌نیاز: Docker و Docker Compose.
-
 ```bash
 cp .env.example .env
-# مقدارهای password و JWT_SECRET را در .env تغییر دهید
+# DB_PASSWORD, DB_ADMIN_PASSWORD, MYSQL_ROOT_PASSWORD, JWT_SECRET
+# و در صورت نیاز LIBRARY_ADMIN_EMAILS را تنظیم کنید.
 docker compose up --build
 ```
 
-سپس باز کنید:
+سپس:
 
-- برنامه: [http://localhost:3000](http://localhost:3000)
-- phpMyAdmin: [http://localhost:8081](http://localhost:8081)
-- سلامت API: [http://localhost:3000/api/health](http://localhost:3000/api/health)
+- برنامه: `http://localhost:3000`
+- کتابخانه: `http://localhost:3000/library.html`
+- phpMyAdmin: `http://localhost:8081`
+- health: `http://localhost:3000/api/health`
 
-Compose بدون `DB_PASSWORD`، `DB_ADMIN_PASSWORD`، `MYSQL_ROOT_PASSWORD` و `JWT_SECRET` اجرا نمی‌شود. مقدارهای نمونه را در `.env` تغییر دهید؛ رمز admin باید با `MYSQL_ROOT_PASSWORD` یکسان باشد. phpMyAdmin به‌صورت پیش‌فرض فقط روی `127.0.0.1` منتشر می‌شود.
-
-برای توقف بدون حذف اطلاعات:
+برای توقف بدون حذف داده:
 
 ```bash
 docker compose down
 ```
 
-برای حذف کامل volume دیتابیس و شروع از صفر:
+برای حذف volume و شروع کامل از صفر:
 
 ```bash
 docker compose down -v
 ```
 
-## ساخت خودکار دیتابیس
+## Migration و setup دیتابیس
 
-هنگام بالا آمدن stack، سرویس یک‌باراجرای `db-setup` دستور زیر را خودکار اجرا می‌کند و فقط پس از موفقیت آن، سرویس وب شروع می‌شود:
+Schema از migrationهای immutable ساخته می‌شود:
 
 ```bash
 cd back
 npm run db:setup
 ```
 
-این اسکریپت قابل‌تکرار و idempotent است: اتصال MySQL را با retry بررسی می‌کند، database را در صورت نبودن می‌سازد، دسترسی محدود کاربر برنامه را تنظیم می‌کند و `back/database/schema.sql` را اجرا می‌کند. اطلاعات root فقط در همین سرویس کوتاه‌عمر قرار می‌گیرد و به process وب داده نمی‌شود.
+`db:setup` اتصال MySQL را با retry برقرار می‌کند، database را می‌سازد، migrationهای جدید را با checksum اجرا می‌کند، کاربر least-privilege اپ را تنظیم می‌کند، منبع IELTS با ۱۵۰۰ ردیف را seed و normalize می‌کند، `learning_states` قدیمی را به جداول normalized migrate می‌کند و برای کاربران legacy، progress کارت‌های alias که به یک هویت مشترک رسیده‌اند را یک‌بار reconcile می‌کند.
 
-جدول‌ها:
+Migration اجراشده نباید ویرایش شود؛ تغییر schema باید migration شماره‌دار جدید داشته باشد.
 
-- `users`: ایمیل یکتا و password hash شده
-- `learning_states`: تمام لغات، خانه‌ها، موعدها، خطاها، تاریخچه، آمار روزانه و تنظیمات هر کاربر در یک ستون JSON متعلق به همان کاربر
+برای بررسی invariants دیتابیس:
 
-phpMyAdmin فقط رابط مدیریت MySQL است؛ دیتابیس اصلی MySQL است.
+```bash
+cd back
+npm run db:verify
+```
+
+## مهاجرت کاربران قبلی
+
+Migration destructive نیست. JSON قبلی در `learning_states` دست‌نخورده می‌ماند و داده‌ها به مدل جدید projection می‌شوند. علاوه بر migration زمان deploy، `GET/PUT /api/state` نیز در صورت مواجهه با کاربر legacy، migration همان کاربر را انجام می‌دهد.
+
+لغت‌های استاندارد به vocabulary عمومی map می‌شوند؛ واژه‌های دستی/import شدهٔ کاربر در یک collection خصوصی «واژه‌های من» قرار می‌گیرند. Progress، history، daily stats و settings حفظ می‌شوند.
+
+اگر چند کارت قدیمی فقط alias املایی یکدیگر باشند و در مدل جدید به یک `vocabulary_entry` برسند، migration صرفاً last-write-wins نمی‌کند: شمارنده‌های attempts/correct/mistakes ترکیب می‌شوند، وضعیت زمان‌بندی از آخرین کارت مرورشده گرفته می‌شود، تاریخ معرفی و metadata مفید حفظ می‌شوند و نتیجه با marker idempotent ثبت می‌شود تا روی deploy بعدی دوباره جمع نشود.
 
 ## اجرای محلی بدون Docker
 
-یک MySQL در دسترس قرار دهید، متغیرهای `.env` را برای host محلی تنظیم کنید و سپس:
+یک MySQL در دسترس قرار دهید و `.env` را تنظیم کنید:
 
 ```bash
 cd back
@@ -81,32 +146,56 @@ npm run db:setup
 npm run dev
 ```
 
-Express فایل‌های پوشهٔ `ui/` و API را از یک origin در پورت ۳۰۰۰ ارائه می‌کند.
+Express فایل‌های `ui/` و API را از یک origin ارائه می‌کند.
 
 ## احراز هویت
 
-- ثبت‌نام فقط با email و password
-- ذخیرهٔ password با bcrypt hash؛ هیچ password خامی ذخیره نمی‌شود
-- session با JWT در cookie از نوع `HttpOnly` و `SameSite=Lax`
-- محدودسازی درخواست‌های login/register برای کاهش brute-force
-- تمام endpointهای وضعیت یادگیری نیازمند login هستند
-- رابط کاربری هیچ وضعیت یادگیری را در `localStorage` ذخیره نمی‌کند
-
-برای کاربر قدیمی، اگر database هنوز state نداشته باشد، رابط یک‌بار دادهٔ نسخهٔ localStorage را به حساب وارد می‌کند و سپس کلید قدیمی را حذف می‌کند.
+- register فقط با email/password
+- bcrypt hash؛ password خام ذخیره نمی‌شود
+- JWT در cookie از نوع `HttpOnly` و `SameSite=Lax`
+- rate limit برای login/register
+- endpointهای learning/library نیازمند login هستند
+- mutation محتوای کتابخانه نیازمند admin policy است
 
 ## API
 
+### Auth / compatibility state
+
 | Method | Path | کاربرد |
 |---|---|---|
-| `GET` | `/api/health` | healthcheck |
-| `POST` | `/api/auth/register` | ساخت حساب |
-| `POST` | `/api/auth/login` | ورود |
-| `GET` | `/api/auth/me` | کاربر فعلی |
-| `POST` | `/api/auth/logout` | خروج |
-| `GET` | `/api/state` | دریافت state کاربر |
-| `PUT` | `/api/state` | ذخیرهٔ کامل state کاربر |
+| GET | `/api/health` | healthcheck |
+| POST | `/api/auth/register` | ساخت حساب |
+| POST | `/api/auth/login` | ورود |
+| GET | `/api/auth/me` | کاربر فعلی |
+| POST | `/api/auth/logout` | خروج |
+| GET | `/api/state` | projection سازگار state از مدل normalized |
+| PUT | `/api/state` | ذخیرهٔ state با optimistic revision |
 
-`GET /api/state` مقدارهای `state` و `revision` را برمی‌گرداند. درخواست `PUT` باید همان `revision` را همراه state بفرستد؛ ذخیرهٔ موفق revision را افزایش می‌دهد و نوشتن از یک تب یا دستگاه قدیمی با `409 STATE_CONFLICT` متوقف می‌شود تا دادهٔ جدیدتر بازنویسی نشود.
+### Library
+
+| Method | Path | کاربرد |
+|---|---|---|
+| GET | `/api/library` | فهرست مجموعه‌های قابل‌مشاهده |
+| GET | `/api/library/:id` | جزئیات، sectionها و واژه‌ها |
+| POST | `/api/library/:id/subscription` | افزودن مجموعه به جعبه |
+| DELETE | `/api/library/:id/subscription` | کنارگذاشتن مجموعه با حفظ progress |
+| GET | `/api/library/vocabulary-sources` | sourceهای واژه‌های فعال کاربر |
+| POST | `/api/library` | ساخت مجموعه (admin) |
+| PUT | `/api/library/:id` | ویرایش مجموعه (admin) |
+| POST | `/api/library/:id/import` | append/replace فایل (admin) |
+| POST | `/api/library/:id/entries` | افزودن واژه (admin) |
+| PUT | `/api/library/:id/entries/:entryId` | ویرایش واژه (admin) |
+| DELETE | `/api/library/:id/entries/:entryId` | soft-remove واژه (admin) |
+
+### Practice sessions
+
+| Method | Path | کاربرد |
+|---|---|---|
+| POST | `/api/learning/sessions` | ثبت شروع صریح جلسه |
+| PUT | `/api/learning/sessions/:id/complete` | تکمیل جلسه |
+| POST | `/api/learning/sessions/:id/abandon` | انصراف از جلسه |
+
+UI هنگام save پاسخ‌ها `X-Vocora-Session-Id` می‌فرستد تا eventهای جدید به session صحیح متصل شوند. همچنین cursor تاریخچهٔ persistشده همراه save ارسال می‌شود تا repository فقط review eventهای جدید را append کند و برای هر پاسخ کل history را دوباره پردازش نکند.
 
 ## تست‌ها
 
@@ -115,31 +204,24 @@ cd back
 npm test
 
 cd ../ui
-npm install
+npm ci
 npm test
 ```
 
-تست‌ها منطق use caseها، validation، authentication، API و رفتارهای اصلی رابط را مستقل از MySQL واقعی بررسی می‌کنند.
+CI علاوه بر unit/API/browser tests، MySQL 8.4 و کل Docker stack را بالا می‌آورد و موارد زیر را smoke-test می‌کند:
 
-گردش‌کار GitHub Actions علاوه بر این تست‌ها، کل stack شامل MySQL، phpMyAdmin و app را با Docker بالا می‌آورد و ثبت‌نام و نوشتن/خواندن state از دیتابیس را smoke-test می‌کند.
+- migration و seed دقیق ۱۵۰۰ **ردیف منبع** به catalog normalized و بررسی count واژه‌های یکتا/aliasها
+- auth و normalized state persistence
+- sparse/lazy progress persistence و جلوگیری از lookup/write تکراری برای همهٔ لغات در هر save
+- ساخت/import یک کتاب جدید
+- subscription و unsubscribe کاربر، از جمله حفظ تصمیم حذف مجموعهٔ پیش‌فرض
+- حفظ progress پس از حذف و re-add واژهٔ کتاب
+- اتصال review event به practice session و عدم duplicate شدن event در save مجدد
+- reset پیشرفت بدون حذف audit history append-only
+- reconciliation بدون اتلاف progress کارت‌های legacy alias
+- عدم نوشتن state کاربران جدید در JSON legacy
+- `npm run db:verify`
 
-## ورود لغات جدید
+## استوری پیشرفت
 
-در «بانک واژه‌ها» فایل Markdown یا TXT با ساختار زیر را import کنید:
-
-```md
-## Travel
-1. accommodation
-2. itinerary
-3. centre / center
-```
-
-املاهای اصلی و جایگزین، حروف بزرگ و کوچک، فاصله‌های اضافی و موارد تکراری داخل همان فایل بررسی می‌شوند؛ فقط لغات واقعاً جدید به state کاربر در دیتابیس اضافه می‌شوند.
-
-## استوری پیشرفت و گیمیفیکیشن
-
-کاربر می‌تواند از صفحهٔ خانه یا پس از پایان جلسه، یک Story استاندارد `1080 × 1920` از پیشرفت واقعی خود بسازد. Vocora بر اساس داده‌های موجود بهترین روایت را از میان نتیجهٔ جلسه، هدف روزانه، پیوستگی، تسلط و رشد هفتگی پیشنهاد می‌دهد. تصویر کاملاً در مرورگر ساخته می‌شود و ایمیل، پاسخ‌های تایپ‌شده، نام واژه‌ها یا جزئیات خطاهای کاربر را در خود ندارد.
-
-در موبایل و روی HTTPS، برنامه از Web Share API و Share Sheet سیستم‌عامل استفاده می‌کند؛ اگر اشتراک فایل پشتیبانی نشود، تصویر PNG برای بارگذاری دستی ذخیره می‌شود. بازشدن مستقیم Instagram از وب تضمین‌پذیر نیست و مقصد را کاربر در Share Sheet انتخاب می‌کند.
-
-منطق علمی، مرزهای اخلاقی، تعریف معیارها و نقشهٔ راه فازهای بعدی در [سند گیمیفیکیشن](docs/GAMIFICATION.md) آمده است.
+Story Studio فعلی بدون تغییر رفتار آموزشی باقی مانده است. خروجی `1080 × 1920` در مرورگر ساخته می‌شود، اطلاعات خصوصی مثل ایمیل و پاسخ‌های تایپ‌شده روی تصویر قرار نمی‌گیرد، و در موبایل از Web Share API در صورت پشتیبانی استفاده می‌کند.

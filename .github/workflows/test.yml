@@ -37,6 +37,7 @@ jobs:
       DB_ADMIN_PASSWORD: ci-root-password
       MYSQL_ROOT_PASSWORD: ci-root-password
       JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+      LIBRARY_ADMIN_EMAILS: ci@example.com
     steps:
       - uses: actions/checkout@v4
       - name: Validate Compose configuration
@@ -51,27 +52,283 @@ jobs:
             sleep 2
           done
           exit 1
-      - name: Exercise authentication and database persistence
+      - name: Exercise normalized learning and library persistence
         run: |
+          set -euo pipefail
+
           curl --fail --silent --show-error \
-            --cookie-jar /tmp/leitner-cookies \
+            --cookie-jar /tmp/admin-cookies \
             --header 'Content-Type: application/json' \
             --data '{"email":"ci@example.com","password":"password123"}' \
             http://127.0.0.1:3000/api/auth/register \
             | jq -e '.user.email == "ci@example.com"'
 
           curl --fail --silent --show-error \
-            --cookie /tmp/leitner-cookies \
-            --request PUT \
-            --header 'Content-Type: application/json' \
-            --data '{"state":{"words":[{"term":"Monday","box":1}],"history":[]},"revision":0}' \
-            http://127.0.0.1:3000/api/state \
-            | jq -e '.state.words[0].term == "Monday" and .revision == 1'
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/library > /tmp/library.json
+          jq -e '.collections[]
+            | select(.id == "ielts-listening-core-1500")
+            | select(.metadata.sourceItemCount == 1500)
+            | select(.wordCount == .metadata.uniqueVocabularyCount)
+            | select(.metadata.duplicateAliasCount == (.metadata.sourceItemCount - .metadata.uniqueVocabularyCount))' \
+            /tmp/library.json
+          IELTS_UNIQUE=$(jq -r '.collections[] | select(.id == "ielts-listening-core-1500") | .wordCount' /tmp/library.json)
+          test "$IELTS_UNIQUE" -gt 0
+          test "$IELTS_UNIQUE" -le 1500
+
+          # Reproduce defaultState() from the browser: all 1500 source items are submitted once,
+          # then the normalized persistence layer collapses equivalent aliases to shared identities.
+          node --input-type=module > /tmp/admin-save.json <<'NODE'
+          globalThis.window = {};
+          await import('./ui/vocabulary.js');
+          const words = window.IELTS_CORE_WORDS.map((source, index) => ({
+            id: `ci-source-${index + 1}`,
+            number: source.number || index + 1,
+            term: source.term,
+            accepted: source.accepted,
+            category: source.category,
+            notes: '',
+            box: 0,
+            due: null,
+            attempts: 0,
+            correct: 0,
+            mistakes: 0,
+            currentStreak: 0,
+            introducedOn: null,
+            addedSource: null,
+            lastReviewed: null,
+            lastPromotedDay: null,
+            blockedUntil: null,
+            masteredAt: null
+          }));
+          const monday = words.find((word) => word.term === 'Monday');
+          Object.assign(monday, {
+            box: 1,
+            due: '2026-08-07',
+            attempts: 1,
+            correct: 1,
+            introducedOn: '2026-08-07'
+          });
+          process.stdout.write(JSON.stringify({
+            revision: 0,
+            state: {
+              schemaVersion: 2,
+              words,
+              history: [],
+              daily: {},
+              settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: 'system' }
+            }
+          }));
+          NODE
 
           curl --fail --silent --show-error \
-            --cookie /tmp/leitner-cookies \
+            --cookie /tmp/admin-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/admin-save.json \
             http://127.0.0.1:3000/api/state \
-            | jq -e '.state.words[0].box == 1'
+            | jq -e '.revision == 1'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e --argjson unique "$IELTS_UNIQUE" '(.state.words | length) == $unique and (.state.words[] | select(.term == "Monday" and .box == 1 and .attempts == 1))'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"title":"American English File 3","slug":"american-english-file-3","description":"CI course vocabulary","kind":"book","visibility":"public","status":"published"}' \
+            http://127.0.0.1:3000/api/library \
+            | jq -e '.collection.slug == "american-english-file-3"'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"text":"## Unit 1\n### Lesson A\n1. aef3-alpha-token\n2. aef3-beta-token\n### Lesson B\n3. aef3-gamma-token","mode":"replace"}' \
+            http://127.0.0.1:3000/api/library/american-english-file-3/import \
+            | jq -e '.result.sourceItemCount == 3 and .result.uniqueVocabularyCount == 3 and .result.duplicatesSkipped == 0 and .result.added == 3'
+
+          curl --fail --silent --show-error \
+            --cookie-jar /tmp/learner-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"email":"learner2@example.com","password":"password123"}' \
+            http://127.0.0.1:3000/api/auth/register \
+            | jq -e '.user.email == "learner2@example.com"'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --request POST \
+            http://127.0.0.1:3000/api/library/american-english-file-3/subscription \
+            | jq -e '.collection.subscribed == true'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/learner-state.json
+          jq -e '.revision == 1 and ([.state.words[].term] | index("aef3-alpha-token") != null)' /tmp/learner-state.json
+
+          SESSION_ID=$(curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"mode":"review","plannedCount":1}' \
+            http://127.0.0.1:3000/api/learning/sessions | jq -r '.session.id')
+
+          jq '{
+            revision: .revision,
+            state: (.state
+              | .words = [.words[] | if .term == "aef3-alpha-token" then .box = 2 | .attempts = 1 | .correct = 1 | .introducedOn = "2026-08-07" | .due = "2026-08-09" | .lastReviewed = "2026-08-07T07:00:00.000Z" else . end]
+              | .history += [{at:"2026-08-07T07:00:00.000Z",day:"2026-08-07",wordId:(.words[] | select(.term == "aef3-alpha-token") | .id),term:"aef3-alpha-token",answer:"aef3-alpha-token",correct:true,mode:"review",promoted:true,previousBox:1,newBox:2,mistakeNumber:null}])
+          }' /tmp/learner-state.json > /tmp/learner-save.json
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --header "X-Vocora-Session-Id: ${SESSION_ID}" \
+            --data-binary @/tmp/learner-save.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '.revision == 2'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data '{"completedCount":1,"correctCount":1,"wrongCount":0,"durationSeconds":12}' \
+            "http://127.0.0.1:3000/api/learning/sessions/${SESSION_ID}/complete" \
+            | jq -e '.session.status == "completed"'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/library/american-english-file-3 > /tmp/aef-detail.json
+          ENTRY_ID=$(jq -r '.collection.entries[] | select(.term == "aef3-alpha-token") | .id' /tmp/aef-detail.json)
+          test -n "$ENTRY_ID"
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --request DELETE \
+            "http://127.0.0.1:3000/api/library/american-english-file-3/entries/${ENTRY_ID}" \
+            | jq -e '.removed == true'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '([.state.words[].term] | index("aef3-alpha-token")) == null'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"term":"aef3-alpha-token","acceptedForms":[],"sectionPath":"Unit 1 / Lesson A"}' \
+            http://127.0.0.1:3000/api/library/american-english-file-3/entries \
+            | jq -e '.entry.term == "aef3-alpha-token"'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '.state.words[] | select(.term == "aef3-alpha-token" and .box == 2 and .attempts == 1)'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM learning_states WHERE user_id IN (SELECT id FROM users WHERE email IN ('ci@example.com','learner2@example.com'));" \
+            | grep -qx '0'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='learner2@example.com' AND ve.primary_form='aef3-alpha-token' AND uvp.box=2;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='learner2@example.com' AND re.term_snapshot='aef3-alpha-token' AND re.practice_session_id IS NOT NULL;" \
+            | grep -qx '1'
+
+          # Re-saving the projected normalized state must not duplicate append-only events.
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/projected-state.json
+          jq '{revision:.revision,state:.state}' /tmp/projected-state.json > /tmp/projected-save.json
+          PROJECTED_NEXT=$(( $(jq -r '.revision' /tmp/projected-state.json) + 1 ))
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/projected-save.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e --argjson next "$PROJECTED_NEXT" '.revision == $next'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='learner2@example.com' AND re.term_snapshot='aef3-alpha-token';" \
+            | grep -qx '1'
+
+          # Preserve append-only audit history while matching the existing UI reset-all-progress behavior.
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/pre-reset-state.json
+          jq '{
+            revision:.revision,
+            state:(.state
+              | .history = []
+              | .daily = {}
+              | .words |= map(
+                  .box = 0 | .due = null | .attempts = 0 | .correct = 0 | .mistakes = 0 | .currentStreak = 0
+                  | .introducedOn = null | .addedSource = null | .lastReviewed = null | .lastPromotedDay = null
+                  | .blockedUntil = null | .masteredAt = null
+                ))
+          }' /tmp/pre-reset-state.json > /tmp/reset-state.json
+          RESET_NEXT=$(( $(jq -r '.revision' /tmp/pre-reset-state.json) + 1 ))
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/reset-state.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e --argjson next "$RESET_NEXT" '.revision == $next'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/learner-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '.state.history == [] and .state.daily == {}'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='learner2@example.com' AND re.term_snapshot='aef3-alpha-token';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='learner2@example.com' AND usr.learning_reset_at IS NOT NULL;" \
+            | grep -qx '1'
+
+          # An explicit unsubscribe from the default collection must survive later state saves.
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --request DELETE \
+            http://127.0.0.1:3000/api/library/ielts-listening-core-1500/subscription \
+            | jq -e '.removed == true'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/admin-unsubscribed-state.json
+          jq -e '(.state.words | length) == 0' /tmp/admin-unsubscribed-state.json
+          jq '{revision:.revision,state:.state}' /tmp/admin-unsubscribed-state.json > /tmp/admin-unsubscribed-save.json
+          UNSUBSCRIBE_NEXT=$(( $(jq -r '.revision' /tmp/admin-unsubscribed-state.json) + 1 ))
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/admin-unsubscribed-save.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e --argjson next "$UNSUBSCRIBE_NEXT" '.revision == $next'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/library \
+            | jq -e '.collections[] | select(.id == "ielts-listening-core-1500" and .subscribed == false)'
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '(.state.words | length) == 0'
+
+          docker compose exec -T app npm run db:verify
       - name: Print container logs after a failure
         if: failure()
         run: docker compose logs --no-color

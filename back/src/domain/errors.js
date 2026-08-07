@@ -20,6 +20,18 @@ export class AuthenticationError extends AppError {
   }
 }
 
+export class ForbiddenError extends AppError {
+  constructor(code = "FORBIDDEN", message = "You do not have permission to perform this action.") {
+    super(403, code, message);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(code = "NOT_FOUND", message = "Resource not found.") {
+    super(404, code, message);
+  }
+}
+
 export class ConflictError extends AppError {
   constructor(code, message) {
     super(409, code, message);

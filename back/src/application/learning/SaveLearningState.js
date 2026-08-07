@@ -6,7 +6,7 @@ export class SaveLearningState {
     this.learningStateRepository = learningStateRepository;
   }
 
-  async execute(userId, stateInput, expectedRevision) {
+  async execute(userId, stateInput, expectedRevision, context = {}) {
     if (!Number.isSafeInteger(expectedRevision) || expectedRevision < 0) {
       throw new ValidationError(
         "INVALID_REVISION",
@@ -18,7 +18,8 @@ export class SaveLearningState {
     const revision = await this.learningStateRepository.save(
       userId,
       state.value,
-      expectedRevision
+      expectedRevision,
+      context
     );
     return { state: state.value, revision };
   }
