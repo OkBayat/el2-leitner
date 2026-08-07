@@ -294,7 +294,7 @@
   }
 
   function openCollectionForm(collection = null) {
-    state.editingMetadata = structuredClone(collection?.metadata || {});
+    state.editingMetadata = { ...(collection?.metadata || {}) };
     state.slugTouched = Boolean(collection);
     $("#collectionFormTitle").textContent = collection ? "ویرایش مجموعه" : "مجموعه‌ی جدید";
     $("#collectionEditingId").value = collection?.id || "";
