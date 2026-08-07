@@ -10,6 +10,12 @@ function required(name) {
   return value;
 }
 
+function parseJson(value) {
+  if (value === null || value === undefined) return {};
+  if (Buffer.isBuffer(value)) value = value.toString("utf8");
+  return typeof value === "string" ? JSON.parse(value) : value;
+}
+
 async function verify() {
   const pool = mysql.createPool({
     host: process.env.DB_HOST || "127.0.0.1",
@@ -21,13 +27,28 @@ async function verify() {
   });
   try {
     const [seedRows] = await pool.execute(
-      `SELECT COUNT(*) AS total
-       FROM collection_entries ce
-       JOIN collections c ON c.id = ce.collection_id
-       WHERE c.public_id = 'ielts-listening-core-1500' AND ce.removed_at IS NULL`
+      `SELECT c.metadata_json, COUNT(ce.id) AS total
+       FROM collections c
+       LEFT JOIN collection_entries ce ON ce.collection_id = c.id AND ce.removed_at IS NULL
+       WHERE c.public_id = 'ielts-listening-core-1500'
+       GROUP BY c.id`
     );
-    if (Number(seedRows[0].total) !== 1500) {
-      throw new Error(`Expected 1500 active IELTS entries, found ${seedRows[0].total}.`);
+    if (!seedRows[0]) throw new Error("Built-in IELTS collection is missing.");
+    const metadata = parseJson(seedRows[0].metadata_json);
+    const activeUniqueItems = Number(seedRows[0].total);
+    const sourceItemCount = Number(metadata.sourceItemCount);
+    const uniqueVocabularyCount = Number(metadata.uniqueVocabularyCount);
+    const duplicateAliasCount = Number(metadata.duplicateAliasCount);
+    if (sourceItemCount !== 1500) {
+      throw new Error(`Expected 1500 IELTS source items, found ${sourceItemCount}.`);
+    }
+    if (activeUniqueItems !== uniqueVocabularyCount) {
+      throw new Error(
+        `Built-in unique vocabulary count mismatch: metadata=${uniqueVocabularyCount}, active=${activeUniqueItems}.`
+      );
+    }
+    if (sourceItemCount - uniqueVocabularyCount !== duplicateAliasCount || duplicateAliasCount < 0) {
+      throw new Error("Built-in duplicate-alias metadata is inconsistent.");
     }
 
     const [legacyRows] = await pool.execute(
@@ -53,7 +74,9 @@ async function verify() {
       throw new Error("Duplicate active collection memberships were found.");
     }
 
-    console.info("Database verification passed: seed, migration coverage, and active membership invariants are valid.");
+    console.info(
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; migration coverage and active membership invariants are valid.`
+    );
   } finally {
     await pool.end();
   }
