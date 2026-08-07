@@ -273,7 +273,9 @@
       const hint = documentObject.querySelector('#vocoraDoubleTapHint');
       button?.classList.remove('skip-armed');
       if (button && button.textContent !== 'بررسی پاسخ') button.textContent = 'بررسی پاسخ';
-      if (hint) hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
+      if (hint && hint.textContent !== 'نمی‌دانی؟ دو بار روی دکمه بزن') {
+        hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
+      }
       if (!keepTriggered) state.skipTriggered = false;
     }
 
@@ -301,7 +303,9 @@
       state.skipTapCount = 1;
       button.classList.add('skip-armed');
       button.textContent = 'یک بار دیگر بزن';
-      if (hint) hint.textContent = 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود';
+      if (hint && hint.textContent !== 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود') {
+        hint.textContent = 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود';
+      }
 
       if (state.skipTapTimer) windowObject.clearTimeout(state.skipTapTimer);
       state.skipTapTimer = windowObject.setTimeout(() => clearSkipTapState(), SKIP_WINDOW_MS);
