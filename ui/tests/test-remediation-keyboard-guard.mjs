@@ -18,6 +18,7 @@ const dom = new JSDOM(`<!doctype html><html><body>
       <input id="remediationInput">
       <button id="remediationSubmitBtn" type="submit">submit</button>
     </form>
+    <button id="vocoraRemediationPreviewContinue" type="button">continue</button>
   </section>
   <button id="ordinaryControl" type="button">ordinary</button>
 </body></html>`, {
@@ -31,16 +32,19 @@ const { document } = window;
 let targetKeydowns = 0;
 let legacyNextCards = 0;
 let unrelatedVoiceStarts = 0;
+let delayedContinues = 0;
 
 for (const selector of ['#remediationAcknowledgeBtn', '#remediationInput']) {
   document.querySelector(selector).addEventListener('keydown', () => { targetKeydowns += 1; });
 }
+document.querySelector('#vocoraRemediationPreviewContinue').addEventListener('click', () => { delayedContinues += 1; });
 
 window.eval(guardSource);
 assert.equal(window.VocoraRemediationKeyboardGuard.install(document), false, 'Installing the guard twice must be idempotent.');
+assert.equal(window.VocoraRemediationKeyboardGuard.loadReviewSessionUx(document), false, 'The review UX loader must be idempotent.');
+assert.equal(document.querySelector('#vocora-review-session-ux-script')?.getAttribute('src'), 'review-session-ux.js');
 
-// This models app-v2's document-level Enter shortcut, which used to call showNextCard()
-// while the remediation UI still owned the keyboard interaction.
+// Models app-v2's document-level Enter shortcut.
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter') return;
   event.preventDefault();
@@ -49,26 +53,32 @@ document.addEventListener('keydown', (event) => {
 });
 
 function pressEnter(element) {
-  const event = new window.KeyboardEvent('keydown', {
-    key: 'Enter',
-    bubbles: true,
-    cancelable: true
-  });
+  const event = new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
   element.dispatchEvent(event);
   return event;
 }
 
 let event = pressEnter(document.querySelector('#remediationAcknowledgeBtn'));
 assert.equal(targetKeydowns, 1, 'Enter must still reach the focused remediation action.');
-assert.equal(legacyNextCards, 0, 'Enter on the correction screen must not advance the underlying card.');
-assert.equal(unrelatedVoiceStarts, 0, 'Enter on the correction screen must not start another word voice.');
+assert.equal(legacyNextCards, 0, 'Enter on correction must not advance the underlying card.');
+assert.equal(unrelatedVoiceStarts, 0);
 assert.equal(event.defaultPrevented, false, 'The guard must preserve the control’s native Enter behavior.');
 
 event = pressEnter(document.querySelector('#remediationInput'));
-assert.equal(targetKeydowns, 2, 'Enter must still reach the remediation recall input/form.');
-assert.equal(legacyNextCards, 0, 'Enter in recall must not advance the underlying card before validation.');
-assert.equal(unrelatedVoiceStarts, 0, 'Enter in recall must not start another word voice.');
+assert.equal(targetKeydowns, 2, 'Enter must still reach the remediation form input.');
+assert.equal(legacyNextCards, 0);
+assert.equal(unrelatedVoiceStarts, 0);
 assert.equal(event.defaultPrevented, false, 'The guard must not cancel native form submission.');
+
+// During the assessment preview, Enter outside remediation must mean Continue,
+// never app-v2's global "next card" shortcut.
+document.querySelector('#practiceRemediation').classList.add('vocora-remediation-delayed');
+event = pressEnter(document.querySelector('#ordinaryControl'));
+assert.equal(delayedContinues, 1, 'Enter must continue into delayed remediation exactly once.');
+assert.equal(legacyNextCards, 0, 'Delayed remediation must not be bypassed by the legacy shortcut.');
+assert.equal(unrelatedVoiceStarts, 0);
+assert.equal(event.defaultPrevented, true);
+document.querySelector('#practiceRemediation').classList.remove('vocora-remediation-delayed');
 
 event = pressEnter(document.querySelector('#ordinaryControl'));
 assert.equal(legacyNextCards, 1, 'Enter outside remediation must retain the existing app shortcut.');
