@@ -3,7 +3,7 @@
 
   const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
   const STYLE_ID = 'vocora-review-session-ux-style';
-  const STYLE_HREF = 'review-session-ux.css';
+  const STYLE_HREF = 'review-session-ux.css?v=20260807-2317';
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
@@ -169,19 +169,25 @@
       const remediationRoot = this.remediationRoot;
 
       if (remediationStage) {
+        // Stage ownership is enforced in the DOM, not only by CSS. This keeps
+        // desktop/mobile identical even if a stale stylesheet is cached or the
+        // remediation view re-renders between observer ticks.
+        this.feedback?.classList.add('hidden');
+        this.answerForm?.classList.add('hidden');
         this.flashCard?.classList.add('remediation-active');
-        if (remediation && remediationRoot) remediationRoot.classList.remove('hidden');
+        if (remediation && remediationRoot) {
+          remediationRoot.classList.remove('hidden', 'vocora-remediation-delayed');
+        }
         this.answerInput?.blur();
         return;
       }
 
-      // A new primary card must never inherit the remediation-active class. That
-      // stale class used to hide every direct child of the card and produced the
-      // intermittent all-white card reported on mobile.
+      // A new primary/feedback card must never inherit remediation presentation.
       this.flashCard?.classList.remove('remediation-active');
 
       if (stage === PracticeStage.ANSWER) {
-        if (!remediation && remediationRoot) remediationRoot.classList.add('hidden');
+        remediationRoot?.classList.add('hidden');
+        remediationRoot?.classList.remove('vocora-remediation-delayed');
         this.answerForm?.classList.remove('hidden');
         this.feedback?.classList.add('hidden');
         if (this.answerInput) {
@@ -191,9 +197,16 @@
         return;
       }
 
-      if (feedbackStage && this.answerInput) {
-        this.answerInput.readOnly = true;
-        this.answerInput.blur();
+      if (feedbackStage) {
+        // The remediation adapter prepares its view immediately after a wrong
+        // answer. Feedback owns the screen until Continue, so hide that prepared
+        // view at the DOM level on every normalization pass. If the adapter
+        // removes .hidden again, the observer calls us and we restore this invariant.
+        remediationRoot?.classList.add('hidden');
+        if (this.answerInput) {
+          this.answerInput.readOnly = true;
+          this.answerInput.blur();
+        }
       }
     }
 
@@ -323,7 +336,8 @@
       const remediationRoot = component.remediationRoot;
       state.delayedRemediation = false;
       state.skipTriggered = false;
-      remediationRoot?.classList.remove('vocora-remediation-delayed');
+      remediationRoot?.classList.remove('vocora-remediation-delayed', 'hidden');
+      feedback.classList.add('hidden');
       flashCard.classList.add('remediation-active');
       syncStableStage();
       windowObject.setTimeout(() => {
@@ -420,11 +434,14 @@
     function delayImmediateRemediation(event) {
       if (event?.detail?.context && event.detail.context !== 'immediate') return;
       const remediationRoot = component.remediationRoot;
-      if (!remediationRoot || !isVisible(remediationRoot)) return;
+      if (!remediationRoot) return;
 
+      // Do not depend on a stylesheet selector to defer remediation. The adapter
+      // renders correction immediately, then emits this event. We mark the domain
+      // attempt as delayed and physically hide its root until the shared Continue.
       state.delayedRemediation = true;
       flashCard.classList.remove('remediation-active');
-      remediationRoot.classList.add('vocora-remediation-delayed');
+      remediationRoot.classList.add('vocora-remediation-delayed', 'hidden');
       restoreCorrectSpelling();
       syncStableStage();
     }
