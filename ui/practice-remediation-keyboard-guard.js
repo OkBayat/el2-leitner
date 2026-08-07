@@ -4,6 +4,7 @@
   const INSTALLATION = Symbol.for('vocora.practiceRemediation.keyboardGuard');
   const REVIEW_UX_LOADER = Symbol.for('vocora.reviewSessionUx.loader');
   const REMEDIATION_ROOT = '#practiceRemediation';
+  const DELAYED_CONTINUE = '#practiceRemediation.vocora-remediation-delayed #vocoraRemediationPreviewContinue';
   const REVIEW_UX_SCRIPT_ID = 'vocora-review-session-ux-script';
   const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js';
 
@@ -17,10 +18,19 @@
     if (documentObject[INSTALLATION]) return false;
 
     const handler = (event) => {
-      if (!ownsEnter(event)) return;
+      const delayedContinue = event?.key === 'Enter'
+        ? documentObject.querySelector?.(DELAYED_CONTINUE)
+        : null;
+      if (!ownsEnter(event) && !delayedContinue) return;
 
-      // The focused button/input has already received the bubbling event. Stop only
-      // later document-level shortcuts; do not prevent the native click/form action.
+      // When the initial red/yellow result is waiting for acknowledgement,
+      // Enter must open remediation instead of reaching app-v2's "next card"
+      // shortcut. If focus is already inside remediation, preserve the native
+      // button/form action and only stop the later document shortcut.
+      if (delayedContinue && !event.target?.closest?.(REMEDIATION_ROOT)) {
+        event.preventDefault();
+        delayedContinue.click();
+      }
       event.stopImmediatePropagation();
     };
 
