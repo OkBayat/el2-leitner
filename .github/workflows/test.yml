@@ -65,21 +65,41 @@ jobs:
 
           curl --fail --silent --show-error \
             --cookie /tmp/admin-cookies \
-            http://127.0.0.1:3000/api/library \
-            | jq -e '.collections[] | select(.id == "ielts-listening-core-1500" and .wordCount == 1500)'
+            http://127.0.0.1:3000/api/library > /tmp/library.json
+          jq -e '.collections[]
+            | select(.id == "ielts-listening-core-1500")
+            | select(.metadata.sourceItemCount == 1500)
+            | select(.wordCount == .metadata.uniqueVocabularyCount)
+            | select(.metadata.duplicateAliasCount == (.metadata.sourceItemCount - .metadata.uniqueVocabularyCount))' \
+            /tmp/library.json
+          IELTS_UNIQUE=$(jq -r '.collections[] | select(.id == "ielts-listening-core-1500") | .wordCount' /tmp/library.json)
+          test "$IELTS_UNIQUE" -gt 0
+          test "$IELTS_UNIQUE" -le 1500
 
+          # A new learner is projected from normalized shared catalog data without copying 1500 source rows into user state storage.
+          curl --fail --silent --show-error \
+            --cookie /tmp/admin-cookies \
+            http://127.0.0.1:3000/api/state > /tmp/admin-state.json
+          jq -e --argjson unique "$IELTS_UNIQUE" '.revision == 0 and (.state.words | length) == $unique' /tmp/admin-state.json
+
+          # Save the real full state shape used by the browser, changing only Monday.
+          jq '{
+            revision: .revision,
+            state: (.state
+              | .words = [.words[] | if .term == "Monday" then .box = 1 | .attempts = 1 | .correct = 1 | .introducedOn = "2026-08-07" | .due = "2026-08-07" else . end])
+          }' /tmp/admin-state.json > /tmp/admin-save.json
           curl --fail --silent --show-error \
             --cookie /tmp/admin-cookies \
             --request PUT \
             --header 'Content-Type: application/json' \
-            --data '{"state":{"schemaVersion":2,"words":[{"term":"Monday","accepted":["Monday"],"category":"Calendar and time","box":1,"attempts":1,"correct":1,"mistakes":0}],"history":[],"daily":{},"settings":{"dailyNew":10,"dailyGoal":20,"voiceRate":0.85,"theme":"system"}},"revision":0}' \
+            --data-binary @/tmp/admin-save.json \
             http://127.0.0.1:3000/api/state \
             | jq -e '.revision == 1'
 
           curl --fail --silent --show-error \
             --cookie /tmp/admin-cookies \
             http://127.0.0.1:3000/api/state \
-            | jq -e '.state.words | length == 1500'
+            | jq -e --argjson unique "$IELTS_UNIQUE" '(.state.words | length) == $unique and (.state.words[] | select(.term == "Monday" and .box == 1 and .attempts == 1))'
 
           curl --fail --silent --show-error \
             --cookie /tmp/admin-cookies \
@@ -93,7 +113,7 @@ jobs:
             --header 'Content-Type: application/json' \
             --data '{"text":"## Unit 1\n### Lesson A\n1. aef3-alpha-token\n2. aef3-beta-token\n### Lesson B\n3. aef3-gamma-token","mode":"replace"}' \
             http://127.0.0.1:3000/api/library/american-english-file-3/import \
-            | jq -e '.result.found == 3 and .result.added == 3'
+            | jq -e '.result.sourceItemCount == 3 and .result.uniqueVocabularyCount == 3 and .result.duplicatesSkipped == 0 and .result.added == 3'
 
           curl --fail --silent --show-error \
             --cookie-jar /tmp/learner-cookies \
@@ -122,7 +142,7 @@ jobs:
           jq '{
             revision: .revision,
             state: (.state
-              | .words = [.words[] | if .term == "aef3-alpha-token" then .box = 2 | .attempts = 1 | .correct = 1 else . end]
+              | .words = [.words[] | if .term == "aef3-alpha-token" then .box = 2 | .attempts = 1 | .correct = 1 | .introducedOn = "2026-08-07" | .due = "2026-08-09" | .lastReviewed = "2026-08-07T07:00:00.000Z" else . end]
               | .history += [{at:"2026-08-07T07:00:00.000Z",day:"2026-08-07",wordId:(.words[] | select(.term == "aef3-alpha-token") | .id),term:"aef3-alpha-token",answer:"aef3-alpha-token",correct:true,mode:"review",promoted:true,previousBox:1,newBox:2,mistakeNumber:null}])
           }' /tmp/learner-state.json > /tmp/learner-save.json
 
@@ -187,7 +207,7 @@ jobs:
             --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='learner2@example.com' AND re.term_snapshot='aef3-alpha-token' AND re.practice_session_id IS NOT NULL;" \
             | grep -qx '1'
 
-          # Re-saving the projected normalized state must not duplicate events whose legacy word id changed during migration/projection.
+          # Re-saving the projected normalized state must not duplicate append-only events.
           curl --fail --silent --show-error \
             --cookie /tmp/learner-cookies \
             http://127.0.0.1:3000/api/state > /tmp/projected-state.json
@@ -206,7 +226,7 @@ jobs:
             --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='learner2@example.com' AND re.term_snapshot='aef3-alpha-token';" \
             | grep -qx '1'
 
-          # Preserve append-only audit history while matching the existing UI's reset-all-progress behavior.
+          # Preserve append-only audit history while matching the existing UI reset-all-progress behavior.
           curl --fail --silent --show-error \
             --cookie /tmp/learner-cookies \
             http://127.0.0.1:3000/api/state > /tmp/pre-reset-state.json
