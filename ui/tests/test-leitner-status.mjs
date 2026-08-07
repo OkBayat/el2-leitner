@@ -121,4 +121,31 @@ const appSource = fs.readFileSync(new URL('../app-v2.js', import.meta.url), 'utf
 assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual section timing must stay aligned with the app scheduling rules');
 assert.deepEqual([...waits], [0, 1, 2, 3, 7, 14], 'The visual must use the same wait-day schedule as the learning engine');
 
+const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.url), 'utf8');
+assert.match(layoutCss, /grid-template-columns:\s*minmax\(300px, 1fr\)\s+minmax\(500px, 820px\)/, 'Desktop layout must cap the Leitner card instead of letting it grow across the dashboard');
+assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House stages must stay centered and use compact progressive widths');
+assert.match(layoutCss, /\.leitner-row\s*\{[\s\S]*?min-height:\s*34px;/, 'Desktop house rows must stay compact');
+assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;/, 'Desktop stage blocks must keep the approved compact height');
+
+const expectedVisualWidths = [
+  { percent: 40, max: 250 },
+  { percent: 54, max: 340 },
+  { percent: 70, max: 440 },
+  { percent: 85, max: 535 },
+  { percent: 100, max: 630 }
+];
+const visualWidths = expectedVisualWidths.map((_, index) => {
+  const houseNumber = index + 1;
+  const match = new RegExp(`\\.leitner-house--${houseNumber}\\s*\\{([\\s\\S]*?)\\n\\}`, 'm').exec(layoutCss);
+  assert.ok(match, `House ${houseNumber} must define its own visual width`);
+  const percent = Number(/--house-width:\s*(\d+)%/.exec(match[1])?.[1]);
+  const max = Number(/--house-max:\s*(\d+)px/.exec(match[1])?.[1]);
+  return { percent, max };
+});
+assert.deepEqual(visualWidths, expectedVisualWidths, 'House 1–5 visual groups must grow progressively like the approved mockup');
+for (let index = 1; index < visualWidths.length; index += 1) {
+  assert.ok(visualWidths[index].percent > visualWidths[index - 1].percent, `House ${index + 1} must be wider than House ${index}`);
+  assert.ok(visualWidths[index].max > visualWidths[index - 1].max, `House ${index + 1} maximum width must be wider than House ${index}`);
+}
+
 console.log('Leitner status distribution tests passed.');
