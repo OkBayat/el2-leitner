@@ -42,7 +42,11 @@ document.querySelector('#nextCardBtn').addEventListener('click', () => { delayed
 window.eval(guardSource);
 assert.equal(window.VocoraRemediationKeyboardGuard.install(document), false, 'Installing the guard twice must be idempotent.');
 assert.equal(window.VocoraRemediationKeyboardGuard.loadReviewSessionUx(document), false, 'The review UX loader must be idempotent.');
-assert.equal(document.querySelector('#vocora-review-session-ux-script')?.getAttribute('src'), 'review-session-ux.js');
+assert.match(
+  document.querySelector('#vocora-review-session-ux-script')?.getAttribute('src') || '',
+  /^review-session-ux\.js\?v=/,
+  'Review UX loader must cache-bust the dynamic asset so deployed clients do not mix old JS/CSS with the new state model.'
+);
 assert.doesNotMatch(guardSource, /vocoraRemediationPreviewContinue/, 'The guard must not depend on a duplicated remediation Continue button.');
 
 // Models app-v2's document-level Enter shortcut.
