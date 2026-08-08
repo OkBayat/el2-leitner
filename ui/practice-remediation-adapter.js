@@ -2,11 +2,10 @@
   'use strict';
 
   const SUPPORTED_MODES = Object.freeze(['box1', 'new']);
-  const SESSION_STARTERS = Object.freeze({
-    beginSessionBtn: 'scheduled',
-    boxOnePracticeBtn: 'box1',
-    practiceExtraBtn: 'box1'
-  });
+  const SESSION_STARTERS = Object.freeze({ beginSessionBtn: 'scheduled', boxOnePracticeBtn: 'box1', practiceExtraBtn: 'box1' });
+  const PracticeStage = Object.freeze({ IDLE: 'idle', ANSWER: 'answer', FEEDBACK_CORRECT: 'feedback-correct', FEEDBACK_WRONG: 'feedback-wrong', FEEDBACK_WARNING: 'feedback-warning', REMEDIATION_CORRECTION: 'remediation-correction', REMEDIATION_RECALL: 'remediation-recall', REMEDIATION_COPY: 'remediation-copy', REMEDIATION_COMPLETED: 'remediation-completed' });
+  const PracticeCommand = Object.freeze({ NONE: 'none', RENDER: 'render', ADVANCE_PRIMARY: 'advance-primary' });
+  const SKIP_WINDOW_MS = 430;
 
   function resolvePracticeMode(instruction = '') {
     const value = String(instruction || '');
@@ -17,10 +16,7 @@
   }
 
   function parsePersianInteger(value) {
-    const normalized = String(value || '')
-      .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
-      .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
-      .replace(/[^\d]/g, '');
+    const normalized = String(value || '').replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))).replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit))).replace(/[^\d]/g, '');
     return normalized ? Number(normalized) : null;
   }
 
@@ -37,615 +33,243 @@
     else Promise.resolve().then(callback);
   }
 
-  function setPresentationHidden(element, hidden) {
-    if (!element) return;
-    element.classList.toggle('hidden', hidden);
-    element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
-    if (hidden) element.setAttribute('inert', '');
-    else element.removeAttribute('inert');
+  function cloneWord(word) {
+    if (!word?.id) return null;
+    return { id: word.id, term: String(word.term || ''), accepted: Array.isArray(word.accepted) && word.accepted.length ? [...word.accepted] : [String(word.term || '')], category: String(word.category || ''), box: Number(word.box) || 0, notes: String(word.notes || '') };
   }
 
-  class VocoraPracticeSessionPort {
-    constructor({ window: windowObject, document: documentObject }) {
-      this.window = windowObject;
-      this.document = documentObject;
-      this.explicitMode = null;
-    }
-
-    setMode(mode) {
-      this.explicitMode = mode || null;
-    }
-
-    mode() {
-      return this.explicitMode || resolvePracticeMode(this.document.querySelector('#cardInstruction')?.textContent);
-    }
-
-    isSupportedMode() {
-      return SUPPORTED_MODES.includes(this.mode());
-    }
-
-    isSessionVisible() {
-      const session = this.document.querySelector('#reviewSession');
-      return Boolean(session && !session.classList.contains('hidden'));
-    }
-
-    currentWord() {
-      const word = this.window.VazheyarTest?.getCurrentWord?.();
-      if (!word?.id) return null;
-      return {
-        id: word.id,
-        term: String(word.term || ''),
-        accepted: Array.isArray(word.accepted) && word.accepted.length ? [...word.accepted] : [String(word.term || '')],
-        category: String(word.category || ''),
-        box: Number(word.box) || 0,
-        notes: String(word.notes || '')
-      };
-    }
-
-    isCorrect(answer, word, forcedWrong = false) {
-      if (forcedWrong) return false;
-      if (typeof this.window.VazheyarTest?.isCorrectAnswer === 'function') {
-        return this.window.VazheyarTest.isCorrectAnswer(answer, word);
-      }
-      const normalize = this.window.VocoraPractice?.defaultNormalize || ((value) => String(value || '').trim().toLowerCase());
-      const normalized = normalize(answer);
-      return Boolean(normalized) && word.accepted.some((candidate) => normalize(candidate) === normalized);
-    }
-
-    shouldFlushBeforeNext() {
-      if (this.mode() !== 'new') return false;
-      const position = sessionPosition(this.document.querySelector('#sessionCounter')?.textContent);
-      const feedbackVisible = !this.document.querySelector('#answerFeedback')?.classList.contains('hidden');
-      return Boolean(position && feedbackVisible && position.current >= position.total);
-    }
-
-    yieldToRemediation() {
-      setPresentationHidden(this.document.querySelector('#answerFeedback'), true);
-      setPresentationHidden(this.document.querySelector('#answerForm'), true);
-      setPresentationHidden(this.document.querySelector('#dontKnowBtn'), true);
-    }
-
-    continueToNextCard() {
-      this.document.querySelector('#nextCardBtn')?.click();
-    }
-
-    speak(word) {
-      if (!word?.term || !('speechSynthesis' in this.window) || typeof this.window.SpeechSynthesisUtterance !== 'function') {
-        return false;
-      }
-      this.window.speechSynthesis.cancel?.();
-      const utterance = new this.window.SpeechSynthesisUtterance(word.term);
-      utterance.lang = 'en-GB';
-      const configuredRate = Number(this.window.VazheyarTest?.getState?.()?.settings?.voiceRate);
-      utterance.rate = Number.isFinite(configuredRate) ? Math.min(Math.max(configuredRate, 0.45), 1.2) : 0.85;
-      const voices = this.window.speechSynthesis.getVoices?.() || [];
-      utterance.voice = voices.find((voice) => /^en-GB/i.test(voice.lang))
-        || voices.find((voice) => /^en/i.test(voice.lang))
-        || null;
-      this.window.speechSynthesis.speak?.(utterance);
-      return true;
-    }
-  }
-
-  class SpellingRemediationView {
-    constructor({ document: documentObject, domain = documentObject.defaultView?.VocoraPractice }) {
-      this.document = documentObject;
-      this.domain = domain;
-      this.root = null;
-      this.handlers = null;
-      this.originalMeta = null;
-      this.faNumber = new documentObject.defaultView.Intl.NumberFormat('fa-IR');
-    }
-
-    mount(handlers) {
-      if (this.root) return this.root;
-      this.handlers = handlers;
-      const feedback = this.document.querySelector('#answerFeedback');
-      if (!feedback) throw new Error('Vocora answer feedback container was not found.');
-
-      const root = this.document.createElement('section');
-      root.id = 'practiceRemediation';
-      root.className = 'practice-remediation hidden';
-      root.setAttribute('aria-live', 'polite');
-      root.setAttribute('aria-labelledby', 'remediationTitle');
-      root.innerHTML = `
-        <div class="remediation-heading">
-          <span id="remediationKicker" class="remediation-kicker"></span>
-          <h3 id="remediationTitle"></h3>
-          <p id="remediationDescription"></p>
-        </div>
-        <div id="remediationComparison" class="remediation-comparison hidden">
-          <div class="remediation-spelling-row wrong-spelling" dir="ltr">
-            <small>پاسخ تو</small>
-            <div id="remediationUserSpelling" class="remediation-spelling"></div>
-          </div>
-          <div class="remediation-spelling-row correct-spelling-row" dir="ltr">
-            <small>املای صحیح</small>
-            <div id="remediationCorrectSpelling" class="remediation-spelling"></div>
-          </div>
-        </div>
-        <p id="remediationHint" class="remediation-hint"></p>
-        <button id="remediationListenBtn" class="remediation-listen" type="button">
-          <span aria-hidden="true">▶</span><span>پخش تلفظ</span>
-        </button>
-        <form id="remediationForm" class="remediation-form hidden" autocomplete="off">
-          <label id="remediationInputLabel" for="remediationInput"></label>
-          <input id="remediationInput" class="answer-input" type="text" lang="en" dir="ltr" spellcheck="false" autocapitalize="none">
-          <p id="remediationValidation" class="remediation-validation" role="alert"></p>
-          <button id="remediationSubmitBtn" class="btn btn-primary wide" type="submit"></button>
-        </form>
-        <div class="remediation-actions">
-          <button id="remediationAcknowledgeBtn" class="btn btn-primary wide hidden" type="button">متوجه شدم؛ حالا از حفظ می‌نویسم</button>
-          <button id="remediationContinueBtn" class="btn btn-primary wide hidden" type="button">ادامهٔ تمرین</button>
-        </div>`;
-      feedback.insertAdjacentElement('afterend', root);
-      this.root = root;
-
-      this.query('#remediationAcknowledgeBtn').addEventListener('click', () => this.handlers.onAcknowledge());
-      this.query('#remediationContinueBtn').addEventListener('click', () => this.handlers.onContinue());
-      this.query('#remediationListenBtn').addEventListener('click', () => this.handlers.onListen());
-      this.query('#remediationForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        this.handlers.onSubmit(this.query('#remediationInput').value);
-      });
-      return root;
-    }
-
-    query(selector) {
-      return this.root?.querySelector(selector) || null;
-    }
-
-    show({ snapshot, word, outcome = null }) {
-      if (!this.root) throw new Error('Remediation view must be mounted before rendering.');
-      this.captureMeta();
-      this.updateMeta(word);
-      this.root.classList.remove('vocora-remediation-delayed');
-      setPresentationHidden(this.root, false);
-      this.document.querySelector('#flashCard')?.classList.add('remediation-active');
-
-      const phase = snapshot.phase;
-      const context = snapshot.context;
-      const isRecheck = context === this.domain.RemediationContext.RECHECK;
-      const phaseNames = this.domain.RemediationPhase;
-      const comparisonVisible = [phaseNames.CORRECTION, phaseNames.COPY].includes(phase);
-      const formVisible = [phaseNames.RECALL, phaseNames.COPY].includes(phase);
-
-      this.query('#remediationComparison').classList.toggle('hidden', !comparisonVisible);
-      if (!comparisonVisible) {
-        this.query('#remediationUserSpelling').replaceChildren();
-        this.query('#remediationCorrectSpelling').replaceChildren();
-      }
-      this.query('#remediationForm').classList.toggle('hidden', !formVisible);
-      if (!formVisible) this.query('#remediationInput').value = '';
-      this.query('#remediationAcknowledgeBtn').classList.toggle('hidden', phase !== phaseNames.CORRECTION);
-      this.query('#remediationContinueBtn').classList.toggle('hidden', phase !== phaseNames.COMPLETED);
-      this.query('#remediationListenBtn').classList.toggle('hidden', phase === phaseNames.COMPLETED);
-      this.query('#remediationValidation').textContent = '';
-
-      if (comparisonVisible && snapshot.comparison) this.renderComparison(snapshot.comparison);
-
-      if (phase === phaseNames.CORRECTION) {
-        this.setHeading('اصلاح فوری', 'اشتباه را دقیق ببین', 'قبل از ادامه، تفاوت پاسخ خودت با املای صحیح را بررسی کن.');
-        this.query('#remediationHint').textContent = snapshot.hint;
-        this.focusSoon('#remediationAcknowledgeBtn');
-        return;
-      }
-
-      if (phase === phaseNames.RECALL) {
-        this.setHeading(
-          isRecheck ? `بازآزمایی ${this.faNumber.format(snapshot.recheckNumber)}` : 'بازیابی از حافظه',
-          'حالا بدون دیدن پاسخ بنویس',
-          'املای صحیح پنهان شده است. به تلفظ گوش کن و کل کلمه را از حافظه تایپ کن.'
-        );
-        this.query('#remediationHint').textContent = 'هیچ حرف یا گزینه‌ای نمایش داده نمی‌شود؛ کل کلمه را خودت تولید کن.';
-        this.configureForm('املای کلمه از حافظه', 'کلمه را کامل بنویس…', 'بررسی املای من');
-        this.focusSoon('#remediationInput');
-        return;
-      }
-
-      if (phase === phaseNames.COPY) {
-        this.setHeading('رونویسی متمرکز', 'یک بار دقیق رونویسی کن', 'پاسخ صحیح را از چپ به راست نگاه کن و همان را یک بار کامل بنویس.');
-        this.query('#remediationHint').textContent = snapshot.hint;
-        this.configureForm('رونویسی دقیق املای صحیح', 'املای صحیح را رونویسی کن…', 'رونویسی و پنهان‌کردن پاسخ');
-        if (snapshot.copyFailures > 0) {
-          this.query('#remediationValidation').textContent = 'رونویسی هنوز دقیقاً مطابق املای صحیح نیست؛ دوباره با دقت مقایسه کن.';
-        } else if (snapshot.recallFailures > 0) {
-          this.query('#remediationValidation').textContent = 'این بار هم درست نبود؛ ابتدا یک رونویسی متمرکز انجام بده.';
-        }
-        this.focusSoon('#remediationInput');
-        return;
-      }
-
-      const scheduledGap = outcome?.nextRecheck?.gap;
-      this.setHeading(
-        isRecheck ? 'بازآزمایی کامل شد' : 'اصلاح کامل شد',
-        'این بار درست نوشتی',
-        isRecheck
-          ? (outcome?.nextRecheck
-            ? `برای تثبیت بیشتر، این کلمه پس از ${this.faNumber.format(scheduledGap)} کارت دیگر یک بار دیگر بررسی می‌شود.`
-            : 'بازآزمایی این کلمه در همین جلسه با موفقیت تمام شد.')
-          : `خطای اصلی ثبت شد و منطق جعبهٔ لایتنر دست‌نخورده ماند. این کلمه پس از ${this.faNumber.format(scheduledGap ?? 3)} کارت دیگر دوباره بررسی می‌شود.`
-      );
-      this.query('#remediationHint').textContent = '';
-      this.focusSoon('#remediationContinueBtn');
-    }
-
-    configureForm(label, placeholder, buttonText) {
-      this.query('#remediationInputLabel').textContent = label;
-      const input = this.query('#remediationInput');
-      input.value = '';
-      input.placeholder = placeholder;
-      this.query('#remediationSubmitBtn').textContent = buttonText;
-    }
-
-    setHeading(kicker, title, description) {
-      this.query('#remediationKicker').textContent = kicker;
-      this.query('#remediationTitle').textContent = title;
-      this.query('#remediationDescription').textContent = description;
-    }
-
-    renderComparison(comparison) {
-      this.renderTokens(this.query('#remediationUserSpelling'), comparison.answerTokens, 'پاسخی ثبت نشد');
-      this.renderTokens(this.query('#remediationCorrectSpelling'), comparison.targetTokens, comparison.target);
-    }
-
-    renderTokens(container, tokens, emptyLabel) {
-      container.replaceChildren();
-      if (!tokens.length) {
-        const empty = this.document.createElement('span');
-        empty.className = 'spelling-empty';
-        empty.textContent = emptyLabel;
-        container.append(empty);
-        return;
-      }
-      tokens.forEach(({ value, status }) => {
-        const token = this.document.createElement('span');
-        token.className = `spelling-token spelling-${status}`;
-        token.textContent = value === ' ' ? '\u00A0' : value;
-        container.append(token);
-      });
-    }
-
-    captureMeta() {
-      if (this.originalMeta) return;
-      this.originalMeta = {
-        category: this.document.querySelector('#cardCategory')?.textContent || '',
-        box: this.document.querySelector('#cardBox')?.textContent || ''
-      };
-    }
-
-    updateMeta(word) {
-      const category = this.document.querySelector('#cardCategory');
-      const box = this.document.querySelector('#cardBox');
-      if (category) category.textContent = word.category || 'تمرین املا';
-      if (box) box.textContent = word.box ? `خانهٔ ${this.faNumber.format(word.box)}` : 'تمرین همان جلسه';
-    }
-
-    defer() {
-      if (this.root) {
-        this.root.classList.add('vocora-remediation-delayed');
-        setPresentationHidden(this.root, true);
-      }
-      this.document.querySelector('#flashCard')?.classList.remove('remediation-active');
-    }
-
-    hide({ restoreMeta = true } = {}) {
-      if (this.root) {
-        this.root.classList.remove('vocora-remediation-delayed');
-        setPresentationHidden(this.root, true);
-      }
-      this.document.querySelector('#flashCard')?.classList.remove('remediation-active');
-      if (restoreMeta) this.restoreMeta();
-    }
-
-    restoreMeta() {
-      if (!this.originalMeta) return;
-      const category = this.document.querySelector('#cardCategory');
-      const box = this.document.querySelector('#cardBox');
-      if (category) category.textContent = this.originalMeta.category;
-      if (box) box.textContent = this.originalMeta.box;
-      this.originalMeta = null;
-    }
-
-    focusSoon(selector) {
-      const view = this;
-      setTimeout(() => view.query(selector)?.focus(), 0);
-    }
-  }
-
-  class PracticeRemediationController {
-    constructor({
-      window: windowObject,
-      document: documentObject,
-      domain = windowObject.VocoraPractice,
-      policy = null,
-      queue = null,
-      port = null,
-      view = null
-    }) {
-      if (!domain) throw new Error('VocoraPractice domain module is required.');
-      this.window = windowObject;
-      this.document = documentObject;
+  class PracticeSessionWorkflow {
+    constructor({ domain, policy = null, queue = null } = {}) {
+      if (!domain?.RemediationAttempt || !domain?.SameSessionRecheckQueue) throw new TypeError('VocoraPractice domain is required.');
       this.domain = domain;
       this.policy = policy || new domain.SameSessionRecheckPolicy();
       this.queue = queue || new domain.SameSessionRecheckQueue();
-      this.port = port || new VocoraPracticeSessionPort({ window: windowObject, document: documentObject });
-      this.view = view || new SpellingRemediationView({ document: documentObject, domain });
+      this.mode = null;
+      this.feedback = null;
       this.active = null;
-      this.presentationDeferred = false;
-      this.mounted = false;
-      this.observer = null;
+    }
+
+    begin(mode) { this.reset(); this.mode = mode || null; return this.result(PracticeCommand.RENDER); }
+    reset() { this.mode = null; this.feedback = null; this.active = null; this.queue.clear(); return this.snapshot(); }
+
+    primaryAnswered({ word, answer = '', correct = false, forcedWrong = false }) {
+      const copiedWord = cloneWord(word);
+      if (!copiedWord) throw new TypeError('A primary word is required.');
+      this.queue.advance();
+      const kind = correct ? 'correct' : forcedWrong ? 'warning' : 'wrong';
+      this.feedback = { kind, word: copiedWord, answer: String(answer || ''), spelling: copiedWord.accepted.join(' / ') };
+      this.active = null;
+      if (!correct && SUPPORTED_MODES.includes(this.mode)) {
+        const attempt = this.domain.RemediationAttempt.immediate({ wordId: copiedWord.id, accepted: copiedWord.accepted, initialAnswer: answer, policy: this.policy });
+        this.active = { attempt, word: copiedWord, mode: this.mode, entry: null, outcome: null, presentationDeferred: true };
+      }
+      return this.result(PracticeCommand.RENDER);
+    }
+
+    continue({ flush = false } = {}) {
+      if (this.active?.presentationDeferred) { this.active.presentationDeferred = false; return this.result(PracticeCommand.RENDER); }
+      if (this.active) {
+        if (this.active.attempt.phase !== this.domain.RemediationPhase.COMPLETED) return this.result(PracticeCommand.NONE);
+        this.active = null;
+      }
+      this.feedback = null;
+      const due = this.queue.takeNext({ flush });
+      if (due) { this.startRecheck(due); return this.result(PracticeCommand.RENDER); }
+      return this.result(PracticeCommand.ADVANCE_PRIMARY);
+    }
+
+    acknowledge() {
+      if (!this.active || this.active.presentationDeferred || this.active.attempt.phase !== this.domain.RemediationPhase.CORRECTION) return this.result(PracticeCommand.NONE);
+      this.active.attempt.acknowledgeCorrection();
+      return this.result(PracticeCommand.RENDER);
+    }
+
+    submitRemediation(answer) {
+      if (!this.active || this.active.presentationDeferred) return this.result(PracticeCommand.NONE);
+      const phase = this.active.attempt.phase;
+      if (phase === this.domain.RemediationPhase.RECALL) this.active.attempt.submitRecall(answer);
+      else if (phase === this.domain.RemediationPhase.COPY) this.active.attempt.submitCopy(answer);
+      else return this.result(PracticeCommand.NONE);
+      if (this.active.attempt.phase === this.domain.RemediationPhase.COMPLETED && !this.active.outcome) {
+        const outcome = this.active.attempt.outcome();
+        this.active.outcome = outcome;
+        if (outcome.nextRecheck) this.queue.schedule({ word: this.active.word, mode: this.active.mode, recheckNumber: outcome.nextRecheck.number, originId: this.active.entry?.originId || this.active.entry?.id || null }, outcome.nextRecheck.gap);
+      }
+      return this.result(PracticeCommand.RENDER);
+    }
+
+    scheduleRecheck({ word, mode = this.mode, recheckNumber = 1, originId = null }, gap) { return this.queue.schedule({ word: cloneWord(word), mode, recheckNumber, originId }, gap); }
+    startRecheck(entry) { const word = cloneWord(entry.word); const attempt = this.domain.RemediationAttempt.recheck({ wordId: word.id, accepted: word.accepted, recheckNumber: entry.recheckNumber, policy: this.policy }); this.feedback = null; this.active = { attempt, word, mode: entry.mode, entry, outcome: null, presentationDeferred: false }; }
+
+    stage() {
+      if (!this.mode) return PracticeStage.IDLE;
+      if (this.active) {
+        if (this.active.presentationDeferred) return this.feedbackStage();
+        const phase = this.active.attempt.phase;
+        if (phase === this.domain.RemediationPhase.CORRECTION) return PracticeStage.REMEDIATION_CORRECTION;
+        if (phase === this.domain.RemediationPhase.RECALL) return PracticeStage.REMEDIATION_RECALL;
+        if (phase === this.domain.RemediationPhase.COPY) return PracticeStage.REMEDIATION_COPY;
+        if (phase === this.domain.RemediationPhase.COMPLETED) return PracticeStage.REMEDIATION_COMPLETED;
+      }
+      if (this.feedback) return this.feedbackStage();
+      return PracticeStage.ANSWER;
+    }
+
+    feedbackStage() { if (this.feedback?.kind === 'correct') return PracticeStage.FEEDBACK_CORRECT; if (this.feedback?.kind === 'warning') return PracticeStage.FEEDBACK_WARNING; return PracticeStage.FEEDBACK_WRONG; }
+
+    activeSnapshot() {
+      if (!this.active) return null;
+      const attempt = this.active.attempt.snapshot();
+      return { wordId: this.active.word.id, word: cloneWord(this.active.word), mode: this.active.mode, phase: attempt.phase, context: attempt.context, recheckNumber: attempt.recheckNumber, presentationDeferred: this.active.presentationDeferred, spelling: this.active.word.accepted.join(' / '), comparison: attempt.comparison, hint: attempt.hint, recallFailures: attempt.recallFailures, copyFailures: attempt.copyFailures, correctOnFirstRecall: attempt.correctOnFirstRecall, outcome: this.active.outcome ? { ...this.active.outcome, nextRecheck: this.active.outcome.nextRecheck ? { ...this.active.outcome.nextRecheck } : null } : null };
+    }
+
+    snapshot() { return { mode: this.mode, stage: this.stage(), feedback: this.feedback ? { ...this.feedback, word: cloneWord(this.feedback.word) } : null, active: this.activeSnapshot(), queue: this.queue.snapshot() }; }
+    result(command) { return { command, snapshot: this.snapshot() }; }
+  }
+
+  class VocoraPracticeSessionPort {
+    constructor({ window: windowObject, document: documentObject }) { this.window = windowObject; this.document = documentObject; this.explicitMode = null; this.allowNextClick = false; }
+    setMode(mode) { this.explicitMode = mode || null; }
+    mode() { return this.explicitMode || resolvePracticeMode(this.document.querySelector('#cardInstruction')?.textContent); }
+    currentWord() { return cloneWord(this.window.VazheyarTest?.getCurrentWord?.()); }
+    isCorrect(answer, word, forcedWrong = false) { if (forcedWrong) return false; if (typeof this.window.VazheyarTest?.isCorrectAnswer === 'function') return this.window.VazheyarTest.isCorrectAnswer(answer, word); const normalize = this.window.VocoraPractice?.defaultNormalize || ((value) => String(value || '').trim().toLowerCase()); const value = normalize(answer); return Boolean(value) && word.accepted.some((candidate) => normalize(candidate) === value); }
+    isSessionVisible() { const session = this.document.querySelector('#reviewSession'); return Boolean(session && !session.classList.contains('hidden')); }
+    shouldFlushBeforeNext() { if (this.mode() !== 'new') return false; const position = sessionPosition(this.document.querySelector('#sessionCounter')?.textContent); const feedbackVisible = !this.document.querySelector('#answerFeedback')?.classList.contains('hidden'); return Boolean(position && feedbackVisible && position.current >= position.total); }
+    advancePrimary() { const next = this.document.querySelector('#nextCardBtn'); if (!next) return false; this.allowNextClick = true; try { next.click(); } finally { this.allowNextClick = false; } return true; }
+    speak(word) { if (!word?.term || !('speechSynthesis' in this.window) || typeof this.window.SpeechSynthesisUtterance !== 'function') return false; this.window.speechSynthesis.cancel?.(); const utterance = new this.window.SpeechSynthesisUtterance(word.term); utterance.lang = 'en-GB'; const rate = Number(this.window.VazheyarTest?.getState?.()?.settings?.voiceRate); utterance.rate = Number.isFinite(rate) ? Math.min(Math.max(rate, 0.45), 1.2) : 0.85; const voices = this.window.speechSynthesis.getVoices?.() || []; utterance.voice = voices.find((voice) => /^en-GB/i.test(voice.lang)) || voices.find((voice) => /^en/i.test(voice.lang)) || null; this.window.speechSynthesis.speak?.(utterance); return true; }
+  }
+
+  class PracticeSessionController {
+    constructor({ window: windowObject, document: documentObject, workflow = null, port = null, view = null }) {
+      if (!windowObject?.VocoraPractice) throw new Error('VocoraPractice domain is required.');
+      if (!windowObject?.VocoraReviewSessionUx?.PracticeSessionView) throw new Error('Vocora practice view is required.');
+      this.window = windowObject; this.document = documentObject; this.workflow = workflow || new PracticeSessionWorkflow({ domain: windowObject.VocoraPractice }); this.port = port || new VocoraPracticeSessionPort({ window: windowObject, document: documentObject }); this.view = view || new windowObject.VocoraReviewSessionUx.PracticeSessionView({ window: windowObject, document: documentObject }); this.pendingAssessment = null; this.skipTapCount = 0; this.skipTapTimer = null; this.mounted = false;
     }
 
     mount() {
       if (this.mounted) return this;
-      this.view.mount({
-        onAcknowledge: () => this.acknowledge(),
-        onSubmit: (answer) => this.submitRemediationAnswer(answer),
-        onContinue: () => this.continueSession(),
-        onListen: () => this.listen()
-      });
-
-      this.document.addEventListener('submit', (event) => this.captureSubmit(event), true);
+      this.view.mount({ acknowledge: () => this.acknowledge(), submit: (answer) => this.submitRemediationAnswer(answer), continue: () => this.continue(), listen: () => this.listen() });
       this.document.addEventListener('click', (event) => this.captureClick(event), true);
-      this.document.addEventListener('keydown', (event) => this.captureKeydown(event), true);
-      this.observeSessionVisibility();
-      this.mounted = true;
-      return this;
+      this.document.addEventListener('submit', (event) => this.captureSubmit(event), true);
+      this.document.querySelector('#answerInput')?.addEventListener('input', () => { this.clearSkipTap(); this.view.updatePrimaryButton(Boolean(this.document.querySelector('#answerInput')?.value.trim())); });
+      this.window.addEventListener('pagehide', () => this.reset());
+      this.mounted = true; this.bootstrap(); return this;
     }
 
+    bootstrap() { if (!this.port.isSessionVisible()) return; const mode = this.port.mode(); if (!mode) return; this.workflow.begin(mode); this.port.setMode(mode); this.render(); }
+    beginSession(mode) { this.cancelPromptSpeech(); this.workflow.begin(mode); this.port.setMode(mode); queueMicrotaskSafely(this.window, () => { if (this.port.isSessionVisible()) { this.view.updatePrimaryButton(Boolean(this.document.querySelector('#answerInput')?.value.trim())); this.render(); } }); }
+    reset() { this.cancelPromptSpeech(); this.clearSkipTap(); this.pendingAssessment = null; this.workflow.reset(); this.port.setMode(null); this.render(); }
+
     captureSubmit(event) {
-      if (event.target?.id === 'newWordsForm') {
-        this.beginSession('new');
-        return;
-      }
-      if (event.target?.id !== 'answerForm' || this.active || !this.port.isSupportedMode()) return;
-      const word = this.port.currentWord();
-      if (!word) return;
+      if (event.target?.id === 'newWordsForm') { this.beginSession('new'); return; }
+      if (event.target?.id !== 'answerForm') return;
       const answer = this.document.querySelector('#answerInput')?.value || '';
-      this.capturePrimaryAssessment({ word, answer, forcedWrong: false });
+      if (!answer.trim()) { event.preventDefault(); event.stopImmediatePropagation(); this.armUnknown(); return; }
+      this.preparePrimaryAssessment({ answer, forcedWrong: false });
     }
 
     captureClick(event) {
-      const starter = event.target.closest?.('[id]');
-      const starterMode = starter ? SESSION_STARTERS[starter.id] : null;
-      if (starterMode) {
-        this.beginSession(starterMode);
-        return;
-      }
-
-      if (event.target.closest?.('#dontKnowBtn') && !this.active && this.port.isSupportedMode()) {
-        const word = this.port.currentWord();
-        if (word) this.capturePrimaryAssessment({ word, answer: '', forcedWrong: true });
-        return;
-      }
-
-      if (!event.target.closest?.('#nextCardBtn')) return;
-      if (this.active) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        if (this.presentationDeferred) this.revealDeferredPresentation();
-        else this.presentActiveRemediation();
-        return;
-      }
-      if (!this.port.isSupportedMode()) return;
-      const entry = this.queue.takeNext();
-      if (!entry) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      this.startRecheck(entry);
+      const starter = event.target?.closest?.('[id]'); const starterMode = starter ? SESSION_STARTERS[starter.id] : null;
+      if (starterMode) { this.beginSession(starterMode); return; }
+      if (event.target?.closest?.('#exitSessionBtn')) { this.reset(); return; }
+      const primary = event.target?.closest?.('#answerForm button[type="submit"]');
+      if (primary && !this.document.querySelector('#answerInput')?.value.trim()) { event.preventDefault(); event.stopImmediatePropagation(); if (this.skipTapCount === 0) this.armUnknown(); else this.submitUnknown(); return; }
+      if (event.target?.closest?.('#dontKnowBtn')) { this.preparePrimaryAssessment({ answer: '', forcedWrong: true }); return; }
+      if (!event.target?.closest?.('#nextCardBtn')) return;
+      if (this.port.allowNextClick) return;
+      event.preventDefault(); event.stopImmediatePropagation(); this.continue();
     }
 
-    captureKeydown(event) {
-      if (!this.active) return;
-      const insideRemediation = event.target.closest?.('#practiceRemediation');
-      if (insideRemediation) return;
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        if (this.presentationDeferred) this.revealDeferredPresentation();
-        else this.presentActiveRemediation();
-      }
-    }
-
-    beginSession(mode) {
-      this.reset();
-      this.port.setMode(mode);
-    }
-
-    capturePrimaryAssessment({ word, answer, forcedWrong }) {
-      const correct = this.port.isCorrect(answer, word, forcedWrong);
-      this.queue.advance();
-      if (correct) return;
+    preparePrimaryAssessment({ answer, forcedWrong }) {
+      const word = this.port.currentWord();
+      if (!word || this.pendingAssessment) return;
+      const assessment = { word, answer: String(answer || ''), forcedWrong: Boolean(forcedWrong), correct: this.port.isCorrect(answer, word, forcedWrong) };
+      this.pendingAssessment = assessment;
       queueMicrotaskSafely(this.window, () => {
-        if (!this.port.isSessionVisible() || this.active || !this.port.isSupportedMode()) return;
-        this.startImmediate(word, answer);
+        if (this.pendingAssessment !== assessment) return;
+        this.pendingAssessment = null;
+        this.workflow.primaryAnswered(assessment);
+        if (!assessment.correct && SUPPORTED_MODES.includes(this.workflow.mode)) this.emit('vocora:spelling-remediation-started', { wordId: assessment.word.id, mode: this.workflow.mode, context: this.window.VocoraPractice.RemediationContext.IMMEDIATE, presentationDeferred: true });
+        this.render();
       });
     }
 
-    startImmediate(word, answer) {
-      const attempt = this.domain.RemediationAttempt.immediate({
-        wordId: word.id,
-        accepted: word.accepted,
-        initialAnswer: answer,
-        policy: this.policy
-      });
-      this.active = { attempt, word, mode: this.port.mode(), entry: null, outcome: null };
-      this.presentationDeferred = true;
-      this.view.defer();
-      this.emit('vocora:spelling-remediation-started', {
-        wordId: word.id,
-        mode: this.active.mode,
-        context: this.domain.RemediationContext.IMMEDIATE,
-        presentationDeferred: true
-      });
-    }
-
-    presentActiveRemediation() {
-      if (!this.active || this.presentationDeferred) return false;
-      this.port.yieldToRemediation();
-      this.view.root?.classList.remove('vocora-remediation-delayed');
+    continue() {
+      const before = this.workflow.snapshot();
+      const result = this.workflow.continue({ flush: this.port.shouldFlushBeforeNext() });
+      const after = result.snapshot;
+      if (before.active?.presentationDeferred && after.active && !after.active.presentationDeferred) this.emit('vocora:spelling-remediation-revealed', { wordId: after.active.wordId, mode: after.active.mode, context: after.active.context });
+      const beforeKey = before.active?.context === 'recheck' ? `${before.active.wordId}:${before.active.recheckNumber}` : null;
+      const afterKey = after.active?.context === 'recheck' ? `${after.active.wordId}:${after.active.recheckNumber}` : null;
+      if (afterKey && afterKey !== beforeKey) this.emit('vocora:same-session-recheck-started', { wordId: after.active.wordId, mode: after.active.mode, recheckNumber: after.active.recheckNumber });
+      if (result.command === PracticeCommand.ADVANCE_PRIMARY) {
+        this.render(); this.port.advancePrimary();
+        queueMicrotaskSafely(this.window, () => { if (!this.port.isSessionVisible()) this.reset(); else { this.view.updatePrimaryButton(Boolean(this.document.querySelector('#answerInput')?.value.trim())); this.render(); } });
+        return true;
+      }
       this.render();
-      return true;
+      return result.command !== PracticeCommand.NONE;
     }
 
-    revealDeferredPresentation() {
-      if (!this.active || !this.presentationDeferred) return false;
-      this.presentationDeferred = false;
-      this.presentActiveRemediation();
-      this.emit('vocora:spelling-remediation-revealed', {
-        wordId: this.active.word.id,
-        mode: this.active.mode,
-        context: this.active.attempt.context
-      });
-      return true;
-    }
-
-    startRecheck(entry) {
-      const attempt = this.domain.RemediationAttempt.recheck({
-        wordId: entry.word.id,
-        accepted: entry.word.accepted,
-        recheckNumber: entry.recheckNumber,
-        policy: this.policy
-      });
-      this.presentationDeferred = false;
-      this.active = { attempt, word: entry.word, mode: entry.mode, entry, outcome: null };
-      this.presentActiveRemediation();
-      this.emit('vocora:same-session-recheck-started', {
-        wordId: entry.word.id,
-        mode: entry.mode,
-        recheckNumber: entry.recheckNumber
-      });
-    }
-
-    acknowledge() {
-      if (!this.active) return;
-      if (this.presentationDeferred) this.revealDeferredPresentation();
-      if (this.active.attempt.phase !== this.domain.RemediationPhase.CORRECTION) return;
-      this.active.attempt.acknowledgeCorrection();
-      this.render();
-    }
+    revealDeferredPresentation() { const before = this.workflow.snapshot(); if (!before.active?.presentationDeferred) return false; return this.continue(); }
+    startImmediate(word, answer = '') { if (!this.workflow.mode) { const mode = this.port.mode() || 'box1'; this.workflow.begin(mode); this.port.setMode(mode); } this.workflow.primaryAnswered({ word, answer, correct: false, forcedWrong: false }); this.emit('vocora:spelling-remediation-started', { wordId: word.id, mode: this.workflow.mode, context: this.window.VocoraPractice.RemediationContext.IMMEDIATE, presentationDeferred: true }); this.render(); return this.snapshot(); }
+    startRecheck(entry) { this.workflow.startRecheck(entry); const active = this.workflow.snapshot().active; this.emit('vocora:same-session-recheck-started', { wordId: active.wordId, mode: active.mode, recheckNumber: active.recheckNumber }); this.render(); return this.snapshot(); }
+    get queue() { return this.workflow.queue; }
+    acknowledge() { const result = this.workflow.acknowledge(); this.render(); return result.command !== PracticeCommand.NONE; }
 
     submitRemediationAnswer(answer) {
-      if (!this.active || this.presentationDeferred) return;
-      const phase = this.active.attempt.phase;
-      if (phase === this.domain.RemediationPhase.RECALL) this.active.attempt.submitRecall(answer);
-      else if (phase === this.domain.RemediationPhase.COPY) this.active.attempt.submitCopy(answer);
-      else return;
-
-      if (this.active.attempt.phase === this.domain.RemediationPhase.COMPLETED) {
-        this.completeActiveAttempt();
+      const before = this.workflow.snapshot(); const result = this.workflow.submitRemediation(answer); const after = result.snapshot;
+      if (before.active?.phase !== 'completed' && after.active?.phase === 'completed') {
+        if (after.active.outcome?.nextRecheck) this.emit('vocora:same-session-recheck-scheduled', { wordId: after.active.wordId, mode: after.active.mode, recheckNumber: after.active.outcome.nextRecheck.number, gap: after.active.outcome.nextRecheck.gap });
+        this.emit('vocora:spelling-remediation-completed', { wordId: after.active.wordId, mode: after.active.mode, context: after.active.context, recheckNumber: after.active.recheckNumber, correctOnFirstRecall: after.active.outcome?.correctOnFirstRecall ?? null, recallFailures: after.active.outcome?.recallFailures ?? 0, copyFailures: after.active.outcome?.copyFailures ?? 0 });
       }
-      this.render();
+      this.render(); return result.command !== PracticeCommand.NONE;
     }
 
-    completeActiveAttempt() {
-      const outcome = this.active.attempt.outcome();
-      this.active.outcome = outcome;
-      if (outcome.nextRecheck) {
-        this.queue.schedule({
-          word: this.active.word,
-          mode: this.active.mode,
-          recheckNumber: outcome.nextRecheck.number,
-          originId: this.active.entry?.originId || this.active.entry?.id || null
-        }, outcome.nextRecheck.gap);
-        this.emit('vocora:same-session-recheck-scheduled', {
-          wordId: this.active.word.id,
-          mode: this.active.mode,
-          recheckNumber: outcome.nextRecheck.number,
-          gap: outcome.nextRecheck.gap
-        });
+    continueSession() { return this.continue(); }
+    listen() { const active = this.workflow.snapshot().active; return active ? this.port.speak(active.word) : false; }
+
+    handleEnter(event) {
+      if (!event || (event.key !== 'Enter' && event.code !== 'NumpadEnter')) return false;
+      const snapshot = this.workflow.snapshot();
+      if (snapshot.stage === PracticeStage.IDLE) return false;
+      if (event.isComposing || event.keyCode === 229) { event.stopImmediatePropagation(); return false; }
+      if (event.repeat) { event.preventDefault(); event.stopImmediatePropagation(); return false; }
+      if (snapshot.stage === PracticeStage.ANSWER) {
+        const input = this.document.querySelector('#answerInput');
+        if (input?.value.trim()) return false;
+        event.preventDefault(); event.stopImmediatePropagation(); this.armUnknown(); return true;
       }
-      this.emit('vocora:spelling-remediation-completed', {
-        wordId: this.active.word.id,
-        mode: this.active.mode,
-        context: outcome.context,
-        recheckNumber: outcome.recheckNumber,
-        correctOnFirstRecall: outcome.correctOnFirstRecall,
-        recallFailures: outcome.recallFailures,
-        copyFailures: outcome.copyFailures
-      });
+      event.preventDefault(); event.stopImmediatePropagation();
+      if (snapshot.stage.startsWith('feedback-')) return this.continue();
+      if (snapshot.stage === PracticeStage.REMEDIATION_CORRECTION) return this.acknowledge();
+      if ([PracticeStage.REMEDIATION_RECALL, PracticeStage.REMEDIATION_COPY].includes(snapshot.stage)) { const input = this.document.querySelector('#remediationInput'); if (!input || input.disabled || !input.value.trim()) { input?.focus?.({ preventScroll: true }); return true; } return this.submitRemediationAnswer(input.value); }
+      if (snapshot.stage === PracticeStage.REMEDIATION_COMPLETED) return this.continue();
+      return false;
     }
 
-    continueSession() {
-      if (!this.active || this.presentationDeferred || this.active.attempt.phase !== this.domain.RemediationPhase.COMPLETED) return;
-      this.presentationDeferred = false;
-      this.active = null;
-      this.view.hide({ restoreMeta: true });
-      this.port.continueToNextCard();
-    }
-
-    listen() {
-      if (this.active && !this.presentationDeferred) this.port.speak(this.active.word);
-    }
-
-    render() {
-      if (!this.active || this.presentationDeferred) return;
-      this.view.show({
-        snapshot: this.active.attempt.snapshot(),
-        word: this.active.word,
-        outcome: this.active.outcome
-      });
-    }
-
-    observeSessionVisibility() {
-      const session = this.document.querySelector('#reviewSession');
-      if (!session || typeof this.window.MutationObserver !== 'function') return;
-      this.observer = new this.window.MutationObserver(() => {
-        if (session.classList.contains('hidden')) this.reset({ keepMode: false });
-      });
-      this.observer.observe(session, { attributes: true, attributeFilter: ['class'] });
-    }
-
-    reset({ keepMode = false } = {}) {
-      this.presentationDeferred = false;
-      this.active = null;
-      this.queue.clear();
-      this.view.hide({ restoreMeta: true });
-      if (!keepMode) this.port.setMode(null);
-    }
-
-    emit(name, detail) {
-      this.document.dispatchEvent(new this.window.CustomEvent(name, { detail }));
-    }
-
-    snapshot() {
-      return {
-        mode: this.port.mode(),
-        active: this.active ? {
-          wordId: this.active.word.id,
-          phase: this.active.attempt.phase,
-          context: this.active.attempt.context,
-          recheckNumber: this.active.attempt.recheckNumber,
-          presentationDeferred: this.presentationDeferred
-        } : null,
-        queue: this.queue.snapshot()
-      };
-    }
+    armUnknown() { if (this.skipTapCount === 1) return; this.skipTapCount = 1; this.view.armUnknown(true); if (this.skipTapTimer) this.window.clearTimeout(this.skipTapTimer); this.skipTapTimer = this.window.setTimeout(() => this.clearSkipTap(), SKIP_WINDOW_MS); }
+    submitUnknown() { this.clearSkipTap(); this.document.querySelector('#answerInput')?.blur(); this.document.querySelector('#dontKnowBtn')?.click(); }
+    clearSkipTap() { this.skipTapCount = 0; if (this.skipTapTimer) this.window.clearTimeout(this.skipTapTimer); this.skipTapTimer = null; this.view.armUnknown(false); }
+    render() { const snapshot = this.workflow.snapshot(); this.view.render(snapshot); return snapshot; }
+    cancelPromptSpeech() { this.window.speechSynthesis?.cancel?.(); }
+    emit(name, detail) { this.document.dispatchEvent(new this.window.CustomEvent(name, { detail })); }
+    snapshot() { return this.workflow.snapshot(); }
   }
 
+  let bootPromise = null;
   function boot() {
-    if (window.VocoraPracticeRemediation) return window.VocoraPracticeRemediation;
-    const controller = new PracticeRemediationController({ window, document }).mount();
-    window.VocoraPracticeRemediation = controller;
-    return controller;
+    if (globalThis.VocoraPracticeRemediation) return Promise.resolve(globalThis.VocoraPracticeRemediation);
+    if (bootPromise) return bootPromise;
+    bootPromise = Promise.resolve(globalThis.VazheyarReady).then(() => {
+      if (globalThis.VocoraPracticeRemediation) return globalThis.VocoraPracticeRemediation;
+      const controller = new PracticeSessionController({ window: globalThis, document: globalThis.document }).mount();
+      globalThis.VocoraPracticeRemediation = controller;
+      return controller;
+    }).catch((error) => { console.error('Could not start the practice-session workflow:', error); return null; });
+    return bootPromise;
   }
 
-  window.VocoraPracticeUI = Object.freeze({
-    SUPPORTED_MODES,
-    resolvePracticeMode,
-    parsePersianInteger,
-    sessionPosition,
-    VocoraPracticeSessionPort,
-    SpellingRemediationView,
-    PracticeRemediationController,
-    boot
-  });
-
-  window.VocoraPracticeRemediationReady = Promise.resolve(window.VazheyarReady)
-    .then(() => boot())
-    .catch((error) => {
-      console.error('Could not start same-session spelling remediation:', error);
-      return null;
-    });
+  globalThis.VocoraPracticeUI = Object.freeze({ SUPPORTED_MODES, SESSION_STARTERS, PracticeStage, PracticeCommand, SKIP_WINDOW_MS, resolvePracticeMode, parsePersianInteger, sessionPosition, cloneWord, PracticeSessionWorkflow, VocoraPracticeSessionPort, PracticeSessionController, boot });
+  globalThis.VocoraPracticeRemediationReady = boot();
 })();
