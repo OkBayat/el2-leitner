@@ -49,9 +49,6 @@
 
     const script = documentObject.createElement('script');
     script.id = KEYBOARD_ROUTER_ID;
-    // The component is already loaded with a cache-busting URL. It also loads
-    // the keyboard router from a new filename/version so an old cached guard
-    // can never keep swallowing Enter on remediation pages.
     script.src = `${KEYBOARD_ROUTER_SRC}-${Date.now()}`;
     script.async = false;
     parent.append(script);
@@ -499,13 +496,12 @@
         setTextIfChanged(title, 'اشکالی ندارد');
         setTextIfChanged(detail, 'این کلمه برای مرور دوباره برمی‌گردد.');
         setTextIfChanged(icon, '!');
-        restoreCorrectSpelling();
       } else if (type === 'wrong') {
         setTextIfChanged(title, 'اشتباه بود');
         setTextIfChanged(detail, 'پاسخ درست را یک بار با دقت ببین.');
         setTextIfChanged(icon, '×');
-        restoreCorrectSpelling();
       }
+      restoreCorrectSpelling();
       setTextIfChanged(next, 'ادامه');
     }
 
@@ -520,6 +516,9 @@
 
       const active = activeAttempt();
 
+      // Deferred immediate correction intentionally leaves the original feedback
+      // in charge until Continue. Every other active remediation owns the screen,
+      // even if stale feedback DOM is still visible for one mutation frame.
       if (active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))) {
         component.deferRemediation();
         const type = feedbackType();
@@ -529,6 +528,12 @@
           component.setStage(stage);
           return stage;
         }
+      } else {
+        const remediation = remediationStage(active);
+        if (remediation) {
+          component.setStage(remediation);
+          return remediation;
+        }
       }
 
       const type = feedbackType();
@@ -537,12 +542,6 @@
         const stage = feedbackStage(type);
         component.setStage(stage);
         return stage;
-      }
-
-      const remediation = remediationStage(active);
-      if (remediation) {
-        component.setStage(remediation);
-        return remediation;
       }
 
       if (isVisible(answerForm)) {
