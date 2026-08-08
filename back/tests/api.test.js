@@ -19,16 +19,23 @@ describe("HTTP API", () => {
     const { app } = createTestContext({}, { staticDirectory });
 
     const html = await request(app).get("/").expect(200);
-    assert.match(html.headers["cache-control"], /no-store/);
+    assert.match(html.headers["cache-control"] || "", /no-store/);
     assert.equal(html.headers["cdn-cache-control"], "no-store");
+    assert.equal(html.headers["surrogate-control"], "no-store");
+    assert.equal(html.headers["clear-site-data"], '"cache"');
+    assert.equal(html.headers["x-vocora-release"], "20260808-ownership3");
 
-    const stylesheet = await request(app).get("/styles-v2.css").expect(200);
-    assert.equal(stylesheet.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
-    assert.match(stylesheet.headers["content-type"], /^text\/css/);
-
-    const script = await request(app).get("/app-v2.js").expect(200);
-    assert.equal(script.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
-    assert.match(script.headers["content-type"], /javascript/);
+    for (const [asset, contentType] of [
+      ["/styles-v2.css", /^text\/css/],
+      ["/app-v2.js", /javascript/]
+    ]) {
+      const response = await request(app).get(asset).expect(200);
+      assert.match(response.headers["cache-control"] || "", /no-store/);
+      assert.equal(response.headers["cdn-cache-control"], "no-store");
+      assert.equal(response.headers["surrogate-control"], "no-store");
+      assert.equal(response.headers["x-vocora-release"], "20260808-ownership3");
+      assert.match(response.headers["content-type"], contentType);
+    }
 
     const logo = await request(app).get("/assets/vocora-logo.png").expect(200);
     assert.match(logo.headers["content-type"], /^image\/png/);
