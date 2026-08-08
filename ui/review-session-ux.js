@@ -1,154 +1,155 @@
 (() => {
   'use strict';
 
-  const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
-  const RELEASE = '20260808-enter-router2';
+  const RELEASE = '20260808-workflow1';
   const STYLE_ID = 'vocora-review-session-ux-style';
   const STYLE_HREF = `review-session-ux.css?v=${RELEASE}`;
-  const KEYBOARD_ROUTER_ID = 'vocora-practice-session-keyboard-router';
-  const KEYBOARD_ROUTER_SRC = `practice-session-keyboard-router.js?v=${RELEASE}`;
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
-  const SKIP_WINDOW_MS = 430;
 
-  const PracticeStage = Object.freeze({
-    ANSWER: 'answer',
-    FEEDBACK_CORRECT: 'feedback-correct',
-    FEEDBACK_WRONG: 'feedback-wrong',
-    FEEDBACK_WARNING: 'feedback-warning',
-    REMEDIATION_CORRECTION: 'remediation-correction',
-    REMEDIATION_RECALL: 'remediation-recall',
-    REMEDIATION_COPY: 'remediation-copy',
-    REMEDIATION_COMPLETED: 'remediation-completed'
-  });
-
-  const VALID_STAGES = new Set(Object.values(PracticeStage));
+  function setVisible(element, visible) {
+    if (!element) return;
+    element.classList.toggle('hidden', !visible);
+    element.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    if (visible) element.removeAttribute('inert');
+    else element.setAttribute('inert', '');
+  }
 
   function isVisible(element) {
-    return Boolean(element && !element.classList.contains('hidden'));
-  }
-
-  function setHidden(element, hidden) {
-    if (!element) return;
-    element.classList.toggle('hidden', hidden);
-    element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
-    if (hidden) element.setAttribute('inert', '');
-    else element.removeAttribute('inert');
-  }
-
-  function ensureKeyboardRouter(
-    documentObject = globalThis.document,
-    windowObject = documentObject?.defaultView || globalThis.window
-  ) {
-    if (!documentObject?.createElement || !windowObject) return false;
-    if (windowObject.VocoraPracticeKeyboardRouter) return false;
-    if (documentObject.getElementById(KEYBOARD_ROUTER_ID)) return false;
-
-    const parent = documentObject.head || documentObject.documentElement;
-    if (!parent?.append) return false;
-
-    const script = documentObject.createElement('script');
-    script.id = KEYBOARD_ROUTER_ID;
-    script.src = `${KEYBOARD_ROUTER_SRC}-${Date.now()}`;
-    script.async = false;
-    parent.append(script);
-    return true;
+    return Boolean(element && !element.classList.contains('hidden') && !element.hasAttribute('hidden'));
   }
 
   function ensureStyles(documentObject = globalThis.document) {
     if (!documentObject?.head) return false;
-    const existing = documentObject.getElementById(STYLE_ID);
-    if (existing) {
-      if (existing.getAttribute('href') !== STYLE_HREF) existing.setAttribute('href', STYLE_HREF);
-      return false;
+    let link = documentObject.getElementById(STYLE_ID);
+    if (!link) {
+      link = documentObject.createElement('link');
+      link.id = STYLE_ID;
+      link.rel = 'stylesheet';
+      documentObject.head.append(link);
     }
-    const link = documentObject.createElement('link');
-    link.id = STYLE_ID;
-    link.rel = 'stylesheet';
     link.href = STYLE_HREF;
-    documentObject.head.append(link);
     return true;
   }
 
-  function currentWord(windowObject = globalThis.window) {
-    return windowObject?.VazheyarTest?.getCurrentWord?.() || null;
+  class PracticeViewport {
+    constructor({ window: windowObject, document: documentObject }) {
+      this.window = windowObject;
+      this.document = documentObject;
+      this.root = documentObject.documentElement;
+      this.body = documentObject.body;
+      this.active = false;
+      this.savedScrollY = 0;
+      this.largestHeight = 0;
+      this.boundSync = () => this.sync();
+      this.boundFocusIn = (event) => {
+        if (event.target?.matches?.(PRACTICE_INPUT_SELECTOR)) {
+          this.body.classList.add('vocora-keyboard-open');
+          this.sync();
+        }
+      };
+      this.boundFocusOut = (event) => {
+        if (event.target?.matches?.(PRACTICE_INPUT_SELECTOR)) this.window.setTimeout(() => this.sync(), 40);
+      };
+      this.installed = false;
+    }
+
+    install() {
+      if (this.installed) return;
+      this.installed = true;
+      this.window.addEventListener?.('resize', this.boundSync, { passive: true });
+      this.window.addEventListener?.('orientationchange', this.boundSync, { passive: true });
+      this.window.visualViewport?.addEventListener?.('resize', this.boundSync, { passive: true });
+      this.window.visualViewport?.addEventListener?.('scroll', this.boundSync, { passive: true });
+      this.document.addEventListener('focusin', this.boundFocusIn, true);
+      this.document.addEventListener('focusout', this.boundFocusOut, true);
+    }
+
+    enter() {
+      this.install();
+      if (!this.active) this.savedScrollY = Number(this.window.scrollY) || 0;
+      this.active = true;
+      this.root.classList.add('vocora-session-active');
+      this.body.classList.add('vocora-session-active');
+      this.sync();
+    }
+
+    leave() {
+      if (!this.active) return;
+      this.active = false;
+      this.root.classList.remove('vocora-session-active');
+      this.body.classList.remove('vocora-session-active', 'vocora-keyboard-open');
+      delete this.body.dataset.vocoraPracticeStage;
+      this.window.setTimeout(() => {
+        try { this.window.scrollTo?.(0, this.savedScrollY); } catch {}
+      }, 0);
+    }
+
+    sync() {
+      if (!this.active) return;
+      const viewport = this.window.visualViewport;
+      const height = Math.round(viewport?.height || this.window.innerHeight || 0);
+      const offsetTop = Math.round(viewport?.offsetTop || 0);
+      if (height > 0) {
+        this.root.style.setProperty('--vocora-review-viewport-height', `${height}px`);
+        this.root.style.setProperty('--vocora-review-viewport-top', `${offsetTop}px`);
+      }
+      const focused = this.document.activeElement?.matches?.(PRACTICE_INPUT_SELECTOR) || false;
+      if (!focused && height > 0) this.largestHeight = Math.max(this.largestHeight, height);
+      else if (!this.largestHeight && height > 0) this.largestHeight = Math.max(height, Number(this.window.innerHeight) || height);
+      const reduced = this.largestHeight > 0 && height > 0 && height < this.largestHeight - 140;
+      this.body.classList.toggle('vocora-keyboard-open', focused || reduced);
+      try { this.window.scrollTo?.(0, 0); } catch {}
+    }
   }
 
-  function remediationSnapshot(windowObject = globalThis.window) {
-    return windowObject?.VocoraPracticeRemediation?.snapshot?.() || { active: null, queue: [] };
-  }
-
-  function activeRemediation(windowObject = globalThis.window) {
-    return remediationSnapshot(windowObject).active || null;
-  }
-
-  function isDeferredRemediation(active) {
-    return Boolean(active?.presentationDeferred);
-  }
-
-  function acceptedSpelling(windowObject = globalThis.window) {
-    const word = currentWord(windowObject);
-    if (!word) return '';
-    const accepted = Array.isArray(word.accepted) && word.accepted.length
-      ? word.accepted
-      : [word.term];
-    return accepted.filter(Boolean).join(' / ');
-  }
-
-  function stageForRemediationPhase(phase) {
-    if (phase === 'correction') return PracticeStage.REMEDIATION_CORRECTION;
-    if (phase === 'recall') return PracticeStage.REMEDIATION_RECALL;
-    if (phase === 'copy') return PracticeStage.REMEDIATION_COPY;
-    if (phase === 'completed') return PracticeStage.REMEDIATION_COMPLETED;
-    return null;
-  }
-
-  function isImmediateCorrection(active) {
-    return Boolean(active && active.context === 'immediate' && active.phase === 'correction');
-  }
-
-  class PracticeSessionComponent {
+  class PracticeSessionView {
     constructor({ window: windowObject, document: documentObject }) {
       this.window = windowObject;
       this.document = documentObject;
       this.body = documentObject.body;
-      this.root = documentObject.documentElement;
       this.reviewSession = documentObject.querySelector('#reviewSession');
       this.flashCard = documentObject.querySelector('#flashCard');
       this.answerForm = documentObject.querySelector('#answerForm');
       this.answerInput = documentObject.querySelector('#answerInput');
       this.feedback = documentObject.querySelector('#answerFeedback');
       this.dontKnowButton = documentObject.querySelector('#dontKnowBtn');
-      this.stage = null;
+      this.viewport = new PracticeViewport({ window: windowObject, document: documentObject });
+      this.handlers = null;
+      this.remediationRoot = null;
+      this.mounted = false;
+      this.lastStage = null;
     }
 
-    get remediationRoot() {
-      return this.document.querySelector('#practiceRemediation');
-    }
-
-    mount() {
+    mount(handlers = {}) {
+      if (this.mounted) {
+        this.handlers = { ...this.handlers, ...handlers };
+        return this;
+      }
+      this.handlers = handlers;
+      ensureStyles(this.document);
       this.reviewSession?.classList.add('vocora-practice-component');
-      this.ensureSessionChrome();
+      this.ensureAccuracyBadge();
       this.ensurePrimaryControls();
-      this.configurePracticeInputs();
+      this.mountRemediation();
+      this.configureInputs();
+      this.mounted = true;
       return this;
     }
 
-    ensureSessionChrome() {
-      const sessionBar = this.document.querySelector('.session-bar');
+    ensureAccuracyBadge() {
+      const bar = this.document.querySelector('.session-bar');
       const accuracy = this.document.querySelector('#sessionAccuracy');
-      if (!sessionBar || !accuracy) return null;
-
+      if (!bar || !accuracy) return;
       let badge = this.document.querySelector('#vocoraSessionAccuracy');
       if (!badge) {
         badge = this.document.createElement('div');
         badge.id = 'vocoraSessionAccuracy';
         badge.className = 'vocora-session-accuracy';
         badge.setAttribute('aria-label', 'دقت جلسه');
-        sessionBar.append(badge);
+        bar.append(badge);
       }
       if (accuracy.parentElement !== badge) badge.append(accuracy);
-      return badge;
     }
 
     configureInput(input) {
@@ -164,23 +165,20 @@
       input.setAttribute('data-lpignore', 'true');
       input.setAttribute('data-1p-ignore', 'true');
       input.setAttribute('data-bwignore', 'true');
-      input.dataset.vocoraSpellingInput = 'true';
       input.form?.setAttribute('autocomplete', 'off');
     }
 
-    configurePracticeInputs() {
+    configureInputs() {
       this.document.querySelectorAll(PRACTICE_INPUT_SELECTOR).forEach((input) => this.configureInput(input));
     }
 
     ensurePrimaryControls() {
-      const button = this.document.querySelector(PRIMARY_SELECTOR);
-      if (!button || !this.answerInput) return null;
-
-      button.classList.add('vocora-primary-review-action');
-      button.removeAttribute('disabled');
+      const primary = this.document.querySelector(PRIMARY_SELECTOR);
+      if (!primary || !this.answerInput) return;
+      primary.classList.add('vocora-primary-review-action');
+      primary.removeAttribute('disabled');
       this.answerInput.setAttribute('aria-label', 'پاسخ');
       this.configureInput(this.answerInput);
-
       let hint = this.document.querySelector('#vocoraDoubleTapHint');
       if (!hint) {
         hint = this.document.createElement('div');
@@ -189,572 +187,121 @@
         hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
         hint.setAttribute('aria-live', 'polite');
       }
-
-      if (button.nextElementSibling !== hint) button.insertAdjacentElement('afterend', hint);
-      button.setAttribute('aria-describedby', hint.id);
-      return button;
+      if (primary.nextElementSibling !== hint) primary.insertAdjacentElement('afterend', hint);
+      primary.setAttribute('aria-describedby', hint.id);
     }
 
-    deferRemediation() {
-      const remediationRoot = this.remediationRoot;
-      setHidden(remediationRoot, true);
-      remediationRoot?.classList.add('vocora-remediation-delayed');
-      this.flashCard?.classList.remove('remediation-active');
+    mountRemediation() {
+      if (this.remediationRoot) return this.remediationRoot;
+      const existing = this.document.querySelector('#practiceRemediation');
+      if (existing) {
+        this.remediationRoot = existing;
+        return existing;
+      }
+      if (!this.feedback) throw new Error('Vocora answer feedback container was not found.');
+      const root = this.document.createElement('section');
+      root.id = 'practiceRemediation';
+      root.className = 'practice-remediation hidden';
+      root.setAttribute('aria-live', 'polite');
+      root.setAttribute('aria-labelledby', 'remediationTitle');
+      root.innerHTML = `
+        <div class="remediation-heading"><span id="remediationKicker" class="remediation-kicker"></span><h3 id="remediationTitle"></h3><p id="remediationDescription"></p></div>
+        <div id="remediationComparison" class="remediation-comparison hidden"><div class="remediation-spelling-row wrong-spelling" dir="ltr"><small>پاسخ تو</small><div id="remediationUserSpelling" class="remediation-spelling"></div></div><div class="remediation-spelling-row correct-spelling-row" dir="ltr"><small>املای صحیح</small><div id="remediationCorrectSpelling" class="remediation-spelling"></div></div></div>
+        <p id="remediationHint" class="remediation-hint"></p>
+        <button id="remediationListenBtn" class="remediation-listen" type="button"><span aria-hidden="true">▶</span><span>پخش تلفظ</span></button>
+        <form id="remediationForm" class="remediation-form hidden" autocomplete="off"><label id="remediationInputLabel" for="remediationInput"></label><input id="remediationInput" class="answer-input" type="text" lang="en" dir="ltr"><p id="remediationValidation" class="remediation-validation" role="alert"></p><button id="remediationSubmitBtn" class="btn btn-primary wide" type="submit"></button></form>
+        <div class="remediation-actions"><button id="remediationAcknowledgeBtn" class="btn btn-primary wide hidden" type="button">متوجه شدم؛ حالا از حفظ می‌نویسم</button><button id="remediationContinueBtn" class="btn btn-primary wide hidden" type="button">ادامهٔ تمرین</button></div>`;
+      this.feedback.insertAdjacentElement('afterend', root);
+      this.remediationRoot = root;
+      this.configureInput(root.querySelector('#remediationInput'));
+      root.querySelector('#remediationAcknowledgeBtn').addEventListener('click', () => this.handlers?.acknowledge?.());
+      root.querySelector('#remediationContinueBtn').addEventListener('click', () => this.handlers?.continue?.());
+      root.querySelector('#remediationListenBtn').addEventListener('click', () => this.handlers?.listen?.());
+      root.querySelector('#remediationForm').addEventListener('submit', (event) => { event.preventDefault(); this.handlers?.submit?.(root.querySelector('#remediationInput').value); });
+      return root;
     }
 
-    setStage(stage) {
-      if (!VALID_STAGES.has(stage) || !this.reviewSession) return false;
-      const changed = this.stage !== stage || this.reviewSession.dataset.vocoraStage !== stage;
-      this.stage = stage;
+    query(selector) { return this.remediationRoot?.querySelector(selector) || null; }
+
+    render(snapshot) {
+      this.mount(this.handlers || {});
+      const stage = snapshot.stage;
+      this.lastStage = stage;
+      if (stage === 'idle') {
+        this.reviewSession?.removeAttribute('data-vocora-stage');
+        this.viewport.leave();
+        return;
+      }
+      this.viewport.enter();
       this.reviewSession.dataset.vocoraStage = stage;
       this.body.dataset.vocoraPracticeStage = stage;
-      this.normalizeStage(stage);
-      return changed;
+      if (stage === 'answer') this.renderAnswer();
+      else if (stage.startsWith('feedback-')) this.renderFeedback(snapshot);
+      else if (stage.startsWith('remediation-')) this.renderRemediation(snapshot);
+      this.viewport.sync();
     }
 
-    normalizeStage(stage) {
-      const active = activeRemediation(this.window);
-      const remediationRoot = this.remediationRoot;
-      const remediationStage = stage.startsWith('remediation-');
-      const feedbackStage = stage.startsWith('feedback-');
-
-      if (remediationStage) {
-        if (!active || isDeferredRemediation(active)) {
-          this.deferRemediation();
-          return;
-        }
-        setHidden(this.feedback, true);
-        setHidden(this.answerForm, true);
-        setHidden(this.dontKnowButton, true);
-        remediationRoot?.classList.remove('vocora-remediation-delayed');
-        setHidden(remediationRoot, false);
-        this.flashCard?.classList.add('remediation-active');
-        this.answerInput?.blur();
-        return;
-      }
-
+    renderAnswer() {
       this.flashCard?.classList.remove('remediation-active');
-
-      if (stage === PracticeStage.ANSWER) {
-        setHidden(remediationRoot, true);
-        if (!active) remediationRoot?.classList.remove('vocora-remediation-delayed');
-        setHidden(this.feedback, true);
-        setHidden(this.answerForm, false);
-        if (this.answerInput) {
-          this.answerInput.disabled = false;
-          this.answerInput.readOnly = false;
-        }
-        return;
-      }
-
-      if (feedbackStage) {
-        setHidden(remediationRoot, true);
-        if (active && (isDeferredRemediation(active) || isImmediateCorrection(active))) {
-          remediationRoot?.classList.add('vocora-remediation-delayed');
-        }
-        setHidden(this.answerForm, true);
-        setHidden(this.dontKnowButton, true);
-        setHidden(this.feedback, false);
-        if (this.answerInput) {
-          this.answerInput.readOnly = true;
-          this.answerInput.blur();
-        }
-      }
+      setVisible(this.answerForm, true); setVisible(this.feedback, false); setVisible(this.remediationRoot, false); setVisible(this.dontKnowButton, true);
+      if (this.answerInput) { this.answerInput.disabled = false; this.answerInput.readOnly = false; }
     }
 
-    clearStage() {
-      this.stage = null;
-      this.reviewSession?.removeAttribute('data-vocora-stage');
-      delete this.body.dataset.vocoraPracticeStage;
-      this.answerInput?.removeAttribute('readonly');
-    }
-
-    recoverPrimaryCard() {
-      if (!currentWord(this.window) || activeRemediation(this.window)) return false;
-      if (!this.reviewSession || !isVisible(this.reviewSession)) return false;
-
+    renderFeedback(snapshot) {
       this.flashCard?.classList.remove('remediation-active');
-      setHidden(this.remediationRoot, true);
-      this.remediationRoot?.classList.remove('vocora-remediation-delayed');
-      setHidden(this.feedback, true);
-      setHidden(this.answerForm, false);
-      this.dontKnowButton?.classList.remove('hidden');
-      if (this.answerInput) {
-        this.answerInput.disabled = false;
-        this.answerInput.readOnly = false;
-      }
-      this.setStage(PracticeStage.ANSWER);
-      this.document.dispatchEvent(new this.window.CustomEvent('vocora:review-ui-recovered', {
-        detail: { reason: 'blank-primary-card' }
-      }));
-      return true;
+      setVisible(this.answerForm, false); setVisible(this.feedback, true); setVisible(this.remediationRoot, false); setVisible(this.dontKnowButton, false);
+      if (this.answerInput) { this.answerInput.readOnly = true; this.answerInput.blur(); }
+      const feedback = snapshot.feedback || {};
+      const title = this.document.querySelector('#feedbackTitle'); const detail = this.document.querySelector('#feedbackDetail'); const icon = this.document.querySelector('#feedbackIcon'); const spelling = this.document.querySelector('#correctAnswer'); const next = this.document.querySelector('#nextCardBtn');
+      if (feedback.kind === 'correct') { if (title) title.textContent = 'عالیه!'; if (icon) icon.textContent = '✓'; }
+      else if (feedback.kind === 'warning') { if (title) title.textContent = 'اشکالی ندارد'; if (detail) detail.textContent = 'این کلمه برای مرور دوباره برمی‌گردد.'; if (icon) icon.textContent = '!'; }
+      else { if (title) title.textContent = 'اشتباه بود'; if (detail) detail.textContent = 'پاسخ درست را یک بار با دقت ببین.'; if (icon) icon.textContent = '×'; }
+      if (spelling && feedback.spelling) spelling.textContent = feedback.spelling;
+      const spellingBox = spelling?.closest?.('.correct-spelling');
+      if (spellingBox) spellingBox.style.setProperty('display', 'block', 'important');
+      if (next) next.textContent = 'ادامه';
     }
 
-    hasRenderableStage() {
-      if (!this.stage) return false;
-      if (this.stage === PracticeStage.ANSWER) return isVisible(this.answerForm);
-      if (this.stage.startsWith('feedback-')) {
-        return isVisible(this.feedback) && !isVisible(this.remediationRoot);
-      }
-      if (this.stage.startsWith('remediation-')) {
-        return isVisible(this.remediationRoot) && !isVisible(this.feedback) && !isVisible(this.answerForm);
-      }
-      return false;
-    }
-  }
-
-  function createController(windowObject = globalThis.window, documentObject = globalThis.document) {
-    if (!windowObject || !documentObject) return null;
-
-    const body = documentObject.body;
-    const root = documentObject.documentElement;
-    const reviewSession = documentObject.querySelector('#reviewSession');
-    const reviewView = documentObject.querySelector('#view-review');
-    const flashCard = documentObject.querySelector('#flashCard');
-    const answerForm = documentObject.querySelector('#answerForm');
-    const answerInput = documentObject.querySelector('#answerInput');
-    const feedback = documentObject.querySelector('#answerFeedback');
-    const dontKnowButton = documentObject.querySelector('#dontKnowBtn');
-
-    if (!body || !root || !reviewSession || !flashCard || !answerForm || !answerInput || !feedback) {
-      return null;
-    }
-
-    const component = new PracticeSessionComponent({ window: windowObject, document: documentObject }).mount();
-    const state = {
-      active: false,
-      savedScrollY: 0,
-      largestViewportHeight: 0,
-      skipTapCount: 0,
-      skipTapTimer: null,
-      skipTriggered: false,
-      observer: null,
-      syncQueued: false
-    };
-
-    function activeAttempt() {
-      return activeRemediation(windowObject);
-    }
-
-    function feedbackOwnsImmediateCorrection(active = activeAttempt()) {
-      return Boolean(isImmediateCorrection(active) && isVisible(feedback));
-    }
-
-    function pendingImmediateCorrection(active = activeAttempt()) {
-      return Boolean(isImmediateCorrection(active) && (isDeferredRemediation(active) || isVisible(feedback)));
-    }
-
-    function clearSkipTapState({ keepTriggered = false } = {}) {
-      state.skipTapCount = 0;
-      if (state.skipTapTimer) {
-        windowObject.clearTimeout(state.skipTapTimer);
-        state.skipTapTimer = null;
-      }
-      const button = documentObject.querySelector(PRIMARY_SELECTOR);
-      const hint = documentObject.querySelector('#vocoraDoubleTapHint');
-      button?.classList.remove('skip-armed');
-      if (button && button.textContent !== 'بررسی پاسخ') button.textContent = 'بررسی پاسخ';
-      if (hint && hint.textContent !== 'نمی‌دانی؟ دو بار روی دکمه بزن') {
-        hint.textContent = 'نمی‌دانی؟ دو بار روی دکمه بزن';
-      }
-      if (!keepTriggered) state.skipTriggered = false;
-    }
-
-    function updatePrimaryState() {
-      const button = component.ensurePrimaryControls();
-      if (!button) return;
-      const hasAnswer = answerInput.value.trim().length > 0;
-      answerForm.classList.toggle('vocora-has-answer', hasAnswer);
-      button.classList.toggle('is-empty', !hasAnswer);
-      button.dataset.empty = hasAnswer ? 'false' : 'true';
-      button.setAttribute(
-        'aria-label',
-        hasAnswer
-          ? 'بررسی پاسخ'
-          : 'پاسخی ننوشته‌ای. برای انتخاب نمی‌دانم دو بار روی این دکمه بزن.'
-      );
-      if (hasAnswer) clearSkipTapState();
-    }
-
-    function armSkip() {
-      const button = component.ensurePrimaryControls();
-      const hint = documentObject.querySelector('#vocoraDoubleTapHint');
-      if (!button) return;
-
-      state.skipTapCount = 1;
-      button.classList.add('skip-armed');
-      button.textContent = 'یک بار دیگر بزن';
-      if (hint && hint.textContent !== 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود') {
-        hint.textContent = 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود';
-      }
-      if (state.skipTapTimer) windowObject.clearTimeout(state.skipTapTimer);
-      state.skipTapTimer = windowObject.setTimeout(() => clearSkipTapState(), SKIP_WINDOW_MS);
-    }
-
-    function submitDontKnow() {
-      clearSkipTapState({ keepTriggered: true });
-      state.skipTriggered = true;
-      answerInput.blur();
-      dontKnowButton?.click();
-    }
-
-    function revealPendingRemediation() {
-      const active = activeAttempt();
-      if (!pendingImmediateCorrection(active)) return false;
-
-      const remediationController = windowObject.VocoraPracticeRemediation;
-      if (typeof remediationController?.revealDeferredPresentation === 'function') {
-        const revealed = remediationController.revealDeferredPresentation();
-        if (revealed) {
-          state.skipTriggered = false;
-          syncStableStage();
-          return true;
-        }
-      }
-
-      const remediationRoot = component.remediationRoot;
-      setHidden(feedback, true);
-      setHidden(answerForm, true);
-      remediationRoot?.classList.remove('vocora-remediation-delayed');
-      setHidden(remediationRoot, false);
-      flashCard.classList.add('remediation-active');
-      state.skipTriggered = false;
-      const stage = stageForRemediationPhase(active?.phase);
-      if (stage) component.setStage(stage);
-      return Boolean(stage);
-    }
-
-    function handleClick(event) {
-      const nextButton = event.target?.closest?.('#nextCardBtn');
-      if (state.active && nextButton && pendingImmediateCorrection()) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        revealPendingRemediation();
-        return;
-      }
-
-      const button = event.target?.closest?.(PRIMARY_SELECTOR);
-      if (!button || !state.active) return;
-
-      if (answerInput.value.trim()) {
-        clearSkipTapState();
-        answerInput.blur();
-        return;
-      }
-
-      event.preventDefault();
-      if (state.skipTapCount === 0) armSkip();
-      else submitDontKnow();
-    }
-
-    function handleAnswerSubmit(event) {
-      if (event.target !== answerForm || !state.active) return;
-      if (!answerInput.value.trim()) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        if (state.skipTapCount === 0) armSkip();
-        return;
-      }
-      clearSkipTapState();
-      answerInput.blur();
-    }
-
-    function feedbackType() {
-      if (!isVisible(feedback)) return null;
-      if (state.skipTriggered) return 'warning';
-      return feedback.classList.contains('wrong') ? 'wrong' : 'correct';
-    }
-
-    function feedbackStage(type) {
-      if (type === 'warning') return PracticeStage.FEEDBACK_WARNING;
-      if (type === 'wrong') return PracticeStage.FEEDBACK_WRONG;
-      if (type === 'correct') return PracticeStage.FEEDBACK_CORRECT;
-      return null;
-    }
-
-    function setTextIfChanged(element, text) {
-      if (element && element.textContent !== text) element.textContent = text;
-    }
-
-    function restoreCorrectSpelling() {
-      const spelling = acceptedSpelling(windowObject);
-      const target = documentObject.querySelector('#correctAnswer');
-      if (spelling && target && !target.textContent.trim()) target.textContent = spelling;
-    }
-
-    function applyFeedbackCopy(type) {
-      const title = documentObject.querySelector('#feedbackTitle');
-      const detail = documentObject.querySelector('#feedbackDetail');
-      const icon = documentObject.querySelector('#feedbackIcon');
-      const next = documentObject.querySelector('#nextCardBtn');
-
-      if (type === 'correct') {
-        setTextIfChanged(title, 'عالیه!');
-        if (!detail?.textContent?.trim()) setTextIfChanged(detail, 'درست نوشتی.');
-        setTextIfChanged(icon, '✓');
-      } else if (type === 'warning') {
-        setTextIfChanged(title, 'اشکالی ندارد');
-        setTextIfChanged(detail, 'این کلمه برای مرور دوباره برمی‌گردد.');
-        setTextIfChanged(icon, '!');
-      } else if (type === 'wrong') {
-        setTextIfChanged(title, 'اشتباه بود');
-        setTextIfChanged(detail, 'پاسخ درست را یک بار با دقت ببین.');
-        setTextIfChanged(icon, '×');
-      }
-      restoreCorrectSpelling();
-      setTextIfChanged(next, 'ادامه');
-    }
-
-    function remediationStage(active = activeAttempt()) {
-      if (!active || isDeferredRemediation(active)) return null;
-      return stageForRemediationPhase(active.phase);
-    }
-
-    function syncStableStage() {
-      if (!state.active) return null;
-      component.configurePracticeInputs();
-
-      const active = activeAttempt();
-
-      // Deferred immediate correction intentionally leaves the original feedback
-      // in charge until Continue. Every other active remediation owns the screen,
-      // even if stale feedback DOM is still visible for one mutation frame.
-      if (active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))) {
-        component.deferRemediation();
-        const type = feedbackType();
-        if (type) {
-          applyFeedbackCopy(type);
-          const stage = feedbackStage(type);
-          component.setStage(stage);
-          return stage;
-        }
+    renderRemediation(snapshot) {
+      const active = snapshot.active;
+      if (!active) throw new Error('Remediation stage requires an active attempt.');
+      setVisible(this.answerForm, false); setVisible(this.feedback, false); setVisible(this.dontKnowButton, false); setVisible(this.remediationRoot, true);
+      this.flashCard?.classList.add('remediation-active');
+      const phase = active.phase;
+      const comparisonVisible = phase === 'correction' || phase === 'copy';
+      const formVisible = phase === 'recall' || phase === 'copy';
+      setVisible(this.query('#remediationComparison'), comparisonVisible); setVisible(this.query('#remediationForm'), formVisible); setVisible(this.query('#remediationAcknowledgeBtn'), phase === 'correction'); setVisible(this.query('#remediationContinueBtn'), phase === 'completed'); setVisible(this.query('#remediationListenBtn'), phase !== 'completed');
+      this.query('#remediationValidation').textContent = '';
+      this.updateMeta(active.word);
+      if (comparisonVisible && active.comparison) this.renderComparison(active.comparison);
+      else { this.query('#remediationUserSpelling').replaceChildren(); this.query('#remediationCorrectSpelling').replaceChildren(); }
+      if (phase === 'correction') {
+        this.setHeading('اصلاح فوری', 'اشتباه را دقیق ببین', 'قبل از ادامه، تفاوت پاسخ خودت با املای صحیح را بررسی کن.'); this.query('#remediationHint').textContent = active.hint || ''; this.focusSoon('#remediationAcknowledgeBtn');
+      } else if (phase === 'recall') {
+        const recheck = active.context === 'recheck';
+        this.setHeading(recheck ? `بازآزمایی ${this.fa(active.recheckNumber)}` : 'بازیابی از حافظه', 'حالا بدون دیدن پاسخ بنویس', recheck ? 'به تلفظ گوش کن و کلمه‌ای را که الان می‌شنوی از حافظه بنویس.' : 'املای صحیح پنهان شده است. به تلفظ گوش کن و کل کلمه را از حافظه تایپ کن.');
+        this.query('#remediationHint').textContent = 'هیچ حرف یا گزینه‌ای نمایش داده نمی‌شود؛ کل کلمه را خودت تولید کن.'; this.configureForm(recheck ? 'املای کلمه‌ای که الان می‌شنوی' : 'املای کلمه از حافظه', 'کلمه را کامل بنویس…', 'بررسی املای من'); this.focusSoon('#remediationInput');
+      } else if (phase === 'copy') {
+        this.setHeading('رونویسی متمرکز', 'یک بار دقیق رونویسی کن', 'پاسخ صحیح را از چپ به راست نگاه کن و همان را یک بار کامل بنویس.'); this.query('#remediationHint').textContent = active.hint || ''; this.configureForm('رونویسی دقیق املای صحیح', 'املای صحیح را رونویسی کن…', 'رونویسی و پنهان‌کردن پاسخ');
+        if (active.copyFailures > 0) this.query('#remediationValidation').textContent = 'رونویسی هنوز دقیقاً مطابق املای صحیح نیست؛ دوباره با دقت مقایسه کن.'; else if (active.recallFailures > 0) this.query('#remediationValidation').textContent = 'این بار هم درست نبود؛ ابتدا یک رونویسی متمرکز انجام بده.'; this.focusSoon('#remediationInput');
       } else {
-        const remediation = remediationStage(active);
-        if (remediation) {
-          component.setStage(remediation);
-          return remediation;
-        }
-      }
-
-      const type = feedbackType();
-      if (type) {
-        applyFeedbackCopy(type);
-        const stage = feedbackStage(type);
-        component.setStage(stage);
-        return stage;
-      }
-
-      if (isVisible(answerForm)) {
-        state.skipTriggered = false;
-        component.setStage(PracticeStage.ANSWER);
-        return PracticeStage.ANSWER;
-      }
-
-      if (component.recoverPrimaryCard()) {
-        state.skipTriggered = false;
-        return PracticeStage.ANSWER;
-      }
-      return null;
-    }
-
-    function practiceInputFocused() {
-      const activeElement = documentObject.activeElement;
-      return Boolean(activeElement?.matches?.(PRACTICE_INPUT_SELECTOR));
-    }
-
-    function syncVisualViewport() {
-      const visualViewport = windowObject.visualViewport;
-      const height = Math.round(visualViewport?.height || windowObject.innerHeight || 0);
-      const offsetTop = Math.round(visualViewport?.offsetTop || 0);
-
-      if (height > 0) {
-        root.style.setProperty('--vocora-review-viewport-height', `${height}px`);
-        root.style.setProperty('--vocora-review-viewport-top', `${offsetTop}px`);
-      }
-
-      if (!practiceInputFocused() && height > 0) {
-        state.largestViewportHeight = Math.max(state.largestViewportHeight, height);
-      } else if (state.largestViewportHeight === 0 && height > 0) {
-        state.largestViewportHeight = Math.max(height, Number(windowObject.innerHeight) || height);
-      }
-
-      const materiallyReduced = state.largestViewportHeight > 0
-        && height > 0
-        && height < state.largestViewportHeight - 140;
-      body.classList.toggle(
-        'vocora-keyboard-open',
-        state.active && (practiceInputFocused() || materiallyReduced)
-      );
-
-      if (state.active && typeof windowObject.scrollTo === 'function') {
-        try { windowObject.scrollTo(0, 0); } catch {}
+        const gap = active.outcome?.nextRecheck?.gap;
+        this.setHeading(active.context === 'recheck' ? 'بازآزمایی کامل شد' : 'اصلاح کامل شد', 'این بار درست نوشتی', active.context === 'recheck' ? (active.outcome?.nextRecheck ? `برای تثبیت بیشتر، این کلمه پس از ${this.fa(gap)} کارت دیگر یک بار دیگر بررسی می‌شود.` : 'بازآزمایی این کلمه در همین جلسه با موفقیت تمام شد.') : `خطای اصلی ثبت شد و منطق جعبهٔ لایتنر دست‌نخورده ماند. این کلمه پس از ${this.fa(gap ?? 3)} کارت دیگر دوباره بررسی می‌شود.`);
+        this.query('#remediationHint').textContent = ''; this.focusSoon('#remediationContinueBtn');
       }
     }
 
-    function enterSessionMode() {
-      if (state.active) return;
-      state.active = true;
-      state.savedScrollY = Number(windowObject.scrollY) || 0;
-      body.classList.add('vocora-session-active');
-      root.classList.add('vocora-session-active');
-      component.mount();
-      syncVisualViewport();
-    }
-
-    function leaveSessionMode() {
-      if (!state.active) return;
-      state.active = false;
-      state.skipTriggered = false;
-      clearSkipTapState();
-      body.classList.remove('vocora-session-active', 'vocora-keyboard-open');
-      root.classList.remove('vocora-session-active');
-      component.clearStage();
-      if (answerInput) answerInput.readOnly = false;
-
-      if (typeof windowObject.scrollTo === 'function') {
-        windowObject.setTimeout(() => {
-          try { windowObject.scrollTo(0, state.savedScrollY); } catch {}
-        }, 0);
-      }
-    }
-
-    function syncSessionMode() {
-      const reviewIsActive = Boolean(reviewView?.classList.contains('active'));
-      if (reviewIsActive && isVisible(reviewSession)) enterSessionMode();
-      else leaveSessionMode();
-    }
-
-    function syncAll() {
-      state.syncQueued = false;
-      syncSessionMode();
-      if (!state.active) return;
-      component.mount();
-      updatePrimaryState();
-      syncStableStage();
-      syncVisualViewport();
-    }
-
-    function requestSync() {
-      if (state.syncQueued) return;
-      state.syncQueued = true;
-      if (typeof windowObject.requestAnimationFrame === 'function') {
-        windowObject.requestAnimationFrame(syncAll);
-      } else {
-        windowObject.setTimeout(syncAll, 0);
-      }
-    }
-
-    function handleFocusIn(event) {
-      if (event.target?.matches?.(PRACTICE_INPUT_SELECTOR)) {
-        component.configureInput(event.target);
-        body.classList.add('vocora-keyboard-open');
-        requestSync();
-      }
-    }
-
-    function handleFocusOut(event) {
-      if (!event.target?.matches?.(PRACTICE_INPUT_SELECTOR)) return;
-      windowObject.setTimeout(syncVisualViewport, 40);
-    }
-
-    function installObserver() {
-      if (typeof windowObject.MutationObserver !== 'function') return;
-      state.observer = new windowObject.MutationObserver(requestSync);
-      state.observer.observe(reviewSession, {
-        attributes: true,
-        attributeFilter: ['class'],
-        childList: true,
-        subtree: true,
-        characterData: true
-      });
-      if (reviewView) {
-        state.observer.observe(reviewView, { attributes: true, attributeFilter: ['class'] });
-      }
-    }
-
-    answerInput.addEventListener('input', updatePrimaryState);
-    documentObject.addEventListener('click', handleClick, true);
-    documentObject.addEventListener('submit', handleAnswerSubmit, true);
-    documentObject.addEventListener('focusin', handleFocusIn, true);
-    documentObject.addEventListener('focusout', handleFocusOut, true);
-    documentObject.addEventListener('vocora:spelling-remediation-started', requestSync);
-    documentObject.addEventListener('vocora:spelling-remediation-revealed', requestSync);
-    documentObject.addEventListener('vocora:same-session-recheck-started', requestSync);
-    documentObject.addEventListener('vocora:spelling-remediation-completed', requestSync);
-
-    windowObject.addEventListener?.('resize', syncVisualViewport, { passive: true });
-    windowObject.addEventListener?.('orientationchange', syncVisualViewport, { passive: true });
-    windowObject.visualViewport?.addEventListener?.('resize', syncVisualViewport, { passive: true });
-    windowObject.visualViewport?.addEventListener?.('scroll', syncVisualViewport, { passive: true });
-
-    installObserver();
-    syncAll();
-
-    return Object.freeze({
-      component,
-      sync: syncAll,
-      syncStableStage,
-      syncVisualViewport,
-      updatePrimaryState,
-      revealDelayedRemediation: revealPendingRemediation,
-      delayImmediateRemediation: requestSync,
-      getState: () => {
-        const active = activeAttempt();
-        return {
-          active: state.active,
-          skipTriggered: state.skipTriggered,
-          delayedRemediation: Boolean(active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))),
-          stage: component.stage,
-          renderable: component.hasRenderableStage()
-        };
-      }
-    });
+    updateMeta(word) { const category = this.document.querySelector('#cardCategory'); const box = this.document.querySelector('#cardBox'); if (category) category.textContent = word?.category || 'تمرین املا'; if (box) box.textContent = word?.box ? `خانهٔ ${this.fa(word.box)}` : 'تمرین همان جلسه'; }
+    configureForm(label, placeholder, buttonText) { const input = this.query('#remediationInput'); this.query('#remediationInputLabel').textContent = label; input.value = ''; input.placeholder = placeholder; this.query('#remediationSubmitBtn').textContent = buttonText; }
+    setHeading(kicker, title, description) { this.query('#remediationKicker').textContent = kicker; this.query('#remediationTitle').textContent = title; this.query('#remediationDescription').textContent = description; }
+    renderComparison(comparison) { this.renderTokens(this.query('#remediationUserSpelling'), comparison.answerTokens, 'پاسخی ثبت نشد'); this.renderTokens(this.query('#remediationCorrectSpelling'), comparison.targetTokens, comparison.target); }
+    renderTokens(container, tokens, emptyLabel) { container.replaceChildren(); if (!tokens?.length) { const empty = this.document.createElement('span'); empty.className = 'spelling-empty'; empty.textContent = emptyLabel; container.append(empty); return; } tokens.forEach(({ value, status }) => { const token = this.document.createElement('span'); token.className = `spelling-token spelling-${status}`; token.textContent = value === ' ' ? '\u00A0' : value; container.append(token); }); }
+    updatePrimaryButton(hasAnswer) { const primary = this.document.querySelector(PRIMARY_SELECTOR); if (!primary) return; this.answerForm?.classList.toggle('vocora-has-answer', hasAnswer); primary.classList.toggle('is-empty', !hasAnswer); primary.dataset.empty = hasAnswer ? 'false' : 'true'; primary.setAttribute('aria-label', hasAnswer ? 'بررسی پاسخ' : 'پاسخی ننوشته‌ای. برای انتخاب نمی‌دانم دو بار روی این دکمه بزن.'); }
+    armUnknown(armed) { const primary = this.document.querySelector(PRIMARY_SELECTOR); const hint = this.document.querySelector('#vocoraDoubleTapHint'); if (!primary || !hint) return; primary.classList.toggle('skip-armed', armed); primary.textContent = armed ? 'یک بار دیگر بزن' : 'بررسی پاسخ'; hint.textContent = armed ? 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود' : 'نمی‌دانی؟ دو بار روی دکمه بزن'; }
+    focusSoon(selector) { this.window.setTimeout(() => this.document.querySelector(selector)?.focus?.({ preventScroll: true }), 0); }
+    fa(value) { return new this.window.Intl.NumberFormat('fa-IR').format(Number(value) || 0); }
+    visibility() { return { answer: isVisible(this.answerForm), feedback: isVisible(this.feedback), remediation: isVisible(this.remediationRoot) }; }
   }
 
-  function install(windowObject = globalThis.window, documentObject = globalThis.document) {
-    if (!windowObject || !documentObject) return null;
-    if (documentObject[INSTALLATION]) return documentObject[INSTALLATION];
-
-    ensureKeyboardRouter(documentObject, windowObject);
-    ensureStyles(documentObject);
-    const controller = createController(windowObject, documentObject);
-    if (!controller) return null;
-
-    Object.defineProperty(documentObject, INSTALLATION, {
-      value: controller,
-      configurable: false,
-      enumerable: false,
-      writable: false
-    });
-    return controller;
-  }
-
-  globalThis.VocoraReviewSessionUx = Object.freeze({
-    RELEASE,
-    STYLE_ID,
-    STYLE_HREF,
-    KEYBOARD_ROUTER_ID,
-    KEYBOARD_ROUTER_SRC,
-    SKIP_WINDOW_MS,
-    PracticeStage,
-    PracticeSessionComponent,
-    stageForRemediationPhase,
-    remediationSnapshot,
-    activeRemediation,
-    isDeferredRemediation,
-    ensureKeyboardRouter,
-    ensureStyles,
-    createController,
-    install
-  });
-
-  function boot() {
-    ensureKeyboardRouter();
-    const controller = install();
-    if (!controller && globalThis.document?.readyState === 'loading') {
-      globalThis.document.addEventListener('DOMContentLoaded', () => install(), { once: true });
-    }
-  }
-
-  boot();
+  globalThis.VocoraReviewSessionUx = Object.freeze({ RELEASE, STYLE_ID, STYLE_HREF, PRIMARY_SELECTOR, PRACTICE_INPUT_SELECTOR, setVisible, isVisible, ensureStyles, PracticeViewport, PracticeSessionView });
 })();
