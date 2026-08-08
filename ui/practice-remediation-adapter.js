@@ -138,6 +138,7 @@
       }
 
       if (this.active?.presentationDeferred) {
+        this.feedback = null;
         this.active.presentationDeferred = false;
         return this.result(PracticeCommand.RENDER);
       }
