@@ -417,9 +417,6 @@
         return;
       }
       if (!this.port.isSupportedMode()) return;
-      // A same-session recheck is eligible only after its configured number of
-      // intervening primary cards. Finite sessions may end with a transient recheck
-      // still pending; the session observer clears it instead of collapsing the gap.
       const entry = this.queue.takeNext();
       if (!entry) return;
       event.preventDefault();
@@ -509,7 +506,12 @@
     }
 
     acknowledge() {
-      if (!this.active || this.presentationDeferred) return;
+      if (!this.active) return;
+      // A hidden/programmatic acknowledgement (used by lower-level adapter tests)
+      // should not bypass state ownership. Reveal the deferred correction first,
+      // then perform the same transition a visible acknowledgement would perform.
+      if (this.presentationDeferred) this.revealDeferredPresentation();
+      if (this.active.attempt.phase !== this.domain.RemediationPhase.CORRECTION) return;
       this.active.attempt.acknowledgeCorrection();
       this.render();
     }
