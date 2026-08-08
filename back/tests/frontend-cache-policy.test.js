@@ -5,7 +5,7 @@ import request from "supertest";
 import { createTestContext } from "./helpers/fakes.js";
 
 describe("frontend review cache policy", () => {
-  it("never stores the practice assets that must change atomically", async () => {
+  it("never stores frontend code that must change atomically", async () => {
     const staticDirectory = fileURLToPath(new URL("../../ui", import.meta.url));
     const { app } = createTestContext({}, { staticDirectory });
 
@@ -15,24 +15,30 @@ describe("frontend review cache policy", () => {
       "/practice-remediation.js",
       "/practice-remediation.css",
       "/practice-remediation-adapter.js",
-      "/practice-remediation-keyboard-guard.js"
+      "/practice-remediation-keyboard-guard.js",
+      "/app-v2.js",
+      "/styles-v2.css"
     ]) {
       const response = await request(app).get(asset).expect(200);
       assert.match(response.headers["cache-control"] || "", /no-store/, `${asset} must not be stored by the browser.`);
+      assert.match(response.headers["cache-control"] || "", /s-maxage=0/, `${asset} must disable shared-cache freshness.`);
       assert.equal(response.headers["cdn-cache-control"], "no-store", `${asset} must not be stored by the CDN.`);
       assert.equal(response.headers["surrogate-control"], "no-store", `${asset} must not be stored by an intermediary.`);
+      assert.equal(response.headers["x-vocora-release"], "20260808-ownership3");
+      assert.equal(response.headers.etag, undefined, `${asset} must not rely on an old ETag.`);
+      assert.equal(response.headers["last-modified"], undefined, `${asset} must not rely on an old Last-Modified validator.`);
     }
   });
 
-  it("forces generic JavaScript and CSS to revalidate and prevents CDN storage", async () => {
+  it("clears previously cached frontend responses when HTML is loaded", async () => {
     const staticDirectory = fileURLToPath(new URL("../../ui", import.meta.url));
     const { app } = createTestContext({}, { staticDirectory });
 
-    for (const asset of ["/app-v2.js", "/styles-v2.css"]) {
-      const response = await request(app).get(asset).expect(200);
-      assert.equal(response.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
-      assert.equal(response.headers["cdn-cache-control"], "no-store");
-      assert.equal(response.headers["surrogate-control"], "no-store");
-    }
+    const response = await request(app).get("/").expect(200);
+    assert.match(response.headers["cache-control"] || "", /no-store/);
+    assert.equal(response.headers["clear-site-data"], '"cache"');
+    assert.equal(response.headers["cdn-cache-control"], "no-store");
+    assert.equal(response.headers["surrogate-control"], "no-store");
+    assert.equal(response.headers["x-vocora-release"], "20260808-ownership3");
   });
 });
