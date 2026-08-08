@@ -30,8 +30,8 @@ function jsonResponse(payload, status = 200) {
   assert.equal(libraryLink.classList.contains("nav-item"), false, "library link must not trigger the SPA view switcher");
   const headers = [...document.querySelectorAll("#view-words thead th")].map((node) => node.textContent.trim());
   assert.ok(headers.includes("مجموعه‌ها"), "word bank must show collection membership");
-  assert.ok(document.querySelector('script[src="word-collections.js"]'));
-  assert.ok(document.querySelector('script[src="session-persistence.js"]'));
+  assert.ok(document.querySelector('script[src^="word-collections.js?v="]'));
+  assert.ok(document.querySelector('script[src^="session-persistence.js?v="]'));
 }
 
 {
@@ -120,8 +120,6 @@ function jsonResponse(payload, status = 200) {
   const { window } = dom;
   installDialogSupport(window);
 
-  // Simulate a CDN/browser still holding the pre-redesign HTML while it has
-  // already revalidated and downloaded the newer library.js runtime.
   [
     "#libraryDate",
     "#libraryWordCount",
