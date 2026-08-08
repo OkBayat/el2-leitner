@@ -2,8 +2,9 @@
   'use strict';
 
   const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
+  const RELEASE = '20260808-ownership3';
   const STYLE_ID = 'vocora-review-session-ux-style';
-  const STYLE_HREF = 'review-session-ux.css?v=20260807-2317';
+  const STYLE_HREF = `review-session-ux.css?v=${RELEASE}`;
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
@@ -25,8 +26,21 @@
     return Boolean(element && !element.classList.contains('hidden'));
   }
 
+  function setHidden(element, hidden) {
+    if (!element) return;
+    element.classList.toggle('hidden', hidden);
+    element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+    if (hidden) element.setAttribute('inert', '');
+    else element.removeAttribute('inert');
+  }
+
   function ensureStyles(documentObject = globalThis.document) {
-    if (!documentObject?.head || documentObject.getElementById(STYLE_ID)) return false;
+    if (!documentObject?.head) return false;
+    const existing = documentObject.getElementById(STYLE_ID);
+    if (existing) {
+      if (existing.getAttribute('href') !== STYLE_HREF) existing.setAttribute('href', STYLE_HREF);
+      return false;
+    }
     const link = documentObject.createElement('link');
     link.id = STYLE_ID;
     link.rel = 'stylesheet';
@@ -39,6 +53,18 @@
     return windowObject?.VazheyarTest?.getCurrentWord?.() || null;
   }
 
+  function remediationSnapshot(windowObject = globalThis.window) {
+    return windowObject?.VocoraPracticeRemediation?.snapshot?.() || { active: null, queue: [] };
+  }
+
+  function activeRemediation(windowObject = globalThis.window) {
+    return remediationSnapshot(windowObject).active || null;
+  }
+
+  function isDeferredRemediation(active) {
+    return Boolean(active?.presentationDeferred);
+  }
+
   function acceptedSpelling(windowObject = globalThis.window) {
     const word = currentWord(windowObject);
     if (!word) return '';
@@ -48,16 +74,16 @@
     return accepted.filter(Boolean).join(' / ');
   }
 
-  function activeRemediation(windowObject = globalThis.window) {
-    return windowObject?.VocoraPracticeRemediation?.snapshot?.()?.active || null;
-  }
-
   function stageForRemediationPhase(phase) {
     if (phase === 'correction') return PracticeStage.REMEDIATION_CORRECTION;
     if (phase === 'recall') return PracticeStage.REMEDIATION_RECALL;
     if (phase === 'copy') return PracticeStage.REMEDIATION_COPY;
     if (phase === 'completed') return PracticeStage.REMEDIATION_COMPLETED;
     return null;
+  }
+
+  function isImmediateCorrection(active) {
+    return Boolean(active && active.context === 'immediate' && active.phase === 'correction');
   }
 
   class PracticeSessionComponent {
@@ -143,11 +169,16 @@
         hint.setAttribute('aria-live', 'polite');
       }
 
-      if (button.nextElementSibling !== hint) {
-        button.insertAdjacentElement('afterend', hint);
-      }
+      if (button.nextElementSibling !== hint) button.insertAdjacentElement('afterend', hint);
       button.setAttribute('aria-describedby', hint.id);
       return button;
+    }
+
+    deferRemediation() {
+      const remediationRoot = this.remediationRoot;
+      setHidden(remediationRoot, true);
+      remediationRoot?.classList.add('vocora-remediation-delayed');
+      this.flashCard?.classList.remove('remediation-active');
     }
 
     setStage(stage) {
@@ -161,18 +192,22 @@
     }
 
     normalizeStage(stage) {
+      const active = activeRemediation(this.window);
+      const remediationRoot = this.remediationRoot;
       const remediationStage = stage.startsWith('remediation-');
       const feedbackStage = stage.startsWith('feedback-');
-      const remediation = activeRemediation(this.window);
-      const remediationRoot = this.remediationRoot;
 
       if (remediationStage) {
-        this.feedback?.classList.add('hidden');
-        this.answerForm?.classList.add('hidden');
-        this.flashCard?.classList.add('remediation-active');
-        if (remediation && remediationRoot) {
-          remediationRoot.classList.remove('hidden', 'vocora-remediation-delayed');
+        if (!active || isDeferredRemediation(active)) {
+          this.deferRemediation();
+          return;
         }
+        setHidden(this.feedback, true);
+        setHidden(this.answerForm, true);
+        setHidden(this.dontKnowButton, true);
+        remediationRoot?.classList.remove('vocora-remediation-delayed');
+        setHidden(remediationRoot, false);
+        this.flashCard?.classList.add('remediation-active');
         this.answerInput?.blur();
         return;
       }
@@ -180,10 +215,10 @@
       this.flashCard?.classList.remove('remediation-active');
 
       if (stage === PracticeStage.ANSWER) {
-        remediationRoot?.classList.add('hidden');
-        remediationRoot?.classList.remove('vocora-remediation-delayed');
-        this.answerForm?.classList.remove('hidden');
-        this.feedback?.classList.add('hidden');
+        setHidden(remediationRoot, true);
+        if (!active) remediationRoot?.classList.remove('vocora-remediation-delayed');
+        setHidden(this.feedback, true);
+        setHidden(this.answerForm, false);
         if (this.answerInput) {
           this.answerInput.disabled = false;
           this.answerInput.readOnly = false;
@@ -192,7 +227,13 @@
       }
 
       if (feedbackStage) {
-        remediationRoot?.classList.add('hidden');
+        setHidden(remediationRoot, true);
+        if (active && (isDeferredRemediation(active) || isImmediateCorrection(active))) {
+          remediationRoot?.classList.add('vocora-remediation-delayed');
+        }
+        setHidden(this.answerForm, true);
+        setHidden(this.dontKnowButton, true);
+        setHidden(this.feedback, false);
         if (this.answerInput) {
           this.answerInput.readOnly = true;
           this.answerInput.blur();
@@ -212,9 +253,10 @@
       if (!this.reviewSession || !isVisible(this.reviewSession)) return false;
 
       this.flashCard?.classList.remove('remediation-active');
-      this.remediationRoot?.classList.add('hidden');
-      this.feedback?.classList.add('hidden');
-      this.answerForm?.classList.remove('hidden');
+      setHidden(this.remediationRoot, true);
+      this.remediationRoot?.classList.remove('vocora-remediation-delayed');
+      setHidden(this.feedback, true);
+      setHidden(this.answerForm, false);
       this.dontKnowButton?.classList.remove('hidden');
       if (this.answerInput) {
         this.answerInput.disabled = false;
@@ -230,8 +272,12 @@
     hasRenderableStage() {
       if (!this.stage) return false;
       if (this.stage === PracticeStage.ANSWER) return isVisible(this.answerForm);
-      if (this.stage.startsWith('feedback-')) return isVisible(this.feedback);
-      if (this.stage.startsWith('remediation-')) return isVisible(this.remediationRoot);
+      if (this.stage.startsWith('feedback-')) {
+        return isVisible(this.feedback) && !isVisible(this.remediationRoot);
+      }
+      if (this.stage.startsWith('remediation-')) {
+        return isVisible(this.remediationRoot) && !isVisible(this.feedback) && !isVisible(this.answerForm);
+      }
       return false;
     }
   }
@@ -261,10 +307,21 @@
       skipTapCount: 0,
       skipTapTimer: null,
       skipTriggered: false,
-      delayedRemediation: false,
       observer: null,
       syncQueued: false
     };
+
+    function activeAttempt() {
+      return activeRemediation(windowObject);
+    }
+
+    function feedbackOwnsImmediateCorrection(active = activeAttempt()) {
+      return Boolean(isImmediateCorrection(active) && isVisible(feedback));
+    }
+
+    function pendingImmediateCorrection(active = activeAttempt()) {
+      return Boolean(isImmediateCorrection(active) && (isDeferredRemediation(active) || isVisible(feedback)));
+    }
 
     function clearSkipTapState({ keepTriggered = false } = {}) {
       state.skipTapCount = 0;
@@ -309,7 +366,6 @@
       if (hint && hint.textContent !== 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود') {
         hint.textContent = 'یک بار دیگر بزن تا «نمی‌دانم» ثبت شود';
       }
-
       if (state.skipTapTimer) windowObject.clearTimeout(state.skipTapTimer);
       state.skipTapTimer = windowObject.setTimeout(() => clearSkipTapState(), SKIP_WINDOW_MS);
     }
@@ -321,38 +377,41 @@
       dontKnowButton?.click();
     }
 
-    function revealDelayedRemediation() {
-      if (!state.delayedRemediation) return false;
-      const remediationController = windowObject.VocoraPracticeRemediation;
+    function revealPendingRemediation() {
+      const active = activeAttempt();
+      if (!pendingImmediateCorrection(active)) return false;
 
+      const remediationController = windowObject.VocoraPracticeRemediation;
       if (typeof remediationController?.revealDeferredPresentation === 'function') {
         const revealed = remediationController.revealDeferredPresentation();
-        if (!revealed) return false;
-        state.delayedRemediation = false;
-        state.skipTriggered = false;
-        syncStableStage();
-        return true;
+        if (revealed) {
+          state.skipTriggered = false;
+          syncStableStage();
+          return true;
+        }
       }
 
+      // Compatibility with a previously cached adapter: the old adapter already
+      // prepared correction DOM. The review component still enforces a single
+      // owner and performs the transition atomically.
       const remediationRoot = component.remediationRoot;
-      state.delayedRemediation = false;
-      state.skipTriggered = false;
-      remediationRoot?.classList.remove('vocora-remediation-delayed', 'hidden');
-      feedback.classList.add('hidden');
+      setHidden(feedback, true);
+      setHidden(answerForm, true);
+      remediationRoot?.classList.remove('vocora-remediation-delayed');
+      setHidden(remediationRoot, false);
       flashCard.classList.add('remediation-active');
-      syncStableStage();
-      windowObject.setTimeout(() => {
-        remediationRoot?.querySelector('#remediationAcknowledgeBtn:not(.hidden), #remediationInput:not(:disabled)')?.focus();
-      }, 0);
-      return true;
+      state.skipTriggered = false;
+      const stage = stageForRemediationPhase(active?.phase);
+      if (stage) component.setStage(stage);
+      return Boolean(stage);
     }
 
     function handleClick(event) {
       const nextButton = event.target?.closest?.('#nextCardBtn');
-      if (state.active && state.delayedRemediation && nextButton) {
+      if (state.active && nextButton && pendingImmediateCorrection()) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        revealDelayedRemediation();
+        revealPendingRemediation();
         return;
       }
 
@@ -366,11 +425,8 @@
       }
 
       event.preventDefault();
-      if (state.skipTapCount === 0) {
-        armSkip();
-        return;
-      }
-      submitDontKnow();
+      if (state.skipTapCount === 0) armSkip();
+      else submitDontKnow();
     }
 
     function handleAnswerSubmit(event) {
@@ -432,40 +488,30 @@
       setTextIfChanged(next, 'ادامه');
     }
 
-    function delayImmediateRemediation(event) {
-      if (event?.detail?.context && event.detail.context !== 'immediate') return;
-      const remediationRoot = component.remediationRoot;
-      if (!remediationRoot) return;
-
-      state.delayedRemediation = true;
-      flashCard.classList.remove('remediation-active');
-      remediationRoot.classList.add('vocora-remediation-delayed', 'hidden');
-      restoreCorrectSpelling();
-      syncStableStage();
-    }
-
-    function handleRemediationRevealed() {
-      if (!state.active) return;
-      state.delayedRemediation = false;
-      state.skipTriggered = false;
-      requestSync();
-    }
-
-    function remediationStage() {
-      if (state.delayedRemediation) return null;
-      const snapshot = activeRemediation(windowObject);
-      if (!snapshot) return null;
-      return stageForRemediationPhase(snapshot.phase);
+    function remediationStage(active = activeAttempt()) {
+      if (!active || isDeferredRemediation(active)) return null;
+      return stageForRemediationPhase(active.phase);
     }
 
     function syncStableStage() {
       if (!state.active) return null;
       component.configurePracticeInputs();
 
-      const remediation = remediationStage();
-      if (remediation) {
-        component.setStage(remediation);
-        return remediation;
+      const active = activeAttempt();
+
+      // Feedback has explicit ownership of immediate correction until Continue.
+      // This also protects clients that still have the previous adapter cached,
+      // because visibility is derived from persistent state + actual DOM, not from
+      // a one-shot event that might have fired before this module loaded.
+      if (active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))) {
+        component.deferRemediation();
+        const type = feedbackType();
+        if (type) {
+          applyFeedbackCopy(type);
+          const stage = feedbackStage(type);
+          component.setStage(stage);
+          return stage;
+        }
       }
 
       const type = feedbackType();
@@ -474,6 +520,12 @@
         const stage = feedbackStage(type);
         component.setStage(stage);
         return stage;
+      }
+
+      const remediation = remediationStage(active);
+      if (remediation) {
+        component.setStage(remediation);
+        return remediation;
       }
 
       if (isVisible(answerForm)) {
@@ -536,12 +588,10 @@
     function leaveSessionMode() {
       if (!state.active) return;
       state.active = false;
-      state.delayedRemediation = false;
       state.skipTriggered = false;
       clearSkipTapState();
       body.classList.remove('vocora-session-active', 'vocora-keyboard-open');
       root.classList.remove('vocora-session-active');
-      component.remediationRoot?.classList.remove('vocora-remediation-delayed');
       component.clearStage();
       if (answerInput) answerInput.readOnly = false;
 
@@ -611,8 +661,8 @@
     documentObject.addEventListener('submit', handleAnswerSubmit, true);
     documentObject.addEventListener('focusin', handleFocusIn, true);
     documentObject.addEventListener('focusout', handleFocusOut, true);
-    documentObject.addEventListener('vocora:spelling-remediation-started', delayImmediateRemediation);
-    documentObject.addEventListener('vocora:spelling-remediation-revealed', handleRemediationRevealed);
+    documentObject.addEventListener('vocora:spelling-remediation-started', requestSync);
+    documentObject.addEventListener('vocora:spelling-remediation-revealed', requestSync);
     documentObject.addEventListener('vocora:same-session-recheck-started', requestSync);
     documentObject.addEventListener('vocora:spelling-remediation-completed', requestSync);
 
@@ -630,15 +680,18 @@
       syncStableStage,
       syncVisualViewport,
       updatePrimaryState,
-      delayImmediateRemediation,
-      revealDelayedRemediation,
-      getState: () => ({
-        active: state.active,
-        skipTriggered: state.skipTriggered,
-        delayedRemediation: state.delayedRemediation,
-        stage: component.stage,
-        renderable: component.hasRenderableStage()
-      })
+      revealDelayedRemediation: revealPendingRemediation,
+      delayImmediateRemediation: requestSync,
+      getState: () => {
+        const active = activeAttempt();
+        return {
+          active: state.active,
+          skipTriggered: state.skipTriggered,
+          delayedRemediation: Boolean(active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))),
+          stage: component.stage,
+          renderable: component.hasRenderableStage()
+        };
+      }
     });
   }
 
@@ -660,12 +713,16 @@
   }
 
   globalThis.VocoraReviewSessionUx = Object.freeze({
+    RELEASE,
     STYLE_ID,
     STYLE_HREF,
     SKIP_WINDOW_MS,
     PracticeStage,
     PracticeSessionComponent,
     stageForRemediationPhase,
+    remediationSnapshot,
+    activeRemediation,
+    isDeferredRemediation,
     ensureStyles,
     createController,
     install
