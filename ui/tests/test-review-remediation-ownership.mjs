@@ -14,10 +14,7 @@ function markup() {
       <div id="reviewSession">
         <div class="session-bar">
           <button id="exitSessionBtn" type="button">×</button>
-          <div class="session-progress">
-            <div class="row-between"><span id="sessionCounter">تمرین آزاد · ۰ پاسخ</span><span id="sessionAccuracy">دقت: ۰٪</span></div>
-            <div class="progress-track"><i id="sessionProgressBar"></i></div>
-          </div>
+          <div class="session-progress"><div class="row-between"><span id="sessionCounter">تمرین آزاد · ۰ پاسخ</span><span id="sessionAccuracy">دقت: ۰٪</span></div><div class="progress-track"><i></i></div></div>
         </div>
         <article id="flashCard">
           <div class="card-meta"><span id="cardCategory">Modern families</span><span id="cardBox">خانه ۱</span></div>
@@ -29,8 +26,7 @@ function markup() {
           <div id="answerFeedback" class="answer-feedback hidden">
             <div class="feedback-heading"><span id="feedbackIcon">×</span><div><strong id="feedbackTitle">اشتباه بود</strong><p id="feedbackDetail"></p></div></div>
             <div class="correct-spelling"><small>املای صحیح</small><strong id="correctAnswer"></strong></div>
-            <p id="wordNote"></p>
-            <button id="nextCardBtn" type="button">ادامه</button>
+            <p id="wordNote"></p><button id="nextCardBtn" type="button">ادامه</button>
           </div>
         </article>
       </div>
@@ -45,12 +41,8 @@ function configureWindow(window) {
   window.speechSynthesis = { cancel() {}, speak() {}, getVoices() { return []; } };
   window.VazheyarTest = {
     getCurrentWord: () => ({
-      id: 'imaginative',
-      term: 'imaginative',
-      accepted: ['imaginative'],
-      category: 'Modern families',
-      box: 1,
-      notes: ''
+      id: 'imaginative', term: 'imaginative', accepted: ['imaginative'],
+      category: 'Modern families', box: 1, notes: ''
     }),
     getState: () => ({ settings: { voiceRate: 0.85 } }),
     isCorrectAnswer: (answer) => String(answer || '').trim().toLowerCase() === 'imaginative'
@@ -71,7 +63,7 @@ function installPrimaryAppBehavior(document, window) {
   });
 }
 
-async function createHarness({ withReviewUx }) {
+async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   const dom = new JSDOM(markup(), {
     url: 'https://vocora.test/#review',
     runScripts: 'outside-only',
@@ -81,15 +73,27 @@ async function createHarness({ withReviewUx }) {
   const { document } = window;
   configureWindow(window);
   installPrimaryAppBehavior(document, window);
-
   window.eval(domainSource);
-  if (withReviewUx) window.eval(reviewUxSource);
+
+  if (reviewTiming === 'before-adapter') window.eval(reviewUxSource);
   window.eval(adapterSource);
   const remediation = await window.VocoraPracticeRemediationReady;
-  const review = withReviewUx ? window.VocoraReviewSessionUx.install(window, document) : null;
+  let review = reviewTiming === 'before-adapter'
+    ? window.VocoraReviewSessionUx.install(window, document)
+    : null;
 
   document.querySelector('#boxOnePracticeBtn').click();
-  return { dom, window, document, remediation, review };
+
+  return {
+    dom, window, document, remediation,
+    get review() { return review; },
+    loadReview() {
+      if (!window.VocoraReviewSessionUx) window.eval(reviewUxSource);
+      review = window.VocoraReviewSessionUx.install(window, document);
+      review.sync();
+      return review;
+    }
+  };
 }
 
 async function submitWrong(harness) {
@@ -101,56 +105,71 @@ async function submitWrong(harness) {
   await tick();
 }
 
-// Source-level invariant: even without review-session-ux, the remediation adapter
-// must not render its correction page before the primary wrong-result Continue.
-const adapterOnly = await createHarness({ withReviewUx: false });
+function assertFeedbackOnly(harness, message) {
+  const feedback = harness.document.querySelector('#answerFeedback');
+  const root = harness.document.querySelector('#practiceRemediation');
+  assert.ok(!feedback.classList.contains('hidden'), message);
+  assert.ok(root.classList.contains('hidden'), message);
+  assert.ok(!harness.document.querySelector('#flashCard').classList.contains('remediation-active'), message);
+}
+
+function assertCorrectionOnly(harness, message) {
+  const feedback = harness.document.querySelector('#answerFeedback');
+  const root = harness.document.querySelector('#practiceRemediation');
+  assert.ok(feedback.classList.contains('hidden'), message);
+  assert.ok(!root.classList.contains('hidden'), message);
+  assert.ok(harness.document.querySelector('#flashCard').classList.contains('remediation-active'), message);
+}
+
+// Adapter source of truth: correction state may exist, but its presentation cannot
+// render before the primary feedback Continue action.
+const adapterOnly = await createHarness({ reviewTiming: 'after-wrong' });
 await submitWrong(adapterOnly);
-let root = adapterOnly.document.querySelector('#practiceRemediation');
 assert.equal(adapterOnly.remediation.snapshot().active?.phase, 'correction');
 assert.equal(adapterOnly.remediation.snapshot().active?.presentationDeferred, true);
-assert.ok(root.classList.contains('hidden'), 'Adapter alone must keep correction DOM hidden while wrong feedback owns the screen.');
-assert.ok(root.classList.contains('vocora-remediation-delayed'));
-assert.ok(!adapterOnly.document.querySelector('#answerFeedback').classList.contains('hidden'));
-assert.ok(!adapterOnly.document.querySelector('#flashCard').classList.contains('remediation-active'));
-
+assertFeedbackOnly(adapterOnly, 'Adapter alone must keep correction hidden before Continue.');
 adapterOnly.document.querySelector('#nextCardBtn').click();
 await tick();
 assert.equal(adapterOnly.remediation.snapshot().active?.presentationDeferred, false);
-assert.ok(adapterOnly.document.querySelector('#answerFeedback').classList.contains('hidden'));
-assert.ok(!root.classList.contains('hidden'));
-assert.ok(adapterOnly.document.querySelector('#flashCard').classList.contains('remediation-active'));
+assertCorrectionOnly(adapterOnly, 'Adapter Continue must atomically reveal correction.');
 adapterOnly.dom.window.close();
 
-// Full production ownership: review UX and adapter cooperate, but there is still
-// exactly one visible stage before and after Continue.
-const integrated = await createHarness({ withReviewUx: true });
+// Normal production order: review coordinator is installed before adapter boot.
+const integrated = await createHarness({ reviewTiming: 'before-adapter' });
 await submitWrong(integrated);
-root = integrated.document.querySelector('#practiceRemediation');
 integrated.review.sync();
-
-assert.equal(integrated.remediation.snapshot().active?.presentationDeferred, true);
 assert.equal(integrated.review.getState().stage, 'feedback-wrong');
-assert.ok(!integrated.document.querySelector('#answerFeedback').classList.contains('hidden'));
-assert.ok(root.classList.contains('hidden'));
-assert.ok(!integrated.document.querySelector('#flashCard').classList.contains('remediation-active'));
-
-// Re-running every synchronizer while feedback is visible must not expose correction.
+assert.equal(integrated.review.getState().delayedRemediation, true);
+assertFeedbackOnly(integrated, 'Integrated feedback must be exclusive.');
 for (let index = 0; index < 3; index += 1) {
   integrated.review.sync();
   integrated.remediation.render();
   await tick();
-  assert.ok(root.classList.contains('hidden'), 'Deferred render attempts must remain no-ops.');
-  assert.ok(!integrated.document.querySelector('#answerFeedback').classList.contains('hidden'));
+  assertFeedbackOnly(integrated, 'Repeated render/sync attempts cannot expose correction early.');
 }
-
 integrated.document.querySelector('#nextCardBtn').click();
 await tick();
 integrated.review.sync();
-assert.equal(integrated.remediation.snapshot().active?.presentationDeferred, false);
 assert.equal(integrated.review.getState().stage, 'remediation-correction');
-assert.ok(integrated.document.querySelector('#answerFeedback').classList.contains('hidden'));
-assert.ok(!root.classList.contains('hidden'));
-assert.ok(integrated.document.querySelector('#flashCard').classList.contains('remediation-active'));
-
+assertCorrectionOnly(integrated, 'Continue must transfer ownership exactly once.');
 integrated.dom.window.close();
+
+// Critical regression: a slow or previously cached review coordinator can load
+// after the remediation-started event. It must derive ownership from the persistent
+// controller snapshot instead of depending on the missed event.
+const lateReview = await createHarness({ reviewTiming: 'after-wrong' });
+await submitWrong(lateReview);
+assert.equal(lateReview.remediation.snapshot().active?.presentationDeferred, true);
+lateReview.loadReview();
+assert.equal(lateReview.review.getState().stage, 'feedback-wrong');
+assert.equal(lateReview.review.getState().delayedRemediation, true);
+assertFeedbackOnly(lateReview, 'Late coordinator load must still keep feedback exclusive.');
+lateReview.document.querySelector('#nextCardBtn').click();
+await tick();
+lateReview.review.sync();
+assert.equal(lateReview.remediation.snapshot().active?.presentationDeferred, false);
+assert.equal(lateReview.review.getState().stage, 'remediation-correction');
+assertCorrectionOnly(lateReview, 'Late-loaded coordinator must transition cleanly on Continue.');
+lateReview.dom.window.close();
+
 console.log('Review/remediation ownership integration tests passed.');
