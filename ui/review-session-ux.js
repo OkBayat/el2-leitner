@@ -3,7 +3,7 @@
 
   const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
   const STYLE_ID = 'vocora-review-session-ux-style';
-  const STYLE_HREF = 'review-session-ux.css?v=20260808-0720';
+  const STYLE_HREF = 'review-session-ux.css?v=20260807-2317';
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
@@ -143,8 +143,6 @@
         hint.setAttribute('aria-live', 'polite');
       }
 
-      // Keep one semantic stack everywhere: input -> primary action -> hint.
-      // DOM and visual order now match on desktop, mobile, and keyboard layouts.
       if (button.nextElementSibling !== hint) {
         button.insertAdjacentElement('afterend', hint);
       }
@@ -169,9 +167,6 @@
       const remediationRoot = this.remediationRoot;
 
       if (remediationStage) {
-        // Stage ownership is enforced in the DOM, not only by CSS. This keeps
-        // desktop/mobile identical even if a stale stylesheet is cached or the
-        // remediation view re-renders between observer ticks.
         this.feedback?.classList.add('hidden');
         this.answerForm?.classList.add('hidden');
         this.flashCard?.classList.add('remediation-active');
@@ -182,7 +177,6 @@
         return;
       }
 
-      // A new primary/feedback card must never inherit remediation presentation.
       this.flashCard?.classList.remove('remediation-active');
 
       if (stage === PracticeStage.ANSWER) {
@@ -198,8 +192,6 @@
       }
 
       if (feedbackStage) {
-        // Feedback owns the screen until Continue. This is enforced on every
-        // normalization pass so remediation can never coexist with the result.
         remediationRoot?.classList.add('hidden');
         if (this.answerInput) {
           this.answerInput.readOnly = true;
@@ -333,9 +325,6 @@
       if (!state.delayedRemediation) return false;
       const remediationController = windowObject.VocoraPracticeRemediation;
 
-      // The remediation controller owns the actual pending correction. Delegate
-      // the transition to it so there is one atomic source of truth instead of
-      // independently toggling the same DOM from two modules.
       if (typeof remediationController?.revealDeferredPresentation === 'function') {
         const revealed = remediationController.revealDeferredPresentation();
         if (!revealed) return false;
@@ -345,7 +334,6 @@
         return true;
       }
 
-      // Backward-compatible fallback for an older adapter during a rolling deploy.
       const remediationRoot = component.remediationRoot;
       state.delayedRemediation = false;
       state.skipTriggered = false;
