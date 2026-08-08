@@ -185,6 +185,7 @@
       if (!this.root) throw new Error('Remediation view must be mounted before rendering.');
       this.captureMeta();
       this.updateMeta(word);
+      this.root.classList.remove('vocora-remediation-delayed');
       this.document.querySelector('#flashCard')?.classList.add('remediation-active');
       this.root.classList.remove('hidden');
 
@@ -314,8 +315,14 @@
       if (wordNote) wordNote.textContent = '';
     }
 
+    defer() {
+      this.root?.classList.add('hidden', 'vocora-remediation-delayed');
+      this.document.querySelector('#flashCard')?.classList.remove('remediation-active');
+    }
+
     hide({ restoreMeta = true } = {}) {
       this.root?.classList.add('hidden');
+      this.root?.classList.remove('vocora-remediation-delayed');
       this.document.querySelector('#flashCard')?.classList.remove('remediation-active');
       if (restoreMeta) this.restoreMeta();
     }
@@ -354,6 +361,7 @@
       this.port = port || new VocoraPracticeSessionPort({ window: windowObject, document: documentObject });
       this.view = view || new SpellingRemediationView({ document: documentObject, domain });
       this.active = null;
+      this.presentationDeferred = false;
       this.mounted = false;
       this.observer = null;
     }
@@ -405,6 +413,7 @@
       if (this.active) {
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (this.presentationDeferred) this.revealDeferredPresentation();
         return;
       }
       if (!this.port.isSupportedMode()) return;
@@ -425,6 +434,7 @@
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (this.presentationDeferred) this.revealDeferredPresentation();
       }
     }
 
@@ -451,12 +461,34 @@
         policy: this.policy
       });
       this.active = { attempt, word, mode: this.port.mode(), entry: null, outcome: null };
-      this.render();
+
+      // Immediate remediation is domain-active now, but its correction UI is not
+      // presented yet. The primary wrong/unknown feedback owns the screen until the
+      // user explicitly presses the shared Continue action. Keeping the view hidden
+      // here eliminates the feedback/remediation race at its source.
+      this.presentationDeferred = true;
+      this.view.defer();
       this.emit('vocora:spelling-remediation-started', {
         wordId: word.id,
         mode: this.active.mode,
-        context: this.domain.RemediationContext.IMMEDIATE
+        context: this.domain.RemediationContext.IMMEDIATE,
+        presentationDeferred: true
       });
+    }
+
+    revealDeferredPresentation() {
+      if (!this.active || !this.presentationDeferred) return false;
+      this.presentationDeferred = false;
+      this.document.querySelector('#answerFeedback')?.classList.add('hidden');
+      this.document.querySelector('#answerForm')?.classList.add('hidden');
+      this.view.root?.classList.remove('vocora-remediation-delayed');
+      this.render();
+      this.emit('vocora:spelling-remediation-revealed', {
+        wordId: this.active.word.id,
+        mode: this.active.mode,
+        context: this.active.attempt.context
+      });
+      return true;
     }
 
     startRecheck(entry) {
@@ -466,6 +498,7 @@
         recheckNumber: entry.recheckNumber,
         policy: this.policy
       });
+      this.presentationDeferred = false;
       this.active = { attempt, word: entry.word, mode: entry.mode, entry, outcome: null };
       this.render();
       this.emit('vocora:same-session-recheck-started', {
@@ -476,13 +509,13 @@
     }
 
     acknowledge() {
-      if (!this.active) return;
+      if (!this.active || this.presentationDeferred) return;
       this.active.attempt.acknowledgeCorrection();
       this.render();
     }
 
     submitRemediationAnswer(answer) {
-      if (!this.active) return;
+      if (!this.active || this.presentationDeferred) return;
       const phase = this.active.attempt.phase;
       if (phase === this.domain.RemediationPhase.RECALL) this.active.attempt.submitRecall(answer);
       else if (phase === this.domain.RemediationPhase.COPY) this.active.attempt.submitCopy(answer);
@@ -523,18 +556,19 @@
     }
 
     continueSession() {
-      if (!this.active || this.active.attempt.phase !== this.domain.RemediationPhase.COMPLETED) return;
+      if (!this.active || this.presentationDeferred || this.active.attempt.phase !== this.domain.RemediationPhase.COMPLETED) return;
+      this.presentationDeferred = false;
       this.active = null;
       this.view.hide({ restoreMeta: true });
       this.port.continueToNextCard();
     }
 
     listen() {
-      if (this.active) this.port.speak(this.active.word);
+      if (this.active && !this.presentationDeferred) this.port.speak(this.active.word);
     }
 
     render() {
-      if (!this.active) return;
+      if (!this.active || this.presentationDeferred) return;
       this.view.show({
         snapshot: this.active.attempt.snapshot(),
         word: this.active.word,
@@ -552,6 +586,7 @@
     }
 
     reset({ keepMode = false } = {}) {
+      this.presentationDeferred = false;
       this.active = null;
       this.queue.clear();
       this.view.hide({ restoreMeta: true });
@@ -569,7 +604,8 @@
           wordId: this.active.word.id,
           phase: this.active.attempt.phase,
           context: this.active.attempt.context,
-          recheckNumber: this.active.attempt.recheckNumber
+          recheckNumber: this.active.attempt.recheckNumber,
+          presentationDeferred: this.presentationDeferred
         } : null,
         queue: this.queue.snapshot()
       };
