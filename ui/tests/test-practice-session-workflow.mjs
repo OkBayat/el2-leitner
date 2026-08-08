@@ -169,11 +169,11 @@ function assertInvariant(workflow, message = 'workflow invariant') {
   assert.equal(snapshot.stage, PracticeStage.IDLE);
   assert.equal(snapshot.active, null);
   assert.equal(snapshot.feedback, null);
-  assert.deepEqual(snapshot.queue, []);
+  assert.equal(snapshot.queue.length, 0);
   workflow.begin('new');
   snapshot = workflow.snapshot();
   assert.equal(snapshot.stage, PracticeStage.ANSWER);
-  assert.deepEqual(snapshot.queue, []);
+  assert.equal(snapshot.queue.length, 0);
 }
 
 // Model-style long run: after every transition exactly one deterministic stage is derivable.
