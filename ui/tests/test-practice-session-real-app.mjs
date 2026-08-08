@@ -56,6 +56,7 @@ function response(status, payload = null) {
 async function createAppHarness() {
   let serverState = null;
   let revision = 0;
+  let primaryAdvanceActions = 0;
   const spoken = [];
   const dom = new JSDOM(html, {
     url: 'https://vocora.test/#dashboard',
@@ -102,6 +103,9 @@ async function createAppHarness() {
   const { window } = dom;
   window.Math.random = () => 0;
   window.VocoraPracticeRecheckPromptConfig = { delayMs: 0 };
+  window.document.querySelector('#nextCardBtn').addEventListener('click', () => {
+    primaryAdvanceActions += 1;
+  });
   window.eval(sources.vocabulary);
   window.eval(sources.share);
   window.eval(sources.domain);
@@ -118,9 +122,6 @@ async function createAppHarness() {
   assert.ok(controller);
   assert.ok(prompt);
 
-  // The production home button intentionally waits 50ms before starting box-one
-  // practice. A default 80ms settle therefore observes the real session boundary,
-  // while callers can still request a shorter wait for synchronous transitions.
   const settle = async (milliseconds = 80) => {
     await Promise.resolve();
     await new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -134,6 +135,7 @@ async function createAppHarness() {
     controller,
     spoken,
     settle,
+    metrics: () => ({ primaryAdvanceActions }),
     state: async () => {
       await window.VazheyarTest.waitForSaves();
       return JSON.parse(JSON.stringify(serverState));
@@ -195,7 +197,6 @@ async function completeRecall(harness, spelling) {
   await harness.settle();
 }
 
-// Real production stack: a wrong answer, three intervening cards, then a due recheck.
 {
   const h = await createAppHarness();
   h.document.querySelector('#boxOnePracticeBtn').click();
@@ -248,15 +249,20 @@ async function completeRecall(harness, spelling) {
 
   await completeRecall(h, original.term);
   assert.equal(h.controller.snapshot().stage, 'remediation-completed');
+  const advancesBeforeCompletion = h.metrics().primaryAdvanceActions;
   pressEnter(h);
   await h.settle();
   assert.equal(h.controller.snapshot().stage, 'answer');
-  assert.notEqual(h.window.VazheyarTest.getCurrentWord().id, lastPrimaryId, 'Completing the due recheck must advance the primary session exactly once.');
+  assert.equal(
+    h.metrics().primaryAdvanceActions,
+    advancesBeforeCompletion + 1,
+    'Completing the due recheck must dispatch exactly one primary advance action.'
+  );
+  assert.equal(h.document.querySelector('#answerInput').value, '', 'The next primary card must be reset for a new answer.');
   assertExclusive(h, 'after due recheck');
   h.dom.window.close();
 }
 
-// Failed recalls, copy retries, and a second recheck after one intervening card.
 {
   const h = await createAppHarness();
   h.document.querySelector('#boxOnePracticeBtn').click();
@@ -318,7 +324,6 @@ async function completeRecall(harness, spelling) {
   h.dom.window.close();
 }
 
-// Double activation of the empty primary action reuses the real unknown business action once.
 {
   const h = await createAppHarness();
   h.document.querySelector('#boxOnePracticeBtn').click();
@@ -338,7 +343,6 @@ async function completeRecall(harness, spelling) {
   h.dom.window.close();
 }
 
-// Scheduled review retains its original rule: wrong answers repeat later but do not open remediation.
 {
   const h = await createAppHarness();
   h.document.querySelector('#beginSessionBtn').click();
@@ -356,7 +360,6 @@ async function completeRecall(harness, spelling) {
   h.dom.window.close();
 }
 
-// The last card of a finite new-word session flushes one queued recheck before completion.
 {
   const h = await createAppHarness();
   h.document.querySelector('#addNewWordsBtn').click();
