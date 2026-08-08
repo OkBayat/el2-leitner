@@ -12,6 +12,10 @@ const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 assert.match(routerSource, /windowObject\.addEventListener\('keydown', handler, true\)/);
 assert.match(compatibilitySource, /practice-session-keyboard-router\.js\?v=/,
   'Previously cached HTML must be upgraded to the new window router.');
+assert.doesNotMatch(adapterSource, /clearOriginalFeedbackContent/,
+  'The remediation view must never erase the primary feedback component.');
+assert.match(adapterSource, /presentActiveRemediation/,
+  'Feedback-to-remediation transfer must be one explicit controller transition.');
 
 function markup() {
   return `<!doctype html><html lang="fa" dir="rtl"><head></head><body>
@@ -51,11 +55,15 @@ function configureWindow(window) {
       category: 'Modern families', box: 1, notes: ''
     }),
     getState: () => ({ settings: { voiceRate: 0.85 } }),
-    isCorrectAnswer: (answer) => String(answer || '').trim().toLowerCase() === 'imaginative'
+    isCorrectAnswer: (answer, word = null) => {
+      const target = word?.accepted?.[0] || 'imaginative';
+      return String(answer || '').trim().toLowerCase() === String(target).toLowerCase();
+    }
   };
 }
 
 function installPrimaryAppBehavior(document, window) {
+  const metrics = { nextCards: 0 };
   document.querySelector('#answerForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const answer = document.querySelector('#answerInput').value;
@@ -65,8 +73,18 @@ function installPrimaryAppBehavior(document, window) {
     document.querySelector('#answerFeedback').classList.remove('hidden');
     document.querySelector('#answerFeedback').classList.toggle('wrong', !correct);
     document.querySelector('#feedbackTitle').textContent = correct ? 'درست بود!' : 'اشتباه بود';
+    document.querySelector('#feedbackDetail').textContent = correct
+      ? 'تمرین ثبت شد؛ تمرین آزاد جای کارت‌های قبلی را تغییر نمی‌دهد.'
+      : 'پاسخ درست را یک بار با دقت ببین.';
     document.querySelector('#correctAnswer').textContent = 'imaginative';
   });
+  document.querySelector('#nextCardBtn').addEventListener('click', () => {
+    metrics.nextCards += 1;
+    document.querySelector('#answerFeedback').classList.add('hidden');
+    document.querySelector('#answerForm').classList.remove('hidden');
+    document.querySelector('#dontKnowBtn').classList.remove('hidden');
+  });
+  return metrics;
 }
 
 async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
@@ -78,10 +96,8 @@ async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   const { window } = dom;
   const { document } = window;
   configureWindow(window);
-  installPrimaryAppBehavior(document, window);
+  const metrics = installPrimaryAppBehavior(document, window);
 
-  // Exact production ownership: window-capture router first, domain and optional
-  // review presentation next, then the remediation adapter.
   window.eval(routerSource);
   window.eval(domainSource);
   if (reviewTiming === 'before-adapter') window.eval(reviewUxSource);
@@ -94,7 +110,7 @@ async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   document.querySelector('#boxOnePracticeBtn').click();
 
   return {
-    dom, window, document, remediation,
+    dom, window, document, remediation, metrics,
     get review() { return review; },
     loadReview() {
       if (!window.VocoraReviewSessionUx) window.eval(reviewUxSource);
@@ -105,13 +121,21 @@ async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   };
 }
 
-async function submitWrong(harness) {
-  harness.document.querySelector('#answerInput').value = 'imagenitive';
+async function submitAnswer(harness, answer) {
+  harness.document.querySelector('#answerInput').value = answer;
   harness.document.querySelector('#answerForm').dispatchEvent(
     new harness.window.Event('submit', { bubbles: true, cancelable: true })
   );
   await tick();
   await tick();
+}
+
+async function submitWrong(harness) {
+  await submitAnswer(harness, 'imagenitive');
+}
+
+async function submitCorrect(harness) {
+  await submitAnswer(harness, 'imaginative');
 }
 
 function pressEnter(harness, element = harness.document.body) {
@@ -130,12 +154,14 @@ function assertFeedbackOnly(harness, message) {
   assert.ok(!harness.document.querySelector('#flashCard').classList.contains('remediation-active'), message);
 }
 
-function assertCorrectionOnly(harness, message) {
+function assertRemediationOnly(harness, message) {
   const feedback = harness.document.querySelector('#answerFeedback');
   const root = harness.document.querySelector('#practiceRemediation');
   assert.ok(feedback.classList.contains('hidden'), message);
   assert.ok(!root.classList.contains('hidden'), message);
   assert.ok(harness.document.querySelector('#flashCard').classList.contains('remediation-active'), message);
+  assert.equal(root.hasAttribute('inert'), false, `${message} Remediation must be interactive.`);
+  assert.equal(root.getAttribute('aria-hidden'), 'false', `${message} Remediation must be exposed to assistive technology.`);
 }
 
 async function enterFeedbackThenCorrection(harness, prefix) {
@@ -144,10 +170,8 @@ async function enterFeedbackThenCorrection(harness, prefix) {
   await tick();
   assert.equal(harness.remediation.snapshot().active?.presentationDeferred, false);
   assert.equal(harness.remediation.snapshot().active?.phase, 'correction');
-  assertCorrectionOnly(harness, `${prefix}: feedback Enter must reveal only correction.`);
+  assertRemediationOnly(harness, `${prefix}: feedback Enter must reveal only correction.`);
 
-  // The exact reported second screenshot: focus may remain on body/old content.
-  // Window capture must call the controller's real acknowledgement transition.
   const correctionEnter = pressEnter(harness);
   assert.equal(correctionEnter.defaultPrevented, true, `${prefix}: correction Enter must be owned.`);
   await tick();
@@ -194,5 +218,61 @@ await enterFeedbackThenCorrection(lateReview, 'late-review');
 lateReview.review.sync();
 assert.equal(lateReview.review.getState().stage, 'remediation-recall');
 lateReview.dom.window.close();
+
+// Exact regression from production: after several primary cards, a due recheck is
+// taken while a correct-feedback screen is visible. Previously startRecheck rendered
+// remediation without hiding feedback; the review component then chose feedback,
+// the remediation view erased #correctAnswer, and both click and Enter deadlocked.
+const dueRecheck = await createHarness({ reviewTiming: 'before-adapter' });
+const recheckWord = {
+  id: 'accommodation', term: 'accommodation', accepted: ['accommodation'],
+  category: 'Modern families', box: 1, notes: ''
+};
+dueRecheck.remediation.queue.schedule({
+  word: recheckWord,
+  mode: 'box1',
+  recheckNumber: 1,
+  originId: null
+}, 1);
+await submitCorrect(dueRecheck);
+dueRecheck.review.sync();
+assert.equal(dueRecheck.review.getState().stage, 'feedback-correct');
+assertFeedbackOnly(dueRecheck, 'Correct feedback must be stable before Continue.');
+assert.equal(dueRecheck.document.querySelector('#correctAnswer').textContent, 'imaginative');
+
+// Real mouse path: Continue is intercepted once and atomically transfers ownership
+// to the due recheck instead of leaving a dead correct-feedback card behind.
+dueRecheck.document.querySelector('#nextCardBtn').click();
+await tick();
+dueRecheck.review.sync();
+assert.equal(dueRecheck.remediation.snapshot().active?.context, 'recheck');
+assert.equal(dueRecheck.remediation.snapshot().active?.phase, 'recall');
+assert.equal(dueRecheck.review.getState().stage, 'remediation-recall');
+assertRemediationOnly(dueRecheck, 'A due recheck must own the screen after Continue.');
+assert.equal(dueRecheck.metrics.nextCards, 0, 'The underlying primary card must not advance before the recheck.');
+assert.equal(
+  dueRecheck.document.querySelector('#correctAnswer').textContent,
+  'imaginative',
+  'Rendering remediation must never destructively erase the primary feedback content.'
+);
+
+// Real keyboard path remains interactive through recall and completion.
+const recheckInput = dueRecheck.document.querySelector('#remediationInput');
+let event = pressEnter(dueRecheck);
+assert.equal(event.defaultPrevented, true);
+assert.equal(dueRecheck.document.activeElement, recheckInput, 'Empty recheck Enter must focus the spelling input.');
+recheckInput.value = 'accommodation';
+event = pressEnter(dueRecheck, recheckInput);
+assert.equal(event.defaultPrevented, true);
+await tick();
+assert.equal(dueRecheck.remediation.snapshot().active?.phase, 'completed');
+assert.equal(dueRecheck.review.syncStableStage(), 'remediation-completed');
+assertRemediationOnly(dueRecheck, 'Completed recheck must remain interactive.');
+event = pressEnter(dueRecheck);
+assert.equal(event.defaultPrevented, true);
+await tick();
+assert.equal(dueRecheck.remediation.snapshot().active, null);
+assert.equal(dueRecheck.metrics.nextCards, 1, 'Completing the recheck must advance the primary session exactly once.');
+dueRecheck.dom.window.close();
 
 console.log('Review/remediation ownership integration tests passed.');
