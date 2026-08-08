@@ -10,6 +10,15 @@ import { createErrorHandler } from "./interfaces/http/errorHandler.js";
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_STATIC_DIRECTORY = path.resolve(currentDirectory, "../../ui");
 
+const NO_STORE_FRONTEND_ASSETS = new Set([
+  "review-session-ux.js",
+  "review-session-ux.css",
+  "practice-remediation-adapter.js",
+  "practice-remediation-keyboard-guard.js",
+  "practice-remediation.js",
+  "practice-remediation.css"
+]);
+
 function setNoStoreHeaders(res) {
   res.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate");
   res.setHeader("CDN-Cache-Control", "no-store");
@@ -18,11 +27,23 @@ function setNoStoreHeaders(res) {
   res.setHeader("Expires", "0");
 }
 
-function setStaticCacheHeaders(res) {
-  // Vocora is currently deployed as a frequently changing application shell.
-  // Do not let the browser, an intermediary proxy, or the CDN mix JavaScript,
-  // CSS, HTML, fonts, or images from different releases.
-  setNoStoreHeaders(res);
+function setStaticCacheHeaders(res, filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  const fileName = path.basename(filePath);
+
+  if (extension === ".html" || NO_STORE_FRONTEND_ASSETS.has(fileName)) {
+    setNoStoreHeaders(res);
+    return;
+  }
+
+  if (extension === ".css" || extension === ".js") {
+    // Generic application assets may be stored locally but must revalidate on
+    // every request. Intermediary/CDN storage is disabled so releases cannot
+    // mix files from different versions.
+    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+    res.setHeader("CDN-Cache-Control", "no-store");
+    res.setHeader("Surrogate-Control", "no-store");
+  }
 }
 
 function isHtmlNavigationRequest(req) {
@@ -72,21 +93,11 @@ export function createApp({
   });
 
   if (staticDirectory && existsSync(staticDirectory)) {
-    app.use(express.static(staticDirectory, {
-      index: "index.html",
-      etag: false,
-      lastModified: false,
-      cacheControl: false,
-      setHeaders: setStaticCacheHeaders
-    }));
+    app.use(express.static(staticDirectory, { index: "index.html", setHeaders: setStaticCacheHeaders }));
     app.use((req, res, next) => {
       if (!isHtmlNavigationRequest(req)) return next();
       setNoStoreHeaders(res);
-      res.sendFile(path.join(staticDirectory, "index.html"), {
-        etag: false,
-        lastModified: false,
-        cacheControl: false
-      }, (error) => {
+      res.sendFile(path.join(staticDirectory, "index.html"), (error) => {
         if (error) next(error);
       });
     });
