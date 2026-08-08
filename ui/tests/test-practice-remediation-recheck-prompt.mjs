@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
 const domainSource = fs.readFileSync(new URL('../practice-remediation.js', import.meta.url), 'utf8');
+const viewSource = fs.readFileSync(new URL('../review-session-ux.js', import.meta.url), 'utf8');
 const adapterSource = fs.readFileSync(new URL('../practice-remediation-adapter.js', import.meta.url), 'utf8');
 const promptSource = fs.readFileSync(new URL('../practice-remediation-recheck-prompt.js', import.meta.url), 'utf8');
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -11,7 +12,11 @@ const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g
 
 assert.ok(
   scriptOrder.indexOf('practice-remediation-recheck-prompt.js') > scriptOrder.indexOf('practice-remediation-adapter.js'),
-  'The recheck prompt coordinator must load after the remediation adapter.'
+  'The recheck prompt coordinator must load after the remediation controller.'
+);
+assert.ok(
+  scriptOrder.indexOf('review-session-ux.js') < scriptOrder.indexOf('practice-remediation-adapter.js'),
+  'The deterministic practice view must load before the controller.'
 );
 
 const WORDS = Object.freeze({
@@ -36,7 +41,7 @@ const WORDS = Object.freeze({
 });
 
 function fixture() {
-  return `<!doctype html><html lang="fa" dir="rtl"><body>
+  return `<!doctype html><html lang="fa" dir="rtl"><head></head><body>
     <button id="beginSessionBtn" type="button">scheduled</button>
     <button id="boxOnePracticeBtn" type="button">box1</button>
     <button id="practiceExtraBtn" type="button">box1 extra</button>
@@ -83,6 +88,7 @@ async function createHarness({ delayMs = 8, underlyingWord = WORDS.airport } = {
     runScripts: 'outside-only',
     pretendToBeVisual: true,
     beforeParse(window) {
+      window.scrollTo = () => {};
       window.SpeechSynthesisUtterance = class {
         constructor(text) { this.text = text; }
       };
@@ -109,6 +115,7 @@ async function createHarness({ delayMs = 8, underlyingWord = WORDS.airport } = {
   document.querySelector('#nextCardBtn').addEventListener('click', () => { underlyingNextCards += 1; });
 
   window.eval(domainSource);
+  window.eval(viewSource);
   window.eval(adapterSource);
   window.eval(promptSource);
 
