@@ -4,6 +4,8 @@ import { describe, it } from "node:test";
 import request from "supertest";
 import { createTestContext } from "./helpers/fakes.js";
 
+const FRONTEND_RELEASE = "20260808-enter-router2";
+
 describe("HTTP API", () => {
   it("reports service health without authentication", async () => {
     const { app } = createTestContext();
@@ -23,17 +25,19 @@ describe("HTTP API", () => {
     assert.equal(html.headers["cdn-cache-control"], "no-store");
     assert.equal(html.headers["surrogate-control"], "no-store");
     assert.equal(html.headers["clear-site-data"], '"cache"');
-    assert.equal(html.headers["x-vocora-release"], "20260808-ownership3");
+    assert.equal(html.headers["x-vocora-release"], FRONTEND_RELEASE);
+    assert.match(html.text, new RegExp(`data-vocora-release="${FRONTEND_RELEASE}"`));
 
     for (const [asset, contentType] of [
       ["/styles-v2.css", /^text\/css/],
-      ["/app-v2.js", /javascript/]
+      ["/app-v2.js", /javascript/],
+      ["/practice-session-keyboard-router.js", /javascript/]
     ]) {
       const response = await request(app).get(asset).expect(200);
       assert.match(response.headers["cache-control"] || "", /no-store/);
       assert.equal(response.headers["cdn-cache-control"], "no-store");
       assert.equal(response.headers["surrogate-control"], "no-store");
-      assert.equal(response.headers["x-vocora-release"], "20260808-ownership3");
+      assert.equal(response.headers["x-vocora-release"], FRONTEND_RELEASE);
       assert.match(response.headers["content-type"], contentType);
     }
 
