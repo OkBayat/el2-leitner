@@ -53,6 +53,40 @@ const words = [
   { id: 'h5-s5-e', box: 5, due: today }
 ];
 
+words.forEach((word, index) => {
+  word.term = word.id;
+  word.number = index + 1;
+  word.mistakes = word.id === 'h1-b' ? 3 : word.id === 'h1-a' ? 1 : 0;
+});
+
+const exportSource = [
+  { term: 'alpha', box: 1, mistakes: 0, number: 3 },
+  { term: 'ignored-house-two', box: 2, mistakes: 99, number: 1 },
+  { term: '  multi\nword  ', box: '1', mistakes: '2', number: 2 },
+  { term: 'concession', box: 1, mistakes: 4, number: 1 },
+  { term: '   ', box: 1, mistakes: 12, number: 4 }
+];
+const originalExportOrder = exportSource.map((word) => word.term);
+const simpleExport = leitner.buildBoxOneExport(exportSource);
+assert.equal(simpleExport, 'concession — 4\nmulti word — 2\nalpha — 0', 'House-one export must include every valid house-one word, ordered by mistakes, with no surrounding prompt');
+assert.deepEqual(exportSource.map((word) => word.term), originalExportOrder, 'Building the export must not mutate the learning state order');
+assert.doesNotMatch(simpleExport, /خانه|ChatGPT|تمرین|اشتباه/, 'The copied payload must contain only word and number lines');
+assert.equal(leitner.buildBoxOneExport(null), '', 'Missing word data must produce an empty export safely');
+
+let clipboardText = null;
+const clipboardCopied = await leitner.copyText('concession — 4', {
+  navigator: {
+    clipboard: {
+      async writeText(value) {
+        clipboardText = value;
+      }
+    }
+  }
+});
+assert.equal(clipboardCopied, true, 'Clipboard API success must be reported to the UI');
+assert.equal(clipboardText, 'concession — 4', 'Clipboard API must receive the exact simple export text');
+assert.equal(await leitner.copyText('', { navigator: {} }), false, 'An empty payload must never attempt to copy');
+
 const expectedByHouse = [
   [2],
   [1, 2],
@@ -102,20 +136,75 @@ expectedByHouse.forEach((expectedSegments, index) => {
 assert.equal(root.querySelectorAll('.leitner-segment').length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
 assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
 
-const liveDom = new JSDOM('<div id="boxDistribution"></div><div id="boxDistributionTotal"><span data-leitner-total-text></span></div>');
+const liveDom = new JSDOM(`
+  <div class="leitner-panel-head">
+    <div><h3>وضعیت خانه‌ها</h3></div>
+    <div id="boxDistributionTotal"><span data-leitner-total-text></span></div>
+  </div>
+  <div id="boxDistribution"></div>
+`);
 const liveRoot = liveDom.window.document.querySelector('#boxDistribution');
+const liveTotal = liveDom.window.document.querySelector('#boxDistributionTotal');
+const scheduledFeedback = [];
+let copiedHouseOneText = null;
 const attachment = leitner.attach({
   document: liveDom.window.document,
   getState: () => ({ words }),
   getToday: () => today,
-  MutationObserver: liveDom.window.MutationObserver
+  MutationObserver: liveDom.window.MutationObserver,
+  copyText: async (value) => {
+    copiedHouseOneText = value;
+    return true;
+  },
+  setTimeout: (callback, delay) => {
+    scheduledFeedback.push({ callback, delay });
+    return scheduledFeedback.length;
+  },
+  clearTimeout: () => {}
 });
 assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The live dashboard enhancer must render the complete visualization immediately');
+const exportButton = liveDom.window.document.querySelector('#boxOneExportBtn');
+assert.ok(exportButton, 'The dashboard enhancer must add the house-one copy button beside the Leitner total');
+assert.equal(liveDom.window.document.querySelectorAll('#boxOneExportBtn').length, 1, 'The export control must never be duplicated');
+assert.equal(exportButton.nextElementSibling, liveTotal, 'The export button must sit directly beside the Leitner total chip');
+assert.equal(exportButton.dataset.wordCount, '2', 'The export button must track every word currently in house one');
+assert.equal(exportButton.disabled, false, 'The export button must be usable when house one has words');
+
+exportButton.click();
+await new Promise((resolve) => liveDom.window.setTimeout(resolve, 0));
+assert.equal(copiedHouseOneText, 'h1-b — 3\nh1-a — 1', 'One click must copy all and only house-one words with their mistake counts');
+assert.equal(exportButton.dataset.exportStatus, 'copied', 'Successful copy must provide immediate button feedback');
+assert.equal(exportButton.querySelector('[data-box-one-export-label]').textContent, 'کپی شد', 'Successful copy feedback must be visible without adding content to the copied payload');
+assert.equal(scheduledFeedback.length, 1, 'Copy feedback must schedule exactly one reset');
+assert.equal(scheduledFeedback[0].delay, 1600, 'Copy feedback must reset after the approved short delay');
+scheduledFeedback[0].callback();
+assert.equal(exportButton.dataset.exportStatus, 'idle', 'Copy feedback must return to the idle state');
+assert.equal(exportButton.querySelector('[data-box-one-export-label]').textContent, 'کپی خانه ۱', 'The button label must return to its normal action');
+
 liveRoot.innerHTML = '<div class="box-row">legacy render</div>';
 await new Promise((resolve) => liveDom.window.setTimeout(resolve, 0));
 assert.equal(liveRoot.querySelector('.box-row'), null, 'A later legacy dashboard render must be replaced by the segmented visualization');
 assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The enhanced visualization must stay synchronized after dashboard refreshes');
-attachment?.observer?.disconnect();
+assert.equal(liveDom.window.document.querySelectorAll('#boxOneExportBtn').length, 1, 'Dashboard refreshes must not duplicate the export button');
+attachment?.destroy?.();
+
+const emptyLiveDom = new JSDOM(`
+  <div class="leitner-panel-head">
+    <div><h3>وضعیت خانه‌ها</h3></div>
+    <div id="boxDistributionTotal"><span data-leitner-total-text></span></div>
+  </div>
+  <div id="boxDistribution"></div>
+`);
+const emptyAttachment = leitner.attach({
+  document: emptyLiveDom.window.document,
+  getState: () => ({ words: words.filter((word) => word.box !== 1) }),
+  getToday: () => today,
+  MutationObserver: emptyLiveDom.window.MutationObserver
+});
+const emptyExportButton = emptyLiveDom.window.document.querySelector('#boxOneExportBtn');
+assert.equal(emptyExportButton.disabled, true, 'The copy action must be disabled when house one is empty');
+assert.equal(emptyExportButton.dataset.wordCount, '0', 'The empty state must expose a zero word count');
+emptyAttachment?.destroy?.();
 
 const appSource = fs.readFileSync(new URL('../app-v2.js', import.meta.url), 'utf8');
 assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual section timing must stay aligned with the app scheduling rules');
@@ -126,6 +215,9 @@ assert.match(layoutCss, /grid-template-columns:\s*minmax\(300px, 1fr\)\s+minmax\
 assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House stages must stay centered and use compact progressive widths');
 assert.match(layoutCss, /\.leitner-row\s*\{[\s\S]*?min-height:\s*34px;/, 'Desktop house rows must stay compact');
 assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;/, 'Desktop stage blocks must keep the approved compact height');
+assert.match(layoutCss, /\.leitner-export-btn\s*\{[\s\S]*?margin-inline-start:\s*auto;[\s\S]*?border-radius:\s*999px;/, 'The house-one export control must stay compact and aligned with the panel chips');
+assert.match(layoutCss, /\.leitner-export-btn\.is-copied\s*\{/, 'Successful copying must have a distinct visual confirmation state');
+assert.match(layoutCss, /@media \(max-width: 560px\)[\s\S]*?\.leitner-export-btn\s*\{[\s\S]*?order:\s*2;[\s\S]*?margin-inline-start:\s*0;/, 'The export control must wrap cleanly on mobile screens');
 
 const expectedVisualWidths = [
   { percent: 40, max: 250 },
@@ -148,4 +240,4 @@ for (let index = 1; index < visualWidths.length; index += 1) {
   assert.ok(visualWidths[index].max > visualWidths[index - 1].max, `House ${index + 1} maximum width must be wider than House ${index}`);
 }
 
-console.log('Leitner status distribution tests passed.');
+console.log('Leitner status distribution and house-one export tests passed.');
