@@ -2,12 +2,15 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
+const RELEASE = '20260808-enter-router2';
 const root = new URL('../', import.meta.url);
 const rawHtml = fs.readFileSync(new URL('index.html', root), 'utf8');
 const html = rawHtml
-  .replace(/<script src="vocabulary\.js"><\/script>/, '')
-  .replace(/<script src="share-story-v2\.js"><\/script>/, '')
-  .replace(/<script src="app-v2\.js"><\/script>/, '');
+  .replace(/<script src="vocabulary\.js(?:\?[^\"]*)?"><\/script>/, '')
+  .replace(/<script src="share-story-v2\.js(?:\?[^\"]*)?"><\/script>/, '')
+  .replace(/<script src="practice-session-keyboard-router\.js(?:\?[^\"]*)?"><\/script>/, '')
+  .replace(/<script src="review-session-ux\.js(?:\?[^\"]*)?"><\/script>/, '')
+  .replace(/<script src="app-v2\.js(?:\?[^\"]*)?"><\/script>/, '');
 const vocabulary = fs.readFileSync(new URL('vocabulary.js', root), 'utf8');
 const shareStory = fs.readFileSync(new URL('share-story-v2.js', root), 'utf8');
 const app = fs.readFileSync(new URL('app-v2.js', root), 'utf8');
@@ -104,9 +107,11 @@ const readServerState = async () => {
 };
 const originalRandom = dom.window.Math.random;
 assert.ok(VazheyarTest, 'Test API should be exposed');
-assert.match(rawHtml, /href="styles-v2\.css"/, 'The release must use a fresh stylesheet URL instead of a stale CDN object');
-assert.match(rawHtml, /src="share-story-v2\.js"/, 'The share runtime must use a fresh CDN URL');
-assert.match(rawHtml, /src="app-v2\.js"/, 'The app runtime must use a fresh CDN URL');
+assert.match(rawHtml, new RegExp(`href="styles-v2\\.css\\?v=${RELEASE}"`), 'The release must use a cache-busted stylesheet URL');
+assert.match(rawHtml, new RegExp(`src="share-story-v2\\.js\\?v=${RELEASE}"`), 'The share runtime must use the release URL');
+assert.match(rawHtml, new RegExp(`src="app-v2\\.js\\?v=${RELEASE}"`), 'The app runtime must use the release URL');
+assert.match(rawHtml, new RegExp(`src="practice-session-keyboard-router\\.js\\?v=${RELEASE}"`), 'The Enter router must use a never-before-cached release URL');
+assert.match(rawHtml, new RegExp(`src="review-session-ux\\.js\\?v=${RELEASE}"`), 'The review component must load statically before app-v2');
 assert.equal(document.querySelector('#userEmail').textContent, 'learner@example.com');
 assert.equal(dom.window.localStorage.getItem('vazheyar-ielts-state-v1'), null, 'Normal learning data must not be written to localStorage');
 assert.ok(apiCalls.some((call) => call.path === '/api/state' && call.method === 'PUT'), 'Initial state must be persisted through the API');
