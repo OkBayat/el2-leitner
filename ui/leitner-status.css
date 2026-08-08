@@ -25,6 +25,66 @@
 
 .leitner-panel-head > div { min-width: 180px; }
 
+.leitner-export-btn {
+  display: inline-flex;
+  min-height: 31px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-inline-start: auto;
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--primary-soft));
+  color: var(--primary-2);
+  padding: 5px 11px;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.leitner-export-btn:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 42%, var(--line));
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+}
+
+.leitner-export-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  outline-offset: 2px;
+}
+
+.leitner-export-btn:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.leitner-export-btn.is-copied {
+  border-color: color-mix(in srgb, #18a27b 40%, var(--line));
+  background: color-mix(in srgb, var(--surface) 84%, #d9f7ed);
+  color: #087657;
+}
+
+.leitner-export-btn.is-failed {
+  border-color: color-mix(in srgb, var(--danger) 35%, var(--line));
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.leitner-export-btn svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .leitner-total-chip {
   display: inline-flex;
   min-height: 31px;
@@ -265,6 +325,12 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
 }
 
+[data-theme="dark"] .leitner-export-btn.is-copied {
+  border-color: color-mix(in srgb, #62d4af 38%, var(--line));
+  background: color-mix(in srgb, var(--surface) 82%, #174d3e);
+  color: #83e4c5;
+}
+
 @media (max-width: 1280px) {
   #view-dashboard .dashboard-grid {
     grid-template-columns: minmax(280px, 1fr) minmax(470px, 680px);
@@ -285,7 +351,9 @@
 @media (max-width: 560px) {
   .leitner-status-panel { padding: 18px 15px; }
   .leitner-panel-head { margin-bottom: 14px; }
-  .leitner-total-chip { order: 2; min-height: 29px; padding: 4px 9px; }
+  .leitner-panel-head > div { flex: 1 1 100%; }
+  .leitner-export-btn { order: 2; min-height: 29px; margin-inline-start: 0; padding: 4px 9px; }
+  .leitner-total-chip { order: 3; min-height: 29px; padding: 4px 9px; }
   .leitner-row { grid-template-columns: 72px minmax(0, 1fr) 46px; gap: 6px; min-height: 32px; }
   .leitner-house-icon { width: 29px; height: 29px; flex-basis: 29px; }
   .leitner-house-icon svg { width: 16px; height: 16px; }
