@@ -2,28 +2,37 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
-const guardSource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
+const routerSource = fs.readFileSync(new URL('../practice-session-keyboard-router.js', import.meta.url), 'utf8');
+const compatibilitySource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)]
   .map((match) => match[1].split('?')[0]);
 
 assert.ok(
-  scriptOrder.indexOf('practice-remediation-keyboard-guard.js') < scriptOrder.indexOf('app-v2.js'),
-  'The stage-aware keyboard router must register before the legacy app shortcut.'
+  scriptOrder.indexOf('practice-session-keyboard-router.js') < scriptOrder.indexOf('app-v2.js'),
+  'The new keyboard router must load before app-v2.'
 );
-assert.match(guardSource, /addEventListener\('keydown', handler, true\)/,
-  'The router must own Enter in capture phase before adapter/app document listeners.');
-assert.match(guardSource, /review-session-ux\.js\?v=\$\{Date\.now\(\)\}/,
-  'The dynamically loaded review coordinator must use a unique URL on every page load.');
-assert.doesNotMatch(guardSource, /vocoraRemediationPreviewContinue/,
-  'Enter routing must reuse real visible controls, not a duplicated CTA.');
+assert.ok(
+  scriptOrder.indexOf('practice-session-keyboard-router.js') < scriptOrder.indexOf('practice-remediation-adapter.js'),
+  'The router must load before the remediation adapter.'
+);
+assert.equal(
+  scriptOrder.includes('practice-remediation-keyboard-guard.js'),
+  false,
+  'New HTML must not execute the legacy document-level guard.'
+);
+assert.match(routerSource, /windowObject\.addEventListener\('keydown', handler, true\)/,
+  'The router must own Enter at window capture, before every document listener.');
+assert.match(routerSource, /submitRemediationAnswer/);
+assert.match(routerSource, /revealDeferredPresentation/);
+assert.match(routerSource, /continueSession/);
+assert.match(compatibilitySource, /practice-session-keyboard-router\.js\?v=/,
+  'Old cached HTML must be upgraded by the compatibility bootstrap.');
 
 const dom = new JSDOM(`<!doctype html><html><body>
-  <div id="reviewSession" data-vocora-stage="answer">
-    <form id="answerForm"><input id="answerInput"><button id="answerSubmit" type="submit">answer</button></form>
-    <div id="answerFeedback" class="hidden">
-      <button id="nextCardBtn" type="button">continue</button>
-    </div>
+  <div id="reviewSession">
+    <form id="answerForm"><input id="answerInput"><button type="submit">answer</button></form>
+    <div id="answerFeedback" class="hidden"><button id="nextCardBtn" type="button">continue</button></div>
     <section id="practiceRemediation" class="hidden">
       <button id="remediationListenBtn" type="button">listen</button>
       <form id="remediationForm" class="hidden">
@@ -51,61 +60,68 @@ const feedbackContinue = document.querySelector('#nextCardBtn');
 const remediation = document.querySelector('#practiceRemediation');
 const remediationForm = document.querySelector('#remediationForm');
 const remediationInput = document.querySelector('#remediationInput');
-const remediationSubmit = document.querySelector('#remediationSubmitBtn');
 const acknowledge = document.querySelector('#remediationAcknowledgeBtn');
 const remediationContinue = document.querySelector('#remediationContinueBtn');
 const listen = document.querySelector('#remediationListenBtn');
 const ordinary = document.querySelector('#ordinaryControl');
 
 let snapshotActive = null;
-window.VocoraPracticeRemediation = {
-  snapshot: () => ({ active: snapshotActive })
-};
-
 const metrics = {
-  feedbackContinues: 0,
-  acknowledgements: 0,
-  remediationContinues: 0,
-  remediationSubmits: 0,
-  listens: 0,
-  answerSubmits: 0,
-  legacyNextCards: 0
+  reveal: 0,
+  acknowledge: 0,
+  submit: 0,
+  continue: 0,
+  feedbackClick: 0,
+  listen: 0,
+  adapterDocumentKeydown: 0,
+  appDocumentKeydown: 0
 };
 
-feedbackContinue.addEventListener('click', () => { metrics.feedbackContinues += 1; });
-acknowledge.addEventListener('click', () => { metrics.acknowledgements += 1; });
-remediationContinue.addEventListener('click', () => { metrics.remediationContinues += 1; });
-listen.addEventListener('click', () => { metrics.listens += 1; });
-remediationForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  metrics.remediationSubmits += 1;
-});
-answerForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  metrics.answerSubmits += 1;
-});
-
-window.eval(guardSource);
-const guard = window.VocoraRemediationKeyboardGuard;
-assert.equal(guard.install(document, window), false, 'Installation must be idempotent.');
-assert.equal(guard.loadReviewSessionUx(document), false, 'Dynamic loader must be idempotent.');
-assert.match(
-  document.querySelector('#vocora-review-session-ux-script')?.getAttribute('src') || '',
-  /^review-session-ux\.js\?v=\d+$/
-);
-
-// Models app-v2's old document shortcut. The guard must stop this listener when
-// feedback/remediation owns Enter, while leaving ordinary answer submission alone.
-document.addEventListener('keydown', (event) => {
-  if (event.key !== 'Enter') return;
-  if (!feedback.classList.contains('hidden') || !remediation.classList.contains('hidden')) {
-    event.preventDefault();
-    metrics.legacyNextCards += 1;
+window.VocoraPracticeRemediation = {
+  snapshot: () => ({ active: snapshotActive }),
+  revealDeferredPresentation() {
+    metrics.reveal += 1;
+    snapshotActive = { ...snapshotActive, presentationDeferred: false };
+    feedback.classList.add('hidden');
+    remediation.classList.remove('hidden');
+    acknowledge.classList.remove('hidden');
+    return true;
+  },
+  acknowledge() {
+    metrics.acknowledge += 1;
+    snapshotActive = { ...snapshotActive, phase: 'recall' };
+    acknowledge.classList.add('hidden');
+    remediationForm.classList.remove('hidden');
+  },
+  submitRemediationAnswer(value) {
+    metrics.submit += 1;
+    assert.equal(value, 'accommodation');
+    snapshotActive = { ...snapshotActive, phase: 'completed' };
+    remediationForm.classList.add('hidden');
+    remediationContinue.classList.remove('hidden');
+  },
+  continueSession() {
+    metrics.continue += 1;
+    snapshotActive = null;
+    remediation.classList.add('hidden');
   }
-});
+};
 
-function resetVisibility() {
-  session.dataset.vocoraStage = 'answer';
+feedbackContinue.addEventListener('click', () => { metrics.feedbackClick += 1; });
+listen.addEventListener('click', () => { metrics.listen += 1; });
+
+window.eval(routerSource);
+const router = window.VocoraPracticeKeyboardRouter;
+assert.ok(router);
+assert.equal(router.install(window, document), false, 'Router installation must be idempotent.');
+assert.equal(router.RELEASE, '20260808-enter-router2');
+
+// These model the two listeners that previously swallowed/misrouted Enter.
+document.addEventListener('keydown', () => { metrics.adapterDocumentKeydown += 1; }, true);
+document.addEventListener('keydown', () => { metrics.appDocumentKeydown += 1; });
+
+function reset() {
+  session.classList.remove('hidden');
   answerForm.classList.remove('hidden');
   feedback.classList.add('hidden');
   remediation.classList.add('hidden');
@@ -117,139 +133,101 @@ function resetVisibility() {
   snapshotActive = null;
 }
 
-function showFeedback({ deferred = false } = {}) {
-  resetVisibility();
-  session.dataset.vocoraStage = 'feedback-wrong';
-  answerForm.classList.add('hidden');
-  feedback.classList.remove('hidden');
-  snapshotActive = deferred
-    ? { wordId: 'word-1', phase: 'correction', context: 'immediate', presentationDeferred: true }
-    : null;
-}
-
-function showCorrection() {
-  resetVisibility();
-  session.dataset.vocoraStage = 'remediation-correction';
-  answerForm.classList.add('hidden');
-  remediation.classList.remove('hidden');
-  acknowledge.classList.remove('hidden');
-  snapshotActive = { wordId: 'word-1', phase: 'correction', context: 'immediate', presentationDeferred: false };
-}
-
-function showRecall() {
-  resetVisibility();
-  session.dataset.vocoraStage = 'remediation-recall';
-  answerForm.classList.add('hidden');
-  remediation.classList.remove('hidden');
-  remediationForm.classList.remove('hidden');
-  snapshotActive = { wordId: 'word-1', phase: 'recall', context: 'immediate', presentationDeferred: false };
-}
-
-function showCompleted() {
-  resetVisibility();
-  session.dataset.vocoraStage = 'remediation-completed';
-  answerForm.classList.add('hidden');
-  remediation.classList.remove('hidden');
-  listen.classList.add('hidden');
-  remediationContinue.classList.remove('hidden');
-  snapshotActive = { wordId: 'word-1', phase: 'completed', context: 'immediate', presentationDeferred: false };
-}
-
 function pressEnter(element, options = {}) {
   const event = new window.KeyboardEvent('keydown', {
     key: 'Enter',
+    code: options.code || 'Enter',
     bubbles: true,
     cancelable: true,
-    ...options
+    repeat: Boolean(options.repeat),
+    isComposing: Boolean(options.isComposing)
   });
+  if (options.keyCode) Object.defineProperty(event, 'keyCode', { value: options.keyCode });
   element.dispatchEvent(event);
   return event;
 }
 
-// Ordinary answer input is intentionally outside this router; native form Enter
-// remains available and no practice-stage action is synthesized.
-resetVisibility();
+// Normal answer typing stays native and reaches document listeners.
+reset();
 let event = pressEnter(answerInput);
 assert.equal(event.defaultPrevented, false);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(metrics.feedbackContinues, 0);
+assert.equal(metrics.adapterDocumentKeydown, 1);
+assert.equal(metrics.appDocumentKeydown, 1);
 
-// Feedback: Enter anywhere invokes the exact same Continue click once, whether
-// remediation is deferred or this is an ordinary correct-result page.
-showFeedback({ deferred: true });
+// Ordinary feedback uses its real Continue click.
+reset();
+answerForm.classList.add('hidden');
+feedback.classList.remove('hidden');
 event = pressEnter(ordinary);
-assert.equal(metrics.feedbackContinues, 1);
-assert.equal(metrics.legacyNextCards, 0);
+assert.equal(metrics.feedbackClick, 1);
 assert.equal(event.defaultPrevented, true);
+assert.equal(metrics.adapterDocumentKeydown, 1, 'Window capture must stop adapter capture.');
+assert.equal(metrics.appDocumentKeydown, 1, 'Window capture must stop app-v2 bubble shortcut.');
 
-showFeedback({ deferred: false });
+// Deferred wrong feedback calls the remediation controller directly.
+reset();
+answerForm.classList.add('hidden');
+feedback.classList.remove('hidden');
+snapshotActive = {
+  wordId: 'word-1', phase: 'correction', context: 'immediate', presentationDeferred: true
+};
 event = pressEnter(feedbackContinue);
-assert.equal(metrics.feedbackContinues, 2, 'Focused feedback button must not double-fire.');
-assert.equal(metrics.legacyNextCards, 0);
+assert.equal(metrics.reveal, 1);
+assert.equal(snapshotActive.presentationDeferred, false);
 assert.equal(event.defaultPrevented, true);
+assert.equal(metrics.adapterDocumentKeydown, 1);
+assert.equal(metrics.appDocumentKeydown, 1);
 
-// Correction: focus can be on body/another control; Enter still activates the
-// visible acknowledgement action. Focused buttons are manually clicked once too.
-showCorrection();
+// Correction works regardless of where focus remained after the prior screen.
 event = pressEnter(ordinary);
-assert.equal(metrics.acknowledgements, 1);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
+assert.equal(metrics.acknowledge, 1);
+assert.equal(snapshotActive.phase, 'recall');
+assert.equal(metrics.adapterDocumentKeydown, 1);
+assert.equal(metrics.appDocumentKeydown, 1);
 
-showCorrection();
-event = pressEnter(acknowledge);
-assert.equal(metrics.acknowledgements, 2, 'Focused acknowledgement must fire exactly once.');
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
-
-// A deliberately focused secondary button keeps its own semantics.
-showCorrection();
-event = pressEnter(listen);
-assert.equal(metrics.listens, 1);
-assert.equal(metrics.acknowledgements, 2);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
-
-// Recall/copy input submits the real remediation form. If focus is elsewhere and
-// the input is empty, Enter focuses the input instead of submitting an empty value.
-showRecall();
-remediationInput.value = 'accommodation';
-event = pressEnter(remediationInput);
-assert.equal(metrics.remediationSubmits, 1);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
-
-showRecall();
+// Empty recall focuses the real input; filled recall submits through the controller.
 event = pressEnter(ordinary);
 assert.equal(document.activeElement, remediationInput);
-assert.equal(metrics.remediationSubmits, 1);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
-
-showRecall();
+assert.equal(metrics.submit, 0);
 remediationInput.value = 'accommodation';
-event = pressEnter(ordinary);
-assert.equal(metrics.remediationSubmits, 2, 'A filled visible remediation form can be submitted globally.');
-assert.equal(metrics.legacyNextCards, 0);
+event = pressEnter(remediationInput);
+assert.equal(metrics.submit, 1);
+assert.equal(snapshotActive.phase, 'completed');
 
-// Completed remediation uses the same Enter routing as its visible Continue click.
-showCompleted();
+// Completed remediation advances through the controller.
 event = pressEnter(ordinary);
-assert.equal(metrics.remediationContinues, 1);
-assert.equal(metrics.legacyNextCards, 0);
-assert.equal(event.defaultPrevented, true);
+assert.equal(metrics.continue, 1);
+assert.equal(snapshotActive, null);
 
-// Holding Enter cannot advance multiple stages.
-showCompleted();
+// A deliberately focused pronunciation button keeps its own semantics.
+reset();
+answerForm.classList.add('hidden');
+remediation.classList.remove('hidden');
+acknowledge.classList.remove('hidden');
+snapshotActive = {
+  wordId: 'word-2', phase: 'correction', context: 'immediate', presentationDeferred: false
+};
+event = pressEnter(listen);
+assert.equal(metrics.listen, 1);
+assert.equal(metrics.acknowledge, 1);
+
+// Numpad Enter follows the same route.
+event = pressEnter(ordinary, { code: 'NumpadEnter' });
+assert.equal(metrics.acknowledge, 2);
+
+// Held Enter and IME completion cannot run a second action.
+reset();
+answerForm.classList.add('hidden');
+remediation.classList.remove('hidden');
+remediationContinue.classList.remove('hidden');
+snapshotActive = {
+  wordId: 'word-3', phase: 'completed', context: 'immediate', presentationDeferred: false
+};
 event = pressEnter(ordinary, { repeat: true });
-assert.equal(metrics.remediationContinues, 1);
-assert.equal(metrics.legacyNextCards, 0);
+assert.equal(metrics.continue, 1);
 assert.equal(event.defaultPrevented, true);
 
-// IME completion is not submitted, but the legacy global shortcut is still blocked.
-showRecall();
-event = pressEnter(remediationInput, { isComposing: true, keyCode: 229 });
-assert.equal(metrics.remediationSubmits, 2);
-assert.equal(metrics.legacyNextCards, 0);
+event = pressEnter(ordinary, { isComposing: true, keyCode: 229 });
+assert.equal(metrics.continue, 1);
 
-console.log('Remediation keyboard guard tests passed.');
+console.log('Practice session keyboard router tests passed.');
