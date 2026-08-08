@@ -34,15 +34,23 @@
     if (!element || element.disabled) return false;
     let current = element;
     while (current?.nodeType === 1) {
-      if (
-        current.hidden
-        || current.classList?.contains('hidden')
-        || current.getAttribute?.('aria-hidden') === 'true'
-        || current.hasAttribute?.('inert')
-      ) return false;
+      if (current.hidden || current.classList?.contains('hidden')) return false;
       current = current.parentElement;
     }
     return true;
+  }
+
+  function repairInteractivePath(element) {
+    let current = element;
+    while (current?.nodeType === 1) {
+      if (current.hidden || current.classList?.contains('hidden')) break;
+      current.removeAttribute?.('inert');
+      if (current.getAttribute?.('aria-hidden') === 'true') {
+        current.setAttribute('aria-hidden', 'false');
+      }
+      if (current.matches?.(SELECTORS.reviewSession)) break;
+      current = current.parentElement;
+    }
   }
 
   function remediationSnapshot(windowObject) {
@@ -127,6 +135,7 @@
     event.preventDefault();
     event.stopImmediatePropagation();
 
+    repairInteractivePath(action.element || action.form);
     if (action.type === 'click') action.element.click();
     else if (action.type === 'submit') requestSubmit(action.form, action.submitter, windowObject);
     else if (action.type === 'focus') action.element.focus?.({ preventScroll: true });
@@ -139,8 +148,6 @@
     if (!stage) return false;
 
     if (event.isComposing || event.keyCode === 229) {
-      // Let the IME finish composing, but never let app-v2's legacy global
-      // shortcut interpret that same key as “next card”.
       event.stopImmediatePropagation();
       return true;
     }
@@ -164,10 +171,8 @@
 
     const handler = (event) => handleEnter(event, documentObject, windowObject);
 
-    // Capture phase is intentional. The remediation adapter and app-v2 both have
-    // legacy document-level keyboard listeners. One stage-aware router must act
-    // first, invoke the visible control's real click/submit handler, and stop the
-    // old listeners from swallowing Enter or advancing the underlying card.
+    // One capture-phase router invokes the visible control's real click/submit
+    // handler before the adapter or app-v2 can swallow Enter or advance the card.
     documentObject.addEventListener('keydown', handler, true);
     Object.defineProperty(documentObject, INSTALLATION, {
       value: handler,
@@ -207,6 +212,7 @@
     ownsEnter,
     isDeferred,
     isAvailable,
+    repairInteractivePath,
     visibleStage,
     resolveEnterAction,
     executeEnterAction,
