@@ -118,7 +118,10 @@ async function createAppHarness() {
   assert.ok(controller);
   assert.ok(prompt);
 
-  const settle = async (milliseconds = 0) => {
+  // The production home button intentionally waits 50ms before starting box-one
+  // practice. A default 80ms settle therefore observes the real session boundary,
+  // while callers can still request a shorter wait for synchronous transitions.
+  const settle = async (milliseconds = 80) => {
     await Promise.resolve();
     await new Promise((resolve) => setTimeout(resolve, milliseconds));
     await Promise.resolve();
