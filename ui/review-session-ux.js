@@ -2,9 +2,11 @@
   'use strict';
 
   const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
-  const RELEASE = '20260808-ownership3';
+  const RELEASE = '20260808-enter-router2';
   const STYLE_ID = 'vocora-review-session-ux-style';
   const STYLE_HREF = `review-session-ux.css?v=${RELEASE}`;
+  const KEYBOARD_ROUTER_ID = 'vocora-practice-session-keyboard-router';
+  const KEYBOARD_ROUTER_SRC = `practice-session-keyboard-router.js?v=${RELEASE}`;
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
@@ -32,6 +34,28 @@
     element.setAttribute('aria-hidden', hidden ? 'true' : 'false');
     if (hidden) element.setAttribute('inert', '');
     else element.removeAttribute('inert');
+  }
+
+  function ensureKeyboardRouter(
+    documentObject = globalThis.document,
+    windowObject = documentObject?.defaultView || globalThis.window
+  ) {
+    if (!documentObject?.createElement || !windowObject) return false;
+    if (windowObject.VocoraPracticeKeyboardRouter) return false;
+    if (documentObject.getElementById(KEYBOARD_ROUTER_ID)) return false;
+
+    const parent = documentObject.head || documentObject.documentElement;
+    if (!parent?.append) return false;
+
+    const script = documentObject.createElement('script');
+    script.id = KEYBOARD_ROUTER_ID;
+    // The component is already loaded with a cache-busting URL. It also loads
+    // the keyboard router from a new filename/version so an old cached guard
+    // can never keep swallowing Enter on remediation pages.
+    script.src = `${KEYBOARD_ROUTER_SRC}-${Date.now()}`;
+    script.async = false;
+    parent.append(script);
+    return true;
   }
 
   function ensureStyles(documentObject = globalThis.document) {
@@ -391,9 +415,6 @@
         }
       }
 
-      // Compatibility with a previously cached adapter: the old adapter already
-      // prepared correction DOM. The review component still enforces a single
-      // owner and performs the transition atomically.
       const remediationRoot = component.remediationRoot;
       setHidden(feedback, true);
       setHidden(answerForm, true);
@@ -499,10 +520,6 @@
 
       const active = activeAttempt();
 
-      // Feedback has explicit ownership of immediate correction until Continue.
-      // This also protects clients that still have the previous adapter cached,
-      // because visibility is derived from persistent state + actual DOM, not from
-      // a one-shot event that might have fired before this module loaded.
       if (active && (isDeferredRemediation(active) || feedbackOwnsImmediateCorrection(active))) {
         component.deferRemediation();
         const type = feedbackType();
@@ -699,6 +716,7 @@
     if (!windowObject || !documentObject) return null;
     if (documentObject[INSTALLATION]) return documentObject[INSTALLATION];
 
+    ensureKeyboardRouter(documentObject, windowObject);
     ensureStyles(documentObject);
     const controller = createController(windowObject, documentObject);
     if (!controller) return null;
@@ -716,6 +734,8 @@
     RELEASE,
     STYLE_ID,
     STYLE_HREF,
+    KEYBOARD_ROUTER_ID,
+    KEYBOARD_ROUTER_SRC,
     SKIP_WINDOW_MS,
     PracticeStage,
     PracticeSessionComponent,
@@ -723,12 +743,14 @@
     remediationSnapshot,
     activeRemediation,
     isDeferredRemediation,
+    ensureKeyboardRouter,
     ensureStyles,
     createController,
     install
   });
 
   function boot() {
+    ensureKeyboardRouter();
     const controller = install();
     if (!controller && globalThis.document?.readyState === 'loading') {
       globalThis.document.addEventListener('DOMContentLoaded', () => install(), { once: true });
