@@ -3,10 +3,15 @@ import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
 const domainSource = fs.readFileSync(new URL('../practice-remediation.js', import.meta.url), 'utf8');
-const guardSource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
+const routerSource = fs.readFileSync(new URL('../practice-session-keyboard-router.js', import.meta.url), 'utf8');
+const compatibilitySource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
 const adapterSource = fs.readFileSync(new URL('../practice-remediation-adapter.js', import.meta.url), 'utf8');
 const reviewUxSource = fs.readFileSync(new URL('../review-session-ux.js', import.meta.url), 'utf8');
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+assert.match(routerSource, /windowObject\.addEventListener\('keydown', handler, true\)/);
+assert.match(compatibilitySource, /practice-session-keyboard-router\.js\?v=/,
+  'Previously cached HTML must be upgraded to the new window router.');
 
 function markup() {
   return `<!doctype html><html lang="fa" dir="rtl"><head></head><body>
@@ -75,9 +80,9 @@ async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   configureWindow(window);
   installPrimaryAppBehavior(document, window);
 
-  // Production order: the capture-phase Enter router is installed before app-v2
-  // and the remediation adapter, so no older document shortcut can swallow Enter.
-  window.eval(guardSource);
+  // Exact production ownership: window-capture router first, domain and optional
+  // review presentation next, then the remediation adapter.
+  window.eval(routerSource);
   window.eval(domainSource);
   if (reviewTiming === 'before-adapter') window.eval(reviewUxSource);
   window.eval(adapterSource);
@@ -111,7 +116,7 @@ async function submitWrong(harness) {
 
 function pressEnter(harness, element = harness.document.body) {
   const event = new harness.window.KeyboardEvent('keydown', {
-    key: 'Enter', bubbles: true, cancelable: true
+    key: 'Enter', code: 'Enter', bubbles: true, cancelable: true
   });
   element.dispatchEvent(event);
   return event;
@@ -141,9 +146,8 @@ async function enterFeedbackThenCorrection(harness, prefix) {
   assert.equal(harness.remediation.snapshot().active?.phase, 'correction');
   assertCorrectionOnly(harness, `${prefix}: feedback Enter must reveal only correction.`);
 
-  // This is the exact reported second screenshot: the button is clickable, but
-  // focus may be on body/old content. Global Enter must invoke the same visible
-  // acknowledgement click and advance to recall exactly once.
+  // The exact reported second screenshot: focus may remain on body/old content.
+  // Window capture must call the controller's real acknowledgement transition.
   const correctionEnter = pressEnter(harness);
   assert.equal(correctionEnter.defaultPrevented, true, `${prefix}: correction Enter must be owned.`);
   await tick();
@@ -154,8 +158,6 @@ async function enterFeedbackThenCorrection(harness, prefix) {
   assert.ok(!harness.document.querySelector('#remediationForm').classList.contains('hidden'));
 }
 
-// Adapter source of truth: correction state may exist, but its presentation cannot
-// render before the primary feedback Continue action. Enter uses the same click.
 const adapterOnly = await createHarness({ reviewTiming: 'after-wrong' });
 await submitWrong(adapterOnly);
 assert.equal(adapterOnly.remediation.snapshot().active?.phase, 'correction');
@@ -164,7 +166,6 @@ assertFeedbackOnly(adapterOnly, 'Adapter alone must keep correction hidden befor
 await enterFeedbackThenCorrection(adapterOnly, 'adapter-only');
 adapterOnly.dom.window.close();
 
-// Normal production order: review coordinator is installed before adapter boot.
 const integrated = await createHarness({ reviewTiming: 'before-adapter' });
 await submitWrong(integrated);
 integrated.review.sync();
@@ -182,8 +183,6 @@ integrated.review.sync();
 assert.equal(integrated.review.getState().stage, 'remediation-recall');
 integrated.dom.window.close();
 
-// Critical regression: a slow coordinator can load after remediation-started. Enter
-// must still derive the visible action from DOM + persistent controller state.
 const lateReview = await createHarness({ reviewTiming: 'after-wrong' });
 await submitWrong(lateReview);
 assert.equal(lateReview.remediation.snapshot().active?.presentationDeferred, true);
