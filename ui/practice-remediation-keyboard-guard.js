@@ -7,7 +7,7 @@
   const DELAYED_REMEDIATION = '#practiceRemediation.vocora-remediation-delayed';
   const FEEDBACK_CONTINUE = '#answerFeedback #nextCardBtn';
   const REVIEW_UX_SCRIPT_ID = 'vocora-review-session-ux-script';
-  const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js?v=20260807-2317';
+  const REVIEW_UX_SCRIPT_SRC = 'review-session-ux.js?v=20260808-0720';
 
   function ownsEnter(event) {
     return event?.key === 'Enter'
@@ -24,11 +24,6 @@
         : null;
       if (!ownsEnter(event) && !delayedRemediation) return;
 
-      // review-session-ux reuses #nextCardBtn as the single Continue action for
-      // the initial red/yellow result. Pressing Enter there must reveal the
-      // already-active remediation flow instead of reaching app-v2's global
-      // "next card" shortcut. Inside remediation we preserve native form/button
-      // behaviour and only stop the later document-level shortcut.
       if (delayedRemediation && !event.target?.closest?.(REMEDIATION_ROOT)) {
         const continueButton = documentObject.querySelector?.(FEEDBACK_CONTINUE);
         if (continueButton) {
