@@ -7,11 +7,14 @@ const adapterSource = fs.readFileSync(new URL('../practice-remediation-adapter.j
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-assert.match(indexMarkup, /href="practice-remediation\.css"/);
-const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1]);
+assert.match(indexMarkup, /href="practice-remediation\.css\?v=20260808-enter-router2"/);
+const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)]
+  .map((match) => match[1].split('?')[0]);
 assert.ok(scriptOrder.indexOf('practice-remediation.js') < scriptOrder.indexOf('app-v2.js'));
-assert.ok(scriptOrder.indexOf('practice-remediation-keyboard-guard.js') < scriptOrder.indexOf('app-v2.js'));
+assert.ok(scriptOrder.indexOf('practice-session-keyboard-router.js') < scriptOrder.indexOf('app-v2.js'));
+assert.ok(scriptOrder.indexOf('review-session-ux.js') < scriptOrder.indexOf('app-v2.js'));
 assert.ok(scriptOrder.indexOf('practice-remediation-adapter.js') > scriptOrder.indexOf('app-v2.js'));
+assert.equal(scriptOrder.includes('practice-remediation-keyboard-guard.js'), false);
 
 function htmlFixture() {
   return `<!doctype html><html lang="fa" dir="rtl"><body>
@@ -88,8 +91,6 @@ async function createHarness({ mode = 'box1', finiteTotal = null } = {}) {
 
   const updateCounter = () => {
     if (mode === 'new') {
-      // Mirrors app-v2: while feedback is open, the counter already points at the
-      // next primary card. Therefore "N of N" does not prove the session is over.
       const completedUnique = Math.min(primaryAnswered, finiteTotal);
       const current = Math.min(finiteTotal, completedUnique + 1);
       document.querySelector('#sessionCounter').textContent = `کارت ${current} از ${finiteTotal}`;
@@ -227,8 +228,6 @@ function nextPrimary(harness) {
   harness.document.querySelector('#nextCardBtn').click();
 }
 
-// Regression: after correcting the first of two new words, the second new word must
-// appear. The pending recheck still has a three-card gap and must not be force-flushed.
 const twoCards = await createHarness({ mode: 'new', finiteTotal: 2 });
 await completeImmediateCorrection(twoCards);
 assert.equal(twoCards.controller.snapshot().queue[0].remainingCards, 3);
@@ -239,8 +238,6 @@ assert.equal(twoCards.currentWord().id, 'airport');
 assert.equal(twoCards.metrics().sessionFinished, false);
 assert.equal(twoCards.emittedEvents.filter(({ name }) => name === 'vocora:same-session-recheck-started').length, 0);
 
-// A short finite session with only two intervening cards must finish normally. It
-// must not collapse a three-card spacing rule into an immediate or early recheck.
 const shortSession = await createHarness({ mode: 'new', finiteTotal: 3 });
 await completeImmediateCorrection(shortSession);
 continueRemediation(shortSession);
@@ -256,7 +253,6 @@ assert.equal(shortSession.controller.snapshot().active, null);
 assert.equal(shortSession.controller.snapshot().queue.length, 0, 'Ending the session must discard transient, not-yet-due rechecks.');
 assert.equal(shortSession.emittedEvents.filter(({ name }) => name === 'vocora:same-session-recheck-started').length, 0);
 
-// The same rule applies when the wrong word is the only/last primary card.
 const lastCard = await createHarness({ mode: 'new', finiteTotal: 1 });
 await completeImmediateCorrection(lastCard);
 continueRemediation(lastCard);
@@ -265,8 +261,6 @@ assert.equal(lastCard.metrics().sessionFinished, true);
 assert.equal(lastCard.controller.snapshot().active, null);
 assert.equal(lastCard.controller.snapshot().queue.length, 0);
 
-// When three genuine primary cards do remain, the recheck should happen exactly
-// after those three cards and before the finite session completes.
 const exactGap = await createHarness({ mode: 'new', finiteTotal: 4 });
 await completeImmediateCorrection(exactGap);
 continueRemediation(exactGap);
@@ -288,7 +282,6 @@ await tick();
 assert.equal(exactGap.metrics().sessionFinished, true);
 assert.equal(exactGap.metrics().appSubmissions, 4, 'Rechecks must remain outside primary/Leitner statistics.');
 
-// Free practice keeps the same three-primary-card spacing behavior.
 const freePractice = await createHarness({ mode: 'box1' });
 await completeImmediateCorrection(freePractice);
 continueRemediation(freePractice);
@@ -300,8 +293,6 @@ assert.equal(freePractice.controller.snapshot().active?.context, 'recheck');
 assert.equal(freePractice.controller.snapshot().active?.wordId, 'environment');
 assert.equal(freePractice.metrics().appSubmissions, 4);
 
-// Multiple mistakes keep independent gaps and are rechecked in due order without
-// jumping ahead of unseen primary words.
 const multipleMistakes = await createHarness({ mode: 'new', finiteTotal: 5 });
 await completeImmediateCorrection(multipleMistakes, 'enviroment');
 continueRemediation(multipleMistakes);
@@ -327,7 +318,6 @@ await tick();
 assert.equal(multipleMistakes.metrics().sessionFinished, true);
 assert.equal(multipleMistakes.metrics().appSubmissions, 5);
 
-// A failed recheck schedules its one-card retry without running it immediately.
 const retryGap = await createHarness({ mode: 'box1' });
 await completeImmediateCorrection(retryGap);
 continueRemediation(retryGap);
@@ -350,7 +340,6 @@ nextPrimary(retryGap);
 assert.equal(retryGap.controller.snapshot().active?.context, 'recheck');
 assert.equal(retryGap.controller.snapshot().active?.recheckNumber, 2);
 
-// Scheduled “today review” remains outside the remediation capability.
 const scheduled = await createHarness({ mode: 'scheduled' });
 submitPrimary(scheduled, 'enviroment');
 await tick();
