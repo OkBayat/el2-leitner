@@ -18,7 +18,7 @@ describe("frontend review cache policy", () => {
       "/practice-remediation.js",
       "/practice-remediation.css",
       "/practice-remediation-adapter.js",
-      "/practice-remediation-keyboard-guard.js",
+      "/practice-remediation-recheck-prompt.js",
       "/app-v2.js",
       "/styles-v2.css"
     ]) {
@@ -45,5 +45,6 @@ describe("frontend review cache policy", () => {
     assert.equal(response.headers["x-vocora-release"], RELEASE);
     assert.match(response.text, new RegExp(`data-vocora-release="${RELEASE}"`));
     assert.match(response.text, new RegExp(`practice-session-keyboard-router\\.js\\?v=${RELEASE}`));
+    assert.doesNotMatch(response.text, /practice-remediation-keyboard-guard\.js/);
   });
 });
