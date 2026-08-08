@@ -3,7 +3,7 @@
 
   const INSTALLATION = Symbol.for('vocora.reviewSessionUx');
   const STYLE_ID = 'vocora-review-session-ux-style';
-  const STYLE_HREF = 'review-session-ux.css?v=20260807-2317';
+  const STYLE_HREF = 'review-session-ux.css?v=20260808-0720';
   const PRIMARY_SELECTOR = '#answerForm button[type="submit"]';
   const PRACTICE_INPUT_SELECTOR = '#answerInput, #remediationInput';
   const SKIP_WINDOW_MS = 430;
@@ -198,10 +198,8 @@
       }
 
       if (feedbackStage) {
-        // The remediation adapter prepares its view immediately after a wrong
-        // answer. Feedback owns the screen until Continue, so hide that prepared
-        // view at the DOM level on every normalization pass. If the adapter
-        // removes .hidden again, the observer calls us and we restore this invariant.
+        // Feedback owns the screen until Continue. This is enforced on every
+        // normalization pass so remediation can never coexist with the result.
         remediationRoot?.classList.add('hidden');
         if (this.answerInput) {
           this.answerInput.readOnly = true;
@@ -333,6 +331,21 @@
 
     function revealDelayedRemediation() {
       if (!state.delayedRemediation) return false;
+      const remediationController = windowObject.VocoraPracticeRemediation;
+
+      // The remediation controller owns the actual pending correction. Delegate
+      // the transition to it so there is one atomic source of truth instead of
+      // independently toggling the same DOM from two modules.
+      if (typeof remediationController?.revealDeferredPresentation === 'function') {
+        const revealed = remediationController.revealDeferredPresentation();
+        if (!revealed) return false;
+        state.delayedRemediation = false;
+        state.skipTriggered = false;
+        syncStableStage();
+        return true;
+      }
+
+      // Backward-compatible fallback for an older adapter during a rolling deploy.
       const remediationRoot = component.remediationRoot;
       state.delayedRemediation = false;
       state.skipTriggered = false;
@@ -436,14 +449,18 @@
       const remediationRoot = component.remediationRoot;
       if (!remediationRoot) return;
 
-      // Do not depend on a stylesheet selector to defer remediation. The adapter
-      // renders correction immediately, then emits this event. We mark the domain
-      // attempt as delayed and physically hide its root until the shared Continue.
       state.delayedRemediation = true;
       flashCard.classList.remove('remediation-active');
       remediationRoot.classList.add('vocora-remediation-delayed', 'hidden');
       restoreCorrectSpelling();
       syncStableStage();
+    }
+
+    function handleRemediationRevealed() {
+      if (!state.active) return;
+      state.delayedRemediation = false;
+      state.skipTriggered = false;
+      requestSync();
     }
 
     function remediationStage() {
@@ -477,9 +494,6 @@
         return PracticeStage.ANSWER;
       }
 
-      // Stable review sessions must always render exactly one component stage.
-      // If legacy remediation left a stale class or hidden form behind, normalize
-      // it here instead of allowing an empty white card to remain on screen.
       if (component.recoverPrimaryCard()) {
         state.skipTriggered = false;
         return PracticeStage.ANSWER;
@@ -610,6 +624,7 @@
     documentObject.addEventListener('focusin', handleFocusIn, true);
     documentObject.addEventListener('focusout', handleFocusOut, true);
     documentObject.addEventListener('vocora:spelling-remediation-started', delayImmediateRemediation);
+    documentObject.addEventListener('vocora:spelling-remediation-revealed', handleRemediationRevealed);
     documentObject.addEventListener('vocora:same-session-recheck-started', requestSync);
     documentObject.addEventListener('vocora:spelling-remediation-completed', requestSync);
 
