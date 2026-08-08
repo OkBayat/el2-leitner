@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
 const domainSource = fs.readFileSync(new URL('../practice-remediation.js', import.meta.url), 'utf8');
+const guardSource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
 const adapterSource = fs.readFileSync(new URL('../practice-remediation-adapter.js', import.meta.url), 'utf8');
 const reviewUxSource = fs.readFileSync(new URL('../review-session-ux.js', import.meta.url), 'utf8');
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -73,8 +74,11 @@ async function createHarness({ reviewTiming = 'before-adapter' } = {}) {
   const { document } = window;
   configureWindow(window);
   installPrimaryAppBehavior(document, window);
-  window.eval(domainSource);
 
+  // Production order: the capture-phase Enter router is installed before app-v2
+  // and the remediation adapter, so no older document shortcut can swallow Enter.
+  window.eval(guardSource);
+  window.eval(domainSource);
   if (reviewTiming === 'before-adapter') window.eval(reviewUxSource);
   window.eval(adapterSource);
   const remediation = await window.VocoraPracticeRemediationReady;
@@ -105,6 +109,14 @@ async function submitWrong(harness) {
   await tick();
 }
 
+function pressEnter(harness, element = harness.document.body) {
+  const event = new harness.window.KeyboardEvent('keydown', {
+    key: 'Enter', bubbles: true, cancelable: true
+  });
+  element.dispatchEvent(event);
+  return event;
+}
+
 function assertFeedbackOnly(harness, message) {
   const feedback = harness.document.querySelector('#answerFeedback');
   const root = harness.document.querySelector('#practiceRemediation');
@@ -121,17 +133,35 @@ function assertCorrectionOnly(harness, message) {
   assert.ok(harness.document.querySelector('#flashCard').classList.contains('remediation-active'), message);
 }
 
+async function enterFeedbackThenCorrection(harness, prefix) {
+  const feedbackEnter = pressEnter(harness);
+  assert.equal(feedbackEnter.defaultPrevented, true, `${prefix}: feedback Enter must be owned.`);
+  await tick();
+  assert.equal(harness.remediation.snapshot().active?.presentationDeferred, false);
+  assert.equal(harness.remediation.snapshot().active?.phase, 'correction');
+  assertCorrectionOnly(harness, `${prefix}: feedback Enter must reveal only correction.`);
+
+  // This is the exact reported second screenshot: the button is clickable, but
+  // focus may be on body/old content. Global Enter must invoke the same visible
+  // acknowledgement click and advance to recall exactly once.
+  const correctionEnter = pressEnter(harness);
+  assert.equal(correctionEnter.defaultPrevented, true, `${prefix}: correction Enter must be owned.`);
+  await tick();
+  assert.equal(harness.remediation.snapshot().active?.phase, 'recall',
+    `${prefix}: correction Enter must invoke the real acknowledgement action.`);
+  const root = harness.document.querySelector('#practiceRemediation');
+  assert.ok(!root.classList.contains('hidden'));
+  assert.ok(!harness.document.querySelector('#remediationForm').classList.contains('hidden'));
+}
+
 // Adapter source of truth: correction state may exist, but its presentation cannot
-// render before the primary feedback Continue action.
+// render before the primary feedback Continue action. Enter uses the same click.
 const adapterOnly = await createHarness({ reviewTiming: 'after-wrong' });
 await submitWrong(adapterOnly);
 assert.equal(adapterOnly.remediation.snapshot().active?.phase, 'correction');
 assert.equal(adapterOnly.remediation.snapshot().active?.presentationDeferred, true);
 assertFeedbackOnly(adapterOnly, 'Adapter alone must keep correction hidden before Continue.');
-adapterOnly.document.querySelector('#nextCardBtn').click();
-await tick();
-assert.equal(adapterOnly.remediation.snapshot().active?.presentationDeferred, false);
-assertCorrectionOnly(adapterOnly, 'Adapter Continue must atomically reveal correction.');
+await enterFeedbackThenCorrection(adapterOnly, 'adapter-only');
 adapterOnly.dom.window.close();
 
 // Normal production order: review coordinator is installed before adapter boot.
@@ -147,16 +177,13 @@ for (let index = 0; index < 3; index += 1) {
   await tick();
   assertFeedbackOnly(integrated, 'Repeated render/sync attempts cannot expose correction early.');
 }
-integrated.document.querySelector('#nextCardBtn').click();
-await tick();
+await enterFeedbackThenCorrection(integrated, 'integrated');
 integrated.review.sync();
-assert.equal(integrated.review.getState().stage, 'remediation-correction');
-assertCorrectionOnly(integrated, 'Continue must transfer ownership exactly once.');
+assert.equal(integrated.review.getState().stage, 'remediation-recall');
 integrated.dom.window.close();
 
-// Critical regression: a slow or previously cached review coordinator can load
-// after the remediation-started event. It must derive ownership from the persistent
-// controller snapshot instead of depending on the missed event.
+// Critical regression: a slow coordinator can load after remediation-started. Enter
+// must still derive the visible action from DOM + persistent controller state.
 const lateReview = await createHarness({ reviewTiming: 'after-wrong' });
 await submitWrong(lateReview);
 assert.equal(lateReview.remediation.snapshot().active?.presentationDeferred, true);
@@ -164,12 +191,9 @@ lateReview.loadReview();
 assert.equal(lateReview.review.getState().stage, 'feedback-wrong');
 assert.equal(lateReview.review.getState().delayedRemediation, true);
 assertFeedbackOnly(lateReview, 'Late coordinator load must still keep feedback exclusive.');
-lateReview.document.querySelector('#nextCardBtn').click();
-await tick();
+await enterFeedbackThenCorrection(lateReview, 'late-review');
 lateReview.review.sync();
-assert.equal(lateReview.remediation.snapshot().active?.presentationDeferred, false);
-assert.equal(lateReview.review.getState().stage, 'remediation-correction');
-assertCorrectionOnly(lateReview, 'Late-loaded coordinator must transition cleanly on Continue.');
+assert.equal(lateReview.review.getState().stage, 'remediation-recall');
 lateReview.dom.window.close();
 
 console.log('Review/remediation ownership integration tests passed.');
