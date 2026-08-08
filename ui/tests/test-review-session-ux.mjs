@@ -2,11 +2,18 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
+const RELEASE = '20260808-enter-router2';
 const uxSource = fs.readFileSync(new URL('../review-session-ux.js', import.meta.url), 'utf8');
 const cssSource = fs.readFileSync(new URL('../review-session-ux.css', import.meta.url), 'utf8');
-const guardSource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
+const routerSource = fs.readFileSync(new URL('../practice-session-keyboard-router.js', import.meta.url), 'utf8');
+const compatibilitySource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
 
-assert.match(guardSource, /review-session-ux\.js/);
+assert.match(compatibilitySource, /practice-session-keyboard-router\.js\?v=/,
+  'Old cached HTML must load the new keyboard router through the compatibility bootstrap.');
+assert.match(routerSource, /windowObject\.addEventListener\('keydown', handler, true\)/,
+  'The keyboard router must own Enter at window capture.');
+assert.match(uxSource, /ensureKeyboardRouter/,
+  'The review component must self-heal by loading the new router if an old bootstrap was cached.');
 assert.doesNotMatch(uxSource, /delayedRemediation:\s*false/,
   'Review UX must not keep a second mutable copy of remediation presentation state.');
 assert.match(uxSource, /presentationDeferred/,
@@ -147,8 +154,14 @@ function showFeedback({ answer, wrong = false }) {
   controller.sync();
 }
 
+assert.equal(api.RELEASE, RELEASE);
 assert.match(document.querySelector('#vocora-review-session-ux-style')?.getAttribute('href') || '',
-  /^review-session-ux\.css\?v=20260808-ownership3$/);
+  new RegExp(`^review-session-ux\\.css\\?v=${RELEASE}$`));
+assert.match(
+  document.querySelector('#vocora-practice-session-keyboard-router')?.getAttribute('src') || '',
+  new RegExp(`^practice-session-keyboard-router\\.js\\?v=${RELEASE}-\\d+$`),
+  'The review component must request the new router from a never-before-cached URL.'
+);
 assert.equal(document.querySelector('#sessionAccuracy').parentElement.id, 'vocoraSessionAccuracy');
 assertStage('answer');
 assertOnly(form);
@@ -192,8 +205,6 @@ assert.equal(title.textContent, 'عالیه!');
 assert.equal(detail.textContent, 'از خانهٔ ۱ به خانهٔ ۲ رفت.');
 assertOnly(feedback);
 
-// The exact reported race: remediation is active and even tries to expose its DOM,
-// but persistent presentationDeferred state says feedback still owns the screen.
 resetToAnswer();
 showFeedback({ answer: 'havnt', wrong: true });
 remediationActive = {
@@ -223,8 +234,6 @@ for (const phase of ['recall', 'copy', 'completed']) {
   assertOnly(remediation);
 }
 
-// Compatibility with an old cached adapter: no presentationDeferred field exists,
-// but visible immediate feedback still has priority and the fallback Continue works.
 resetToAnswer();
 showFeedback({ answer: 'havnt', wrong: true });
 remediationActive = { wordId: 'word-1', phase: 'correction', context: 'immediate', recheckNumber: 0 };
@@ -238,8 +247,6 @@ controller.sync();
 assertStage('remediation-correction');
 assertOnly(remediation);
 
-// A late-loaded coordinator must derive deferred state from snapshot without
-// relying on having observed the original start event.
 remediationActive = { wordId: 'word-1', phase: 'correction', context: 'immediate', presentationDeferred: true };
 feedback.classList.remove('hidden');
 feedback.classList.add('wrong');
@@ -248,7 +255,6 @@ controller.sync();
 assertStage('feedback-wrong');
 assertOnly(feedback);
 
-// Blank-card recovery.
 remediationActive = null;
 form.classList.add('hidden');
 feedback.classList.add('hidden');
