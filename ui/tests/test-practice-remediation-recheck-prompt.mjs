@@ -6,7 +6,8 @@ const domainSource = fs.readFileSync(new URL('../practice-remediation.js', impor
 const adapterSource = fs.readFileSync(new URL('../practice-remediation-adapter.js', import.meta.url), 'utf8');
 const promptSource = fs.readFileSync(new URL('../practice-remediation-recheck-prompt.js', import.meta.url), 'utf8');
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1]);
+const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)]
+  .map((match) => match[1].split('?')[0]);
 
 assert.ok(
   scriptOrder.indexOf('practice-remediation-recheck-prompt.js') > scriptOrder.indexOf('practice-remediation-adapter.js'),
@@ -135,9 +136,6 @@ function submitRemediation(harness, answer) {
   );
 }
 
-// A queued recheck must identify its own word, not the unrelated primary card that
-// remains underneath the overlay. Input stays locked until that prompt is delivered,
-// and the target spelling remains absent from the recall DOM.
 const identity = await createHarness({ underlyingWord: WORDS.airport });
 identity.controller.startRecheck(recheckEntry(WORDS.concession));
 const identityInput = identity.document.querySelector('#remediationInput');
@@ -161,9 +159,6 @@ assert.equal(
 );
 assert.ok(identity.metrics().speechCancellations >= 1, 'Starting a recheck must cancel stale pronunciation first.');
 
-// Reproduce the reported shape: two due words can be rechecked back-to-back. The
-// second one must lock, pronounce, and describe itself before accepting input, so
-// entering the previous word is clearly a mistake for the newly prompted word.
 identity.controller.queue.schedule({
   word: WORDS.philosophy,
   mode: 'box1',
@@ -187,8 +182,6 @@ assert.equal(identity.document.querySelector('#remediationUserSpelling').textCon
 assert.equal(identity.document.querySelector('#remediationCorrectSpelling').textContent, 'philosophy');
 assert.equal(identity.spoken.at(-1), 'philosophy', 'The learner must hear the word that the failed recall is checked against.');
 
-// If another recheck replaces a pending prompt before its timer fires, only the
-// current active word may be spoken and the input remains gated for that current word.
 const replaced = await createHarness({ delayMs: 20 });
 replaced.controller.startRecheck(recheckEntry(WORDS.concession));
 replaced.controller.startRecheck(recheckEntry(WORDS.philosophy));
@@ -198,8 +191,6 @@ assert.deepEqual(replaced.spoken, ['philosophy']);
 assert.equal(replaced.document.querySelector('#remediationInput').disabled, false);
 assert.equal(replaced.controller.snapshot().active?.wordId, 'philosophy');
 
-// Manual replay owns the prompt: clicking it before the automatic timer fires must
-// unlock input and produce one pronunciation, not a delayed duplicate.
 const manual = await createHarness({ delayMs: 25 });
 manual.controller.startRecheck(recheckEntry(WORDS.calendar));
 assert.equal(manual.document.querySelector('#remediationInput').disabled, true);
@@ -208,8 +199,6 @@ assert.equal(manual.document.querySelector('#remediationInput').disabled, false)
 await wait(50);
 assert.deepEqual(manual.spoken, ['calendar']);
 
-// Submitting a recall immediately cancels the pending automatic prompt. No stale
-// pronunciation may start after the screen has already changed to completion.
 const fastSubmit = await createHarness({ delayMs: 25 });
 fastSubmit.controller.startRecheck(recheckEntry(WORDS.restaurant));
 assert.equal(fastSubmit.document.querySelector('#remediationInput').disabled, true);
@@ -219,8 +208,6 @@ assert.equal(fastSubmit.document.querySelector('#remediationInput').disabled, fa
 await wait(50);
 assert.deepEqual(fastSubmit.spoken, []);
 
-// Closing the session before the timer fires clears the prompt, unlocks the hidden
-// control, and stops stale audio.
 const closed = await createHarness({ delayMs: 25 });
 closed.controller.startRecheck(recheckEntry(WORDS.temperature));
 assert.equal(closed.document.querySelector('#remediationInput').disabled, true);
@@ -230,8 +217,6 @@ assert.deepEqual(closed.spoken, []);
 assert.equal(closed.document.querySelector('#remediationInput').disabled, false);
 assert.ok(closed.metrics().speechCancellations >= 1);
 
-// Immediate correction screens are not new audio prompts; only queued hidden-answer
-// rechecks receive this automatic identification behavior.
 const immediate = await createHarness({ delayMs: 5 });
 immediate.controller.startImmediate(WORDS.concession, 'concesion');
 await wait(20);
