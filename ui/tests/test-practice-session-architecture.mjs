@@ -59,8 +59,12 @@ assert.doesNotMatch(view, /MutationObserver/,
   'The view must not infer business state from DOM mutations.');
 assert.doesNotMatch(view, /addEventListener\(['"](?:click|submit|keydown)['"],\s*\(event\)\s*=>\s*this\.(?:capture|handle)/,
   'The view must not own global practice commands.');
-assert.doesNotMatch(view, /clearOriginalFeedbackContent|#correctAnswer.*textContent\s*=\s*['"]/s,
-  'The remediation renderer must not erase primary feedback content.');
+assert.doesNotMatch(view, /clearOriginalFeedbackContent/,
+  'The remediation renderer must not contain a destructive feedback-clearing operation.');
+assert.match(view, /if \(spelling && feedback\.spelling\) spelling\.textContent = feedback\.spelling/,
+  'The feedback renderer must restore spelling from the immutable workflow snapshot.');
+assert.doesNotMatch(view, /spelling\.textContent\s*=\s*['"]\s*['"]/,
+  'The shared feedback spelling node must never be cleared by the renderer.');
 
 // Exactly one controller/state machine owns every practice transition.
 assert.match(controller, /class PracticeSessionWorkflow/);
