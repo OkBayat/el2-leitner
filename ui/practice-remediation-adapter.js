@@ -421,9 +421,11 @@
           window: windowObject,
           document: documentObject
         });
+      this.pendingMode = null;
       this.pendingAssessment = null;
       this.skipTapCount = 0;
       this.skipTapTimer = null;
+      this.sessionObserver = null;
       this.mounted = false;
     }
 
@@ -444,36 +446,68 @@
         ));
       });
       this.window.addEventListener('pagehide', () => this.reset());
+      this.observeSessionVisibility();
       this.mounted = true;
       this.bootstrap();
       return this;
     }
 
+    observeSessionVisibility() {
+      const sessionElement = this.document.querySelector('#reviewSession');
+      if (!sessionElement || typeof this.window.MutationObserver !== 'function') return;
+      this.sessionObserver = new this.window.MutationObserver(() => {
+        if (this.port.isSessionVisible()) {
+          this.activatePendingSession();
+        } else if (this.workflow.stage() !== PracticeStage.IDLE) {
+          this.reset();
+        }
+      });
+      this.sessionObserver.observe(sessionElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
+
     bootstrap() {
       if (!this.port.isSessionVisible()) return;
-      const mode = this.port.mode();
-      if (!mode) return;
-      this.workflow.begin(mode);
+      this.pendingMode = this.port.mode();
+      this.activatePendingSession();
+    }
+
+    activatePendingSession() {
+      if (!this.port.isSessionVisible()) return false;
+      const mode = this.pendingMode || this.port.mode();
+      if (!mode) return false;
+      if (
+        this.workflow.stage() === PracticeStage.IDLE
+        || this.workflow.mode !== mode
+      ) {
+        this.workflow.begin(mode);
+      }
       this.port.setMode(mode);
+      this.pendingMode = null;
+      this.view.updatePrimaryButton(Boolean(
+        this.document.querySelector('#answerInput')?.value.trim()
+      ));
       this.render();
+      return true;
     }
 
     beginSession(mode) {
       this.cancelPromptSpeech();
-      this.workflow.begin(mode);
+      this.clearSkipTap();
+      this.pendingAssessment = null;
+      this.workflow.reset();
+      this.pendingMode = mode;
       this.port.setMode(mode);
-      queueMicrotaskSafely(this.window, () => {
-        if (!this.port.isSessionVisible()) return;
-        this.view.updatePrimaryButton(Boolean(
-          this.document.querySelector('#answerInput')?.value.trim()
-        ));
-        this.render();
-      });
+      if (this.port.isSessionVisible()) this.activatePendingSession();
+      else this.render();
     }
 
     reset() {
       this.cancelPromptSpeech();
       this.clearSkipTap();
+      this.pendingMode = null;
       this.pendingAssessment = null;
       this.workflow.reset();
       this.port.setMode(null);
