@@ -9,7 +9,7 @@ import { createErrorHandler } from "./interfaces/http/errorHandler.js";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_STATIC_DIRECTORY = path.resolve(currentDirectory, "../../ui");
-export const FRONTEND_RELEASE = "20260808-ownership3";
+export const FRONTEND_RELEASE = "20260808-enter-router2";
 
 const NO_STORE_VALUE = "private, no-store, no-cache, max-age=0, s-maxage=0, must-revalidate, proxy-revalidate";
 const NO_STORE_EXTENSIONS = new Set([".html", ".css", ".js", ".json", ".webmanifest"]);
