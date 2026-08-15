@@ -60,7 +60,10 @@ window.fetch = async (input, options = {}) => {
       }
     });
   }
-  if (path === "/api/state") return responseFor({ revision: 5 });
+  if (path === "/api/state") {
+    const payload = JSON.parse(options.body);
+    return responseFor({ revision: Number(payload.revision) + 1 });
+  }
   const payload = path === "/api/learning/sessions"
     ? { session: { id: "session-123", status: "active" } }
     : { session: { id: "session-123", status: "completed" } };
