@@ -6,6 +6,9 @@
   let completionObserver = null;
   let startPromise = null;
   let persistedCursor = null;
+  let reviewWriteFailed = false;
+  let advancePromise = null;
+  let advanceBypass = false;
 
   function parseLocalizedInteger(value) {
     const digits = String(value ?? "")
@@ -40,6 +43,11 @@
 
   function sessionIsVisible() {
     const node = document.querySelector("#reviewSession");
+    return Boolean(node && !node.classList.contains("hidden"));
+  }
+
+  function feedbackIsVisible() {
+    const node = document.querySelector("#answerFeedback");
     return Boolean(node && !node.classList.contains("hidden"));
   }
 
@@ -83,9 +91,19 @@
     return startPromise;
   }
 
+  async function waitForStateWrites() {
+    const waitForSaves = window.VazheyarTest?.waitForSaves;
+    if (typeof waitForSaves === "function") await waitForSaves();
+    return !reviewWriteFailed;
+  }
+
   async function completeSession() {
     if (!activeSession || activeSession.finishing) return;
     activeSession.finishing = true;
+    if (!(await waitForStateWrites())) {
+      activeSession.finishing = false;
+      return;
+    }
     const correct = parseLocalizedInteger(document.querySelector("#completeCorrect")?.textContent);
     const wrong = parseLocalizedInteger(document.querySelector("#completeWrong")?.textContent);
     const durationSeconds = Math.max(0, Math.round((Date.now() - activeSession.startedAt) / 1000));
@@ -138,17 +156,100 @@
   }
 
   function prepareStateWrite(init) {
-    if (typeof init.body !== "string") return { init, state: null };
+    if (typeof init.body !== "string") return { init, state: null, payload: null };
     try {
       const payload = JSON.parse(init.body);
-      if (!payload?.state || typeof payload.state !== "object") return { init, state: null };
+      if (!payload?.state || typeof payload.state !== "object") return { init, state: null, payload };
       const state = payload.state;
       state.persistenceCursor = persistedCursor || state.persistenceCursor || cursorForState(state);
       state.normalizedPersistenceVersion = Math.max(2, Number(state.normalizedPersistenceVersion) || 0);
-      return { init: { ...init, body: JSON.stringify(payload) }, state };
+      return { init: { ...init, body: JSON.stringify(payload) }, state, payload };
     } catch {
-      return { init, state: null };
+      return { init, state: null, payload: null };
     }
+  }
+
+  function cursorMatchesState(state, cursor) {
+    const history = Array.isArray(state?.history) ? state.history : [];
+    const length = Number(cursor?.historyLength);
+    if (!Number.isSafeInteger(length) || length < 0 || length > history.length) return false;
+    if (length === 0) return !cursor?.lastReviewFingerprint;
+    return reviewFingerprint(history[length - 1]) === cursor?.lastReviewFingerprint;
+  }
+
+  function reviewCommandForState(payload, state) {
+    const cursor = persistedCursor || state?.persistenceCursor;
+    const history = Array.isArray(state?.history) ? state.history : [];
+    if (!cursorMatchesState(state, cursor)) return null;
+    if (history.length !== Number(cursor.historyLength) + 1) return null;
+
+    const event = history.at(-1);
+    const word = Array.isArray(state?.words)
+      ? state.words.find((item) => String(item?.id) === String(event?.wordId))
+      : null;
+    const daily = event?.day ? state?.daily?.[event.day] : null;
+    const revision = Number(payload?.revision);
+    if (!event || !word || !daily || !Number.isSafeInteger(revision) || revision < 0) return null;
+
+    return {
+      revision,
+      practiceSessionId: activeSession?.id || null,
+      word: {
+        id: word.id,
+        box: word.box,
+        due: word.due,
+        attempts: word.attempts,
+        correct: word.correct,
+        mistakes: word.mistakes,
+        currentStreak: word.currentStreak,
+        introducedOn: word.introducedOn,
+        addedSource: word.addedSource,
+        lastReviewed: word.lastReviewed,
+        lastPromotedDay: word.lastPromotedDay,
+        blockedUntil: word.blockedUntil,
+        masteredAt: word.masteredAt
+      },
+      event: {
+        at: event.at,
+        day: event.day,
+        wordId: event.wordId,
+        term: event.term,
+        answer: event.answer,
+        correct: Boolean(event.correct),
+        mode: event.mode,
+        promoted: Boolean(event.promoted),
+        previousBox: event.previousBox,
+        newBox: event.newBox,
+        mistakeNumber: event.mistakeNumber
+      },
+      daily: {
+        attempts: daily.attempts,
+        correct: daily.correct,
+        wrong: daily.wrong,
+        newAdded: daily.newAdded,
+        sessions: daily.sessions,
+        durationSeconds: daily.durationSeconds
+      }
+    };
+  }
+
+  async function sendCompactReview(command) {
+    const options = {
+      method: "POST",
+      credentials: "include",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(command)
+    };
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await originalFetch("/api/learning/reviews", options);
+        if (response.status < 500 || attempt === 1) return response;
+      } catch (error) {
+        if (attempt === 1) throw error;
+      }
+    }
+    throw new Error("Review persistence failed.");
   }
 
   function installFetchContext() {
@@ -163,11 +264,27 @@
 
       if (isStateEndpoint && method === "PUT") {
         const prepared = prepareStateWrite(init);
+        const compactReview = prepared.state ? reviewCommandForState(prepared.payload, prepared.state) : null;
+        if (compactReview) {
+          try {
+            const response = await sendCompactReview(compactReview);
+            reviewWriteFailed = !response.ok;
+            if (response.ok) persistedCursor = cursorForState(prepared.state);
+            return response;
+          } catch (error) {
+            reviewWriteFailed = true;
+            throw error;
+          }
+        }
+
         const headers = new Headers(typeof input !== "string" ? input.headers : undefined);
         new Headers(prepared.init.headers || {}).forEach((value, key) => headers.set(key, value));
         if (activeSession) headers.set("X-Vocora-Session-Id", activeSession.id);
         const response = await originalFetch(input, { ...prepared.init, headers });
-        if (response.ok && prepared.state) persistedCursor = cursorForState(prepared.state);
+        if (response.ok && prepared.state) {
+          persistedCursor = cursorForState(prepared.state);
+          reviewWriteFailed = false;
+        }
         return response;
       }
 
@@ -180,6 +297,46 @@
     document.querySelector("#boxOnePracticeBtn")?.addEventListener("click", () => setTimeout(() => startSession("box1"), 0));
     document.querySelector("#practiceExtraBtn")?.addEventListener("click", () => setTimeout(() => startSession("box1"), 0));
     document.querySelector("#newWordsForm")?.addEventListener("submit", () => setTimeout(() => startSession("new"), 0));
+  }
+
+  function advanceAfterSave(button) {
+    if (advancePromise) return advancePromise;
+    button.disabled = true;
+    advancePromise = waitForStateWrites()
+      .then((canAdvance) => {
+        if (!canAdvance) return;
+        advanceBypass = true;
+        button.disabled = false;
+        button.click();
+      })
+      .finally(() => {
+        button.disabled = false;
+        advancePromise = null;
+      });
+    return advancePromise;
+  }
+
+  function bindReviewAdvanceBarrier() {
+    const button = document.querySelector("#nextCardBtn");
+    if (!button) return;
+
+    button.addEventListener("click", (event) => {
+      if (advanceBypass) {
+        advanceBypass = false;
+        return;
+      }
+      if (!feedbackIsVisible()) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      advanceAfterSave(button);
+    }, true);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" || !sessionIsVisible() || !feedbackIsVisible()) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      advanceAfterSave(button);
+    }, true);
   }
 
   function observeCompletion() {
@@ -201,6 +358,7 @@
   function boot() {
     installFetchContext();
     bindSessionStarts();
+    bindReviewAdvanceBarrier();
     observeCompletion();
   }
 
@@ -208,8 +366,11 @@
     parseLocalizedInteger,
     reviewFingerprint,
     cursorForState,
+    reviewCommandForState,
     getPersistedCursor: () => persistedCursor,
     getActiveSession: () => activeSession,
+    getReviewWriteFailed: () => reviewWriteFailed,
+    waitForStateWrites,
     startSession,
     completeSession,
     abandonSession
