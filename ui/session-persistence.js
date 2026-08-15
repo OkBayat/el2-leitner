@@ -7,6 +7,7 @@
   let startPromise = null;
   let persistedCursor = null;
   let reviewWriteFailed = false;
+  let pendingReviewRevision = null;
   let advancePromise = null;
   let advanceBypass = false;
 
@@ -51,6 +52,10 @@
     return Boolean(node && !node.classList.contains("hidden"));
   }
 
+  function isRemediationEvent(event) {
+    return Boolean(event?.target?.closest?.("#practiceRemediation"));
+  }
+
   function requestJson(path, options = {}) {
     return originalFetch(path, {
       credentials: "include",
@@ -64,6 +69,13 @@
       if (!response.ok) throw new Error(payload?.error?.message || "Session persistence request failed.");
       return payload;
     });
+  }
+
+  async function acknowledgesRevision(response, expectedRevision) {
+    if (!response.ok) return false;
+    const payload = await response.clone().json().catch(() => null);
+    const revision = Number(payload?.revision);
+    return Number.isSafeInteger(revision) && revision === expectedRevision;
   }
 
   async function startSession(mode) {
@@ -94,7 +106,7 @@
   async function waitForStateWrites() {
     const waitForSaves = window.VazheyarTest?.waitForSaves;
     if (typeof waitForSaves === "function") await waitForSaves();
-    return !reviewWriteFailed;
+    return pendingReviewRevision === null && !reviewWriteFailed;
   }
 
   async function completeSession() {
@@ -145,9 +157,15 @@
     try {
       const payload = await response.clone().json();
       if (payload?.state) {
-        persistedCursor = payload.state.persistenceCursor || cursorForState(payload.state);
+        // The history returned by the server is authoritative. Deriving the cursor
+        // here self-heals stale cursor metadata instead of carrying it into writes.
+        persistedCursor = cursorForState(payload.state);
+        pendingReviewRevision = null;
+        reviewWriteFailed = false;
       } else {
         persistedCursor = null;
+        pendingReviewRevision = null;
+        reviewWriteFailed = false;
       }
     } catch {
       // The application owns response validation. Cursor tracking is best-effort only.
@@ -169,20 +187,32 @@
     }
   }
 
-  function cursorMatchesState(state, cursor) {
+  function cursorPosition(state, cursor) {
     const history = Array.isArray(state?.history) ? state.history : [];
     const length = Number(cursor?.historyLength);
-    if (!Number.isSafeInteger(length) || length < 0 || length > history.length) return false;
-    if (length === 0) return !cursor?.lastReviewFingerprint;
-    return reviewFingerprint(history[length - 1]) === cursor?.lastReviewFingerprint;
+    const fingerprint = cursor?.lastReviewFingerprint || null;
+    if (!Number.isSafeInteger(length) || length < 0) return null;
+    if (length === 0 && !fingerprint) return 0;
+    if (length > 0 && length <= history.length && reviewFingerprint(history[length - 1]) === fingerprint) {
+      return length;
+    }
+    if (!fingerprint) return null;
+    for (let index = history.length - 1; index >= 0; index -= 1) {
+      if (reviewFingerprint(history[index]) === fingerprint) return index + 1;
+    }
+    return null;
+  }
+
+  function reviewDeltaCount(state) {
+    const cursor = persistedCursor || state?.persistenceCursor;
+    const history = Array.isArray(state?.history) ? state.history : [];
+    const position = cursorPosition(state, cursor);
+    return position === null ? null : history.length - position;
   }
 
   function reviewCommandForState(payload, state) {
-    const cursor = persistedCursor || state?.persistenceCursor;
+    if (reviewDeltaCount(state) !== 1) return null;
     const history = Array.isArray(state?.history) ? state.history : [];
-    if (!cursorMatchesState(state, cursor)) return null;
-    if (history.length !== Number(cursor.historyLength) + 1) return null;
-
     const event = history.at(-1);
     const word = Array.isArray(state?.words)
       ? state.words.find((item) => String(item?.id) === String(event?.wordId))
@@ -266,10 +296,16 @@
         const prepared = prepareStateWrite(init);
         const compactReview = prepared.state ? reviewCommandForState(prepared.payload, prepared.state) : null;
         if (compactReview) {
+          const expectedRevision = compactReview.revision + 1;
+          pendingReviewRevision = expectedRevision;
           try {
             const response = await sendCompactReview(compactReview);
-            reviewWriteFailed = !response.ok;
-            if (response.ok) persistedCursor = cursorForState(prepared.state);
+            const acknowledged = await acknowledgesRevision(response, expectedRevision);
+            reviewWriteFailed = !acknowledged;
+            if (acknowledged) {
+              persistedCursor = cursorForState(prepared.state);
+              pendingReviewRevision = null;
+            }
             return response;
           } catch (error) {
             reviewWriteFailed = true;
@@ -277,15 +313,30 @@
           }
         }
 
+        const reviewDelta = prepared.state ? reviewDeltaCount(prepared.state) : 0;
+        const hasReviewDelta = Number(reviewDelta) > 0;
+        const baseRevision = Number(prepared.payload?.revision);
+        const expectedRevision = Number.isSafeInteger(baseRevision) && baseRevision >= 0 ? baseRevision + 1 : null;
+        if (hasReviewDelta) {
+          pendingReviewRevision = expectedRevision;
+          if (expectedRevision === null) reviewWriteFailed = true;
+        }
         const headers = new Headers(typeof input !== "string" ? input.headers : undefined);
         new Headers(prepared.init.headers || {}).forEach((value, key) => headers.set(key, value));
         if (activeSession) headers.set("X-Vocora-Session-Id", activeSession.id);
-        const response = await originalFetch(input, { ...prepared.init, headers });
-        if (response.ok && prepared.state) {
-          persistedCursor = cursorForState(prepared.state);
-          reviewWriteFailed = false;
+        try {
+          const response = await originalFetch(input, { ...prepared.init, headers });
+          if (hasReviewDelta && expectedRevision !== null) {
+            const acknowledged = await acknowledgesRevision(response, expectedRevision);
+            reviewWriteFailed = !acknowledged;
+            if (acknowledged) pendingReviewRevision = null;
+          }
+          if (response.ok && prepared.state) persistedCursor = cursorForState(prepared.state);
+          return response;
+        } catch (error) {
+          if (hasReviewDelta) reviewWriteFailed = true;
+          throw error;
         }
-        return response;
       }
 
       return originalFetch(input, init);
@@ -332,7 +383,7 @@
     }, true);
 
     window.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" || !sessionIsVisible() || !feedbackIsVisible()) return;
+      if (event.key !== "Enter" || !sessionIsVisible() || !feedbackIsVisible() || isRemediationEvent(event)) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       advanceAfterSave(button);
@@ -366,10 +417,13 @@
     parseLocalizedInteger,
     reviewFingerprint,
     cursorForState,
+    cursorPosition,
     reviewCommandForState,
+    reviewDeltaCount,
     getPersistedCursor: () => persistedCursor,
     getActiveSession: () => activeSession,
     getReviewWriteFailed: () => reviewWriteFailed,
+    getPendingReviewRevision: () => pendingReviewRevision,
     waitForStateWrites,
     startSession,
     completeSession,

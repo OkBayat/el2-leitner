@@ -7,12 +7,16 @@ const dom = new JSDOM(`<!doctype html><body>
 <button id="beginSessionBtn"></button><button id="boxOnePracticeBtn"></button><button id="practiceExtraBtn"></button>
 <form id="newWordsForm"></form><button id="exitSessionBtn"></button><button id="nextCardBtn"></button>
 <div id="reviewSession"></div><div id="answerFeedback"></div><div id="sessionComplete" class="hidden"></div>
+<div id="practiceRemediation"><input id="remediationInput"></div>
 <strong id="completeCorrect">۱</strong><strong id="completeWrong">۰</strong><button data-go="dashboard"></button>
 </body>`, { runScripts: "outside-only", url: "http://localhost/index.html" });
 const { window } = dom;
 window.Headers = globalThis.Headers;
 window.MutationObserver = class { observe() {} };
 const requests = [];
+let reviewStatus = 200;
+let reviewRevisionOverride = null;
+let fullStateStatus = 200;
 
 const firstEvent = {
   at: "2026-08-15T08:00:00.000Z",
@@ -34,6 +38,22 @@ const secondEvent = {
   term: "Tuesday",
   answer: "tuesday"
 };
+const thirdEvent = {
+  ...firstEvent,
+  at: "2026-08-15T08:02:00.000Z",
+  wordId: "vocab-wednesday",
+  term: "Wednesday",
+  answer: "wednesday"
+};
+const fourthEvent = {
+  ...firstEvent,
+  at: "2026-08-15T08:03:00.000Z",
+  wordId: "vocab-thursday",
+  term: "Thursday",
+  answer: "thursday"
+};
+let stateReadHistory = [firstEvent];
+let stateReadRevision = 4;
 
 function responseFor(payload, status = 200) {
   return {
@@ -46,31 +66,41 @@ function responseFor(payload, status = 200) {
 
 window.fetch = async (input, options = {}) => {
   const path = new URL(typeof input === "string" ? input : input.url, window.location.href).pathname;
+  const method = String(options.method || "GET").toUpperCase();
   requests.push({ path, options });
-  if (path === "/api/state" && String(options.method || "GET").toUpperCase() === "GET") {
+  if (path === "/api/state" && method === "GET") {
     return responseFor({
-      revision: 4,
+      revision: stateReadRevision,
       state: {
-        history: [firstEvent],
-        persistenceCursor: {
-          historyLength: 1,
-          lastReviewFingerprint: JSON.stringify([
-            firstEvent.at, firstEvent.day, firstEvent.term, firstEvent.answer, true,
-            firstEvent.mode, 1, 2, null
-          ])
-        }
+        history: structuredClone(stateReadHistory),
+        // Deliberately stale metadata: the adapter must derive the authoritative
+        // cursor from the history returned by the server.
+        persistenceCursor: { historyLength: 0, lastReviewFingerprint: null }
       }
     });
   }
   if (path === "/api/learning/sessions") return responseFor({ session: { id: "session-123" } }, 201);
-  if (path === "/api/learning/reviews") return responseFor({ revision: 5 });
+  if (path === "/api/learning/reviews") {
+    const command = JSON.parse(options.body);
+    const revision = reviewRevisionOverride ?? Number(command.revision) + 1;
+    return reviewStatus === 200
+      ? responseFor({ revision })
+      : responseFor({ error: { code: "STATE_CONFLICT", message: "conflict" } }, reviewStatus);
+  }
   if (path.endsWith("/complete") || path.endsWith("/abandon")) return responseFor({ session: { id: "session-123" } });
-  if (path === "/api/state") return responseFor({ revision: 5 });
+  if (path === "/api/state" && method === "PUT") {
+    const payload = JSON.parse(options.body);
+    return fullStateStatus === 200
+      ? responseFor({ revision: Number(payload.revision) + 1 })
+      : responseFor({ error: { code: "STATE_CONFLICT", message: "conflict" } }, fullStateStatus);
+  }
   return responseFor({}, 404);
 };
 
 window.eval(script);
 await window.fetch("/api/state");
+assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor().historyLength, 1,
+  "state reads must derive the cursor from real history instead of trusting stale metadata");
 await window.VocoraSessionPersistenceTest.startSession("review");
 
 const state = {
@@ -112,6 +142,13 @@ assert.equal(body.practiceSessionId, "session-123");
 assert.equal(body.revision, 4);
 assert.equal(Object.hasOwn(body, "words"), false);
 assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor().historyLength, 2);
+assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), null,
+  "a valid server revision acknowledgement must close the review barrier");
+
+// When a capped history drops its oldest item, the saved fingerprint shifts left.
+// Cursor recovery must mirror the backend and still identify exactly one new review.
+const shiftedHistory = { history: [secondEvent, thirdEvent] };
+assert.equal(window.VocoraSessionPersistenceTest.reviewDeltaCount(shiftedHistory), 1);
 
 let releaseSave;
 window.VazheyarTest = {
@@ -121,9 +158,93 @@ let advanced = 0;
 window.document.querySelector("#nextCardBtn").addEventListener("click", () => { advanced += 1; });
 window.document.querySelector("#nextCardBtn").click();
 await new Promise((resolve) => setTimeout(resolve, 0));
-assert.equal(advanced, 0, "the next card must wait for the current review write");
+assert.equal(advanced, 0, "the next card must wait for the application's current save queue");
 releaseSave();
 await new Promise((resolve) => setTimeout(resolve, 0));
-assert.equal(advanced, 1, "the next card may advance after the review write is durable");
+assert.equal(advanced, 1, "the next card may advance after the acknowledged write and save queue are both complete");
+
+const remediationInput = window.document.querySelector("#remediationInput");
+const remediationEnter = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+remediationInput.dispatchEvent(remediationEnter);
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.equal(remediationEnter.defaultPrevented, false,
+  "the persistence barrier must not steal Enter from the remediation form");
+assert.equal(advanced, 1, "remediation Enter must not advance the primary review queue");
+
+// More than one unpersisted review intentionally uses the full-state fallback.
+// A failure there must still block advancing; app-v2's save queue catches errors.
+fullStateStatus = 409;
+window.VazheyarTest = { waitForSaves: async () => {} };
+const fallbackState = {
+  ...state,
+  history: [firstEvent, secondEvent, thirdEvent, fourthEvent],
+  words: [{
+    ...state.words[0],
+    id: "vocab-thursday",
+    lastReviewed: fourthEvent.at
+  }],
+  daily: {
+    "2026-08-15": { attempts: 4, correct: 4, wrong: 0, newAdded: 10, sessions: 0, durationSeconds: 0 }
+  }
+};
+const compactCountBeforeFallback = requests.filter((request) => request.path === "/api/learning/reviews").length;
+const fallbackResponse = await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 5, state: fallbackState })
+});
+assert.equal(fallbackResponse.status, 409);
+assert.equal(requests.filter((request) => request.path === "/api/learning/reviews").length, compactCountBeforeFallback,
+  "multiple review deltas must use the intentional full-state fallback");
+assert.equal(window.VocoraSessionPersistenceTest.getReviewWriteFailed(), true);
+assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), 6);
+window.document.querySelector("#nextCardBtn").click();
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.equal(advanced, 1, "a failed full-state review write must block moving to the next card");
+
+// A direct compact conflict must also keep the barrier closed.
+fullStateStatus = 200;
+reviewStatus = 409;
+reviewRevisionOverride = null;
+stateReadHistory = [firstEvent, secondEvent];
+stateReadRevision = 5;
+await window.fetch("/api/state");
+const failedCompactState = {
+  ...state,
+  history: [firstEvent, secondEvent, thirdEvent],
+  words: [{
+    ...state.words[0],
+    id: "vocab-wednesday",
+    lastReviewed: thirdEvent.at
+  }],
+  daily: {
+    "2026-08-15": { attempts: 3, correct: 3, wrong: 0, newAdded: 10, sessions: 0, durationSeconds: 0 }
+  }
+};
+const compactCountBeforeConflict = requests.filter((request) => request.path === "/api/learning/reviews").length;
+const failedResponse = await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 5, state: failedCompactState })
+});
+assert.equal(failedResponse.status, 409);
+assert.equal(requests.filter((request) => request.path === "/api/learning/reviews").length, compactCountBeforeConflict + 1,
+  "one review delta must still use the compact endpoint after a fresh state read");
+assert.equal(window.VocoraSessionPersistenceTest.getReviewWriteFailed(), true);
+assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), 6);
+
+// Even a 200 response is not accepted if it acknowledges the wrong revision.
+reviewStatus = 200;
+reviewRevisionOverride = 5;
+await window.fetch("/api/state");
+const staleAckResponse = await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 5, state: failedCompactState })
+});
+assert.equal(staleAckResponse.status, 200);
+assert.equal(window.VocoraSessionPersistenceTest.getReviewWriteFailed(), true,
+  "a stale server revision acknowledgement must keep the barrier closed");
+assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), 6);
 
 console.log("Compact review persistence adapter tests passed.");
