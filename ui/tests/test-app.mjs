@@ -185,12 +185,13 @@ for (let index = 0; index < 2; index += 1) {
   document.querySelector('#answerForm button[type="submit"]').click();
 }
 document.querySelector('#nextCardBtn').click();
-assert.equal(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong card should be shown once more in the same session');
-document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
+assert.notEqual(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong scheduled card must not be shown again in the same today-review session');
+const nextOriginalWord = VazheyarTest.getCurrentWord();
+document.querySelector('#answerInput').value = nextOriginalWord.term;
 document.querySelector('#answerForm button[type="submit"]').click();
 saved = await readServerState();
-assert.equal(saved.words.find((word) => word.id === mistakenId).box, 1, 'A later correct answer on the same day must not unlock promotion');
-assert.equal(saved.history.at(-1).promoted, false);
+assert.equal(saved.words.find((word) => word.id === mistakenId).box, 1, 'A scheduled mistake must remain in box 1 until tomorrow');
+assert.equal(saved.history.filter((event) => event.wordId === mistakenId).length, 1, 'The mistaken word must have only one assessment in the scheduled session');
 
 document.querySelector('#exitSessionBtn').click();
 await VazheyarTest.waitForSaves();

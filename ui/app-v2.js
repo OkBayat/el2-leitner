@@ -572,7 +572,7 @@
       const message = mode === 'box1' ? 'هنوز کارتی در خانهٔ ۱ وجود ندارد.' : mode === 'new' ? 'لغت جدیدی برای آزمون انتخاب نشده است.' : 'مرور موعدداری برای امروز وجود ندارد.';
       return showToast(message);
     }
-    session = { mode, startedAt: Date.now(), initialCount: reviewQueue.length, answered: 0, correct: 0, wrong: 0, completed: false, retryCounts: {}, retryTotal: 0, retryAnswered: 0, currentIsRetry: false, pendingRetryIds: [], recorded: false };
+    session = { mode, startedAt: Date.now(), initialCount: reviewQueue.length, answered: 0, correct: 0, wrong: 0, completed: false, recorded: false };
     currentWord = null;
     $('#reviewSetup').classList.add('hidden');
     $('#reviewEmpty').classList.add('hidden');
@@ -586,9 +586,6 @@
     if (!reviewQueue.length && session?.mode === 'box1') reviewQueue = weightedBoxOneBatch(24, currentWord?.id);
     if (!reviewQueue.length) return finishSession();
     const id = reviewQueue.shift();
-    const pendingRetryIndex = session.pendingRetryIds.indexOf(id);
-    session.currentIsRetry = pendingRetryIndex >= 0;
-    if (session.currentIsRetry) session.pendingRetryIds.splice(pendingRetryIndex, 1);
     currentWord = state.words.find((word) => word.id === id);
     if (!currentWord) return showNextCard();
     if (session.mode === 'box1' && currentWord.box !== 1) return showNextCard();
@@ -616,33 +613,12 @@
       $('#sessionProgressBar').style.width = '100%';
       return;
     }
-    if (session.mode !== 'scheduled') {
-      const completedUnique = Math.min(session.answered, session.initialCount);
-      const current = Math.min(session.initialCount, completedUnique + 1);
-      $('#sessionCounter').textContent = `کارت ${faNumber.format(current)} از ${faNumber.format(session.initialCount)}`;
-      const sessionAcc = accuracy(session.correct, session.answered);
-      $('#sessionAccuracy').textContent = `دقت: ${sessionAcc === null ? '—' : `${faNumber.format(sessionAcc)}٪`}`;
-      $('#sessionProgressBar').style.width = `${Math.round((completedUnique / session.initialCount) * 100)}%`;
-      return;
-    }
-
-    const total = session.initialCount + session.retryTotal;
-    const originalAnswered = session.answered - session.retryAnswered;
-    const includeCurrent = currentWord && !feedbackOpen ? 1 : 0;
-    const originalCurrent = Math.min(
-      session.initialCount,
-      originalAnswered + (includeCurrent && !session.currentIsRetry ? 1 : 0)
-    );
-    const retryCurrent = Math.min(
-      session.retryTotal,
-      session.retryAnswered + (includeCurrent && session.currentIsRetry ? 1 : 0)
-    );
-    const current = originalCurrent + retryCurrent;
-    $('#sessionCounter').textContent = `مجموع ${faNumber.format(current)} از ${faNumber.format(total)} · اصلی ${faNumber.format(originalCurrent)} از ${faNumber.format(session.initialCount)} · تکرار خطا ${faNumber.format(retryCurrent)} از ${faNumber.format(session.retryTotal)}`;
+    const completedUnique = Math.min(session.answered, session.initialCount);
+    const current = Math.min(session.initialCount, completedUnique + 1);
+    $('#sessionCounter').textContent = `کارت ${faNumber.format(current)} از ${faNumber.format(session.initialCount)}`;
     const sessionAcc = accuracy(session.correct, session.answered);
     $('#sessionAccuracy').textContent = `دقت: ${sessionAcc === null ? '—' : `${faNumber.format(sessionAcc)}٪`}`;
-    const completed = Math.min(session.answered, total);
-    $('#sessionProgressBar').style.width = `${total ? Math.round((completed / total) * 100) : 0}%`;
+    $('#sessionProgressBar').style.width = `${Math.round((completedUnique / session.initialCount) * 100)}%`;
   }
 
   function speakWord(multiplier = 1) {
@@ -666,7 +642,6 @@
     const isFreePractice = session.mode === 'box1';
     feedbackOpen = true;
     session.answered += 1;
-    if (session.currentIsRetry) session.retryAnswered += 1;
     if (correct) session.correct += 1;
     else session.wrong += 1;
 
@@ -698,15 +673,6 @@
       currentWord.due = addDays(today, 1);
       currentWord.blockedUntil = addDays(today, 1);
       currentWord.masteredAt = null;
-      if (session.mode === 'scheduled') {
-        const repeats = session.retryCounts[currentWord.id] || 0;
-        if (repeats < 1) {
-          session.retryCounts[currentWord.id] = repeats + 1;
-          session.retryTotal += 1;
-          session.pendingRetryIds.push(currentWord.id);
-          reviewQueue.splice(Math.min(3, reviewQueue.length), 0, currentWord.id);
-        }
-      }
     }
 
     const daily = todayRecord();
