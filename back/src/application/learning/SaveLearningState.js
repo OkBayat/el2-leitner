@@ -21,6 +21,6 @@ export class SaveLearningState {
       expectedRevision,
       context
     );
-    return { state: state.value, revision };
+    return { revision };
   }
 }
