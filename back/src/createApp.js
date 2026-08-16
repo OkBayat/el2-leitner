@@ -30,6 +30,29 @@ function isHtmlNavigationRequest(req) {
   return Boolean(req.accepts("html"));
 }
 
+function installOriginTiming(req, res, next) {
+  const startedAt = performance.now();
+  const originalJson = res.json.bind(res);
+
+  res.json = (payload) => {
+    if (!res.headersSent) {
+      const durationMs = Math.max(0, performance.now() - startedAt);
+      const formattedDuration = durationMs.toFixed(1);
+      const existingTiming = res.getHeader("Server-Timing");
+      const vocoraTiming = `vocora;dur=${formattedDuration}`;
+      res.setHeader(
+        "Server-Timing",
+        existingTiming ? `${existingTiming}, ${vocoraTiming}` : vocoraTiming
+      );
+      res.setHeader("X-Vocora-Origin-Ms", formattedDuration);
+      res.setHeader("X-Vocora-Request-Bytes", req.get("content-length") || "0");
+    }
+    return originalJson(payload);
+  };
+
+  next();
+}
+
 export function createApp({
   container,
   staticDirectory = DEFAULT_STATIC_DIRECTORY,
@@ -41,6 +64,7 @@ export function createApp({
 
   if (trustProxy) app.set("trust proxy", 1);
   app.disable("x-powered-by");
+  app.use(installOriginTiming);
   app.use(
     helmet({
       contentSecurityPolicy: {
