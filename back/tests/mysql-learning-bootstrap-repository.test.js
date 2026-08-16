@@ -98,6 +98,8 @@ describe("MySqlLearningBootstrapRepository", () => {
       notes: "",
       createdAt: "2026-08-07T12:00:00.000Z"
     });
+    assert.equal(Object.hasOwn(result.state.words[0], "box"), false,
+      "zero/default progress must not inflate unseen vocabulary bootstrap rows");
     assert.equal(result.state.persistenceCursor.historyLength, 1);
     assert.ok(result.state.persistenceCursor.lastReviewFingerprint);
     const historyQuery = pool.calls.find(({ sql }) => /FROM review_events/u.test(sql));
