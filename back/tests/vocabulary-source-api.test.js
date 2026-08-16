@@ -6,15 +6,9 @@ import { createApp } from "../src/createApp.js";
 
 function appWith(useCases) {
   return createApp({
-    config: {
-      auth: {
-        cookie: { name: "vocora_session", options: {} },
-        rateLimit: { windowMs: 60000, max: 100 }
-      },
-      cors: { allowedOrigins: [] }
-    },
+    staticDirectory: null,
     container: {
-      tokenService: { verify: () => ({ sub: "7" }) },
+      tokenService: { verify: () => ({ userId: 7 }) },
       authCookie: { name: "vocora_session", options: {} },
       authRateLimit: { windowMs: 60000, max: 100 },
       useCases: {
