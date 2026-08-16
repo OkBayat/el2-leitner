@@ -103,5 +103,9 @@ describe("MySqlLearningBootstrapRepository", () => {
     const historyQuery = pool.calls.find(({ sql }) => /FROM review_events/u.test(sql));
     assert.match(historyQuery.sql, /ORDER BY re\.occurred_at DESC, re\.id DESC\s+LIMIT 1/u);
     assert.equal(pool.calls.some(({ sql }) => /LIMIT 20000/u.test(sql)), false);
+    const wordQuery = pool.calls.find(({ sql }) => /GROUP_CONCAT/u.test(sql));
+    assert.match(wordQuery.sql, /MIN\(ve\.created_at\) AS progress_created_at/u);
+    assert.doesNotMatch(wordQuery.sql, /uvp\.created_at/u,
+      "bootstrap createdAt must not drift when a progress row is created");
   });
 });
