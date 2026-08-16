@@ -2,7 +2,7 @@ import { normalizeVocabularyForm } from "../../../domain/library/VocabularyNorma
 import { reviewFingerprint } from "./MySqlEfficientLearningStateRepository.js";
 
 const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "system" });
-const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "createdAt"]);
+const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "notes", "createdAt"]);
 
 function parseJson(value, fallback = null) {
   if (value === null || value === undefined) return fallback;
