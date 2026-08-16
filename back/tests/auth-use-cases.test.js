@@ -112,7 +112,6 @@ describe("SaveLearningState", () => {
     const save = new SaveLearningState({ learningStateRepository: repository });
 
     assert.deepEqual(await save.execute("1", { words: [] }, 0), {
-      state: { words: [] },
       revision: 1
     });
     await assert.rejects(save.execute("1", { words: ["stale"] }, 0), {

@@ -68,7 +68,7 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
   });
 
   router.get("/library/vocabulary-sources", authenticate, async (req, res) => {
-    const result = await useCases.libraryQueries.vocabularySources(req.auth.user);
+    const result = await useCases.getVocabularySources.execute(req.auth.userId, { ids: req.query.ids });
     res.status(200).json(result);
   });
 
@@ -154,13 +154,23 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json(result);
   });
 
+  router.post("/learning/vocabulary-activations", authenticate, async (req, res) => {
+    const result = await useCases.activateVocabulary.execute(req.auth.userId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
+  router.post("/learning/vocabulary-activation-batches", authenticate, async (req, res) => {
+    const result = await useCases.activateVocabularyBatch.execute(req.auth.userId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
   router.post("/learning/reviews", authenticate, async (req, res) => {
     const result = await useCases.recordReviewResult.execute(req.auth.userId, req.body ?? {});
     res.status(200).json(result);
   });
 
   router.get("/state", authenticate, async (req, res) => {
-    const result = await useCases.getLearningState.execute(req.auth.userId);
+    const result = await useCases.getLearningState.execute(req.auth.userId, { view: req.query.view });
     res.status(200).json(result);
   });
 
