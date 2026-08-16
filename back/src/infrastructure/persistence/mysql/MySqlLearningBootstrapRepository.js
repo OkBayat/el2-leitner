@@ -102,7 +102,7 @@ export class MySqlLearningBootstrapRepository {
                 MAX(uvp.introduced_on) AS introduced_on, MAX(uvp.introduced_via) AS introduced_via,
                 MAX(uvp.last_reviewed_at) AS last_reviewed_at, MAX(uvp.last_promoted_on) AS last_promoted_on,
                 MAX(uvp.blocked_until) AS blocked_until, MAX(uvp.mastered_at) AS mastered_at,
-                COALESCE(MAX(uvp.created_at), MIN(ve.created_at)) AS progress_created_at
+                MIN(ve.created_at) AS progress_created_at
          FROM user_collections uc
          JOIN collections c ON c.id = uc.collection_id
          JOIN collection_entries ce ON ce.collection_id = c.id AND ce.removed_at IS NULL
