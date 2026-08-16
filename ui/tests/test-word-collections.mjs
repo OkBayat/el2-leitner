@@ -114,6 +114,47 @@ assert.ok(activation.options.body.length < 150, "the network write must stay tin
 assert.equal(Object.hasOwn(activationBody, "state"), false);
 assert.equal(window.VocoraWordCollectionsTest.getPendingActivationId(), null);
 
+// Real production evidence showed a click save where one unrelated immutable createdAt value
+// had drifted. The compact path must still recognize the single learning mutation without
+// requiring the click marker to be present.
+const fallbackBefore = {
+  settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" },
+  words: [
+    {
+      id: "roommate", number: 1, term: "roommate", accepted: ["roommate"], category: "People", notes: "",
+      createdAt: "2026-08-07T12:00:00.000Z", box: 0, due: null, attempts: 0, correct: 0, mistakes: 0,
+      currentStreak: 0, introducedOn: null, addedSource: null, lastReviewed: null,
+      lastPromotedDay: null, blockedUntil: null, masteredAt: null
+    },
+    {
+      id: "partner", number: 2, term: "partner", accepted: ["partner"], category: "People", notes: "",
+      createdAt: "2026-08-07T12:00:00.000Z", box: 0, due: null, attempts: 0, correct: 0, mistakes: 0,
+      currentStreak: 0, introducedOn: null, addedSource: null, lastReviewed: null,
+      lastPromotedDay: null, blockedUntil: null, masteredAt: null
+    }
+  ],
+  history: [{ id: 1 }],
+  daily: {
+    "2026-08-16": { attempts: 3, correct: 2, wrong: 1, newAdded: 40, sessions: 1, durationSeconds: 60 }
+  }
+};
+window.VocoraWordCollectionsTest.capturePersistedBaseline(fallbackBefore);
+const fallbackAfter = structuredClone(fallbackBefore);
+fallbackAfter.words[0].box = 1;
+fallbackAfter.words[0].due = "2026-08-16";
+fallbackAfter.words[0].introducedOn = "2026-08-16";
+fallbackAfter.words[0].addedSource = "word-bank";
+fallbackAfter.words[1].createdAt = "2026-08-16T14:29:34.046Z";
+fallbackAfter.daily["2026-08-16"].newAdded = 41;
+const inferred = window.VocoraWordCollectionsTest.compactWordBankActivationFromBaseline({
+  body: JSON.stringify({ revision: 4954, state: fallbackAfter })
+});
+assert.deepEqual(inferred.command, {
+  revision: 4954,
+  vocabularyId: "roommate",
+  day: "2026-08-16"
+}, "one word-bank activation must stay compact even if an immutable createdAt value drifted");
+
 window.document.querySelector("#wordsTableBody").innerHTML =
   '<tr><td>new word</td><td>Unit 2</td><td>وارد نشده</td><td><button class="add-to-box-one" data-id="vocab-3">+</button></td></tr>';
 await new Promise((resolve) => setTimeout(resolve, 20));
