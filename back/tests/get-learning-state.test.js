@@ -16,7 +16,7 @@ class FakeRepository {
 }
 
 describe("GetLearningState", () => {
-  it("uses the lean repository only for the bootstrap view", async () => {
+  it("uses the lean repository by default and full state only when explicitly requested", async () => {
     const full = new FakeRepository("full");
     const bootstrap = new FakeRepository("bootstrap");
     const useCase = new GetLearningState({
@@ -24,10 +24,10 @@ describe("GetLearningState", () => {
       learningBootstrapRepository: bootstrap
     });
 
+    assert.equal((await useCase.execute(3)).state.label, "bootstrap");
     assert.equal((await useCase.execute(3, { view: "bootstrap" })).state.label, "bootstrap");
     assert.equal((await useCase.execute(3, { view: "full" })).state.label, "full");
-    assert.equal((await useCase.execute(3)).state.label, "full");
-    assert.deepEqual(bootstrap.calls, [3]);
-    assert.deepEqual(full.calls, [3, 3]);
+    assert.deepEqual(bootstrap.calls, [3, 3]);
+    assert.deepEqual(full.calls, [3]);
   });
 });
