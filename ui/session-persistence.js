@@ -6,6 +6,7 @@
   let completionObserver = null;
   let startPromise = null;
   let persistedCursor = null;
+  let persistedActivationSnapshot = null;
   let reviewWriteFailed = false;
   let pendingReviewRevision = null;
   let advancePromise = null;
@@ -40,6 +41,24 @@
       historyLength: history.length,
       lastReviewFingerprint: history.length ? reviewFingerprint(history.at(-1)) : null
     };
+  }
+
+  function activationSnapshotForState(state) {
+    const snapshot = new Map();
+    for (const word of Array.isArray(state?.words) ? state.words : []) {
+      if (!word?.id) continue;
+      snapshot.set(String(word.id), {
+        box: Number(word.box) || 0,
+        introducedOn: word.introducedOn || null,
+        addedSource: word.addedSource || null
+      });
+    }
+    return snapshot;
+  }
+
+  function updatePersistenceSnapshot(state) {
+    persistedCursor = cursorForState(state);
+    persistedActivationSnapshot = activationSnapshotForState(state);
   }
 
   function sessionIsVisible() {
@@ -157,18 +176,19 @@
     try {
       const payload = await response.clone().json();
       if (payload?.state) {
-        // The history returned by the server is authoritative. Deriving the cursor
-        // here self-heals stale cursor metadata instead of carrying it into writes.
-        persistedCursor = cursorForState(payload.state);
+        // The server response is authoritative. Deriving both snapshots here
+        // prevents stale client metadata from turning a small mutation into a full-state write.
+        updatePersistenceSnapshot(payload.state);
         pendingReviewRevision = null;
         reviewWriteFailed = false;
       } else {
         persistedCursor = null;
+        persistedActivationSnapshot = null;
         pendingReviewRevision = null;
         reviewWriteFailed = false;
       }
     } catch {
-      // The application owns response validation. Cursor tracking is best-effort only.
+      // The application owns response validation. Snapshot tracking is best-effort only.
     }
     return response;
   }
@@ -263,7 +283,38 @@
     };
   }
 
-  async function sendCompactReview(command) {
+  function wordBankActivationCommandForState(payload, state) {
+    if (!(persistedActivationSnapshot instanceof Map) || reviewDeltaCount(state) !== 0) return null;
+    const revision = Number(payload?.revision);
+    if (!Number.isSafeInteger(revision) || revision < 0) return null;
+
+    const introductionChanges = [];
+    for (const word of Array.isArray(state?.words) ? state.words : []) {
+      const previous = persistedActivationSnapshot.get(String(word?.id));
+      if (!previous) continue;
+      const introducedOn = word?.introducedOn || null;
+      if (previous.introducedOn !== introducedOn) introductionChanges.push({ previous, word });
+    }
+    if (introductionChanges.length !== 1) return null;
+
+    const { previous, word } = introductionChanges[0];
+    if (previous.box !== 0
+      || previous.introducedOn
+      || Number(word?.box) !== 1
+      || !word?.introducedOn
+      || word?.addedSource !== "word-bank"
+      || word?.due !== word.introducedOn) {
+      return null;
+    }
+
+    return {
+      revision,
+      vocabularyId: String(word.id),
+      day: word.introducedOn
+    };
+  }
+
+  async function sendCompactCommand(path, command, failureMessage) {
     const options = {
       method: "POST",
       credentials: "include",
@@ -273,13 +324,25 @@
     };
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
-        const response = await originalFetch("/api/learning/reviews", options);
+        const response = await originalFetch(path, options);
         if (response.status < 500 || attempt === 1) return response;
       } catch (error) {
         if (attempt === 1) throw error;
       }
     }
-    throw new Error("Review persistence failed.");
+    throw new Error(failureMessage);
+  }
+
+  function sendCompactReview(command) {
+    return sendCompactCommand("/api/learning/reviews", command, "Review persistence failed.");
+  }
+
+  function sendCompactActivation(command) {
+    return sendCompactCommand(
+      "/api/learning/vocabulary-activations",
+      command,
+      "Vocabulary activation persistence failed."
+    );
   }
 
   function installFetchContext() {
@@ -303,7 +366,7 @@
             const acknowledged = await acknowledgesRevision(response, expectedRevision);
             reviewWriteFailed = !acknowledged;
             if (acknowledged) {
-              persistedCursor = cursorForState(prepared.state);
+              updatePersistenceSnapshot(prepared.state);
               pendingReviewRevision = null;
             }
             return response;
@@ -311,6 +374,18 @@
             reviewWriteFailed = true;
             throw error;
           }
+        }
+
+        const compactActivation = prepared.state
+          ? wordBankActivationCommandForState(prepared.payload, prepared.state)
+          : null;
+        if (compactActivation) {
+          const expectedRevision = compactActivation.revision + 1;
+          const response = await sendCompactActivation(compactActivation);
+          if (await acknowledgesRevision(response, expectedRevision)) {
+            updatePersistenceSnapshot(prepared.state);
+          }
+          return response;
         }
 
         const reviewDelta = prepared.state ? reviewDeltaCount(prepared.state) : 0;
@@ -331,7 +406,7 @@
             reviewWriteFailed = !acknowledged;
             if (acknowledged) pendingReviewRevision = null;
           }
-          if (response.ok && prepared.state) persistedCursor = cursorForState(prepared.state);
+          if (response.ok && prepared.state) updatePersistenceSnapshot(prepared.state);
           return response;
         } catch (error) {
           if (hasReviewDelta) reviewWriteFailed = true;
@@ -420,7 +495,10 @@
     cursorPosition,
     reviewCommandForState,
     reviewDeltaCount,
+    activationSnapshotForState,
+    wordBankActivationCommandForState,
     getPersistedCursor: () => persistedCursor,
+    getPersistedActivationSnapshot: () => persistedActivationSnapshot,
     getActiveSession: () => activeSession,
     getReviewWriteFailed: () => reviewWriteFailed,
     getPendingReviewRevision: () => pendingReviewRevision,
