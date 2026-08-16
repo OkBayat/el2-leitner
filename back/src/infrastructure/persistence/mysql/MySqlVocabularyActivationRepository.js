@@ -182,6 +182,7 @@ export class MySqlVocabularyActivationRepository {
 
   async activateBatch(userId, { expectedRevision, vocabularyIds, day, source }) {
     const connection = await this.pool.getConnection();
+    let transactionStarted = false;
     try {
       const targets = await this.activationTargets(connection, userId, vocabularyIds);
       const byPublicId = new Map(targets.map((target) => [String(target.vocabulary_id), target]));
@@ -192,14 +193,9 @@ export class MySqlVocabularyActivationRepository {
           "Vocabulary entry was not found in an active collection."
         );
       }
-      if (vocabularyIds.some((id) => !isUnseenProgress(byPublicId.get(String(id))))) {
-        throw new ConflictError(
-          "VOCABULARY_ALREADY_ACTIVE",
-          "Vocabulary is already active in the learning boxes."
-        );
-      }
 
       await connection.beginTransaction();
+      transactionStarted = true;
       if (!(await this.claimRevision(connection, userId, expectedRevision))) {
         const current = await this.currentRevision(connection, userId);
         if (current === null) {
@@ -214,6 +210,7 @@ export class MySqlVocabularyActivationRepository {
             return target && isSameActivation(target, day, source);
           })) {
             await connection.commit();
+            transactionStarted = false;
             return current;
           }
         }
@@ -221,6 +218,13 @@ export class MySqlVocabularyActivationRepository {
         throw new ConflictError(
           "STATE_CONFLICT",
           "Learning state was updated by another session. Reload and try again."
+        );
+      }
+
+      if (vocabularyIds.some((id) => !isUnseenProgress(byPublicId.get(String(id))))) {
+        throw new ConflictError(
+          "VOCABULARY_ALREADY_ACTIVE",
+          "Vocabulary is already active in the learning boxes."
         );
       }
 
@@ -255,9 +259,10 @@ export class MySqlVocabularyActivationRepository {
       );
 
       await connection.commit();
+      transactionStarted = false;
       return expectedRevision + 1;
     } catch (error) {
-      if (connection.rolledBack !== true) await connection.rollback();
+      if (transactionStarted) await connection.rollback();
       throw error;
     } finally {
       connection.release();
