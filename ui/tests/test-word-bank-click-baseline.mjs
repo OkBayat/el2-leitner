@@ -51,7 +51,28 @@ const state = {
       createdAt: "2026-08-07T12:54:06.074Z", box: 0, due: null, attempts: 0, correct: 0,
       mistakes: 0, currentStreak: 0, introducedOn: null, addedSource: null, lastReviewed: null,
       lastPromotedDay: null, blockedUntil: null, masteredAt: null
-    }
+    },
+    ...Array.from({ length: 1950 }, (_, index) => ({
+      id: `filler-${index + 3}`,
+      number: index + 3,
+      term: `filler word ${index + 3}`,
+      accepted: [`filler word ${index + 3}`],
+      category: "Regression fixture",
+      notes: "",
+      createdAt: "2026-08-07T12:54:06.080Z",
+      box: 0,
+      due: null,
+      attempts: 0,
+      correct: 0,
+      mistakes: 0,
+      currentStreak: 0,
+      introducedOn: null,
+      addedSource: null,
+      lastReviewed: null,
+      lastPromotedDay: null,
+      blockedUntil: null,
+      masteredAt: null
+    }))
   ],
   history: Array.from({ length: 4713 }, (_, index) => ({ id: index + 1 })),
   daily: {
@@ -74,7 +95,7 @@ state.daily["2026-08-16"].newAdded = 42;
 state.words[0].createdAt = "2026-08-16T14:40:36.072Z";
 
 const fullBody = JSON.stringify({ revision: 4955, state });
-assert.ok(fullBody.length > 100000, "fixture must make a full-state upload materially large");
+assert.ok(fullBody.length > 500000, "fixture must reproduce a materially large full-state upload");
 const result = await window.fetch("/api/state", {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
