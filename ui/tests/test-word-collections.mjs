@@ -152,6 +152,26 @@ assert.equal(
   "one word-bank activation must stay compact even if an immutable createdAt value drifted"
 );
 
+const fullPutsBeforeFallback = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "PUT").length;
+const activationsBeforeFallback = requests.filter((request) => request.url.pathname === "/api/learning/vocabulary-activations").length;
+const inferredResponse = await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 4954, state: fallbackAfter })
+});
+assert.equal(inferredResponse.status, 200);
+assert.equal(
+  requests.filter((request) => request.url.pathname === "/api/state" && request.method === "PUT").length,
+  fullPutsBeforeFallback,
+  "an activation inferred from authoritative state must not leak a full-state PUT"
+);
+const inferredActivations = requests.filter((request) => request.url.pathname === "/api/learning/vocabulary-activations");
+assert.equal(inferredActivations.length, activationsBeforeFallback + 1);
+assert.equal(
+  inferredActivations.at(-1).options.body,
+  JSON.stringify({ revision: 4954, vocabularyId: "roommate", day: "2026-08-16" })
+);
+
 window.document.querySelector("#wordsTableBody").innerHTML =
   '<tr><td>new word</td><td>Unit 2</td><td>وارد نشده</td><td><button class="add-to-box-one" data-id="vocab-3">+</button></td></tr>';
 await new Promise((resolve) => setTimeout(resolve, 20));
