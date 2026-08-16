@@ -27,8 +27,10 @@ export function createContainer({ pool, config, adapters = {} }) {
   const userRepository = adapters.userRepository ?? new MySqlUserRepository(pool);
   const learningStateRepository =
     adapters.learningStateRepository ?? new MySqlEfficientLearningStateRepository(pool);
-  const learningBootstrapRepository =
-    adapters.learningBootstrapRepository ?? new MySqlLearningBootstrapRepository(pool, learningStateRepository);
+  const learningBootstrapRepository = adapters.learningBootstrapRepository
+    ?? (adapters.learningStateRepository
+      ? learningStateRepository
+      : new MySqlLearningBootstrapRepository(pool, learningStateRepository));
   const libraryRepository = adapters.libraryRepository ?? new MySqlLibraryRepository(pool);
   const practiceSessionRepository =
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
