@@ -18,9 +18,7 @@ function isSameActivation(target, day) {
 
 function hasExistingLearningProgress(target) {
   if (target.progress_user_id === null || target.progress_user_id === undefined) return false;
-  return target.progress_status === "active"
-    || Number(target.progress_box) > 0
-    || Boolean(target.progress_introduced_on);
+  return Number(target.progress_box) > 0 || Boolean(target.progress_introduced_on);
 }
 
 export class MySqlVocabularyActivationRepository {
