@@ -339,6 +339,81 @@
     });
   }
 
+  function bootstrapStateUrl(url, method) {
+    if (method !== "GET") return null;
+    try {
+      const parsed = new URL(url, window.location.href);
+      if (parsed.pathname !== "/api/state" || parsed.search) return null;
+      return "/api/state?view=bootstrap";
+    } catch {
+      return null;
+    }
+  }
+
+  function fetchFullState() {
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest();
+      request.open("GET", "/api/state?view=full", true);
+      request.withCredentials = true;
+      request.responseType = "json";
+      request.onload = () => {
+        if (request.status >= 200 && request.status < 300 && request.response?.state) {
+          resolve(request.response.state);
+          return;
+        }
+        reject(new Error("Could not load the full learning state."));
+      };
+      request.onerror = () => reject(new Error("Could not load the full learning state."));
+      request.send();
+    });
+  }
+
+  function downloadJson(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function handleFullStateExport(button) {
+    if (!button || button.disabled) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "در حال آماده‌سازی…";
+    try {
+      await window.VazheyarTest?.waitForSaves?.();
+      const fullState = await fetchFullState();
+      const day = window.VazheyarTest?.localDay?.() || new Date().toISOString().slice(0, 10);
+      if (button.id === "exportBackupBtn") {
+        downloadJson(fullState, `vocora-backup-${day}.json`);
+        return;
+      }
+
+      const currentState = window.VazheyarTest?.getState?.();
+      const buildReport = window.VazheyarTest?.buildAnalysisReport;
+      if (!currentState || typeof buildReport !== "function") throw new Error("Analysis tools are not ready.");
+      const localHistory = currentState.history;
+      try {
+        currentState.history = Array.isArray(fullState.history) ? fullState.history : [];
+        downloadJson(buildReport(), `vocora-analysis-${day}.json`);
+      } finally {
+        currentState.history = localHistory;
+      }
+    } catch (error) {
+      console.warn("Could not prepare full-state export:", error);
+      button.textContent = "تلاش دوباره";
+      setTimeout(() => { button.textContent = originalText; }, 1600);
+    } finally {
+      button.disabled = false;
+      if (button.textContent === "در حال آماده‌سازی…") button.textContent = originalText;
+    }
+  }
+
   function installActivationWriteInterceptor() {
     window.fetch = async function vocoraWordBankFetch(input, init = {}) {
       const url = typeof input === "string" ? input : input?.url || "";
@@ -346,7 +421,8 @@
       const isStateEndpoint = /\/api\/state(?:\?|$)/u.test(url);
 
       if (isStateEndpoint && method === "GET") {
-        return captureStateRead(await previousFetch(input, init));
+        const bootstrapUrl = bootstrapStateUrl(url, method);
+        return captureStateRead(await previousFetch(bootstrapUrl || input, init));
       }
 
       if (isStateEndpoint && method === "PUT") {
@@ -396,16 +472,25 @@
     };
   }
 
-  function bindWordBankActivationIntent() {
+  function bindDocumentActions() {
     document.addEventListener("click", (event) => {
-      const button = event.target.closest?.(".add-to-box-one[data-id]");
-      if (button?.closest?.("#wordsTableBody")) pendingActivationId = button.dataset.id;
+      const activationButton = event.target.closest?.(".add-to-box-one[data-id]");
+      if (activationButton?.closest?.("#wordsTableBody")) {
+        pendingActivationId = activationButton.dataset.id;
+        return;
+      }
+
+      const exportButton = event.target.closest?.("#exportBackupBtn, #exportAnalysisBtn");
+      if (!exportButton) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      handleFullStateExport(exportButton);
     }, true);
   }
 
   function boot() {
     installActivationWriteInterceptor();
-    bindWordBankActivationIntent();
+    bindDocumentActions();
     if (!tableBody) return;
     const observer = new MutationObserver(() => {
       if (!decorating) {
@@ -431,6 +516,7 @@
     compactWordBankActivationFromBaseline,
     compactAutomaticActivationBatch,
     capturePersistedBaseline,
+    bootstrapStateUrl,
     getPendingActivationId: () => pendingActivationId
   };
   boot();
