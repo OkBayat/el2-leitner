@@ -170,7 +170,7 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
   });
 
   router.get("/state", authenticate, async (req, res) => {
-    const result = await useCases.getLearningState.execute(req.auth.userId);
+    const result = await useCases.getLearningState.execute(req.auth.userId, { view: req.query.view });
     res.status(200).json(result);
   });
 
