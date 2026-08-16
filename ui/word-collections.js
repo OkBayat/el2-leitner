@@ -5,7 +5,6 @@
   const tableBody = document.querySelector("#wordsTableBody");
   let sourcesByVocabularyId = new Map();
   let sourcesByTerm = new Map();
-  let refreshTimer = null;
   let decorating = false;
 
   function normalize(value) {
@@ -104,18 +103,10 @@
     }
   }
 
-  function scheduleRefresh() {
-    clearTimeout(refreshTimer);
-    refreshTimer = setTimeout(refreshSources, 60);
-  }
-
   function boot() {
     if (!tableBody) return;
     const observer = new MutationObserver(() => {
-      if (!decorating) {
-        decorateRows();
-        scheduleRefresh();
-      }
+      if (!decorating) decorateRows();
     });
     observer.observe(tableBody, { childList: true });
     ["#wordSearch", "#boxFilter", "#sortWords", "#prevPage", "#nextPage"].forEach((selector) => {
