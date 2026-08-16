@@ -71,6 +71,25 @@ describe("MySqlVocabularyActivationRepository", () => {
     assert.deepEqual(dailyWrite.parameters, [7, "2026-08-16"]);
   });
 
+  it("activates an unseen word even when a box-zero row exists only for metadata", async () => {
+    const connection = new PatternConnection({
+      progress: {
+        status: "active",
+        box: 0,
+        due: null,
+        introducedOn: null,
+        introducedVia: null
+      }
+    });
+    const repository = new MySqlVocabularyActivationRepository(new PatternPool(connection));
+
+    const revision = await repository.activate(7, command);
+
+    assert.equal(revision, 9);
+    assert.equal(connection.committed, true);
+    assert.equal(connection.calls.filter(({ sql }) => /INSERT INTO user_vocabulary_progress/u.test(sql)).length, 1);
+  });
+
   it("treats the immediately retried identical activation as idempotent", async () => {
     const connection = new PatternConnection({
       revision: 9,
