@@ -95,6 +95,7 @@ describe("MySqlLearningBootstrapRepository", () => {
       term: "roommate",
       accepted: ["roommate"],
       category: "People",
+      notes: "",
       createdAt: "2026-08-07T12:00:00.000Z"
     });
     assert.equal(result.state.persistenceCursor.historyLength, 1);
