@@ -5,6 +5,7 @@ import { GetVocabularySources } from "./application/library/GetVocabularySources
 import { LibraryCommands } from "./application/library/LibraryCommands.js";
 import { LibraryQueries } from "./application/library/LibraryQueries.js";
 import { ActivateVocabulary } from "./application/learning/ActivateVocabulary.js";
+import { ActivateVocabularyBatch } from "./application/learning/ActivateVocabularyBatch.js";
 import { GetLearningState } from "./application/learning/GetLearningState.js";
 import { LearningSessionCommands } from "./application/learning/LearningSessionCommands.js";
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
@@ -54,6 +55,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getLearningState: new GetLearningState({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
+      activateVocabularyBatch: new ActivateVocabularyBatch({ vocabularyActivationRepository }),
       getVocabularySources: new GetVocabularySources({ vocabularySourceRepository }),
       recordReviewResult: new RecordReviewResult({ reviewProgressRepository }),
       learningSessionCommands: new LearningSessionCommands({ practiceSessionRepository }),
