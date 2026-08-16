@@ -5,9 +5,9 @@ export class GetLearningState {
   }
 
   async execute(userId, input = {}) {
-    const repository = input.view === "bootstrap"
-      ? this.learningBootstrapRepository
-      : this.learningStateRepository;
+    const repository = input.view === "full"
+      ? this.learningStateRepository
+      : this.learningBootstrapRepository;
     return repository.findByUserId(userId);
   }
 }
