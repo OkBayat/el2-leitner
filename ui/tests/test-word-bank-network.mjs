@@ -64,6 +64,27 @@ let serverState = {
   history
 };
 
+function compactWord(word) {
+  const required = new Set(["id", "number", "term", "accepted", "category", "createdAt"]);
+  return Object.fromEntries(Object.entries(word).filter(([key, value]) =>
+    required.has(key) || (value !== null && value !== "" && value !== 0)
+  ));
+}
+
+function bootstrapState() {
+  const tail = serverState.history.slice(-1);
+  return {
+    ...structuredClone(serverState),
+    words: serverState.words.map(compactWord),
+    history: structuredClone(tail),
+    normalizedPersistenceVersion: 2,
+    persistenceCursor: {
+      historyLength: tail.length,
+      lastReviewFingerprint: tail.length ? "bootstrap-tail" : null
+    }
+  };
+}
+
 const requests = [];
 function responseFor(payload, status = 200) {
   return {
@@ -107,7 +128,8 @@ const dom = new JSDOM(html, {
         return responseFor({ user: { id: 7, email: "learner@example.com" } });
       }
       if (url.pathname === "/api/state" && method === "GET") {
-        return responseFor({ state: structuredClone(serverState), revision: serverRevision });
+        const state = url.searchParams.get("view") === "bootstrap" ? bootstrapState() : structuredClone(serverState);
+        return responseFor({ state, revision: serverRevision });
       }
       if (url.pathname === "/api/state" && method === "PUT") {
         return responseFor({ error: { code: "FULL_STATE_WRITE", message: "Full state write must not happen." } }, 500);
@@ -139,7 +161,7 @@ const dom = new JSDOM(html, {
   }
 });
 
-// Match production script order: app -> review persistence -> word-bank integration.
+// Match production script order: app -> review persistence -> word-bank/bootstrap integration.
 dom.window.eval(appScript);
 dom.window.eval(sessionScript);
 dom.window.eval(collectionsScript);
@@ -147,10 +169,18 @@ await dom.window.VazheyarReady;
 await dom.window.VazheyarTest.waitForSaves();
 await new Promise((resolve) => setTimeout(resolve, 20));
 
-const stateGetsBefore = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "GET").length;
+const stateGetRequests = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "GET");
+const stateGetsBefore = stateGetRequests.length;
 const statePutsBefore = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "PUT").length;
 const dailyBatches = requests.filter((request) => request.url.pathname === "/api/learning/vocabulary-activation-batches" && request.method === "POST");
-assert.equal(stateGetsBefore, 1, "the large state may be loaded once at application bootstrap");
+assert.equal(stateGetsBefore, 1, "the state is loaded once at application bootstrap");
+assert.equal(stateGetRequests[0].url.searchParams.get("view"), "bootstrap",
+  "normal app startup must request the lean bootstrap state rather than the full audit history");
+assert.ok(
+  Buffer.byteLength(JSON.stringify(bootstrapState()), "utf8") < Buffer.byteLength(JSON.stringify(serverState), "utf8") * 0.4,
+  "the production-sized bootstrap fixture must stay well below half of the full state payload"
+);
+assert.equal(bootstrapState().history.length, 1, "bootstrap must carry only the local history tail");
 assert.equal(statePutsBefore, 0, "automatic daily activation must not upload the multi-megabyte state");
 assert.equal(dailyBatches.length, 1, "daily provisioning should use one compact batch request");
 assert.ok(Buffer.byteLength(String(dailyBatches[0].options.body || ""), "utf8") < 1000,
@@ -169,9 +199,9 @@ const statePutsAfter = requests.filter((request) => request.url.pathname === "/a
 const activations = requests.filter((request) => request.url.pathname === "/api/learning/vocabulary-activations" && request.method === "POST");
 
 assert.equal(stateGetsAfter, stateGetsBefore,
-  "adding one word must not reload the multi-megabyte learning state");
+  "adding one word must not reload the learning state");
 assert.equal(statePutsAfter, statePutsBefore,
-  "adding one word must not send the multi-megabyte learning state");
+  "adding one word must not send the full learning state");
 assert.equal(activations.length, 1, "one click must produce exactly one compact activation command");
 const activationBody = String(activations[0].options.body || "");
 const activationPayload = JSON.parse(activationBody);
@@ -182,7 +212,7 @@ assert.deepEqual(activationPayload, {
 });
 assert.equal(Object.prototype.hasOwnProperty.call(activationPayload, "state"), false);
 assert.ok(Buffer.byteLength(activationBody, "utf8") < 150,
-  "single-word activation request must stay tiny even when the loaded state has 1,952 words and 4,712 history events");
+  "single-word activation request must stay tiny even with 1,952 words in the catalog");
 assert.equal(serverState.words.find((word) => word.id === selectedId).box, 1);
 
-console.log("Production-sized word-bank network regression passed.");
+console.log("Production-sized word-bank and lean-bootstrap network regression passed.");
