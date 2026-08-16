@@ -1,6 +1,7 @@
 import { GetCurrentUser } from "./application/auth/GetCurrentUser.js";
 import { LoginUser } from "./application/auth/LoginUser.js";
 import { RegisterUser } from "./application/auth/RegisterUser.js";
+import { GetVocabularySources } from "./application/library/GetVocabularySources.js";
 import { LibraryCommands } from "./application/library/LibraryCommands.js";
 import { LibraryQueries } from "./application/library/LibraryQueries.js";
 import { ActivateVocabulary } from "./application/learning/ActivateVocabulary.js";
@@ -16,6 +17,7 @@ import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mys
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
 import { MySqlUserRepository } from "./infrastructure/persistence/mysql/MySqlUserRepository.js";
 import { MySqlVocabularyActivationRepository } from "./infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
+import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
 
@@ -30,6 +32,8 @@ export function createContainer({ pool, config, adapters = {} }) {
     adapters.reviewProgressRepository ?? new MySqlReviewProgressRepository(pool);
   const vocabularyActivationRepository =
     adapters.vocabularyActivationRepository ?? new MySqlVocabularyActivationRepository(pool);
+  const vocabularySourceRepository =
+    adapters.vocabularySourceRepository ?? new MySqlVocabularySourceRepository(pool);
   const passwordHasher = adapters.passwordHasher ?? new BcryptPasswordHasher();
   const tokenService = adapters.tokenService ?? new JwtTokenService({
     secret: config.auth.jwtSecret,
@@ -50,6 +54,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getLearningState: new GetLearningState({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
+      getVocabularySources: new GetVocabularySources({ vocabularySourceRepository }),
       recordReviewResult: new RecordReviewResult({ reviewProgressRepository }),
       learningSessionCommands: new LearningSessionCommands({ practiceSessionRepository }),
       libraryQueries: new LibraryQueries({ libraryRepository, adminPolicy: libraryAdminPolicy }),
