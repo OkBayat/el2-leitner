@@ -74,9 +74,10 @@
   }
 
   function visibleVocabularyIds() {
-    if (!tableBody) return [];
+    const body = document.querySelector("#wordsTableBody") || tableBody;
+    if (!body) return [];
     return [...new Set(
-      [...tableBody.querySelectorAll("tr")]
+      [...body.querySelectorAll("tr")]
         .map((row) => rowIdentity(row).vocabularyId)
         .filter(Boolean)
     )].slice(0, 50);
@@ -97,11 +98,12 @@
   }
 
   function decorateRows() {
-    if (!tableBody || decorating) return;
+    const body = document.querySelector("#wordsTableBody") || tableBody;
+    if (!body || decorating) return;
     decorating = true;
     try {
       ensureHeader();
-      for (const row of tableBody.querySelectorAll("tr")) {
+      for (const row of body.querySelectorAll("tr")) {
         row.querySelector(`td[${SOURCE_COLUMN_MARKER}]`)?.remove();
         const { vocabularyId, term } = rowIdentity(row);
         const collections = (vocabularyId && sourcesByVocabularyId.get(vocabularyId)) || sourcesByTerm.get(term) || [];
@@ -145,7 +147,6 @@
       Array.isArray(word?.accepted) ? word.accepted : [],
       word?.category ?? null,
       word?.notes ?? null,
-      word?.createdAt ?? null,
       Number(word?.attempts) || 0,
       Number(word?.correct) || 0,
       Number(word?.mistakes) || 0,
@@ -229,10 +230,10 @@
     };
   }
 
-  function isAutomaticActivation(previous, current) {
+  function isActivation(previous, current, allowedSources) {
     const source = current?.addedSource;
     const day = current?.introducedOn;
-    if (!previous || !["daily", "home-selection"].includes(source) || !day) return false;
+    if (!previous || !allowedSources.includes(source) || !day) return false;
     return previous.box === 0
       && previous.introducedOn === null
       && previous.invariant === wordInvariant(current)
@@ -240,6 +241,14 @@
       && current.due === day
       && current.lastPromotedDay === null
       && current.blockedUntil === null;
+  }
+
+  function stateShapeMatchesBaseline(state) {
+    if (!persistedBaseline || state.words.length !== persistedBaseline.wordCount) return false;
+    if (JSON.stringify(state.settings || {}) !== persistedBaseline.settings) return false;
+    const currentHistory = historyCursor(state.history);
+    return currentHistory.length === persistedBaseline.history.length
+      && currentHistory.last === persistedBaseline.history.last;
   }
 
   function dailyMatchesBatch(state, candidates) {
@@ -257,38 +266,52 @@
     return true;
   }
 
-  function compactAutomaticActivationBatch(init) {
-    const envelope = parseStateEnvelope(init);
-    if (!envelope || !persistedBaseline) return null;
-    const { state, revision } = envelope;
-    if (state.words.length !== persistedBaseline.wordCount) return null;
-    if (JSON.stringify(state.settings || {}) !== persistedBaseline.settings) return null;
-
-    const currentHistory = historyCursor(state.history);
-    if (currentHistory.length !== persistedBaseline.history.length || currentHistory.last !== persistedBaseline.history.last) {
-      return null;
-    }
-
+  function activationCandidates(state, allowedSources) {
+    if (!stateShapeMatchesBaseline(state)) return null;
     const candidates = [];
     for (const word of state.words) {
       const previous = persistedBaseline.words.get(String(word.id));
       if (!previous) return null;
       const current = progressSnapshot(word);
       if (JSON.stringify(current) === JSON.stringify(previous)) continue;
-      if (!isAutomaticActivation(previous, word)) return null;
+      if (!isActivation(previous, word, allowedSources)) return null;
       candidates.push(word);
     }
+    return candidates;
+  }
 
-    if (!candidates.length || candidates.length > 50) return null;
+  function compactWordBankActivationFromBaseline(init, expectedVocabularyId = null) {
+    const envelope = parseStateEnvelope(init);
+    if (!envelope || !persistedBaseline) return null;
+    const candidates = activationCandidates(envelope.state, ["word-bank"]);
+    if (!candidates || candidates.length !== 1) return null;
+    const word = candidates[0];
+    if (expectedVocabularyId && String(word.id) !== String(expectedVocabularyId)) return null;
+    if (!dailyMatchesBatch(envelope.state, candidates)) return null;
+    return {
+      envelope,
+      command: {
+        revision: envelope.revision,
+        vocabularyId: String(word.id),
+        day: word.introducedOn
+      }
+    };
+  }
+
+  function compactAutomaticActivationBatch(init) {
+    const envelope = parseStateEnvelope(init);
+    if (!envelope || !persistedBaseline) return null;
+    const candidates = activationCandidates(envelope.state, ["daily", "home-selection"]);
+    if (!candidates || !candidates.length || candidates.length > 50) return null;
     const source = candidates[0].addedSource;
     const day = candidates[0].introducedOn;
     if (!candidates.every((word) => word.addedSource === source && word.introducedOn === day)) return null;
-    if (!dailyMatchesBatch(state, candidates)) return null;
+    if (!dailyMatchesBatch(envelope.state, candidates)) return null;
 
     return {
       envelope,
       command: {
-        revision,
+        revision: envelope.revision,
         vocabularyIds: candidates.map((word) => String(word.id)),
         day,
         source
@@ -328,6 +351,14 @@
 
       if (isStateEndpoint && method === "PUT") {
         const envelope = parseStateEnvelope(init);
+        const baselineActivation = compactWordBankActivationFromBaseline(init, pendingActivationId);
+
+        if (baselineActivation) {
+          pendingActivationId = null;
+          const response = await sendCompact("/api/learning/vocabulary-activations", baselineActivation.command);
+          if (response.ok) capturePersistedBaseline(baselineActivation.envelope.state);
+          return response;
+        }
 
         if (pendingActivationId) {
           const command = compactActivationCommand(init, pendingActivationId);
@@ -337,6 +368,13 @@
             if (response.ok && envelope?.state) capturePersistedBaseline(envelope.state);
             return response;
           }
+        }
+
+        const inferredActivation = compactWordBankActivationFromBaseline(init);
+        if (inferredActivation) {
+          const response = await sendCompact("/api/learning/vocabulary-activations", inferredActivation.command);
+          if (response.ok) capturePersistedBaseline(inferredActivation.envelope.state);
+          return response;
         }
 
         const automaticBatch = compactAutomaticActivationBatch(init);
@@ -359,16 +397,16 @@
   }
 
   function bindWordBankActivationIntent() {
-    tableBody?.addEventListener("click", (event) => {
-      const button = event.target.closest(".add-to-box-one[data-id]");
-      if (button) pendingActivationId = button.dataset.id;
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest?.(".add-to-box-one[data-id]");
+      if (button?.closest?.("#wordsTableBody")) pendingActivationId = button.dataset.id;
     }, true);
   }
 
   function boot() {
     installActivationWriteInterceptor();
-    if (!tableBody) return;
     bindWordBankActivationIntent();
+    if (!tableBody) return;
     const observer = new MutationObserver(() => {
       if (!decorating) {
         decorateRows();
@@ -390,6 +428,7 @@
     rowIdentity,
     visibleVocabularyIds,
     compactActivationCommand,
+    compactWordBankActivationFromBaseline,
     compactAutomaticActivationBatch,
     capturePersistedBaseline,
     getPendingActivationId: () => pendingActivationId
