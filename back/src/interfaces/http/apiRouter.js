@@ -154,6 +154,11 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json(result);
   });
 
+  router.post("/learning/vocabulary-activations", authenticate, async (req, res) => {
+    const result = await useCases.activateVocabulary.execute(req.auth.userId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
   router.post("/learning/reviews", authenticate, async (req, res) => {
     const result = await useCases.recordReviewResult.execute(req.auth.userId, req.body ?? {});
     res.status(200).json(result);
