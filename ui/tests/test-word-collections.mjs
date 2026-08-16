@@ -70,37 +70,48 @@ addButton.click();
 assert.equal(window.VocoraWordCollectionsTest.getPendingActivationId(), "vocab-1",
   "the actual word-bank click must identify the mutation before app-v2 saves state");
 
+const words = Array.from({ length: 1952 }, (_, index) => ({
+  id: `vocab-${index + 1}`,
+  box: 0,
+  due: null,
+  introducedOn: null,
+  addedSource: null
+}));
+words[0] = {
+  ...words[0],
+  box: 1,
+  due: "2026-08-16",
+  introducedOn: "2026-08-16",
+  addedSource: "word-bank"
+};
 const state = {
-  history: [],
-  words: [
-    {
-      id: "vocab-1",
-      box: 1,
-      due: "2026-08-16",
-      introducedOn: "2026-08-16",
-      addedSource: "word-bank"
-    },
-    { id: "vocab-2", box: 0, due: null, introducedOn: null, addedSource: null }
-  ],
+  history: Array.from({ length: 4712 }, (_, index) => ({ id: index + 1 })),
+  words,
   daily: {
     "2026-08-16": { attempts: 0, correct: 0, wrong: 0, newAdded: 1, sessions: 0, durationSeconds: 0 }
   }
 };
+const fullStatePayload = JSON.stringify({ revision: 8, state });
+assert.ok(fullStatePayload.length > 100000, "the regression fixture must be large enough to expose a full-state write");
+
 const saveResponse = await window.fetch("/api/state", {
   method: "PUT",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ revision: 8, state })
+  body: fullStatePayload
 });
 assert.equal(saveResponse.status, 200);
 assert.equal(requests.some((request) => request.url.pathname === "/api/state" && request.method === "PUT"), false,
   "the clicked word-bank activation must never send the full learning state");
 const activation = requests.find((request) => request.url.pathname === "/api/learning/vocabulary-activations");
 assert.ok(activation);
-assert.deepEqual(JSON.parse(activation.options.body), {
+const activationBody = JSON.parse(activation.options.body);
+assert.deepEqual(activationBody, {
   revision: 8,
   vocabularyId: "vocab-1",
   day: "2026-08-16"
 });
+assert.ok(activation.options.body.length < 150, "the network write must stay tiny regardless of bank/history size");
+assert.equal(Object.hasOwn(activationBody, "state"), false);
 assert.equal(window.VocoraWordCollectionsTest.getPendingActivationId(), null);
 
 window.document.querySelector("#wordsTableBody").innerHTML =
