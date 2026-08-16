@@ -476,6 +476,8 @@
     document.addEventListener("click", (event) => {
       const activationButton = event.target.closest?.(".add-to-box-one[data-id]");
       if (activationButton?.closest?.("#wordsTableBody")) {
+        const currentState = window.VazheyarTest?.getState?.();
+        if (currentState) capturePersistedBaseline(currentState);
         pendingActivationId = activationButton.dataset.id;
         return;
       }
