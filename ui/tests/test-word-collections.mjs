@@ -9,22 +9,26 @@ const dom = new JSDOM(`<!doctype html><body>
 <input id="wordSearch"><select id="boxFilter"></select><select id="sortWords"></select><button id="prevPage"></button><button id="nextPage"></button>
 </body>`, { runScripts: "outside-only", url: "http://localhost/index.html" });
 const { window } = dom;
-window.fetch = async () => ({
-  ok: true,
-  status: 200,
-  async json() {
-    return {
-      sources: [{
-        vocabularyId: "vocab-1",
-        term: "centre",
-        collections: [
-          { id: "ielts", title: "1500 IELTS Listening Words" },
-          { id: "aef3", title: "American English File 3" }
-        ]
-      }]
-    };
-  }
-});
+let fetchCount = 0;
+window.fetch = async () => {
+  fetchCount += 1;
+  return {
+    ok: true,
+    status: 200,
+    async json() {
+      return {
+        sources: [{
+          vocabularyId: "vocab-1",
+          term: "centre",
+          collections: [
+            { id: "ielts", title: "1500 IELTS Listening Words" },
+            { id: "aef3", title: "American English File 3" }
+          ]
+        }]
+      };
+    }
+  };
+};
 window.eval(script);
 await new Promise((resolve) => setTimeout(resolve, 15));
 
@@ -35,5 +39,13 @@ assert.match(sourceCell.textContent, /1500 IELTS Listening Words/u);
 assert.match(sourceCell.textContent, /American English File 3/u);
 assert.equal(sourceCell.querySelectorAll("a.word-source-chip").length, 2);
 assert.equal(window.VocoraWordCollectionsTest.normalize(" Interest–Free  Credit "), "interest-free credit");
+assert.equal(fetchCount, 1, "vocabulary source metadata should load once at boot");
+
+window.document.querySelector("#wordsTableBody").innerHTML =
+  '<tr><td>centre / center</td><td>Unit 1</td><td>خانه ۱</td><td><button data-id="vocab-1">ویرایش</button></td></tr>';
+await new Promise((resolve) => setTimeout(resolve, 15));
+assert.equal(fetchCount, 1,
+  "re-rendering the vocabulary table must reuse the indexed source metadata instead of refetching every vocabulary");
+assert.match(window.document.querySelector('td[data-vocora-source-column]').textContent, /1500 IELTS Listening Words/u);
 
 console.log("Word collection integration tests passed.");
