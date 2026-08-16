@@ -20,7 +20,7 @@ function appWith(getLearningState) {
 }
 
 describe("GET /api/state views", () => {
-  it("passes bootstrap intent explicitly without changing the full-state default", async () => {
+  it("keeps normal state reads lean while allowing an explicit full view", async () => {
     const calls = [];
     const app = appWith({
       async execute(userId, input) {
@@ -30,17 +30,17 @@ describe("GET /api/state views", () => {
     });
 
     await request(app)
-      .get("/api/state?view=bootstrap")
+      .get("/api/state")
       .set("Cookie", "vocora_session=token")
       .expect(200);
     await request(app)
-      .get("/api/state")
+      .get("/api/state?view=full")
       .set("Cookie", "vocora_session=token")
       .expect(200);
 
     assert.deepEqual(calls, [
-      { userId: 7, input: { view: "bootstrap" } },
-      { userId: 7, input: { view: undefined } }
+      { userId: 7, input: { view: undefined } },
+      { userId: 7, input: { view: "full" } }
     ]);
   });
 });
