@@ -114,9 +114,6 @@ assert.ok(activation.options.body.length < 150, "the network write must stay tin
 assert.equal(Object.hasOwn(activationBody, "state"), false);
 assert.equal(window.VocoraWordCollectionsTest.getPendingActivationId(), null);
 
-// Real production evidence showed a click save where one unrelated immutable createdAt value
-// had drifted. The compact path must still recognize the single learning mutation without
-// requiring the click marker to be present.
 const fallbackBefore = {
   settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" },
   words: [
@@ -149,11 +146,11 @@ fallbackAfter.daily["2026-08-16"].newAdded = 41;
 const inferred = window.VocoraWordCollectionsTest.compactWordBankActivationFromBaseline({
   body: JSON.stringify({ revision: 4954, state: fallbackAfter })
 });
-assert.deepEqual(inferred.command, {
-  revision: 4954,
-  vocabularyId: "roommate",
-  day: "2026-08-16"
-}, "one word-bank activation must stay compact even if an immutable createdAt value drifted");
+assert.equal(
+  JSON.stringify(inferred.command),
+  JSON.stringify({ revision: 4954, vocabularyId: "roommate", day: "2026-08-16" }),
+  "one word-bank activation must stay compact even if an immutable createdAt value drifted"
+);
 
 window.document.querySelector("#wordsTableBody").innerHTML =
   '<tr><td>new word</td><td>Unit 2</td><td>وارد نشده</td><td><button class="add-to-box-one" data-id="vocab-3">+</button></td></tr>';
