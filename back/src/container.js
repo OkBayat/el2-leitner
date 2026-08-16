@@ -13,6 +13,7 @@ import { SaveLearningState } from "./application/learning/SaveLearningState.js";
 import { LibraryAdminPolicy } from "./domain/library/LibraryAdminPolicy.js";
 import { VocabularyFileParser } from "./domain/library/VocabularyFileParser.js";
 import { MySqlEfficientLearningStateRepository } from "./infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js";
+import { MySqlLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js";
 import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySqlLibraryRepository.js";
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
@@ -26,6 +27,8 @@ export function createContainer({ pool, config, adapters = {} }) {
   const userRepository = adapters.userRepository ?? new MySqlUserRepository(pool);
   const learningStateRepository =
     adapters.learningStateRepository ?? new MySqlEfficientLearningStateRepository(pool);
+  const learningBootstrapRepository =
+    adapters.learningBootstrapRepository ?? new MySqlLearningBootstrapRepository(pool, learningStateRepository);
   const libraryRepository = adapters.libraryRepository ?? new MySqlLibraryRepository(pool);
   const practiceSessionRepository =
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
@@ -52,7 +55,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       registerUser: new RegisterUser({ userRepository, passwordHasher }),
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
-      getLearningState: new GetLearningState({ learningStateRepository }),
+      getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
       activateVocabularyBatch: new ActivateVocabularyBatch({ vocabularyActivationRepository }),
