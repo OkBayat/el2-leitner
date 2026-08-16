@@ -3,9 +3,13 @@
 
   const SOURCE_COLUMN_MARKER = "data-vocora-source-column";
   const tableBody = document.querySelector("#wordsTableBody");
+  const previousFetch = window.fetch.bind(window);
   let sourcesByVocabularyId = new Map();
   let sourcesByTerm = new Map();
   let decorating = false;
+  let refreshTimer = null;
+  let lastSourceKey = "";
+  let pendingActivationId = null;
 
   function normalize(value) {
     return String(value ?? "")
@@ -26,16 +30,15 @@
       .replace(/'/g, "&#039;");
   }
 
-  async function apiRequest(path) {
-    const response = await fetch(path, { credentials: "include" });
-    if (response.status === 401) return { sources: [] };
-    if (!response.ok) throw new Error("Could not load vocabulary sources.");
-    return response.json();
+  function requestJson(path) {
+    return previousFetch(path, { credentials: "include" }).then(async (response) => {
+      if (response.status === 401) return { sources: [] };
+      if (!response.ok) throw new Error("Could not load vocabulary sources.");
+      return response.json();
+    });
   }
 
-  function indexSources(sources) {
-    sourcesByVocabularyId = new Map();
-    sourcesByTerm = new Map();
+  function mergeSources(sources) {
     for (const source of sources || []) {
       const collections = Array.isArray(source.collections) ? source.collections : [];
       if (source.vocabularyId) sourcesByVocabularyId.set(String(source.vocabularyId), collections);
@@ -59,6 +62,15 @@
     const vocabularyId = idButton?.dataset.id || null;
     const term = normalize(row.cells[0]?.textContent?.split("/")[0]);
     return { vocabularyId, term };
+  }
+
+  function visibleVocabularyIds() {
+    if (!tableBody) return [];
+    return [...new Set(
+      [...tableBody.querySelectorAll("tr")]
+        .map((row) => rowIdentity(row).vocabularyId)
+        .filter(Boolean)
+    )].slice(0, 50);
   }
 
   function sourceCell(collections) {
@@ -93,30 +105,107 @@
   }
 
   async function refreshSources() {
+    const ids = visibleVocabularyIds();
+    const key = ids.join(",");
+    if (!ids.length || key === lastSourceKey) {
+      decorateRows();
+      return;
+    }
+    lastSourceKey = key;
     try {
-      const payload = await apiRequest("/api/library/vocabulary-sources");
-      indexSources(payload.sources || []);
+      const params = new URLSearchParams({ ids: key });
+      const payload = await requestJson(`/api/library/vocabulary-sources?${params.toString()}`);
+      mergeSources(payload.sources || []);
       decorateRows();
     } catch (error) {
+      lastSourceKey = "";
       console.warn("Could not decorate vocabulary sources:", error);
       decorateRows();
     }
   }
 
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(refreshSources, 0);
+  }
+
+  function compactActivationCommand(init, vocabularyId) {
+    if (typeof init.body !== "string" || !vocabularyId) return null;
+    try {
+      const payload = JSON.parse(init.body);
+      const revision = Number(payload?.revision);
+      const words = Array.isArray(payload?.state?.words) ? payload.state.words : [];
+      const word = words.find((item) => String(item?.id) === String(vocabularyId));
+      if (!Number.isSafeInteger(revision) || revision < 0 || !word) return null;
+      if (Number(word.box) !== 1
+        || !word.introducedOn
+        || word.addedSource !== "word-bank"
+        || word.due !== word.introducedOn) {
+        return null;
+      }
+      return {
+        revision,
+        vocabularyId: String(vocabularyId),
+        day: word.introducedOn
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function installActivationWriteInterceptor() {
+    window.fetch = async function vocoraWordBankFetch(input, init = {}) {
+      const url = typeof input === "string" ? input : input?.url || "";
+      const method = String(init.method || (typeof input !== "string" ? input?.method : "GET") || "GET").toUpperCase();
+      if (pendingActivationId && method === "PUT" && /\/api\/state(?:\?|$)/u.test(url)) {
+        const command = compactActivationCommand(init, pendingActivationId);
+        if (command) {
+          pendingActivationId = null;
+          return previousFetch("/api/learning/vocabulary-activations", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(command)
+          });
+        }
+      }
+      return previousFetch(input, init);
+    };
+  }
+
+  function bindWordBankActivationIntent() {
+    tableBody?.addEventListener("click", (event) => {
+      const button = event.target.closest(".add-to-box-one[data-id]");
+      if (button) pendingActivationId = button.dataset.id;
+    }, true);
+  }
+
   function boot() {
+    installActivationWriteInterceptor();
     if (!tableBody) return;
+    bindWordBankActivationIntent();
     const observer = new MutationObserver(() => {
-      if (!decorating) decorateRows();
+      if (!decorating) {
+        decorateRows();
+        scheduleRefresh();
+      }
     });
     observer.observe(tableBody, { childList: true });
     ["#wordSearch", "#boxFilter", "#sortWords", "#prevPage", "#nextPage"].forEach((selector) => {
-      document.querySelector(selector)?.addEventListener("input", decorateRows);
-      document.querySelector(selector)?.addEventListener("change", decorateRows);
-      document.querySelector(selector)?.addEventListener("click", decorateRows);
+      document.querySelector(selector)?.addEventListener("input", scheduleRefresh);
+      document.querySelector(selector)?.addEventListener("change", scheduleRefresh);
+      document.querySelector(selector)?.addEventListener("click", scheduleRefresh);
     });
     refreshSources();
   }
 
-  window.VocoraWordCollectionsTest = { normalize, indexSources, rowIdentity };
+  window.VocoraWordCollectionsTest = {
+    normalize,
+    mergeSources,
+    rowIdentity,
+    visibleVocabularyIds,
+    compactActivationCommand,
+    getPendingActivationId: () => pendingActivationId
+  };
   boot();
 })();
