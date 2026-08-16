@@ -65,7 +65,7 @@ let serverState = {
 };
 
 function compactWord(word) {
-  const required = new Set(["id", "number", "term", "accepted", "category", "createdAt"]);
+  const required = new Set(["id", "number", "term", "accepted", "category", "notes", "createdAt"]);
   return Object.fromEntries(Object.entries(word).filter(([key, value]) =>
     required.has(key) || (value !== null && value !== "" && value !== 0)
   ));
