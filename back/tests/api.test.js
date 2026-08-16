@@ -127,7 +127,7 @@ describe("HTTP API", () => {
     await first
       .put("/api/state")
       .send({ state, revision: 0 })
-      .expect(200, { state, revision: 1 });
+      .expect(200, { revision: 1 });
     await first.get("/api/state").expect(200, { state, revision: 1 });
     await second.get("/api/state").expect(200, { state: null, revision: 0 });
 
