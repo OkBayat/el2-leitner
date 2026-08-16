@@ -68,7 +68,7 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
   });
 
   router.get("/library/vocabulary-sources", authenticate, async (req, res) => {
-    const result = await useCases.libraryQueries.vocabularySources(req.auth.user);
+    const result = await useCases.getVocabularySources.execute(req.auth.userId, { ids: req.query.ids });
     res.status(200).json(result);
   });
 
