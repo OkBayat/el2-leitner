@@ -59,7 +59,7 @@ let serverState = {
   settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" },
   words,
   daily: {
-    [today]: { attempts: 0, correct: 0, wrong: 0, newAdded: 36, sessions: 0, durationSeconds: 0 }
+    [today]: { attempts: 0, correct: 0, wrong: 0, newAdded: 0, sessions: 0, durationSeconds: 0 }
   },
   history
 };
@@ -73,6 +73,16 @@ function responseFor(payload, status = 200) {
     async json() { return structuredClone(payload); },
     clone() { return responseFor(payload, status); }
   };
+}
+
+function applyActivation(id, day, source) {
+  const word = serverState.words.find((item) => item.id === id);
+  assert.ok(word, "selected vocabulary must exist in the server fixture");
+  assert.equal(word.box, 0, "compact activation must target an unseen word");
+  word.box = 1;
+  word.due = day;
+  word.introducedOn = day;
+  word.addedSource = source;
 }
 
 const dom = new JSDOM(html, {
@@ -105,15 +115,21 @@ const dom = new JSDOM(html, {
       if (url.pathname === "/api/library/vocabulary-sources" && method === "GET") {
         return responseFor({ sources: [] });
       }
+      if (url.pathname === "/api/learning/vocabulary-activation-batches" && method === "POST") {
+        const command = JSON.parse(options.body);
+        assert.equal(command.revision, serverRevision);
+        assert.equal(command.source, "daily");
+        assert.equal(command.day, today);
+        assert.equal(command.vocabularyIds.length, 10, "daily bootstrap should activate exactly the configured quota");
+        command.vocabularyIds.forEach((id) => applyActivation(id, command.day, command.source));
+        serverState.daily[command.day].newAdded += command.vocabularyIds.length;
+        serverRevision += 1;
+        return responseFor({ revision: serverRevision });
+      }
       if (url.pathname === "/api/learning/vocabulary-activations" && method === "POST") {
         const command = JSON.parse(options.body);
         assert.equal(command.revision, serverRevision);
-        const word = serverState.words.find((item) => item.id === command.vocabularyId);
-        assert.ok(word, "selected vocabulary must exist in the server fixture");
-        word.box = 1;
-        word.due = command.day;
-        word.introducedOn = command.day;
-        word.addedSource = "word-bank";
+        applyActivation(command.vocabularyId, command.day, "word-bank");
         serverState.daily[command.day].newAdded += 1;
         serverRevision += 1;
         return responseFor({ revision: serverRevision });
@@ -133,10 +149,15 @@ await new Promise((resolve) => setTimeout(resolve, 20));
 
 const stateGetsBefore = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "GET").length;
 const statePutsBefore = requests.filter((request) => request.url.pathname === "/api/state" && request.method === "PUT").length;
+const dailyBatches = requests.filter((request) => request.url.pathname === "/api/learning/vocabulary-activation-batches" && request.method === "POST");
 assert.equal(stateGetsBefore, 1, "the large state may be loaded once at application bootstrap");
-assert.equal(statePutsBefore, 0, "bootstrap fixture must not need a full state write");
+assert.equal(statePutsBefore, 0, "automatic daily activation must not upload the multi-megabyte state");
+assert.equal(dailyBatches.length, 1, "daily provisioning should use one compact batch request");
+assert.ok(Buffer.byteLength(String(dailyBatches[0].options.body || ""), "utf8") < 1000,
+  "the ten-word daily bootstrap request must remain tiny");
+assert.equal(serverState.daily[today].newAdded, 10);
 
-const addButton = dom.window.document.querySelector(".add-to-box-one[data-id]");
+const addButton = dom.window.document.querySelector('.add-to-box-one[data-id]');
 assert.ok(addButton, "word bank must expose an add-to-box-one action");
 const selectedId = addButton.dataset.id;
 addButton.click();
@@ -155,7 +176,7 @@ assert.equal(activations.length, 1, "one click must produce exactly one compact 
 const activationBody = String(activations[0].options.body || "");
 const activationPayload = JSON.parse(activationBody);
 assert.deepEqual(activationPayload, {
-  revision: 4949,
+  revision: 4950,
   vocabularyId: selectedId,
   day: today
 });
