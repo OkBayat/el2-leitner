@@ -65,45 +65,54 @@ await VazheyarTest.waitForSaves();
 
 document.querySelector('[data-view="review"]').click();
 document.querySelector('#beginSessionBtn').click();
-assert.match(
+assert.equal(
   document.querySelector('#sessionCounter').textContent,
-  /مجموع ۱ از ۱۰.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۰/,
-  'A scheduled session should start with separate original and retry counts'
+  'کارت ۱ از ۱۰',
+  'Today review should be a simple finite pass over the cards that were due when the session started'
+);
+assert.doesNotMatch(
+  document.querySelector('#sessionCounter').textContent,
+  /تکرار خطا|اصلی|مجموع/,
+  'Scheduled review should not expose retry bookkeeping'
 );
 
 const mistakenId = VazheyarTest.getCurrentWord().id;
 document.querySelector('#dontKnowBtn').click();
-assert.match(
+assert.equal(
   document.querySelector('#sessionCounter').textContent,
-  /مجموع ۱ از ۱۱.*اصلی ۱ از ۱۰.*تکرار خطا ۰ از ۱/,
-  'A wrong answer should immediately expand the real session total'
+  'کارت ۲ از ۱۰',
+  'A wrong answer must not expand the scheduled review total'
 );
-assert.equal(document.querySelector('#sessionProgressBar').style.width, '9%');
+assert.equal(document.querySelector('#sessionProgressBar').style.width, '10%');
 
-for (let index = 0; index < 3; index += 1) {
+const seenIds = [mistakenId];
+for (let index = 1; index < 10; index += 1) {
   document.querySelector('#nextCardBtn').click();
   const word = VazheyarTest.getCurrentWord();
+  assert.ok(word, `Scheduled card ${index + 1} should exist`);
+  assert.notEqual(word.id, mistakenId, 'A wrong scheduled card must not be reinserted into the same session');
+  assert.equal(seenIds.includes(word.id), false, 'Each scheduled card should appear only once in the pass');
+  seenIds.push(word.id);
   document.querySelector('#answerInput').value = word.term;
   document.querySelector('#answerForm button[type="submit"]').click();
 }
 
+assert.equal(seenIds.length, 10);
+assert.equal(new Set(seenIds).size, 10, 'The scheduled pass should contain ten distinct original cards');
 document.querySelector('#nextCardBtn').click();
-assert.equal(VazheyarTest.getCurrentWord().id, mistakenId, 'The scheduled retry should still appear after three intervening cards');
-assert.match(
-  document.querySelector('#sessionCounter').textContent,
-  /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/,
-  'Showing the retry should advance the retry and overall counters'
+assert.equal(
+  document.querySelector('#sessionComplete').classList.contains('hidden'),
+  false,
+  'Today review should finish immediately after the original queue is exhausted'
 );
-assert.equal(document.querySelector('#sessionProgressBar').style.width, '36%');
-
-document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
-document.querySelector('#answerForm button[type="submit"]').click();
-assert.match(
-  document.querySelector('#sessionCounter').textContent,
-  /مجموع ۵ از ۱۱.*اصلی ۴ از ۱۰.*تکرار خطا ۱ از ۱/,
-  'The feedback state should keep the completed retry position visible'
-);
-assert.equal(document.querySelector('#sessionProgressBar').style.width, '45%');
 
 await VazheyarTest.waitForSaves();
-console.log('Scheduled review retry progress test passed.');
+const mistakenEvents = serverState.history.filter((event) => event.wordId === mistakenId);
+assert.equal(mistakenEvents.length, 1, 'The mistaken word should have exactly one scheduled assessment in this session');
+assert.equal(mistakenEvents[0].correct, false);
+const mistakenWord = serverState.words.find((word) => word.id === mistakenId);
+assert.equal(mistakenWord.box, 1, 'A scheduled mistake must still return the word to box 1');
+assert.equal(mistakenWord.due, VazheyarTest.addDays(VazheyarTest.localDay(), 1), 'A scheduled mistake remains due tomorrow');
+assert.equal(mistakenWord.blockedUntil, VazheyarTest.addDays(VazheyarTest.localDay(), 1), 'Promotion remains blocked until tomorrow');
+
+console.log('Scheduled review single-pass test passed.');
