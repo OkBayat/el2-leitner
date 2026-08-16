@@ -3,6 +3,7 @@ import { LoginUser } from "./application/auth/LoginUser.js";
 import { RegisterUser } from "./application/auth/RegisterUser.js";
 import { LibraryCommands } from "./application/library/LibraryCommands.js";
 import { LibraryQueries } from "./application/library/LibraryQueries.js";
+import { ActivateVocabulary } from "./application/learning/ActivateVocabulary.js";
 import { GetLearningState } from "./application/learning/GetLearningState.js";
 import { LearningSessionCommands } from "./application/learning/LearningSessionCommands.js";
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
@@ -14,6 +15,7 @@ import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySql
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
 import { MySqlUserRepository } from "./infrastructure/persistence/mysql/MySqlUserRepository.js";
+import { MySqlVocabularyActivationRepository } from "./infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
 
@@ -26,6 +28,8 @@ export function createContainer({ pool, config, adapters = {} }) {
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
   const reviewProgressRepository =
     adapters.reviewProgressRepository ?? new MySqlReviewProgressRepository(pool);
+  const vocabularyActivationRepository =
+    adapters.vocabularyActivationRepository ?? new MySqlVocabularyActivationRepository(pool);
   const passwordHasher = adapters.passwordHasher ?? new BcryptPasswordHasher();
   const tokenService = adapters.tokenService ?? new JwtTokenService({
     secret: config.auth.jwtSecret,
@@ -45,6 +49,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getCurrentUser: new GetCurrentUser({ userRepository }),
       getLearningState: new GetLearningState({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
+      activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
       recordReviewResult: new RecordReviewResult({ reviewProgressRepository }),
       learningSessionCommands: new LearningSessionCommands({ practiceSessionRepository }),
       libraryQueries: new LibraryQueries({ libraryRepository, adminPolicy: libraryAdminPolicy }),
