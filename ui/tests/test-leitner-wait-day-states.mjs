@@ -119,7 +119,7 @@ expectedAccents.forEach((accent, index) => {
   const house = index + 1;
   assert.match(
     layoutCss,
-    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent:\\s*${accent.replace('#', '\\#')};`),
+    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent:\\s*${accent};`),
     `House ${house} must use the reference underline color ${accent}`
   );
 });
