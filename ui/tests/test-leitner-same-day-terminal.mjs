@@ -45,8 +45,6 @@ const state = {
     introducedOn: addDays(today, -60),
     addedSource: "daily",
     lastReviewed: `${today}T08:00:00.000Z`,
-    // This is the production edge case: an earlier same-day action left the
-    // promotion marker on today while the final house-five review is still due.
     lastPromotedDay: today,
     blockedUntil: null,
     masteredAt: null
@@ -96,7 +94,8 @@ const dom = new JSDOM(html, {
     window.HTMLDialogElement.prototype.showModal = function showModal() { this.open = true; };
     window.HTMLDialogElement.prototype.close = function close() { this.open = false; };
     window.fetch = async (input, options = {}) => {
-      const url = new URL(typeof input === "string" ? input : input.url, window.location.href);
+      const target = typeof input === "string" ? input : input?.url || String(input || "");
+      const url = new URL(target, window.location.href);
       const method = String(options.method || "GET").toUpperCase();
       if (url.pathname === "/api/auth/me") {
         return responseFor(window, { user: { id: 77, email: "same-day@example.com" } });
@@ -127,9 +126,6 @@ assert.equal(VazheyarTest.getCurrentWord()?.lastPromotedDay, today);
 document.querySelector("#answerInput").value = "graduation";
 document.querySelector('#answerForm button[type="submit"]').click();
 
-// These assertions intentionally run immediately, before saveState can be
-// repaired by any persistence adapter or server. app-v2 itself owns the
-// scheduling transition and must produce the correct terminal state.
 const word = VazheyarTest.getState().words[0];
 const event = VazheyarTest.getState().history.at(-1);
 assert.equal(word.box, 5);
@@ -141,5 +137,6 @@ assert.equal(event.previousBox, 5);
 assert.equal(event.newBox, 5);
 assert.match(document.querySelector("#feedbackDetail").textContent, /چرخهٔ مرور لایتنر خارج شد/u);
 
+await VazheyarTest.waitForSaves();
 dom.window.close();
 console.log("Same-day terminal app regression test passed.");
