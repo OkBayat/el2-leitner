@@ -59,14 +59,9 @@ jobs:
           INSERT INTO user_collections (user_id, collection_id, status)
           VALUES (@user_id, @default_collection_id, 'active');
 
-          -- This user was normalized before the box-five repair existed. Because
-          -- user_state_revisions already exists, later db:setup runs intentionally
-          -- do not re-migrate learning_states.
           INSERT INTO user_state_revisions (user_id, revision, metadata_json)
           VALUES (@user_id, 20, JSON_OBJECT('schemaVersion', 2));
 
-          -- Current normalized projection lost the historical Mastered state and
-          -- still carries the obsolete +14 day due date.
           INSERT INTO user_vocabulary_progress
             (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count,
              mistake_count, current_streak, introduced_on, last_reviewed_at,
@@ -76,9 +71,6 @@ jobs:
              0, 6, '2026-07-12', '2026-08-20 10:00:00.000',
              '2026-08-20', NULL);
 
-          -- The normalized event stream is incomplete: it only retained the 4->5
-          -- transition. This is why scanning review_events alone cannot recover the
-          -- final review that the user actually completed before PR #26.
           INSERT INTO review_events
             (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, answer,
              correct, mode, previous_box, new_box, promoted, term_snapshot)
@@ -87,10 +79,6 @@ jobs:
              '2026-08-06 17:12:27.997', '2026-08-06', 'Monday',
              1, 'scheduled', 4, 5, 1, 'Monday');
 
-          -- learning_states is intentionally preserved by the architecture and still
-          -- contains the exact pre-PR-26 result of a successful final house-five
-          -- review: box 5, another +14 day due date, premature masteredAt, and a
-          -- promoted 5->5 history event.
           INSERT INTO learning_states (user_id, state_json, revision, created_at, updated_at)
           VALUES (
             @user_id,
@@ -173,6 +161,19 @@ jobs:
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
             --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-preserved-legacy-ci@example.com';" \
             | grep -qx '21'
+
+      - name: Regression - a second startup repair is idempotent
+        run: |
+          set -euo pipefail
+          docker compose run --rm db-setup
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-preserved-legacy-ci@example.com';" \
+            | grep -qx '21'
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-preserved-legacy-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:00:00.006';" \
+            | grep -qx '1'
 
       - name: Print container logs after a failure
         if: failure()
