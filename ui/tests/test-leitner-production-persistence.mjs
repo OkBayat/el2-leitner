@@ -29,7 +29,11 @@ function addDays(day, amount) {
 }
 
 const today = localDay();
-const previousPromotionDay = addDays(today, -14);
+// This is the exact browser state that was missing from earlier regressions:
+// the card is due in house 5 but lastPromotedDay is already today. app-v2 alone
+// records the correct answer without graduating it; the production persistence
+// adapter and server authority must normalize the terminal review.
+const previousPromotionDay = today;
 let serverRevision = 7;
 let fullStatePutCount = 0;
 const requests = [];
@@ -54,7 +58,7 @@ let serverState = {
     currentStreak: 4,
     introducedOn: addDays(today, -60),
     addedSource: "daily",
-    lastReviewed: `${previousPromotionDay}T12:00:00.000Z`,
+    lastReviewed: `${previousPromotionDay}T08:00:00.000Z`,
     lastPromotedDay: previousPromotionDay,
     blockedUntil: null,
     masteredAt: null
@@ -70,7 +74,7 @@ let serverState = {
     }
   },
   history: [{
-    at: `${previousPromotionDay}T12:00:00.000Z`,
+    at: `${previousPromotionDay}T08:00:00.000Z`,
     day: previousPromotionDay,
     wordId: "production-box-five",
     term: "graduation",
@@ -161,8 +165,6 @@ async function bootClient() {
     }
   });
 
-  // Keep this order identical to index.html. A regression in any production
-  // fetch wrapper or remediation adapter must be able to fail this test.
   dom.window.eval(vocabulary);
   dom.window.eval(shareStory);
   dom.window.eval(practiceRemediation);
@@ -187,11 +189,10 @@ const {
   VocoraLeitnerStatus
 } = firstClient.window;
 
-assert.ok(VocoraWordCollectionsTest, "the production word-collection fetch wrapper must be installed");
-assert.ok(VocoraLeitnerStatus, "the production Leitner enhancement must be installed");
+assert.ok(VocoraWordCollectionsTest);
+assert.ok(VocoraLeitnerStatus);
 assert.ok(
-  requests.some(({ path, method, search }) => path === "/api/state" && method === "GET" && search === "?view=bootstrap"),
-  "the exact production wrapper chain must request the bootstrap state view"
+  requests.some(({ path, method, search }) => path === "/api/state" && method === "GET" && search === "?view=bootstrap")
 );
 
 document.querySelector('[data-view="review"]').click();
@@ -211,8 +212,8 @@ assert.equal(fullStatePutCount, 0, "the live box-five review must not fall back 
 
 const compactBody = JSON.parse(compactRequests[0].options.body);
 assert.equal(compactBody.word.box, 5);
-assert.equal(compactBody.word.due, null, "a successful due 5 -> 5 review must clear the next due date");
-assert.ok(compactBody.word.masteredAt, "the compact command must carry the real mastery timestamp");
+assert.equal(compactBody.word.due, null, "the same-day terminal review must clear the due date");
+assert.ok(compactBody.word.masteredAt);
 assert.equal(compactBody.word.masteredAt, compactBody.word.lastReviewed);
 assert.equal(compactBody.word.masteredAt, compactBody.event.at);
 assert.equal(compactBody.word.lastPromotedDay, today);
@@ -226,8 +227,12 @@ assert.deepEqual(
   { correct: true, promoted: true, previousBox: 5, newBox: 5 }
 );
 
+const liveWord = VazheyarTest.getState().words[0];
+assert.equal(liveWord.due, null, "the acknowledged compact write must repair the in-memory card before the next UI render");
+assert.equal(liveWord.masteredAt, compactBody.event.at);
+
 const persistedWord = serverState.words[0];
-assert.equal(persistedWord.due, null, "the server-side representation must stay graduated after the request completes");
+assert.equal(persistedWord.due, null);
 assert.equal(persistedWord.masteredAt, compactBody.event.at);
 assert.equal(serverState.history.at(-1).at, persistedWord.masteredAt);
 
@@ -236,8 +241,8 @@ const requestCountBeforeReload = requests.length;
 const reloadedClient = await bootClient();
 const reloadedWord = reloadedClient.window.VazheyarTest.getState().words[0];
 assert.equal(reloadedWord.box, 5);
-assert.equal(reloadedWord.due, null, "a browser reload must not resurrect the 14-day box-five due date");
-assert.equal(reloadedWord.masteredAt, persistedWord.masteredAt, "a browser reload must preserve persisted mastery");
+assert.equal(reloadedWord.due, null, "a browser reload must not resurrect the box-five due date");
+assert.equal(reloadedWord.masteredAt, persistedWord.masteredAt);
 assert.equal(reloadedClient.window.VazheyarTest.buildAnalysisReport().profile.masteredWords, 1);
 
 reloadedClient.window.document.querySelector('[data-view="review"]').click();
@@ -248,9 +253,8 @@ assert.equal(
 );
 assert.equal(
   requests.slice(requestCountBeforeReload).some(({ path, method }) => path === "/api/state" && method === "PUT"),
-  false,
-  "reload must consume authoritative server state without a browser-side repair write"
+  false
 );
 
 reloadedClient.window.close();
-console.log("Complete production box-five persistence regression test passed.");
+console.log("Same-day production box-five persistence regression test passed.");
