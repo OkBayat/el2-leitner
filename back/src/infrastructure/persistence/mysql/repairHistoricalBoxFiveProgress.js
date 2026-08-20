@@ -4,12 +4,22 @@ function emptyResult() {
   return { mastered: 0, pendingCorrected: 0, repairedUsers: 0 };
 }
 
+function hasReviewId(row) {
+  return row?.review_event_id !== null && row?.review_event_id !== undefined;
+}
+
 function isSuccessfulFinalReview(row) {
-  return row?.review_event_id !== null && row?.review_event_id !== undefined &&
+  return hasReviewId(row) &&
     Number(row.correct) === 1 &&
     Number(row.promoted) === 1 &&
     Number(row.previous_box) === 5 &&
     Number(row.new_box) === 5;
+}
+
+function isWrongReset(row) {
+  return hasReviewId(row) &&
+    Number(row.correct) === 0 &&
+    Number(row.new_box) === 1;
 }
 
 function dayValue(value) {
@@ -37,13 +47,27 @@ function groupByUser(rows) {
   return [...groups.values()];
 }
 
+function compareReviews(left, right) {
+  const leftTime = new Date(left.occurred_at).getTime();
+  const rightTime = new Date(right.occurred_at).getTime();
+  if (leftTime !== rightTime) return leftTime - rightTime;
+  return Number(left.review_event_id) - Number(right.review_event_id);
+}
+
 function earlierReview(left, right) {
   if (!left) return right || null;
   if (!right) return left;
-  const leftTime = new Date(left.occurred_at).getTime();
-  const rightTime = new Date(right.occurred_at).getTime();
-  if (rightTime !== leftTime) return rightTime < leftTime ? right : left;
-  return Number(right.review_event_id) < Number(left.review_event_id) ? right : left;
+  return compareReviews(right, left) < 0 ? right : left;
+}
+
+function laterReview(left, right) {
+  if (!left) return right || null;
+  if (!right) return left;
+  return compareReviews(right, left) > 0 ? right : left;
+}
+
+function isAfterBoundary(row, boundary) {
+  return !boundary || compareReviews(row, boundary) > 0;
 }
 
 function addOwner(ownersByForm, normalizedForm, vocabularyEntryId) {
@@ -62,10 +86,10 @@ function candidateFormOwners(candidates, persistedOwners) {
   return owners;
 }
 
-function fallbackFinalsByNormalizedForm(rows) {
+function fallbackEvidenceByNormalizedForm(rows) {
   const index = new Map();
   for (const row of rows) {
-    if (!isSuccessfulFinalReview(row)) continue;
+    if (!isSuccessfulFinalReview(row) && !isWrongReset(row)) continue;
     const normalized = normalizeVocabularyForm(row.term_snapshot);
     if (!normalized) continue;
     if (!index.has(normalized)) index.set(normalized, []);
@@ -74,17 +98,58 @@ function fallbackFinalsByNormalizedForm(rows) {
   return index;
 }
 
-function firstReviewInLifecycle(rows, introducedOn) {
+function firstFinalInLifecycle(rows, introducedOn, resetBoundary) {
   const lifecycleDay = dayValue(introducedOn);
   if (!Array.isArray(rows) || !rows.length) return null;
+  let earliest = null;
   for (const row of rows) {
-    if (!lifecycleDay || dayValue(row.local_day) > lifecycleDay) return row;
+    if (lifecycleDay && dayValue(row.local_day) <= lifecycleDay) continue;
+    if (!isSuccessfulFinalReview(row) || !isAfterBoundary(row, resetBoundary)) continue;
+    earliest = earlierReview(earliest, row);
   }
-  return null;
+  return earliest;
 }
 
-async function firstExactFinalReview(connection, userId, vocabularyEntryId, learningResetAt, introducedOn) {
+function latestResetInLifecycle(rows, introducedOn) {
   const lifecycleDay = dayValue(introducedOn);
+  if (!Array.isArray(rows) || !rows.length) return null;
+  let latest = null;
+  for (const row of rows) {
+    if (lifecycleDay && dayValue(row.local_day) <= lifecycleDay) continue;
+    if (!isWrongReset(row)) continue;
+    latest = laterReview(latest, row);
+  }
+  return latest;
+}
+
+async function latestExactReset(connection, userId, vocabularyEntryId, learningResetAt, introducedOn) {
+  const lifecycleDay = dayValue(introducedOn);
+  const [rows] = await connection.execute(
+    `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
+     FROM review_events
+     WHERE user_id = ?
+       AND (? IS NULL OR occurred_at > ?)
+       AND vocabulary_entry_id = ?
+       AND correct = 0
+       AND new_box = 1
+       AND (? IS NULL OR local_day > ?)
+     ORDER BY occurred_at DESC, id DESC
+     LIMIT 1`,
+    [userId, learningResetAt, learningResetAt, vocabularyEntryId, lifecycleDay, lifecycleDay]
+  );
+  return isWrongReset(rows[0]) ? rows[0] : null;
+}
+
+async function firstExactFinalReview(
+  connection,
+  userId,
+  vocabularyEntryId,
+  learningResetAt,
+  introducedOn,
+  resetBoundary
+) {
+  const lifecycleDay = dayValue(introducedOn);
+  const resetAt = resetBoundary?.occurred_at || null;
   const [rows] = await connection.execute(
     `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
      FROM review_events
@@ -96,14 +161,24 @@ async function firstExactFinalReview(connection, userId, vocabularyEntryId, lear
        AND previous_box = 5
        AND new_box = 5
        AND (? IS NULL OR local_day > ?)
+       AND (? IS NULL OR occurred_at > ?)
      ORDER BY occurred_at ASC, id ASC
      LIMIT 1`,
-    [userId, learningResetAt, learningResetAt, vocabularyEntryId, lifecycleDay, lifecycleDay]
+    [
+      userId,
+      learningResetAt,
+      learningResetAt,
+      vocabularyEntryId,
+      lifecycleDay,
+      lifecycleDay,
+      resetAt,
+      resetAt
+    ]
   );
-  return rows[0] || null;
+  return isSuccessfulFinalReview(rows[0]) ? rows[0] : null;
 }
 
-async function loadFallbackFinalReviews(connection, userId, learningResetAt) {
+async function loadFallbackEvidence(connection, userId, learningResetAt) {
   const [rows] = await connection.execute(
     `SELECT re.id AS review_event_id, re.occurred_at, re.local_day,
             re.correct, re.promoted, re.previous_box, re.new_box, re.term_snapshot
@@ -112,14 +187,14 @@ async function loadFallbackFinalReviews(connection, userId, learningResetAt) {
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
        AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
-       AND re.correct = 1
-       AND re.promoted = 1
-       AND re.previous_box = 5
-       AND re.new_box = 5
+       AND (
+         (re.correct = 1 AND re.promoted = 1 AND re.previous_box = 5 AND re.new_box = 5)
+         OR (re.correct = 0 AND re.new_box = 1)
+       )
      ORDER BY re.occurred_at ASC, re.id ASC`,
     [userId, learningResetAt, learningResetAt]
   );
-  return fallbackFinalsByNormalizedForm(rows);
+  return fallbackEvidenceByNormalizedForm(rows);
 }
 
 async function loadActiveFormOwners(connection, userId) {
@@ -151,15 +226,34 @@ async function loadActiveFormOwners(connection, userId) {
   return owners;
 }
 
-function firstTrustedFallback(candidate, fallbackIndex, ownersByForm, introducedOn) {
-  const candidateId = String(candidate.vocabulary_entry_id);
+function hasUniqueCandidateOwner(candidate, form, ownersByForm) {
+  const owners = ownersByForm.get(form);
+  return Boolean(
+    owners &&
+    owners.size === 1 &&
+    owners.has(String(candidate.vocabulary_entry_id))
+  );
+}
+
+function latestTrustedFallbackReset(candidate, fallbackIndex, ownersByForm, introducedOn) {
+  let latest = null;
+  for (const form of parseForms(candidate.forms)) {
+    if (!hasUniqueCandidateOwner(candidate, form, ownersByForm)) continue;
+    latest = laterReview(
+      latest,
+      latestResetInLifecycle(fallbackIndex.get(form), introducedOn)
+    );
+  }
+  return latest;
+}
+
+function firstTrustedFallbackFinal(candidate, fallbackIndex, ownersByForm, introducedOn, resetBoundary) {
   let earliest = null;
   for (const form of parseForms(candidate.forms)) {
-    const owners = ownersByForm.get(form);
-    if (!owners || owners.size !== 1 || !owners.has(candidateId)) continue;
+    if (!hasUniqueCandidateOwner(candidate, form, ownersByForm)) continue;
     earliest = earlierReview(
       earliest,
-      firstReviewInLifecycle(fallbackIndex.get(form), introducedOn)
+      firstFinalInLifecycle(fallbackIndex.get(form), introducedOn, resetBoundary)
     );
   }
   return earliest;
@@ -174,24 +268,43 @@ async function firstRelevantFinalReview(
   fallbackIndex,
   ownersByForm
 ) {
-  // A successful 5 -> 5 review should have graduated the card immediately. Any
-  // later box-5 reviews only happened because of the historical bug, so mastery
-  // belongs to the first trusted final review strictly after the card was introduced
-  // into its current lifecycle.
-  const exact = await firstExactFinalReview(
+  // A wrong answer resets the word to box 1 and begins a relearning cycle. A
+  // successful final review from before that reset cannot master the current
+  // box-5 card. Reintroduction is bounded separately by introduced_on.
+  const exactReset = await latestExactReset(
     connection,
     userId,
     candidate.vocabulary_entry_id,
     learningResetAt,
     progress.introduced_on
   );
-  const fallback = firstTrustedFallback(
+  const fallbackReset = latestTrustedFallbackReset(
     candidate,
     fallbackIndex,
     ownersByForm,
     progress.introduced_on
   );
-  return earlierReview(exact, fallback);
+  const resetBoundary = laterReview(exactReset, fallbackReset);
+
+  // The first successful 5 -> 5 after the current cycle's latest reset is the
+  // real mastery moment. Later successful box-5 reviews only existed because of
+  // the historical scheduling bug.
+  const exactFinal = await firstExactFinalReview(
+    connection,
+    userId,
+    candidate.vocabulary_entry_id,
+    learningResetAt,
+    progress.introduced_on,
+    resetBoundary
+  );
+  const fallbackFinal = firstTrustedFallbackFinal(
+    candidate,
+    fallbackIndex,
+    ownersByForm,
+    progress.introduced_on,
+    resetBoundary
+  );
+  return earlierReview(exactFinal, fallbackFinal);
 }
 
 async function lockedProgress(connection, userId, vocabularyEntryId) {
@@ -253,7 +366,7 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         continue;
       }
 
-      const fallbackIndex = await loadFallbackFinalReviews(connection, group.userId, revision.learning_reset_at);
+      const fallbackIndex = await loadFallbackEvidence(connection, group.userId, revision.learning_reset_at);
       const persistedOwners = await loadActiveFormOwners(connection, group.userId);
       const ownersByForm = candidateFormOwners(group.rows, persistedOwners);
 
