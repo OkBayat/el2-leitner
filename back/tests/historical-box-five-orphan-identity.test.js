@@ -61,6 +61,7 @@ test("an active but no-longer-visible legacy identity can supply the real final 
         );
         return [[finalReview()], []];
       }
+      if (/FROM learning_states/u.test(sql)) return [[], []];
       if (isOwnerQuery(sql)) {
         assert.match(
           sql,
