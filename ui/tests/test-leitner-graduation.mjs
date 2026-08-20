@@ -172,7 +172,29 @@ document.querySelector('[data-view="review"]').click();
 document.querySelector('#beginSessionBtn').click();
 assert.equal(VazheyarTest.getCurrentWord().box, 5);
 document.querySelector('#answerInput').value = hydratedWord.term;
+
+// Force every no-argument Date construction to move forward. Old code created
+// progress and history timestamps independently, so this makes that mismatch
+// deterministic instead of relying on the runner crossing a millisecond boundary.
+const RealDate = dom.window.Date;
+let deterministicNow = RealDate.now();
+class IncrementingDate extends RealDate {
+  constructor(...args) {
+    if (args.length) {
+      super(...args);
+      return;
+    }
+    deterministicNow += 7;
+    super(deterministicNow);
+  }
+  static now() {
+    deterministicNow += 7;
+    return deterministicNow;
+  }
+}
+dom.window.Date = IncrementingDate;
 document.querySelector('#answerForm button[type="submit"]').click();
+dom.window.Date = RealDate;
 await VazheyarTest.waitForSaves();
 
 savedWord = serverState.words.find((word) => word.id === hydratedWord.id);
