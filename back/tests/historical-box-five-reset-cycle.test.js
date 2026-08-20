@@ -130,10 +130,23 @@ test("an ambiguous NULL-id reset after an exact final keeps the card pending rat
         if (/correct = 0/u.test(sql) && /new_box = 1/u.test(sql)) return [[], []];
         if (/correct = 1/u.test(sql) && /previous_box = 5/u.test(sql)) {
           assert.match(sql, /occurred_at > \?/u, "the exact final lookup must be bounded by the possible reset");
+          assert.match(
+            sql,
+            /occurred_at > \?\s+OR \(occurred_at = \? AND id > \?\)/u,
+            "the boundary must preserve a later event when reset and final share one timestamp"
+          );
+          const [nullableBoundary, laterTimestampBoundary, equalTimestampBoundary, resetId] = parameters.slice(-4);
+          const expectedResetAt = ambiguousReset.occurred_at.toISOString();
+          assert.deepEqual(
+            [nullableBoundary, laterTimestampBoundary, equalTimestampBoundary]
+              .map((value) => new Date(value).toISOString()),
+            [expectedResetAt, expectedResetAt, expectedResetAt],
+            "the ambiguous reset timestamp must guard every exact-final boundary branch"
+          );
           assert.equal(
-            new Date(parameters.at(-1)).toISOString(),
-            "2026-08-15T09:00:00.000Z",
-            "the ambiguous reset must be the exact-final safety boundary"
+            resetId,
+            ambiguousReset.review_event_id,
+            "the ambiguous reset id must break same-timestamp ties"
           );
           exactFinalBoundaryChecked = true;
           return [[], []];
