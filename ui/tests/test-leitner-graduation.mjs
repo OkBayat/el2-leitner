@@ -187,6 +187,8 @@ assert.equal(finalEvent.previousBox, 5);
 assert.equal(finalEvent.newBox, 5);
 assert.equal(finalEvent.correct, true);
 assert.equal(finalEvent.promoted, true, 'Final mastery is still a successful Leitner promotion event');
+assert.equal(finalEvent.at, savedWord.lastReviewed, 'One review must have one authoritative timestamp in progress and history');
+assert.equal(finalEvent.at, savedWord.masteredAt, 'The final review event timestamp must be the mastery timestamp');
 assert.equal(VazheyarTest.buildAnalysisReport().profile.masteredWords, 2, 'Mastery stats must count only cards that completed the final review');
 
 document.querySelector('#nextCardBtn').click();
