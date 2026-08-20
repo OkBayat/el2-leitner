@@ -51,9 +51,7 @@ function candidateFormOwners(candidates, persistedOwners) {
     [...persistedOwners.entries()].map(([form, ids]) => [form, new Set(ids)])
   );
   for (const candidate of candidates) {
-    for (const form of parseForms(candidate.forms)) {
-      addOwner(owners, form, candidate.vocabulary_entry_id);
-    }
+    for (const form of parseForms(candidate.forms)) addOwner(owners, form, candidate.vocabulary_entry_id);
   }
   return owners;
 }
@@ -63,8 +61,7 @@ function fallbackByNormalizedForm(rows) {
   for (const row of rows) {
     const normalized = normalizeVocabularyForm(row.term_snapshot);
     if (!normalized) continue;
-    const existing = index.get(normalized);
-    index.set(normalized, newerReview(existing, row));
+    index.set(normalized, newerReview(index.get(normalized), row));
   }
   return index;
 }
@@ -143,8 +140,7 @@ async function latestRelevantReview(connection, userId, candidate, learningReset
   // the same domain function used to create vocabulary identities, then the newest
   // trusted event wins because identity drift can happen before the final review.
   const exact = await latestExactReview(connection, userId, candidate.vocabulary_entry_id, learningResetAt);
-  const fallback = latestTrustedFallback(candidate, fallbackIndex, ownersByForm);
-  return newerReview(exact, fallback);
+  return newerReview(exact, latestTrustedFallback(candidate, fallbackIndex, ownersByForm));
 }
 
 async function lockedProgress(connection, userId, vocabularyEntryId) {
@@ -206,10 +202,9 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         continue;
       }
 
-      const [fallbackIndex, persistedOwners] = await Promise.all([
-        loadFallbackReviews(connection, group.userId, revision.learning_reset_at),
-        loadActiveFormOwners(connection, group.userId)
-      ]);
+      // One connection inside one transaction: keep reads sequential and predictable.
+      const fallbackIndex = await loadFallbackReviews(connection, group.userId, revision.learning_reset_at);
+      const persistedOwners = await loadActiveFormOwners(connection, group.userId);
       const ownersByForm = candidateFormOwners(group.rows, persistedOwners);
 
       for (const candidate of group.rows) {
@@ -238,13 +233,7 @@ export async function repairHistoricalBoxFiveProgress(pool) {
                AND status = 'active'
                AND box = 5
                AND due_date IS NOT NULL`,
-            [
-              finalReview.occurred_at,
-              finalReview.occurred_at,
-              finalReview.local_day,
-              group.userId,
-              candidate.vocabulary_entry_id
-            ]
+            [finalReview.occurred_at, finalReview.occurred_at, finalReview.local_day, group.userId, candidate.vocabulary_entry_id]
           );
           if (Number(result.affectedRows) > 0) {
             mastered += 1;
