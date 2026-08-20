@@ -279,7 +279,7 @@
           word.masteredAt = null;
           return;
         }
-        const eligible = word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && word.lastPromotedDay !== day;
+        const eligible = word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && (word.box === 5 || word.lastPromotedDay !== day);
         if (!eligible) return;
         word.lastPromotedDay = day;
         word.blockedUntil = null;
@@ -667,7 +667,7 @@
         && currentWord.due
         && currentWord.due <= today
         && (!currentWord.blockedUntil || currentWord.blockedUntil <= today)
-        && currentWord.lastPromotedDay !== today;
+        && (previousBox === 5 || currentWord.lastPromotedDay !== today);
       if (eligible) {
         currentWord.lastPromotedDay = today;
         currentWord.blockedUntil = null;
