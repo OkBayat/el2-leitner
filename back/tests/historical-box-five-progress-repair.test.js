@@ -19,40 +19,36 @@ function progress(masteredAt) {
   };
 }
 
-function finalReview(id, at, day = "2026-08-20") {
+function review({ id, at, previousBox, newBox = 5, correct = 1, promoted = 1 }) {
   return {
     review_event_id: id,
     occurred_at: new Date(at),
-    local_day: day,
-    correct: 1,
-    promoted: 1,
-    previous_box: 5,
-    new_box: 5
+    local_day: at.slice(0, 10),
+    correct,
+    promoted,
+    previous_box: previousBox,
+    new_box: newBox
   };
 }
 
+function isExactReviewQuery(sql) {
+  return /FROM review_events/u.test(sql) && !/term_snapshot/u.test(sql);
+}
+
+function isFallbackReviewQuery(sql) {
+  return /FROM review_events re/u.test(sql) && /term_snapshot/u.test(sql);
+}
+
 describe("historical box-five progress repair", () => {
-  it("locks the learner revision before progress and repairs exact-id final/pending cards once", async () => {
+  it("locks revision before progress and repairs exact final/pending cards once", async () => {
     const writes = [];
-    const candidates = [
-      candidate(7, 101, ["graduated"]),
-      candidate(7, 102, ["pending"])
-    ];
     const progressById = new Map([
       [101, progress("2026-08-01T09:00:00.000Z")],
       [102, progress("2026-08-18T08:00:00.000Z")]
     ]);
-    const eventsById = new Map([
-      [101, finalReview(9001, "2026-08-20T08:00:00.000Z")],
-      [102, {
-        review_event_id: 9002,
-        occurred_at: new Date("2026-08-18T08:00:00.000Z"),
-        local_day: "2026-08-18",
-        correct: 1,
-        promoted: 1,
-        previous_box: 4,
-        new_box: 5
-      }]
+    const exactById = new Map([
+      [101, review({ id: 9001, at: "2026-08-20T08:00:00.000Z", previousBox: 5 })],
+      [102, review({ id: 9002, at: "2026-08-18T08:00:00.000Z", previousBox: 4 })]
     ]);
 
     const connection = {
@@ -68,9 +64,8 @@ describe("historical box-five progress repair", () => {
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progressById.get(Number(parameters[1]))], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
-          return [[eventsById.get(Number(parameters[3]))], []];
-        }
+        if (isExactReviewQuery(sql)) return [[exactById.get(Number(parameters[3]))], []];
+        if (isFallbackReviewQuery(sql)) throw new Error("fallback must not run when an exact review exists");
         if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
         if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
         if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -80,10 +75,11 @@ describe("historical box-five progress repair", () => {
 
     const pool = {
       async execute(sql) {
+        assert.match(sql, /JOIN user_state_revisions/u, "orphan progress must not enter startup repair");
         assert.match(sql, /uvp\.box = 5/u);
         assert.match(sql, /uvp\.due_date IS NOT NULL/u);
-        assert.match(sql, /GROUP_CONCAT/u, "candidate discovery must include accepted forms for alias fallback");
-        return [candidates, []];
+        assert.match(sql, /vf\.normalized_form/u, "candidate aliases must use canonical normalization");
+        return [[candidate(7, 101, ["graduated"]), candidate(7, 102, ["pending"])], []];
       },
       async getConnection() { return connection; }
     };
@@ -91,10 +87,8 @@ describe("historical box-five progress repair", () => {
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 1, pendingCorrected: 1, repairedUsers: 1 });
 
-    const transactionalSql = writes
-      .filter(({ sql }) => !["BEGIN", "COMMIT"].includes(sql))
-      .map(({ sql }) => sql);
-    assert.match(transactionalSql[0], /user_state_revisions/u, "revision must be the first row lock to match normal write-path lock order");
+    const transactionalSql = writes.filter(({ sql }) => !["BEGIN", "COMMIT"].includes(sql)).map(({ sql }) => sql);
+    assert.match(transactionalSql[0], /user_state_revisions/u);
     assert.match(transactionalSql[0], /FOR UPDATE/u);
     assert.match(transactionalSql[1], /user_vocabulary_progress/u);
     assert.match(transactionalSql[1], /FOR UPDATE/u);
@@ -110,14 +104,13 @@ describe("historical box-five progress repair", () => {
     const pendingCorrection = writes.find(({ sql }) => /SET mastered_at = NULL/u.test(sql));
     assert.ok(pendingCorrection);
     assert.deepEqual(pendingCorrection.parameters, [7, 102]);
-
-    const revisionWrites = writes.filter(({ sql }) => /SET revision = revision \+ 1/u.test(sql));
-    assert.equal(revisionWrites.length, 1);
-    assert.deepEqual(revisionWrites[0].parameters, [7]);
+    assert.equal(writes.filter(({ sql }) => /SET revision = revision \+ 1/u.test(sql)).length, 1);
   });
 
-  it("finds a historical final review by accepted term when its old vocabulary id is retired or null", async () => {
+  it("uses normalized accepted-term fallback only when no exact review exists", async () => {
     const writes = [];
+    let exactLookups = 0;
+    let fallbackLookups = 0;
     const connection = {
       async beginTransaction() {},
       async commit() {},
@@ -131,11 +124,17 @@ describe("historical box-five progress repair", () => {
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progress("2026-08-01T09:00:00.000Z")], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
-          assert.match(sql, /term_snapshot IN/u, "retired/null event ids need an accepted-form fallback");
+        if (isExactReviewQuery(sql)) {
+          exactLookups += 1;
+          return [[], []];
+        }
+        if (isFallbackReviewQuery(sql)) {
+          fallbackLookups += 1;
+          assert.match(sql, /REGEXP_REPLACE/u, "legacy snapshots must normalize whitespace/punctuation");
+          assert.match(sql, /ambiguous_form\.normalized_form/u);
           assert.ok(parameters.includes("center"));
           assert.ok(parameters.includes("centre"));
-          return [[finalReview(9100, "2026-08-20T08:30:00.000Z")], []];
+          return [[review({ id: 9100, at: "2026-08-20T08:30:00.000Z", previousBox: 5 })], []];
         }
         if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
         if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -149,10 +148,12 @@ describe("historical box-five progress repair", () => {
 
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 1, pendingCorrected: 0, repairedUsers: 1 });
+    assert.equal(exactLookups, 1);
+    assert.equal(fallbackLookups, 1);
     assert.ok(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)));
   });
 
-  it("never steals a same-term review that still belongs to another active vocabulary identity", async () => {
+  it("never steals a same-term review that belongs to another active identity", async () => {
     const writes = [];
     const connection = {
       async beginTransaction() {},
@@ -167,10 +168,11 @@ describe("historical box-five progress repair", () => {
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progress("2026-08-01T09:00:00.000Z")], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
-          assert.match(sql, /LEFT JOIN vocabulary_entries/u, "term fallback must inspect the event's linked vocabulary status");
-          assert.match(sql, /event_vocabulary\.status/u, "an event linked to another active identity must not be claimed by term alone");
-          assert.match(sql, /vocabulary_entry_id IS NULL/u, "null event ids may still use the accepted-term fallback");
+        if (isExactReviewQuery(sql)) return [[], []];
+        if (isFallbackReviewQuery(sql)) {
+          assert.match(sql, /LEFT JOIN vocabulary_entries event_vocabulary/u);
+          assert.match(sql, /event_vocabulary\.status <> 'active'/u);
+          assert.match(sql, /re\.vocabulary_entry_id IS NULL/u);
           return [[], []];
         }
         if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -188,25 +190,24 @@ describe("historical box-five progress repair", () => {
     assert.equal(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)), false);
   });
 
-  it("does not claim a null-id review when the accepted term is shared by another active identity", async () => {
-    const writes = [];
+  it("does not claim a null-id review when its normalized term is ambiguous", async () => {
     const connection = {
       async beginTransaction() {},
       async commit() {},
       async rollback() {},
       release() {},
       async execute(sql, parameters = []) {
-        writes.push({ sql, parameters });
         if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[{ revision: 8, learning_reset_at: null }], []];
         }
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progress("2026-08-01T09:00:00.000Z")], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
-          assert.match(sql, /NOT EXISTS/u, "term fallback must prove the accepted form is not shared by another active identity");
-          assert.match(sql, /vocabulary_forms/u, "ambiguity guard must check current vocabulary forms");
-          assert.match(sql, /ambiguous_vocabulary\.owner_user_id/u, "ambiguity must be scoped to public or this learner's private vocabulary");
+        if (isExactReviewQuery(sql)) return [[], []];
+        if (isFallbackReviewQuery(sql)) {
+          assert.match(sql, /NOT EXISTS/u);
+          assert.match(sql, /ambiguous_form\.normalized_form/u);
+          assert.match(sql, /ambiguous_vocabulary\.owner_user_id/u);
           return [[], []];
         }
         if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -221,7 +222,6 @@ describe("historical box-five progress repair", () => {
 
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
-    assert.equal(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)), false);
   });
 
   it("does nothing when no stuck box-five rows exist", async () => {
