@@ -13,6 +13,7 @@ const dom = new JSDOM(`<!doctype html><body>
 const { window } = dom;
 window.Headers = globalThis.Headers;
 const requests = [];
+let stateReadCount = 0;
 
 const persistedEvent = {
   at: "2026-08-07T10:00:00.000Z",
@@ -23,6 +24,20 @@ const persistedEvent = {
   mode: "review",
   previousBox: 1,
   newBox: 2,
+  mistakeNumber: null
+};
+
+const historicalFinalEvent = {
+  at: "2026-08-06T10:00:00.000Z",
+  day: "2026-08-06",
+  wordId: "retired-legacy-id",
+  term: "legacy-final",
+  answer: "legacy-final",
+  correct: true,
+  promoted: true,
+  mode: "scheduled",
+  previousBox: 5,
+  newBox: 5,
   mistakeNumber: null
 };
 
@@ -39,6 +54,23 @@ window.fetch = async (input, options = {}) => {
   const path = new URL(typeof input === "string" ? input : input.url, window.location.href).pathname;
   requests.push({ path, options });
   if (path === "/api/state" && String(options.method || "GET").toUpperCase() === "GET") {
+    stateReadCount += 1;
+    if (stateReadCount === 1) {
+      return responseFor({
+        revision: 3,
+        state: {
+          words: [{
+            id: "canonical-legacy-id",
+            term: "legacy-final",
+            accepted: ["legacy-final"],
+            box: 5,
+            due: "2026-08-20",
+            masteredAt: "2026-07-20T10:00:00.000Z"
+          }],
+          history: [historicalFinalEvent]
+        }
+      });
+    }
     return responseFor({
       revision: 4,
       state: {
@@ -73,6 +105,14 @@ window.eval(script);
 
 assert.equal(window.VocoraSessionPersistenceTest.parseLocalizedInteger("۱۲۳ کارت"), 123);
 
+await window.fetch("/api/state");
+assert.equal(
+  requests.filter((request) => request.path === "/api/state" && request.options.method === "PUT").length,
+  0,
+  "historical mastery repair belongs to the server; a state read must never trigger a client repair PUT"
+);
+
+requests.length = 0;
 await window.fetch("/api/state");
 assert.equal(window.VocoraSessionPersistenceTest.getPersistedCursor()?.historyLength, 1);
 
