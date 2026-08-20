@@ -129,6 +129,8 @@ assert.equal(serverState.words.find((word) => word.id === 'canonical-center').du
 const faNumber = new Intl.NumberFormat('fa-IR');
 assert.equal(document.querySelector('#masteredStat').textContent, faNumber.format(1), 'Dashboard mastery count must reflect repaired historical mastery');
 assert.match(document.querySelector('#sideProgressCaption').textContent, new RegExp(faNumber.format(1)), 'Sidebar mastery summary must reflect repaired historical mastery');
+const dashboardBoxCounts = [...document.querySelectorAll('#boxDistribution .box-count')].map((node) => node.textContent);
+assert.equal(dashboardBoxCounts[4], faNumber.format(1), 'Dashboard house 5 must count only cards still active in the Leitner cycle');
 
 const distribution = leitner.buildDistribution(state.words, today);
 assert.equal(distribution.houses[4].total, 1, 'Leitner visualization must exclude mastered words from active house 5');
