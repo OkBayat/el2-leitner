@@ -74,14 +74,17 @@ leitner.render(root, model);
 assert.equal(root.querySelectorAll('.leitner-segment').length, 27, 'The full visualization must render 1+2+3+7+14 = 27 states');
 assert.equal(root.querySelector('[data-house="4"]').querySelectorAll('.leitner-segment').length, 7, 'House 4 DOM must render all seven states');
 assert.equal(root.querySelector('[data-house="5"]').querySelectorAll('.leitner-segment').length, 14, 'House 5 DOM must render all fourteen states');
+assert.equal(root.querySelector('.leitner-state-index'), null, 'Regression: state-number elements must not be rendered inside Leitner segments');
 
 const houseFiveStates = [...root.querySelectorAll('[data-house="5"] .leitner-segment')];
 houseFiveStates.forEach((segment, index) => {
   const state = index + 1;
-  assert.equal(segment.dataset.stage, String(state), `House 5 state ${state} must retain its explicit state number`);
-  assert.equal(segment.querySelector('.leitner-state-index')?.textContent, new Intl.NumberFormat('fa-IR').format(state), `House 5 state ${state} must show its state number without requiring hover`);
+  assert.equal(segment.dataset.stage, String(state), `House 5 state ${state} must retain its machine-readable state number`);
   assert.match(segment.getAttribute('aria-label') || '', new RegExp(`وضعیت ${new Intl.NumberFormat('fa-IR').format(state)} از ۱۴`), `House 5 state ${state} must expose the exact state in accessible text`);
   assert.equal(segment.classList.contains('is-occupied'), true, `House 5 state ${state} with words must be visually marked as occupied`);
 });
+
+const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.url), 'utf8');
+assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Regression: obsolete state-number styling must be removed from the stylesheet');
 
 console.log('Leitner wait-day state regression and unit tests passed.');
