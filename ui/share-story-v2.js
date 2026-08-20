@@ -93,7 +93,7 @@
     const correct = safeCorrect(todayRecord);
     const dailyGoal = Math.max(1, Number(settings.dailyGoal) || 20);
     const streak = streakFor(daily, today);
-    const mastered = words.filter((word) => Number(word.box) === 5).length;
+    const mastered = words.filter((word) => Boolean(word.masteredAt)).length;
     const introduced = words.filter((word) => Number(word.box) > 0 || word.introducedOn).length;
     const activeDays = Object.values(daily).filter((record) => Number(record?.attempts) > 0).length;
     const weekValues = Array.from({ length: 7 }, (_, index) => safeCorrect(daily[shiftDay(today, index - 6)]));

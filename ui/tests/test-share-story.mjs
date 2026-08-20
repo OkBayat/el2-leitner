@@ -52,7 +52,8 @@ const progressState = {
   words: Array.from({ length: 12 }, (_, index) => ({
     term: `secret-${index}`,
     box: index < 10 ? 5 : 2,
-    introducedOn: '2026-07-01'
+    introducedOn: '2026-07-01',
+    masteredAt: index < 10 ? '2026-07-10T12:00:00.000Z' : null
   })),
   daily: {
     '2026-07-13': { attempts: 12, correct: 10 },
@@ -69,6 +70,14 @@ assert.ok(progressMoments.some((moment) => moment.kind === 'mastery'));
 assert.match(progressMoments.find((moment) => moment.kind === 'daily').title, /کامل کردم/);
 assert.equal(progressMoments.find((moment) => moment.kind === 'mastery').unit, 'واژه در خانهٔ تسلط');
 assert.equal(JSON.stringify(progressMoments).includes('secret-'), false);
+
+const pendingFinalReviewState = {
+  settings: { dailyGoal: 10, dailyNew: 5 },
+  words: [{ term: 'pending-final', box: 5, due: '2026-07-20', masteredAt: null, introducedOn: '2026-07-01' }],
+  daily: {}
+};
+const pendingFinalMoments = VocoraShare.buildShareMoments(pendingFinalReviewState, { now, today: '2026-07-13' });
+assert.equal(pendingFinalMoments.some((moment) => moment.kind === 'mastery'), false, 'Entering house five must not be shared as mastery before the final review');
 
 const withSession = VocoraShare.buildShareMoments(progressState, {
   now,

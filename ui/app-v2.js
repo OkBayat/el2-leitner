@@ -77,7 +77,7 @@
       lastReviewed: source.lastReviewed || null,
       lastPromotedDay: source.lastPromotedDay || null,
       blockedUntil: source.blockedUntil || null,
-      masteredAt: source.masteredAt || null
+      masteredAt: Number(source.box) === 5 && !source.due ? source.masteredAt || null : null
     };
   }
 
@@ -133,6 +133,29 @@
     return payload;
   }
 
+  function repairBoxFiveMastery(targetState) {
+    const finalReviewByWord = new Map();
+    (targetState.history || []).forEach((event) => {
+      if (!event.wordId || !event.correct || !event.promoted || Number(event.previousBox) !== 5 || Number(event.newBox) !== 5) return;
+      const previous = finalReviewByWord.get(event.wordId);
+      const eventTime = String(event.at || event.day || '');
+      const previousTime = String(previous?.at || previous?.day || '');
+      if (!previous || eventTime < previousTime) finalReviewByWord.set(event.wordId, event);
+    });
+    targetState.words.forEach((word) => {
+      if (word.box !== 5) return;
+      const finalReview = finalReviewByWord.get(word.id);
+      if (finalReview) {
+        word.due = null;
+        word.blockedUntil = null;
+        word.masteredAt = finalReview.at || word.masteredAt || new Date(`${finalReview.day}T12:00:00`).toISOString();
+        word.lastPromotedDay = finalReview.day || word.lastPromotedDay;
+      } else if (word.due) {
+        word.masteredAt = null;
+      }
+    });
+  }
+
   function hydrateState(parsed) {
     if (!parsed || !Array.isArray(parsed.words)) throw new Error('Invalid state');
     const defaults = defaultState();
@@ -147,6 +170,7 @@
       history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(clean);
+    repairBoxFiveMastery(clean);
     return clean;
   }
 
@@ -279,13 +303,18 @@
           word.masteredAt = null;
           return;
         }
-        const eligible = word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && word.lastPromotedDay !== day;
+        const eligible = word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && word.lastPromotedDay !== day;
         if (!eligible) return;
-        word.box = Math.min(5, word.box + 1);
         word.lastPromotedDay = day;
         word.blockedUntil = null;
+        if (word.box === 5) {
+          word.due = null;
+          word.masteredAt = event.at || new Date(`${day}T12:00:00`).toISOString();
+          return;
+        }
+        word.box = Math.min(5, word.box + 1);
         word.due = addDays(day, BOX_WAIT_DAYS[word.box]);
-        if (word.box === 5) word.masteredAt = event.at || new Date(`${day}T12:00:00`).toISOString();
+        word.masteredAt = null;
       });
     });
   }
@@ -358,7 +387,7 @@
   function getDueWords() {
     const today = localDay();
     return state.words
-      .filter((word) => word.box > 0 && word.due && word.due <= today && (!word.blockedUntil || word.blockedUntil <= today))
+      .filter((word) => word.box > 0 && !word.masteredAt && word.due && word.due <= today && (!word.blockedUntil || word.blockedUntil <= today))
       .sort((a, b) => (a.due || '').localeCompare(b.due || '') || b.mistakes - a.mistakes || a.number - b.number);
   }
 
@@ -372,8 +401,8 @@
       sum.attempts += word.attempts;
       sum.correct += word.correct;
       sum.mistakes += word.mistakes;
-      if (word.box === 5) sum.mastered += 1;
-      if (word.box > 0) sum.learning += 1;
+      if (word.masteredAt) sum.mastered += 1;
+      if (word.box > 0 && !word.masteredAt) sum.learning += 1;
       return sum;
     }, { attempts: 0, correct: 0, mistakes: 0, mastered: 0, learning: 0 });
   }
@@ -433,7 +462,7 @@
     $('#navDueBadge').textContent = faNumber.format(due);
     $('#sideProgressText').textContent = `${faNumber.format(masteredPercent)}٪`;
     $('#sideProgressBar').style.width = `${masteredPercent}%`;
-    $('#sideProgressCaption').textContent = `${faNumber.format(stats.mastered)} از ${faNumber.format(state.words.length)} کلمه در خانهٔ ۵`;
+    $('#sideProgressCaption').textContent = `${faNumber.format(stats.mastered)} از ${faNumber.format(state.words.length)} کلمه به تسلط رسیده`;
   }
 
   function renderDashboard() {
@@ -648,8 +677,9 @@
     const previousBox = currentWord.box;
     const canGraduateNewBoxOne = previousBox === 1 && currentWord.mistakes === 0 && !currentWord.lastPromotedDay;
     let promoted = false;
+    const reviewedAt = new Date().toISOString();
     currentWord.attempts += 1;
-    currentWord.lastReviewed = new Date().toISOString();
+    currentWord.lastReviewed = reviewedAt;
     if (correct) {
       currentWord.correct += 1;
       currentWord.currentStreak += 1;
@@ -659,12 +689,17 @@
         && (!currentWord.blockedUntil || currentWord.blockedUntil <= today)
         && currentWord.lastPromotedDay !== today;
       if (eligible) {
-        currentWord.box = Math.min(5, Math.max(1, currentWord.box + 1));
         currentWord.lastPromotedDay = today;
         currentWord.blockedUntil = null;
-        currentWord.due = addDays(today, BOX_WAIT_DAYS[currentWord.box]);
         promoted = true;
-        if (currentWord.box === 5 && !currentWord.masteredAt) currentWord.masteredAt = new Date().toISOString();
+        if (previousBox === 5) {
+          currentWord.due = null;
+          currentWord.masteredAt = reviewedAt;
+        } else {
+          currentWord.box = Math.min(5, Math.max(1, currentWord.box + 1));
+          currentWord.due = addDays(today, BOX_WAIT_DAYS[currentWord.box]);
+          currentWord.masteredAt = null;
+        }
       }
     } else {
       currentWord.mistakes += 1;
@@ -696,8 +731,8 @@
     if (!correct) {
       $('#feedbackDetail').textContent = `کلمه در خانهٔ ۱ می‌ماند و تا فردا امکان ارتقا ندارد.`;
     } else if (promoted) {
-      $('#feedbackDetail').textContent = previousBox === currentWord.box
-        ? `مرور خانهٔ ۵ ثبت شد؛ موعد بعدی ${faNumber.format(BOX_WAIT_DAYS[5])} روز دیگر است.`
+      $('#feedbackDetail').textContent = previousBox === 5
+        ? 'مرور نهایی خانهٔ ۵ انجام شد؛ این کلمه از چرخهٔ مرور لایتنر خارج شد.'
         : `از خانهٔ ${faNumber.format(previousBox)} به خانهٔ ${faNumber.format(currentWord.box)} رفت.`;
     } else if (isFreePractice) {
       $('#feedbackDetail').textContent = 'تمرین ثبت شد؛ تمرین آزاد جای کارت‌های قبلی را تغییر نمی‌دهد.';
@@ -924,7 +959,7 @@
     const introduced = state.words.filter((word) => word.introducedOn).length;
     const metrics = [
       { label: 'آشنایی با فهرست', value: Math.round((introduced / total) * 100), detail: `${introduced} از ${state.words.length}` },
-      { label: 'رسیدن به خانهٔ ۵', value: Math.round((stats.mastered / total) * 100), detail: `${stats.mastered} کلمه` },
+      { label: 'تسلط کامل', value: Math.round((stats.mastered / total) * 100), detail: `${stats.mastered} کلمه` },
       { label: 'دقت کلی', value: accuracy(stats.correct, stats.attempts) || 0, detail: `${stats.correct} پاسخ درست` },
       { label: 'پیوستگی تمرین', value: clamp(Math.round((calculateStreak() / 30) * 100), 0, 100), detail: `${calculateStreak()} روز پیوسته از ${activeDays} روز فعال` }
     ];
@@ -958,7 +993,7 @@
       schemaVersion: SCHEMA_VERSION,
       exportedAt: new Date().toISOString(),
       instructionsForAI: 'Analyse progress, recurring spelling mistakes, hard words, consistency and accuracy. Reply in Persian with a short diagnosis and a practical 7-day drill.',
-      schedulingRules: { dayBoundary: 'local midnight', box1: 'daily and unlimited free practice without promotion', box2To3Days: 2, box3To4Days: 3, box4To5Days: 7, box5ReviewDays: 14, wrongAnswer: 'return to box 1 and block promotion until next calendar day' },
+      schedulingRules: { dayBoundary: 'local midnight', box1: 'daily and unlimited free practice without promotion', box2To3Days: 2, box3To4Days: 3, box4To5Days: 7, box5ReviewDays: 14, box5Success: 'mastered and removed from scheduled review', wrongAnswer: 'return to box 1 and block promotion until next calendar day' },
       profile: {
         totalWords: state.words.length,
         introducedWords: state.words.filter((word) => word.introducedOn).length,
@@ -1151,6 +1186,7 @@
       settings: { ...defaultState().settings, ...parsed.settings }, words: parsed.words.map(createWord), daily: parsed.daily || {}, history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(state);
+    repairBoxFiveMastery(state);
     ensureDailyWords();
     saveState();
     renderAll();

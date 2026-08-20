@@ -32,6 +32,7 @@
   function segmentIndexForWord(word, box, today, waitDays = DEFAULT_WAIT_DAYS) {
     const segmentCount = clamp(Number(box) || 1, 1, 5);
     if (segmentCount === 1) return 0;
+    if (segmentCount === 5 && word?.masteredAt) return segmentCount - 1;
 
     const todaySerial = parseDay(today);
     const dueSerial = parseDay(word?.due);

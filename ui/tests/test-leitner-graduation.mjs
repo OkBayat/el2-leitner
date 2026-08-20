@@ -26,6 +26,7 @@ function addDays(day, amount) {
 
 const today = localDay();
 const legacyMasteredAt = new Date().toISOString();
+const legacyFinalReviewAt = new Date(Date.now() - 60_000).toISOString();
 let serverState = {
   schemaVersion: 2,
   createdAt: new Date().toISOString(),
@@ -51,9 +52,32 @@ let serverState = {
     lastPromotedDay: today,
     blockedUntil: null,
     masteredAt: legacyMasteredAt
+  }, {
+    id: 'already-reviewed-word',
+    number: 2,
+    term: 'completed',
+    accepted: ['completed'],
+    category: 'Regression',
+    notes: '',
+    createdAt: new Date().toISOString(),
+    box: 5,
+    due: addDays(today, 14),
+    attempts: 5,
+    correct: 5,
+    mistakes: 0,
+    currentStreak: 5,
+    introducedOn: addDays(today, -45),
+    addedSource: 'test',
+    lastReviewed: legacyFinalReviewAt,
+    lastPromotedDay: today,
+    blockedUntil: null,
+    masteredAt: legacyMasteredAt
   }],
   daily: {},
-  history: []
+  history: [
+    { at: legacyMasteredAt, day: today, wordId: 'box-five-word', term: 'graduation', answer: 'graduation', correct: true, mode: 'scheduled', promoted: true, previousBox: 4, newBox: 5, mistakeNumber: null },
+    { at: legacyFinalReviewAt, day: today, wordId: 'already-reviewed-word', term: 'completed', answer: 'completed', correct: true, mode: 'scheduled', promoted: true, previousBox: 5, newBox: 5, mistakeNumber: null }
+  ]
 };
 let serverRevision = 1;
 
@@ -111,8 +135,11 @@ assert.equal(hydratedWord.due, addDays(today, 14));
 assert.equal(
   hydratedWord.masteredAt,
   null,
-  'Existing box-5 cards with a future due date are pending their final review, not already mastered'
+  'Existing box-5 cards with only an entry promotion are pending their final review, not already mastered'
 );
+const alreadyReviewedWord = VazheyarTest.getState().words.find((word) => word.id === 'already-reviewed-word');
+assert.equal(alreadyReviewedWord.due, null, 'A historical successful box-5 review must be repaired as already graduated');
+assert.equal(alreadyReviewedWord.masteredAt, legacyFinalReviewAt, 'Historical mastery must use the actual final-review timestamp');
 
 Object.assign(hydratedWord, {
   box: 4,
@@ -160,6 +187,7 @@ assert.equal(finalEvent.previousBox, 5);
 assert.equal(finalEvent.newBox, 5);
 assert.equal(finalEvent.correct, true);
 assert.equal(finalEvent.promoted, true, 'Final mastery is still a successful Leitner promotion event');
+assert.equal(VazheyarTest.buildAnalysisReport().profile.masteredWords, 2, 'Mastery stats must count only cards that completed the final review');
 
 document.querySelector('#nextCardBtn').click();
 document.querySelector('[data-view="review"]').click();
