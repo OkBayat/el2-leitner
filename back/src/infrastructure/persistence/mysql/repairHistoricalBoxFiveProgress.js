@@ -226,6 +226,12 @@ async function loadActiveFormOwners(connection, userId) {
   return owners;
 }
 
+function candidateMayOwnForm(candidate, form, ownersByForm) {
+  return Boolean(
+    ownersByForm.get(form)?.has(String(candidate.vocabulary_entry_id))
+  );
+}
+
 function hasUniqueCandidateOwner(candidate, form, ownersByForm) {
   const owners = ownersByForm.get(form);
   return Boolean(
@@ -235,10 +241,13 @@ function hasUniqueCandidateOwner(candidate, form, ownersByForm) {
   );
 }
 
-function latestTrustedFallbackReset(candidate, fallbackIndex, ownersByForm, introducedOn) {
+function latestPossibleFallbackReset(candidate, fallbackIndex, ownersByForm, introducedOn) {
   let latest = null;
   for (const form of parseForms(candidate.forms)) {
-    if (!hasUniqueCandidateOwner(candidate, form, ownersByForm)) continue;
+    // A reset on an ambiguous historical spelling is not proof that this card
+    // reset, but it is enough uncertainty to stop an automatic false mastery.
+    // Final-review evidence remains stricter and still requires a unique owner.
+    if (!candidateMayOwnForm(candidate, form, ownersByForm)) continue;
     latest = laterReview(
       latest,
       latestResetInLifecycle(fallbackIndex.get(form), introducedOn)
@@ -278,7 +287,7 @@ async function firstRelevantFinalReview(
     learningResetAt,
     progress.introduced_on
   );
-  const fallbackReset = latestTrustedFallbackReset(
+  const fallbackReset = latestPossibleFallbackReset(
     candidate,
     fallbackIndex,
     ownersByForm,
