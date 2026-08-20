@@ -121,6 +121,7 @@
   --house-a: #8ee1f4;
   --house-b: #62cfea;
   --house-accent-rgb: 42, 194, 217;
+  --house-accent: rgba(var(--house-accent-rgb), .6);
   --house-width: 100%;
   --house-max: 630px;
   display: grid;
@@ -229,7 +230,7 @@
   height: 30px;
   place-items: center;
   border: 0;
-  border-bottom: 2px solid rgba(var(--house-accent-rgb), .6);
+  border-bottom: 2px solid var(--house-accent);
   border-radius: 0;
   background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   color: var(--text);
@@ -335,7 +336,7 @@
 }
 
 [data-theme="dark"] .leitner-segment {
-  border-bottom-color: rgba(var(--house-accent-rgb), .6);
+  border-bottom-color: var(--house-accent);
   background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   box-shadow: none;
 }
