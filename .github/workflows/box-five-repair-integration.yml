@@ -45,13 +45,9 @@ jobs:
           SET @monday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Monday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
           SET @tuesday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Tuesday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
 
-          -- Give Monday a unique legacy alias. The card first entered box 5 with its exact identity,
-          -- then the final review was recorded after identity drift with a NULL vocabulary id.
           INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
           VALUES (@monday_id, 'Monday legacy', 'monday legacy', 0);
 
-          -- Create a same-term private identity for this learner. A later review belonging to this active
-          -- identity must never be stolen by the public Tuesday card merely because term_snapshot matches.
           INSERT INTO vocabulary_entries
             (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
           VALUES
@@ -60,8 +56,6 @@ jobs:
           INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
           VALUES (@private_tuesday_id, 'Tuesday', 'tuesday', 1);
 
-          -- A private QA word verifies that a legacy smart apostrophe in term_snapshot is normalized
-          -- with the same identity rules as the vocabulary domain.
           INSERT INTO vocabulary_entries
             (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
           VALUES
@@ -88,18 +82,25 @@ jobs:
             (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
              previous_box, new_box, promoted, term_snapshot)
           VALUES
-            -- Older exact evidence: Monday entered box 5 normally.
             (REPEAT('d', 64), @user_id, @monday_id, '2026-08-06 08:00:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'Monday'),
-            -- Newer trusted identity-drift evidence: the final review must supersede that older exact event.
             (REPEAT('a', 64), @user_id, NULL, '2026-08-20 08:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Monday legacy'),
-            -- The public Tuesday only entered house 5 and must remain pending.
             (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday'),
-            -- A later same-term final review belongs to another ACTIVE identity; public Tuesday must not claim it.
             (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday'),
-            -- Exact entry followed by a NULL-id final review whose smart apostrophe must normalize to ASCII.
             (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
             (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy');
           SQL
+
+      - name: Diagnose apostrophe fixture
+        run: |
+          set -euo pipefail
+          echo '--- qa vocabulary/forms ---'
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch \
+            --execute="SELECT ve.id,ve.public_id,ve.owner_user_id,vf.form,vf.normalized_form,HEX(vf.normalized_form) FROM vocabulary_entries ve JOIN vocabulary_forms vf ON vf.vocabulary_entry_id=ve.id WHERE ve.primary_form LIKE 'qa%';"
+          echo '--- qa review events ---'
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch \
+            --execute="SELECT id,vocabulary_entry_id,term_snapshot,HEX(term_snapshot),previous_box,new_box,promoted,occurred_at FROM review_events WHERE term_snapshot LIKE 'qa%';"
 
       - name: Run production repair path
         run: docker compose run --rm db-setup
