@@ -152,6 +152,42 @@ describe("historical box-five progress repair", () => {
     assert.ok(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)));
   });
 
+  it("never steals a same-term review that still belongs to another active vocabulary identity", async () => {
+    const writes = [];
+    const connection = {
+      async beginTransaction() {},
+      async commit() {},
+      async rollback() {},
+      release() {},
+      async execute(sql, parameters = []) {
+        writes.push({ sql, parameters });
+        if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) {
+          return [[{ revision: 6, learning_reset_at: null }], []];
+        }
+        if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
+          return [[progress("2026-08-01T09:00:00.000Z")], []];
+        }
+        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
+          assert.match(sql, /LEFT JOIN vocabulary_entries/u, "term fallback must inspect the event's linked vocabulary status");
+          assert.match(sql, /event_vocabulary\.status/u, "an event linked to another active identity must not be claimed by term alone");
+          assert.match(sql, /vocabulary_entry_id IS NULL/u, "null event ids may still use the accepted-term fallback");
+          return [[], []];
+        }
+        if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
+        if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
+        throw new Error(`Unexpected transactional SQL: ${sql}`);
+      }
+    };
+    const pool = {
+      async execute() { return [[candidate(11, 301, ["reused-term"])], []]; },
+      async getConnection() { return connection; }
+    };
+
+    const result = await repairHistoricalBoxFiveProgress(pool);
+    assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
+    assert.equal(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)), false);
+  });
+
   it("does nothing when no stuck box-five rows exist", async () => {
     let connectionRequested = false;
     const pool = {
