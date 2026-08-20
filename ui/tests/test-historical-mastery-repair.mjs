@@ -132,12 +132,27 @@ assert.match(document.querySelector('#sideProgressCaption').textContent, new Reg
 const dashboardBoxCounts = [...document.querySelectorAll('#boxDistribution .box-count')].map((node) => node.textContent);
 assert.equal(dashboardBoxCounts[4], faNumber.format(1), 'Dashboard house 5 must count only cards still active in the Leitner cycle');
 
+const wordsNav = document.querySelector('.nav-item[data-view="words"]');
+wordsNav.click();
+const wordRows = [...document.querySelectorAll('#wordsTableBody tr')];
+const masteredRow = wordRows.find((row) => row.textContent.includes('center'));
+assert.ok(masteredRow, 'The mastered word must remain visible in the word bank');
+assert.match(masteredRow.textContent, /تسلط/u, 'A mastered word must be labeled as mastery instead of house 5');
+
+const boxFilter = document.querySelector('#boxFilter');
+boxFilter.value = '5';
+boxFilter.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+assert.equal(document.querySelector('#wordCountLabel').textContent, `${faNumber.format(1)} کلمه`, 'House-5 filter must exclude mastered words');
+assert.doesNotMatch(document.querySelector('#wordsTableBody').textContent, /center/u, 'Mastered words must not reappear as active house-5 cards');
+
 const distribution = leitner.buildDistribution(state.words, today);
 assert.equal(distribution.houses[4].total, 1, 'Leitner visualization must exclude mastered words from active house 5');
 assert.equal(distribution.total, 1, 'Leitner total must count only cards still in the active Leitner cycle');
 leitner.attach({ document, getState: () => state, getToday: () => today, MutationObserver: null });
 assert.equal(document.querySelector('[data-house="5"] .leitner-row-total strong').textContent, faNumber.format(1), 'Rendered house 5 must show only the pending final-review card');
 
-assert.equal(VazheyarTest.buildAnalysisReport().profile.masteredWords, 1, 'Analysis report must count the repaired mastery');
+const analysis = VazheyarTest.buildAnalysisReport();
+assert.equal(analysis.profile.masteredWords, 1, 'Analysis report must count the repaired mastery');
+assert.equal(analysis.boxDistribution.box_5, 1, 'Analysis box-5 distribution must count only active house-5 cards');
 
 console.log('Historical mastery repair regression test passed.');
