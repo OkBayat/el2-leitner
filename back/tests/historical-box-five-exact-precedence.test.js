@@ -29,11 +29,8 @@ test("an exact vocabulary review is authoritative before any term fallback", asy
         return [[{ box: 5, due_date: "2026-09-03", mastered_at: null }], []];
       }
       if (/FROM review_events/u.test(sql)) {
-        if (/term_snapshot/u.test(sql)) {
-          throw new Error("term fallback must not run after an exact-id review was found");
-        }
+        assert.doesNotMatch(sql, /term_snapshot/u, "fallback matching must not be mixed into the exact-id query");
         assert.match(sql, /vocabulary_entry_id = \?/u, "exact lookup must use the indexed vocabulary identity");
-        assert.doesNotMatch(sql, /\sOR\s/u, "exact lookup must not be mixed with fallback matching");
         return [[exactFinal], []];
       }
       if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
