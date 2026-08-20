@@ -1,0 +1,184 @@
+name: Box Five Preserved Legacy State Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - agent/**
+
+permissions:
+  contents: read
+
+jobs:
+  preserved-legacy-state:
+    runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci-application-password
+      DB_ADMIN_PASSWORD: ci-root-password
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start MySQL and initialize schema
+        run: |
+          set -euo pipefail
+          docker compose up --build --detach mysql
+          for attempt in {1..60}; do
+            if docker compose exec -T mysql mysqladmin ping --host=127.0.0.1 --user=root --password="$MYSQL_ROOT_PASSWORD" --silent; then
+              break
+            fi
+            sleep 2
+          done
+          docker compose run --rm db-setup
+
+      - name: Seed an already-normalized learner whose preserved legacy JSON contains the missing final review
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --default-character-set=utf8mb4 <<'SQL'
+          INSERT INTO users (email, password_hash)
+          VALUES ('box5-preserved-legacy-ci@example.com', 'not-used-by-integration-test');
+          SET @user_id = LAST_INSERT_ID();
+
+          SET @default_collection_id = (
+            SELECT id FROM collections WHERE is_default = TRUE AND archived_at IS NULL ORDER BY id LIMIT 1
+          );
+          SET @monday_id = (
+            SELECT ve.id
+            FROM collection_entries ce
+            JOIN vocabulary_entries ve ON ve.id = ce.vocabulary_entry_id
+            WHERE ce.collection_id = @default_collection_id
+              AND ce.removed_at IS NULL
+              AND ve.primary_form = 'Monday'
+            ORDER BY ve.id
+            LIMIT 1
+          );
+
+          INSERT INTO user_collections (user_id, collection_id, status)
+          VALUES (@user_id, @default_collection_id, 'active');
+
+          INSERT INTO user_state_revisions (user_id, revision, metadata_json)
+          VALUES (@user_id, 20, JSON_OBJECT('schemaVersion', 2));
+
+          INSERT INTO user_vocabulary_progress
+            (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count,
+             mistake_count, current_streak, introduced_on, last_reviewed_at,
+             last_promoted_on, mastered_at)
+          VALUES
+            (@user_id, @monday_id, 'active', 5, '2026-09-03', 6, 6,
+             0, 6, '2026-07-12', '2026-08-20 10:00:00.000',
+             '2026-08-20', NULL);
+
+          INSERT INTO review_events
+            (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, answer,
+             correct, mode, previous_box, new_box, promoted, term_snapshot)
+          VALUES
+            (REPEAT('q', 64), @user_id, @monday_id,
+             '2026-08-06 17:12:27.997', '2026-08-06', 'Monday',
+             1, 'scheduled', 4, 5, 1, 'Monday');
+
+          INSERT INTO learning_states (user_id, state_json, revision, created_at, updated_at)
+          VALUES (
+            @user_id,
+            JSON_OBJECT(
+              'schemaVersion', 2,
+              'createdAt', '2026-07-12T14:24:26.386Z',
+              'updatedAt', '2026-08-20T10:00:00.006Z',
+              'settings', JSON_OBJECT('dailyNew', 10, 'dailyGoal', 20, 'voiceRate', 0.85, 'theme', 'light'),
+              'words', JSON_ARRAY(
+                JSON_OBJECT(
+                  'id', '68d0f1aa-cff2-4089-9371-b2aa727f92d1',
+                  'number', 1,
+                  'term', 'Monday',
+                  'accepted', JSON_ARRAY('Monday'),
+                  'category', 'Calendar and time',
+                  'notes', '',
+                  'createdAt', '2026-07-12T14:24:26.386Z',
+                  'box', 5,
+                  'due', '2026-09-03',
+                  'attempts', 6,
+                  'correct', 6,
+                  'mistakes', 0,
+                  'currentStreak', 6,
+                  'introducedOn', '2026-07-12',
+                  'addedSource', NULL,
+                  'lastReviewed', '2026-08-20T10:00:00.000Z',
+                  'lastPromotedDay', '2026-08-20',
+                  'blockedUntil', NULL,
+                  'masteredAt', '2026-08-20T10:00:00.003Z'
+                )
+              ),
+              'daily', JSON_OBJECT(),
+              'history', JSON_ARRAY(
+                JSON_OBJECT(
+                  'at', '2026-08-06T17:12:27.997Z',
+                  'day', '2026-08-06',
+                  'wordId', '68d0f1aa-cff2-4089-9371-b2aa727f92d1',
+                  'term', 'Monday',
+                  'answer', 'Monday',
+                  'correct', TRUE,
+                  'mode', 'scheduled',
+                  'promoted', TRUE,
+                  'previousBox', 4,
+                  'newBox', 5,
+                  'mistakeNumber', NULL
+                ),
+                JSON_OBJECT(
+                  'at', '2026-08-20T10:00:00.006Z',
+                  'day', '2026-08-20',
+                  'wordId', '68d0f1aa-cff2-4089-9371-b2aa727f92d1',
+                  'term', 'Monday',
+                  'answer', 'Monday',
+                  'correct', TRUE,
+                  'mode', 'scheduled',
+                  'promoted', TRUE,
+                  'previousBox', 5,
+                  'newBox', 5,
+                  'mistakeNumber', NULL
+                )
+              )
+            ),
+            7,
+            '2026-07-12 14:24:26.386',
+            '2026-08-20 10:00:00.006'
+          );
+          SQL
+
+      - name: Run the production startup repair path
+        run: docker compose run --rm db-setup
+
+      - name: Regression - preserved legacy final review must restore Mastered
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-preserved-legacy-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:00:00.006';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-preserved-legacy-ci@example.com';" \
+            | grep -qx '21'
+
+      - name: Regression - a second startup repair is idempotent
+        run: |
+          set -euo pipefail
+          docker compose run --rm db-setup
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-preserved-legacy-ci@example.com';" \
+            | grep -qx '21'
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-preserved-legacy-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:00:00.006';" \
+            | grep -qx '1'
+
+      - name: Print container logs after a failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes

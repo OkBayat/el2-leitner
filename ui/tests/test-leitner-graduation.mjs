@@ -61,7 +61,7 @@ let serverState = {
     notes: '',
     createdAt: new Date().toISOString(),
     box: 5,
-    due: addDays(today, 14),
+    due: null,
     attempts: 5,
     correct: 5,
     mistakes: 0,
@@ -71,7 +71,7 @@ let serverState = {
     lastReviewed: legacyFinalReviewAt,
     lastPromotedDay: today,
     blockedUntil: null,
-    masteredAt: legacyMasteredAt
+    masteredAt: legacyFinalReviewAt
   }],
   daily: {},
   history: [
@@ -138,8 +138,8 @@ assert.equal(
   'Existing box-5 cards with only an entry promotion are pending their final review, not already mastered'
 );
 const alreadyReviewedWord = VazheyarTest.getState().words.find((word) => word.id === 'already-reviewed-word');
-assert.equal(alreadyReviewedWord.due, null, 'A historical successful box-5 review must be repaired as already graduated');
-assert.equal(alreadyReviewedWord.masteredAt, legacyFinalReviewAt, 'Historical mastery must use the actual final-review timestamp');
+assert.equal(alreadyReviewedWord.due, null, 'Server-repaired historical mastery must stay graduated after hydrate');
+assert.equal(alreadyReviewedWord.masteredAt, legacyFinalReviewAt, 'Historical mastery must preserve the server-owned final-review timestamp');
 
 Object.assign(hydratedWord, {
   box: 4,
@@ -172,7 +172,29 @@ document.querySelector('[data-view="review"]').click();
 document.querySelector('#beginSessionBtn').click();
 assert.equal(VazheyarTest.getCurrentWord().box, 5);
 document.querySelector('#answerInput').value = hydratedWord.term;
+
+// Force every no-argument Date construction to move forward. Old code created
+// progress and history timestamps independently, so this makes that mismatch
+// deterministic instead of relying on the runner crossing a millisecond boundary.
+const RealDate = dom.window.Date;
+let deterministicNow = RealDate.now();
+class IncrementingDate extends RealDate {
+  constructor(...args) {
+    if (args.length) {
+      super(...args);
+      return;
+    }
+    deterministicNow += 7;
+    super(deterministicNow);
+  }
+  static now() {
+    deterministicNow += 7;
+    return deterministicNow;
+  }
+}
+dom.window.Date = IncrementingDate;
 document.querySelector('#answerForm button[type="submit"]').click();
+dom.window.Date = RealDate;
 await VazheyarTest.waitForSaves();
 
 savedWord = serverState.words.find((word) => word.id === hydratedWord.id);
@@ -187,6 +209,8 @@ assert.equal(finalEvent.previousBox, 5);
 assert.equal(finalEvent.newBox, 5);
 assert.equal(finalEvent.correct, true);
 assert.equal(finalEvent.promoted, true, 'Final mastery is still a successful Leitner promotion event');
+assert.equal(finalEvent.at, savedWord.lastReviewed, 'One review must have one authoritative timestamp in progress and history');
+assert.equal(finalEvent.at, savedWord.masteredAt, 'The final review event timestamp must be the mastery timestamp');
 assert.equal(VazheyarTest.buildAnalysisReport().profile.masteredWords, 2, 'Mastery stats must count only cards that completed the final review');
 
 document.querySelector('#nextCardBtn').click();

@@ -10,16 +10,22 @@ import { createErrorHandler } from "./interfaces/http/errorHandler.js";
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_STATIC_DIRECTORY = path.resolve(currentDirectory, "../../ui");
 
+function setNoStoreHeaders(res) {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Surrogate-Control", "no-store");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+}
+
 function setStaticCacheHeaders(res, filePath) {
   const extension = path.extname(filePath).toLowerCase();
-  if (extension === ".html") {
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.setHeader("CDN-Cache-Control", "no-store");
-    res.setHeader("Surrogate-Control", "no-store");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-  } else if (extension === ".css" || extension === ".js") {
-    res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
+  if (extension === ".html" || extension === ".css" || extension === ".js") {
+    // Frontend modules wrap fetch in a strict load order. Serving even one old
+    // script beside a new index can restore an already-fixed persistence bug,
+    // so executable frontend assets are intentionally never stored by browsers,
+    // reverse proxies, or CDNs.
+    setNoStoreHeaders(res);
   }
 }
 
@@ -97,11 +103,7 @@ export function createApp({
     app.use(express.static(staticDirectory, { index: "index.html", setHeaders: setStaticCacheHeaders }));
     app.use((req, res, next) => {
       if (!isHtmlNavigationRequest(req)) return next();
-      res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-      res.set("CDN-Cache-Control", "no-store");
-      res.set("Surrogate-Control", "no-store");
-      res.set("Pragma", "no-cache");
-      res.set("Expires", "0");
+      setNoStoreHeaders(res);
       res.sendFile(path.join(staticDirectory, "index.html"), (error) => {
         if (error) next(error);
       });

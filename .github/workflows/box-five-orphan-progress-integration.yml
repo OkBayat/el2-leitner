@@ -1,0 +1,146 @@
+name: Box Five Orphan Progress Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - agent/**
+
+permissions:
+  contents: read
+
+jobs:
+  orphan-progress:
+    runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci-application-password
+      DB_ADMIN_PASSWORD: ci-root-password
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start MySQL and initialize schema
+        run: |
+          set -euo pipefail
+          docker compose up --build --detach mysql
+          for attempt in {1..60}; do
+            if docker compose exec -T mysql mysqladmin ping --host=127.0.0.1 --user=root --password="$MYSQL_ROOT_PASSWORD" --silent; then
+              break
+            fi
+            sleep 2
+          done
+          docker compose run --rm db-setup
+
+      - name: Seed a visible canonical card and a hidden legacy progress row
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --default-character-set=utf8mb4 <<'SQL'
+          INSERT INTO users (email, password_hash)
+          VALUES ('box5-orphan-progress-ci@example.com', 'not-used-by-integration-test');
+          SET @user_id = LAST_INSERT_ID();
+
+          INSERT INTO collections
+            (public_id, slug, title, kind, visibility, status, owner_user_id, published_at)
+          VALUES
+            ('box5-orphan-progress-collection', CONCAT('box5-orphan-progress-', @user_id),
+             'Visible canonical box-five card', 'personal', 'private', 'published',
+             @user_id, CURRENT_TIMESTAMP(3));
+          SET @collection_id = LAST_INSERT_ID();
+
+          INSERT INTO user_collections (user_id, collection_id, status)
+          VALUES (@user_id, @collection_id, 'active');
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-orphan-progress-current', 'en', 'canonical orphan', 'canonical orphan',
+             CONCAT('user:', @user_id, ':en:canonical orphan'), @user_id, 'active');
+          SET @current_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES
+            (@current_id, 'canonical orphan', 'canonical orphan', 1),
+            (@current_id, 'legacy orphan alias', 'legacy orphan alias', 0);
+
+          INSERT INTO collection_entries
+            (public_id, collection_id, vocabulary_entry_id, position)
+          VALUES
+            ('box5-orphan-progress-current-entry', @collection_id, @current_id, 1);
+
+          -- This legacy identity is still active and still has a stuck progress row,
+          -- but is no longer visible through any active collection.
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-orphan-progress-legacy', 'en', 'legacy orphan identity', 'legacy orphan identity',
+             CONCAT('user:', @user_id, ':en:legacy orphan identity'), @user_id, 'active');
+          SET @legacy_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES
+            (@legacy_id, 'legacy orphan identity', 'legacy orphan identity', 1),
+            (@legacy_id, 'legacy orphan alias', 'legacy orphan alias', 0);
+
+          INSERT INTO user_state_revisions (user_id, revision)
+          VALUES (@user_id, 10);
+
+          INSERT INTO user_vocabulary_progress
+            (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count,
+             introduced_on, last_reviewed_at, last_promoted_on, mastered_at)
+          VALUES
+            (@user_id, @current_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 10:10:00.000', '2026-08-20', '2026-08-01 10:10:00.000'),
+            (@user_id, @legacy_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 10:10:00.000', '2026-08-20', '2026-08-01 10:10:00.000');
+
+          INSERT INTO review_events
+            (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
+             previous_box, new_box, promoted, term_snapshot)
+          VALUES
+            (REPEAT('o', 64), @user_id, @current_id,
+             '2026-08-06 10:10:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'canonical orphan'),
+            (REPEAT('p', 64), @user_id, @legacy_id,
+             '2026-08-20 10:10:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'legacy orphan alias');
+          SQL
+
+      - name: Run the production historical repair
+        run: docker compose run --rm db-setup
+
+      - name: Verify hidden progress cannot block the visible canonical card
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-orphan-progress-ci@example.com' AND ve.public_id='box5-orphan-progress-current' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:10:00.000';" \
+            | grep -qx '1'
+
+          # The hidden legacy row has exact-id final evidence, so repairing it too is
+          # valid. The regression is that it must not make the visible canonical alias
+          # ambiguous or force the canonical card to wait for a second db:setup run.
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-orphan-progress-ci@example.com' AND ve.public_id='box5-orphan-progress-legacy' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:10:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-orphan-progress-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Verify one run is sufficient and the repair stays idempotent
+        run: |
+          set -euo pipefail
+          docker compose run --rm db-setup
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-orphan-progress-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Print container logs after a failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes

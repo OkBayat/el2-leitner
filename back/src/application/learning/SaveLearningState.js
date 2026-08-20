@@ -1,4 +1,5 @@
 import { LearningState } from "../../domain/learning/LearningState.js";
+import { applyBoxFiveReviewPolicyToState } from "../../domain/learning/BoxFiveReviewPolicy.js";
 import { ValidationError } from "../../domain/errors.js";
 
 export class SaveLearningState {
@@ -15,6 +16,7 @@ export class SaveLearningState {
     }
 
     const state = new LearningState(stateInput);
+    applyBoxFiveReviewPolicyToState(state.value);
     const revision = await this.learningStateRepository.save(
       userId,
       state.value,

@@ -42,96 +42,6 @@
     };
   }
 
-  function normalizeLearningForm(value) {
-    return String(value || "")
-      .normalize("NFKC")
-      .toLocaleLowerCase("en")
-      .replace(/[’‘]/g, "'")
-      .replace(/[–—]/g, "-")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function uniqueWordsByForm(words) {
-    const index = new Map();
-    for (const word of words) {
-      const forms = [word?.term, ...(Array.isArray(word?.accepted) ? word.accepted : [])];
-      for (const form of forms) {
-        const normalized = normalizeLearningForm(form);
-        if (!normalized) continue;
-        if (!index.has(normalized)) {
-          index.set(normalized, word);
-          continue;
-        }
-        if (index.get(normalized)?.id !== word?.id) index.set(normalized, null);
-      }
-    }
-    return index;
-  }
-
-  function repairHistoricalMastery(state) {
-    const words = Array.isArray(state?.words) ? state.words : [];
-    const history = Array.isArray(state?.history) ? state.history : [];
-    if (!words.length || !history.length) return false;
-
-    const wordsById = new Map(words.map((word) => [String(word?.id || ""), word]));
-    const wordsByForm = uniqueWordsByForm(words);
-    const finalReviewByWordId = new Map();
-
-    for (const event of history) {
-      if (!event?.correct || !event?.promoted || Number(event?.previousBox) !== 5 || Number(event?.newBox) !== 5) continue;
-      let word = event.wordId ? wordsById.get(String(event.wordId)) : null;
-      if (!word) word = wordsByForm.get(normalizeLearningForm(event.term)) || null;
-      if (!word || Number(word.box) !== 5) continue;
-
-      const key = String(word.id);
-      const previous = finalReviewByWordId.get(key);
-      const eventTime = String(event.at || event.day || "");
-      const previousTime = String(previous?.at || previous?.day || "");
-      if (!previous || eventTime < previousTime) finalReviewByWordId.set(key, event);
-    }
-
-    let changed = false;
-    for (const word of words) {
-      if (Number(word?.box) !== 5) continue;
-      const finalReview = finalReviewByWordId.get(String(word.id));
-      if (finalReview) {
-        const masteredAt = finalReview.at || (finalReview.day ? new Date(`${finalReview.day}T12:00:00`).toISOString() : word.masteredAt);
-        const lastPromotedDay = finalReview.day || word.lastPromotedDay || null;
-        if (word.due !== null || word.blockedUntil !== null || word.masteredAt !== masteredAt || word.lastPromotedDay !== lastPromotedDay) {
-          word.due = null;
-          word.blockedUntil = null;
-          word.masteredAt = masteredAt;
-          word.lastPromotedDay = lastPromotedDay;
-          changed = true;
-        }
-      } else if (word.due && word.masteredAt) {
-        word.masteredAt = null;
-        changed = true;
-      }
-    }
-    return changed;
-  }
-
-  function responseWithPayload(response, payload) {
-    const body = JSON.stringify(payload);
-    if (typeof window.Response === "function") {
-      return new window.Response(body, {
-        status: response.status,
-        statusText: response.statusText || "",
-        headers: response.headers
-      });
-    }
-    return {
-      ok: response.ok,
-      status: response.status,
-      headers: response.headers,
-      async json() { return JSON.parse(body); },
-      async text() { return body; },
-      clone() { return responseWithPayload(response, payload); }
-    };
-  }
-
   function sessionIsVisible() {
     const node = document.querySelector("#reviewSession");
     return Boolean(node && !node.classList.contains("hidden"));
@@ -247,42 +157,18 @@
     try {
       const payload = await response.clone().json();
       if (payload?.state) {
-        // The history returned by the server is authoritative. Deriving the cursor
-        // here self-heals stale cursor metadata instead of carrying it into writes.
+        // The server owns historical repair. This adapter only tracks the authoritative
+        // review cursor so later writes append exactly the new events.
         persistedCursor = cursorForState(payload.state);
         pendingReviewRevision = null;
         reviewWriteFailed = false;
-
-        if (repairHistoricalMastery(payload.state)) {
-          const revision = Number(payload.revision);
-          if (!Number.isSafeInteger(revision) || revision < 0) return response;
-
-          payload.state.persistenceCursor = payload.state.persistenceCursor || persistedCursor;
-          payload.state.normalizedPersistenceVersion = Math.max(2, Number(payload.state.normalizedPersistenceVersion) || 0);
-          const repairResponse = await originalFetch("/api/state", {
-            method: "PUT",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ state: payload.state, revision })
-          });
-          if (!repairResponse.ok) return response;
-
-          const savedPayload = await repairResponse.clone().json().catch(() => null);
-          const savedRevision = Number(savedPayload?.revision);
-          if (!Number.isSafeInteger(savedRevision) || savedRevision <= revision) return response;
-
-          payload.revision = savedRevision;
-          persistedCursor = cursorForState(payload.state);
-          return responseWithPayload(response, payload);
-        }
       } else {
         persistedCursor = null;
         pendingReviewRevision = null;
         reviewWriteFailed = false;
       }
-    } catch (error) {
-      console.warn("Could not repair historical mastery state:", error);
-      // The application owns response validation. Repair and cursor tracking are best-effort only.
+    } catch {
+      // The application owns response validation. Cursor tracking is best-effort only.
     }
     return response;
   }
@@ -324,6 +210,44 @@
     return position === null ? null : history.length - position;
   }
 
+  function isDueTerminalReview(word, event) {
+    return Boolean(
+      event?.correct &&
+      Number(event?.previousBox) === 5 &&
+      Number(event?.newBox) === 5 &&
+      Number(word?.box) === 5 &&
+      word?.due &&
+      event?.day &&
+      String(word.due) <= String(event.day)
+    );
+  }
+
+  function normalizeTerminalReviewSnapshot(word, event) {
+    if (!isDueTerminalReview(word, event)) return false;
+    word.due = null;
+    word.lastReviewed = event.at;
+    word.lastPromotedDay = event.day;
+    word.blockedUntil = null;
+    word.masteredAt = event.at;
+    event.promoted = true;
+    return true;
+  }
+
+  function syncAcknowledgedReviewToLiveState(command) {
+    if (!command || !isDueTerminalReview(command.word, command.event) && !command.word?.masteredAt) return;
+    const liveState = window.VazheyarTest?.getState?.();
+    if (!liveState || !Array.isArray(liveState.words)) return;
+    const liveWord = liveState.words.find((item) => String(item?.id) === String(command.word.id));
+    if (liveWord) Object.assign(liveWord, command.word);
+    const liveEvent = Array.isArray(liveState.history)
+      ? [...liveState.history].reverse().find((item) => (
+        String(item?.wordId) === String(command.event.wordId) &&
+        String(item?.at) === String(command.event.at)
+      ))
+      : null;
+    if (liveEvent) Object.assign(liveEvent, command.event);
+  }
+
   function reviewCommandForState(payload, state) {
     if (reviewDeltaCount(state) !== 1) return null;
     const history = Array.isArray(state?.history) ? state.history : [];
@@ -334,6 +258,8 @@
     const daily = event?.day ? state?.daily?.[event.day] : null;
     const revision = Number(payload?.revision);
     if (!event || !word || !daily || !Number.isSafeInteger(revision) || revision < 0) return null;
+
+    normalizeTerminalReviewSnapshot(word, event);
 
     return {
       revision,
@@ -417,6 +343,7 @@
             const acknowledged = await acknowledgesRevision(response, expectedRevision);
             reviewWriteFailed = !acknowledged;
             if (acknowledged) {
+              syncAcknowledgedReviewToLiveState(compactReview);
               persistedCursor = cursorForState(prepared.state);
               pendingReviewRevision = null;
             }
@@ -531,7 +458,6 @@
     parseLocalizedInteger,
     reviewFingerprint,
     cursorForState,
-    repairHistoricalMastery,
     cursorPosition,
     reviewCommandForState,
     reviewDeltaCount,

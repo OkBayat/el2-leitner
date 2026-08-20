@@ -23,11 +23,15 @@ describe("HTTP API", () => {
     assert.equal(html.headers["cdn-cache-control"], "no-store");
 
     const stylesheet = await request(app).get("/styles-v2.css").expect(200);
-    assert.equal(stylesheet.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(stylesheet.headers["cache-control"], /no-store/);
+    assert.equal(stylesheet.headers["cdn-cache-control"], "no-store");
+    assert.equal(stylesheet.headers["surrogate-control"], "no-store");
     assert.match(stylesheet.headers["content-type"], /^text\/css/);
 
     const script = await request(app).get("/app-v2.js").expect(200);
-    assert.equal(script.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(script.headers["cache-control"], /no-store/);
+    assert.equal(script.headers["cdn-cache-control"], "no-store");
+    assert.equal(script.headers["surrogate-control"], "no-store");
     assert.match(script.headers["content-type"], /javascript/);
 
     const logo = await request(app).get("/assets/vocora-logo.png").expect(200);

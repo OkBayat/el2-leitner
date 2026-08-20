@@ -1,0 +1,248 @@
+name: Box Five Repair Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - agent/**
+
+permissions:
+  contents: read
+
+jobs:
+  mysql-repair:
+    runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci-application-password
+      DB_ADMIN_PASSWORD: ci-root-password
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start MySQL and initialize schema
+        run: |
+          set -euo pipefail
+          docker compose up --build --detach mysql
+          for attempt in {1..60}; do
+            if docker compose exec -T mysql mysqladmin ping --host=127.0.0.1 --user=root --password="$MYSQL_ROOT_PASSWORD" --silent; then
+              break
+            fi
+            sleep 2
+          done
+          docker compose run --rm db-setup
+
+      - name: Seed persisted historical box-five failures
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --default-character-set=utf8mb4 <<'SQL'
+          INSERT INTO users (email, password_hash)
+          VALUES ('box5-repair-ci@example.com', 'not-used-by-integration-test');
+
+          SET @user_id = (SELECT id FROM users WHERE email = 'box5-repair-ci@example.com');
+          SET @monday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Monday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
+          SET @tuesday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Tuesday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
+
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@monday_id, 'Monday legacy', 'monday legacy', 0);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-private-tuesday', 'en', 'Tuesday', 'tuesday', CONCAT('user:', @user_id, ':en:tuesday'), @user_id, 'active');
+          SET @private_tuesday_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@private_tuesday_id, 'Tuesday', 'tuesday', 1);
+
+          -- A second active identity only blocks fallback when it is genuinely visible
+          -- to this learner through an active, non-archived collection membership.
+          INSERT INTO collections
+            (public_id, slug, title, kind, visibility, status, owner_user_id, published_at)
+          VALUES
+            ('box5-visible-private-collection', CONCAT('box5-visible-private-', @user_id),
+             'Box 5 visible private identities', 'personal', 'private', 'published',
+             @user_id, CURRENT_TIMESTAMP(3));
+          SET @personal_collection_id = LAST_INSERT_ID();
+
+          INSERT INTO user_collections (user_id, collection_id, status)
+          VALUES (@user_id, @personal_collection_id, 'active');
+
+          INSERT INTO collection_entries
+            (public_id, collection_id, vocabulary_entry_id, position)
+          VALUES
+            ('box5-visible-private-tuesday-entry', @personal_collection_id, @private_tuesday_id, 1);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-normalized-apostrophe', 'en', 'qa''legacy', 'qa''legacy', CONCAT('user:', @user_id, ':en:qa''legacy'), @user_id, 'active');
+          SET @apostrophe_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@apostrophe_id, 'qa''legacy', 'qa''legacy', 1);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-current-lifecycle', 'en', 'qa lifecycle', 'qa lifecycle', CONCAT('user:', @user_id, ':en:qa lifecycle'), @user_id, 'active');
+          SET @lifecycle_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@lifecycle_id, 'qa lifecycle', 'qa lifecycle', 1);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-first-final', 'en', 'qa repeat-final', 'qa repeat-final', CONCAT('user:', @user_id, ':en:qa repeat-final'), @user_id, 'active');
+          SET @repeat_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@repeat_id, 'qa repeat-final', 'qa repeat-final', 1);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-post-reset', 'en', 'qa relearned', 'qa relearned', CONCAT('user:', @user_id, ':en:qa relearned'), @user_id, 'active');
+          SET @relearned_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@relearned_id, 'qa relearned', 'qa relearned', 1);
+
+          -- The current canonical identity is visible, while the historical identity
+          -- remains active but orphaned from every active collection. Its real final
+          -- review must still be recoverable by the canonical card's unique alias.
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-orphan-current', 'en', 'qa orphan current', 'qa orphan current',
+             CONCAT('user:', @user_id, ':en:qa orphan current'), @user_id, 'active');
+          SET @orphan_current_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES
+            (@orphan_current_id, 'qa orphan current', 'qa orphan current', 1),
+            (@orphan_current_id, 'qa orphan', 'qa orphan', 0);
+
+          INSERT INTO collection_entries
+            (public_id, collection_id, vocabulary_entry_id, position)
+          VALUES
+            ('box5-visible-orphan-current-entry', @personal_collection_id, @orphan_current_id, 2);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-orphan-legacy', 'en', 'qa orphan legacy', 'qa orphan legacy',
+             CONCAT('user:', @user_id, ':en:qa orphan legacy'), @user_id, 'active');
+          SET @orphan_legacy_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES
+            (@orphan_legacy_id, 'qa orphan legacy', 'qa orphan legacy', 1),
+            (@orphan_legacy_id, 'qa orphan', 'qa orphan', 0);
+
+          INSERT INTO user_state_revisions (user_id, revision)
+          VALUES (@user_id, 10);
+
+          INSERT INTO user_vocabulary_progress
+            (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count,
+             introduced_on, last_reviewed_at, last_promoted_on, mastered_at)
+          VALUES
+            (@user_id, @monday_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 08:00:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
+            (@user_id, @tuesday_id, 'active', 5, '2026-09-03', 4, 4,
+             '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000'),
+            (@user_id, @apostrophe_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 08:30:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
+            (@user_id, @lifecycle_id, 'active', 5, '2026-09-03', 4, 4,
+             '2026-08-10', '2026-08-18 08:40:00.000', '2026-08-18', '2026-08-01 09:00:00.000'),
+            (@user_id, @repeat_id, 'active', 5, '2026-09-03', 6, 6,
+             '2026-07-01', '2026-08-20 08:45:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
+            (@user_id, @relearned_id, 'active', 5, '2026-09-03', 9, 8,
+             '2026-07-01', '2026-08-20 08:50:00.000', '2026-08-20', '2026-08-01 08:50:00.000'),
+            (@user_id, @orphan_current_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 09:10:00.000', '2026-08-20', '2026-08-01 09:10:00.000');
+
+          INSERT INTO review_events
+            (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
+             previous_box, new_box, promoted, term_snapshot)
+          VALUES
+            (REPEAT('d', 64), @user_id, @monday_id, '2026-08-06 08:00:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'Monday'),
+            (REPEAT('a', 64), @user_id, NULL, '2026-08-20 08:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Monday legacy'),
+            (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday'),
+            (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday'),
+            (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
+            (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy'),
+            -- Same calendar day as the current introduction. A real final review cannot
+            -- belong to a card introduced that day, so this evidence is from an older lifecycle.
+            (REPEAT('g', 64), @user_id, NULL, '2026-08-10 08:40:00.000', '2026-08-10', 1, 'scheduled', 5, 5, 1, 'qa lifecycle'),
+            (REPEAT('h', 64), @user_id, NULL, '2026-08-06 08:45:00.000', '2026-08-06', 1, 'scheduled', 5, 5, 1, 'qa repeat-final'),
+            (REPEAT('i', 64), @user_id, NULL, '2026-08-20 08:45:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa repeat-final'),
+            -- This card really mastered once, then failed a later review and restarted at box 1.
+            -- It has since climbed back to box 5 but has not completed the new final review yet.
+            (REPEAT('j', 64), @user_id, NULL, '2026-08-01 08:50:00.000', '2026-08-01', 1, 'scheduled', 5, 5, 1, 'qa relearned'),
+            (REPEAT('k', 64), @user_id, NULL, '2026-08-15 08:50:00.000', '2026-08-15', 0, 'scheduled', 5, 1, 0, 'qa relearned'),
+            (REPEAT('l', 64), @user_id, @relearned_id, '2026-08-20 08:50:00.000', '2026-08-20', 1, 'scheduled', 4, 5, 1, 'qa relearned'),
+            -- Identity drift after entering box 5: the real final is still linked to
+            -- an active legacy identity that is no longer visible in any collection.
+            (REPEAT('m', 64), @user_id, @orphan_current_id, '2026-08-06 09:10:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa orphan current'),
+            (REPEAT('n', 64), @user_id, @orphan_legacy_id, '2026-08-20 09:10:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa orphan');
+          SQL
+
+      - name: Run production repair path
+        run: docker compose run --rm db-setup
+
+      - name: Verify mastery, lifecycle isolation, identity safety, and one revision bump
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Monday' AND ve.owner_user_id IS NULL AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:00:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Tuesday' AND ve.owner_user_id IS NULL AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-normalized-apostrophe' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:30:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-current-lifecycle' AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-first-final' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-06 08:45:00.000' AND uvp.last_reviewed_at='2026-08-20 08:45:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-post-reset' AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-orphan-current' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 09:10:00.000' AND uvp.last_reviewed_at='2026-08-20 09:10:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-repair-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Verify repair is idempotent
+        run: |
+          set -euo pipefail
+          docker compose run --rm db-setup
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-repair-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Print container logs after a failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes

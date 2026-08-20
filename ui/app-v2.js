@@ -133,29 +133,6 @@
     return payload;
   }
 
-  function repairBoxFiveMastery(targetState) {
-    const finalReviewByWord = new Map();
-    (targetState.history || []).forEach((event) => {
-      if (!event.wordId || !event.correct || !event.promoted || Number(event.previousBox) !== 5 || Number(event.newBox) !== 5) return;
-      const previous = finalReviewByWord.get(event.wordId);
-      const eventTime = String(event.at || event.day || '');
-      const previousTime = String(previous?.at || previous?.day || '');
-      if (!previous || eventTime < previousTime) finalReviewByWord.set(event.wordId, event);
-    });
-    targetState.words.forEach((word) => {
-      if (word.box !== 5) return;
-      const finalReview = finalReviewByWord.get(word.id);
-      if (finalReview) {
-        word.due = null;
-        word.blockedUntil = null;
-        word.masteredAt = finalReview.at || word.masteredAt || new Date(`${finalReview.day}T12:00:00`).toISOString();
-        word.lastPromotedDay = finalReview.day || word.lastPromotedDay;
-      } else if (word.due) {
-        word.masteredAt = null;
-      }
-    });
-  }
-
   function hydrateState(parsed) {
     if (!parsed || !Array.isArray(parsed.words)) throw new Error('Invalid state');
     const defaults = defaultState();
@@ -170,7 +147,6 @@
       history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(clean);
-    repairBoxFiveMastery(clean);
     return clean;
   }
 
@@ -303,7 +279,7 @@
           word.masteredAt = null;
           return;
         }
-        const eligible = word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && word.lastPromotedDay !== day;
+        const eligible = word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day) && (word.box === 5 || word.lastPromotedDay !== day);
         if (!eligible) return;
         word.lastPromotedDay = day;
         word.blockedUntil = null;
@@ -396,13 +372,17 @@
     return getDueWords().filter((word) => word.introducedOn === today && word.box === 1);
   }
 
+  function isActiveLeitnerWord(word) {
+    return Number(word?.box) > 0 && !word?.masteredAt;
+  }
+
   function totalStats() {
     return state.words.reduce((sum, word) => {
       sum.attempts += word.attempts;
       sum.correct += word.correct;
       sum.mistakes += word.mistakes;
       if (word.masteredAt) sum.mastered += 1;
-      if (word.box > 0 && !word.masteredAt) sum.learning += 1;
+      if (isActiveLeitnerWord(word)) sum.learning += 1;
       return sum;
     }, { attempts: 0, correct: 0, mistakes: 0, mastered: 0, learning: 0 });
   }
@@ -522,7 +502,7 @@
   }
 
   function renderBoxDistribution() {
-    const learningWords = state.words.filter((word) => word.box > 0);
+    const learningWords = state.words.filter(isActiveLeitnerWord);
     const counts = [1, 2, 3, 4, 5].map((box) => learningWords.filter((word) => word.box === box).length);
     const max = Math.max(...counts, 1);
     $('#boxDistribution').innerHTML = counts.map((count, index) => `<div class="box-row"><span>خانهٔ ${faNumber.format(index + 1)}</span><div class="progress-track"><i style="width:${Math.round((count / max) * 100)}%"></i></div><span class="box-count">${faNumber.format(count)}</span></div>`).join('');
@@ -687,7 +667,7 @@
         && currentWord.due
         && currentWord.due <= today
         && (!currentWord.blockedUntil || currentWord.blockedUntil <= today)
-        && currentWord.lastPromotedDay !== today;
+        && (previousBox === 5 || currentWord.lastPromotedDay !== today);
       if (eligible) {
         currentWord.lastPromotedDay = today;
         currentWord.blockedUntil = null;
@@ -715,7 +695,7 @@
     if (correct) daily.correct += 1;
     else daily.wrong += 1;
     state.history.push({
-      at: new Date().toISOString(), day: today, wordId: currentWord.id, term: currentWord.term,
+      at: reviewedAt, day: today, wordId: currentWord.id, term: currentWord.term,
       answer: String(answer || ''), correct, mode: session.mode, promoted, previousBox, newBox: currentWord.box,
       mistakeNumber: correct ? null : currentWord.mistakes
     });
@@ -840,7 +820,9 @@
     const sort = $('#sortWords').value;
     let words = state.words.filter((word) => {
       const matchesSearch = !search || normalizeAnswer(`${word.term} ${word.accepted.join(' ')} ${word.category}`).includes(search);
-      const matchesBox = box === 'all' || word.box === Number(box);
+      const boxNumber = Number(box);
+      const matchesBox = box === 'all'
+        || (boxNumber === 0 ? word.box === 0 : isActiveLeitnerWord(word) && word.box === boxNumber);
       return matchesSearch && matchesBox;
     });
     words.sort((a, b) => {
@@ -855,7 +837,7 @@
     $('#wordCountLabel').textContent = `${faNumber.format(words.length)} کلمه`;
     $('#wordsTableBody').innerHTML = pageWords.length ? pageWords.map((word) => `<tr>
       <td class="word-cell">${escapeHtml(word.accepted.join(' / '))}</td><td>${escapeHtml(word.category)}</td>
-      <td><span class="box-badge ${word.box ? '' : 'new'}">${word.box ? `خانهٔ ${faNumber.format(word.box)}` : 'وارد نشده'}</span></td>
+      <td><span class="box-badge ${word.box ? '' : 'new'}">${word.masteredAt ? 'تسلط' : word.box ? `خانهٔ ${faNumber.format(word.box)}` : 'وارد نشده'}</span></td>
       <td>${faNumber.format(word.attempts)}</td><td class="mistake-count">${faNumber.format(word.mistakes)}</td>
       <td>${word.due ? formatRelativeDay(word.due) : '—'}</td>
       <td><div class="row-menu">${word.box === 0 ? `<button class="mini-btn add-to-box-one" data-id="${word.id}" aria-label="افزودن ${escapeHtml(word.term)} به خانه ۱" title="افزودن به خانهٔ ۱">＋</button>` : ''}<button class="mini-btn listen-row" data-id="${word.id}" aria-label="تلفظ">▶</button><button class="mini-btn edit-row" data-id="${word.id}">ویرایش</button><button class="mini-btn delete delete-row" data-id="${word.id}">حذف</button></div></td>
@@ -926,7 +908,7 @@
     renderAccuracyChart();
     renderProgressMetrics(stats, activeDays);
     const hardest = hardWords(30);
-    $('#hardWordsTable').innerHTML = hardest.length ? hardest.map((word) => `<tr><td class="word-cell">${escapeHtml(word.term)}</td><td class="mistake-count">${faNumber.format(word.mistakes)}</td><td>${faNumber.format(word.attempts)}</td><td>${faNumber.format(accuracy(word.correct, word.attempts) || 0)}٪</td><td>${faNumber.format(word.box)}</td><td>${word.lastReviewed ? shortFaDate.format(new Date(word.lastReviewed)) : '—'}</td></tr>`).join('') : '<tr><td colspan="6" class="no-data">پس از مرور لغات، گزارش اینجا نمایش داده می‌شود.</td></tr>';
+    $('#hardWordsTable').innerHTML = hardest.length ? hardest.map((word) => `<tr><td class="word-cell">${escapeHtml(word.term)}</td><td class="mistake-count">${faNumber.format(word.mistakes)}</td><td>${faNumber.format(word.attempts)}</td><td>${faNumber.format(accuracy(word.correct, word.attempts) || 0)}٪</td><td>${word.masteredAt ? 'تسلط' : faNumber.format(word.box)}</td><td>${word.lastReviewed ? shortFaDate.format(new Date(word.lastReviewed)) : '—'}</td></tr>`).join('') : '<tr><td colspan="6" class="no-data">پس از مرور لغات، گزارش اینجا نمایش داده می‌شود.</td></tr>';
   }
 
   function renderAccuracyChart() {
@@ -987,7 +969,10 @@
   function buildAnalysisReport() {
     const stats = totalStats();
     const activeDays = Object.entries(state.daily).filter(([, value]) => value.attempts > 0);
-    const boxDistribution = Object.fromEntries([0, 1, 2, 3, 4, 5].map((box) => [box === 0 ? 'new' : `box_${box}`, state.words.filter((word) => word.box === box).length]));
+    const boxDistribution = Object.fromEntries([0, 1, 2, 3, 4, 5].map((box) => [
+      box === 0 ? 'new' : `box_${box}`,
+      state.words.filter((word) => word.box === box && (box === 0 || isActiveLeitnerWord(word))).length
+    ]));
     return {
       reportType: 'Vocora Learning Analysis',
       schemaVersion: SCHEMA_VERSION,
@@ -1010,7 +995,7 @@
       boxDistribution,
       last90Days: Object.fromEntries(Object.entries(state.daily).filter(([day]) => day >= daysAgo(89)).sort(([a], [b]) => a.localeCompare(b))),
       hardestWords: hardWords(100).map((word) => ({
-        word: word.term, acceptedSpellings: word.accepted, category: word.category, box: word.box, addedSource: word.addedSource,
+        word: word.term, acceptedSpellings: word.accepted, category: word.category, box: word.box, mastered: Boolean(word.masteredAt), addedSource: word.addedSource,
         attempts: word.attempts, correct: word.correct, mistakes: word.mistakes,
         accuracyPercent: accuracy(word.correct, word.attempts), mistakeRatePercent: word.attempts ? Math.round((word.mistakes / word.attempts) * 100) : 0,
         lastReviewed: word.lastReviewed, nextDue: word.due, blockedUntil: word.blockedUntil, note: word.notes || undefined
@@ -1186,7 +1171,6 @@
       settings: { ...defaultState().settings, ...parsed.settings }, words: parsed.words.map(createWord), daily: parsed.daily || {}, history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(state);
-    repairBoxFiveMastery(state);
     ensureDailyWords();
     saveState();
     renderAll();
