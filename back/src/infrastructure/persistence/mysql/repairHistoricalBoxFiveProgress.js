@@ -31,13 +31,14 @@ function groupByUser(rows) {
   return [...groups.values()];
 }
 
+const UTF8_APOSTROPHE_SQL = "CONVERT(CHAR(39) USING utf8mb4)";
 const NORMALIZED_TERM_SQL = `LOWER(REGEXP_REPLACE(
   TRIM(
     REPLACE(
       REPLACE(
         REPLACE(
-          REPLACE(re.term_snapshot, '’', CHAR(39)),
-          '‘', CHAR(39)
+          REPLACE(re.term_snapshot, '’', ${UTF8_APOSTROPHE_SQL}),
+          '‘', ${UTF8_APOSTROPHE_SQL}
         ),
         '–', '-'
       ),
