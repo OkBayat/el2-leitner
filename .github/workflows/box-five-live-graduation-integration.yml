@@ -55,60 +55,42 @@ jobs:
               "schemaVersion": 2,
               "createdAt": "2026-07-12T14:24:26.386Z",
               "updatedAt": "2026-08-20T09:59:00.000Z",
-              "settings": {
-                "dailyNew": 10,
-                "dailyGoal": 20,
-                "voiceRate": 0.85,
-                "theme": "light"
-              },
-              "words": [
-                {
-                  "id": "68d0f1aa-cff2-4089-9371-b2aa727f92d1",
-                  "number": 1,
-                  "term": "Monday",
-                  "accepted": ["Monday"],
-                  "category": "Calendar and time",
-                  "notes": "",
-                  "createdAt": "2026-08-07T12:21:53.760Z",
-                  "box": 5,
-                  "due": "2026-08-20",
-                  "attempts": 5,
-                  "correct": 5,
-                  "mistakes": 0,
-                  "currentStreak": 5,
-                  "introducedOn": "2026-07-12",
-                  "addedSource": null,
-                  "lastReviewed": "2026-08-06T17:12:27.997Z",
-                  "lastPromotedDay": "2026-08-06",
-                  "blockedUntil": null,
-                  "masteredAt": "2026-08-06T17:12:27.997Z"
-                }
-              ],
-              "daily": {
-                "2026-08-06": {
-                  "attempts": 1,
-                  "correct": 1,
-                  "wrong": 0,
-                  "newAdded": 0,
-                  "sessions": 1,
-                  "durationSeconds": 0
-                }
-              },
-              "history": [
-                {
-                  "at": "2026-08-06T17:12:27.997Z",
-                  "day": "2026-08-06",
-                  "wordId": "68d0f1aa-cff2-4089-9371-b2aa727f92d1",
-                  "term": "Monday",
-                  "answer": "Monday",
-                  "correct": true,
-                  "mode": "scheduled",
-                  "promoted": true,
-                  "previousBox": 4,
-                  "newBox": 5,
-                  "mistakeNumber": null
-                }
-              ]
+              "settings": {"dailyNew":10,"dailyGoal":20,"voiceRate":0.85,"theme":"light"},
+              "words": [{
+                "id":"68d0f1aa-cff2-4089-9371-b2aa727f92d1",
+                "number":1,
+                "term":"Monday",
+                "accepted":["Monday"],
+                "category":"Calendar and time",
+                "notes":"",
+                "createdAt":"2026-08-07T12:21:53.760Z",
+                "box":5,
+                "due":"2026-08-20",
+                "attempts":5,
+                "correct":5,
+                "mistakes":0,
+                "currentStreak":5,
+                "introducedOn":"2026-07-12",
+                "addedSource":null,
+                "lastReviewed":"2026-08-06T17:12:27.997Z",
+                "lastPromotedDay":"2026-08-06",
+                "blockedUntil":null,
+                "masteredAt":"2026-08-06T17:12:27.997Z"
+              }],
+              "daily":{"2026-08-06":{"attempts":1,"correct":1,"wrong":0,"newAdded":0,"sessions":1,"durationSeconds":0}},
+              "history":[{
+                "at":"2026-08-06T17:12:27.997Z",
+                "day":"2026-08-06",
+                "wordId":"68d0f1aa-cff2-4089-9371-b2aa727f92d1",
+                "term":"Monday",
+                "answer":"Monday",
+                "correct":true,
+                "mode":"scheduled",
+                "promoted":true,
+                "previousBox":4,
+                "newBox":5,
+                "mistakeNumber":null
+              }]
             }',
             1,
             '2026-07-12 14:24:26.386',
@@ -116,9 +98,6 @@ jobs:
           );
           SQL
 
-          # This is the exact production startup path. It must migrate the old
-          # UUID state and clear the premature mastery from the 4 -> 5 event,
-          # leaving Monday due for its real final review.
           docker compose run --rm db-setup
 
       - name: Review Monday through the real HTTP API and reload persisted state
@@ -145,17 +124,17 @@ jobs:
           BEFORE_REVISION=$(jq -r '.revision' /tmp/box5-before-final.json)
           EXPECTED_REVISION=$((BEFORE_REVISION + 1))
 
-          # Deliberately submit the old broken browser shape: the event says this
-          # is a successful promoted 5 -> 5 final review, but the word schedules
-          # another 14-day due date and leaves masteredAt empty. The server must
-          # derive the final outcome instead of trusting those stale fields.
+          # Exact regression: the broken browser has already written
+          # lastPromotedDay=today, so it records a correct due 5 -> 5 with
+          # promoted=false and leaves the due date untouched. The server must
+          # normalize that terminal review instead of returning the card to 5.
           jq '
             (.state.words[] | select(.term == "Monday")) as $word
             | {
                 revision: .revision,
                 word: ($word
                   | .box = 5
-                  | .due = "2026-09-03"
+                  | .due = "2026-08-20"
                   | .attempts = 6
                   | .correct = 6
                   | .mistakes = 0
@@ -172,7 +151,7 @@ jobs:
                   answer: "Monday",
                   correct: true,
                   mode: "scheduled",
-                  promoted: true,
+                  promoted: false,
                   previousBox: 5,
                   newBox: 5,
                   mistakeNumber: null
@@ -195,8 +174,6 @@ jobs:
             http://127.0.0.1:3000/api/learning/reviews \
             | jq -e --argjson revision "$EXPECTED_REVISION" '.revision == $revision'
 
-          # Repeat the identical stale request. The event key makes this retry
-          # idempotent even though it still carries the old pre-write revision.
           curl --fail --silent --show-error \
             --cookie /tmp/box5-live-cookies \
             --header 'Content-Type: application/json' \
@@ -234,6 +211,8 @@ jobs:
             --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-live-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:00:00.000' AND uvp.last_reviewed_at='2026-08-20 10:00:00.000' AND uvp.last_promoted_on='2026-08-20';" \
             | grep -qx '1'
 
+          # The server normalizes the stale promoted=false evidence before it is
+          # persisted so future repair and analytics see the canonical event.
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
             --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='box5-live-ci@example.com' AND re.term_snapshot='Monday' AND re.correct=1 AND re.promoted=1 AND re.previous_box=5 AND re.new_box=5 AND re.occurred_at='2026-08-20 10:00:00.000';" \
