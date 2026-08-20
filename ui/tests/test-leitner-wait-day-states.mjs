@@ -8,7 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
-const assetVersion = 'wait-day-states-v3';
+const assetVersion = 'wait-day-states-v4';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -89,8 +89,13 @@ assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Regression: obsolete 
 
 assert.match(
   layoutCss,
-  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*linear-gradient\(180deg, rgba\(249, 250, 252, \.58\), rgba\(245, 248, 251, \.88\)\);[\s\S]*?box-shadow:\s*none;/,
-  'Regression: each state must be a flat pale rectangle with only a colored bottom border and no rounded card chrome'
+  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*#f7f9fb;[\s\S]*?box-shadow:\s*none;/,
+  'Regression: each state must use a plain solid background and a 60%-alpha colored bottom border'
+);
+assert.doesNotMatch(
+  layoutCss,
+  /\.leitner-segment\s*\{[^}]*linear-gradient/,
+  'Regression: the default Leitner state background must never be a gradient'
 );
 assert.match(
   layoutCss,
@@ -104,30 +109,30 @@ assert.match(
 );
 assert.match(
   layoutCss,
-  /\.leitner-segment:hover,[\s\S]*?\.leitner-segment:focus-visible\s*\{[\s\S]*?box-shadow:\s*none;[\s\S]*?transform:\s*none;/,
-  'Hover/focus must preserve the reference flat rectangular silhouette'
+  /\.leitner-segment:hover,[\s\S]*?\.leitner-segment:focus-visible\s*\{[\s\S]*?background:\s*#f4f7fa;[\s\S]*?box-shadow:\s*none;[\s\S]*?transform:\s*none;/,
+  'Hover/focus must keep a simple solid background and preserve the flat rectangular silhouette'
 );
 
-const expectedAccents = [
-  '#2ac2d9',
-  '#1fbecb',
-  '#2eb82b',
-  '#075cf0',
-  '#7b4de8'
+const expectedAccentRgb = [
+  '42, 194, 217',
+  '31, 190, 203',
+  '46, 184, 43',
+  '7, 92, 240',
+  '123, 77, 232'
 ];
-expectedAccents.forEach((accent, index) => {
+expectedAccentRgb.forEach((accentRgb, index) => {
   const house = index + 1;
   assert.match(
     layoutCss,
-    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent:\\s*${accent};`),
-    `House ${house} must use the reference underline color ${accent}`
+    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent-rgb:\\s*${accentRgb};`),
+    `House ${house} must expose its reference accent as RGB channels for the rgba border`
   );
 });
 
 assert.match(
   layoutCss,
-  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*var\(--house-accent\);[\s\S]*?box-shadow:\s*none;/,
-  'Dark mode must preserve the same flat shape and house-colored underline'
+  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?background:\s*rgba\(255, 255, 255, \.055\);[\s\S]*?box-shadow:\s*none;/,
+  'Dark mode must preserve the same 60%-alpha underline and a simple non-gradient background'
 );
 
 console.log('Leitner wait-day state regression and unit tests passed.');
