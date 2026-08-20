@@ -133,29 +133,6 @@
     return payload;
   }
 
-  function repairBoxFiveMastery(targetState) {
-    const finalReviewByWord = new Map();
-    (targetState.history || []).forEach((event) => {
-      if (!event.wordId || !event.correct || !event.promoted || Number(event.previousBox) !== 5 || Number(event.newBox) !== 5) return;
-      const previous = finalReviewByWord.get(event.wordId);
-      const eventTime = String(event.at || event.day || '');
-      const previousTime = String(previous?.at || previous?.day || '');
-      if (!previous || eventTime < previousTime) finalReviewByWord.set(event.wordId, event);
-    });
-    targetState.words.forEach((word) => {
-      if (word.box !== 5) return;
-      const finalReview = finalReviewByWord.get(word.id);
-      if (finalReview) {
-        word.due = null;
-        word.blockedUntil = null;
-        word.masteredAt = finalReview.at || word.masteredAt || new Date(`${finalReview.day}T12:00:00`).toISOString();
-        word.lastPromotedDay = finalReview.day || word.lastPromotedDay;
-      } else if (word.due) {
-        word.masteredAt = null;
-      }
-    });
-  }
-
   function hydrateState(parsed) {
     if (!parsed || !Array.isArray(parsed.words)) throw new Error('Invalid state');
     const defaults = defaultState();
@@ -170,7 +147,6 @@
       history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(clean);
-    repairBoxFiveMastery(clean);
     return clean;
   }
 
@@ -719,7 +695,7 @@
     if (correct) daily.correct += 1;
     else daily.wrong += 1;
     state.history.push({
-      at: new Date().toISOString(), day: today, wordId: currentWord.id, term: currentWord.term,
+      at: reviewedAt, day: today, wordId: currentWord.id, term: currentWord.term,
       answer: String(answer || ''), correct, mode: session.mode, promoted, previousBox, newBox: currentWord.box,
       mistakeNumber: correct ? null : currentWord.mistakes
     });
@@ -1195,7 +1171,6 @@
       settings: { ...defaultState().settings, ...parsed.settings }, words: parsed.words.map(createWord), daily: parsed.daily || {}, history: Array.isArray(parsed.history) ? parsed.history : []
     };
     if (sourceVersion < 2) migrateLegacyProgress(state);
-    repairBoxFiveMastery(state);
     ensureDailyWords();
     saveState();
     renderAll();
