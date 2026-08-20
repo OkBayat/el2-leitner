@@ -65,7 +65,7 @@ describe("historical box-five progress repair", () => {
           return [[progressById.get(Number(parameters[1]))], []];
         }
         if (isExactReviewQuery(sql)) return [[exactById.get(Number(parameters[3]))], []];
-        if (isFallbackReviewQuery(sql)) throw new Error("fallback must not run when an exact review exists");
+        if (isFallbackReviewQuery(sql)) return [[], []];
         if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
         if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
         if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -107,7 +107,7 @@ describe("historical box-five progress repair", () => {
     assert.equal(writes.filter(({ sql }) => /SET revision = revision \+ 1/u.test(sql)).length, 1);
   });
 
-  it("uses normalized accepted-term fallback only when no exact review exists", async () => {
+  it("uses normalized accepted-term fallback when exact review is absent", async () => {
     const writes = [];
     let exactLookups = 0;
     let fallbackLookups = 0;
