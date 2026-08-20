@@ -88,15 +88,6 @@ test("a final review before the latest reset to box 1 cannot master a relearned 
 });
 
 test("an ambiguous NULL-id reset after an exact final keeps the card pending rather than risking false mastery", async () => {
-  const exactOldFinal = event({
-    id: 9700,
-    at: "2026-08-01T09:00:00.000Z",
-    correct: 1,
-    promoted: 1,
-    previousBox: 5,
-    newBox: 5,
-    term: "shared-reset"
-  });
   const ambiguousReset = event({
     id: 9800,
     at: "2026-08-15T09:00:00.000Z",
@@ -107,13 +98,14 @@ test("an ambiguous NULL-id reset after an exact final keeps the card pending rat
     term: "shared-reset"
   });
   let graduated = false;
+  let exactFinalBoundaryChecked = false;
 
   const connection = {
     async beginTransaction() {},
     async commit() {},
     async rollback() {},
     release() {},
-    async execute(sql) {
+    async execute(sql, parameters = []) {
       if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) {
         return [[{ revision: 10, learning_reset_at: null }], []];
       }
@@ -136,7 +128,16 @@ test("an ambiguous NULL-id reset after an exact final keeps the card pending rat
       }
       if (/FROM review_events/u.test(sql) && /vocabulary_entry_id = \?/u.test(sql)) {
         if (/correct = 0/u.test(sql) && /new_box = 1/u.test(sql)) return [[], []];
-        if (/correct = 1/u.test(sql) && /previous_box = 5/u.test(sql)) return [[exactOldFinal], []];
+        if (/correct = 1/u.test(sql) && /previous_box = 5/u.test(sql)) {
+          assert.match(sql, /occurred_at > \?/u, "the exact final lookup must be bounded by the possible reset");
+          assert.equal(
+            new Date(parameters.at(-1)).toISOString(),
+            "2026-08-15T09:00:00.000Z",
+            "the ambiguous reset must be the exact-final safety boundary"
+          );
+          exactFinalBoundaryChecked = true;
+          return [[], []];
+        }
       }
       if (/SET due_date = NULL/u.test(sql)) {
         graduated = true;
@@ -159,4 +160,5 @@ test("an ambiguous NULL-id reset after an exact final keeps the card pending rat
 
   assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
   assert.equal(graduated, false, "uncertain reset ownership must never cause an automatic false mastery");
+  assert.equal(exactFinalBoundaryChecked, true);
 });
