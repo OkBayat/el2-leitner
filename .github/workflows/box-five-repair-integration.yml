@@ -64,6 +64,22 @@ jobs:
           INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
           VALUES (@apostrophe_id, 'qa''legacy', 'qa''legacy', 1);
 
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-current-lifecycle', 'en', 'qa lifecycle', 'qa lifecycle', CONCAT('user:', @user_id, ':en:qa lifecycle'), @user_id, 'active');
+          SET @lifecycle_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@lifecycle_id, 'qa lifecycle', 'qa lifecycle', 1);
+
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-first-final', 'en', 'qa repeat-final', 'qa repeat-final', CONCAT('user:', @user_id, ':en:qa repeat-final'), @user_id, 'active');
+          SET @repeat_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@repeat_id, 'qa repeat-final', 'qa repeat-final', 1);
+
           INSERT INTO user_state_revisions (user_id, revision)
           VALUES (@user_id, 10);
 
@@ -76,7 +92,15 @@ jobs:
             (@user_id, @tuesday_id, 'active', 5, '2026-09-03', 4, 4,
              '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000'),
             (@user_id, @apostrophe_id, 'active', 5, '2026-09-03', 5, 5,
-             '2026-07-01', '2026-08-20 08:30:00.000', '2026-08-20', '2026-08-01 09:00:00.000');
+             '2026-07-01', '2026-08-20 08:30:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
+            -- This vocabulary was reintroduced on Aug 10. The Aug 1 final review below belongs
+            -- to an older lifecycle and must not graduate the current card.
+            (@user_id, @lifecycle_id, 'active', 5, '2026-09-03', 4, 4,
+             '2026-08-10', '2026-08-18 08:40:00.000', '2026-08-18', '2026-08-01 09:00:00.000'),
+            -- The old bug created multiple successful box-5 reviews. The first one is the real
+            -- mastery moment under the corrected Leitner semantics.
+            (@user_id, @repeat_id, 'active', 5, '2026-09-03', 6, 6,
+             '2026-07-01', '2026-08-20 08:45:00.000', '2026-08-20', '2026-08-01 09:00:00.000');
 
           INSERT INTO review_events
             (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
@@ -87,13 +111,16 @@ jobs:
             (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday'),
             (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday'),
             (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
-            (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy');
+            (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy'),
+            (REPEAT('g', 64), @user_id, NULL, '2026-08-01 08:40:00.000', '2026-08-01', 1, 'scheduled', 5, 5, 1, 'qa lifecycle'),
+            (REPEAT('h', 64), @user_id, NULL, '2026-08-06 08:45:00.000', '2026-08-06', 1, 'scheduled', 5, 5, 1, 'qa repeat-final'),
+            (REPEAT('i', 64), @user_id, NULL, '2026-08-20 08:45:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa repeat-final');
           SQL
 
       - name: Run production repair path
         run: docker compose run --rm db-setup
 
-      - name: Verify mastery, pending state, and one revision bump
+      - name: Verify mastery, lifecycle isolation, pending state, and one revision bump
         run: |
           set -euo pipefail
           docker compose exec -T mysql mysql \
@@ -109,6 +136,16 @@ jobs:
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
             --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-normalized-apostrophe' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:30:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-current-lifecycle' AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-first-final' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-06 08:45:00.000';" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
