@@ -7,8 +7,14 @@ const html = fs.readFileSync(new URL("index.html", root), "utf8")
   .replace(/<script src="[^"]+"><\/script>/gu, "");
 const vocabulary = fs.readFileSync(new URL("vocabulary.js", root), "utf8");
 const shareStory = fs.readFileSync(new URL("share-story-v2.js", root), "utf8");
+const practiceRemediation = fs.readFileSync(new URL("practice-remediation.js", root), "utf8");
+const remediationKeyboardGuard = fs.readFileSync(new URL("practice-remediation-keyboard-guard.js", root), "utf8");
 const app = fs.readFileSync(new URL("app-v2.js", root), "utf8");
 const sessionPersistence = fs.readFileSync(new URL("session-persistence.js", root), "utf8");
+const wordCollections = fs.readFileSync(new URL("word-collections.js", root), "utf8");
+const leitnerStatus = fs.readFileSync(new URL("leitner-status.js", root), "utf8");
+const remediationAdapter = fs.readFileSync(new URL("practice-remediation-adapter.js", root), "utf8");
+const remediationRecheckPrompt = fs.readFileSync(new URL("practice-remediation-recheck-prompt.js", root), "utf8");
 
 function localDay(date = new Date()) {
   const year = date.getFullYear();
@@ -96,7 +102,7 @@ function installServerFetch(window) {
     const url = new URL(typeof input === "string" ? input : input.url, window.location.href);
     const path = url.pathname;
     const method = String(options.method || (typeof input === "string" ? "GET" : input.method) || "GET").toUpperCase();
-    requests.push({ path, method, options });
+    requests.push({ path, method, options, search: url.search });
 
     if (path === "/api/auth/me" && method === "GET") {
       return responseFor(window, { user: { id: 77, email: "box5-production@example.com" } });
@@ -106,6 +112,9 @@ function installServerFetch(window) {
         revision: serverRevision,
         state: structuredClone(serverState)
       });
+    }
+    if (path === "/api/library/vocabulary-sources" && method === "GET") {
+      return responseFor(window, { sources: [] });
     }
     if (path === "/api/learning/sessions" && method === "POST") {
       return responseFor(window, { session: { id: "session-box5", status: "active" } }, 201);
@@ -152,17 +161,38 @@ async function bootClient() {
     }
   });
 
+  // Keep this order identical to index.html. A regression in any production
+  // fetch wrapper or remediation adapter must be able to fail this test.
   dom.window.eval(vocabulary);
   dom.window.eval(shareStory);
+  dom.window.eval(practiceRemediation);
+  dom.window.eval(remediationKeyboardGuard);
   dom.window.eval(app);
   dom.window.eval(sessionPersistence);
+  dom.window.eval(wordCollections);
+  dom.window.eval(leitnerStatus);
+  dom.window.eval(remediationAdapter);
+  dom.window.eval(remediationRecheckPrompt);
   await dom.window.VazheyarReady;
   await dom.window.VazheyarTest.waitForSaves();
   return dom;
 }
 
 const firstClient = await bootClient();
-const { document, VazheyarTest, VocoraSessionPersistenceTest } = firstClient.window;
+const {
+  document,
+  VazheyarTest,
+  VocoraSessionPersistenceTest,
+  VocoraWordCollectionsTest,
+  VocoraLeitnerStatus
+} = firstClient.window;
+
+assert.ok(VocoraWordCollectionsTest, "the production word-collection fetch wrapper must be installed");
+assert.ok(VocoraLeitnerStatus, "the production Leitner enhancement must be installed");
+assert.ok(
+  requests.some(({ path, method, search }) => path === "/api/state" && method === "GET" && search === "?view=bootstrap"),
+  "the exact production wrapper chain must request the bootstrap state view"
+);
 
 document.querySelector('[data-view="review"]').click();
 document.querySelector("#beginSessionBtn").click();
@@ -176,7 +206,7 @@ await VazheyarTest.waitForSaves();
 assert.equal(await VocoraSessionPersistenceTest.waitForStateWrites(), true);
 
 const compactRequests = requests.filter(({ path, method }) => path === "/api/learning/reviews" && method === "POST");
-assert.equal(compactRequests.length, 1, "the actual production script chain must persist one final review exactly once");
+assert.equal(compactRequests.length, 1, "the complete production script chain must persist one final review exactly once");
 assert.equal(fullStatePutCount, 0, "the live box-five review must not fall back to a full-state PUT");
 
 const compactBody = JSON.parse(compactRequests[0].options.body);
@@ -223,4 +253,4 @@ assert.equal(
 );
 
 reloadedClient.window.close();
-console.log("Production box-five persistence regression test passed.");
+console.log("Complete production box-five persistence regression test passed.");
