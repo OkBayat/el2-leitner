@@ -7,8 +7,13 @@ function candidate(userId, vocabularyEntryId, forms = []) {
   return { user_id: userId, vocabulary_entry_id: vocabularyEntryId, forms: forms.join("\u001f") };
 }
 
-function progress(masteredAt) {
-  return { box: 5, due_date: "2026-09-03", mastered_at: masteredAt ? new Date(masteredAt) : null };
+function progress(masteredAt, introducedOn = "2026-07-01") {
+  return {
+    box: 5,
+    due_date: "2026-09-03",
+    introduced_on: introducedOn,
+    mastered_at: masteredAt ? new Date(masteredAt) : null
+  };
 }
 
 function review({ id, at, previousBox, term = null, newBox = 5, correct = 1, promoted = 1 }) {
@@ -130,6 +135,72 @@ describe("historical box-five progress repair", () => {
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 1, pendingCorrected: 0, repairedUsers: 1 });
     assert.equal(exactLookups, 1);
+  });
+
+  it("does not reuse a successful final review from before the current card lifecycle", async () => {
+    let graduated = false;
+    const staleFinal = review({
+      id: 9150,
+      at: "2026-08-01T08:30:00.000Z",
+      previousBox: 5,
+      term: "reintroduced"
+    });
+    const connection = {
+      async beginTransaction() {}, async commit() {}, async rollback() {}, release() {},
+      async execute(sql) {
+        if (isRevisionLock(sql)) return [[{ revision: 5, learning_reset_at: null }], []];
+        if (isFallbackEvidenceQuery(sql)) return [[staleFinal], []];
+        if (isOwnerQuery(sql)) return [[{ normalized_form: "reintroduced", vocabulary_entry_id: 251 }], []];
+        if (isProgressLock(sql)) return [[progress("2026-08-10T09:00:00.000Z", "2026-08-10")], []];
+        if (isExactReviewQuery(sql)) return [[], []];
+        if (/SET due_date = NULL/u.test(sql)) { graduated = true; return [{ affectedRows: 1 }, []]; }
+        if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
+        if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
+        throw new Error(`Unexpected transactional SQL: ${sql}`);
+      }
+    };
+    const pool = {
+      async execute() { return [[candidate(10, 251, ["reintroduced"])], []]; },
+      async getConnection() { return connection; }
+    };
+
+    const result = await repairHistoricalBoxFiveProgress(pool);
+    assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
+    assert.equal(graduated, false, "a previous lifecycle must never master the current card");
+  });
+
+  it("uses the first successful final review because later box-5 reviews only existed due to the old bug", async () => {
+    const writes = [];
+    const firstFinal = review({ id: 9300, at: "2026-08-06T08:00:00.000Z", previousBox: 5, term: "repeat-final" });
+    const laterBugReview = review({ id: 9400, at: "2026-08-20T08:00:00.000Z", previousBox: 5, term: "repeat-final" });
+    const connection = {
+      async beginTransaction() {}, async commit() {}, async rollback() {}, release() {},
+      async execute(sql, parameters = []) {
+        writes.push({ sql, parameters });
+        if (isRevisionLock(sql)) return [[{ revision: 6, learning_reset_at: null }], []];
+        if (isFallbackEvidenceQuery(sql)) return [[[firstFinal, laterBugReview].flat()], []];
+        if (isOwnerQuery(sql)) return [[{ normalized_form: "repeat-final", vocabulary_entry_id: 275 }], []];
+        if (isProgressLock(sql)) return [[progress(null, "2026-07-01")], []];
+        if (isExactReviewQuery(sql)) return [[], []];
+        if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
+        if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
+        throw new Error(`Unexpected transactional SQL: ${sql}`);
+      }
+    };
+    const pool = {
+      async execute() { return [[candidate(12, 275, ["repeat-final"])], []]; },
+      async getConnection() { return connection; }
+    };
+
+    const result = await repairHistoricalBoxFiveProgress(pool);
+    assert.deepEqual(result, { mastered: 1, pendingCorrected: 0, repairedUsers: 1 });
+    const graduation = writes.find(({ sql }) => /SET due_date = NULL/u.test(sql));
+    assert.ok(graduation);
+    assert.equal(
+      graduation.parameters[0].toISOString(),
+      "2026-08-06T08:00:00.000Z",
+      "mastery must be dated at the first successful final review"
+    );
   });
 
   it("does not steal a review that still belongs to another active identity", async () => {
