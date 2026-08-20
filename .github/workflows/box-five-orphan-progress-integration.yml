@@ -115,9 +115,12 @@ jobs:
             --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-orphan-progress-ci@example.com' AND ve.public_id='box5-orphan-progress-current' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:10:00.000';" \
             | grep -qx '1'
 
+          # The hidden legacy row has exact-id final evidence, so repairing it too is
+          # valid. The regression is that it must not make the visible canonical alias
+          # ambiguous or force the canonical card to wait for a second db:setup run.
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
-            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-orphan-progress-ci@example.com' AND ve.public_id='box5-orphan-progress-legacy' AND uvp.due_date='2026-09-03';" \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-orphan-progress-ci@example.com' AND ve.public_id='box5-orphan-progress-legacy' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:10:00.000';" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
