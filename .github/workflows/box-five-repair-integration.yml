@@ -1,0 +1,106 @@
+name: Box Five Repair Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - agent/**
+
+permissions:
+  contents: read
+
+jobs:
+  mysql-repair:
+    runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci-application-password
+      DB_ADMIN_PASSWORD: ci-root-password
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start MySQL and initialize schema
+        run: |
+          set -euo pipefail
+          docker compose up --build --detach mysql
+          for attempt in {1..60}; do
+            if docker compose exec -T mysql mysqladmin ping --host=127.0.0.1 --user=root --password="$MYSQL_ROOT_PASSWORD" --silent; then
+              break
+            fi
+            sleep 2
+          done
+          docker compose run --rm db-setup
+
+      - name: Seed persisted historical box-five failures
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts <<'SQL'
+          INSERT INTO users (email, password_hash)
+          VALUES ('box5-repair-ci@example.com', 'not-used-by-integration-test');
+
+          SET @user_id = (SELECT id FROM users WHERE email = 'box5-repair-ci@example.com');
+          SET @monday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Monday' ORDER BY owner_user_id IS NULL DESC, id LIMIT 1);
+          SET @tuesday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Tuesday' ORDER BY owner_user_id IS NULL DESC, id LIMIT 1);
+
+          INSERT INTO user_state_revisions (user_id, revision)
+          VALUES (@user_id, 10);
+
+          INSERT INTO user_vocabulary_progress
+            (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count,
+             introduced_on, last_reviewed_at, last_promoted_on, mastered_at)
+          VALUES
+            (@user_id, @monday_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 08:00:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
+            (@user_id, @tuesday_id, 'active', 5, '2026-09-03', 4, 4,
+             '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000');
+
+          -- Historical alias/identity drift: the final Monday review no longer has a vocabulary id,
+          -- so repair must recover it from the accepted term snapshot.
+          INSERT INTO review_events
+            (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
+             previous_box, new_box, promoted, term_snapshot)
+          VALUES
+            (REPEAT('a', 64), @user_id, NULL, '2026-08-20 08:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Monday'),
+            (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday');
+          SQL
+
+      - name: Run production repair path
+        run: docker compose run --rm db-setup
+
+      - name: Verify mastery, pending state, and one revision bump
+        run: |
+          set -euo pipefail
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:00:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Tuesday' AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-repair-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Verify repair is idempotent
+        run: |
+          set -euo pipefail
+          docker compose run --rm db-setup
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-repair-ci@example.com';" \
+            | grep -qx '11'
+
+      - name: Print container logs after a failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes
