@@ -42,8 +42,23 @@ jobs:
           VALUES ('box5-repair-ci@example.com', 'not-used-by-integration-test');
 
           SET @user_id = (SELECT id FROM users WHERE email = 'box5-repair-ci@example.com');
-          SET @monday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Monday' ORDER BY owner_user_id IS NULL DESC, id LIMIT 1);
-          SET @tuesday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Tuesday' ORDER BY owner_user_id IS NULL DESC, id LIMIT 1);
+          SET @monday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Monday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
+          SET @tuesday_id = (SELECT id FROM vocabulary_entries WHERE primary_form = 'Tuesday' AND owner_user_id IS NULL ORDER BY id LIMIT 1);
+
+          -- Give Monday a unique legacy alias. Its historical final review will have a NULL vocabulary id,
+          -- so the repair must recover the canonical public word through this accepted form.
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@monday_id, 'Monday legacy', 'monday legacy', 0);
+
+          -- Create a same-term private identity for this learner. A later review belonging to this active
+          -- identity must never be stolen by the public Tuesday card merely because term_snapshot matches.
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-private-tuesday', 'en', 'Tuesday', 'tuesday', CONCAT('user:', @user_id, ':en:tuesday'), @user_id, 'active');
+          SET @private_tuesday_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@private_tuesday_id, 'Tuesday', 'tuesday', 1);
 
           INSERT INTO user_state_revisions (user_id, revision)
           VALUES (@user_id, 10);
@@ -57,14 +72,16 @@ jobs:
             (@user_id, @tuesday_id, 'active', 5, '2026-09-03', 4, 4,
              '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000');
 
-          -- Historical alias/identity drift: the final Monday review no longer has a vocabulary id,
-          -- so repair must recover it from the accepted term snapshot.
           INSERT INTO review_events
             (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
              previous_box, new_box, promoted, term_snapshot)
           VALUES
-            (REPEAT('a', 64), @user_id, NULL, '2026-08-20 08:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Monday'),
-            (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday');
+            -- Recoverable identity drift: NULL id + unique accepted alias => Monday must graduate.
+            (REPEAT('a', 64), @user_id, NULL, '2026-08-20 08:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Monday legacy'),
+            -- The public Tuesday only entered house 5 and must remain pending.
+            (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday'),
+            -- A later same-term final review belongs to another ACTIVE identity; public Tuesday must not claim it.
+            (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday');
           SQL
 
       - name: Run production repair path
@@ -75,12 +92,12 @@ jobs:
           set -euo pipefail
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
-            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:00:00.000';" \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Monday' AND ve.owner_user_id IS NULL AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:00:00.000';" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
-            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Tuesday' AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Tuesday' AND ve.owner_user_id IS NULL AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
