@@ -87,11 +87,18 @@ houseFiveStates.forEach((segment, index) => {
 const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.url), 'utf8');
 assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Regression: obsolete state-number styling must be removed from the stylesheet');
 
+const iconBackground = 'color-mix(in srgb, var(--house-a) 22%, var(--surface))';
 assert.match(
   layoutCss,
-  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*#f7f9fb;[\s\S]*?box-shadow:\s*none;/,
-  'Regression: each state must use a plain solid background and a 60%-alpha colored bottom border'
+  /\.leitner-house-icon\s*\{[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);/,
+  'House icons must keep the per-house tinted reference background'
 );
+assert.match(
+  layoutCss,
+  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
+  'Regression: each state must use the exact house-icon tint and a 60%-alpha colored bottom border'
+);
+assert.ok(layoutCss.includes(iconBackground), 'The segment and icon tint formula must stay shared and explicit');
 assert.doesNotMatch(
   layoutCss,
   /\.leitner-segment\s*\{[^}]*linear-gradient/,
@@ -100,7 +107,7 @@ assert.doesNotMatch(
 assert.match(
   layoutCss,
   /\.leitner-segment\.is-empty\s*\{[\s\S]*?opacity:\s*1;[\s\S]*?color:\s*var\(--muted\);[\s\S]*?filter:\s*none;/,
-  'Empty states must keep the same underline and flat box instead of fading the whole segment'
+  'Empty states must keep the same underline and house tint instead of fading the whole segment'
 );
 assert.match(
   layoutCss,
@@ -109,8 +116,8 @@ assert.match(
 );
 assert.match(
   layoutCss,
-  /\.leitner-segment:hover,[\s\S]*?\.leitner-segment:focus-visible\s*\{[\s\S]*?background:\s*#f4f7fa;[\s\S]*?box-shadow:\s*none;[\s\S]*?transform:\s*none;/,
-  'Hover/focus must keep a simple solid background and preserve the flat rectangular silhouette'
+  /\.leitner-segment:hover,[\s\S]*?\.leitner-segment:focus-visible\s*\{[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;[\s\S]*?transform:\s*none;/,
+  'Hover/focus must keep the exact house tint and preserve the flat rectangular silhouette'
 );
 
 const expectedAccentRgb = [
@@ -131,8 +138,8 @@ expectedAccentRgb.forEach((accentRgb, index) => {
 
 assert.match(
   layoutCss,
-  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?background:\s*rgba\(255, 255, 255, \.055\);[\s\S]*?box-shadow:\s*none;/,
-  'Dark mode must preserve the same 60%-alpha underline and a simple non-gradient background'
+  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
+  'Dark mode must preserve the same house-icon tint and 60%-alpha underline'
 );
 
 console.log('Leitner wait-day state regression and unit tests passed.');
