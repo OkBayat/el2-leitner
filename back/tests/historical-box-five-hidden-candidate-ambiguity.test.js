@@ -54,6 +54,7 @@ test("two hidden candidate identities keep a shared fallback ambiguous regardles
     async execute(sql) {
       if (isRevisionLock(sql)) return [[{ revision: 20, learning_reset_at: null }], []];
       if (isFallbackEvidenceQuery(sql)) return [[finalReview()], []];
+      if (/FROM learning_states/u.test(sql)) return [[], []];
       if (isOwnerQuery(sql)) return [[], []];
       if (isProgressLock(sql)) {
         return [[{
