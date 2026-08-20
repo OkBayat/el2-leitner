@@ -8,7 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
-const assetVersion = 'wait-day-states-v1';
+const assetVersion = 'wait-day-states-v2';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -39,7 +39,7 @@ assert.match(
 assert.match(
   indexSource,
   new RegExp(`src="leitner-status\\.js\\?v=${assetVersion}"`),
-  'Regression: the dashboard must request the revised Leitner runtime with a new cache key instead of reusing the old five-state asset'
+  'Regression: the dashboard must request the revised Leitner runtime with a new cache key instead of reusing the old state-number asset'
 );
 
 const empty = leitner.buildDistribution([], today, waits);
