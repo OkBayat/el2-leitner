@@ -135,7 +135,7 @@ expectedByHouse.forEach((expectedSegments, index) => {
   });
 });
 assert.equal(root.querySelectorAll('.leitner-segment').length, 27, 'The visual must render 1+2+3+7+14 = 27 states');
-assert.equal(root.querySelector('.leitner-state-index'), null, 'State numbers must not be rendered as visible elements');
+assert.equal(root.querySelector('.leitner-state-index'), null, 'State numbers must stay out of the visible segment DOM');
 assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
 
 const liveDom = new JSDOM(`
@@ -216,10 +216,10 @@ const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.u
 assert.match(layoutCss, /grid-template-columns:\s*minmax\(300px, 1fr\)\s+minmax\(500px, 820px\)/, 'Desktop layout must cap the Leitner card instead of letting it grow across the dashboard');
 assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House states must stay centered and use compact progressive widths');
 assert.match(layoutCss, /\.leitner-row\s*\{[\s\S]*?min-height:\s*34px;/, 'Desktop house rows must stay compact');
-assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;/, 'Desktop state blocks must keep the approved compact height');
-assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Removed state-number elements must not leave obsolete styling behind');
-assert.match(layoutCss, /\.leitner-segment\.is-empty\s*\{/, 'Empty states must be visually quieter than occupied states');
-assert.match(layoutCss, /\.leitner-segment\.is-occupied\s*\{/, 'Occupied states must be visually distinct');
+assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?box-shadow:\s*none;/, 'Desktop state blocks must match the flat reference: square pale box, no chrome, colored underline only');
+assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Visible state-number styling must stay removed');
+assert.match(layoutCss, /\.leitner-segment\.is-empty\s*\{[\s\S]*?opacity:\s*1;[\s\S]*?color:\s*var\(--muted\);/, 'Empty states must keep their underline and only mute the count');
+assert.match(layoutCss, /\.leitner-segment\.is-occupied\s*\{[\s\S]*?color:\s*var\(--text\);[\s\S]*?box-shadow:\s*none;/, 'Occupied states must stay flat and readable');
 assert.match(layoutCss, /\.leitner-export-btn\s*\{[\s\S]*?margin-inline-start:\s*auto;[\s\S]*?border-radius:\s*999px;/, 'The house-one export control must stay compact and aligned with the panel chips');
 assert.match(layoutCss, /\.leitner-export-btn\.is-copied\s*\{/, 'Successful copying must have a distinct visual confirmation state');
 assert.match(layoutCss, /@media \(max-width: 560px\)[\s\S]*?\.leitner-export-btn\s*\{[\s\S]*?order:\s*2;[\s\S]*?margin-inline-start:\s*0;/, 'The export control must wrap cleanly on mobile screens');
