@@ -18,8 +18,6 @@ function staleFinalWord() {
     notes: "",
     createdAt: "2026-08-07T12:21:53.760Z",
     box: 5,
-    // Old clients could report a successful 5 -> 5 review while scheduling
-    // another fourteen-day review instead of graduating the card.
     due: "2026-09-03",
     attempts: 6,
     correct: 6,
@@ -113,11 +111,38 @@ test("the compact review command derives final mastery on the server instead of 
   });
 
   assert.deepEqual(result, { revision: 42 });
-  assert.deepEqual(
-    recorded.word,
-    expectedCompactWord(expectedGraduatedWord(word)),
-    "a promoted successful 5 -> 5 event is authoritative even when the browser still carries the old 14-day due date"
-  );
+  assert.deepEqual(recorded.word, expectedCompactWord(expectedGraduatedWord(word)));
+});
+
+test("a correct due 5 -> 5 review is terminal even when same-day state makes promoted false", async () => {
+  let recorded = null;
+  const useCase = new RecordReviewResult({
+    reviewProgressRepository: {
+      async record(_userId, command) {
+        recorded = command;
+        return 51;
+      }
+    }
+  });
+
+  const word = {
+    ...staleFinalWord(),
+    due: finalDay,
+    lastReviewed: "2026-08-20T09:00:00.000Z",
+    lastPromotedDay: finalDay,
+    masteredAt: null
+  };
+  const event = finalEvent({ promoted: false });
+
+  await useCase.execute(7, {
+    revision: 50,
+    word,
+    event,
+    daily: daily()
+  });
+
+  assert.equal(recorded.event.promoted, true, "the server must normalize the stale terminal event");
+  assert.deepEqual(recorded.word, expectedCompactWord(expectedGraduatedWord(word)));
 });
 
 test("the full-state compatibility path also derives final mastery from the appended 5 -> 5 event", async () => {
@@ -149,11 +174,7 @@ test("the full-state compatibility path also derives final mastery from the appe
   const result = await useCase.execute(7, state, 41);
 
   assert.deepEqual(result, { revision: 42 });
-  assert.deepEqual(
-    persistedState.words[0],
-    expectedGraduatedWord(word),
-    "a stale full-state writer must not be able to resurrect the old box-five schedule"
-  );
+  assert.deepEqual(persistedState.words[0], expectedGraduatedWord(word));
 });
 
 test("entering house five schedules the real final review and clears premature mastery", async () => {
@@ -232,9 +253,5 @@ test("an old final event cannot re-master a card introduced in a later lifecycle
     history: [oldFinal]
   }, 5);
 
-  assert.deepEqual(
-    persistedState.words[0],
-    word,
-    "fallback inspection for old clients must not reuse a final review from before reintroduction"
-  );
+  assert.deepEqual(persistedState.words[0], word);
 });
