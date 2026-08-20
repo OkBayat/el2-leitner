@@ -68,7 +68,7 @@ describe("historical box-five progress repair", () => {
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progressById.get(Number(parameters[1]))], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY occurred_at DESC/u.test(sql)) {
+        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
           return [[eventsById.get(Number(parameters[3]))], []];
         }
         if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
@@ -131,7 +131,7 @@ describe("historical box-five progress repair", () => {
         if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
           return [[progress("2026-08-01T09:00:00.000Z")], []];
         }
-        if (/FROM review_events/u.test(sql) && /ORDER BY occurred_at DESC/u.test(sql)) {
+        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
           assert.match(sql, /term_snapshot IN/u, "retired/null event ids need an accepted-form fallback");
           assert.ok(parameters.includes("center"));
           assert.ok(parameters.includes("centre"));
@@ -180,6 +180,42 @@ describe("historical box-five progress repair", () => {
     };
     const pool = {
       async execute() { return [[candidate(11, 301, ["reused-term"])], []]; },
+      async getConnection() { return connection; }
+    };
+
+    const result = await repairHistoricalBoxFiveProgress(pool);
+    assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
+    assert.equal(writes.some(({ sql }) => /SET due_date = NULL/u.test(sql)), false);
+  });
+
+  it("does not claim a null-id review when the accepted term is shared by another active identity", async () => {
+    const writes = [];
+    const connection = {
+      async beginTransaction() {},
+      async commit() {},
+      async rollback() {},
+      release() {},
+      async execute(sql, parameters = []) {
+        writes.push({ sql, parameters });
+        if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) {
+          return [[{ revision: 8, learning_reset_at: null }], []];
+        }
+        if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) {
+          return [[progress("2026-08-01T09:00:00.000Z")], []];
+        }
+        if (/FROM review_events/u.test(sql) && /ORDER BY/u.test(sql)) {
+          assert.match(sql, /NOT EXISTS/u, "term fallback must prove the accepted form is not shared by another active identity");
+          assert.match(sql, /vocabulary_forms/u, "ambiguity guard must check current vocabulary forms");
+          assert.match(sql, /ambiguous_vocabulary\.owner_user_id/u, "ambiguity must be scoped to public or this learner's private vocabulary");
+          return [[], []];
+        }
+        if (/SET mastered_at = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
+        if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
+        throw new Error(`Unexpected transactional SQL: ${sql}`);
+      }
+    };
+    const pool = {
+      async execute() { return [[candidate(13, 401, ["shared-term"])], []]; },
       async getConnection() { return connection; }
     };
 
