@@ -44,13 +44,33 @@ function isSuccessfulPromotion(event, previousBox, newBox) {
   );
 }
 
-export function applyBoxFiveReviewPolicyToWord(word, event) {
-  const next = { ...word };
-  const reviewedAt = normalizedIso(event?.at);
+function isDueTerminalFinalReview(word, event) {
+  const dueDay = normalizedDay(word?.due);
   const reviewDay = normalizedDay(event?.day);
+  return Boolean(
+    event?.correct === true &&
+    Number(event?.previousBox) === 5 &&
+    Number(event?.newBox) === 5 &&
+    Number(word?.box) === 5 &&
+    dueDay &&
+    reviewDay &&
+    dueDay <= reviewDay
+  );
+}
+
+export function normalizeBoxFiveReviewEvent(word, event) {
+  if (!isDueTerminalFinalReview(word, event) || event?.promoted === true) return event;
+  return { ...event, promoted: true };
+}
+
+export function applyBoxFiveReviewPolicyToWord(word, event) {
+  const normalizedEvent = normalizeBoxFiveReviewEvent(word, event);
+  const next = { ...word };
+  const reviewedAt = normalizedIso(normalizedEvent?.at);
+  const reviewDay = normalizedDay(normalizedEvent?.day);
   if (!reviewedAt || !reviewDay) return next;
 
-  if (isSuccessfulPromotion(event, 4, 5)) {
+  if (isSuccessfulPromotion(normalizedEvent, 4, 5)) {
     next.box = 5;
     next.due = addDays(reviewDay, FINAL_REVIEW_DELAY_DAYS);
     next.lastReviewed = reviewedAt;
@@ -60,7 +80,7 @@ export function applyBoxFiveReviewPolicyToWord(word, event) {
     return next;
   }
 
-  if (isSuccessfulPromotion(event, 5, 5)) {
+  if (isSuccessfulPromotion(normalizedEvent, 5, 5)) {
     next.box = 5;
     next.due = null;
     next.lastReviewed = reviewedAt;
@@ -133,8 +153,10 @@ export function applyBoxFiveReviewPolicyToState(state) {
     const index = wordsById.get(String(event?.wordId || ""));
     if (index === undefined) continue;
     const word = state.words[index];
-    if (!eventMatchesCurrentWordSnapshot(word, event)) continue;
-    state.words[index] = applyBoxFiveReviewPolicyToWord(word, event);
+    const normalizedEvent = normalizeBoxFiveReviewEvent(word, event);
+    if (!eventMatchesCurrentWordSnapshot(word, normalizedEvent)) continue;
+    if (normalizedEvent !== event) Object.assign(event, normalizedEvent);
+    state.words[index] = applyBoxFiveReviewPolicyToWord(word, normalizedEvent);
   }
   return state;
 }
