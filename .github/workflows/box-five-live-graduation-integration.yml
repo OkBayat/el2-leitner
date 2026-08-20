@@ -1,0 +1,229 @@
+name: Box Five Live Graduation Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - agent/**
+
+permissions:
+  contents: read
+
+jobs:
+  live-final-review:
+    runs-on: ubuntu-latest
+    env:
+      DB_PASSWORD: ci-application-password
+      DB_ADMIN_PASSWORD: ci-root-password
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and start the production stack
+        run: |
+          set -euo pipefail
+          docker compose up --build --detach
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Graduate a due house-five word through HTTP and reload persisted state
+        run: |
+          set -euo pipefail
+
+          curl --fail --silent --show-error \
+            --cookie-jar /tmp/box5-live-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"email":"box5-live-ci@example.com","password":"password123"}' \
+            http://127.0.0.1:3000/api/auth/register \
+            | jq -e '.user.email == "box5-live-ci@example.com"'
+
+          cat > /tmp/box5-initial-state.json <<'JSON'
+          {
+            "revision": 0,
+            "state": {
+              "schemaVersion": 2,
+              "createdAt": "2026-07-01T10:00:00.000Z",
+              "updatedAt": "2026-08-20T09:59:00.000Z",
+              "settings": {
+                "dailyNew": 10,
+                "dailyGoal": 20,
+                "voiceRate": 0.85,
+                "theme": "system"
+              },
+              "words": [
+                {
+                  "id": "box5-live-monday",
+                  "number": 1,
+                  "term": "Monday",
+                  "accepted": ["Monday"],
+                  "category": "Time",
+                  "notes": "",
+                  "createdAt": "2026-07-01T10:00:00.000Z",
+                  "box": 5,
+                  "due": "2026-08-20",
+                  "attempts": 5,
+                  "correct": 5,
+                  "mistakes": 0,
+                  "currentStreak": 5,
+                  "introducedOn": "2026-07-01",
+                  "addedSource": "daily",
+                  "lastReviewed": "2026-08-06T10:00:00.000Z",
+                  "lastPromotedDay": "2026-08-06",
+                  "blockedUntil": null,
+                  "masteredAt": null
+                }
+              ],
+              "daily": {
+                "2026-08-06": {
+                  "attempts": 1,
+                  "correct": 1,
+                  "wrong": 0,
+                  "newAdded": 0,
+                  "sessions": 1,
+                  "durationSeconds": 0
+                }
+              },
+              "history": [
+                {
+                  "at": "2026-08-06T10:00:00.000Z",
+                  "day": "2026-08-06",
+                  "wordId": "box5-live-monday",
+                  "term": "Monday",
+                  "answer": "Monday",
+                  "correct": true,
+                  "mode": "scheduled",
+                  "promoted": true,
+                  "previousBox": 4,
+                  "newBox": 5,
+                  "mistakeNumber": null
+                }
+              ]
+            }
+          }
+          JSON
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/box5-live-cookies \
+            --request PUT \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/box5-initial-state.json \
+            http://127.0.0.1:3000/api/state \
+            | jq -e '.revision == 1'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/box5-live-cookies \
+            'http://127.0.0.1:3000/api/state?view=full' \
+            > /tmp/box5-before-final.json
+
+          jq -e '.revision == 1 and (.state.words[] | select(.term == "Monday" and .box == 5 and .due == "2026-08-20" and .masteredAt == null))' \
+            /tmp/box5-before-final.json
+
+          jq '
+            (.state.words[] | select(.term == "Monday")) as $word
+            | {
+                revision: .revision,
+                word: ($word
+                  | .box = 5
+                  | .due = null
+                  | .attempts = 6
+                  | .correct = 6
+                  | .mistakes = 0
+                  | .currentStreak = 6
+                  | .lastReviewed = "2026-08-20T10:00:00.000Z"
+                  | .lastPromotedDay = "2026-08-20"
+                  | .blockedUntil = null
+                  | .masteredAt = "2026-08-20T10:00:00.000Z"),
+                event: {
+                  at: "2026-08-20T10:00:00.000Z",
+                  day: "2026-08-20",
+                  wordId: $word.id,
+                  term: "Monday",
+                  answer: "Monday",
+                  correct: true,
+                  mode: "scheduled",
+                  promoted: true,
+                  previousBox: 5,
+                  newBox: 5,
+                  mistakeNumber: null
+                },
+                daily: {
+                  attempts: 1,
+                  correct: 1,
+                  wrong: 0,
+                  newAdded: 0,
+                  sessions: 1,
+                  durationSeconds: 0
+                }
+              }
+          ' /tmp/box5-before-final.json > /tmp/box5-final-review.json
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/box5-live-cookies \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/box5-final-review.json \
+            http://127.0.0.1:3000/api/learning/reviews \
+            | jq -e '.revision == 2'
+
+          # Repeat the identical network request: it must be idempotent and must
+          # not create another final review or advance the revision again.
+          curl --fail --silent --show-error \
+            --cookie /tmp/box5-live-cookies \
+            --header 'Content-Type: application/json' \
+            --data-binary @/tmp/box5-final-review.json \
+            http://127.0.0.1:3000/api/learning/reviews \
+            | jq -e '.revision == 2'
+
+          curl --fail --silent --show-error \
+            --cookie-jar /tmp/box5-reload-cookies \
+            --header 'Content-Type: application/json' \
+            --data '{"email":"box5-live-ci@example.com","password":"password123"}' \
+            http://127.0.0.1:3000/api/auth/login \
+            | jq -e '.user.email == "box5-live-ci@example.com"'
+
+          curl --fail --silent --show-error \
+            --cookie /tmp/box5-reload-cookies \
+            'http://127.0.0.1:3000/api/state?view=full' \
+            > /tmp/box5-after-reload.json
+
+          jq -e '
+            .revision == 2
+            and (.state.words[]
+              | select(
+                  .term == "Monday"
+                  and .box == 5
+                  and .due == null
+                  and .masteredAt == "2026-08-20T10:00:00.000Z"
+                  and .lastReviewed == "2026-08-20T10:00:00.000Z"
+                  and .lastPromotedDay == "2026-08-20"
+                ))
+          ' /tmp/box5-after-reload.json
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-live-ci@example.com' AND ve.primary_form='Monday' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 10:00:00.000' AND uvp.last_reviewed_at='2026-08-20 10:00:00.000' AND uvp.last_promoted_on='2026-08-20';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM review_events re JOIN users u ON u.id=re.user_id WHERE u.email='box5-live-ci@example.com' AND re.term_snapshot='Monday' AND re.correct=1 AND re.promoted=1 AND re.previous_box=5 AND re.new_box=5 AND re.occurred_at='2026-08-20 10:00:00.000';" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT usr.revision FROM user_state_revisions usr JOIN users u ON u.id=usr.user_id WHERE u.email='box5-live-ci@example.com';" \
+            | grep -qx '2'
+
+      - name: Print container logs after a failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down --volumes
