@@ -108,7 +108,9 @@ jobs:
             (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday'),
             (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
             (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy'),
-            (REPEAT('g', 64), @user_id, NULL, '2026-08-01 08:40:00.000', '2026-08-01', 1, 'scheduled', 5, 5, 1, 'qa lifecycle'),
+            -- Same calendar day as the current introduction. A real final review cannot
+            -- belong to a card introduced that day, so this evidence is from an older lifecycle.
+            (REPEAT('g', 64), @user_id, NULL, '2026-08-10 08:40:00.000', '2026-08-10', 1, 'scheduled', 5, 5, 1, 'qa lifecycle'),
             (REPEAT('h', 64), @user_id, NULL, '2026-08-06 08:45:00.000', '2026-08-06', 1, 'scheduled', 5, 5, 1, 'qa repeat-final'),
             (REPEAT('i', 64), @user_id, NULL, '2026-08-20 08:45:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa repeat-final');
           SQL
