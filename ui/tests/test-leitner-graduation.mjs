@@ -61,7 +61,7 @@ let serverState = {
     notes: '',
     createdAt: new Date().toISOString(),
     box: 5,
-    due: addDays(today, 14),
+    due: null,
     attempts: 5,
     correct: 5,
     mistakes: 0,
@@ -71,7 +71,7 @@ let serverState = {
     lastReviewed: legacyFinalReviewAt,
     lastPromotedDay: today,
     blockedUntil: null,
-    masteredAt: legacyMasteredAt
+    masteredAt: legacyFinalReviewAt
   }],
   daily: {},
   history: [
@@ -138,8 +138,8 @@ assert.equal(
   'Existing box-5 cards with only an entry promotion are pending their final review, not already mastered'
 );
 const alreadyReviewedWord = VazheyarTest.getState().words.find((word) => word.id === 'already-reviewed-word');
-assert.equal(alreadyReviewedWord.due, null, 'A historical successful box-5 review must be repaired as already graduated');
-assert.equal(alreadyReviewedWord.masteredAt, legacyFinalReviewAt, 'Historical mastery must use the actual final-review timestamp');
+assert.equal(alreadyReviewedWord.due, null, 'Server-repaired historical mastery must stay graduated after hydrate');
+assert.equal(alreadyReviewedWord.masteredAt, legacyFinalReviewAt, 'Historical mastery must preserve the server-owned final-review timestamp');
 
 Object.assign(hydratedWord, {
   box: 4,
