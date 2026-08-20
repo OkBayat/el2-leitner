@@ -1,3 +1,5 @@
+import { normalizeVocabularyForm } from "../../../domain/library/VocabularyNormalizer.js";
+
 function emptyResult() {
   return { mastered: 0, pendingCorrected: 0, repairedUsers: 0 };
 }
@@ -11,7 +13,12 @@ function isSuccessfulFinalReview(row) {
 }
 
 function parseForms(value) {
-  return [...new Set(String(value || "").split("\u001f").map((form) => form.trim()).filter(Boolean))];
+  return [...new Set(
+    String(value || "")
+      .split("\u001f")
+      .map((form) => normalizeVocabularyForm(form))
+      .filter(Boolean)
+  )];
 }
 
 function groupByUser(rows) {
@@ -24,38 +31,69 @@ function groupByUser(rows) {
   return [...groups.values()];
 }
 
-async function latestRelevantReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
+const NORMALIZED_TERM_SQL = `LOWER(REGEXP_REPLACE(
+  TRIM(
+    REPLACE(
+      REPLACE(
+        REPLACE(
+          REPLACE(re.term_snapshot, '’', CHAR(39)),
+          '‘', CHAR(39)
+        ),
+        '–', '-'
+      ),
+      '—', '-'
+    )
+  ),
+  '[[:space:]]+', ' '
+))`;
+
+async function latestExactReview(connection, userId, vocabularyEntryId, learningResetAt) {
+  const [rows] = await connection.execute(
+    `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
+     FROM review_events
+     WHERE user_id = ?
+       AND (? IS NULL OR occurred_at > ?)
+       AND vocabulary_entry_id = ?
+     ORDER BY occurred_at DESC, id DESC
+     LIMIT 1`,
+    [userId, learningResetAt, learningResetAt, vocabularyEntryId]
+  );
+  return rows[0] || null;
+}
+
+async function latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
   const safeForms = parseForms(forms);
-  const fallbackClause = safeForms.length
-    ? ` OR (
-         re.term_snapshot IN (${safeForms.map(() => "?").join(", ")})
-         AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
-         AND NOT EXISTS (
-           SELECT 1
-           FROM vocabulary_forms ambiguous_form
-           JOIN vocabulary_entries ambiguous_vocabulary
-             ON ambiguous_vocabulary.id = ambiguous_form.vocabulary_entry_id
-            AND ambiguous_vocabulary.status = 'active'
-           WHERE ambiguous_vocabulary.id <> ?
-             AND ambiguous_form.form = re.term_snapshot
-             AND (ambiguous_vocabulary.owner_user_id IS NULL OR ambiguous_vocabulary.owner_user_id = ?)
-         )
-       )`
-    : "";
+  if (!safeForms.length) return null;
+  const placeholders = safeForms.map(() => "?").join(", ");
   const [rows] = await connection.execute(
     `SELECT re.id AS review_event_id, re.occurred_at, re.local_day, re.correct, re.promoted, re.previous_box, re.new_box
      FROM review_events re
      LEFT JOIN vocabulary_entries event_vocabulary ON event_vocabulary.id = re.vocabulary_entry_id
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
-       AND (re.vocabulary_entry_id = ?${fallbackClause})
+       AND ${NORMALIZED_TERM_SQL} IN (${placeholders})
+       AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
+       AND NOT EXISTS (
+         SELECT 1
+         FROM vocabulary_forms ambiguous_form
+         JOIN vocabulary_entries ambiguous_vocabulary
+           ON ambiguous_vocabulary.id = ambiguous_form.vocabulary_entry_id
+          AND ambiguous_vocabulary.status = 'active'
+         WHERE ambiguous_vocabulary.id <> ?
+           AND ambiguous_form.normalized_form = ${NORMALIZED_TERM_SQL}
+           AND (ambiguous_vocabulary.owner_user_id IS NULL OR ambiguous_vocabulary.owner_user_id = ?)
+       )
      ORDER BY re.occurred_at DESC, re.id DESC
      LIMIT 1`,
-    safeForms.length
-      ? [userId, learningResetAt, learningResetAt, vocabularyEntryId, ...safeForms, vocabularyEntryId, userId]
-      : [userId, learningResetAt, learningResetAt, vocabularyEntryId]
+    [userId, learningResetAt, learningResetAt, ...safeForms, vocabularyEntryId, userId]
   );
   return rows[0] || null;
+}
+
+async function latestRelevantReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
+  const exact = await latestExactReview(connection, userId, vocabularyEntryId, learningResetAt);
+  if (exact) return exact;
+  return latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms);
 }
 
 async function lockedProgress(connection, userId, vocabularyEntryId) {
@@ -79,8 +117,9 @@ function isStuckBoxFive(progress) {
 export async function repairHistoricalBoxFiveProgress(pool) {
   const [candidates] = await pool.execute(`
     SELECT uvp.user_id, uvp.vocabulary_entry_id,
-           GROUP_CONCAT(DISTINCT vf.form ORDER BY vf.is_primary DESC, vf.id SEPARATOR '\u001f') AS forms
+           GROUP_CONCAT(DISTINCT vf.normalized_form ORDER BY vf.is_primary DESC, vf.id SEPARATOR '\u001f') AS forms
     FROM user_vocabulary_progress uvp
+    JOIN user_state_revisions usr ON usr.user_id = uvp.user_id
     LEFT JOIN vocabulary_forms vf ON vf.vocabulary_entry_id = uvp.vocabulary_entry_id
     WHERE uvp.status = 'active'
       AND uvp.box = 5
@@ -101,8 +140,7 @@ export async function repairHistoricalBoxFiveProgress(pool) {
     try {
       await connection.beginTransaction();
 
-      // Normal learning writes lock the revision first. Keep the same lock order so
-      // a deployment repair cannot deadlock with a still-running older app process.
+      // Match the normal learning write lock order: revision first, progress second.
       const [revisionRows] = await connection.execute(
         `SELECT revision, learning_reset_at
          FROM user_state_revisions
@@ -112,7 +150,10 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         [group.userId]
       );
       const revision = revisionRows[0];
-      if (!revision) throw new Error(`Missing learning-state revision for user ${group.userId}`);
+      if (!revision) {
+        await connection.commit();
+        continue;
+      }
 
       for (const candidate of group.rows) {
         const progress = await lockedProgress(connection, group.userId, candidate.vocabulary_entry_id);
