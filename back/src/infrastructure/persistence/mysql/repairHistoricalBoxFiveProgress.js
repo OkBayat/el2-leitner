@@ -113,6 +113,18 @@ function fallbackEvidenceByNormalizedForm(rows) {
   return index;
 }
 
+function mergeEvidenceIndexes(...indexes) {
+  const merged = new Map();
+  for (const index of indexes) {
+    for (const [form, rows] of index.entries()) {
+      if (!merged.has(form)) merged.set(form, []);
+      merged.get(form).push(...rows);
+    }
+  }
+  for (const rows of merged.values()) rows.sort(compareReviews);
+  return merged;
+}
+
 function firstFinalInLifecycle(rows, introducedOn, resetBoundary, dueDate) {
   const lifecycleDay = dayValue(introducedOn);
   if (!Array.isArray(rows) || !rows.length) return null;
@@ -236,6 +248,64 @@ async function loadFallbackEvidence(connection, userId, learningResetAt) {
     [userId, learningResetAt, learningResetAt, userId]
   );
   return fallbackEvidenceByNormalizedForm(rows);
+}
+
+function parseLegacyState(value) {
+  if (value === null || value === undefined) return null;
+  try {
+    if (Buffer.isBuffer(value)) return JSON.parse(value.toString("utf8"));
+    if (typeof value === "string") return JSON.parse(value);
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+function preservedLegacyRows(state, learningResetAt) {
+  const history = Array.isArray(state?.history) ? state.history : [];
+  if (!history.length) return [];
+  const wordsById = new Map(
+    (Array.isArray(state?.words) ? state.words : [])
+      .filter((word) => word?.id)
+      .map((word) => [String(word.id), word])
+  );
+  const resetTime = learningResetAt ? new Date(learningResetAt).getTime() : null;
+  const baseId = -Math.max(history.length + 1, 2);
+  const rows = [];
+
+  history.forEach((event, index) => {
+    const occurredAt = event?.at || (event?.day ? `${event.day}T12:00:00.000Z` : null);
+    const occurredDate = occurredAt ? new Date(occurredAt) : null;
+    if (!occurredDate || Number.isNaN(occurredDate.getTime())) return;
+    if (resetTime !== null && occurredDate.getTime() <= resetTime) return;
+
+    const word = event?.wordId ? wordsById.get(String(event.wordId)) : null;
+    const row = {
+      // Legacy archive order breaks ties inside the preserved JSON. Negative ids
+      // keep normalized review_events authoritative when both sources share the
+      // exact same timestamp.
+      review_event_id: baseId + index,
+      occurred_at: occurredDate,
+      local_day: event?.day || occurredDate.toISOString().slice(0, 10),
+      correct: event?.correct ? 1 : 0,
+      promoted: event?.promoted ? 1 : 0,
+      previous_box: event?.previousBox ?? null,
+      new_box: event?.newBox ?? null,
+      term_snapshot: event?.term || word?.term || ""
+    };
+    if (isFinalReviewCandidate(row) || isWrongReset(row)) rows.push(row);
+  });
+
+  return rows;
+}
+
+async function loadPreservedLegacyEvidence(connection, userId, learningResetAt) {
+  const [rows] = await connection.execute(
+    "SELECT state_json FROM learning_states WHERE user_id = ? LIMIT 1",
+    [userId]
+  );
+  const state = parseLegacyState(rows[0]?.state_json);
+  return fallbackEvidenceByNormalizedForm(preservedLegacyRows(state, learningResetAt));
 }
 
 async function loadActiveFormOwners(connection, userId) {
@@ -394,7 +464,13 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         continue;
       }
 
-      const fallbackIndex = await loadFallbackEvidence(connection, group.userId, revision.learning_reset_at);
+      const normalizedFallback = await loadFallbackEvidence(connection, group.userId, revision.learning_reset_at);
+      const preservedLegacyFallback = await loadPreservedLegacyEvidence(
+        connection,
+        group.userId,
+        revision.learning_reset_at
+      );
+      const fallbackIndex = mergeEvidenceIndexes(normalizedFallback, preservedLegacyFallback);
       const persistedOwners = await loadActiveFormOwners(connection, group.userId);
       const ownersByForm = candidateFormOwners(group.rows, persistedOwners);
 
