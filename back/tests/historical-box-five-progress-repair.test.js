@@ -178,7 +178,7 @@ describe("historical box-five progress repair", () => {
       async execute(sql, parameters = []) {
         writes.push({ sql, parameters });
         if (isRevisionLock(sql)) return [[{ revision: 6, learning_reset_at: null }], []];
-        if (isFallbackEvidenceQuery(sql)) return [[[firstFinal, laterBugReview].flat()], []];
+        if (isFallbackEvidenceQuery(sql)) return [[firstFinal, laterBugReview], []];
         if (isOwnerQuery(sql)) return [[{ normalized_form: "repeat-final", vocabulary_entry_id: 275 }], []];
         if (isProgressLock(sql)) return [[progress(null, "2026-07-01")], []];
         if (isExactReviewQuery(sql)) return [[], []];
