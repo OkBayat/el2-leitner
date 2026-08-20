@@ -27,17 +27,33 @@ function groupByUser(rows) {
 async function latestRelevantReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
   const safeForms = parseForms(forms);
   const fallbackClause = safeForms.length
-    ? ` OR term_snapshot IN (${safeForms.map(() => "?").join(", ")})`
+    ? ` OR (
+         re.term_snapshot IN (${safeForms.map(() => "?").join(", ")})
+         AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
+         AND NOT EXISTS (
+           SELECT 1
+           FROM vocabulary_forms ambiguous_form
+           JOIN vocabulary_entries ambiguous_vocabulary
+             ON ambiguous_vocabulary.id = ambiguous_form.vocabulary_entry_id
+            AND ambiguous_vocabulary.status = 'active'
+           WHERE ambiguous_vocabulary.id <> ?
+             AND ambiguous_form.form = re.term_snapshot
+             AND (ambiguous_vocabulary.owner_user_id IS NULL OR ambiguous_vocabulary.owner_user_id = ?)
+         )
+       )`
     : "";
   const [rows] = await connection.execute(
-    `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
-     FROM review_events
-     WHERE user_id = ?
-       AND (? IS NULL OR occurred_at > ?)
-       AND (vocabulary_entry_id = ?${fallbackClause})
-     ORDER BY occurred_at DESC, id DESC
+    `SELECT re.id AS review_event_id, re.occurred_at, re.local_day, re.correct, re.promoted, re.previous_box, re.new_box
+     FROM review_events re
+     LEFT JOIN vocabulary_entries event_vocabulary ON event_vocabulary.id = re.vocabulary_entry_id
+     WHERE re.user_id = ?
+       AND (? IS NULL OR re.occurred_at > ?)
+       AND (re.vocabulary_entry_id = ?${fallbackClause})
+     ORDER BY re.occurred_at DESC, re.id DESC
      LIMIT 1`,
-    [userId, learningResetAt, learningResetAt, vocabularyEntryId, ...safeForms]
+    safeForms.length
+      ? [userId, learningResetAt, learningResetAt, vocabularyEntryId, ...safeForms, vocabularyEntryId, userId]
+      : [userId, learningResetAt, learningResetAt, vocabularyEntryId]
   );
   return rows[0] || null;
 }
