@@ -91,8 +91,8 @@ const expectedByHouse = [
   [2],
   [1, 2],
   [1, 2, 3],
-  [1, 2, 3, 4],
-  [1, 2, 3, 4, 5]
+  [1, 0, 2, 0, 3, 0, 4],
+  [1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0, 4, 1]
 ];
 
 const model = leitner.buildDistribution(words, today, waits);
@@ -100,20 +100,20 @@ assert.equal(model.houses.length, 5, 'The distribution must always contain all f
 expectedByHouse.forEach((expectedSegments, index) => {
   const house = model.houses[index];
   assert.equal(house.box, index + 1, `House ${index + 1} must stay in its correct position`);
-  assert.deepEqual(house.segments, expectedSegments, `House ${index + 1} must bucket every section correctly`);
-  assert.equal(house.segments.length, house.box, `House ${house.box} must render exactly ${house.box} sections`);
-  assert.equal(house.segments.reduce((sum, count) => sum + count, 0), house.total, `House ${house.box} section totals must equal the house total`);
+  assert.deepEqual(house.segments, expectedSegments, `House ${index + 1} must bucket every daily state correctly`);
+  assert.equal(house.segments.length, waits[house.box], `House ${house.box} must render one state per waiting day`);
+  assert.equal(house.segments.reduce((sum, count) => sum + count, 0), house.total, `House ${house.box} state totals must equal the house total`);
 });
 assert.equal(model.total, words.length, 'Overall total must equal all words currently stored in houses 1–5');
 
 const emptyModel = leitner.buildDistribution([], today, waits);
 assert.equal(emptyModel.total, 0, 'An empty Leitner box must have a zero total');
-assert.deepEqual(emptyModel.houses.map((house) => house.segments.length), [1, 2, 3, 4, 5], 'Empty houses must still keep their complete visual structure');
-assert.ok(emptyModel.houses.every((house) => house.segments.every((count) => count === 0)), 'Every empty house section must display zero');
+assert.deepEqual(emptyModel.houses.map((house) => house.segments.length), [1, 2, 3, 7, 14], 'Empty houses must still keep every waiting-day state visible');
+assert.ok(emptyModel.houses.every((house) => house.segments.every((count) => count === 0)), 'Every empty house state must display zero');
 
-assert.equal(leitner.segmentIndexForWord({ due: '2026-08-01' }, 5, today, waits), 4, 'Overdue words must stay in the final section until reviewed');
-assert.equal(leitner.segmentIndexForWord({ due: null }, 5, today, waits), 0, 'Missing legacy due dates must fall back safely to the first section');
-assert.equal(leitner.segmentIndexForWord({ due: null, masteredAt: '2026-08-06T12:00:00.000Z' }, 5, today, waits), 4, 'Mastered house-five words must remain in the final visual section');
+assert.equal(leitner.segmentIndexForWord({ due: '2026-08-01' }, 5, today, waits), 13, 'Overdue words must stay in the final state until reviewed');
+assert.equal(leitner.segmentIndexForWord({ due: null }, 5, today, waits), 0, 'Missing legacy due dates must fall back safely to the first state');
+assert.equal(leitner.segmentIndexForWord({ due: null, masteredAt: '2026-08-06T12:00:00.000Z' }, 5, today, waits), 13, 'Mastered house-five words must remain in the final visual state');
 
 const dom = new JSDOM('<div id="root"></div><div id="total"><span data-leitner-total-text></span></div>');
 const root = dom.window.document.querySelector('#root');
@@ -126,15 +126,16 @@ expectedByHouse.forEach((expectedSegments, index) => {
   const row = root.querySelector(`[data-house="${houseNumber}"]`);
   assert.ok(row, `House ${houseNumber} row must exist in the DOM`);
   const segments = [...row.querySelectorAll('.leitner-segment')];
-  assert.equal(segments.length, houseNumber, `House ${houseNumber} DOM must have exactly ${houseNumber} visual sections`);
+  assert.equal(segments.length, expectedSegments.length, `House ${houseNumber} DOM must render every waiting-day state`);
   segments.forEach((segment, segmentIndex) => {
-    assert.equal(Number(segment.dataset.stage), segmentIndex + 1, `House ${houseNumber}, section ${segmentIndex + 1} must preserve its stage number`);
-    assert.equal(Number(segment.dataset.count), expectedSegments[segmentIndex], `House ${houseNumber}, section ${segmentIndex + 1} must show the correct word count`);
-    assert.equal(segment.tabIndex, 0, `House ${houseNumber}, section ${segmentIndex + 1} must be keyboard focusable`);
-    assert.match(segment.getAttribute('aria-label'), new RegExp(`بخش ${faNumber.format(segmentIndex + 1)} از ${faNumber.format(houseNumber)}`), `House ${houseNumber}, section ${segmentIndex + 1} must expose accessible detail`);
+    assert.equal(Number(segment.dataset.stage), segmentIndex + 1, `House ${houseNumber}, state ${segmentIndex + 1} must preserve its state number`);
+    assert.equal(Number(segment.dataset.count), expectedSegments[segmentIndex], `House ${houseNumber}, state ${segmentIndex + 1} must show the correct word count`);
+    assert.equal(segment.tabIndex, 0, `House ${houseNumber}, state ${segmentIndex + 1} must be keyboard focusable`);
+    assert.match(segment.getAttribute('aria-label'), new RegExp(`وضعیت ${faNumber.format(segmentIndex + 1)} از ${faNumber.format(expectedSegments.length)}`), `House ${houseNumber}, state ${segmentIndex + 1} must expose accessible detail`);
   });
 });
-assert.equal(root.querySelectorAll('.leitner-segment').length, 15, 'The visual must render 1+2+3+4+5 = 15 sections');
+assert.equal(root.querySelectorAll('.leitner-segment').length, 27, 'The visual must render 1+2+3+7+14 = 27 states');
+assert.equal(root.querySelector('.leitner-state-index'), null, 'State numbers must stay out of the visible segment DOM');
 assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
 
 const liveDom = new JSDOM(`
@@ -163,7 +164,7 @@ const attachment = leitner.attach({
   },
   clearTimeout: () => {}
 });
-assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The live dashboard enhancer must render the complete visualization immediately');
+assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 27, 'The live dashboard enhancer must render all waiting-day states immediately');
 const exportButton = liveDom.window.document.querySelector('#boxOneExportBtn');
 assert.ok(exportButton, 'The dashboard enhancer must add the house-one copy button beside the Leitner total');
 assert.equal(liveDom.window.document.querySelectorAll('#boxOneExportBtn').length, 1, 'The export control must never be duplicated');
@@ -184,8 +185,8 @@ assert.equal(exportButton.querySelector('[data-box-one-export-label]').textConte
 
 liveRoot.innerHTML = '<div class="box-row">legacy render</div>';
 await new Promise((resolve) => liveDom.window.setTimeout(resolve, 0));
-assert.equal(liveRoot.querySelector('.box-row'), null, 'A later legacy dashboard render must be replaced by the segmented visualization');
-assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 15, 'The enhanced visualization must stay synchronized after dashboard refreshes');
+assert.equal(liveRoot.querySelector('.box-row'), null, 'A later legacy dashboard render must be replaced by the daily-state visualization');
+assert.equal(liveRoot.querySelectorAll('.leitner-segment').length, 27, 'The enhanced visualization must stay synchronized after dashboard refreshes');
 assert.equal(liveDom.window.document.querySelectorAll('#boxOneExportBtn').length, 1, 'Dashboard refreshes must not duplicate the export button');
 attachment?.destroy?.();
 
@@ -208,14 +209,17 @@ assert.equal(emptyExportButton.dataset.wordCount, '0', 'The empty state must exp
 emptyAttachment?.destroy?.();
 
 const appSource = fs.readFileSync(new URL('../app-v2.js', import.meta.url), 'utf8');
-assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual section timing must stay aligned with the app scheduling rules');
+assert.match(appSource, /const BOX_WAIT_DAYS = \[0, 1, 2, 3, 7, 14\];/, 'The visual state timing must stay aligned with the app scheduling rules');
 assert.deepEqual([...waits], [0, 1, 2, 3, 7, 14], 'The visual must use the same wait-day schedule as the learning engine');
 
 const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.url), 'utf8');
 assert.match(layoutCss, /grid-template-columns:\s*minmax\(300px, 1fr\)\s+minmax\(500px, 820px\)/, 'Desktop layout must cap the Leitner card instead of letting it grow across the dashboard');
-assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House stages must stay centered and use compact progressive widths');
+assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House states must stay centered and use compact progressive widths');
 assert.match(layoutCss, /\.leitner-row\s*\{[\s\S]*?min-height:\s*34px;/, 'Desktop house rows must stay compact');
-assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;/, 'Desktop stage blocks must keep the approved compact height');
+assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?box-shadow:\s*none;/, 'Desktop state blocks must match the flat reference: square pale box, no chrome, colored underline only');
+assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Visible state-number styling must stay removed');
+assert.match(layoutCss, /\.leitner-segment\.is-empty\s*\{[\s\S]*?opacity:\s*1;[\s\S]*?color:\s*var\(--muted\);/, 'Empty states must keep their underline and only mute the count');
+assert.match(layoutCss, /\.leitner-segment\.is-occupied\s*\{[\s\S]*?color:\s*var\(--text\);[\s\S]*?box-shadow:\s*none;/, 'Occupied states must stay flat and readable');
 assert.match(layoutCss, /\.leitner-export-btn\s*\{[\s\S]*?margin-inline-start:\s*auto;[\s\S]*?border-radius:\s*999px;/, 'The house-one export control must stay compact and aligned with the panel chips');
 assert.match(layoutCss, /\.leitner-export-btn\.is-copied\s*\{/, 'Successful copying must have a distinct visual confirmation state');
 assert.match(layoutCss, /@media \(max-width: 560px\)[\s\S]*?\.leitner-export-btn\s*\{[\s\S]*?order:\s*2;[\s\S]*?margin-inline-start:\s*0;/, 'The export control must wrap cleanly on mobile screens');
@@ -229,7 +233,7 @@ const expectedVisualWidths = [
 ];
 const visualWidths = expectedVisualWidths.map((_, index) => {
   const houseNumber = index + 1;
-  const match = new RegExp(`\\.leitner-house--${houseNumber}\\s*\\{([\\s\\S]*?)\\n\\}`, 'm').exec(layoutCss);
+  const match = new RegExp(`\\.leitner-house--${houseNumber}\\s*\\{([\\s\\S]*?)\\}`, 'm').exec(layoutCss);
   assert.ok(match, `House ${houseNumber} must define its own visual width`);
   const percent = Number(/--house-width:\s*(\d+)%/.exec(match[1])?.[1]);
   const max = Number(/--house-max:\s*(\d+)px/.exec(match[1])?.[1]);

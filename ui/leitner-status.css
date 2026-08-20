@@ -1,4 +1,4 @@
-/* Leitner house distribution — compact visual stages that match the approved Vocora mockup. */
+/* Leitner house distribution — compact visual states mapped to the real waiting-day schedule. */
 #view-dashboard .dashboard-grid {
   grid-template-columns: minmax(300px, 1fr) minmax(500px, 820px);
   align-items: stretch;
@@ -118,8 +118,10 @@
 
 .leitner-row {
   --house-ink: #0b78ad;
+  --house-ink-rgb: 11, 120, 173;
   --house-a: #8ee1f4;
   --house-b: #62cfea;
+  --house-accent: rgba(var(--house-ink-rgb), .6);
   --house-width: 100%;
   --house-max: 630px;
   display: grid;
@@ -131,12 +133,12 @@
 }
 
 /*
- * The approved mockup does not stretch every house across the whole card.
- * Each successive house grows around one shared center point instead:
- * 1 section -> compact, 5 sections -> widest.
+ * Each house keeps the approved centered silhouette while its internal states
+ * now follow the real waiting-day schedule: 1, 2, 3, 7 and 14 states.
  */
 .leitner-house--1 {
   --house-ink: #087bb2;
+  --house-ink-rgb: 8, 123, 178;
   --house-a: #9ce8f7;
   --house-b: #66d2ed;
   --house-width: 40%;
@@ -144,6 +146,7 @@
 }
 .leitner-house--2 {
   --house-ink: #087f81;
+  --house-ink-rgb: 8, 127, 129;
   --house-a: #82e6df;
   --house-b: #49d1c9;
   --house-width: 54%;
@@ -151,6 +154,7 @@
 }
 .leitner-house--3 {
   --house-ink: #087d66;
+  --house-ink-rgb: 8, 125, 102;
   --house-a: #77dfc3;
   --house-b: #45cda7;
   --house-width: 70%;
@@ -158,6 +162,7 @@
 }
 .leitner-house--4 {
   --house-ink: #116db1;
+  --house-ink-rgb: 17, 109, 177;
   --house-a: #86c8f7;
   --house-b: #57adee;
   --house-width: 85%;
@@ -165,6 +170,7 @@
 }
 .leitner-house--5 {
   --house-ink: #415ac7;
+  --house-ink-rgb: 65, 90, 199;
   --house-a: #8ca8ff;
   --house-b: #6788f3;
   --house-width: 100%;
@@ -223,20 +229,27 @@
   min-width: 0;
   height: 30px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, .34);
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--house-a), var(--house-b));
-  color: color-mix(in srgb, var(--house-ink) 86%, #102019);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 12px rgba(27, 95, 132, .045);
+  border: 0;
+  border-bottom: 2px solid var(--house-accent);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
+  color: var(--text);
+  box-shadow: none;
   cursor: default;
-  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+  filter: none;
+  transition: background .16s ease, color .16s ease, filter .16s ease;
 }
 
-.leitner-segment--1 { filter: saturate(.82) brightness(1.055); }
-.leitner-segment--2 { filter: saturate(.9) brightness(1.025); }
-.leitner-segment--3 { filter: saturate(.98); }
-.leitner-segment--4 { filter: saturate(1.04) brightness(.99); }
-.leitner-segment--5 { filter: saturate(1.09) brightness(.975); }
+.leitner-segment.is-empty {
+  opacity: 1;
+  color: var(--muted);
+  filter: none;
+}
+
+.leitner-segment.is-occupied {
+  color: var(--text);
+  box-shadow: none;
+}
 
 .leitner-segment b {
   overflow: hidden;
@@ -275,8 +288,10 @@
 .leitner-segment:hover,
 .leitner-segment:focus-visible {
   z-index: 12;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 8px 18px rgba(27, 95, 132, .11);
-  transform: translateY(-2px);
+  opacity: 1;
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
+  box-shadow: none;
+  transform: none;
 }
 
 .leitner-segment:hover::after,
@@ -321,8 +336,18 @@
 }
 
 [data-theme="dark"] .leitner-segment {
-  border-color: rgba(255, 255, 255, .08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+  border-bottom-color: var(--house-accent);
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
+  box-shadow: none;
+}
+
+[data-theme="dark"] .leitner-segment.is-empty {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .leitner-segment.is-occupied {
+  color: var(--text);
+  box-shadow: none;
 }
 
 [data-theme="dark"] .leitner-export-btn.is-copied {
@@ -360,7 +385,12 @@
   .leitner-house-label { gap: 5px; }
   .leitner-house-label strong { font-size: 10px; }
   .leitner-segments { gap: 4px; }
-  .leitner-segment { height: 28px; border-radius: 8px; }
+  .leitner-house--5 .leitner-segments {
+    grid-template-columns: repeat(var(--segment-count), minmax(20px, 1fr));
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .leitner-segment { height: 28px; border-radius: 0; }
   .leitner-segment b { font-size: 9px; }
   .leitner-row-total strong { font-size: 11px; }
   .leitner-row-total span { font-size: 8px; }
