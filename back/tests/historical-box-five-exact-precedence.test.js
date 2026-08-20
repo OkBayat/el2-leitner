@@ -28,6 +28,9 @@ function isExactResetQuery(sql) {
 function isExactFinalQuery(sql) {
   return /FROM review_events/u.test(sql) && /vocabulary_entry_id = \?/u.test(sql) && /correct = 1/u.test(sql) && !/event_vocabulary/u.test(sql);
 }
+function isPreservedLegacyQuery(sql) {
+  return /FROM learning_states/u.test(sql);
+}
 
 function basePool(connection, forms = "authoritative-term\u001flegacy-term") {
   return {
@@ -53,6 +56,7 @@ test("the earliest exact final review beats a later trusted fallback final", asy
       calls.push({ sql, parameters });
       if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) return [[{ revision: 3, learning_reset_at: null }], []];
       if (isFallbackEvidenceQuery(sql)) return [[fallbackFinal], []];
+      if (isPreservedLegacyQuery(sql)) return [[], []];
       if (isOwnerQuery(sql)) return [[{ normalized_form: "legacy-term", vocabulary_entry_id: 501 }], []];
       if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) return [progress(), []];
       if (isExactResetQuery(sql)) return [[], []];
@@ -86,6 +90,7 @@ test("the earliest trusted fallback final beats a later exact final review", asy
       calls.push({ sql, parameters });
       if (/FROM user_state_revisions/u.test(sql) && /FOR UPDATE/u.test(sql)) return [[{ revision: 4, learning_reset_at: null }], []];
       if (isFallbackEvidenceQuery(sql)) return [[fallbackFinal], []];
+      if (isPreservedLegacyQuery(sql)) return [[], []];
       if (isOwnerQuery(sql)) return [[{ normalized_form: "legacy-term", vocabulary_entry_id: 501 }], []];
       if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) return [progress(), []];
       if (isExactResetQuery(sql)) return [[], []];
