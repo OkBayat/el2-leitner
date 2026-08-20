@@ -125,13 +125,17 @@ jobs:
           jq -e '.revision == 1 and (.state.words[] | select(.term == "Monday" and .box == 5 and .due == "2026-08-20" and .masteredAt == null))' \
             /tmp/box5-before-final.json
 
+          # Deliberately submit the old broken browser shape: the event says this
+          # is a successful promoted 5 -> 5 final review, but the word schedules
+          # another 14-day due date and leaves masteredAt empty. The API must
+          # derive the authoritative final outcome instead of trusting it.
           jq '
             (.state.words[] | select(.term == "Monday")) as $word
             | {
                 revision: .revision,
                 word: ($word
                   | .box = 5
-                  | .due = null
+                  | .due = "2026-09-03"
                   | .attempts = 6
                   | .correct = 6
                   | .mistakes = 0
@@ -139,7 +143,7 @@ jobs:
                   | .lastReviewed = "2026-08-20T10:00:00.000Z"
                   | .lastPromotedDay = "2026-08-20"
                   | .blockedUntil = null
-                  | .masteredAt = "2026-08-20T10:00:00.000Z"),
+                  | .masteredAt = null),
                 event: {
                   at: "2026-08-20T10:00:00.000Z",
                   day: "2026-08-20",
