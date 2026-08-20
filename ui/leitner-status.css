@@ -118,10 +118,10 @@
 
 .leitner-row {
   --house-ink: #0b78ad;
+  --house-ink-rgb: 11, 120, 173;
   --house-a: #8ee1f4;
   --house-b: #62cfea;
-  --house-accent-rgb: 42, 194, 217;
-  --house-accent: rgba(var(--house-accent-rgb), .6);
+  --house-accent: rgba(var(--house-ink-rgb), .6);
   --house-width: 100%;
   --house-max: 630px;
   display: grid;
@@ -138,41 +138,41 @@
  */
 .leitner-house--1 {
   --house-ink: #087bb2;
+  --house-ink-rgb: 8, 123, 178;
   --house-a: #9ce8f7;
   --house-b: #66d2ed;
-  --house-accent-rgb: 42, 194, 217;
   --house-width: 40%;
   --house-max: 250px;
 }
 .leitner-house--2 {
   --house-ink: #087f81;
+  --house-ink-rgb: 8, 127, 129;
   --house-a: #82e6df;
   --house-b: #49d1c9;
-  --house-accent-rgb: 31, 190, 203;
   --house-width: 54%;
   --house-max: 340px;
 }
 .leitner-house--3 {
   --house-ink: #087d66;
+  --house-ink-rgb: 8, 125, 102;
   --house-a: #77dfc3;
   --house-b: #45cda7;
-  --house-accent-rgb: 46, 184, 43;
   --house-width: 70%;
   --house-max: 440px;
 }
 .leitner-house--4 {
   --house-ink: #116db1;
+  --house-ink-rgb: 17, 109, 177;
   --house-a: #86c8f7;
   --house-b: #57adee;
-  --house-accent-rgb: 7, 92, 240;
   --house-width: 85%;
   --house-max: 535px;
 }
 .leitner-house--5 {
   --house-ink: #415ac7;
+  --house-ink-rgb: 65, 90, 199;
   --house-a: #8ca8ff;
   --house-b: #6788f3;
-  --house-accent-rgb: 123, 77, 232;
   --house-width: 100%;
   --house-max: 630px;
 }
