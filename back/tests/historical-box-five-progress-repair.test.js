@@ -99,10 +99,13 @@ describe("historical box-five progress repair", () => {
 
     const graduation = writes.find(({ sql }) => /SET due_date = NULL/u.test(sql));
     assert.ok(graduation);
+    assert.match(graduation.sql, /last_reviewed_at = CASE/u);
+    assert.match(graduation.sql, /last_reviewed_at IS NULL OR last_reviewed_at < \?/u);
     assert.equal(graduation.parameters[0].toISOString(), "2026-08-20T08:00:00.000Z");
     assert.equal(graduation.parameters[1].toISOString(), "2026-08-20T08:00:00.000Z");
-    assert.equal(graduation.parameters[2], "2026-08-20");
-    assert.deepEqual(graduation.parameters.slice(3), [7, 101]);
+    assert.equal(graduation.parameters[2].toISOString(), "2026-08-20T08:00:00.000Z");
+    assert.equal(graduation.parameters[3], "2026-08-20");
+    assert.deepEqual(graduation.parameters.slice(4), [7, 101]);
 
     const pendingCorrection = writes.find(({ sql }) => /SET mastered_at = NULL/u.test(sql));
     assert.ok(pendingCorrection);
