@@ -51,7 +51,7 @@
     const houses = [1, 2, 3, 4, 5].map((box) => {
       const segments = Array.from({ length: box }, () => 0);
       source.forEach((word) => {
-        if (Number(word?.box) !== box) return;
+        if (Number(word?.box) !== box || word?.masteredAt) return;
         segments[segmentIndexForWord(word, box, today, waitDays)] += 1;
       });
       return {
