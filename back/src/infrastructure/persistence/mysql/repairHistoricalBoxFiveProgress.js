@@ -31,22 +31,43 @@ function groupByUser(rows) {
   return [...groups.values()];
 }
 
-const UTF8_APOSTROPHE_SQL = "CONVERT(CHAR(39) USING utf8mb4)";
-const NORMALIZED_TERM_SQL = `LOWER(REGEXP_REPLACE(
-  TRIM(
-    REPLACE(
-      REPLACE(
-        REPLACE(
-          REPLACE(re.term_snapshot, '’', ${UTF8_APOSTROPHE_SQL}),
-          '‘', ${UTF8_APOSTROPHE_SQL}
-        ),
-        '–', '-'
-      ),
-      '—', '-'
-    )
-  ),
-  '[[:space:]]+', ' '
-))`;
+function newerReview(left, right) {
+  if (!left) return right || null;
+  if (!right) return left;
+  const leftTime = new Date(left.occurred_at).getTime();
+  const rightTime = new Date(right.occurred_at).getTime();
+  if (rightTime !== leftTime) return rightTime > leftTime ? right : left;
+  return Number(right.review_event_id) > Number(left.review_event_id) ? right : left;
+}
+
+function addOwner(ownersByForm, normalizedForm, vocabularyEntryId) {
+  if (!normalizedForm) return;
+  if (!ownersByForm.has(normalizedForm)) ownersByForm.set(normalizedForm, new Set());
+  ownersByForm.get(normalizedForm).add(String(vocabularyEntryId));
+}
+
+function candidateFormOwners(candidates, persistedOwners) {
+  const owners = new Map(
+    [...persistedOwners.entries()].map(([form, ids]) => [form, new Set(ids)])
+  );
+  for (const candidate of candidates) {
+    for (const form of parseForms(candidate.forms)) {
+      addOwner(owners, form, candidate.vocabulary_entry_id);
+    }
+  }
+  return owners;
+}
+
+function fallbackByNormalizedForm(rows) {
+  const index = new Map();
+  for (const row of rows) {
+    const normalized = normalizeVocabularyForm(row.term_snapshot);
+    if (!normalized) continue;
+    const existing = index.get(normalized);
+    index.set(normalized, newerReview(existing, row));
+  }
+  return index;
+}
 
 async function latestExactReview(connection, userId, vocabularyEntryId, learningResetAt) {
   const [rows] = await connection.execute(
@@ -62,50 +83,67 @@ async function latestExactReview(connection, userId, vocabularyEntryId, learning
   return rows[0] || null;
 }
 
-async function latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
-  const safeForms = parseForms(forms);
-  if (!safeForms.length) return null;
-  const placeholders = safeForms.map(() => "?").join(", ");
+async function loadFallbackReviews(connection, userId, learningResetAt) {
   const [rows] = await connection.execute(
-    `SELECT re.id AS review_event_id, re.occurred_at, re.local_day, re.correct, re.promoted, re.previous_box, re.new_box
+    `SELECT re.id AS review_event_id, re.occurred_at, re.local_day,
+            re.correct, re.promoted, re.previous_box, re.new_box, re.term_snapshot
      FROM review_events re
      LEFT JOIN vocabulary_entries event_vocabulary ON event_vocabulary.id = re.vocabulary_entry_id
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
-       AND ${NORMALIZED_TERM_SQL} IN (${placeholders})
        AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
-       AND NOT EXISTS (
-         SELECT 1
-         FROM vocabulary_forms ambiguous_form
-         JOIN vocabulary_entries ambiguous_vocabulary
-           ON ambiguous_vocabulary.id = ambiguous_form.vocabulary_entry_id
-          AND ambiguous_vocabulary.status = 'active'
-         WHERE ambiguous_vocabulary.id <> ?
-           AND ambiguous_form.normalized_form = ${NORMALIZED_TERM_SQL}
-           AND (ambiguous_vocabulary.owner_user_id IS NULL OR ambiguous_vocabulary.owner_user_id = ?)
-       )
-     ORDER BY re.occurred_at DESC, re.id DESC
-     LIMIT 1`,
-    [userId, learningResetAt, learningResetAt, ...safeForms, vocabularyEntryId, userId]
+     ORDER BY re.occurred_at DESC, re.id DESC`,
+    [userId, learningResetAt, learningResetAt]
   );
-  return rows[0] || null;
+  return fallbackByNormalizedForm(rows);
 }
 
-function newerReview(left, right) {
-  if (!left) return right || null;
-  if (!right) return left;
-  const leftTime = new Date(left.occurred_at).getTime();
-  const rightTime = new Date(right.occurred_at).getTime();
-  if (rightTime !== leftTime) return rightTime > leftTime ? right : left;
-  return Number(right.review_event_id) > Number(left.review_event_id) ? right : left;
+async function loadActiveFormOwners(connection, userId) {
+  const [rows] = await connection.execute(
+    `SELECT vf.normalized_form, ve.id AS vocabulary_entry_id
+     FROM vocabulary_entries ve
+     JOIN vocabulary_forms vf ON vf.vocabulary_entry_id = ve.id
+     WHERE ve.status = 'active'
+       AND (
+         ve.owner_user_id = ?
+         OR (
+           ve.owner_user_id IS NULL
+           AND EXISTS (
+             SELECT 1
+             FROM user_collections uc
+             JOIN collections c ON c.id = uc.collection_id AND c.archived_at IS NULL
+             JOIN collection_entries ce
+               ON ce.collection_id = uc.collection_id
+              AND ce.vocabulary_entry_id = ve.id
+              AND ce.removed_at IS NULL
+             WHERE uc.user_id = ? AND uc.status = 'active'
+           )
+         )
+       )`,
+    [userId, userId]
+  );
+  const owners = new Map();
+  for (const row of rows) addOwner(owners, row.normalized_form, row.vocabulary_entry_id);
+  return owners;
 }
 
-async function latestRelevantReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
-  // Keep exact and fallback lookups separate so the indexed identity path stays cheap,
-  // but choose the newest trusted event because identity drift can happen between
-  // entering box 5 and the final review fourteen days later.
-  const exact = await latestExactReview(connection, userId, vocabularyEntryId, learningResetAt);
-  const fallback = await latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms);
+function latestTrustedFallback(candidate, fallbackIndex, ownersByForm) {
+  const candidateId = String(candidate.vocabulary_entry_id);
+  let latest = null;
+  for (const form of parseForms(candidate.forms)) {
+    const owners = ownersByForm.get(form);
+    if (!owners || owners.size !== 1 || !owners.has(candidateId)) continue;
+    latest = newerReview(latest, fallbackIndex.get(form));
+  }
+  return latest;
+}
+
+async function latestRelevantReview(connection, userId, candidate, learningResetAt, fallbackIndex, ownersByForm) {
+  // Exact evidence remains indexed. Fallback evidence is normalized in Node with
+  // the same domain function used to create vocabulary identities, then the newest
+  // trusted event wins because identity drift can happen before the final review.
+  const exact = await latestExactReview(connection, userId, candidate.vocabulary_entry_id, learningResetAt);
+  const fallback = latestTrustedFallback(candidate, fallbackIndex, ownersByForm);
   return newerReview(exact, fallback);
 }
 
@@ -168,6 +206,12 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         continue;
       }
 
+      const [fallbackIndex, persistedOwners] = await Promise.all([
+        loadFallbackReviews(connection, group.userId, revision.learning_reset_at),
+        loadActiveFormOwners(connection, group.userId)
+      ]);
+      const ownersByForm = candidateFormOwners(group.rows, persistedOwners);
+
       for (const candidate of group.rows) {
         const progress = await lockedProgress(connection, group.userId, candidate.vocabulary_entry_id);
         if (!isStuckBoxFive(progress)) continue;
@@ -175,9 +219,10 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         const finalReview = await latestRelevantReview(
           connection,
           group.userId,
-          candidate.vocabulary_entry_id,
+          candidate,
           revision.learning_reset_at,
-          candidate.forms
+          fallbackIndex,
+          ownersByForm
         );
 
         if (isSuccessfulFinalReview(finalReview)) {
