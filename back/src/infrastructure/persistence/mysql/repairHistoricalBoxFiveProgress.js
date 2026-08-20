@@ -12,6 +12,12 @@ function isSuccessfulFinalReview(row) {
     Number(row.new_box) === 5;
 }
 
+function dayValue(value) {
+  if (!value) return null;
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
+}
+
 function parseForms(value) {
   return [...new Set(
     String(value || "")
@@ -31,13 +37,13 @@ function groupByUser(rows) {
   return [...groups.values()];
 }
 
-function newerReview(left, right) {
+function earlierReview(left, right) {
   if (!left) return right || null;
   if (!right) return left;
   const leftTime = new Date(left.occurred_at).getTime();
   const rightTime = new Date(right.occurred_at).getTime();
-  if (rightTime !== leftTime) return rightTime > leftTime ? right : left;
-  return Number(right.review_event_id) > Number(left.review_event_id) ? right : left;
+  if (rightTime !== leftTime) return rightTime < leftTime ? right : left;
+  return Number(right.review_event_id) < Number(left.review_event_id) ? right : left;
 }
 
 function addOwner(ownersByForm, normalizedForm, vocabularyEntryId) {
@@ -56,31 +62,48 @@ function candidateFormOwners(candidates, persistedOwners) {
   return owners;
 }
 
-function fallbackByNormalizedForm(rows) {
+function fallbackFinalsByNormalizedForm(rows) {
   const index = new Map();
   for (const row of rows) {
+    if (!isSuccessfulFinalReview(row)) continue;
     const normalized = normalizeVocabularyForm(row.term_snapshot);
     if (!normalized) continue;
-    index.set(normalized, newerReview(index.get(normalized), row));
+    if (!index.has(normalized)) index.set(normalized, []);
+    index.get(normalized).push(row);
   }
   return index;
 }
 
-async function latestExactReview(connection, userId, vocabularyEntryId, learningResetAt) {
+function firstReviewInLifecycle(rows, introducedOn) {
+  const lifecycleDay = dayValue(introducedOn);
+  if (!Array.isArray(rows) || !rows.length) return null;
+  for (const row of rows) {
+    if (!lifecycleDay || dayValue(row.local_day) >= lifecycleDay) return row;
+  }
+  return null;
+}
+
+async function firstExactFinalReview(connection, userId, vocabularyEntryId, learningResetAt, introducedOn) {
+  const lifecycleDay = dayValue(introducedOn);
   const [rows] = await connection.execute(
     `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
      FROM review_events
      WHERE user_id = ?
        AND (? IS NULL OR occurred_at > ?)
        AND vocabulary_entry_id = ?
-     ORDER BY occurred_at DESC, id DESC
+       AND correct = 1
+       AND promoted = 1
+       AND previous_box = 5
+       AND new_box = 5
+       AND (? IS NULL OR local_day >= ?)
+     ORDER BY occurred_at ASC, id ASC
      LIMIT 1`,
-    [userId, learningResetAt, learningResetAt, vocabularyEntryId]
+    [userId, learningResetAt, learningResetAt, vocabularyEntryId, lifecycleDay, lifecycleDay]
   );
   return rows[0] || null;
 }
 
-async function loadFallbackReviews(connection, userId, learningResetAt) {
+async function loadFallbackFinalReviews(connection, userId, learningResetAt) {
   const [rows] = await connection.execute(
     `SELECT re.id AS review_event_id, re.occurred_at, re.local_day,
             re.correct, re.promoted, re.previous_box, re.new_box, re.term_snapshot
@@ -89,10 +112,14 @@ async function loadFallbackReviews(connection, userId, learningResetAt) {
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
        AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
-     ORDER BY re.occurred_at DESC, re.id DESC`,
+       AND re.correct = 1
+       AND re.promoted = 1
+       AND re.previous_box = 5
+       AND re.new_box = 5
+     ORDER BY re.occurred_at ASC, re.id ASC`,
     [userId, learningResetAt, learningResetAt]
   );
-  return fallbackByNormalizedForm(rows);
+  return fallbackFinalsByNormalizedForm(rows);
 }
 
 async function loadActiveFormOwners(connection, userId) {
@@ -124,28 +151,51 @@ async function loadActiveFormOwners(connection, userId) {
   return owners;
 }
 
-function latestTrustedFallback(candidate, fallbackIndex, ownersByForm) {
+function firstTrustedFallback(candidate, fallbackIndex, ownersByForm, introducedOn) {
   const candidateId = String(candidate.vocabulary_entry_id);
-  let latest = null;
+  let earliest = null;
   for (const form of parseForms(candidate.forms)) {
     const owners = ownersByForm.get(form);
     if (!owners || owners.size !== 1 || !owners.has(candidateId)) continue;
-    latest = newerReview(latest, fallbackIndex.get(form));
+    earliest = earlierReview(
+      earliest,
+      firstReviewInLifecycle(fallbackIndex.get(form), introducedOn)
+    );
   }
-  return latest;
+  return earliest;
 }
 
-async function latestRelevantReview(connection, userId, candidate, learningResetAt, fallbackIndex, ownersByForm) {
-  // Exact evidence remains indexed. Fallback evidence is normalized in Node with
-  // the same domain function used to create vocabulary identities, then the newest
-  // trusted event wins because identity drift can happen before the final review.
-  const exact = await latestExactReview(connection, userId, candidate.vocabulary_entry_id, learningResetAt);
-  return newerReview(exact, latestTrustedFallback(candidate, fallbackIndex, ownersByForm));
+async function firstRelevantFinalReview(
+  connection,
+  userId,
+  candidate,
+  progress,
+  learningResetAt,
+  fallbackIndex,
+  ownersByForm
+) {
+  // A successful 5 -> 5 review should have graduated the card immediately. Any
+  // later box-5 reviews only happened because of the historical bug, so mastery
+  // belongs to the first trusted final review in the card's current lifecycle.
+  const exact = await firstExactFinalReview(
+    connection,
+    userId,
+    candidate.vocabulary_entry_id,
+    learningResetAt,
+    progress.introduced_on
+  );
+  const fallback = firstTrustedFallback(
+    candidate,
+    fallbackIndex,
+    ownersByForm,
+    progress.introduced_on
+  );
+  return earlierReview(exact, fallback);
 }
 
 async function lockedProgress(connection, userId, vocabularyEntryId) {
   const [rows] = await connection.execute(
-    `SELECT box, due_date, mastered_at
+    `SELECT box, due_date, introduced_on, mastered_at
      FROM user_vocabulary_progress
      WHERE user_id = ?
        AND vocabulary_entry_id = ?
@@ -202,8 +252,7 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         continue;
       }
 
-      // One connection inside one transaction: keep reads sequential and predictable.
-      const fallbackIndex = await loadFallbackReviews(connection, group.userId, revision.learning_reset_at);
+      const fallbackIndex = await loadFallbackFinalReviews(connection, group.userId, revision.learning_reset_at);
       const persistedOwners = await loadActiveFormOwners(connection, group.userId);
       const ownersByForm = candidateFormOwners(group.rows, persistedOwners);
 
@@ -211,10 +260,11 @@ export async function repairHistoricalBoxFiveProgress(pool) {
         const progress = await lockedProgress(connection, group.userId, candidate.vocabulary_entry_id);
         if (!isStuckBoxFive(progress)) continue;
 
-        const finalReview = await latestRelevantReview(
+        const finalReview = await firstRelevantFinalReview(
           connection,
           group.userId,
           candidate,
+          progress,
           revision.learning_reset_at,
           fallbackIndex,
           ownersByForm
