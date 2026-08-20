@@ -93,12 +93,8 @@ jobs:
              '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000'),
             (@user_id, @apostrophe_id, 'active', 5, '2026-09-03', 5, 5,
              '2026-07-01', '2026-08-20 08:30:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
-            -- This vocabulary was reintroduced on Aug 10. The Aug 1 final review below belongs
-            -- to an older lifecycle and must not graduate the current card.
             (@user_id, @lifecycle_id, 'active', 5, '2026-09-03', 4, 4,
              '2026-08-10', '2026-08-18 08:40:00.000', '2026-08-18', '2026-08-01 09:00:00.000'),
-            -- The old bug created multiple successful box-5 reviews. The first one is the real
-            -- mastery moment under the corrected Leitner semantics.
             (@user_id, @repeat_id, 'active', 5, '2026-09-03', 6, 6,
              '2026-07-01', '2026-08-20 08:45:00.000', '2026-08-20', '2026-08-01 09:00:00.000');
 
@@ -145,7 +141,7 @@ jobs:
 
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
-            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-first-final' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-06 08:45:00.000';" \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-first-final' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-06 08:45:00.000' AND uvp.last_reviewed_at='2026-08-20 08:45:00.000';" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
