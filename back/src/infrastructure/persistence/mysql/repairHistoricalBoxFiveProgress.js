@@ -186,13 +186,26 @@ async function loadFallbackEvidence(connection, userId, learningResetAt) {
      LEFT JOIN vocabulary_entries event_vocabulary ON event_vocabulary.id = re.vocabulary_entry_id
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
-       AND (re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active')
+       AND (
+         re.vocabulary_entry_id IS NULL
+         OR event_vocabulary.status <> 'active'
+         OR NOT EXISTS (
+           SELECT 1
+           FROM user_collections uc
+           JOIN collections c ON c.id = uc.collection_id AND c.archived_at IS NULL
+           JOIN collection_entries ce
+             ON ce.collection_id = uc.collection_id
+            AND ce.vocabulary_entry_id = event_vocabulary.id
+            AND ce.removed_at IS NULL
+           WHERE uc.user_id = ? AND uc.status = 'active'
+         )
+       )
        AND (
          (re.correct = 1 AND re.promoted = 1 AND re.previous_box = 5 AND re.new_box = 5)
          OR (re.correct = 0 AND re.new_box = 1)
        )
      ORDER BY re.occurred_at ASC, re.id ASC`,
-    [userId, learningResetAt, learningResetAt]
+    [userId, learningResetAt, learningResetAt, userId]
   );
   return fallbackEvidenceByNormalizedForm(rows);
 }
@@ -203,21 +216,16 @@ async function loadActiveFormOwners(connection, userId) {
      FROM vocabulary_entries ve
      JOIN vocabulary_forms vf ON vf.vocabulary_entry_id = ve.id
      WHERE ve.status = 'active'
-       AND (
-         ve.owner_user_id = ?
-         OR (
-           ve.owner_user_id IS NULL
-           AND EXISTS (
-             SELECT 1
-             FROM user_collections uc
-             JOIN collections c ON c.id = uc.collection_id AND c.archived_at IS NULL
-             JOIN collection_entries ce
-               ON ce.collection_id = uc.collection_id
-              AND ce.vocabulary_entry_id = ve.id
-              AND ce.removed_at IS NULL
-             WHERE uc.user_id = ? AND uc.status = 'active'
-           )
-         )
+       AND (ve.owner_user_id IS NULL OR ve.owner_user_id = ?)
+       AND EXISTS (
+         SELECT 1
+         FROM user_collections uc
+         JOIN collections c ON c.id = uc.collection_id AND c.archived_at IS NULL
+         JOIN collection_entries ce
+           ON ce.collection_id = uc.collection_id
+          AND ce.vocabulary_entry_id = ve.id
+          AND ce.removed_at IS NULL
+         WHERE uc.user_id = ? AND uc.status = 'active'
        )`,
     [userId, userId]
   );
