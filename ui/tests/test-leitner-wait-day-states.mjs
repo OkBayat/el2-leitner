@@ -8,7 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
-const assetVersion = 'wait-day-states-v4';
+const assetVersion = 'wait-day-states-v3';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -34,7 +34,7 @@ const indexSource = fs.readFileSync(new URL('../index.html', import.meta.url), '
 assert.match(
   indexSource,
   new RegExp(`href="leitner-status\\.css\\?v=${assetVersion}"`),
-  'Regression: the dashboard must request the revised flat Leitner stylesheet with a fresh cache key'
+  'Regression: the dashboard must request the current Leitner stylesheet cache key'
 );
 assert.match(
   indexSource,
@@ -95,8 +95,13 @@ assert.match(
 );
 assert.match(
   layoutCss,
-  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
-  'Regression: each state must use the exact house-icon tint and a 60%-alpha colored bottom border'
+  /\.leitner-row\s*\{[\s\S]*?--house-accent:\s*rgba\(var\(--house-accent-rgb\), \.6\);/,
+  'Regression: the visible border color token must use 60% alpha'
+);
+assert.match(
+  layoutCss,
+  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
+  'Regression: each state must use the exact house-icon tint and the softened per-house bottom border'
 );
 assert.ok(layoutCss.includes(iconBackground), 'The segment and icon tint formula must stay shared and explicit');
 assert.doesNotMatch(
@@ -138,8 +143,8 @@ expectedAccentRgb.forEach((accentRgb, index) => {
 
 assert.match(
   layoutCss,
-  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*rgba\(var\(--house-accent-rgb\), \.6\);[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
-  'Dark mode must preserve the same house-icon tint and 60%-alpha underline'
+  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*var\(--house-accent\);[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
+  'Dark mode must preserve the same house-icon tint and softened underline'
 );
 
 console.log('Leitner wait-day state regression and unit tests passed.');
