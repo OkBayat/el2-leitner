@@ -8,24 +8,30 @@ function hasReviewId(row) {
   return row?.review_event_id !== null && row?.review_event_id !== undefined;
 }
 
-function isSuccessfulFinalReview(row) {
+function isFinalReviewCandidate(row) {
   return hasReviewId(row) &&
     Number(row.correct) === 1 &&
-    Number(row.promoted) === 1 &&
     Number(row.previous_box) === 5 &&
     Number(row.new_box) === 5;
-}
-
-function isWrongReset(row) {
-  return hasReviewId(row) &&
-    Number(row.correct) === 0 &&
-    Number(row.new_box) === 1;
 }
 
 function dayValue(value) {
   if (!value) return null;
   if (value instanceof Date) return value.toISOString().slice(0, 10);
   return String(value).slice(0, 10);
+}
+
+function isSuccessfulFinalReview(row, dueDate = null) {
+  if (!isFinalReviewCandidate(row)) return false;
+  const dueDay = dayValue(dueDate);
+  const reviewDay = dayValue(row.local_day);
+  return Number(row.promoted) === 1 || Boolean(dueDay && reviewDay && reviewDay >= dueDay);
+}
+
+function isWrongReset(row) {
+  return hasReviewId(row) &&
+    Number(row.correct) === 0 &&
+    Number(row.new_box) === 1;
 }
 
 function parseForms(value) {
@@ -88,11 +94,6 @@ function candidateFormOwners(candidates, persistedOwners) {
 
   for (const candidate of candidates) {
     for (const form of parseForms(candidate.forms)) {
-      // Identities currently visible through an active collection are the
-      // authoritative ownership set. Hidden orphan progress may still be
-      // repaired by exact id, but it must not make a visible canonical alias
-      // ambiguous. When no visible owner exists, retain every hidden candidate
-      // so row order can never assign shared fallback evidence to one of them.
       if (visibleOwnedForms.has(form)) continue;
       addOwner(owners, form, candidate.vocabulary_entry_id);
     }
@@ -103,7 +104,7 @@ function candidateFormOwners(candidates, persistedOwners) {
 function fallbackEvidenceByNormalizedForm(rows) {
   const index = new Map();
   for (const row of rows) {
-    if (!isSuccessfulFinalReview(row) && !isWrongReset(row)) continue;
+    if (!isFinalReviewCandidate(row) && !isWrongReset(row)) continue;
     const normalized = normalizeVocabularyForm(row.term_snapshot);
     if (!normalized) continue;
     if (!index.has(normalized)) index.set(normalized, []);
@@ -112,13 +113,13 @@ function fallbackEvidenceByNormalizedForm(rows) {
   return index;
 }
 
-function firstFinalInLifecycle(rows, introducedOn, resetBoundary) {
+function firstFinalInLifecycle(rows, introducedOn, resetBoundary, dueDate) {
   const lifecycleDay = dayValue(introducedOn);
   if (!Array.isArray(rows) || !rows.length) return null;
   let earliest = null;
   for (const row of rows) {
     if (lifecycleDay && dayValue(row.local_day) <= lifecycleDay) continue;
-    if (!isSuccessfulFinalReview(row) || !isAfterBoundary(row, resetBoundary)) continue;
+    if (!isSuccessfulFinalReview(row, dueDate) || !isAfterBoundary(row, resetBoundary)) continue;
     earliest = earlierReview(earliest, row);
   }
   return earliest;
@@ -160,9 +161,11 @@ async function firstExactFinalReview(
   vocabularyEntryId,
   learningResetAt,
   introducedOn,
+  dueDate,
   resetBoundary
 ) {
   const lifecycleDay = dayValue(introducedOn);
+  const dueDay = dayValue(dueDate);
   const resetAt = resetBoundary?.occurred_at || null;
   const resetId = resetBoundary?.review_event_id ?? null;
   const [rows] = await connection.execute(
@@ -172,7 +175,10 @@ async function firstExactFinalReview(
        AND (? IS NULL OR occurred_at > ?)
        AND vocabulary_entry_id = ?
        AND correct = 1
-       AND promoted = 1
+       AND (
+         promoted = 1
+         OR (? IS NOT NULL AND local_day >= ?)
+       )
        AND previous_box = 5
        AND new_box = 5
        AND (? IS NULL OR local_day > ?)
@@ -188,6 +194,8 @@ async function firstExactFinalReview(
       learningResetAt,
       learningResetAt,
       vocabularyEntryId,
+      dueDay,
+      dueDay,
       lifecycleDay,
       lifecycleDay,
       resetAt,
@@ -196,7 +204,7 @@ async function firstExactFinalReview(
       resetId
     ]
   );
-  return isSuccessfulFinalReview(rows[0]) ? rows[0] : null;
+  return isSuccessfulFinalReview(rows[0], dueDay) ? rows[0] : null;
 }
 
 async function loadFallbackEvidence(connection, userId, learningResetAt) {
@@ -221,7 +229,7 @@ async function loadFallbackEvidence(connection, userId, learningResetAt) {
          )
        )
        AND (
-         (re.correct = 1 AND re.promoted = 1 AND re.previous_box = 5 AND re.new_box = 5)
+         (re.correct = 1 AND re.previous_box = 5 AND re.new_box = 5)
          OR (re.correct = 0 AND re.new_box = 1)
        )
      ORDER BY re.occurred_at ASC, re.id ASC`,
@@ -255,42 +263,30 @@ async function loadActiveFormOwners(connection, userId) {
 }
 
 function candidateMayOwnForm(candidate, form, ownersByForm) {
-  return Boolean(
-    ownersByForm.get(form)?.has(String(candidate.vocabulary_entry_id))
-  );
+  return Boolean(ownersByForm.get(form)?.has(String(candidate.vocabulary_entry_id)));
 }
 
 function hasUniqueCandidateOwner(candidate, form, ownersByForm) {
   const owners = ownersByForm.get(form);
-  return Boolean(
-    owners &&
-    owners.size === 1 &&
-    owners.has(String(candidate.vocabulary_entry_id))
-  );
+  return Boolean(owners && owners.size === 1 && owners.has(String(candidate.vocabulary_entry_id)));
 }
 
 function latestPossibleFallbackReset(candidate, fallbackIndex, ownersByForm, introducedOn) {
   let latest = null;
   for (const form of parseForms(candidate.forms)) {
-    // A reset on an ambiguous historical spelling is not proof that this card
-    // reset, but it is enough uncertainty to stop an automatic false mastery.
-    // Final-review evidence remains stricter and still requires a unique owner.
     if (!candidateMayOwnForm(candidate, form, ownersByForm)) continue;
-    latest = laterReview(
-      latest,
-      latestResetInLifecycle(fallbackIndex.get(form), introducedOn)
-    );
+    latest = laterReview(latest, latestResetInLifecycle(fallbackIndex.get(form), introducedOn));
   }
   return latest;
 }
 
-function firstTrustedFallbackFinal(candidate, fallbackIndex, ownersByForm, introducedOn, resetBoundary) {
+function firstTrustedFallbackFinal(candidate, fallbackIndex, ownersByForm, introducedOn, resetBoundary, dueDate) {
   let earliest = null;
   for (const form of parseForms(candidate.forms)) {
     if (!hasUniqueCandidateOwner(candidate, form, ownersByForm)) continue;
     earliest = earlierReview(
       earliest,
-      firstFinalInLifecycle(fallbackIndex.get(form), introducedOn, resetBoundary)
+      firstFinalInLifecycle(fallbackIndex.get(form), introducedOn, resetBoundary, dueDate)
     );
   }
   return earliest;
@@ -305,9 +301,6 @@ async function firstRelevantFinalReview(
   fallbackIndex,
   ownersByForm
 ) {
-  // A wrong answer resets the word to box 1 and begins a relearning cycle. A
-  // successful final review from before that reset cannot master the current
-  // box-5 card. Reintroduction is bounded separately by introduced_on.
   const exactReset = await latestExactReset(
     connection,
     userId,
@@ -323,15 +316,13 @@ async function firstRelevantFinalReview(
   );
   const resetBoundary = laterReview(exactReset, fallbackReset);
 
-  // The first successful 5 -> 5 after the current cycle's latest reset is the
-  // real mastery moment. Later successful box-5 reviews only existed because of
-  // the historical scheduling bug.
   const exactFinal = await firstExactFinalReview(
     connection,
     userId,
     candidate.vocabulary_entry_id,
     learningResetAt,
     progress.introduced_on,
+    progress.due_date,
     resetBoundary
   );
   const fallbackFinal = firstTrustedFallbackFinal(
@@ -339,7 +330,8 @@ async function firstRelevantFinalReview(
     fallbackIndex,
     ownersByForm,
     progress.introduced_on,
-    resetBoundary
+    resetBoundary,
+    progress.due_date
   );
   return earlierReview(exactFinal, fallbackFinal);
 }
@@ -388,7 +380,6 @@ export async function repairHistoricalBoxFiveProgress(pool) {
     try {
       await connection.beginTransaction();
 
-      // Match the normal learning write lock order: revision first, progress second.
       const [revisionRows] = await connection.execute(
         `SELECT revision, learning_reset_at
          FROM user_state_revisions
@@ -421,7 +412,7 @@ export async function repairHistoricalBoxFiveProgress(pool) {
           ownersByForm
         );
 
-        if (isSuccessfulFinalReview(finalReview)) {
+        if (isSuccessfulFinalReview(finalReview, progress.due_date)) {
           const [result] = await connection.execute(
             `UPDATE user_vocabulary_progress
              SET due_date = NULL,
