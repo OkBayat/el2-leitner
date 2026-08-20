@@ -4,12 +4,13 @@ import { test } from "node:test";
 import { RecordReviewResult } from "../src/application/learning/RecordReviewResult.js";
 import { SaveLearningState } from "../src/application/learning/SaveLearningState.js";
 
+const mondayId = "68d0f1aa-cff2-4089-9371-b2aa727f92d1";
 const finalAt = "2026-08-20T10:00:00.000Z";
 const finalDay = "2026-08-20";
 
 function staleFinalWord() {
   return {
-    id: "68d0f1aa-cff2-4089-9371-b2aa727f92d1",
+    id: mondayId,
     number: 1,
     term: "Monday",
     accepted: ["Monday"],
@@ -17,8 +18,8 @@ function staleFinalWord() {
     notes: "",
     createdAt: "2026-08-07T12:21:53.760Z",
     box: 5,
-    // This is the old client bug: it reports a successful 5 -> 5 review but
-    // schedules another fourteen-day review instead of graduating the card.
+    // Old clients could report a successful 5 -> 5 review while scheduling
+    // another fourteen-day review instead of graduating the card.
     due: "2026-09-03",
     attempts: 6,
     correct: 6,
@@ -33,11 +34,11 @@ function staleFinalWord() {
   };
 }
 
-function finalEvent() {
+function finalEvent(overrides = {}) {
   return {
     at: finalAt,
     day: finalDay,
-    wordId: "68d0f1aa-cff2-4089-9371-b2aa727f92d1",
+    wordId: mondayId,
     term: "Monday",
     answer: "monday",
     correct: true,
@@ -45,7 +46,8 @@ function finalEvent() {
     promoted: true,
     previousBox: 5,
     newBox: 5,
-    mistakeNumber: null
+    mistakeNumber: null,
+    ...overrides
   };
 }
 
@@ -58,6 +60,35 @@ function expectedGraduatedWord(word) {
     lastReviewed: finalAt,
     lastPromotedDay: finalDay,
     masteredAt: finalAt
+  };
+}
+
+function expectedCompactWord(word) {
+  return {
+    id: word.id,
+    box: word.box,
+    due: word.due,
+    attempts: word.attempts,
+    correct: word.correct,
+    mistakes: word.mistakes,
+    currentStreak: word.currentStreak,
+    introducedOn: word.introducedOn,
+    addedSource: word.addedSource,
+    lastReviewed: word.lastReviewed,
+    lastPromotedDay: word.lastPromotedDay,
+    blockedUntil: word.blockedUntil,
+    masteredAt: word.masteredAt
+  };
+}
+
+function daily() {
+  return {
+    attempts: 1,
+    correct: 1,
+    wrong: 0,
+    newAdded: 0,
+    sessions: 0,
+    durationSeconds: 0
   };
 }
 
@@ -78,20 +109,13 @@ test("the compact review command derives final mastery on the server instead of 
     practiceSessionId: "session-monday",
     word,
     event: finalEvent(),
-    daily: {
-      attempts: 1,
-      correct: 1,
-      wrong: 0,
-      newAdded: 0,
-      sessions: 0,
-      durationSeconds: 0
-    }
+    daily: daily()
   });
 
   assert.deepEqual(result, { revision: 42 });
   assert.deepEqual(
     recorded.word,
-    expectedGraduatedWord(word),
+    expectedCompactWord(expectedGraduatedWord(word)),
     "a promoted successful 5 -> 5 event is authoritative even when the browser still carries the old 14-day due date"
   );
 });
@@ -114,16 +138,7 @@ test("the full-state compatibility path also derives final mastery from the appe
     updatedAt: finalAt,
     settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" },
     words: [word],
-    daily: {
-      [finalDay]: {
-        attempts: 1,
-        correct: 1,
-        wrong: 0,
-        newAdded: 0,
-        sessions: 0,
-        durationSeconds: 0
-      }
-    },
+    daily: { [finalDay]: daily() },
     history: [finalEvent()],
     persistenceCursor: {
       historyLength: 0,
@@ -138,5 +153,88 @@ test("the full-state compatibility path also derives final mastery from the appe
     persistedState.words[0],
     expectedGraduatedWord(word),
     "a stale full-state writer must not be able to resurrect the old box-five schedule"
+  );
+});
+
+test("entering house five schedules the real final review and clears premature mastery", async () => {
+  let recorded = null;
+  const useCase = new RecordReviewResult({
+    reviewProgressRepository: {
+      async record(_userId, command) {
+        recorded = command;
+        return 12;
+      }
+    }
+  });
+
+  const entryAt = "2026-08-06T17:12:27.997Z";
+  const entryDay = "2026-08-06";
+  const word = {
+    ...staleFinalWord(),
+    due: null,
+    attempts: 5,
+    correct: 5,
+    lastReviewed: entryAt,
+    lastPromotedDay: entryDay,
+    masteredAt: entryAt
+  };
+  const event = finalEvent({
+    at: entryAt,
+    day: entryDay,
+    previousBox: 4,
+    newBox: 5
+  });
+
+  await useCase.execute(7, {
+    revision: 11,
+    word,
+    event,
+    daily: daily()
+  });
+
+  assert.deepEqual(recorded.word, {
+    ...expectedCompactWord(word),
+    box: 5,
+    due: "2026-08-20",
+    lastReviewed: entryAt,
+    lastPromotedDay: entryDay,
+    blockedUntil: null,
+    masteredAt: null
+  });
+});
+
+test("an old final event cannot re-master a card introduced in a later lifecycle", async () => {
+  let persistedState = null;
+  const useCase = new SaveLearningState({
+    learningStateRepository: {
+      async save(_userId, state) {
+        persistedState = state;
+        return 6;
+      }
+    }
+  });
+
+  const oldFinalAt = "2026-08-01T09:00:00.000Z";
+  const oldFinalDay = "2026-08-01";
+  const word = {
+    ...staleFinalWord(),
+    introducedOn: "2026-08-10",
+    due: "2026-09-03",
+    lastReviewed: oldFinalAt,
+    lastPromotedDay: oldFinalDay,
+    masteredAt: null
+  };
+  const oldFinal = finalEvent({ at: oldFinalAt, day: oldFinalDay });
+
+  await useCase.execute(7, {
+    schemaVersion: 2,
+    words: [word],
+    history: [oldFinal]
+  }, 5);
+
+  assert.deepEqual(
+    persistedState.words[0],
+    word,
+    "fallback inspection for old clients must not reuse a final review from before reintroduction"
   );
 });
