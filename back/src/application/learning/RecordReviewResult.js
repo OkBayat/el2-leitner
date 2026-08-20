@@ -1,5 +1,8 @@
 import { ValidationError } from "../../domain/errors.js";
-import { applyBoxFiveReviewPolicyToWord } from "../../domain/learning/BoxFiveReviewPolicy.js";
+import {
+  applyBoxFiveReviewPolicyToWord,
+  normalizeBoxFiveReviewEvent
+} from "../../domain/learning/BoxFiveReviewPolicy.js";
 
 function nonNegativeInteger(value, name) {
   const number = Number(value);
@@ -120,11 +123,12 @@ export class RecordReviewResult {
   async execute(userId, input = {}) {
     const expectedRevision = nonNegativeInteger(input.revision, "revision");
     const parsedWord = parseWord(input.word);
-    const event = parseEvent(input.event, parsedWord.id);
-    if (!event.day) throw new ValidationError("INVALID_REVIEW_RESULT", "event.day is required.");
-    if (event.newBox !== null && event.newBox !== parsedWord.box) {
+    const parsedEvent = parseEvent(input.event, parsedWord.id);
+    if (!parsedEvent.day) throw new ValidationError("INVALID_REVIEW_RESULT", "event.day is required.");
+    if (parsedEvent.newBox !== null && parsedEvent.newBox !== parsedWord.box) {
       throw new ValidationError("INVALID_REVIEW_RESULT", "event.newBox must match word.box.");
     }
+    const event = normalizeBoxFiveReviewEvent(parsedWord, parsedEvent);
     const word = applyBoxFiveReviewPolicyToWord(parsedWord, event);
     const daily = parseDaily(input.daily, event.day);
     const practiceSessionId = input.practiceSessionId
