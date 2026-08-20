@@ -1,4 +1,4 @@
-/* Leitner house distribution — compact visual stages that match the approved Vocora mockup. */
+/* Leitner house distribution — compact visual states mapped to the real waiting-day schedule. */
 #view-dashboard .dashboard-grid {
   grid-template-columns: minmax(300px, 1fr) minmax(500px, 820px);
   align-items: stretch;
@@ -131,9 +131,8 @@
 }
 
 /*
- * The approved mockup does not stretch every house across the whole card.
- * Each successive house grows around one shared center point instead:
- * 1 section -> compact, 5 sections -> widest.
+ * Each house keeps the approved centered silhouette while its internal states
+ * now follow the real waiting-day schedule: 1, 2, 3, 7 and 14 states.
  */
 .leitner-house--1 {
   --house-ink: #087bb2;
@@ -229,7 +228,7 @@
   color: color-mix(in srgb, var(--house-ink) 86%, #102019);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 12px rgba(27, 95, 132, .045);
   cursor: default;
-  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease, opacity .16s ease;
 }
 
 .leitner-segment--1 { filter: saturate(.82) brightness(1.055); }
@@ -237,6 +236,27 @@
 .leitner-segment--3 { filter: saturate(.98); }
 .leitner-segment--4 { filter: saturate(1.04) brightness(.99); }
 .leitner-segment--5 { filter: saturate(1.09) brightness(.975); }
+
+.leitner-segment.is-empty {
+  opacity: .43;
+  filter: saturate(.58) brightness(1.04);
+}
+
+.leitner-segment.is-occupied {
+  border-color: color-mix(in srgb, var(--house-ink) 25%, rgba(255, 255, 255, .45));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 5px 14px rgba(27, 95, 132, .10);
+}
+
+.leitner-state-index {
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 4px;
+  font-size: 7px;
+  font-weight: 750;
+  line-height: 1;
+  opacity: .68;
+  pointer-events: none;
+}
 
 .leitner-segment b {
   overflow: hidden;
@@ -275,6 +295,7 @@
 .leitner-segment:hover,
 .leitner-segment:focus-visible {
   z-index: 12;
+  opacity: 1;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 8px 18px rgba(27, 95, 132, .11);
   transform: translateY(-2px);
 }
@@ -325,6 +346,10 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
 }
 
+[data-theme="dark"] .leitner-segment.is-occupied {
+  border-color: color-mix(in srgb, var(--house-a) 24%, rgba(255, 255, 255, .08));
+}
+
 [data-theme="dark"] .leitner-export-btn.is-copied {
   border-color: color-mix(in srgb, #62d4af 38%, var(--line));
   background: color-mix(in srgb, var(--surface) 82%, #174d3e);
@@ -360,7 +385,13 @@
   .leitner-house-label { gap: 5px; }
   .leitner-house-label strong { font-size: 10px; }
   .leitner-segments { gap: 4px; }
+  .leitner-house--5 .leitner-segments {
+    grid-template-columns: repeat(var(--segment-count), minmax(20px, 1fr));
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
   .leitner-segment { height: 28px; border-radius: 8px; }
+  .leitner-state-index { top: 2px; inset-inline-start: 3px; font-size: 6px; }
   .leitner-segment b { font-size: 9px; }
   .leitner-row-total strong { font-size: 11px; }
   .leitner-row-total span { font-size: 8px; }
