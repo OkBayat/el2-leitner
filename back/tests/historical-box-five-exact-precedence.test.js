@@ -57,7 +57,7 @@ test("the earliest exact final review beats a later trusted fallback final", asy
         assert.match(sql, /promoted = 1/u);
         assert.match(sql, /previous_box = 5/u);
         assert.match(sql, /new_box = 5/u);
-        assert.match(sql, /local_day >= \?/u);
+        assert.match(sql, /local_day > \?/u);
         assert.match(sql, /ORDER BY occurred_at ASC, id ASC/u);
         return [[exactFinal], []];
       }
