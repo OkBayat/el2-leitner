@@ -140,11 +140,11 @@ describe("historical box-five progress repair", () => {
     assert.equal(exactLookups, 1);
   });
 
-  it("does not reuse a successful final review from before the current card lifecycle", async () => {
+  it("does not reuse a successful final review from the introduction day or an older lifecycle", async () => {
     let graduated = false;
     const staleFinal = review({
       id: 9150,
-      at: "2026-08-01T08:30:00.000Z",
+      at: "2026-08-10T08:30:00.000Z",
       previousBox: 5,
       term: "reintroduced"
     });
@@ -169,7 +169,7 @@ describe("historical box-five progress repair", () => {
 
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 0, pendingCorrected: 1, repairedUsers: 1 });
-    assert.equal(graduated, false, "a previous lifecycle must never master the current card");
+    assert.equal(graduated, false, "an earlier or same-day lifecycle must never master the current card");
   });
 
   it("uses the first successful final review because later box-5 reviews only existed due to the old bug", async () => {
