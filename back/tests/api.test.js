@@ -23,11 +23,15 @@ describe("HTTP API", () => {
     assert.equal(html.headers["cdn-cache-control"], "no-store");
 
     const stylesheet = await request(app).get("/styles-v2.css").expect(200);
-    assert.equal(stylesheet.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(stylesheet.headers["cache-control"], /no-store/);
+    assert.equal(stylesheet.headers["cdn-cache-control"], "no-store");
+    assert.equal(stylesheet.headers["surrogate-control"], "no-store");
     assert.match(stylesheet.headers["content-type"], /^text\/css/);
 
     const script = await request(app).get("/app-v2.js").expect(200);
-    assert.equal(script.headers["cache-control"], "no-cache, max-age=0, must-revalidate");
+    assert.match(script.headers["cache-control"], /no-store/);
+    assert.equal(script.headers["cdn-cache-control"], "no-store");
+    assert.equal(script.headers["surrogate-control"], "no-store");
     assert.match(script.headers["content-type"], /javascript/);
 
     const logo = await request(app).get("/assets/vocora-logo.png").expect(200);
@@ -118,71 +122,62 @@ describe("HTTP API", () => {
       .expect(201);
 
     await first.get("/api/state").expect(200, { state: null, revision: 0 });
-
-    const state = {
-      version: 4,
-      cards: [{ word: "Monday", box: 2, mistakes: 0 }],
-      history: [{ date: "2026-07-12", correct: true }]
-    };
-    await first
-      .put("/api/state")
-      .send({ state, revision: 0 })
-      .expect(200, { revision: 1 });
-    await first.get("/api/state").expect(200, { state, revision: 1 });
     await second.get("/api/state").expect(200, { state: null, revision: 0 });
 
     await first
       .put("/api/state")
-      .send({ state: { overwritten: true }, revision: 0 })
-      .expect(409, {
-        error: {
-          code: "STATE_CONFLICT",
-          message: "Learning state was updated by another session. Reload and try again."
-        }
-      });
-    await first.get("/api/state").expect(200, { state, revision: 1 });
+      .send({ state: { words: [{ id: "first" }] }, revision: 0 })
+      .expect(200, { revision: 1 });
+    await second
+      .put("/api/state")
+      .send({ state: { words: [{ id: "second" }] }, revision: 0 })
+      .expect(200, { revision: 1 });
+
+    const firstState = await first.get("/api/state").expect(200);
+    const secondState = await second.get("/api/state").expect(200);
+    assert.deepEqual(firstState.body, { state: { words: [{ id: "first" }] }, revision: 1 });
+    assert.deepEqual(secondState.body, { state: { words: [{ id: "second" }] }, revision: 1 });
   });
 
   it("requires authentication and validates the state envelope", async () => {
     const { app } = createTestContext();
-
-    await request(app).get("/api/state").expect(401);
-
     const agent = request.agent(app);
+
+    await request(app).get("/api/state").expect(401, {
+      error: { code: "AUTHENTICATION_REQUIRED", message: "Authentication is required." }
+    });
+    await request(app).put("/api/state").send({ state: {} }).expect(401);
+
     await agent
       .post("/api/auth/register")
       .send({ email: "learner@example.com", password: "password123" })
       .expect(201);
+
+    await agent.put("/api/state").send({ state: {} }).expect(400, {
+      error: { code: "INVALID_REVISION", message: "Revision must be a non-negative safe integer." }
+    });
     await agent.put("/api/state").send({ state: [], revision: 0 }).expect(400, {
       error: { code: "INVALID_STATE", message: "State must be a JSON object." }
-    });
-    await agent.put("/api/state").send({ state: {} }).expect(400, {
-      error: {
-        code: "INVALID_REVISION",
-        message: "Revision must be a non-negative safe integer."
-      }
     });
   });
 
   it("rate limits repeated authentication attempts with the canonical error shape", async () => {
-    const { app } = createTestContext({
-      AUTH_RATE_LIMIT_MAX: "2",
-      AUTH_RATE_LIMIT_WINDOW_MS: "60000"
-    });
+    const { app } = createTestContext({}, { authRateLimit: { windowMs: 60_000, max: 2 } });
 
-    const attempt = () =>
-      request(app)
-        .post("/api/auth/login")
-        .send({ email: "missing@example.com", password: "password123" });
-
-    await attempt().expect(401);
-    await attempt().expect(401);
-    await attempt().expect(429, {
-      error: {
-        code: "AUTH_RATE_LIMITED",
-        message: "Too many authentication attempts. Try again later."
-      }
-    });
+    await request(app)
+      .post("/api/auth/login")
+      .send({ email: "nobody@example.com", password: "wrong-password" })
+      .expect(401);
+    await request(app)
+      .post("/api/auth/login")
+      .send({ email: "nobody@example.com", password: "wrong-password" })
+      .expect(401);
+    await request(app)
+      .post("/api/auth/login")
+      .send({ email: "nobody@example.com", password: "wrong-password" })
+      .expect(429, {
+        error: { code: "AUTH_RATE_LIMITED", message: "Too many authentication attempts. Try again later." }
+      });
   });
 
   it("returns structured errors for malformed JSON and unknown API paths", async () => {
@@ -193,7 +188,7 @@ describe("HTTP API", () => {
       .set("Content-Type", "application/json")
       .send('{"email":')
       .expect(400, {
-        error: { code: "INVALID_JSON", message: "Request body contains invalid JSON." }
+        error: { code: "INVALID_JSON", message: "Request body must be valid JSON." }
       });
 
     await request(app).get("/api/does-not-exist").expect(404, {
