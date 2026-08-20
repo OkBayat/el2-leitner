@@ -29,27 +29,32 @@
     return `${year}-${month}-${day}`;
   }
 
+  function stateCountForHouse(box, waitDays = DEFAULT_WAIT_DAYS) {
+    const house = clamp(Math.trunc(Number(box) || 1), 1, 5);
+    return Math.max(1, Math.trunc(Number(waitDays[house]) || house));
+  }
+
   function segmentIndexForWord(word, box, today, waitDays = DEFAULT_WAIT_DAYS) {
-    const segmentCount = clamp(Number(box) || 1, 1, 5);
-    if (segmentCount === 1) return 0;
-    if (segmentCount === 5 && word?.masteredAt) return segmentCount - 1;
+    const house = clamp(Math.trunc(Number(box) || 1), 1, 5);
+    const segmentCount = stateCountForHouse(house, waitDays);
+    if (house === 5 && word?.masteredAt) return segmentCount - 1;
 
     const todaySerial = parseDay(today);
     const dueSerial = parseDay(word?.due);
-    const waitingDays = Math.max(1, Number(waitDays[segmentCount]) || segmentCount);
+    const waitingDays = segmentCount;
     if (todaySerial === null || dueSerial === null) return 0;
 
     const startedSerial = dueSerial - waitingDays;
     const elapsedDays = clamp(todaySerial - startedSerial, 0, waitingDays);
     if (elapsedDays >= waitingDays) return segmentCount - 1;
 
-    return clamp(Math.floor((elapsedDays / waitingDays) * segmentCount), 0, segmentCount - 1);
+    return clamp(Math.floor(elapsedDays), 0, segmentCount - 1);
   }
 
   function buildDistribution(words, today = localDay(), waitDays = DEFAULT_WAIT_DAYS) {
     const source = Array.isArray(words) ? words : [];
     const houses = [1, 2, 3, 4, 5].map((box) => {
-      const segments = Array.from({ length: box }, () => 0);
+      const segments = Array.from({ length: stateCountForHouse(box, waitDays) }, () => 0);
       source.forEach((word) => {
         if (Number(word?.box) !== box || word?.masteredAt) return;
         segments[segmentIndexForWord(word, box, today, waitDays)] += 1;
@@ -148,12 +153,14 @@
 
   function renderDistributionHtml(model) {
     return model.houses.map((house) => {
+      const stateCount = house.segments.length;
       const segments = house.segments.map((count, index) => {
         const stage = index + 1;
-        const tooltip = `خانه ${faNumber.format(house.box)} · بخش ${faNumber.format(stage)} از ${faNumber.format(house.box)} · ${faNumber.format(count)} لغت`;
-        return `<span class="leitner-segment leitner-segment--${stage}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img" tabindex="0"><b>${faNumber.format(count)}</b></span>`;
+        const tooltip = `خانه ${faNumber.format(house.box)} · وضعیت ${faNumber.format(stage)} از ${faNumber.format(stateCount)} · ${faNumber.format(count)} لغت`;
+        const occupancyClass = count > 0 ? 'is-occupied' : 'is-empty';
+        return `<span class="leitner-segment leitner-segment--${stage} ${occupancyClass}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img" tabindex="0"><span class="leitner-state-index" aria-hidden="true">${faNumber.format(stage)}</span><b>${faNumber.format(count)}</b></span>`;
       }).join('');
-      return `<div class="leitner-row leitner-house--${house.box}" data-house="${house.box}"><div class="leitner-house-label"><span class="leitner-house-icon">${houseIcon()}</span><strong>خانه ${faNumber.format(house.box)}</strong></div><div class="leitner-segments" style="--segment-count:${house.box}">${segments}</div><div class="leitner-row-total"><strong>${faNumber.format(house.total)}</strong><span>لغت</span></div></div>`;
+      return `<div class="leitner-row leitner-house--${house.box}" data-house="${house.box}" data-state-count="${stateCount}"><div class="leitner-house-label"><span class="leitner-house-icon">${houseIcon()}</span><strong>خانه ${faNumber.format(house.box)}</strong></div><div class="leitner-segments" style="--segment-count:${stateCount}">${segments}</div><div class="leitner-row-total"><strong>${faNumber.format(house.total)}</strong><span>لغت</span></div></div>`;
     }).join('');
   }
 
@@ -326,6 +333,7 @@
     DEFAULT_WAIT_DAYS,
     parseDay,
     localDay,
+    stateCountForHouse,
     segmentIndexForWord,
     buildDistribution,
     buildBoxOneExport,
