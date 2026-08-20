@@ -49,6 +49,7 @@ test("a final review before the latest reset to box 1 cannot master a relearned 
       if (/FROM review_events re/u.test(sql) && /event_vocabulary/u.test(sql)) {
         return [[oldFinal, laterWrongReset], []];
       }
+      if (/FROM learning_states/u.test(sql)) return [[], []];
       if (/FROM vocabulary_entries ve/u.test(sql) && /JOIN vocabulary_forms vf/u.test(sql)) {
         return [[{ normalized_form: "relearned", vocabulary_entry_id: 501 }], []];
       }
@@ -112,6 +113,7 @@ test("an ambiguous NULL-id reset after an exact final keeps the card pending rat
       if (/FROM review_events re/u.test(sql) && /event_vocabulary/u.test(sql)) {
         return [[ambiguousReset], []];
       }
+      if (/FROM learning_states/u.test(sql)) return [[], []];
       if (/FROM vocabulary_entries ve/u.test(sql) && /JOIN vocabulary_forms vf/u.test(sql)) {
         return [[
           { normalized_form: "shared-reset", vocabulary_entry_id: 601 },
