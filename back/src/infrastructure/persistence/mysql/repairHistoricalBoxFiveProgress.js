@@ -90,10 +90,22 @@ async function latestFallbackReview(connection, userId, vocabularyEntryId, learn
   return rows[0] || null;
 }
 
+function newerReview(left, right) {
+  if (!left) return right || null;
+  if (!right) return left;
+  const leftTime = new Date(left.occurred_at).getTime();
+  const rightTime = new Date(right.occurred_at).getTime();
+  if (rightTime !== leftTime) return rightTime > leftTime ? right : left;
+  return Number(right.review_event_id) > Number(left.review_event_id) ? right : left;
+}
+
 async function latestRelevantReview(connection, userId, vocabularyEntryId, learningResetAt, forms) {
+  // Keep exact and fallback lookups separate so the indexed identity path stays cheap,
+  // but choose the newest trusted event because identity drift can happen between
+  // entering box 5 and the final review fourteen days later.
   const exact = await latestExactReview(connection, userId, vocabularyEntryId, learningResetAt);
-  if (exact) return exact;
-  return latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms);
+  const fallback = await latestFallbackReview(connection, userId, vocabularyEntryId, learningResetAt, forms);
+  return newerReview(exact, fallback);
 }
 
 async function lockedProgress(connection, userId, vocabularyEntryId) {
