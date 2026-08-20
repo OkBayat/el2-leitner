@@ -44,6 +44,9 @@ function isFallbackEvidenceQuery(sql) {
 function isOwnerQuery(sql) {
   return /FROM vocabulary_entries ve/u.test(sql) && /JOIN vocabulary_forms vf/u.test(sql);
 }
+function isPreservedLegacyQuery(sql) {
+  return /FROM learning_states/u.test(sql);
+}
 
 describe("historical box-five progress repair", () => {
   it("locks revision before progress and repairs exact final/pending cards once", async () => {
@@ -69,6 +72,7 @@ describe("historical box-five progress repair", () => {
           assert.match(sql, /re\.vocabulary_entry_id IS NULL OR event_vocabulary\.status <> 'active'/u);
           return [[], []];
         }
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) return [[], []];
         if (isProgressLock(sql)) return [[progressById.get(Number(parameters[1]))], []];
         if (isExactReviewQuery(sql)) return [[exactById.get(Number(parameters[3]))], []];
@@ -122,6 +126,7 @@ describe("historical box-five progress repair", () => {
         if (isFallbackEvidenceQuery(sql)) {
           return [[review({ id: 9100, at: "2026-08-20T08:30:00.000Z", previousBox: 5, term: "  CAN’T   STOP  " })], []];
         }
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) return [[{ normalized_form: "can't stop", vocabulary_entry_id: 201 }], []];
         if (isProgressLock(sql)) return [[progress("2026-08-01T09:00:00.000Z")], []];
         if (isExactReviewQuery(sql)) { exactLookups += 1; return [[], []]; }
@@ -153,6 +158,7 @@ describe("historical box-five progress repair", () => {
       async execute(sql) {
         if (isRevisionLock(sql)) return [[{ revision: 5, learning_reset_at: null }], []];
         if (isFallbackEvidenceQuery(sql)) return [[staleFinal], []];
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) return [[{ normalized_form: "reintroduced", vocabulary_entry_id: 251 }], []];
         if (isProgressLock(sql)) return [[progress("2026-08-10T09:00:00.000Z", "2026-08-10")], []];
         if (isExactReviewQuery(sql)) return [[], []];
@@ -182,6 +188,7 @@ describe("historical box-five progress repair", () => {
         writes.push({ sql, parameters });
         if (isRevisionLock(sql)) return [[{ revision: 6, learning_reset_at: null }], []];
         if (isFallbackEvidenceQuery(sql)) return [[firstFinal, laterBugReview], []];
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) return [[{ normalized_form: "repeat-final", vocabulary_entry_id: 275 }], []];
         if (isProgressLock(sql)) return [[progress(null, "2026-07-01")], []];
         if (isExactReviewQuery(sql)) return [[], []];
@@ -215,6 +222,7 @@ describe("historical box-five progress repair", () => {
           assert.match(sql, /re\.vocabulary_entry_id IS NULL OR event_vocabulary\.status <> 'active'/u);
           return [[], []];
         }
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) return [[{ normalized_form: "reused-term", vocabulary_entry_id: 301 }], []];
         if (isProgressLock(sql)) return [[progress("2026-08-01T09:00:00.000Z")], []];
         if (isExactReviewQuery(sql)) return [[], []];
@@ -243,6 +251,7 @@ describe("historical box-five progress repair", () => {
         if (isFallbackEvidenceQuery(sql)) {
           return [[review({ id: 9200, at: "2026-08-20T09:00:00.000Z", previousBox: 5, term: "shared-term" })], []];
         }
+        if (isPreservedLegacyQuery(sql)) return [[], []];
         if (isOwnerQuery(sql)) {
           return [[
             { normalized_form: "shared-term", vocabulary_entry_id: 401 },
