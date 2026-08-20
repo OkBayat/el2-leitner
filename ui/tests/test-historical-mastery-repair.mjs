@@ -31,6 +31,7 @@ function addDays(day, amount) {
 const today = localDay();
 const entryAt = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
 const finalReviewAt = new Date(Date.now() - 60_000).toISOString();
+const oldLifecycleReviewAt = new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString();
 let serverRevision = 7;
 let stateWrites = 0;
 let serverState = {
@@ -50,6 +51,12 @@ let serverState = {
       createdAt: entryAt, box: 5, due: null, attempts: 5, correct: 5, mistakes: 0,
       currentStreak: 5, introducedOn: addDays(today, -45), addedSource: 'test', lastReviewed: finalReviewAt,
       lastPromotedDay: today, blockedUntil: null, masteredAt: finalReviewAt
+    },
+    {
+      id: 'reintroduced-box-five', number: 3, term: 'reintroduced', accepted: ['reintroduced'], category: 'Regression', notes: '',
+      createdAt: entryAt, box: 5, due: addDays(today, 14), attempts: 4, correct: 4, mistakes: 0,
+      currentStreak: 4, introducedOn: addDays(today, -2), addedSource: 'test', lastReviewed: entryAt,
+      lastPromotedDay: addDays(today, -1), blockedUntil: null, masteredAt: null
     }
   ],
   daily: {},
@@ -60,6 +67,10 @@ let serverState = {
     },
     {
       at: finalReviewAt, day: today, wordId: 'retired-alias-id', term: 'centre', answer: 'centre',
+      correct: true, mode: 'scheduled', promoted: true, previousBox: 5, newBox: 5, mistakeNumber: null
+    },
+    {
+      at: oldLifecycleReviewAt, day: addDays(today, -20), wordId: 'reintroduced-box-five', term: 'reintroduced', answer: 'reintroduced',
       correct: true, mode: 'scheduled', promoted: true, previousBox: 5, newBox: 5, mistakeNumber: null
     }
   ]
@@ -116,11 +127,14 @@ await VazheyarTest.waitForSaves();
 const state = VazheyarTest.getState();
 const pending = state.words.find((word) => word.id === 'pending-box-five');
 const repaired = state.words.find((word) => word.id === 'canonical-center');
+const reintroduced = state.words.find((word) => word.id === 'reintroduced-box-five');
 
 assert.equal(pending.masteredAt, null, 'Entering box 5 must remain pending until the final review');
 assert.ok(pending.due, 'A pending box-5 card must keep its final-review due date');
 assert.equal(repaired.due, null, 'Server-repaired mastery must stay outside scheduled review');
 assert.equal(repaired.masteredAt, finalReviewAt, 'UI must preserve the server-owned final-review timestamp');
+assert.equal(reintroduced.masteredAt, null, 'Browser hydrate must not reuse a final review from an older lifecycle');
+assert.ok(reintroduced.due, 'A server-pending reintroduced card must remain pending after hydrate');
 assert.equal(stateWrites, 0, 'Loading repaired state must not trigger a client-side mastery write');
 assert.equal(serverRevision, 7, 'A read-only UI load must not advance the learning-state revision');
 assert.equal(serverState.words.find((word) => word.id === 'canonical-center').due, null, 'The server copy must retain the repaired mastery');
@@ -129,7 +143,7 @@ const faNumber = new Intl.NumberFormat('fa-IR');
 assert.equal(document.querySelector('#masteredStat').textContent, faNumber.format(1), 'Dashboard mastery count must reflect repaired historical mastery');
 assert.match(document.querySelector('#sideProgressCaption').textContent, new RegExp(faNumber.format(1)), 'Sidebar mastery summary must reflect repaired historical mastery');
 const dashboardBoxCounts = [...document.querySelectorAll('#boxDistribution .box-count')].map((node) => node.textContent);
-assert.equal(dashboardBoxCounts[4], faNumber.format(1), 'Dashboard house 5 must count only cards still active in the Leitner cycle');
+assert.equal(dashboardBoxCounts[4], faNumber.format(2), 'Dashboard house 5 must count both still-active final-review cards');
 
 const wordsNav = document.querySelector('.nav-item[data-view="words"]');
 wordsNav.click();
@@ -141,17 +155,17 @@ assert.match(masteredRow.textContent, /تسلط/u, 'A mastered word must be labe
 const boxFilter = document.querySelector('#boxFilter');
 boxFilter.value = '5';
 boxFilter.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
-assert.equal(document.querySelector('#wordCountLabel').textContent, `${faNumber.format(1)} کلمه`, 'House-5 filter must exclude mastered words');
+assert.equal(document.querySelector('#wordCountLabel').textContent, `${faNumber.format(2)} کلمه`, 'House-5 filter must include both active pending final-review cards');
 assert.doesNotMatch(document.querySelector('#wordsTableBody').textContent, /center/u, 'Mastered words must not reappear as active house-5 cards');
 
 const distribution = leitner.buildDistribution(state.words, today);
-assert.equal(distribution.houses[4].total, 1, 'Leitner visualization must exclude mastered words from active house 5');
-assert.equal(distribution.total, 1, 'Leitner total must count only cards still in the active Leitner cycle');
+assert.equal(distribution.houses[4].total, 2, 'Leitner visualization must keep both active house-5 cards');
+assert.equal(distribution.total, 2, 'Leitner total must count only cards still in the active Leitner cycle');
 leitner.attach({ document, getState: () => state, getToday: () => today, MutationObserver: null });
-assert.equal(document.querySelector('[data-house="5"] .leitner-row-total strong').textContent, faNumber.format(1), 'Rendered house 5 must show only the pending final-review card');
+assert.equal(document.querySelector('[data-house="5"] .leitner-row-total strong').textContent, faNumber.format(2), 'Rendered house 5 must show both pending final-review cards');
 
 const analysis = VazheyarTest.buildAnalysisReport();
 assert.equal(analysis.profile.masteredWords, 1, 'Analysis report must count the repaired mastery');
-assert.equal(analysis.boxDistribution.box_5, 1, 'Analysis box-5 distribution must count only active house-5 cards');
+assert.equal(analysis.boxDistribution.box_5, 2, 'Analysis box-5 distribution must count both active house-5 cards');
 
 console.log('Historical mastery repair regression test passed.');
