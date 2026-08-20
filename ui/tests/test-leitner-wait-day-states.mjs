@@ -8,7 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
-const assetVersion = 'wait-day-states-v2';
+const assetVersion = 'wait-day-states-v3';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -34,12 +34,12 @@ const indexSource = fs.readFileSync(new URL('../index.html', import.meta.url), '
 assert.match(
   indexSource,
   new RegExp(`href="leitner-status\\.css\\?v=${assetVersion}"`),
-  'Regression: the dashboard must request the revised Leitner stylesheet with a new cache key'
+  'Regression: the dashboard must request the revised flat Leitner stylesheet with a fresh cache key'
 );
 assert.match(
   indexSource,
   new RegExp(`src="leitner-status\\.js\\?v=${assetVersion}"`),
-  'Regression: the dashboard must request the revised Leitner runtime with a new cache key instead of reusing the old state-number asset'
+  'Regression: the dashboard must keep Leitner runtime/style cache keys synchronized'
 );
 
 const empty = leitner.buildDistribution([], today, waits);
@@ -86,5 +86,48 @@ houseFiveStates.forEach((segment, index) => {
 
 const layoutCss = fs.readFileSync(new URL('../leitner-status.css', import.meta.url), 'utf8');
 assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Regression: obsolete state-number styling must be removed from the stylesheet');
+
+assert.match(
+  layoutCss,
+  /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*linear-gradient\(180deg, rgba\(249, 250, 252, \.58\), rgba\(245, 248, 251, \.88\)\);[\s\S]*?box-shadow:\s*none;/,
+  'Regression: each state must be a flat pale rectangle with only a colored bottom border and no rounded card chrome'
+);
+assert.match(
+  layoutCss,
+  /\.leitner-segment\.is-empty\s*\{[\s\S]*?opacity:\s*1;[\s\S]*?color:\s*var\(--muted\);[\s\S]*?filter:\s*none;/,
+  'Empty states must keep the same underline and flat box instead of fading the whole segment'
+);
+assert.match(
+  layoutCss,
+  /\.leitner-segment\.is-occupied\s*\{[\s\S]*?color:\s*var\(--text\);[\s\S]*?box-shadow:\s*none;/,
+  'Occupied states must differ mainly through readable count text, not borders or shadows'
+);
+assert.match(
+  layoutCss,
+  /\.leitner-segment:hover,[\s\S]*?\.leitner-segment:focus-visible\s*\{[\s\S]*?box-shadow:\s*none;[\s\S]*?transform:\s*none;/,
+  'Hover/focus must preserve the reference flat rectangular silhouette'
+);
+
+const expectedAccents = [
+  '#2ac2d9',
+  '#1fbecb',
+  '#2eb82b',
+  '#075cf0',
+  '#7b4de8'
+];
+expectedAccents.forEach((accent, index) => {
+  const house = index + 1;
+  assert.match(
+    layoutCss,
+    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent:\\s*${accent.replace('#', '\\#')};`),
+    `House ${house} must use the reference underline color ${accent}`
+  );
+});
+
+assert.match(
+  layoutCss,
+  /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*var\(--house-accent\);[\s\S]*?box-shadow:\s*none;/,
+  'Dark mode must preserve the same flat shape and house-colored underline'
+);
 
 console.log('Leitner wait-day state regression and unit tests passed.');
