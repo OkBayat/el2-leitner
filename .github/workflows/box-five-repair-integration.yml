@@ -60,6 +60,16 @@ jobs:
           INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
           VALUES (@private_tuesday_id, 'Tuesday', 'tuesday', 1);
 
+          -- A private QA word verifies that a legacy smart apostrophe in term_snapshot is normalized
+          -- with the same identity rules as the vocabulary domain.
+          INSERT INTO vocabulary_entries
+            (public_id, language_code, primary_form, normalized_form, canonical_key, owner_user_id, status)
+          VALUES
+            ('box5-normalized-apostrophe', 'en', 'qa''legacy', 'qa''legacy', CONCAT('user:', @user_id, ':en:qa''legacy'), @user_id, 'active');
+          SET @apostrophe_id = LAST_INSERT_ID();
+          INSERT INTO vocabulary_forms (vocabulary_entry_id, form, normalized_form, is_primary)
+          VALUES (@apostrophe_id, 'qa''legacy', 'qa''legacy', 1);
+
           INSERT INTO user_state_revisions (user_id, revision)
           VALUES (@user_id, 10);
 
@@ -70,7 +80,9 @@ jobs:
             (@user_id, @monday_id, 'active', 5, '2026-09-03', 5, 5,
              '2026-07-01', '2026-08-20 08:00:00.000', '2026-08-20', '2026-08-01 09:00:00.000'),
             (@user_id, @tuesday_id, 'active', 5, '2026-09-03', 4, 4,
-             '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000');
+             '2026-07-01', '2026-08-18 08:00:00.000', '2026-08-18', '2026-08-18 08:00:00.000'),
+            (@user_id, @apostrophe_id, 'active', 5, '2026-09-03', 5, 5,
+             '2026-07-01', '2026-08-20 08:30:00.000', '2026-08-20', '2026-08-01 09:00:00.000');
 
           INSERT INTO review_events
             (event_key, user_id, vocabulary_entry_id, occurred_at, local_day, correct, mode,
@@ -83,7 +95,10 @@ jobs:
             -- The public Tuesday only entered house 5 and must remain pending.
             (REPEAT('b', 64), @user_id, @tuesday_id, '2026-08-18 08:00:00.000', '2026-08-18', 1, 'scheduled', 4, 5, 1, 'Tuesday'),
             -- A later same-term final review belongs to another ACTIVE identity; public Tuesday must not claim it.
-            (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday');
+            (REPEAT('c', 64), @user_id, @private_tuesday_id, '2026-08-20 09:00:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'Tuesday'),
+            -- Exact entry followed by a NULL-id final review whose smart apostrophe must normalize to ASCII.
+            (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
+            (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy');
           SQL
 
       - name: Run production repair path
@@ -100,6 +115,11 @@ jobs:
           docker compose exec -T mysql mysql \
             --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
             --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.primary_form='Tuesday' AND ve.owner_user_id IS NULL AND uvp.box=5 AND uvp.due_date='2026-09-03' AND uvp.mastered_at IS NULL;" \
+            | grep -qx '1'
+
+          docker compose exec -T mysql mysql \
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch --skip-column-names \
+            --execute="SELECT COUNT(*) FROM user_vocabulary_progress uvp JOIN users u ON u.id=uvp.user_id JOIN vocabulary_entries ve ON ve.id=uvp.vocabulary_entry_id WHERE u.email='box5-repair-ci@example.com' AND ve.public_id='box5-normalized-apostrophe' AND uvp.box=5 AND uvp.due_date IS NULL AND uvp.mastered_at='2026-08-20 08:30:00.000';" \
             | grep -qx '1'
 
           docker compose exec -T mysql mysql \
