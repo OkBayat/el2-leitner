@@ -187,8 +187,7 @@ async function loadFallbackEvidence(connection, userId, learningResetAt) {
      WHERE re.user_id = ?
        AND (? IS NULL OR re.occurred_at > ?)
        AND (
-         re.vocabulary_entry_id IS NULL
-         OR event_vocabulary.status <> 'active'
+         re.vocabulary_entry_id IS NULL OR event_vocabulary.status <> 'active'
          OR NOT EXISTS (
            SELECT 1
            FROM user_collections uc
