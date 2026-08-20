@@ -80,13 +80,20 @@ function candidateFormOwners(candidates, persistedOwners) {
   const owners = new Map(
     [...persistedOwners.entries()].map(([form, ids]) => [form, new Set(ids)])
   );
+  const visibleOwnedForms = new Set(
+    [...persistedOwners.entries()]
+      .filter(([, ids]) => ids.size > 0)
+      .map(([form]) => form)
+  );
+
   for (const candidate of candidates) {
     for (const form of parseForms(candidate.forms)) {
       // Identities currently visible through an active collection are the
       // authoritative ownership set. Hidden orphan progress may still be
       // repaired by exact id, but it must not make a visible canonical alias
-      // ambiguous. When no visible owner exists, retain candidate ambiguity.
-      if (owners.has(form) && owners.get(form).size > 0) continue;
+      // ambiguous. When no visible owner exists, retain every hidden candidate
+      // so row order can never assign shared fallback evidence to one of them.
+      if (visibleOwnedForms.has(form)) continue;
       addOwner(owners, form, candidate.vocabulary_entry_id);
     }
   }
