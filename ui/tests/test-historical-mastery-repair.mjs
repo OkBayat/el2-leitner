@@ -31,7 +31,6 @@ function addDays(day, amount) {
 const today = localDay();
 const entryAt = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
 const finalReviewAt = new Date(Date.now() - 60_000).toISOString();
-const oldMasteredAt = entryAt;
 let serverRevision = 7;
 let stateWrites = 0;
 let serverState = {
@@ -44,13 +43,13 @@ let serverState = {
       id: 'pending-box-five', number: 1, term: 'pending', accepted: ['pending'], category: 'Regression', notes: '',
       createdAt: entryAt, box: 5, due: addDays(today, 14), attempts: 4, correct: 4, mistakes: 0,
       currentStreak: 4, introducedOn: addDays(today, -30), addedSource: 'test', lastReviewed: entryAt,
-      lastPromotedDay: addDays(today, -14), blockedUntil: null, masteredAt: oldMasteredAt
+      lastPromotedDay: addDays(today, -14), blockedUntil: null, masteredAt: null
     },
     {
       id: 'canonical-center', number: 2, term: 'center', accepted: ['center', 'centre'], category: 'Regression', notes: '',
-      createdAt: entryAt, box: 5, due: addDays(today, 14), attempts: 5, correct: 5, mistakes: 0,
+      createdAt: entryAt, box: 5, due: null, attempts: 5, correct: 5, mistakes: 0,
       currentStreak: 5, introducedOn: addDays(today, -45), addedSource: 'test', lastReviewed: finalReviewAt,
-      lastPromotedDay: today, blockedUntil: null, masteredAt: oldMasteredAt
+      lastPromotedDay: today, blockedUntil: null, masteredAt: finalReviewAt
     }
   ],
   daily: {},
@@ -120,10 +119,10 @@ const repaired = state.words.find((word) => word.id === 'canonical-center');
 
 assert.equal(pending.masteredAt, null, 'Entering box 5 must remain pending until the final review');
 assert.ok(pending.due, 'A pending box-5 card must keep its final-review due date');
-assert.equal(repaired.due, null, 'A historical final review must graduate the current canonical word even when the old word id changed');
-assert.equal(repaired.masteredAt, finalReviewAt, 'Historical mastery must use the actual final-review timestamp');
-assert.equal(stateWrites, 1, 'A repaired historical mastery must be persisted immediately instead of existing only in browser memory');
-assert.equal(serverRevision, 8, 'Persisting the repair must advance the learning-state revision once');
+assert.equal(repaired.due, null, 'Server-repaired mastery must stay outside scheduled review');
+assert.equal(repaired.masteredAt, finalReviewAt, 'UI must preserve the server-owned final-review timestamp');
+assert.equal(stateWrites, 0, 'Loading repaired state must not trigger a client-side mastery write');
+assert.equal(serverRevision, 7, 'A read-only UI load must not advance the learning-state revision');
 assert.equal(serverState.words.find((word) => word.id === 'canonical-center').due, null, 'The server copy must retain the repaired mastery');
 
 const faNumber = new Intl.NumberFormat('fa-IR');
