@@ -113,6 +113,7 @@ assert.ok(emptyModel.houses.every((house) => house.segments.every((count) => cou
 
 assert.equal(leitner.segmentIndexForWord({ due: '2026-08-01' }, 5, today, waits), 4, 'Overdue words must stay in the final section until reviewed');
 assert.equal(leitner.segmentIndexForWord({ due: null }, 5, today, waits), 0, 'Missing legacy due dates must fall back safely to the first section');
+assert.equal(leitner.segmentIndexForWord({ due: null, masteredAt: '2026-08-06T12:00:00.000Z' }, 5, today, waits), 4, 'Mastered house-five words must remain in the final visual section');
 
 const dom = new JSDOM('<div id="root"></div><div id="total"><span data-leitner-total-text></span></div>');
 const root = dom.window.document.querySelector('#root');
