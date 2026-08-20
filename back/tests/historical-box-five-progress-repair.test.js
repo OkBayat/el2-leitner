@@ -137,7 +137,7 @@ describe("historical box-five progress repair", () => {
 
     const result = await repairHistoricalBoxFiveProgress(pool);
     assert.deepEqual(result, { mastered: 1, pendingCorrected: 0, repairedUsers: 1 });
-    assert.equal(exactLookups, 1);
+    assert.equal(exactLookups, 2, "repair checks the exact reset boundary and the exact final review");
   });
 
   it("does not reuse a successful final review from the introduction day or an older lifecycle", async () => {
