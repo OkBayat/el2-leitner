@@ -231,7 +231,7 @@
   border: 0;
   border-bottom: 2px solid rgba(var(--house-accent-rgb), .6);
   border-radius: 0;
-  background: #f7f9fb;
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   color: var(--text);
   box-shadow: none;
   cursor: default;
@@ -288,7 +288,7 @@
 .leitner-segment:focus-visible {
   z-index: 12;
   opacity: 1;
-  background: #f4f7fa;
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   box-shadow: none;
   transform: none;
 }
@@ -336,7 +336,7 @@
 
 [data-theme="dark"] .leitner-segment {
   border-bottom-color: rgba(var(--house-accent-rgb), .6);
-  background: rgba(255, 255, 255, .055);
+  background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   box-shadow: none;
 }
 
