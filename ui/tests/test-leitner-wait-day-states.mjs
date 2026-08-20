@@ -8,7 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
-const assetVersion = 'wait-day-states-v3';
+const assetVersion = 'wait-day-states-v5';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -95,13 +95,13 @@ assert.match(
 );
 assert.match(
   layoutCss,
-  /\.leitner-row\s*\{[\s\S]*?--house-accent:\s*rgba\(var\(--house-accent-rgb\), \.6\);/,
-  'Regression: the visible border color token must use 60% alpha'
+  /\.leitner-row\s*\{[\s\S]*?--house-accent:\s*rgba\(var\(--house-ink-rgb\), \.6\);/,
+  'Regression: segment borders must use the exact house icon ink color at 60% alpha'
 );
 assert.match(
   layoutCss,
   /\.leitner-segment\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-bottom:\s*2px solid var\(--house-accent\);[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
-  'Regression: each state must use the exact house-icon tint and the softened per-house bottom border'
+  'Regression: each state must use the exact house-icon background tint and the same icon color for its softened bottom border'
 );
 assert.ok(layoutCss.includes(iconBackground), 'The segment and icon tint formula must stay shared and explicit');
 assert.doesNotMatch(
@@ -125,26 +125,27 @@ assert.match(
   'Hover/focus must keep the exact house tint and preserve the flat rectangular silhouette'
 );
 
-const expectedAccentRgb = [
-  '42, 194, 217',
-  '31, 190, 203',
-  '46, 184, 43',
-  '7, 92, 240',
-  '123, 77, 232'
+const expectedInkRgb = [
+  '8, 123, 178',
+  '8, 127, 129',
+  '8, 125, 102',
+  '17, 109, 177',
+  '65, 90, 199'
 ];
-expectedAccentRgb.forEach((accentRgb, index) => {
+expectedInkRgb.forEach((inkRgb, index) => {
   const house = index + 1;
   assert.match(
     layoutCss,
-    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-accent-rgb:\\s*${accentRgb};`),
-    `House ${house} must expose its reference accent as RGB channels for the rgba border`
+    new RegExp(`\\.leitner-house--${house}\\s*\\{[\\s\\S]*?--house-ink-rgb:\\s*${inkRgb};`),
+    `House ${house} must expose the exact icon ink RGB channels for its rgba border`
   );
 });
+assert.doesNotMatch(layoutCss, /--house-accent-rgb:/, 'A separate accent palette must not drift away from the house icon colors');
 
 assert.match(
   layoutCss,
   /\[data-theme="dark"\] \.leitner-segment\s*\{[\s\S]*?border-bottom-color:\s*var\(--house-accent\);[\s\S]*?background:\s*color-mix\(in srgb, var\(--house-a\) 22%, var\(--surface\)\);[\s\S]*?box-shadow:\s*none;/,
-  'Dark mode must preserve the same house-icon tint and softened underline'
+  'Dark mode must preserve the same house-icon tint and softened icon-color underline'
 );
 
 console.log('Leitner wait-day state regression and unit tests passed.');
