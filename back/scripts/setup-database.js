@@ -7,6 +7,7 @@ import mysql from "mysql2/promise";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
+import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
 
@@ -172,6 +173,13 @@ async function setupDatabase() {
     if (repaired.repairedUsers) {
       console.info(
         `Reconciled ${repaired.repairedGroups} duplicate alias group(s) across ${repaired.repairedUsers} legacy learner(s).`
+      );
+    }
+
+    const boxFiveRepair = await repairHistoricalBoxFiveProgress(applicationPool);
+    if (boxFiveRepair.repairedUsers) {
+      console.info(
+        `Repaired box-five mastery for ${boxFiveRepair.mastered} mastered card(s) and ${boxFiveRepair.pendingCorrected} pending card(s) across ${boxFiveRepair.repairedUsers} learner(s).`
       );
     }
 
