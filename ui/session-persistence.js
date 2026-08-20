@@ -210,6 +210,44 @@
     return position === null ? null : history.length - position;
   }
 
+  function isDueTerminalReview(word, event) {
+    return Boolean(
+      event?.correct &&
+      Number(event?.previousBox) === 5 &&
+      Number(event?.newBox) === 5 &&
+      Number(word?.box) === 5 &&
+      word?.due &&
+      event?.day &&
+      String(word.due) <= String(event.day)
+    );
+  }
+
+  function normalizeTerminalReviewSnapshot(word, event) {
+    if (!isDueTerminalReview(word, event)) return false;
+    word.due = null;
+    word.lastReviewed = event.at;
+    word.lastPromotedDay = event.day;
+    word.blockedUntil = null;
+    word.masteredAt = event.at;
+    event.promoted = true;
+    return true;
+  }
+
+  function syncAcknowledgedReviewToLiveState(command) {
+    if (!command || !isDueTerminalReview(command.word, command.event) && !command.word?.masteredAt) return;
+    const liveState = window.VazheyarTest?.getState?.();
+    if (!liveState || !Array.isArray(liveState.words)) return;
+    const liveWord = liveState.words.find((item) => String(item?.id) === String(command.word.id));
+    if (liveWord) Object.assign(liveWord, command.word);
+    const liveEvent = Array.isArray(liveState.history)
+      ? [...liveState.history].reverse().find((item) => (
+        String(item?.wordId) === String(command.event.wordId) &&
+        String(item?.at) === String(command.event.at)
+      ))
+      : null;
+    if (liveEvent) Object.assign(liveEvent, command.event);
+  }
+
   function reviewCommandForState(payload, state) {
     if (reviewDeltaCount(state) !== 1) return null;
     const history = Array.isArray(state?.history) ? state.history : [];
@@ -220,6 +258,8 @@
     const daily = event?.day ? state?.daily?.[event.day] : null;
     const revision = Number(payload?.revision);
     if (!event || !word || !daily || !Number.isSafeInteger(revision) || revision < 0) return null;
+
+    normalizeTerminalReviewSnapshot(word, event);
 
     return {
       revision,
@@ -303,6 +343,7 @@
             const acknowledged = await acknowledgesRevision(response, expectedRevision);
             reviewWriteFailed = !acknowledged;
             if (acknowledged) {
+              syncAcknowledgedReviewToLiveState(compactReview);
               persistedCursor = cursorForState(prepared.state);
               pendingReviewRevision = null;
             }
