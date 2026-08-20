@@ -276,14 +276,24 @@ export async function repairHistoricalBoxFiveProgress(pool) {
              SET due_date = NULL,
                  blocked_until = NULL,
                  mastered_at = ?,
-                 last_reviewed_at = ?,
+                 last_reviewed_at = CASE
+                   WHEN last_reviewed_at IS NULL OR last_reviewed_at < ? THEN ?
+                   ELSE last_reviewed_at
+                 END,
                  last_promoted_on = ?
              WHERE user_id = ?
                AND vocabulary_entry_id = ?
                AND status = 'active'
                AND box = 5
                AND due_date IS NOT NULL`,
-            [finalReview.occurred_at, finalReview.occurred_at, finalReview.local_day, group.userId, candidate.vocabulary_entry_id]
+            [
+              finalReview.occurred_at,
+              finalReview.occurred_at,
+              finalReview.occurred_at,
+              finalReview.local_day,
+              group.userId,
+              candidate.vocabulary_entry_id
+            ]
           );
           if (Number(result.affectedRows) > 0) {
             mastered += 1;
