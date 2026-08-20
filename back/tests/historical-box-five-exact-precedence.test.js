@@ -22,8 +22,11 @@ function isFallbackEvidenceQuery(sql) {
 function isOwnerQuery(sql) {
   return /FROM vocabulary_entries ve/u.test(sql) && /JOIN vocabulary_forms vf/u.test(sql);
 }
-function isExactQuery(sql) {
-  return /FROM review_events/u.test(sql) && /vocabulary_entry_id = \?/u.test(sql) && !/event_vocabulary/u.test(sql);
+function isExactResetQuery(sql) {
+  return /FROM review_events/u.test(sql) && /vocabulary_entry_id = \?/u.test(sql) && /correct = 0/u.test(sql);
+}
+function isExactFinalQuery(sql) {
+  return /FROM review_events/u.test(sql) && /vocabulary_entry_id = \?/u.test(sql) && /correct = 1/u.test(sql) && !/event_vocabulary/u.test(sql);
 }
 
 function basePool(connection, forms = "authoritative-term\u001flegacy-term") {
@@ -52,8 +55,8 @@ test("the earliest exact final review beats a later trusted fallback final", asy
       if (isFallbackEvidenceQuery(sql)) return [[fallbackFinal], []];
       if (isOwnerQuery(sql)) return [[{ normalized_form: "legacy-term", vocabulary_entry_id: 501 }], []];
       if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) return [progress(), []];
-      if (isExactQuery(sql)) {
-        assert.match(sql, /correct = 1/u);
+      if (isExactResetQuery(sql)) return [[], []];
+      if (isExactFinalQuery(sql)) {
         assert.match(sql, /promoted = 1/u);
         assert.match(sql, /previous_box = 5/u);
         assert.match(sql, /new_box = 5/u);
@@ -85,7 +88,8 @@ test("the earliest trusted fallback final beats a later exact final review", asy
       if (isFallbackEvidenceQuery(sql)) return [[fallbackFinal], []];
       if (isOwnerQuery(sql)) return [[{ normalized_form: "legacy-term", vocabulary_entry_id: 501 }], []];
       if (/FROM user_vocabulary_progress/u.test(sql) && /FOR UPDATE/u.test(sql)) return [progress(), []];
-      if (isExactQuery(sql)) return [[exactFinal], []];
+      if (isExactResetQuery(sql)) return [[], []];
+      if (isExactFinalQuery(sql)) return [[exactFinal], []];
       if (/SET due_date = NULL/u.test(sql)) return [{ affectedRows: 1 }, []];
       if (/SET revision = revision \+ 1/u.test(sql)) return [{ affectedRows: 1 }, []];
       throw new Error(`Unexpected SQL: ${sql}`);
