@@ -135,6 +135,7 @@ expectedByHouse.forEach((expectedSegments, index) => {
   });
 });
 assert.equal(root.querySelectorAll('.leitner-segment').length, 27, 'The visual must render 1+2+3+7+14 = 27 states');
+assert.equal(root.querySelector('.leitner-state-index'), null, 'State numbers must not be rendered as visible elements');
 assert.match(total.textContent, /مجموع: ۳۶ لغت/, 'The total chip must reflect every word in houses 1–5');
 
 const liveDom = new JSDOM(`
@@ -216,7 +217,7 @@ assert.match(layoutCss, /grid-template-columns:\s*minmax\(300px, 1fr\)\s+minmax\
 assert.match(layoutCss, /\.leitner-segments\s*\{[\s\S]*?width:\s*var\(--house-width\);[\s\S]*?max-width:\s*var\(--house-max\);[\s\S]*?justify-self:\s*center;/, 'House states must stay centered and use compact progressive widths');
 assert.match(layoutCss, /\.leitner-row\s*\{[\s\S]*?min-height:\s*34px;/, 'Desktop house rows must stay compact');
 assert.match(layoutCss, /\.leitner-segment\s*\{[\s\S]*?height:\s*30px;/, 'Desktop state blocks must keep the approved compact height');
-assert.match(layoutCss, /\.leitner-state-index\s*\{/, 'Every state must have a persistent visible state-number treatment');
+assert.doesNotMatch(layoutCss, /\.leitner-state-index\b/, 'Removed state-number elements must not leave obsolete styling behind');
 assert.match(layoutCss, /\.leitner-segment\.is-empty\s*\{/, 'Empty states must be visually quieter than occupied states');
 assert.match(layoutCss, /\.leitner-segment\.is-occupied\s*\{/, 'Occupied states must be visually distinct');
 assert.match(layoutCss, /\.leitner-export-btn\s*\{[\s\S]*?margin-inline-start:\s*auto;[\s\S]*?border-radius:\s*999px;/, 'The house-one export control must stay compact and aligned with the panel chips');
