@@ -54,6 +54,7 @@ test("an exact final with the same timestamp but a later event id survives the r
       writes.push({ sql, parameters });
       if (isRevisionLock(sql)) return [[{ revision: 12, learning_reset_at: null }], []];
       if (isFallbackEvidenceQuery(sql)) return [[], []];
+      if (/FROM learning_states/u.test(sql)) return [[], []];
       if (isOwnerQuery(sql)) return [[{ normalized_form: "same timestamp", vocabulary_entry_id: 801 }], []];
       if (isProgressLock(sql)) {
         return [[{
