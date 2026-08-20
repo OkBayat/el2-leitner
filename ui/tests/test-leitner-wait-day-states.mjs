@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
@@ -7,6 +8,7 @@ assert.ok(leitner, 'Leitner status module must expose its testable API');
 
 const today = '2026-08-06';
 const waits = leitner.DEFAULT_WAIT_DAYS;
+const assetVersion = 'wait-day-states-v1';
 
 function addDays(day, amount) {
   const [year, month, date] = day.split('-').map(Number);
@@ -27,6 +29,18 @@ function wordsForEveryState(box) {
 }
 
 assert.deepEqual([...waits], [0, 1, 2, 3, 7, 14], 'UI state counts must come from the real Leitner waiting schedule');
+
+const indexSource = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+assert.match(
+  indexSource,
+  new RegExp(`href="leitner-status\\.css\\?v=${assetVersion}"`),
+  'Regression: the dashboard must request the revised Leitner stylesheet with a new cache key'
+);
+assert.match(
+  indexSource,
+  new RegExp(`src="leitner-status\\.js\\?v=${assetVersion}"`),
+  'Regression: the dashboard must request the revised Leitner runtime with a new cache key instead of reusing the old five-state asset'
+);
 
 const empty = leitner.buildDistribution([], today, waits);
 assert.deepEqual(
