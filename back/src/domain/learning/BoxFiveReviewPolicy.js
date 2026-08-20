@@ -1,5 +1,6 @@
 const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const FINAL_REVIEW_DELAY_DAYS = 14;
+const LEGACY_REVIEW_TIMESTAMP_DRIFT_MS = 5_000;
 
 function normalizedIso(value) {
   if (!value) return null;
@@ -97,6 +98,16 @@ function appendedReviewEvents(state) {
   return [history.at(-1)];
 }
 
+function timestampsMatchLegacyReview(wordLastReviewed, eventAt) {
+  const wordReviewedAt = normalizedIso(wordLastReviewed);
+  const eventReviewedAt = normalizedIso(eventAt);
+  if (!wordReviewedAt || !eventReviewedAt) return false;
+
+  const wordTime = new Date(wordReviewedAt).getTime();
+  const eventTime = new Date(eventReviewedAt).getTime();
+  return eventTime >= wordTime && eventTime - wordTime <= LEGACY_REVIEW_TIMESTAMP_DRIFT_MS;
+}
+
 function eventMatchesCurrentWordSnapshot(word, event) {
   if (!word || !event || String(word.id || "") !== String(event.wordId || "")) return false;
   if (!isSuccessfulPromotion(event, 4, 5) && !isSuccessfulPromotion(event, 5, 5)) return false;
@@ -104,7 +115,7 @@ function eventMatchesCurrentWordSnapshot(word, event) {
   const reviewedAt = normalizedIso(event.at);
   const reviewDay = normalizedDay(event.day);
   if (!reviewedAt || !reviewDay) return false;
-  if (normalizedIso(word.lastReviewed) !== reviewedAt) return false;
+  if (!timestampsMatchLegacyReview(word.lastReviewed, reviewedAt)) return false;
   if (normalizedDay(word.lastPromotedDay) !== reviewDay) return false;
   if (Number(word.box) !== Number(event.newBox)) return false;
 
