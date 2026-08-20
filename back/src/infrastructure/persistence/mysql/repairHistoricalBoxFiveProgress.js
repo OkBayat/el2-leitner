@@ -78,7 +78,7 @@ function firstReviewInLifecycle(rows, introducedOn) {
   const lifecycleDay = dayValue(introducedOn);
   if (!Array.isArray(rows) || !rows.length) return null;
   for (const row of rows) {
-    if (!lifecycleDay || dayValue(row.local_day) >= lifecycleDay) return row;
+    if (!lifecycleDay || dayValue(row.local_day) > lifecycleDay) return row;
   }
   return null;
 }
@@ -95,7 +95,7 @@ async function firstExactFinalReview(connection, userId, vocabularyEntryId, lear
        AND promoted = 1
        AND previous_box = 5
        AND new_box = 5
-       AND (? IS NULL OR local_day >= ?)
+       AND (? IS NULL OR local_day > ?)
      ORDER BY occurred_at ASC, id ASC
      LIMIT 1`,
     [userId, learningResetAt, learningResetAt, vocabularyEntryId, lifecycleDay, lifecycleDay]
@@ -176,7 +176,8 @@ async function firstRelevantFinalReview(
 ) {
   // A successful 5 -> 5 review should have graduated the card immediately. Any
   // later box-5 reviews only happened because of the historical bug, so mastery
-  // belongs to the first trusted final review in the card's current lifecycle.
+  // belongs to the first trusted final review strictly after the card was introduced
+  // into its current lifecycle.
   const exact = await firstExactFinalReview(
     connection,
     userId,
