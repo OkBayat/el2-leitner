@@ -150,6 +150,7 @@ async function firstExactFinalReview(
 ) {
   const lifecycleDay = dayValue(introducedOn);
   const resetAt = resetBoundary?.occurred_at || null;
+  const resetId = resetBoundary?.review_event_id ?? null;
   const [rows] = await connection.execute(
     `SELECT id AS review_event_id, occurred_at, local_day, correct, promoted, previous_box, new_box
      FROM review_events
@@ -161,7 +162,11 @@ async function firstExactFinalReview(
        AND previous_box = 5
        AND new_box = 5
        AND (? IS NULL OR local_day > ?)
-       AND (? IS NULL OR occurred_at > ?)
+       AND (
+         ? IS NULL
+         OR occurred_at > ?
+         OR (occurred_at = ? AND id > ?)
+       )
      ORDER BY occurred_at ASC, id ASC
      LIMIT 1`,
     [
@@ -172,7 +177,9 @@ async function firstExactFinalReview(
       lifecycleDay,
       lifecycleDay,
       resetAt,
-      resetAt
+      resetAt,
+      resetAt,
+      resetId
     ]
   );
   return isSuccessfulFinalReview(rows[0]) ? rows[0] : null;
