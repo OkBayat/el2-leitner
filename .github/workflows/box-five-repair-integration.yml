@@ -37,7 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           docker compose exec -T mysql mysql \
-            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts <<'SQL'
+            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --default-character-set=utf8mb4 <<'SQL'
           INSERT INTO users (email, password_hash)
           VALUES ('box5-repair-ci@example.com', 'not-used-by-integration-test');
 
@@ -89,18 +89,6 @@ jobs:
             (REPEAT('e', 64), @user_id, @apostrophe_id, '2026-08-06 08:30:00.000', '2026-08-06', 1, 'scheduled', 4, 5, 1, 'qa''legacy'),
             (REPEAT('f', 64), @user_id, NULL, '2026-08-20 08:30:00.000', '2026-08-20', 1, 'scheduled', 5, 5, 1, 'qa’legacy');
           SQL
-
-      - name: Diagnose apostrophe fixture
-        run: |
-          set -euo pipefail
-          echo '--- qa vocabulary/forms ---'
-          docker compose exec -T mysql mysql \
-            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch \
-            --execute="SELECT ve.id,ve.public_id,ve.owner_user_id,vf.form,vf.normalized_form,HEX(vf.normalized_form) FROM vocabulary_entries ve JOIN vocabulary_forms vf ON vf.vocabulary_entry_id=ve.id WHERE ve.primary_form LIKE 'qa%';"
-          echo '--- qa review events ---'
-          docker compose exec -T mysql mysql \
-            --user=root --password="$MYSQL_ROOT_PASSWORD" --database=leitner_ielts --batch \
-            --execute="SELECT id,vocabulary_entry_id,term_snapshot,HEX(term_snapshot),previous_box,new_box,promoted,occurred_at FROM review_events WHERE term_snapshot LIKE 'qa%';"
 
       - name: Run production repair path
         run: docker compose run --rm db-setup
