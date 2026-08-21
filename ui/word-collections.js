@@ -119,10 +119,9 @@
 
   function isPersistedWordBankActivation(word) {
     return Boolean(word)
-      && Number(word.box) === 1
+      && Number(word.box) > 0
       && Boolean(word.introducedOn)
-      && word.addedSource === "word-bank"
-      && word.due === word.introducedOn;
+      && word.addedSource === "word-bank";
   }
 
   function settlePersistedWordSaves(state) {
