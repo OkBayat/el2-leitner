@@ -89,6 +89,22 @@ assert.deepEqual(plain(trackerEvents), [
   { pending: 0, failed: 0 }
 ], "The domain tracker must only remove a pending save after success");
 
+assert.equal(
+  await window.VocoraWordCollectionsTest.activationAcknowledged(response({ revision: 8 }, 200), { revision: 7 }),
+  true,
+  "A save is acknowledged only by the exact next revision"
+);
+assert.equal(
+  await window.VocoraWordCollectionsTest.activationAcknowledged(response({ revision: 7 }, 200), { revision: 7 }),
+  false,
+  "HTTP 200 with a stale revision must not close the save progress"
+);
+assert.equal(
+  await window.VocoraWordCollectionsTest.activationAcknowledged(response({ revision: 8 }, 503), { revision: 7 }),
+  false,
+  "Non-success HTTP responses must not acknowledge persistence"
+);
+
 const tenClickTracker = window.VocoraWordCollectionsTest.createPendingSaveTracker();
 for (let index = 1; index <= 10; index += 1) tenClickTracker.begin(`word-${index}`);
 assert.deepEqual(plain(tenClickTracker.snapshot()), { pending: 10, failed: 0 });
