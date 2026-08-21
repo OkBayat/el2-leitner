@@ -66,6 +66,7 @@ function jsonResponse(payload, status = 200) {
     status: "published",
     contentVersion: 2,
     wordCount: 120,
+    leitnerWordCount: 30,
     subscribed: false,
     metadata: { level: "B1" },
     updatedAt: "2026-08-07T10:00:00.000Z"
@@ -93,6 +94,9 @@ function jsonResponse(payload, status = 200) {
   assert.equal(window.document.querySelector("#userEmail").textContent, "learner@example.com");
   assert.match(window.document.querySelector("#libraryGrid").textContent, /American English File 3/u);
   assert.match(window.document.querySelector("#libraryGrid").textContent, /B1/u, "level must be visible on the collection card");
+  assert.match(window.document.querySelector("#libraryGrid").textContent, /۲۵٪/u, "collection card must show the percentage entered into Leitner");
+  assert.match(window.document.querySelector("#libraryGrid").textContent, /۳۰ از ۱۲۰ واژه/u, "collection card must show the Leitner count behind the percentage");
+  assert.equal(window.document.querySelector(".library-card-leitner-track")?.getAttribute("aria-valuenow"), "25");
   assert.equal(window.document.querySelector("#collectionCount").textContent, "۱");
   assert.equal(window.document.querySelector("#libraryWordCount").textContent, "۱۲۰");
   assert.equal(window.document.querySelector("#subscribedWordCount").textContent, "۰");
