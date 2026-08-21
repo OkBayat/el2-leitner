@@ -432,13 +432,28 @@
     });
   }
 
+  async function activationAcknowledged(response, body) {
+    if (!response.ok) return false;
+    try {
+      const payload = await response.clone().json();
+      const revision = Number(payload?.revision);
+      const expected = Number(body?.revision) + 1;
+      return Number.isSafeInteger(revision)
+        && Number.isSafeInteger(expected)
+        && revision === expected;
+    } catch {
+      return false;
+    }
+  }
+
   async function sendTrackedWordBankActivation(path, body) {
     const vocabularyId = String(body?.vocabularyId || "");
     try {
       const response = await sendCompact(path, body);
-      if (response.ok) wordSaveTracker.saved(vocabularyId);
+      const acknowledged = await activationAcknowledged(response, body);
+      if (acknowledged) wordSaveTracker.saved(vocabularyId);
       else wordSaveTracker.failed(vocabularyId);
-      return response;
+      return { response, acknowledged };
     } catch (error) {
       wordSaveTracker.failed(vocabularyId);
       throw error;
@@ -537,26 +552,26 @@
 
         if (baselineActivation) {
           pendingActivationId = null;
-          const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", baselineActivation.command);
-          if (response.ok) capturePersistedBaseline(baselineActivation.envelope.state);
-          return response;
+          const result = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", baselineActivation.command);
+          if (result.acknowledged) capturePersistedBaseline(baselineActivation.envelope.state);
+          return result.response;
         }
 
         if (pendingActivationId) {
           const command = compactActivationCommand(init, pendingActivationId);
           if (command) {
             pendingActivationId = null;
-            const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", command);
-            if (response.ok && envelope?.state) capturePersistedBaseline(envelope.state);
-            return response;
+            const result = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", command);
+            if (result.acknowledged && envelope?.state) capturePersistedBaseline(envelope.state);
+            return result.response;
           }
         }
 
         const inferredActivation = compactWordBankActivationFromBaseline(init);
         if (inferredActivation) {
-          const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", inferredActivation.command);
-          if (response.ok) capturePersistedBaseline(inferredActivation.envelope.state);
-          return response;
+          const result = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", inferredActivation.command);
+          if (result.acknowledged) capturePersistedBaseline(inferredActivation.envelope.state);
+          return result.response;
         }
 
         const automaticBatch = compactAutomaticActivationBatch(init);
@@ -602,6 +617,7 @@
   function boot() {
     installActivationWriteInterceptor();
     bindDocumentActions();
+    ensureWordSaveProgress();
     if (!tableBody) return;
     const observer = new MutationObserver(() => {
       if (!decorating) {
@@ -628,6 +644,7 @@
     compactWordBankActivationFromBaseline,
     compactAutomaticActivationBatch,
     capturePersistedBaseline,
+    activationAcknowledged,
     bootstrapStateUrl,
     getPendingActivationId: () => pendingActivationId,
     getWordSaveProgress: () => wordSaveTracker.snapshot()
