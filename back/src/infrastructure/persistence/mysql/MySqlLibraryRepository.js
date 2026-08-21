@@ -34,6 +34,7 @@ function mapCollection(row) {
     metadata: parseJson(row.metadata_json),
     isDefault: bool(row.is_default),
     wordCount: Number(row.word_count ?? 0),
+    leitnerWordCount: Number(row.leitner_word_count ?? 0),
     subscribed: row.subscription_status === "active",
     lastSeenVersion: Number(row.last_seen_version ?? 0),
     publishedAt: row.published_at,
@@ -81,17 +82,24 @@ export class MySqlLibraryRepository {
     const managedClause = includeManaged ? "OR c.kind <> 'personal'" : "";
     const [rows] = await this.pool.execute(
       `SELECT c.*, COUNT(ce.id) AS word_count,
+              COUNT(DISTINCT CASE
+                WHEN uvp.status = 'active'
+                  AND (COALESCE(uvp.box, 0) > 0 OR uvp.introduced_on IS NOT NULL OR uvp.mastered_at IS NOT NULL)
+                THEN ce.id
+              END) AS leitner_word_count,
               uc.status AS subscription_status, uc.last_seen_version
        FROM collections c
        LEFT JOIN collection_entries ce
          ON ce.collection_id = c.id AND ce.removed_at IS NULL
        LEFT JOIN user_collections uc
          ON uc.collection_id = c.id AND uc.user_id = ?
+       LEFT JOIN user_vocabulary_progress uvp
+         ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ce.vocabulary_entry_id
        WHERE (${includeManaged ? "1 = 1" : "c.archived_at IS NULL"})
          AND ((c.visibility = 'public' AND c.status = 'published') OR c.owner_user_id = ? ${managedClause})
        GROUP BY c.id, uc.status, uc.last_seen_version
        ORDER BY c.is_default DESC, c.published_at DESC, c.created_at DESC`,
-      [userId, userId]
+      [userId, userId, userId]
     );
     return rows.map(mapCollection);
   }
@@ -101,13 +109,21 @@ export class MySqlLibraryRepository {
     const [collectionRows] = await this.pool.execute(
       `SELECT c.*,
               (SELECT COUNT(*) FROM collection_entries ce WHERE ce.collection_id = c.id AND ce.removed_at IS NULL) AS word_count,
+              (SELECT COUNT(*)
+               FROM collection_entries progress_ce
+               JOIN user_vocabulary_progress uvp
+                 ON uvp.user_id = ? AND uvp.vocabulary_entry_id = progress_ce.vocabulary_entry_id
+               WHERE progress_ce.collection_id = c.id
+                 AND progress_ce.removed_at IS NULL
+                 AND uvp.status = 'active'
+                 AND (COALESCE(uvp.box, 0) > 0 OR uvp.introduced_on IS NOT NULL OR uvp.mastered_at IS NOT NULL)) AS leitner_word_count,
               uc.status AS subscription_status, uc.last_seen_version
        FROM collections c
        LEFT JOIN user_collections uc ON uc.collection_id = c.id AND uc.user_id = ?
        WHERE (c.public_id = ? OR c.slug = ?)
          AND ((c.visibility IN ('public', 'unlisted') AND c.status = 'published') OR c.owner_user_id = ? ${managedClause})
        LIMIT 1`,
-      [userId, collectionId, collectionId, userId]
+      [userId, userId, collectionId, collectionId, userId]
     );
     const collection = mapCollection(collectionRows[0]);
     if (!collection) throw new NotFoundError("COLLECTION_NOT_FOUND", "Collection was not found.");

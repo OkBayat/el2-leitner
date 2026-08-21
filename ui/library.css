@@ -64,6 +64,12 @@
 .library-card-description{min-height:39px;margin:5px 0 11px;color:var(--muted,#718079);font-size:10.5px;line-height:1.85}
 .library-card-tags{display:flex;min-height:25px;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .library-card-tag{display:inline-flex;align-items:center;border:1px solid #e7eeeb;border-radius:999px;background:var(--surface-2,#f8faf7);color:#60736b;padding:3px 8px;font-size:9.5px}
+.library-card-leitner{display:grid;gap:6px;margin:0 0 12px}
+.library-card-leitner-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted,#718079);font-size:9.5px}
+.library-card-leitner-meta strong{color:#0b947e;font-size:11px;font-weight:800}
+.library-card-leitner-track{height:6px;overflow:hidden;border-radius:999px;background:#e9efec}
+.library-card-leitner-track>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#1fb5a1,#4ccdbb)}
+.library-card-leitner small{color:var(--muted,#718079);font-size:9px}
 .library-card-footer{display:flex;align-items:center;justify-content:space-between;gap:9px;border-top:1px solid #edf1ef;padding-top:11px}
 .library-card-actions{display:flex;min-width:0;gap:6px}
 .library-card-actions .btn{min-height:34px;border-radius:9px;padding:7px 10px;font-size:10px;white-space:nowrap}
@@ -134,6 +140,7 @@
 [data-theme="dark"] .library-file-drop{background:#17252d;border-color:#35576c}
 [data-theme="dark"] .library-filter-chip.active{background:#20384a;border-color:#345c75;color:#8bcef7}
 [data-theme="dark"] .library-card-actions .subscribe-card.added{background:#183b35;border-color:#285e54;color:#70d8c5}
+[data-theme="dark"] .library-card-leitner-track{background:#263731}
 
 .hidden{display:none!important}
 

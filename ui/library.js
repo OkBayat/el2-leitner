@@ -102,6 +102,16 @@
     return value;
   }
 
+  function collectionLeitnerProgress(collection) {
+    const total = Math.max(0, Number(collection?.wordCount || 0));
+    const entered = Math.min(total, Math.max(0, Number(collection?.leitnerWordCount || 0)));
+    return {
+      total,
+      entered,
+      percent: total ? Math.round((entered / total) * 100) : 0
+    };
+  }
+
   function coverCode(collection) {
     const custom = String(collection?.metadata?.coverLabel || "").trim();
     if (custom) return custom.slice(0, 14);
@@ -163,6 +173,7 @@
   function collectionCard(collection) {
     const subscribed = Boolean(collection.subscribed);
     const level = collectionLevel(collection);
+    const leitner = collectionLeitnerProgress(collection);
     const editable = state.canManage;
     const metadataTags = [kindLabel(collection.kind), level !== "—" ? level : "سطح تعیین نشده"]
       .filter(Boolean)
@@ -190,6 +201,11 @@
         </div>
         <p class="library-card-description">${escapeHtml(collection.description || "مجموعه‌ای از واژه‌ها برای مسیر یادگیری تو.")}</p>
         <div class="library-card-tags">${metadataTags}<span class="library-card-tag">نسخه ${faNumber.format(collection.contentVersion || 1)}</span></div>
+        <div class="library-card-leitner">
+          <div class="library-card-leitner-meta"><span>وارد لایتنر شده</span><strong>${faNumber.format(leitner.percent)}٪</strong></div>
+          <div class="library-card-leitner-track" role="progressbar" aria-label="درصد واژه‌های واردشده به لایتنر" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${leitner.percent}"><span style="width:${leitner.percent}%"></span></div>
+          <small>${faNumber.format(leitner.entered)} از ${faNumber.format(leitner.total)} واژه</small>
+        </div>
         <div class="library-card-footer">
           <div class="library-card-actions">
             <button class="btn ${subscribed ? "btn-light added" : "btn-primary"} subscribe-card" data-id="${escapeHtml(collection.id)}" type="button">${subscribed ? "✓ اضافه شده" : "افزودن به جعبه"}</button>
@@ -570,6 +586,6 @@
     }
   }
 
-  window.VocoraLibraryTest = { normalize, kindLabel, escapeHtml, collectionLevel, slugifyAscii, kindTone };
+  window.VocoraLibraryTest = { normalize, kindLabel, escapeHtml, collectionLevel, collectionLeitnerProgress, slugifyAscii, kindTone };
   boot();
 })();

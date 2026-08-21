@@ -24,6 +24,17 @@ class Pool {
   async getConnection() { return this.connection; }
 }
 
+class QueryPool {
+  constructor(rows) {
+    this.rows = rows;
+    this.calls = [];
+  }
+  async execute(sql, parameters = []) {
+    this.calls.push({ sql, parameters });
+    return [this.rows, []];
+  }
+}
+
 function importConnection() {
   return new ScriptedConnection([
     [[{ id: 1, public_id: "collection-1", content_version: 4 }], []],
@@ -66,5 +77,37 @@ describe("MySqlLibraryRepository import ordering", () => {
     const membershipInsert = connection.calls.find((call) => /INSERT INTO collection_entries/u.test(call.sql));
     assert.equal(membershipInsert.parameters[4], 1);
     assert.equal(connection.committed, true);
+  });
+});
+
+describe("MySqlLibraryRepository collection Leitner progress", () => {
+  it("returns the number of collection words already introduced to Leitner", async () => {
+    const pool = new QueryPool([{
+      public_id: "collection-1",
+      slug: "collection-1",
+      title: "Collection 1",
+      description: "",
+      kind: "book",
+      visibility: "public",
+      status: "published",
+      content_version: 1,
+      metadata_json: "{}",
+      is_default: 0,
+      word_count: 4,
+      leitner_word_count: 2,
+      subscription_status: "active",
+      last_seen_version: 1
+    }]);
+    const repository = new MySqlLibraryRepository(pool);
+
+    const [collection] = await repository.listForUser("user-1");
+
+    assert.equal(collection.leitnerWordCount, 2);
+    assert.equal(pool.calls.length, 1);
+    assert.match(pool.calls[0].sql, /user_vocabulary_progress/u);
+    assert.match(pool.calls[0].sql, /uvp\.status = 'active'/u);
+    assert.match(pool.calls[0].sql, /uvp\.introduced_on IS NOT NULL/u);
+    assert.match(pool.calls[0].sql, /uvp\.mastered_at IS NOT NULL/u);
+    assert.deepEqual(pool.calls[0].parameters, ["user-1", "user-1", "user-1"]);
   });
 });
