@@ -59,6 +59,74 @@
   background: rgba(111, 128, 120, .08);
 }
 
+.word-save-progress {
+  position: fixed;
+  z-index: 60;
+  bottom: 25px;
+  left: 25px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(400px, calc(100% - 40px));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--text);
+  color: var(--surface);
+  padding: 11px 16px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(15px);
+  transition: .2s;
+  direction: rtl;
+  font-size: 12px;
+}
+
+.word-save-progress::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid currentColor;
+  border-left-color: transparent;
+  border-radius: 50%;
+  animation: word-save-spin .75s linear infinite;
+}
+
+.word-save-progress.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.word-save-progress.error {
+  background: var(--danger, #ba4545);
+  color: #fff;
+}
+
+.word-save-progress.error::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  animation: none;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.word-save-progress.show ~ .toast.show {
+  bottom: 78px;
+}
+
+@keyframes word-save-spin {
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 760px) {
   .word-source-cell { min-width: 145px; }
+  .word-save-progress {
+    bottom: 82px;
+    left: 14px;
+    max-width: calc(100% - 28px);
+  }
+  .word-save-progress.show ~ .toast.show { bottom: 135px; }
 }
