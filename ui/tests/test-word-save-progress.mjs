@@ -55,6 +55,10 @@ window.fetch = async (input, options = {}) => {
   const method = String(options.method || "GET").toUpperCase();
   if (url.pathname === "/api/library/vocabulary-sources") return response({ sources: [] });
   if (url.pathname === "/api/state" && method === "GET") return response({ state: structuredClone(state), revision });
+  if (url.pathname === "/api/state" && method === "PUT") {
+    revision += 1;
+    return response({ revision }, 200);
+  }
   if (url.pathname === "/api/learning/vocabulary-activations" && method === "POST") {
     if (activationStatus >= 200 && activationStatus < 300) revision += 1;
     return response({ revision }, activationStatus);
@@ -150,5 +154,19 @@ assert.equal(indicator.classList.contains("show"), true, "An unsaved word must r
 assert.equal(indicator.classList.contains("error"), true);
 assert.match(indicator.textContent, /۱/);
 assert.match(indicator.textContent, /ثبت نشده/);
+
+activationStatus = 200;
+const third = state.words.find((item) => item.id === "third-word");
+third.box = 2;
+third.due = "2026-08-23";
+third.lastPromotedDay = "2026-08-21";
+const recoveredSave = await persistSnapshot(structuredClone(state));
+assert.equal(recoveredSave.status, 200);
+assert.deepEqual(
+  window.VocoraWordCollectionsTest.getWordSaveProgress(),
+  { pending: 0, failed: 0 },
+  "A later successful full-state save must clear an activation even if the word has already advanced"
+);
+assert.equal(indicator.classList.contains("show"), false);
 
 console.log("Word-bank save progress lifecycle passed.");
