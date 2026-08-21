@@ -4,6 +4,7 @@
   const SOURCE_COLUMN_MARKER = "data-vocora-source-column";
   const tableBody = document.querySelector("#wordsTableBody");
   const previousFetch = window.fetch.bind(window);
+  const faNumber = new Intl.NumberFormat("fa-IR");
   const DAILY_DEFAULTS = Object.freeze({
     attempts: 0,
     correct: 0,
@@ -19,6 +20,7 @@
   let lastSourceKey = "";
   let pendingActivationId = null;
   let persistedBaseline = null;
+  const wordSaveTracker = createPendingSaveTracker(renderWordSaveProgress);
 
   function normalize(value) {
     return String(value ?? "")
@@ -37,6 +39,98 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  function createPendingSaveTracker(onChange = () => {}) {
+    const entries = new Map();
+
+    function snapshot() {
+      let failed = 0;
+      entries.forEach((entry) => { if (entry.failed) failed += 1; });
+      return { pending: entries.size, failed };
+    }
+
+    function emit() {
+      onChange(snapshot());
+    }
+
+    return {
+      begin(key) {
+        const id = String(key || "");
+        if (!id || entries.has(id)) return id;
+        entries.set(id, { failed: false });
+        emit();
+        return id;
+      },
+      saved(key) {
+        const id = String(key || "");
+        if (!entries.delete(id)) return;
+        emit();
+      },
+      failed(key) {
+        const id = String(key || "");
+        const entry = entries.get(id);
+        if (!entry || entry.failed) return;
+        entry.failed = true;
+        emit();
+      },
+      keys() {
+        return [...entries.keys()];
+      },
+      snapshot
+    };
+  }
+
+  function ensureWordSaveProgress() {
+    let indicator = document.querySelector("#wordSaveProgress");
+    if (indicator) return indicator;
+    indicator = document.createElement("div");
+    indicator.id = "wordSaveProgress";
+    indicator.className = "word-save-progress";
+    indicator.setAttribute("role", "status");
+    indicator.setAttribute("aria-live", "polite");
+    indicator.setAttribute("aria-atomic", "true");
+    const toast = document.querySelector("#toast");
+    if (toast?.parentNode) toast.before(indicator);
+    else document.body.appendChild(indicator);
+    return indicator;
+  }
+
+  function renderWordSaveProgress({ pending = 0, failed = 0 } = {}) {
+    const indicator = ensureWordSaveProgress();
+    if (!pending) {
+      indicator.textContent = "";
+      indicator.classList.remove("show", "error");
+      return;
+    }
+    indicator.textContent = failed
+      ? `${faNumber.format(pending)} واژه ثبت نشده؛ اتصال را بررسی کن.`
+      : `${faNumber.format(pending)} واژه در حال ثبت…`;
+    indicator.classList.toggle("error", failed > 0);
+    indicator.classList.add("show");
+  }
+
+  function suppressLegacyActivationToast() {
+    Promise.resolve().then(() => {
+      const toast = document.querySelector("#toast");
+      if (toast?.textContent?.includes("به خانهٔ ۱ اضافه شد")) toast.classList.remove("show");
+    });
+  }
+
+  function isPersistedWordBankActivation(word) {
+    return Boolean(word)
+      && Number(word.box) === 1
+      && Boolean(word.introducedOn)
+      && word.addedSource === "word-bank"
+      && word.due === word.introducedOn;
+  }
+
+  function settlePersistedWordSaves(state) {
+    if (!state || !Array.isArray(state.words)) return;
+    const byId = new Map(state.words.map((word) => [String(word?.id), word]));
+    wordSaveTracker.keys().forEach((id) => {
+      if (isPersistedWordBankActivation(byId.get(id))) wordSaveTracker.saved(id);
+    });
   }
 
   function requestJson(path) {
@@ -339,6 +433,19 @@
     });
   }
 
+  async function sendTrackedWordBankActivation(path, body) {
+    const vocabularyId = String(body?.vocabularyId || "");
+    try {
+      const response = await sendCompact(path, body);
+      if (response.ok) wordSaveTracker.saved(vocabularyId);
+      else wordSaveTracker.failed(vocabularyId);
+      return response;
+    } catch (error) {
+      wordSaveTracker.failed(vocabularyId);
+      throw error;
+    }
+  }
+
   function bootstrapStateUrl(url, method) {
     if (method !== "GET") return null;
     try {
@@ -431,7 +538,7 @@
 
         if (baselineActivation) {
           pendingActivationId = null;
-          const response = await sendCompact("/api/learning/vocabulary-activations", baselineActivation.command);
+          const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", baselineActivation.command);
           if (response.ok) capturePersistedBaseline(baselineActivation.envelope.state);
           return response;
         }
@@ -440,7 +547,7 @@
           const command = compactActivationCommand(init, pendingActivationId);
           if (command) {
             pendingActivationId = null;
-            const response = await sendCompact("/api/learning/vocabulary-activations", command);
+            const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", command);
             if (response.ok && envelope?.state) capturePersistedBaseline(envelope.state);
             return response;
           }
@@ -448,7 +555,7 @@
 
         const inferredActivation = compactWordBankActivationFromBaseline(init);
         if (inferredActivation) {
-          const response = await sendCompact("/api/learning/vocabulary-activations", inferredActivation.command);
+          const response = await sendTrackedWordBankActivation("/api/learning/vocabulary-activations", inferredActivation.command);
           if (response.ok) capturePersistedBaseline(inferredActivation.envelope.state);
           return response;
         }
@@ -464,7 +571,10 @@
         }
 
         const response = await previousFetch(input, init);
-        if (response.ok && envelope?.state) capturePersistedBaseline(envelope.state);
+        if (response.ok && envelope?.state) {
+          capturePersistedBaseline(envelope.state);
+          settlePersistedWordSaves(envelope.state);
+        }
         return response;
       }
 
@@ -477,6 +587,8 @@
       const activationButton = event.target.closest?.(".add-to-box-one[data-id]");
       if (activationButton?.closest?.("#wordsTableBody")) {
         pendingActivationId = activationButton.dataset.id;
+        wordSaveTracker.begin(activationButton.dataset.id);
+        suppressLegacyActivationToast();
         return;
       }
 
@@ -512,12 +624,14 @@
     mergeSources,
     rowIdentity,
     visibleVocabularyIds,
+    createPendingSaveTracker,
     compactActivationCommand,
     compactWordBankActivationFromBaseline,
     compactAutomaticActivationBatch,
     capturePersistedBaseline,
     bootstrapStateUrl,
-    getPendingActivationId: () => pendingActivationId
+    getPendingActivationId: () => pendingActivationId,
+    getWordSaveProgress: () => wordSaveTracker.snapshot()
   };
   boot();
 })();
