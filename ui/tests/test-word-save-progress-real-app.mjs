@@ -135,6 +135,7 @@ for (const id of ids) {
   const button = document.querySelector(`.add-to-box-one[data-id="${id}"]`);
   assert.ok(button, `Expected add button for ${id}`);
   button.click();
+  await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 assert.deepEqual(
@@ -146,7 +147,6 @@ const indicator = document.querySelector("#wordSaveProgress");
 assert.ok(indicator?.classList.contains("show"));
 assert.match(indicator.textContent, /۱۰/);
 assert.match(indicator.textContent, /در حال ثبت/);
-await Promise.resolve();
 assert.equal(document.querySelector("#toast").classList.contains("show"), false, "The old immediate success toast must stay suppressed before browser paint");
 
 await waitUntil(() => activationRequests.length === 1, "The first real saveQueue activation request did not start");
