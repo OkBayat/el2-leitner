@@ -5,6 +5,7 @@ import { JSDOM } from "jsdom";
 const root = new URL("../", import.meta.url);
 const libraryMarkup = fs.readFileSync(new URL("library.html", root), "utf8");
 const libraryScript = fs.readFileSync(new URL("library.js", root), "utf8");
+const importTemplateScript = fs.readFileSync(new URL("library-import-template.js", root), "utf8");
 
 function installDialogSupport(window) {
   window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
@@ -43,6 +44,7 @@ window.fetch = async (input) => {
 };
 
 window.eval(libraryScript);
+window.eval(importTemplateScript);
 await new Promise((resolve) => setTimeout(resolve, 20));
 
 const copyButton = window.document.querySelector("#copyImportTemplateBtn");
