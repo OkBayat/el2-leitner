@@ -16,6 +16,7 @@ const dom = new JSDOM(`<!doctype html><body>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>`, { runScripts: "outside-only", url: "https://vocora.test/#words" });
 const { window } = dom;
+const plain = (value) => JSON.parse(JSON.stringify(value));
 
 function word(id, number, term) {
   return {
@@ -80,13 +81,21 @@ tracker.begin("b");
 tracker.failed("a");
 tracker.saved("b");
 tracker.saved("a");
-assert.deepEqual(trackerEvents, [
+assert.deepEqual(plain(trackerEvents), [
   { pending: 1, failed: 0 },
   { pending: 2, failed: 0 },
   { pending: 2, failed: 1 },
   { pending: 1, failed: 1 },
   { pending: 0, failed: 0 }
 ], "The domain tracker must only remove a pending save after success");
+
+const tenClickTracker = window.VocoraWordCollectionsTest.createPendingSaveTracker();
+for (let index = 1; index <= 10; index += 1) tenClickTracker.begin(`word-${index}`);
+assert.deepEqual(plain(tenClickTracker.snapshot()), { pending: 10, failed: 0 });
+for (let index = 1; index <= 10; index += 1) {
+  tenClickTracker.saved(`word-${index}`);
+  assert.equal(tenClickTracker.snapshot().pending, 10 - index, "Ten rapid saves must count down one acknowledgement at a time");
+}
 
 const tableBody = window.document.querySelector("#wordsTableBody");
 const toast = window.document.querySelector("#toast");
@@ -130,17 +139,17 @@ assert.equal(indicator.classList.contains("show"), true);
 assert.match(indicator.textContent, /۲/);
 assert.match(indicator.textContent, /در حال ثبت/);
 assert.equal(toast.classList.contains("show"), false, "The old immediate success toast must be replaced by save progress");
-assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 2, failed: 0 });
+assert.deepEqual(plain(window.VocoraWordCollectionsTest.getWordSaveProgress()), { pending: 2, failed: 0 });
 
 const firstSave = await persistSnapshot(firstSnapshot);
 assert.equal(firstSave.status, 200);
-assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 1, failed: 0 });
+assert.deepEqual(plain(window.VocoraWordCollectionsTest.getWordSaveProgress()), { pending: 1, failed: 0 });
 assert.match(indicator.textContent, /۱/, "Each server acknowledgement must decrement exactly one rapid click");
 assert.equal(indicator.classList.contains("show"), true);
 
 const secondSave = await persistSnapshot(secondSnapshot);
 assert.equal(secondSave.status, 200);
-assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 0, failed: 0 });
+assert.deepEqual(plain(window.VocoraWordCollectionsTest.getWordSaveProgress()), { pending: 0, failed: 0 });
 assert.equal(indicator.classList.contains("show"), false, "The progress notice must close only after all saves succeed");
 
 activationStatus = 503;
@@ -149,7 +158,7 @@ await Promise.resolve();
 activateLocally("third-word");
 const failedSave = await persistSnapshot(structuredClone(state));
 assert.equal(failedSave.status, 503);
-assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 1, failed: 1 });
+assert.deepEqual(plain(window.VocoraWordCollectionsTest.getWordSaveProgress()), { pending: 1, failed: 1 });
 assert.equal(indicator.classList.contains("show"), true, "An unsaved word must remain visible after a failed request");
 assert.equal(indicator.classList.contains("error"), true);
 assert.match(indicator.textContent, /۱/);
@@ -163,7 +172,7 @@ third.lastPromotedDay = "2026-08-21";
 const recoveredSave = await persistSnapshot(structuredClone(state));
 assert.equal(recoveredSave.status, 200);
 assert.deepEqual(
-  window.VocoraWordCollectionsTest.getWordSaveProgress(),
+  plain(window.VocoraWordCollectionsTest.getWordSaveProgress()),
   { pending: 0, failed: 0 },
   "A later successful full-state save must clear an activation even if the word has already advanced"
 );
