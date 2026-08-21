@@ -3,17 +3,28 @@ import fs from "node:fs";
 import { JSDOM } from "jsdom";
 
 const script = fs.readFileSync(new URL("../word-collections.js", import.meta.url), "utf8");
+const styles = fs.readFileSync(new URL("../library-integration.css", import.meta.url), "utf8");
 const dom = new JSDOM(`<!doctype html><body>
 <section id="view-words"><table><thead><tr><th>word</th><th>category</th><th>box</th></tr></thead>
 <tbody id="wordsTableBody">
 <tr><td>first word</td><td>Test</td><td>new</td><td><button class="add-to-box-one" data-id="first-word">+</button></td></tr>
 <tr><td>second word</td><td>Test</td><td>new</td><td><button class="add-to-box-one" data-id="second-word">+</button></td></tr>
+<tr><td>third word</td><td>Test</td><td>new</td><td><button class="add-to-box-one" data-id="third-word">+</button></td></tr>
 </tbody></table></section>
 <input id="wordSearch"><select id="boxFilter"></select><select id="sortWords"></select>
 <button id="prevPage"></button><button id="nextPage"></button>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>`, { runScripts: "outside-only", url: "https://vocora.test/#words" });
 const { window } = dom;
+
+function word(id, number, term) {
+  return {
+    id, number, term, accepted: [term], category: "Test", notes: "",
+    box: 0, due: null, attempts: 0, correct: 0, mistakes: 0, currentStreak: 0,
+    introducedOn: null, addedSource: null, lastReviewed: null, lastPromotedDay: null,
+    blockedUntil: null, masteredAt: null
+  };
+}
 
 function response(payload, status = 200) {
   return {
@@ -27,18 +38,9 @@ function response(payload, status = 200) {
 const state = {
   settings: { dailyNew: 0, dailyGoal: 20, voiceRate: 0.85, theme: "light" },
   words: [
-    {
-      id: "first-word", number: 1, term: "first word", accepted: ["first word"], category: "Test", notes: "",
-      box: 0, due: null, attempts: 0, correct: 0, mistakes: 0, currentStreak: 0,
-      introducedOn: null, addedSource: null, lastReviewed: null, lastPromotedDay: null,
-      blockedUntil: null, masteredAt: null
-    },
-    {
-      id: "second-word", number: 2, term: "second word", accepted: ["second word"], category: "Test", notes: "",
-      box: 0, due: null, attempts: 0, correct: 0, mistakes: 0, currentStreak: 0,
-      introducedOn: null, addedSource: null, lastReviewed: null, lastPromotedDay: null,
-      blockedUntil: null, masteredAt: null
-    }
+    word("first-word", 1, "first word"),
+    word("second-word", 2, "second word"),
+    word("third-word", 3, "third word")
   ],
   history: [],
   daily: {
@@ -64,6 +66,24 @@ window.eval(script);
 await new Promise((resolve) => setTimeout(resolve, 10));
 await window.fetch("/api/state");
 
+assert.match(styles, /\.word-save-progress\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?bottom:\s*25px;[\s\S]*?left:\s*25px;/);
+assert.match(styles, /@media \(max-width: 760px\)[\s\S]*?\.word-save-progress\s*\{[\s\S]*?bottom:\s*82px;/);
+
+const trackerEvents = [];
+const tracker = window.VocoraWordCollectionsTest.createPendingSaveTracker((snapshot) => trackerEvents.push(snapshot));
+tracker.begin("a");
+tracker.begin("b");
+tracker.failed("a");
+tracker.saved("b");
+tracker.saved("a");
+assert.deepEqual(trackerEvents, [
+  { pending: 1, failed: 0 },
+  { pending: 2, failed: 0 },
+  { pending: 2, failed: 1 },
+  { pending: 1, failed: 1 },
+  { pending: 0, failed: 0 }
+], "The domain tracker must only remove a pending save after success");
+
 const tableBody = window.document.querySelector("#wordsTableBody");
 const toast = window.document.querySelector("#toast");
 tableBody.addEventListener("click", (event) => {
@@ -73,24 +93,28 @@ tableBody.addEventListener("click", (event) => {
 });
 
 function activateLocally(id) {
-  const word = state.words.find((item) => item.id === id);
-  word.box = 1;
-  word.due = "2026-08-21";
-  word.introducedOn = "2026-08-21";
-  word.addedSource = "word-bank";
+  const target = state.words.find((item) => item.id === id);
+  target.box = 1;
+  target.due = "2026-08-21";
+  target.introducedOn = "2026-08-21";
+  target.addedSource = "word-bank";
   state.daily["2026-08-21"].newAdded += 1;
 }
 
-async function persistSnapshot() {
+async function persistSnapshot(snapshot) {
   return window.fetch("/api/state", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ revision, state: structuredClone(state) })
+    body: JSON.stringify({ revision, state: snapshot })
   });
 }
 
-const firstButton = window.document.querySelector('.add-to-box-one[data-id="first-word"]');
-firstButton.click();
+window.document.querySelector('.add-to-box-one[data-id="first-word"]').click();
+activateLocally("first-word");
+const firstSnapshot = structuredClone(state);
+window.document.querySelector('.add-to-box-one[data-id="second-word"]').click();
+activateLocally("second-word");
+const secondSnapshot = structuredClone(state);
 await Promise.resolve();
 
 const indicator = window.document.querySelector("#wordSaveProgress");
@@ -99,22 +123,27 @@ assert.equal(indicator.getAttribute("role"), "status");
 assert.equal(indicator.getAttribute("aria-live"), "polite");
 assert.equal(indicator.getAttribute("aria-atomic"), "true");
 assert.equal(indicator.classList.contains("show"), true);
-assert.match(indicator.textContent, /۱/);
+assert.match(indicator.textContent, /۲/);
 assert.match(indicator.textContent, /در حال ثبت/);
 assert.equal(toast.classList.contains("show"), false, "The old immediate success toast must be replaced by save progress");
-assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 1, failed: 0 });
+assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 2, failed: 0 });
 
-activateLocally("first-word");
-const successfulSave = await persistSnapshot();
-assert.equal(successfulSave.status, 200);
+const firstSave = await persistSnapshot(firstSnapshot);
+assert.equal(firstSave.status, 200);
+assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 1, failed: 0 });
+assert.match(indicator.textContent, /۱/, "Each server acknowledgement must decrement exactly one rapid click");
+assert.equal(indicator.classList.contains("show"), true);
+
+const secondSave = await persistSnapshot(secondSnapshot);
+assert.equal(secondSave.status, 200);
 assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 0, failed: 0 });
-assert.equal(indicator.classList.contains("show"), false, "The progress notice must close only after server success");
+assert.equal(indicator.classList.contains("show"), false, "The progress notice must close only after all saves succeed");
 
 activationStatus = 503;
-window.document.querySelector('.add-to-box-one[data-id="second-word"]').click();
+window.document.querySelector('.add-to-box-one[data-id="third-word"]').click();
 await Promise.resolve();
-activateLocally("second-word");
-const failedSave = await persistSnapshot();
+activateLocally("third-word");
+const failedSave = await persistSnapshot(structuredClone(state));
 assert.equal(failedSave.status, 503);
 assert.deepEqual(window.VocoraWordCollectionsTest.getWordSaveProgress(), { pending: 1, failed: 1 });
 assert.equal(indicator.classList.contains("show"), true, "An unsaved word must remain visible after a failed request");
