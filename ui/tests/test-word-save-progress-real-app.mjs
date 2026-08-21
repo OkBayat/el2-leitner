@@ -146,7 +146,8 @@ const indicator = document.querySelector("#wordSaveProgress");
 assert.ok(indicator?.classList.contains("show"));
 assert.match(indicator.textContent, /۱۰/);
 assert.match(indicator.textContent, /در حال ثبت/);
-assert.equal(document.querySelector("#toast").classList.contains("show"), false, "The old immediate success toast must stay suppressed");
+await Promise.resolve();
+assert.equal(document.querySelector("#toast").classList.contains("show"), false, "The old immediate success toast must stay suppressed before browser paint");
 
 await waitUntil(() => activationRequests.length === 1, "The first real saveQueue activation request did not start");
 assert.equal(fullStateWrites.length, 0, "Word-bank clicks should use compact activation persistence");
