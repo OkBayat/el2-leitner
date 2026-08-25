@@ -851,7 +851,7 @@
     const pageWords = words.slice((wordsPage - 1) * PAGE_SIZE, wordsPage * PAGE_SIZE);
     $('#wordCountLabel').textContent = `${faNumber.format(words.length)} کلمه`;
     $('#wordsTableBody').innerHTML = pageWords.length ? pageWords.map((word) => `<tr>
-      <td class="word-cell">${escapeHtml(word.accepted.join(' / '))}</td><td>${escapeHtml((word.tags.length ? word.tags : [word.category]).join('، '))}</td><td>${escapeHtml(word.lessons.join('، ') || '—')}</td>
+      <td class="word-cell">${escapeHtml(word.accepted.join(' / '))}</td><td>${escapeHtml(word.tags.length ? word.tags.join('، ') : word.lessons.length ? '—' : word.category)}</td><td>${escapeHtml(word.lessons.join('، ') || '—')}</td>
       <td><span class="box-badge ${word.box ? '' : 'new'}">${word.masteredAt ? 'تسلط' : word.box ? `خانهٔ ${faNumber.format(word.box)}` : 'وارد نشده'}</span></td>
       <td>${faNumber.format(word.attempts)}</td><td class="mistake-count">${faNumber.format(word.mistakes)}</td>
       <td>${word.due ? formatRelativeDay(word.due) : '—'}</td>
