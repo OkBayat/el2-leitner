@@ -7,7 +7,7 @@ const rawHtml = fs.readFileSync(new URL('index.html', root), 'utf8');
 const html = rawHtml
   .replace(/<script src="vocabulary\.js"><\/script>/, '')
   .replace(/<script src="share-story-v2\.js"><\/script>/, '')
-  .replace(/<script src="app-v2\.js"><\/script>/, '');
+  .replace(/<script src="app-v2\.js(?:\?[^\"]*)?"><\/script>/, '');
 const vocabulary = fs.readFileSync(new URL('vocabulary.js', root), 'utf8');
 const shareStory = fs.readFileSync(new URL('share-story-v2.js', root), 'utf8');
 const app = fs.readFileSync(new URL('app-v2.js', root), 'utf8');
@@ -106,7 +106,7 @@ const originalRandom = dom.window.Math.random;
 assert.ok(VazheyarTest, 'Test API should be exposed');
 assert.match(rawHtml, /href="styles-v2\.css"/, 'The release must use a fresh stylesheet URL instead of a stale CDN object');
 assert.match(rawHtml, /src="share-story-v2\.js"/, 'The share runtime must use a fresh CDN URL');
-assert.match(rawHtml, /src="app-v2\.js"/, 'The app runtime must use a fresh CDN URL');
+assert.match(rawHtml, /src="app-v2\.js(?:\?[^\"]*)?"/, 'The app runtime must use a fresh CDN URL');
 assert.equal(document.querySelector('#userEmail').textContent, 'learner@example.com');
 assert.equal(dom.window.localStorage.getItem('vazheyar-ielts-state-v1'), null, 'Normal learning data must not be written to localStorage');
 assert.ok(apiCalls.some((call) => call.path === '/api/state' && call.method === 'PUT'), 'Initial state must be persisted through the API');
