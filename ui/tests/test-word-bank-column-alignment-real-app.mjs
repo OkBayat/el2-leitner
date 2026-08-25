@@ -170,6 +170,9 @@ assert.equal(abilityRow.cells[1].textContent.trim(), "Nouns");
 assert.match(abilityRow.cells[2].textContent, /Cambridge Vocabulary for IELTS/u);
 assert.equal(abilityRow.cells[3].textContent.trim(), "Unit 2 — Mental and physical development");
 
+// The screenshot regression was a mixed deployment: the new nine-column HTML header
+// was served together with an older cached app-v2 row renderer. Version the script URL
+// whenever the row schema changes so a browser/CDN cannot combine those two revisions.
 const parsedMarkup = new JSDOM(rawHtml).window.document;
 const appSrc = parsedMarkup.querySelector('script[src^="app-v2.js"]')?.getAttribute("src") || "";
 assert.match(
