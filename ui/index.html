@@ -183,11 +183,11 @@
         </div>
         <article class="panel table-panel">
           <div class="filters-row">
-            <label class="search-field"><span>⌕</span><input id="wordSearch" type="search" placeholder="جست‌وجوی کلمه یا دسته…"></label>
+            <label class="search-field"><span>⌕</span><input id="wordSearch" type="search" placeholder="جست‌وجوی کلمه، تگ یا درس…"></label>
             <select id="boxFilter" aria-label="فیلتر خانه"><option value="all">همه خانه‌ها</option><option value="0">هنوز وارد نشده</option><option value="1">خانهٔ ۱</option><option value="2">خانهٔ ۲</option><option value="3">خانهٔ ۳</option><option value="4">خانهٔ ۴</option><option value="5">خانهٔ ۵</option></select>
             <select id="sortWords" aria-label="مرتب‌سازی"><option value="number">ترتیب اصلی</option><option value="mistakes">بیشترین خطا</option><option value="due">نزدیک‌ترین مرور</option><option value="alpha">الفبایی</option></select>
           </div>
-          <div class="table-wrap"><table><thead><tr><th>کلمه</th><th>دسته</th><th data-vocora-source-column="true">مجموعه‌ها</th><th>خانه</th><th>تلاش‌ها</th><th>خطا</th><th>مرور بعدی</th><th></th></tr></thead><tbody id="wordsTableBody"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>کلمه</th><th>تگ‌ها</th><th data-vocora-source-column="true">مجموعه‌ها</th><th>درس</th><th>خانه</th><th>تلاش‌ها</th><th>خطا</th><th>مرور بعدی</th><th></th></tr></thead><tbody id="wordsTableBody"></tbody></table></div>
           <div class="pagination"><button class="btn btn-light" id="prevPage">قبلی</button><span id="pageInfo">صفحه ۱</span><button class="btn btn-light" id="nextPage">بعدی</button></div>
         </article>
       </section>
@@ -320,7 +320,7 @@
   <script src="share-story-v2.js"></script>
   <script src="practice-remediation.js"></script>
   <script src="practice-remediation-keyboard-guard.js"></script>
-  <script src="app-v2.js"></script>
+  <script src="app-v2.js?v=word-bank-columns-v2"></script>
   <script src="session-persistence.js"></script>
   <script src="word-collections.js"></script>
   <script src="leitner-status.js?v=wait-day-states-v5"></script>

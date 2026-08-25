@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 
 const guardSource = fs.readFileSync(new URL('../practice-remediation-keyboard-guard.js', import.meta.url), 'utf8');
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1]);
+const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1].split('?')[0]);
 
 assert.ok(
   scriptOrder.indexOf('practice-remediation-keyboard-guard.js') < scriptOrder.indexOf('app-v2.js'),

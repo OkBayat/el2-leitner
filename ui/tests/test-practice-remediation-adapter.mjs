@@ -8,7 +8,7 @@ const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const indexMarkup = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 assert.match(indexMarkup, /href="practice-remediation\.css"/);
-const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1]);
+const scriptOrder = [...indexMarkup.matchAll(/<script src="([^"]+)"><\/script>/g)].map((match) => match[1].split('?')[0]);
 assert.ok(scriptOrder.indexOf('practice-remediation.js') < scriptOrder.indexOf('app-v2.js'));
 assert.ok(scriptOrder.indexOf('practice-remediation-keyboard-guard.js') < scriptOrder.indexOf('app-v2.js'));
 assert.ok(scriptOrder.indexOf('practice-remediation-adapter.js') > scriptOrder.indexOf('app-v2.js'));

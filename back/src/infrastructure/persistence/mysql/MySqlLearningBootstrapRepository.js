@@ -2,12 +2,17 @@ import { normalizeVocabularyForm } from "../../../domain/library/VocabularyNorma
 import { reviewFingerprint } from "./MySqlEfficientLearningStateRepository.js";
 
 const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "system" });
-const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "notes", "createdAt"]);
+const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "tags", "lessons", "notes", "createdAt"]);
 
 function parseJson(value, fallback = null) {
   if (value === null || value === undefined) return fallback;
   if (Buffer.isBuffer(value)) value = value.toString("utf8");
   return typeof value === "string" ? JSON.parse(value) : value;
+}
+
+function splitLabels(value) {
+  if (!value) return [];
+  return [...new Set(String(value).split("\u001f").map((item) => item.trim()).filter(Boolean))];
 }
 
 function asDay(value) {
@@ -95,6 +100,16 @@ export class MySqlLearningBootstrapRepository {
                 MIN(uc.subscribed_at) AS source_subscribed_at,
                 MIN(ce.position) AS source_position,
                 COALESCE(MAX(uvp.legacy_category), MIN(s.title), 'بدون دسته‌بندی') AS category,
+                GROUP_CONCAT(
+                  DISTINCT COALESCE(parent_section.title, s.title)
+                  ORDER BY COALESCE(parent_section.title, s.title)
+                  SEPARATOR '\u001f'
+                ) AS lessons,
+                GROUP_CONCAT(
+                  DISTINCT CASE WHEN parent_section.id IS NOT NULL THEN s.title END
+                  ORDER BY s.title
+                  SEPARATOR '\u001f'
+                ) AS tags,
                 MAX(uvp.personal_note) AS personal_note,
                 MAX(uvp.box) AS box, MAX(uvp.due_date) AS due_date,
                 MAX(uvp.attempts) AS attempts, MAX(uvp.correct_count) AS correct_count,
@@ -109,6 +124,7 @@ export class MySqlLearningBootstrapRepository {
          JOIN vocabulary_entries ve ON ve.id = ce.vocabulary_entry_id AND ve.status = 'active'
          LEFT JOIN vocabulary_forms vf ON vf.vocabulary_entry_id = ve.id
          LEFT JOIN collection_sections s ON s.id = ce.section_id
+         LEFT JOIN collection_sections parent_section ON parent_section.id = s.parent_section_id
          LEFT JOIN user_vocabulary_progress uvp
            ON uvp.user_id = uc.user_id AND uvp.vocabulary_entry_id = ve.id
          WHERE uc.user_id = ? AND uc.status = 'active' AND COALESCE(uvp.status, 'active') <> 'excluded'
@@ -181,6 +197,8 @@ export class MySqlLearningBootstrapRepository {
             .filter((form) => normalizeVocabularyForm(form) !== normalizeVocabularyForm(row.primary_form))
         ],
         category: row.category || "بدون دسته‌بندی",
+        tags: splitLabels(row.tags),
+        lessons: splitLabels(row.lessons),
         notes: row.personal_note || "",
         createdAt: asIso(row.progress_created_at) || new Date().toISOString(),
         box: boxNumber(row.box),

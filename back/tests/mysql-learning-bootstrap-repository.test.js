@@ -39,7 +39,9 @@ class BootstrapPool {
         public_id: "vocab-1",
         primary_form: "roommate",
         accepted_forms: "roommate",
-        category: "People",
+        category: "Nouns",
+        tags: "Nouns",
+        lessons: "Unit 2 — Mental and physical development",
         personal_note: null,
         box: 0,
         due_date: null,
@@ -79,7 +81,7 @@ class BootstrapPool {
 }
 
 describe("MySqlLearningBootstrapRepository", () => {
-  it("returns compact words and only the latest history event", async () => {
+  it("returns compact words with taxonomy and only the latest history event", async () => {
     const pool = new BootstrapPool();
     const fallback = { findByUserId: async () => { throw new Error("fallback should not run"); } };
     const repository = new MySqlLearningBootstrapRepository(pool, fallback);
@@ -94,7 +96,9 @@ describe("MySqlLearningBootstrapRepository", () => {
       number: 1,
       term: "roommate",
       accepted: ["roommate"],
-      category: "People",
+      category: "Nouns",
+      tags: ["Nouns"],
+      lessons: ["Unit 2 — Mental and physical development"],
       notes: "",
       createdAt: "2026-08-07T12:00:00.000Z"
     });
@@ -106,6 +110,8 @@ describe("MySqlLearningBootstrapRepository", () => {
     assert.match(historyQuery.sql, /ORDER BY re\.occurred_at DESC, re\.id DESC\s+LIMIT 1/u);
     assert.equal(pool.calls.some(({ sql }) => /LIMIT 20000/u.test(sql)), false);
     const wordQuery = pool.calls.find(({ sql }) => /GROUP_CONCAT/u.test(sql));
+    assert.match(wordQuery.sql, /LEFT JOIN collection_sections parent_section/u,
+      "lesson metadata must come from the real parent collection section");
     assert.match(wordQuery.sql, /MIN\(ve\.created_at\) AS progress_created_at/u);
     assert.doesNotMatch(wordQuery.sql, /uvp\.created_at/u,
       "bootstrap createdAt must not drift when a progress row is created");
