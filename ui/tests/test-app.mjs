@@ -229,14 +229,49 @@ assert.equal(saved.history.at(-1).mode, 'box1');
 assert.equal(saved.history.at(-1).promoted, false);
 dom.window.Math.random = originalRandom;
 
-const weightedCounts = new Map();
+const boxOneCoverageFixture = [
+  ['facilities', 14], ['dissertation', 14], ['competitive', 14], ['etiquette', 14], ['spacious', 11],
+  ['disease', 10], ['patient', 9], ['ceiling', 8], ['disappointing', 7], ['vegan', 6], ['chimney', 6],
+  ['deforestation', 6], ['embarrassed', 6], ['couple', 6], ['campaign for', 6], ['village', 5],
+  ['burning fossil fuels', 5], ['thriller', 5], ['compensation', 5], ['victim', 5], ['chemical-free', 4],
+  ['borrow', 4], ['fed up with', 4], ['amazed', 4], ['soundtrack', 4], ['degradation', 3], ['impatient', 3],
+  ['digital detox', 3], ['admire', 3], ['arrest', 3], ['evaluate', 2], ['customer', 2], ['temperature', 2],
+  ['sea level', 2], ['ocean currents', 2], ['soil conditioner', 2], ['fossil fuels', 2], ['drought', 2],
+  ['stepmother', 2], ['stomach', 2], ['give a thumbs up', 2], ['eggs', 1], ['jungle', 1], ['blizzard', 1],
+  ['cyclone', 1], ['volcanic eruption', 1], ['bushfire', 1], ['nuclear energy', 1], ['natural gas', 1],
+  ['windmill', 1], ['non-renewable', 1]
+];
+const boxOneCoverageWords = boxOneCoverageFixture.map(([term, mistakes], index) => ({
+  id: `coverage-${index + 1}`, term, box: 1, mistakes
+}));
+boxOneCoverageWords.push({ id: 'outside-box-one', term: 'outside', box: 2, mistakes: 99 });
+let coverageSeed = 0x1f2e3d4c;
+const coverageRandom = () => {
+  coverageSeed = (Math.imul(coverageSeed, 1664525) + 1013904223) >>> 0;
+  return coverageSeed / 0x100000000;
+};
+const coverageCycle = VazheyarTest.buildWeightedBoxOneCycle(boxOneCoverageWords, null, coverageRandom);
+const expectedCoverageIds = boxOneCoverageWords.filter((word) => word.box === 1).map((word) => word.id);
+assert.equal(coverageCycle.length, expectedCoverageIds.length, 'One free-practice cycle must contain every box 1 word exactly once');
+assert.equal(new Set(coverageCycle).size, expectedCoverageIds.length, 'A free-practice cycle must not repeat a word before full coverage');
+assert.deepEqual([...coverageCycle].sort(), [...expectedCoverageIds].sort(), 'Low-mistake box 1 words must not starve behind historically hard words');
+const boundaryCycle = VazheyarTest.buildWeightedBoxOneCycle(boxOneCoverageWords, boxOneCoverageWords[0].id, () => 0);
+assert.notEqual(boundaryCycle[0], boxOneCoverageWords[0].id, 'A new coverage cycle must avoid an immediate repeat from the previous cycle when alternatives exist');
+
+let prioritySeed = 0x13579bdf;
+const priorityRandom = () => {
+  prioritySeed = (Math.imul(prioritySeed, 1664525) + 1013904223) >>> 0;
+  return prioritySeed / 0x100000000;
+};
+let hardFirstCount = 0;
 for (let index = 0; index < 300; index += 1) {
-  VazheyarTest.weightedBoxOneBatch().forEach((id) => weightedCounts.set(id, (weightedCounts.get(id) || 0) + 1));
+  const [first] = VazheyarTest.buildWeightedBoxOneCycle([
+    { id: 'hard', box: 1, mistakes: 14 },
+    { id: 'easy', box: 1, mistakes: 1 }
+  ], null, priorityRandom);
+  if (first === 'hard') hardFirstCount += 1;
 }
-const mistakenFrequency = weightedCounts.get(mistakenId) || 0;
-const otherFrequencies = [...weightedCounts.entries()].filter(([id]) => id !== mistakenId).map(([, count]) => count);
-const otherAverage = otherFrequencies.reduce((sum, count) => sum + count, 0) / otherFrequencies.length;
-assert.ok(mistakenFrequency > otherAverage * 1.25, 'Words with more mistakes must appear more often in box 1 practice');
+assert.ok(hardFirstCount > 240, 'Historical mistakes should influence priority within a cycle without increasing repetition count');
 
 const legacy = {
   words: [{ id: 'legacy-word', box: 4, due: '2026-01-01', introducedOn: '2026-01-01', blockedUntil: null, lastPromotedDay: null, masteredAt: null }],
