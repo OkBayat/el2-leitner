@@ -39,6 +39,8 @@ for (const selector of ['#remediationAcknowledgeBtn', '#remediationInput']) {
 window.eval(guardSource);
 assert.equal(window.VocoraRemediationKeyboardGuard.install(document), false, 'Installing the guard twice must be idempotent.');
 
+// This models app-v2's document-level Enter shortcut, which used to call showNextCard()
+// while the remediation UI still owned the keyboard interaction.
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter') return;
   event.preventDefault();
