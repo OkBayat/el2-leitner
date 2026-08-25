@@ -58,12 +58,17 @@
   function createWord(source, index = 0) {
     const accepted = Array.isArray(source.accepted) ? source.accepted : String(source.term || '').split(/\s+\/\s+/);
     const cleanAccepted = [...new Set(accepted.map((item) => item.trim()).filter(Boolean))];
+    const cleanTags = [...new Set((Array.isArray(source.tags) ? source.tags : []).map((item) => String(item || '').trim()).filter(Boolean))];
+    const lessonValues = Array.isArray(source.lessons) ? source.lessons : source.lesson ? [source.lesson] : [];
+    const cleanLessons = [...new Set(lessonValues.map((item) => String(item || '').trim()).filter(Boolean))];
     return {
       id: source.id || uid(),
       number: Number(source.number) || index + 1,
       term: cleanAccepted[0] || String(source.term || '').trim(),
       accepted: cleanAccepted,
       category: source.category || 'بدون دسته‌بندی',
+      tags: cleanTags,
+      lessons: cleanLessons,
       notes: source.notes || '',
       createdAt: source.createdAt || new Date().toISOString(),
       box: clamp(Number(source.box) || 0, 0, 5),
@@ -829,7 +834,7 @@
     const box = $('#boxFilter').value;
     const sort = $('#sortWords').value;
     let words = state.words.filter((word) => {
-      const matchesSearch = !search || normalizeAnswer(`${word.term} ${word.accepted.join(' ')} ${word.category}`).includes(search);
+      const matchesSearch = !search || normalizeAnswer(`${word.term} ${word.accepted.join(' ')} ${word.category} ${word.tags.join(' ')} ${word.lessons.join(' ')}`).includes(search);
       const boxNumber = Number(box);
       const matchesBox = box === 'all'
         || (boxNumber === 0 ? word.box === 0 : isActiveLeitnerWord(word) && word.box === boxNumber);
@@ -846,12 +851,12 @@
     const pageWords = words.slice((wordsPage - 1) * PAGE_SIZE, wordsPage * PAGE_SIZE);
     $('#wordCountLabel').textContent = `${faNumber.format(words.length)} کلمه`;
     $('#wordsTableBody').innerHTML = pageWords.length ? pageWords.map((word) => `<tr>
-      <td class="word-cell">${escapeHtml(word.accepted.join(' / '))}</td><td>${escapeHtml(word.category)}</td>
+      <td class="word-cell">${escapeHtml(word.accepted.join(' / '))}</td><td>${escapeHtml((word.tags.length ? word.tags : [word.category]).join('، '))}</td><td>${escapeHtml(word.lessons.join('، ') || '—')}</td>
       <td><span class="box-badge ${word.box ? '' : 'new'}">${word.masteredAt ? 'تسلط' : word.box ? `خانهٔ ${faNumber.format(word.box)}` : 'وارد نشده'}</span></td>
       <td>${faNumber.format(word.attempts)}</td><td class="mistake-count">${faNumber.format(word.mistakes)}</td>
       <td>${word.due ? formatRelativeDay(word.due) : '—'}</td>
       <td><div class="row-menu">${word.box === 0 ? `<button class="mini-btn add-to-box-one" data-id="${word.id}" aria-label="افزودن ${escapeHtml(word.term)} به خانه ۱" title="افزودن به خانهٔ ۱">＋</button>` : ''}<button class="mini-btn listen-row" data-id="${word.id}" aria-label="تلفظ">▶</button><button class="mini-btn edit-row" data-id="${word.id}">ویرایش</button><button class="mini-btn delete delete-row" data-id="${word.id}">حذف</button></div></td>
-    </tr>`).join('') : '<tr><td colspan="7" class="no-data">کلمه‌ای پیدا نشد.</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="8" class="no-data">کلمه‌ای پیدا نشد.</td></tr>';
     $('#pageInfo').textContent = `صفحه ${faNumber.format(wordsPage)} از ${faNumber.format(totalPages)}`;
     $('#prevPage').disabled = wordsPage <= 1;
     $('#nextPage').disabled = wordsPage >= totalPages;
@@ -1189,7 +1194,7 @@
 
   function resetProgress() {
     if (!confirm('همه‌ی پیشرفت‌ها، خطاها و تاریخچه پاک شود؟ این کار قابل بازگشت نیست مگر پشتیبان داشته باشی.')) return;
-    const keepWords = state.words.map((word, index) => createWord({ number: word.number || index + 1, term: word.term, accepted: word.accepted, category: word.category, notes: word.notes }));
+    const keepWords = state.words.map((word, index) => createWord({ number: word.number || index + 1, term: word.term, accepted: word.accepted, category: word.category, tags: word.tags, lessons: word.lessons, notes: word.notes }));
     state = defaultState();
     state.words = keepWords;
     ensureDailyWords();
