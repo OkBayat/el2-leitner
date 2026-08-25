@@ -552,31 +552,41 @@
     return queue.map((word) => word.id);
   }
 
-  function weightedBoxOneBatch(size = 24, excludeId = null) {
-    const words = state.words.filter((word) => word.box === 1);
-    if (!words.length) return [];
+  function boxOnePracticeWeight(word) {
+    return 1 + Math.min(Math.max(Number(word?.mistakes) || 0, 0), 8) * 2;
+  }
+
+  function buildWeightedBoxOneCycle(words, excludeId = null, random = Math.random) {
+    const remaining = words.filter((word) => word.box === 1);
+    if (!remaining.length) return [];
     const result = [];
-    let previousId = excludeId;
-    for (let index = 0; index < size; index += 1) {
-      const totalWeight = words.reduce((sum, word) => sum + 1 + Math.min(word.mistakes, 8) * 2, 0);
-      let cursor = Math.random() * totalWeight;
-      let selected = words[0];
-      for (const word of words) {
-        cursor -= 1 + Math.min(word.mistakes, 8) * 2;
-        if (cursor <= 0) { selected = word; break; }
+
+    while (remaining.length) {
+      const candidates = !result.length && excludeId && remaining.length > 1
+        ? remaining.filter((word) => word.id !== excludeId)
+        : remaining;
+      const totalWeight = candidates.reduce((sum, word) => sum + boxOnePracticeWeight(word), 0);
+      let cursor = random() * totalWeight;
+      let selected = candidates[candidates.length - 1];
+
+      for (const word of candidates) {
+        cursor -= boxOnePracticeWeight(word);
+        if (cursor <= 0) {
+          selected = word;
+          break;
+        }
       }
-      if (words.length > 1 && selected.id === previousId) {
-        selected = words.find((word) => word.id !== previousId) || selected;
-      }
+
       result.push(selected.id);
-      previousId = selected.id;
+      remaining.splice(remaining.indexOf(selected), 1);
     }
+
     return result;
   }
 
   function startSession(mode = 'scheduled', selectedWordIds = []) {
     if (session && !session.completed) recordSessionTime();
-    reviewQueue = mode === 'box1' ? weightedBoxOneBatch() : mode === 'new' ? [...selectedWordIds] : buildReviewQueue();
+    reviewQueue = mode === 'box1' ? buildWeightedBoxOneCycle(state.words) : mode === 'new' ? [...selectedWordIds] : buildReviewQueue();
     if (!reviewQueue.length) {
       const message = mode === 'box1' ? 'هنوز کارتی در خانهٔ ۱ وجود ندارد.' : mode === 'new' ? 'لغت جدیدی برای آزمون انتخاب نشده است.' : 'مرور موعدداری برای امروز وجود ندارد.';
       return showToast(message);
@@ -592,7 +602,7 @@
 
   function showNextCard() {
     feedbackOpen = false;
-    if (!reviewQueue.length && session?.mode === 'box1') reviewQueue = weightedBoxOneBatch(24, currentWord?.id);
+    if (!reviewQueue.length && session?.mode === 'box1') reviewQueue = buildWeightedBoxOneCycle(state.words, currentWord?.id);
     if (!reviewQueue.length) return finishSession();
     const id = reviewQueue.shift();
     currentWord = state.words.find((word) => word.id === id);
@@ -1338,7 +1348,7 @@
     $('#bootLoader').classList.add('hidden');
     window.VazheyarTest = {
       normalizeAnswer, isCorrectAnswer, parseWordFile, importWords, addDays, localDay,
-      buildAnalysisReport, migrateLegacyProgress, weightedBoxOneBatch, waitForSaves,
+      buildAnalysisReport, migrateLegacyProgress, buildWeightedBoxOneCycle, waitForSaves,
       getCurrentWord: () => currentWord, getState: () => state, getStateRevision: () => stateRevision,
       getCurrentUser: () => currentUser, openShareDialog, waitForShareReady: () => shareReadyPromise,
       getShareMoments: () => shareMoments, getSelectedShareMoment: () => selectedShareMoment
