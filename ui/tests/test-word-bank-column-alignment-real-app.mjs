@@ -146,7 +146,11 @@ assert.equal(
   "every rendered word row must have exactly one cell per header after collection decoration"
 );
 assert.equal(dictionaryRow.cells[0].textContent.trim(), "dictionary");
-assert.equal(dictionaryRow.cells[1].textContent.trim(), "University and study");
+assert.equal(
+  dictionaryRow.cells[1].textContent.trim(),
+  "—",
+  "a root lesson/section must not be duplicated into the tag column"
+);
 assert.match(dictionaryRow.cells[2].textContent, /IELTS Listening Words 1500/u);
 assert.equal(
   dictionaryRow.cells[3].textContent.trim(),
