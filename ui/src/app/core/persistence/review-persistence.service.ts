@@ -16,7 +16,7 @@ export class ReviewPersistenceService {
       try {
         const response = await this.api.post<{ revision: number }>('/api/learning/reviews', command);
         if (!Number.isSafeInteger(response.revision) || response.revision !== command.revision + 1) {
-          throw new ApiError('نسخهٔ ذخیره‌شده از سرور معتبر نبود.', 502, 'INVALID_STATE_REVISION');
+          throw new ApiError('The saved state revision returned by the server is invalid.', 502, 'INVALID_STATE_REVISION');
         }
         return response.revision;
       } catch (error) {
