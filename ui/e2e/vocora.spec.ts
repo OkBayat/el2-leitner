@@ -53,6 +53,13 @@ async function expectFooterAnchoredToViewport(page: Page): Promise<void> {
   expect(Math.abs(box!.width - viewport!.width)).toBeLessThanOrEqual(2);
 }
 
+async function expectLowercaseMobileInput(input: ReturnType<Page['getByLabel']>): Promise<void> {
+  await expect(input).toHaveAttribute('autocomplete', 'off');
+  await expect(input).toHaveAttribute('autocapitalize', 'none');
+  await expect(input).toHaveAttribute('autocorrect', 'off');
+  await expect(input).toHaveAttribute('spellcheck', 'false');
+}
+
 test('English LTR Angular app preserves the complete learner and library flow', async ({ page }) => {
   await authenticate(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -94,11 +101,12 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(checkAnswer).toBeDisabled();
   await expect(answerInput).toBeVisible();
   await expect(answerInput).toBeFocused();
+  await expectLowercaseMobileInput(answerInput);
   await answerInput.fill(dueTerm);
   await expect(checkAnswer).toBeEnabled();
   await checkAnswer.click();
 
-  await expect(footer).toHaveClass(/correct/u);
+  await expect(footer).toHaveClass(/success/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
   await expect(footer.getByText('Correct!')).toBeVisible();
   await expect(footer.getByRole('button', { name: 'Continue' })).toBeVisible();
@@ -143,7 +151,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText(/email, typed answers/i)).toBeVisible();
 });
 
-test('wrong spelling uses the anchored error footer and continues into recall', async ({ page }) => {
+test('wrong spelling changes from error feedback to the shared yellow retry footer', async ({ page }) => {
   await authenticate(page, `e2e-spelling-${Date.now()}@example.com`);
   const term = await firstDueTerm(page);
   const wrong = `${term.slice(0, -1)}${term.endsWith('x') ? 'y' : 'x'}`;
@@ -154,7 +162,7 @@ test('wrong spelling uses the anchored error footer and continues into recall', 
   await page.getByLabel('Your answer').fill(wrong);
   await footer.getByRole('button', { name: 'Check answer' }).click();
 
-  await expect(footer).toHaveClass(/wrong/u);
+  await expect(footer).toHaveClass(/error/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 223, 224)');
   await expect(footer.getByText('Correct solution:')).toBeVisible();
   await expect(footer).toContainText(term);
@@ -175,6 +183,20 @@ test('wrong spelling uses the anchored error footer and continues into recall', 
   const recallInput = page.getByLabel('Recall from memory');
   await expect(recallInput).toBeVisible();
   await expect(recallInput).toBeFocused();
+  await expectLowercaseMobileInput(recallInput);
+
+  await expect(footer).toHaveClass(/practice/u);
+  await expect(footer).toHaveCSS('background-color', 'rgb(255, 244, 204)');
+  await expect(footer.getByText('Correct solution:')).toHaveCount(0);
+  await expectFooterAnchoredToViewport(page);
+  await expect(page.locator('.session-stage').getByRole('button', { name: 'Check' })).toHaveCount(0);
+
+  const retryCheck = footer.getByRole('button', { name: 'Check' });
+  await expect(retryCheck).toBeDisabled();
+  await recallInput.fill(term);
+  await expect(retryCheck).toBeEnabled();
+  await retryCheck.click();
+  await expect(footer).toHaveClass(/practice/u);
 });
 
 test('review keeps its bottom action footer fitted on mobile', async ({ page }) => {
@@ -197,7 +219,9 @@ test('review keeps its bottom action footer fitted on mobile', async ({ page }) 
   await page.getByRole('button', { name: 'Start session' }).click();
   await expect(page.getByTestId('review-session-bar')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Exit review' })).toBeVisible();
-  await expect(page.getByLabel('Your answer')).toBeVisible();
+  const answerInput = page.getByLabel('Your answer');
+  await expect(answerInput).toBeVisible();
+  await expectLowercaseMobileInput(answerInput);
   await expectFooterAnchoredToViewport(page);
   const footer = page.getByTestId('review-action-footer');
   await expect(footer.getByRole('button', { name: "I don't know" })).toBeVisible();
