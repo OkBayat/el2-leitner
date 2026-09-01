@@ -60,6 +60,7 @@ assert.ok(build.options.assets.some((asset) => asset.input === 'fonts'));
 const bootstrapCss = 'node_modules/bootstrap/dist/css/bootstrap.min.css';
 assert.ok(build.options.styles.includes(bootstrapCss), 'Bootstrap CSS must be loaded globally by Angular.');
 assert.ok(build.options.styles.indexOf(bootstrapCss) < build.options.styles.indexOf('src/styles.scss'), 'Project styles must load after Bootstrap so application overrides keep precedence.');
+assert.deepEqual(angular.projects.vocora.architect.test.options.styles, build.options.styles, 'Unit tests must load the same global styles as the application build.');
 
 const theme = read('src/styles.scss');
 assert.match(theme, /@use ['"]@angular\/material['"] as mat/u);
