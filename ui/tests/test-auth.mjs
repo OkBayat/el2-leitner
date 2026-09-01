@@ -40,8 +40,8 @@ const login = await createAuthHarness(
     ? response(200, { user: { id: 1, email: 'user@example.com' } })
     : response(404)
 );
-const loginInputs = [...login.dom.window.document.querySelectorAll('#authForm input')];
-assert.deepEqual(loginInputs.map((input) => input.type), ['email', 'password'], 'Login must request only email and password');
+const loginInputs = [...login.dom.window.document.querySelectorAll('#authForm md-outlined-text-field')];
+assert.deepEqual(loginInputs.map((input) => input.getAttribute('type')), ['email', 'password'], 'Login must request only email and password through Material fields');
 login.dom.window.document.querySelector('#email').value = ' USER@example.COM ';
 login.dom.window.document.querySelector('#password').value = 'correct-password';
 login.dom.window.document.querySelector('#authForm').dispatchEvent(new login.dom.window.Event('submit', { bubbles: true, cancelable: true }));
@@ -87,8 +87,8 @@ const register = await createAuthHarness(
     ? response(409, { error: { code: 'EMAIL_ALREADY_REGISTERED', message: 'This email is already registered.' } })
     : response(404)
 );
-const registerInputs = [...register.dom.window.document.querySelectorAll('#authForm input')];
-assert.deepEqual(registerInputs.map((input) => input.type), ['email', 'password'], 'Register must request only email and password');
+const registerInputs = [...register.dom.window.document.querySelectorAll('#authForm md-outlined-text-field')];
+assert.deepEqual(registerInputs.map((input) => input.getAttribute('type')), ['email', 'password'], 'Register must request only email and password through Material fields');
 register.dom.window.document.querySelector('#email').value = 'existing@example.com';
 register.dom.window.document.querySelector('#password').value = 'short';
 register.dom.window.document.querySelector('#authForm').dispatchEvent(new register.dom.window.Event('submit', { bubbles: true, cancelable: true }));
