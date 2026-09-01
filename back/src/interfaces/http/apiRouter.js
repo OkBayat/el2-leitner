@@ -169,6 +169,11 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json(result);
   });
 
+  router.get("/learning/boxes/:box", authenticate, async (req, res) => {
+    const result = await useCases.getLeitnerHouse.execute(req.auth.userId, req.params.box);
+    res.status(200).json(result);
+  });
+
   router.get("/state", authenticate, async (req, res) => {
     const result = await useCases.getLearningState.execute(req.auth.userId, { view: req.query.view });
     res.status(200).json(result);
