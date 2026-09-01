@@ -45,6 +45,9 @@ const routes = read('src/app/app.routes.ts');
 for (const route of ['login', 'register', 'dashboard', 'review', 'words', 'reports', 'settings', 'library', 'leitner-house/:house']) {
   assert.ok(routes.includes(`path: '${route}'`), `Route ${route} must exist.`);
 }
+assert.match(routes, /\{ path: 'review', canActivate: \[authGuard\], loadComponent:/u, 'Review must remain authenticated while living outside the application shell.');
+assert.equal(routes.match(/path: 'review'/gu)?.length, 1, 'Review must have exactly one route owner.');
+assert.ok(routes.indexOf("path: 'review'") < routes.indexOf("loadComponent: () => import('./shared/app-shell/app-shell.component')"), 'Review must be routed before and outside AppShell.');
 
 const angular = JSON.parse(read('angular.json'));
 const build = angular.projects.vocora.architect.build;
@@ -91,6 +94,10 @@ for (const [name, source] of userFacingSources) {
 const reviewPage = read('src/app/features/review/review-page.component.ts');
 assert.match(reviewPage, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
+assert.match(reviewPage, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
+assert.match(reviewPage, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
+assert.match(reviewPage, /min-height:100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
+assert.match(reviewPage, /@media\(max-width:600px\)/u, 'Review layout must have a dedicated mobile presentation.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 for (const materialModule of ['MatButtonModule', 'MatCardModule', 'MatFormFieldModule', 'MatInputModule', 'MatSelectModule', 'MatDialogModule', 'MatTableModule']) {
