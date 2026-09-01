@@ -57,7 +57,7 @@ import { ShareStoryService } from '../../shared/share-story/share-story.service'
           <mat-card-content>
             <div class="listen"><button mat-fab extended (click)="session.pronounce()">▶ پخش تلفظ</button><button mat-button (click)="session.pronounce(.7)">آهسته‌تر</button></div>
             @if (session.currentTask() === 'review' && !session.feedback()) {
-              <form (ngSubmit)="submit()" class="answer-form">
+              <form (submit)="$event.preventDefault(); submit()" class="answer-form">
                 <mat-form-field appearance="outline"><mat-label>پاسخ شما</mat-label><input matInput [formControl]="answer" lang="en" dir="ltr" autocomplete="off"></mat-form-field>
                 <button mat-flat-button type="submit" [disabled]="saving()">بررسی پاسخ</button><button mat-button type="button" (click)="dontKnow()">نمی‌دانم</button>
               </form>
