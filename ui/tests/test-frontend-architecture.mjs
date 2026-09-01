@@ -13,6 +13,7 @@ const read = (relativePath) => fs.readFileSync(path.join(uiRoot, relativePath), 
 const requiredFiles = [
   'src/shared/http/HttpClient.js',
   'src/shared/navigation/SafeReturnTo.js',
+  'src/material-web.js',
   'src/features/auth/application/AuthCommands.js',
   'src/features/auth/infrastructure/AuthHttpGateway.js',
   'src/features/auth/presentation/AuthPage.js',
@@ -24,7 +25,8 @@ const requiredFiles = [
   'src/features/leitner-house/presentation/LeitnerHousePage.js',
   'src/features/leitner-house/presentation/leitner-house.css',
   'src/features/leitner-house/index.js',
-  'src/design-system/material3.css'
+  'src/design-system/material3.css',
+  'rollup.config.js'
 ];
 for (const file of requiredFiles) assert.ok(fs.existsSync(path.join(uiRoot, file)), `${file} must exist.`);
 
@@ -44,6 +46,7 @@ const pageContracts = [
 for (const [page, modulePath] of pageContracts) {
   const document = new JSDOM(read(page)).window.document;
   assert.ok(document.querySelector(`script[type="module"][src="${modulePath}"]`), `${page} must boot through ${modulePath}.`);
+  assert.ok(document.querySelector('script[type="module"][src="./dist/material-web.js"]'), `${page} must consume the resolved Material Web bundle.`);
 }
 
 for (const page of ['index.html', 'library.html', 'leitner-house.html', 'login.html', 'register.html']) {
@@ -97,14 +100,9 @@ const leitnerCss = read('src/features/leitner-house/presentation/leitner-house.c
 for (const role of ['--md-sys-color-error-container', '--md-sys-color-primary-container', '--md-sys-color-outline-variant', '--md-sys-color-on-surface-variant']) {
   assert.match(leitnerCss, new RegExp(role), `Leitner feature states must consume ${role}.`);
 }
-assert.match(
-  leitnerCss,
-  /\.leitner-house-controls\s+\.leitner-house-search-wrap\s+input\s*\{/u,
-  'The wrapped search input needs enough specificity to remain a single Material field when the design system loads last.'
-);
 
 const packageJson = JSON.parse(read('package.json'));
-assert.equal(packageJson.dependencies, undefined, 'The frontend foundation must stay dependency-free until a concrete dependency is justified.');
+assert.deepEqual(packageJson.dependencies, { '@material/web': '2.5.0' }, 'Runtime dependencies must stay minimal and pin the official Material Web implementation.');
 assert.equal(packageJson.type, 'module', 'Native ES modules must be explicit in package metadata.');
 assert.match(packageJson.scripts.test, /test-frontend-architecture\.mjs/u, 'The architecture contract must run in the default test suite.');
 
