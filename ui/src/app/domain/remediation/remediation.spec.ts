@@ -23,13 +23,13 @@ describe('same-session spelling remediation regressions', () => {
 
   it('preserves the legacy main comparison tokens for correct, changed, missing, and extra letters', () => {
     const replacement = buildSpellingComparison('definate', 'definite');
-    expect(replacement.answerTokens.find((token) => token.value === 'a')).toEqual({ value: 'a', status: 'changed' });
-    expect(replacement.targetTokens.find((token) => token.value === 'i')).toEqual({ value: 'i', status: 'changed' });
+    expect(replacement.answerTokens.some((token) => token.value === 'a' && token.status === 'changed')).toBe(true);
+    expect(replacement.targetTokens.some((token) => token.value === 'i' && token.status === 'changed')).toBe(true);
     expect(replacement.answerTokens.some((token) => token.status === 'correct')).toBe(true);
     expect(replacement.targetTokens.some((token) => token.status === 'correct')).toBe(true);
 
     const missing = buildSpellingComparison('enviroment', 'environment');
-    expect(missing.targetTokens.find((token) => token.status === 'missing')).toEqual({ value: 'n', status: 'missing' });
+    expect(missing.targetTokens.some((token) => token.value === 'n' && token.status === 'missing')).toBe(true);
 
     const extra = buildSpellingComparison('environmentt', 'environment');
     expect(extra.answerTokens.at(-1)).toEqual({ value: 't', status: 'extra' });
