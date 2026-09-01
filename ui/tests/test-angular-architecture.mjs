@@ -103,7 +103,16 @@ assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stabl
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
 assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
 assert.match(reviewTemplate, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
+assert.match(reviewTemplate, /data-testid="review-action-footer"/u, 'Review actions and feedback must share one stable bottom footer surface.');
+assert.match(reviewTemplate, /form="review-answer-form"/u, 'The bottom Check answer action must submit the review form without moving into the content stage.');
+assert.match(reviewTemplate, /Correct solution:/u, 'Wrong-answer footer must expose the accepted solution.');
 assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
+assert.match(reviewStyles, /\.review-action-footer\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*0;/u, 'Review footer must stay fixed to the viewport bottom.');
+assert.match(reviewStyles, /border-top:\s*2px solid var\(--review-footer-border\)/u, 'Neutral review actions must be separated from content by a full-width top divider.');
+assert.match(reviewStyles, /--review-success-background:\s*#d7ffb8/u, 'Correct feedback must use the approved light-green footer background.');
+assert.match(reviewStyles, /--review-success-action:\s*#58cc02/u, 'Correct feedback must use the approved green primary action.');
+assert.match(reviewStyles, /--review-error-background:\s*#ffdfe0/u, 'Wrong feedback must use the approved light-red footer background.');
+assert.match(reviewStyles, /--review-error-action:\s*#ff4b4b/u, 'Wrong feedback must use the approved red primary action.');
 assert.match(reviewStyles, /@media\(max-width:\s*600px\)/u, 'Review layout must have a dedicated mobile presentation.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
