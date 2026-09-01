@@ -26,9 +26,7 @@ const requiredFiles = [
   'src/features/leitner-house/index.js',
   'src/design-system/material3.css'
 ];
-for (const file of requiredFiles) {
-  assert.ok(fs.existsSync(path.join(uiRoot, file)), `${file} must exist.`);
-}
+for (const file of requiredFiles) assert.ok(fs.existsSync(path.join(uiRoot, file)), `${file} must exist.`);
 
 for (const documentation of ['AGENTS.md', 'docs/FRONTEND_ARCHITECTURE.md']) {
   assert.ok(fs.existsSync(path.join(repoRoot, documentation)), `${documentation} must document the enforced architecture.`);
@@ -45,8 +43,7 @@ const pageContracts = [
 ];
 for (const [page, modulePath] of pageContracts) {
   const document = new JSDOM(read(page)).window.document;
-  const module = document.querySelector(`script[type="module"][src="${modulePath}"]`);
-  assert.ok(module, `${page} must boot through ${modulePath}.`);
+  assert.ok(document.querySelector(`script[type="module"][src="${modulePath}"]`), `${page} must boot through ${modulePath}.`);
 }
 
 for (const page of ['index.html', 'library.html', 'leitner-house.html', 'login.html', 'register.html']) {
@@ -58,18 +55,10 @@ for (const page of ['index.html', 'library.html', 'leitner-house.html', 'login.h
 }
 
 const allowedRootScripts = new Set([
-  'app-v2.js',
-  'leitner-status.js',
-  'library-import-template.js',
-  'library.js',
-  'practice-remediation-adapter.js',
-  'practice-remediation-keyboard-guard.js',
-  'practice-remediation-recheck-prompt.js',
-  'practice-remediation.js',
-  'session-persistence.js',
-  'share-story-v2.js',
-  'vocabulary.js',
-  'word-collections.js'
+  'app-v2.js', 'leitner-status.js', 'library-import-template.js', 'library.js',
+  'practice-remediation-adapter.js', 'practice-remediation-keyboard-guard.js',
+  'practice-remediation-recheck-prompt.js', 'practice-remediation.js',
+  'session-persistence.js', 'share-story-v2.js', 'vocabulary.js', 'word-collections.js'
 ]);
 const rootScripts = fs.readdirSync(uiRoot).filter((name) => name.endsWith('.js')).sort();
 assert.deepEqual(rootScripts, [...allowedRootScripts].sort(), 'New feature JavaScript must live under src/, not grow the legacy root surface.');
@@ -90,26 +79,28 @@ const imports = (source) => [...source.matchAll(/(?:import|export)\s+(?:[^'";]+?
 for (const file of walk(srcRoot)) {
   const relative = path.relative(uiRoot, file).replaceAll(path.sep, '/');
   const specs = imports(fs.readFileSync(file, 'utf8'));
+  if (relative.includes('/domain/')) for (const spec of specs) assert.doesNotMatch(spec, /\/(?:application|infrastructure|presentation)\//u, `${relative}: domain must not depend outward.`);
+  if (relative.includes('/application/')) for (const spec of specs) assert.doesNotMatch(spec, /\/(?:infrastructure|presentation)\//u, `${relative}: application must not depend on infrastructure/presentation.`);
+  if (relative.includes('/infrastructure/')) for (const spec of specs) assert.doesNotMatch(spec, /\/presentation\//u, `${relative}: infrastructure must not depend on presentation.`);
+  if (relative.includes('/presentation/')) for (const spec of specs) assert.doesNotMatch(spec, /\/infrastructure\//u, `${relative}: presentation must receive dependencies instead of constructing infrastructure.`);
+  if (relative.startsWith('src/shared/')) for (const spec of specs) assert.doesNotMatch(spec, /features\//u, `${relative}: shared code must not depend on a feature.`);
+}
 
-  if (relative.includes('/domain/')) {
-    for (const spec of specs) assert.doesNotMatch(spec, /\/(?:application|infrastructure|presentation)\//u, `${relative}: domain must not depend outward.`);
-  }
-  if (relative.includes('/application/')) {
-    for (const spec of specs) assert.doesNotMatch(spec, /\/(?:infrastructure|presentation)\//u, `${relative}: application must not depend on infrastructure/presentation.`);
-  }
-  if (relative.includes('/infrastructure/')) {
-    for (const spec of specs) assert.doesNotMatch(spec, /\/presentation\//u, `${relative}: infrastructure must not depend on presentation.`);
-  }
-  if (relative.includes('/presentation/')) {
-    for (const spec of specs) assert.doesNotMatch(spec, /\/infrastructure\//u, `${relative}: presentation must receive dependencies instead of constructing infrastructure.`);
-  }
-  if (relative.startsWith('src/shared/')) {
-    for (const spec of specs) assert.doesNotMatch(spec, /features\//u, `${relative}: shared code must not depend on a feature.`);
-  }
+for (const stylesheet of [
+  'src/features/auth/presentation/auth.css',
+  'src/features/leitner-house/presentation/leitner-house.css'
+]) {
+  const css = read(stylesheet);
+  assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b/iu, `${stylesheet}: feature CSS must use design-system roles instead of creating a local palette.`);
+}
+const leitnerCss = read('src/features/leitner-house/presentation/leitner-house.css');
+for (const role of ['--md-sys-color-error-container', '--md-sys-color-primary-container', '--md-sys-color-outline-variant', '--md-sys-color-on-surface-variant']) {
+  assert.match(leitnerCss, new RegExp(role), `Leitner feature states must consume ${role}.`);
 }
 
 const packageJson = JSON.parse(read('package.json'));
 assert.equal(packageJson.dependencies, undefined, 'The frontend foundation must stay dependency-free until a concrete dependency is justified.');
+assert.equal(packageJson.type, 'module', 'Native ES modules must be explicit in package metadata.');
 assert.match(packageJson.scripts.test, /test-frontend-architecture\.mjs/u, 'The architecture contract must run in the default test suite.');
 
 console.log('Frontend architecture constraints passed.');
