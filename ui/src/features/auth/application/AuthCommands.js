@@ -21,6 +21,9 @@ function validatePresent(credentials) {
   if (!credentials.email || !credentials.password) {
     throw new AuthValidationError('MISSING_CREDENTIALS', 'ایمیل و رمز عبور را وارد کن.');
   }
+  if (!/^[^\s@]+@[^\s@]+$/u.test(credentials.email)) {
+    throw new AuthValidationError('INVALID_EMAIL', 'یک ایمیل معتبر وارد کن.');
+  }
   if (passwordBytes(credentials.password) > 72) {
     throw new AuthValidationError('PASSWORD_TOO_LONG', 'رمز عبور نباید بیشتر از ۷۲ بایت باشد.');
   }
