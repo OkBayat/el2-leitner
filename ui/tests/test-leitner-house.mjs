@@ -79,4 +79,43 @@ assert.ok(document.querySelector('#leitnerHouseWordsBody'), 'Detail page must pr
 assert.ok(document.querySelector('#leitnerHouseInfo'), 'Detail page must display house information');
 assert.ok(document.querySelector('script[src="leitner-house.js"]'), 'Detail page must load the dedicated query UI module');
 
+const interactiveDom = new JSDOM(pageHtml, { url: 'https://vocora.test/leitner-house.html?box=2' });
+const interactiveDocument = interactiveDom.window.document;
+let requestedUrl = null;
+await housePage.mount({
+  document: interactiveDocument,
+  window: interactiveDom.window,
+  fetch: async (url) => {
+    requestedUrl = url;
+    return {
+      ok: true,
+      status: 200,
+      async json() {
+        return {
+          house: { number: 2, reviewIntervalDays: 2, stateCount: 2 },
+          summary: { totalWords: 3, dueWords: 1, totalAttempts: 37, totalMistakes: 25 },
+          words: sourceWords
+        };
+      }
+    };
+  }
+});
+
+assert.equal(requestedUrl, '/api/learning/boxes/2', 'Detail page must use the dedicated Leitner read endpoint');
+assert.equal(interactiveDocument.querySelector('#leitnerHouseTotal').textContent, '۳', 'House summary must render API totals');
+assert.equal(interactiveDocument.querySelectorAll('#leitnerHouseWordsBody tr').length, 3, 'All house words must be visible initially');
+
+const searchInput = interactiveDocument.querySelector('#leitnerHouseSearch');
+searchInput.value = 'home';
+searchInput.dispatchEvent(new interactiveDom.window.Event('input'));
+assert.equal(interactiveDocument.querySelectorAll('#leitnerHouseWordsBody tr').length, 1, 'Search must immediately filter the rendered table');
+assert.equal(interactiveDocument.querySelector('#leitnerHouseWordsBody strong').textContent, 'Spacious');
+
+searchInput.value = '';
+searchInput.dispatchEvent(new interactiveDom.window.Event('input'));
+const sortSelect = interactiveDocument.querySelector('#leitnerHouseSort');
+sortSelect.value = 'alpha';
+sortSelect.dispatchEvent(new interactiveDom.window.Event('change'));
+assert.equal(interactiveDocument.querySelector('#leitnerHouseWordsBody strong').textContent, 'etiquette', 'Sort selection must immediately reorder the rendered table');
+
 console.log('Leitner house page regression tests passed.');
