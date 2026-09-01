@@ -21,6 +21,39 @@ describe('same-session spelling remediation regressions', () => {
     expect(selectClosestAccepted('center', ['centre', 'center'])).toBe('center');
   });
 
+  it('preserves the legacy main comparison tokens for correct, changed, missing, and extra letters', () => {
+    const replacement = buildSpellingComparison('definate', 'definite');
+    expect(replacement.answerTokens.some((token) => token.value === 'a' && token.status === 'changed')).toBe(true);
+    expect(replacement.targetTokens.some((token) => token.value === 'i' && token.status === 'changed')).toBe(true);
+    expect(replacement.answerTokens.some((token) => token.status === 'correct')).toBe(true);
+    expect(replacement.targetTokens.some((token) => token.status === 'correct')).toBe(true);
+
+    const missing = buildSpellingComparison('enviroment', 'environment');
+    expect(missing.targetTokens.some((token) => token.value === 'n' && token.status === 'missing')).toBe(true);
+
+    const extra = buildSpellingComparison('environmentt', 'environment');
+    expect(extra.answerTokens.some((token) => token.value === 't' && token.status === 'extra')).toBe(true);
+  });
+
+  it('keeps the actual failed recheck answer in the copy-phase comparison', () => {
+    const attempt = RemediationAttempt.recheck({
+      wordId: 'temperament',
+      accepted: ['temperament'],
+      recheckNumber: 1,
+    });
+
+    expect(attempt.phase).toBe(RemediationPhase.RECALL);
+    expect(attempt.submitRecall('temproment')).toBe(false);
+
+    const snapshot = attempt.snapshot();
+    expect(snapshot.phase).toBe(RemediationPhase.COPY);
+    expect(snapshot.comparison.answer).toBe('temproment');
+    expect(snapshot.comparison.target).toBe('temperament');
+    expect(snapshot.comparison.answerTokens.map((token) => token.value).join('')).toBe('temproment');
+    expect(snapshot.comparison.targetTokens.map((token) => token.value).join('')).toBe('temperament');
+    expect(snapshot.comparison.distance).toBeGreaterThan(0);
+  });
+
   it('enforces correction, hidden recall, copy and final recall', () => {
     const policy = new SameSessionRecheckPolicy(3, 1, 2);
     const attempt = RemediationAttempt.immediate({ wordId: 'environment', accepted: ['environment'], initialAnswer: 'enviroment', policy, now: () => '2026-07-16T10:00:00.000Z' });
