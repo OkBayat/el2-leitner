@@ -29,6 +29,7 @@ import {RemediationPhase} from '../../domain/remediation/remediation';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {ShareStoryService} from '../../shared/share-story/share-story.service';
 import {buildReviewAnswerFieldState, type ReviewAnswerFieldState} from './review-answer-field';
+import {ReviewContextBadgeComponent} from './review-context-badge.component';
 
 type ReviewFooterTone = 'neutral' | 'success' | 'error' | 'practice';
 type ReviewFooterIcon = 'none' | 'check' | 'error' | 'practice';
@@ -46,7 +47,7 @@ interface ReviewFooterState {
 
 @Component({
 	selector: 'app-review-page',
-	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule],
+	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
 	templateUrl: 'review-page.component.html',
 	styleUrl: 'review-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
