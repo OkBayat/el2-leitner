@@ -107,6 +107,9 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(checkAnswer).toBeEnabled();
   await checkAnswer.click();
 
+  await expect(answerInput).toBeVisible();
+  await expect(answerInput).toBeDisabled();
+  await expect(answerInput).toHaveValue(dueTerm);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
   await expect(footer.getByText('Correct!')).toBeVisible();
@@ -124,6 +127,8 @@ test('English LTR Angular app preserves the complete learner and library flow', 
 
   await footer.getByRole('button', { name: 'Continue' }).click();
   await expect(answerInput).toBeVisible();
+  await expect(answerInput).toBeEnabled();
+  await expect(answerInput).toHaveValue('');
   await expect(answerInput).toBeFocused();
 
   await page.goto('/library');
@@ -161,9 +166,13 @@ test('wrong spelling moves through error, yellow memory practice, and green memo
   await page.goto('/review');
   await page.getByRole('button', { name: 'Start session' }).click();
   const footer = page.getByTestId('review-action-footer');
-  await page.getByLabel('Your answer').fill(wrong);
+  const initialAnswer = page.getByLabel('Your answer');
+  await initialAnswer.fill(wrong);
   await footer.getByRole('button', { name: 'Check answer' }).click();
 
+  await expect(initialAnswer).toBeVisible();
+  await expect(initialAnswer).toBeDisabled();
+  await expect(initialAnswer).toHaveValue(wrong);
   await expect(footer).toHaveClass(/error/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 223, 224)');
   await expect(footer.getByText('Correct solution:')).toBeVisible();
@@ -183,6 +192,7 @@ test('wrong spelling moves through error, yellow memory practice, and green memo
   await expect(page.locator('.spelling-hint')).toHaveCount(0);
 
   await footer.getByRole('button', { name: 'Continue' }).click();
+  await expect(initialAnswer).toHaveCount(0);
   const recallInput = page.getByLabel('Recall from memory');
   await expect(recallInput).toBeVisible();
   await expect(recallInput).toBeFocused();

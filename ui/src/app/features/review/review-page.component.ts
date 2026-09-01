@@ -161,17 +161,21 @@ export class ReviewPageComponent implements OnInit {
 			this.snack.open(mode === 'box1' ? 'There are no cards in House 1 yet.' : 'There are no due reviews.', 'OK', {duration: 3000});
 			return;
 		}
+		this.answer.enable({emitEvent: false});
+		this.answer.setValue('');
 		this.focusAnswerInput();
 		setTimeout(() => this.session.pronounce(), 200);
 	}
 
 	async submit(): Promise<void> {
-		if (!this.answer.value.trim()) return;
+		const submittedAnswer = this.answer.value;
+		if (!submittedAnswer.trim()) return;
+		this.answer.disable({emitEvent: false});
 		this.saving.set(true);
 		try {
-			await this.session.submit(this.answer.value);
-			this.answer.setValue('');
+			await this.session.submit(submittedAnswer);
 		} catch (error) {
+			this.answer.enable({emitEvent: false});
 			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
 		} finally {
 			this.saving.set(false);
@@ -228,6 +232,7 @@ export class ReviewPageComponent implements OnInit {
 
 	async next(): Promise<void> {
 		await this.session.next();
+		this.answer.enable({emitEvent: false});
 		this.answer.setValue('');
 		this.remediationAnswer.setValue('');
 		if (!this.session.active()) return;
