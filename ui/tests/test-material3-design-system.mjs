@@ -8,7 +8,7 @@ const testDir = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDir, "..");
 const read = (name) => fs.readFileSync(path.join(uiRoot, name), "utf8");
 
-const pages = ["index.html", "library.html", "login.html", "register.html"];
+const pages = ["index.html", "library.html", "leitner-house.html", "login.html", "register.html"];
 for (const page of pages) {
   const markup = read(page);
   const { document } = new JSDOM(markup).window;
