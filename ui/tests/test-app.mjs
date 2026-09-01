@@ -11,80 +11,381 @@ const html = rawHtml
 const vocabulary = fs.readFileSync(new URL('vocabulary.js', root), 'utf8');
 const shareStory = fs.readFileSync(new URL('share-story-v2.js', root), 'utf8');
 const app = fs.readFileSync(new URL('app-v2.js', root), 'utf8');
-const apiCalls = [];
+const sourceWords = fs.readFileSync(new URL('../data/IELTS_Listening_Core_1500.md', import.meta.url), 'utf8');
 let serverState = null;
 let serverRevision = 0;
-const serverSeed = {
-  user: { id: 'user-test', email: 'learner@example.com' }
-};
+const apiCalls = [];
+const sharedPayloads = [];
 
-function jsonResponse(status, payload) {
+function installShareBrowserMocks(window) {
+  const context = {
+    globalAlpha: 1,
+    beginPath() {}, moveTo() {}, lineTo() {}, quadraticCurveTo() {}, closePath() {},
+    arc() {}, stroke() {}, fill() {}, save() {}, restore() {}, fillRect() {},
+    createLinearGradient() { return { addColorStop() {} }; },
+    measureText(text) { return { width: String(text).length * 22 }; },
+    fillText() {}
+  };
+  Object.defineProperty(window.HTMLCanvasElement.prototype, 'getContext', {
+    configurable: true,
+    value() { return context; }
+  });
+  Object.defineProperty(window.HTMLCanvasElement.prototype, 'toBlob', {
+    configurable: true,
+    value(callback, type) { callback(new window.Blob(['png'], { type })); }
+  });
+  window.URL.createObjectURL = () => 'blob:vocora-story';
+  window.URL.revokeObjectURL = () => {};
+  Object.defineProperty(window.navigator, 'canShare', {
+    configurable: true,
+    value: ({ files }) => files?.length === 1 && files[0].type === 'image/png'
+  });
+  Object.defineProperty(window.navigator, 'share', {
+    configurable: true,
+    value: async (payload) => { sharedPayloads.push(payload); }
+  });
+  Object.defineProperty(window.navigator, 'clipboard', {
+    configurable: true,
+    value: { async writeText() {} }
+  });
+}
+
+function mockResponse(status, payload = null) {
   return {
     ok: status >= 200 && status < 300,
     status,
-    async text() { return payload === undefined ? '' : JSON.stringify(payload); }
+    async text() { return payload === null ? '' : JSON.stringify(payload); }
   };
 }
 
 const dom = new JSDOM(html, {
-  url: 'https://vocora.test/',
+  url: 'https://vazheyar.test/',
   runScripts: 'outside-only',
   pretendToBeVisual: true,
   beforeParse(window) {
+    installShareBrowserMocks(window);
     window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
     window.scrollTo = () => {};
     window.confirm = () => true;
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+    window.speechSynthesis = { cancel() {}, speak() {}, getVoices() { return []; } };
     window.HTMLDialogElement.prototype.showModal = function showModal() { this.open = true; };
     window.HTMLDialogElement.prototype.close = function close() { this.open = false; };
     window.fetch = async (path, options = {}) => {
       const method = options.method || 'GET';
-      apiCalls.push({ path, method, options });
-      if (path === '/api/auth/me') return jsonResponse(200, serverSeed);
-      if (path === '/api/state' && method === 'GET') return jsonResponse(200, { state: serverState, revision: serverRevision });
+      apiCalls.push({ path: String(path), method, body: options.body ? JSON.parse(options.body) : null });
+      if (path === '/api/auth/me' && method === 'GET') return mockResponse(200, { user: { id: 7, email: 'learner@example.com' } });
+      if (path === '/api/state' && method === 'GET') return mockResponse(200, { state: serverState, revision: serverRevision });
       if (path === '/api/state' && method === 'PUT') {
         const payload = JSON.parse(options.body);
         if (payload.revision !== serverRevision) {
-          return jsonResponse(409, { error: { code: 'STATE_REVISION_CONFLICT', message: 'State revision conflict.' } });
+          return mockResponse(409, { error: { code: 'STATE_CONFLICT', message: 'State changed elsewhere.' } });
         }
         serverState = JSON.parse(JSON.stringify(payload.state));
         serverRevision += 1;
-        return jsonResponse(200, { state: serverState, revision: serverRevision });
+        return mockResponse(200, { state: serverState, revision: serverRevision });
       }
-      if (path === '/api/auth/logout' && method === 'POST') return jsonResponse(204);
-      return jsonResponse(404, { error: { code: 'NOT_FOUND', message: 'Not found' } });
+      if (path === '/api/auth/logout' && method === 'POST') return mockResponse(204);
+      return mockResponse(404, { error: { code: 'NOT_FOUND', message: 'Not found' } });
     };
   }
 });
 
-const { window } = dom;
-const { document } = window;
-window.eval(vocabulary);
-window.eval(shareStory);
-window.eval(app);
-await window.VazheyarReady;
-const { VazheyarTest } = window;
+dom.window.eval(vocabulary);
+dom.window.eval(shareStory);
+dom.window.eval(app);
+await dom.window.VazheyarReady;
 
+const { document, VazheyarTest } = dom.window;
+await VazheyarTest.waitForSaves();
 const readServerState = async () => {
   await VazheyarTest.waitForSaves();
   return JSON.parse(JSON.stringify(serverState));
 };
 const originalRandom = dom.window.Math.random;
 assert.ok(VazheyarTest, 'Test API should be exposed');
-assert.match(rawHtml, /href="styles-v2\.css"/);
-assert.match(rawHtml, /src="share-story-v2\.js"/);
-assert.match(rawHtml, /src="app-v2\.js(?:\?[^\"]*)?"/);
+assert.match(rawHtml, /href="styles-v2\.css"/, 'The release must use a fresh stylesheet URL instead of a stale CDN object');
+assert.match(rawHtml, /src="share-story-v2\.js"/, 'The share runtime must use a fresh CDN URL');
+assert.match(rawHtml, /src="app-v2\.js(?:\?[^\"]*)?"/, 'The app runtime must use a fresh CDN URL');
 assert.equal(document.querySelector('#userEmail').textContent, 'learner@example.com');
 assert.equal(dom.window.localStorage.getItem('vazheyar-ielts-state-v1'), null, 'Normal learning data must not be written to localStorage');
 assert.ok(apiCalls.some((call) => call.path === '/api/state' && call.method === 'PUT'), 'Initial state must be persisted through the API');
+assert.equal(VazheyarTest.getStateRevision(), serverRevision, 'Client and database state revisions must stay synchronized');
+assert.equal(dom.window.IELTS_CORE_WORDS.length, 1500, 'Bundled list must contain 1500 items');
+assert.equal(VazheyarTest.parseWordFile(sourceWords).length, 1500, 'Markdown parser must read all 1500 items');
+assert.equal(VazheyarTest.normalizeAnswer('  Credit   Card  '), 'credit card');
+assert.ok(VazheyarTest.isCorrectAnswer('center', { accepted: ['centre', 'center'] }));
+assert.ok(VazheyarTest.isCorrectAnswer("taxpayers’ money", { accepted: ["taxpayers' money"] }));
+assert.equal(VazheyarTest.addDays('2026-12-31', 1), '2027-01-01');
 
-// Preserve all existing app behavior/regression assertions below by loading the
-// original test body from the historical test would be unsafe; this file is intentionally
-// kept complete in repository history. The assertions below cover the integration points
-// required by the modular frontend migration while the feature-specific suites cover
-// Leitner, review, persistence, remediation and library behavior.
-const state = await readServerState();
-assert.ok(state && Array.isArray(state.words));
-assert.ok(state.settings);
+let report = VazheyarTest.buildAnalysisReport();
+assert.equal(report.profile.totalWords, 1500);
+assert.equal(report.profile.introducedWords, 10, 'Ten words must enter box 1 at the start of a calendar day');
+assert.equal(report.profile.totalAttempts, 0);
+assert.equal(document.querySelector('#dueStat').textContent, '۱۰');
+assert.equal(report.schedulingRules.box2To3Days, 2);
+assert.equal(report.schedulingRules.box3To4Days, 3);
+assert.equal(document.querySelectorAll('.stat-card.tone-blue').length, 2);
+assert.equal(document.querySelectorAll('.stat-card.tone-teal').length, 1);
+assert.equal(document.querySelectorAll('.stat-card.tone-coral').length, 1);
+
+const shareProgressButton = document.querySelector('#shareProgressBtn');
+assert.equal(shareProgressButton.disabled, false, 'The share control must always respond, including for an honest journey-start story');
+assert.equal(shareProgressButton.querySelector('span'), null, 'The compact hero control must be icon-only');
+assert.equal(shareProgressButton.querySelector('svg').getAttribute('width'), '20', 'The icon needs an intrinsic width even if stale CSS is present');
+assert.match(shareProgressButton.getAttribute('aria-label'), /شروع مسیر/);
+shareProgressButton.click();
+await VazheyarTest.waitForShareReady();
+assert.equal(document.querySelector('#shareDialog').open, true, 'Zero-progress sharing must open Story Studio instead of looking broken');
+assert.equal(VazheyarTest.getSelectedShareMoment().kind, 'journey');
+document.querySelector('.close-share-dialog').click();
+
+document.querySelector('[data-view="words"]').click();
+assert.equal(document.querySelectorAll('#wordsTableBody tr').length, 40, 'Words table should paginate to 40 rows');
+assert.match(document.querySelector('#wordCountLabel').textContent, /۱٬۵۰۰/);
+
+document.querySelector('[data-view="review"]').click();
+assert.equal(document.querySelector('#setupNew').textContent, '۱۰');
+assert.equal(document.querySelector('#setupDue').textContent, '۰');
+document.querySelector('#beginSessionBtn').click();
+assert.equal(document.querySelector('#reviewSession').classList.contains('hidden'), false);
+document.querySelector('#dontKnowBtn').click();
+assert.match(document.querySelector('#feedbackTitle').textContent, /۱‌مین خطا/);
+
+let saved = await readServerState();
+assert.equal(saved.history.length, 1);
+assert.equal(saved.history[0].correct, false);
+const mistakenId = saved.history[0].wordId;
+const mistakenWord = saved.words.find((word) => word.id === mistakenId);
+assert.equal(mistakenWord.mistakes, 1);
+assert.equal(mistakenWord.box, 1);
+assert.equal(mistakenWord.blockedUntil, VazheyarTest.addDays(VazheyarTest.localDay(), 1));
+assert.equal(mistakenWord.due, VazheyarTest.addDays(VazheyarTest.localDay(), 1));
+
+document.querySelector('#nextCardBtn').click();
+const promotable = VazheyarTest.getCurrentWord();
+document.querySelector('#answerInput').value = promotable.term;
+document.querySelector('#answerForm button[type="submit"]').click();
+saved = await readServerState();
+const promotedWord = saved.words.find((word) => word.id === promotable.id);
+assert.equal(promotedWord.box, 2, 'A correct scheduled answer must promote box 1 to box 2');
+assert.equal(promotedWord.due, VazheyarTest.addDays(VazheyarTest.localDay(), 2), 'Box 2 must wait two calendar days');
+assert.equal(saved.history.at(-1).promoted, true);
+
+report = VazheyarTest.buildAnalysisReport();
+assert.equal(report.profile.totalAttempts, 2);
+assert.equal(report.profile.mistakes, 1);
+assert.equal(report.hardestWords[0].mistakes, 1);
+assert.equal(report.recentMistakeEvents.length, 1);
+
+for (let index = 0; index < 2; index += 1) {
+  document.querySelector('#nextCardBtn').click();
+  const dueWord = VazheyarTest.getCurrentWord();
+  document.querySelector('#answerInput').value = dueWord.term;
+  document.querySelector('#answerForm button[type="submit"]').click();
+}
+document.querySelector('#nextCardBtn').click();
+assert.notEqual(VazheyarTest.getCurrentWord().id, mistakenId, 'A wrong scheduled card must not be shown again in the same today-review session');
+const nextOriginalWord = VazheyarTest.getCurrentWord();
+document.querySelector('#answerInput').value = nextOriginalWord.term;
+document.querySelector('#answerForm button[type="submit"]').click();
+saved = await readServerState();
+assert.equal(saved.words.find((word) => word.id === mistakenId).box, 1, 'A scheduled mistake must remain in box 1 until tomorrow');
+assert.equal(saved.history.filter((event) => event.wordId === mistakenId).length, 1, 'The mistaken word must have only one assessment in the scheduled session');
+
+document.querySelector('#exitSessionBtn').click();
+await VazheyarTest.waitForSaves();
+assert.equal(document.querySelector('#shareProgressBtn').disabled, false, 'Progress sharing unlocks after real practice');
+assert.match(document.querySelector('#shareProgressBtn').getAttribute('aria-label'), /پیشرفت واقعی/);
+const stateBeforeOpeningStory = JSON.stringify(VazheyarTest.getState());
+const revisionBeforeOpeningStory = VazheyarTest.getStateRevision();
+document.querySelector('#shareProgressBtn').click();
+await VazheyarTest.waitForShareReady();
+assert.equal(document.querySelector('#shareDialog').open, true, 'Home share button must open Story Studio');
+assert.equal(document.querySelector('#storyCanvas').width, 1080);
+assert.equal(document.querySelector('#storyCanvas').height, 1920);
+assert.equal(VazheyarTest.getSelectedShareMoment().kind, 'daily');
+assert.equal(document.querySelector('#storyPreviewPanel').getAttribute('aria-labelledby'), 'share-tab-daily');
+assert.match(document.querySelector('#shareStatus').textContent, /آماده است/);
+assert.equal(JSON.stringify(VazheyarTest.getShareMoments()).includes('learner@example.com'), false, 'Public story data must not expose email');
+assert.equal(JSON.stringify(VazheyarTest.getState()), stateBeforeOpeningStory, 'Opening Story Studio must not mutate learning state');
+assert.equal(VazheyarTest.getStateRevision(), revisionBeforeOpeningStory, 'Opening Story Studio must not write to the database');
+document.querySelector('#copyCaptionBtn').click();
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.match(document.querySelector('#shareStatus').textContent, /کپی شد/, 'In-dialog actions need visible feedback above the modal backdrop');
+document.querySelector('.close-share-dialog').click();
+assert.equal(document.querySelector('#shareDialog').open, false);
+
+dom.window.Math.random = () => 0;
+document.querySelector('#boxOnePracticeBtn').click();
+await new Promise((resolve) => setTimeout(resolve, 80));
+const freePracticeWord = VazheyarTest.getCurrentWord();
+assert.equal(freePracticeWord.box, 1, 'Free practice must only select box 1');
+document.querySelector('#answerInput').value = freePracticeWord.term;
+document.querySelector('#answerForm button[type="submit"]').click();
+saved = await readServerState();
+assert.equal(saved.words.find((word) => word.id === freePracticeWord.id).box, 1, 'A correct free-practice answer must not promote a card');
+assert.equal(saved.history.at(-1).mode, 'box1');
+assert.equal(saved.history.at(-1).promoted, false);
+dom.window.Math.random = originalRandom;
+
+const boxOneCoverageFixture = [
+  ['facilities', 14], ['dissertation', 14], ['competitive', 14], ['etiquette', 14], ['spacious', 11],
+  ['disease', 10], ['patient', 9], ['ceiling', 8], ['disappointing', 7], ['vegan', 6], ['chimney', 6],
+  ['deforestation', 6], ['embarrassed', 6], ['couple', 6], ['campaign for', 6], ['village', 5],
+  ['burning fossil fuels', 5], ['thriller', 5], ['compensation', 5], ['victim', 5], ['chemical-free', 4],
+  ['borrow', 4], ['fed up with', 4], ['amazed', 4], ['soundtrack', 4], ['degradation', 3], ['impatient', 3],
+  ['digital detox', 3], ['admire', 3], ['arrest', 3], ['evaluate', 2], ['customer', 2], ['temperature', 2],
+  ['sea level', 2], ['ocean currents', 2], ['soil conditioner', 2], ['fossil fuels', 2], ['drought', 2],
+  ['stepmother', 2], ['stomach', 2], ['give a thumbs up', 2], ['eggs', 1], ['jungle', 1], ['blizzard', 1],
+  ['cyclone', 1], ['volcanic eruption', 1], ['bushfire', 1], ['nuclear energy', 1], ['natural gas', 1],
+  ['windmill', 1], ['non-renewable', 1]
+];
+const boxOneCoverageWords = boxOneCoverageFixture.map(([term, mistakes], index) => ({
+  id: `coverage-${index + 1}`, term, box: 1, mistakes
+}));
+boxOneCoverageWords.push({ id: 'outside-box-one', term: 'outside', box: 2, mistakes: 99 });
+let coverageSeed = 0x1f2e3d4c;
+const coverageRandom = () => {
+  coverageSeed = (Math.imul(coverageSeed, 1664525) + 1013904223) >>> 0;
+  return coverageSeed / 0x100000000;
+};
+const coverageCycle = VazheyarTest.buildWeightedBoxOneCycle(boxOneCoverageWords, null, coverageRandom);
+const expectedCoverageIds = boxOneCoverageWords.filter((word) => word.box === 1).map((word) => word.id);
+assert.equal(coverageCycle.length, expectedCoverageIds.length, 'One free-practice cycle must contain every box 1 word exactly once');
+assert.equal(new Set(coverageCycle).size, expectedCoverageIds.length, 'A free-practice cycle must not repeat a word before full coverage');
+assert.deepEqual([...coverageCycle].sort(), [...expectedCoverageIds].sort(), 'Low-mistake box 1 words must not starve behind historically hard words');
+const boundaryCycle = VazheyarTest.buildWeightedBoxOneCycle(boxOneCoverageWords, boxOneCoverageWords[0].id, () => 0);
+assert.notEqual(boundaryCycle[0], boxOneCoverageWords[0].id, 'A new coverage cycle must avoid an immediate repeat from the previous cycle when alternatives exist');
+
+let prioritySeed = 0x13579bdf;
+const priorityRandom = () => {
+  prioritySeed = (Math.imul(prioritySeed, 1664525) + 1013904223) >>> 0;
+  return prioritySeed / 0x100000000;
+};
+let hardFirstCount = 0;
+for (let index = 0; index < 300; index += 1) {
+  const [first] = VazheyarTest.buildWeightedBoxOneCycle([
+    { id: 'hard', box: 1, mistakes: 14 },
+    { id: 'easy', box: 1, mistakes: 1 }
+  ], null, priorityRandom);
+  if (first === 'hard') hardFirstCount += 1;
+}
+assert.ok(hardFirstCount > 240, 'Historical mistakes should influence priority within a cycle without increasing repetition count');
+
+const legacy = {
+  words: [{ id: 'legacy-word', box: 4, due: '2026-01-01', introducedOn: '2026-01-01', blockedUntil: null, lastPromotedDay: null, masteredAt: null }],
+  history: [
+    { wordId: 'legacy-word', day: '2026-01-01', at: '2026-01-01T10:00:00Z', correct: true },
+    { wordId: 'legacy-word', day: '2026-01-01', at: '2026-01-01T11:00:00Z', correct: true },
+    { wordId: 'legacy-word', day: '2026-01-02', at: '2026-01-02T11:00:00Z', correct: true },
+    { wordId: 'legacy-word', day: '2026-01-03', at: '2026-01-03T11:00:00Z', correct: true }
+  ]
+};
+VazheyarTest.migrateLegacyProgress(legacy);
+assert.equal(legacy.words[0].box, 3, 'Legacy same-day extra practice must not create extra promotions');
+assert.equal(legacy.words[0].due, '2026-01-06', 'Migrated box 3 must wait three calendar days');
+
+document.querySelector('#exitSessionBtn').click();
+document.querySelector('[data-view="words"]').click();
+const addToBoxOneButton = document.querySelector('.add-to-box-one');
+assert.ok(addToBoxOneButton, 'Unintroduced words must show a small add-to-box-1 button');
+const bankAddedId = addToBoxOneButton.dataset.id;
+addToBoxOneButton.click();
+saved = await readServerState();
+const bankAddedWord = saved.words.find((word) => word.id === bankAddedId);
+assert.equal(bankAddedWord.box, 1);
+assert.equal(bankAddedWord.due, VazheyarTest.localDay());
+assert.equal(bankAddedWord.addedSource, 'word-bank');
+assert.equal(document.querySelector(`.add-to-box-one[data-id="${bankAddedId}"]`), null, 'The plus button must disappear after activation');
+
+document.querySelector('[data-view="dashboard"]').click();
+dom.window.Math.random = () => 0.999999;
+document.querySelector('#boxOnePracticeBtn').click();
+await new Promise((resolve) => setTimeout(resolve, 80));
+assert.equal(VazheyarTest.getCurrentWord().id, bankAddedId, 'A manually activated word must be available in box 1 practice');
+document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
+document.querySelector('#answerForm button[type="submit"]').click();
+saved = await readServerState();
+assert.equal(saved.words.find((word) => word.id === bankAddedId).box, 2, 'A zero-mistake new word must graduate from free practice on its first correct answer');
+assert.equal(saved.history.at(-1).promoted, true);
+document.querySelector('#exitSessionBtn').click();
+dom.window.Math.random = originalRandom;
+
+document.querySelector('#addNewWordsBtn').click();
+assert.equal(document.querySelector('#newWordsDialog').open, true);
+saved = await readServerState();
+const selectedNewIds = saved.words.filter((word) => word.box === 0).sort((a, b) => a.number - b.number).slice(0, 3).map((word) => word.id);
+document.querySelector('#newWordsCountInput').value = '3';
+document.querySelector('#startNewWordsBtn').click();
+assert.equal(document.querySelector('#reviewSession').classList.contains('hidden'), false, 'The selected new-word test must start immediately');
+assert.equal(VazheyarTest.getCurrentWord().id, selectedNewIds[0]);
+document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
+document.querySelector('#answerForm button[type="submit"]').click();
+saved = await readServerState();
+assert.equal(saved.words.find((word) => word.id === selectedNewIds[0]).box, 2, 'A first correct answer must move a new word directly to box 2');
+assert.equal(saved.history.at(-1).mode, 'new');
+
+document.querySelector('#nextCardBtn').click();
+assert.equal(VazheyarTest.getCurrentWord().id, selectedNewIds[1]);
+document.querySelector('#dontKnowBtn').click();
+saved = await readServerState();
+assert.equal(saved.words.find((word) => word.id === selectedNewIds[1]).box, 1, 'A failed new word must remain in box 1');
+assert.equal(saved.words.find((word) => word.id === selectedNewIds[1]).blockedUntil, VazheyarTest.addDays(VazheyarTest.localDay(), 1));
+
+document.querySelector('#nextCardBtn').click();
+assert.equal(VazheyarTest.getCurrentWord().id, selectedNewIds[2], 'A failed new word must not repeat in the initial test');
+document.querySelector('#answerInput').value = VazheyarTest.getCurrentWord().term;
+document.querySelector('#answerForm button[type="submit"]').click();
+document.querySelector('#nextCardBtn').click();
+assert.equal(document.querySelector('#sessionComplete').classList.contains('hidden'), false, 'The initial test must finish after each selected word is shown once');
+
+await VazheyarTest.waitForSaves();
+const revisionBeforeSessionShare = VazheyarTest.getStateRevision();
+document.querySelector('#shareSessionBtn').click();
+await VazheyarTest.waitForShareReady();
+assert.equal(VazheyarTest.getSelectedShareMoment().kind, 'session', 'A completed session must be the recommended story');
+assert.equal(document.querySelector('#nativeShareBtn').disabled, false);
+document.querySelector('#nativeShareBtn').click();
+await new Promise((resolve) => setTimeout(resolve, 0));
+assert.equal(sharedPayloads.length, 1, 'Native mobile share must receive one story payload');
+assert.equal(sharedPayloads[0].files.length, 1);
+assert.equal(sharedPayloads[0].files[0].type, 'image/png');
+assert.equal(document.querySelector('#shareDialog').open, false, 'Successful native share should close Story Studio');
+assert.equal(VazheyarTest.getStateRevision(), revisionBeforeSessionShare, 'Sharing must not write learning state');
+
+document.querySelector('[data-view="words"]').click();
+document.querySelector('#addWordBtn').click();
+document.querySelector('#wordTermInput').value = 'accommodation';
+document.querySelector('.close-word-dialog').click();
+assert.equal(document.querySelector('#wordDialog').open, false, 'Cancel must close without saving');
+
+document.querySelector('#addWordBtn').click();
+document.querySelector('#wordTermInput').value = 'test phrase';
+document.querySelector('#wordVariantsInput').value = 'test-phrase';
+document.querySelector('#wordCategoryInput').value = 'Test';
+document.querySelector('#saveWordBtn').click();
+const afterAdd = await readServerState();
+assert.equal(afterAdd.words.length, 1501, 'Manual word entry must persist');
+assert.deepEqual(afterAdd.words.at(-1).accepted, ['test phrase', 'test-phrase']);
+
+const importResult = VazheyarTest.importWords(`
+## Duplicate handling
+1. MONDAY
+2. center
+3. centre / center
+4. unique-import-word
+5. UNIQUE-IMPORT-WORD
+`);
+assert.equal(importResult.found, 5);
+assert.equal(importResult.added, 1);
+assert.equal(importResult.skipped, 4, 'Import must reject exact, case-only, variant, and within-file duplicates');
+const afterImport = await readServerState();
+assert.equal(afterImport.words.length, 1502);
+assert.equal(afterImport.words.filter((word) => VazheyarTest.normalizeAnswer(word.term) === 'unique-import-word').length, 1);
+
+document.querySelector('[data-view="settings"]').click();
+assert.equal(document.querySelector('.repo-link').href, 'https://github.com/OkBayat/vocora');
 
 const stateBeforeConcurrentChange = JSON.parse(JSON.stringify(serverState));
 serverRevision += 1; // Simulate a write from another tab or device.
@@ -101,14 +402,97 @@ for (const filename of ['login.html', 'register.html']) {
   const authDom = new JSDOM(fs.readFileSync(new URL(filename, root), 'utf8'));
   const authInputs = [...authDom.window.document.querySelectorAll('#authForm input')];
   assert.deepEqual(authInputs.map((input) => input.type), ['email', 'password'], `${filename} must request only email and password`);
-  assert.ok(
-    authDom.window.document.querySelector('script[type="module"][src="./src/features/auth/index.js"]'),
-    `${filename} must boot through the auth composition root`
-  );
-  authDom.window.close();
+  assert.ok(authDom.window.document.querySelector('script[type="module"][src="./src/features/auth/index.js"]'), `${filename} must boot through the auth composition root`);
 }
 
-// Restore deterministic globals used by neighboring tests.
-dom.window.Math.random = originalRandom;
-dom.window.close();
-console.log('All Vocora app integration tests passed.');
+let migratedServerState = null;
+let migrationRevision = 0;
+const legacyState = {
+  schemaVersion: 2,
+  createdAt: '2026-07-01T10:00:00.000Z',
+  updatedAt: '2026-07-01T10:00:00.000Z',
+  settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: 'system' },
+  words: [{ id: 'browser-legacy', number: 1, term: 'legacy', accepted: ['legacy'], category: 'Migration', box: 2, due: '2099-01-01' }],
+  daily: {},
+  history: []
+};
+const migrationDom = new JSDOM(html, {
+  url: 'https://vazheyar.test/',
+  runScripts: 'outside-only',
+  pretendToBeVisual: true,
+  beforeParse(window) {
+    installShareBrowserMocks(window);
+    window.localStorage.setItem('vazheyar-ielts-state-v1', JSON.stringify(legacyState));
+    window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+    window.scrollTo = () => {};
+    window.confirm = () => true;
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+    window.speechSynthesis = { cancel() {}, speak() {}, getVoices() { return []; } };
+    window.HTMLDialogElement.prototype.showModal = function showModal() { this.open = true; };
+    window.HTMLDialogElement.prototype.close = function close() { this.open = false; };
+    window.fetch = async (path, options = {}) => {
+      const method = options.method || 'GET';
+      if (path === '/api/auth/me') return mockResponse(200, { user: { id: 8, email: 'legacy@example.com' } });
+      if (path === '/api/state' && method === 'GET') return mockResponse(200, { state: null, revision: migrationRevision });
+      if (path === '/api/state' && method === 'PUT') {
+        const payload = JSON.parse(options.body);
+        assert.equal(payload.revision, migrationRevision);
+        migratedServerState = payload.state;
+        migrationRevision += 1;
+        return mockResponse(200, { state: migratedServerState, revision: migrationRevision });
+      }
+      return mockResponse(404);
+    };
+  }
+});
+migrationDom.window.eval(vocabulary);
+migrationDom.window.eval(shareStory);
+migrationDom.window.eval(app);
+await migrationDom.window.VazheyarReady;
+await migrationDom.window.VazheyarTest.waitForSaves();
+assert.equal(migratedServerState.words[0].id, 'browser-legacy', 'Existing localStorage data must be uploaded when the account has no server state');
+assert.equal(migrationDom.window.localStorage.getItem('vazheyar-ielts-state-v1'), null, 'Legacy data must be removed only after its successful upload');
+
+let freshStateWithoutStorage = null;
+let blockedStorageRevision = 0;
+const blockedStorageDom = new JSDOM(html, {
+  url: 'https://vazheyar.test/',
+  runScripts: 'outside-only',
+  pretendToBeVisual: true,
+  beforeParse(window) {
+    installShareBrowserMocks(window);
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get() { throw new Error('Storage access blocked'); }
+    });
+    window.console.warn = () => {};
+    window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+    window.scrollTo = () => {};
+    window.confirm = () => true;
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+    window.speechSynthesis = { cancel() {}, speak() {}, getVoices() { return []; } };
+    window.HTMLDialogElement.prototype.showModal = function showModal() { this.open = true; };
+    window.HTMLDialogElement.prototype.close = function close() { this.open = false; };
+    window.fetch = async (path, options = {}) => {
+      const method = options.method || 'GET';
+      if (path === '/api/auth/me') return mockResponse(200, { user: { id: 9, email: 'private@example.com' } });
+      if (path === '/api/state' && method === 'GET') return mockResponse(200, { state: null, revision: blockedStorageRevision });
+      if (path === '/api/state' && method === 'PUT') {
+        const payload = JSON.parse(options.body);
+        assert.equal(payload.revision, blockedStorageRevision);
+        freshStateWithoutStorage = payload.state;
+        blockedStorageRevision += 1;
+        return mockResponse(200, { state: freshStateWithoutStorage, revision: blockedStorageRevision });
+      }
+      return mockResponse(404);
+    };
+  }
+});
+blockedStorageDom.window.eval(vocabulary);
+blockedStorageDom.window.eval(shareStory);
+blockedStorageDom.window.eval(app);
+await blockedStorageDom.window.VazheyarReady;
+await blockedStorageDom.window.VazheyarTest.waitForSaves();
+assert.equal(freshStateWithoutStorage.words.length, 1500, 'Blocked legacy storage must not prevent a database-backed first boot');
+
+console.log('All Vazheyar browser tests passed.');
