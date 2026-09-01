@@ -28,6 +28,7 @@ for (const required of [
   'src/app/features/auth/login-page.component.ts', 'src/app/features/auth/register-page.component.ts',
   'src/app/features/dashboard/dashboard-page.component.ts', 'src/app/features/review/review-page.component.ts',
   'src/app/features/review/review-page.component.html', 'src/app/features/review/review-page.component.scss',
+  'src/app/features/review/review-answer-field.ts', 'src/app/features/review/review-answer-field.spec.ts',
   'src/app/features/words/words-page.component.ts', 'src/app/features/reports/reports-page.component.ts',
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
@@ -99,6 +100,8 @@ for (const [name, source] of userFacingSources) {
 const reviewPage = read('src/app/features/review/review-page.component.ts');
 const reviewTemplate = read('src/app/features/review/review-page.component.html');
 const reviewStyles = read('src/app/features/review/review-page.component.scss');
+const reviewAnswerField = read('src/app/features/review/review-answer-field.ts');
+const reviewAnswerFieldSpec = read('src/app/features/review/review-answer-field.spec.ts');
 assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
 assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
@@ -115,12 +118,23 @@ assert.match(reviewPage, /title: 'From memory'/u, 'Recall footer must provide st
 assert.match(reviewPage, /detail: 'You remembered the spelling\.'/u, 'Successful memory recall must surface an explicit success message.');
 assert.match(reviewPage, /tone: 'success'[\s\S]*title: 'Correct!'/u, 'Completed memory recall must use the same green success state as a correct review answer.');
 assert.match(reviewTemplate, /Correct spelling/u, 'Wrong-answer correction must continue exposing the accepted solution comparison.');
-assert.equal(reviewTemplate.match(/class="review-answer-form/gu)?.length, 2, 'Initial and remediation answers must share one form class.');
-assert.equal(reviewTemplate.match(/class="review-answer-field"/gu)?.length, 2, 'Initial and remediation answers must share one Material field class.');
-assert.equal(reviewTemplate.match(/class="review-answer-input"/gu)?.length, 2, 'Initial and remediation answers must share one input class.');
-assert.equal(reviewTemplate.match(/autocapitalize="none"/gu)?.length, 2, 'All spelling inputs must disable mobile auto-capitalization.');
-assert.equal(reviewTemplate.match(/autocorrect="off"/gu)?.length, 2, 'All spelling inputs must disable mobile auto-correction.');
-assert.equal(reviewTemplate.match(/spellcheck="false"/gu)?.length, 2, 'All spelling inputs must disable browser spellcheck assistance.');
+assert.equal(reviewTemplate.match(/class="review-answer-form"/gu)?.length, 1, 'Every review/remediation stage must render through one shared answer form.');
+assert.equal(reviewTemplate.match(/class="review-answer-field"/gu)?.length, 1, 'Every review/remediation stage must render through one shared Material field.');
+assert.equal(reviewTemplate.match(/class="review-answer-input"/gu)?.length, 1, 'Every review/remediation stage must render through one shared input element.');
+assert.equal(reviewTemplate.match(/data-testid="review-answer-input"/gu)?.length, 1, 'The shared answer input must have one stable E2E locator.');
+assert.equal(reviewTemplate.match(/autocapitalize="none"/gu)?.length, 1, 'The shared spelling input must disable mobile auto-capitalization.');
+assert.equal(reviewTemplate.match(/autocorrect="off"/gu)?.length, 1, 'The shared spelling input must disable mobile auto-correction.');
+assert.equal(reviewTemplate.match(/spellcheck="false"/gu)?.length, 1, 'The shared spelling input must disable browser spellcheck assistance.');
+assert.doesNotMatch(reviewTemplate, /#remediationInput/u, 'A second remediation input must not be reintroduced.');
+assert.doesNotMatch(reviewPage, /remediationAnswer|focusRemediationInput/u, 'Review and remediation must not keep separate input controls or focus paths.');
+assert.match(reviewPage, /readonly answerFieldState = computed<ReviewAnswerFieldState \| null>/u, 'One TypeScript view model must own answer-field visibility, label, action, and disabled state.');
+assert.match(reviewPage, /submitAnswer\(\)/u, 'All answer submissions must dispatch through one shared answer handler.');
+assert.match(reviewAnswerField, /buildReviewAnswerFieldState/u, 'Answer-field state must be derived by a pure TypeScript function.');
+assert.match(reviewAnswerField, /RemediationPhase\.CORRECTION/u, 'Correction must explicitly hide the redundant answer field.');
+assert.match(reviewAnswerField, /RemediationPhase\.COMPLETED/u, 'Completed remediation/recheck must explicitly keep the shared field locked.');
+assert.match(reviewAnswerFieldSpec, /currentTask: 'recheck'/u, 'The answer-field regression suite must cover scheduled rechecks.');
+assert.match(reviewAnswerFieldSpec, /RemediationPhase\.COPY/u, 'The answer-field regression suite must cover copy mode.');
+assert.match(reviewAnswerFieldSpec, /RemediationPhase\.COMPLETED/u, 'The answer-field regression suite must cover completed states.');
 assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
 assert.match(reviewStyles, /\.review-action-footer\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*0;/u, 'Review footer must stay fixed to the viewport bottom.');
 assert.match(reviewStyles, /border-top:\s*2px solid var\(--review-footer-border-color\)/u, 'All footer tones must share one full-width divider implementation.');
