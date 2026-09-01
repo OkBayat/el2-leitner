@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/cor
 import {ReviewSessionService} from '../../application/review/review-session.service';
 import {RemediationContext, RemediationPhase, RemediationSnapshot} from '../../domain/remediation/remediation';
 
-export type ReviewContextBadgeKind = 'previous-mistake' | 'recall-from-memory' | 'mistake-recheck' | 'copy-correction';
+export type ReviewContextBadgeKind = 'spelling-correction' | 'recall-from-memory' | 'mistake-recheck' | 'copy-correction';
 export type ReviewContextBadgeIcon = 'mistake' | 'memory' | 'recheck' | 'copy';
 
 export interface ReviewContextBadgeState {
@@ -13,39 +13,40 @@ export interface ReviewContextBadgeState {
 
 type RemediationContextSnapshot = Pick<RemediationSnapshot, 'phase' | 'context'>;
 
+const SPELLING_CORRECTION: ReviewContextBadgeState = {
+	kind: 'spelling-correction',
+	icon: 'mistake',
+	label: 'SPELLING CORRECTION',
+};
+const RECALL_FROM_MEMORY: ReviewContextBadgeState = {
+	kind: 'recall-from-memory',
+	icon: 'memory',
+	label: 'RECALL FROM MEMORY',
+};
+const MISTAKE_RECHECK: ReviewContextBadgeState = {
+	kind: 'mistake-recheck',
+	icon: 'recheck',
+	label: 'MISTAKE RECHECK',
+};
+const COPY_THE_CORRECTION: ReviewContextBadgeState = {
+	kind: 'copy-correction',
+	icon: 'copy',
+	label: 'COPY THE CORRECTION',
+};
+
 export function resolveReviewContextBadge(remediation: RemediationContextSnapshot | null): ReviewContextBadgeState | null {
-	if (!remediation || remediation.phase === RemediationPhase.COMPLETED) return null;
+	if (!remediation) return null;
 
-	if (remediation.phase === RemediationPhase.COPY) {
-		return {
-			kind: 'copy-correction',
-			icon: 'copy',
-			label: 'COPY THE CORRECTION',
-		};
-	}
+	if (remediation.phase === RemediationPhase.COPY) return COPY_THE_CORRECTION;
 
-	if (remediation.context === RemediationContext.RECHECK) {
-		return {
-			kind: 'mistake-recheck',
-			icon: 'recheck',
-			label: 'MISTAKE RECHECK',
-		};
-	}
+	// A completed recheck stays visibly identified until Continue is pressed.
+	if (remediation.context === RemediationContext.RECHECK) return MISTAKE_RECHECK;
 
-	if (remediation.phase === RemediationPhase.CORRECTION) {
-		return {
-			kind: 'previous-mistake',
-			icon: 'mistake',
-			label: 'SPELLING CORRECTION',
-		};
-	}
+	if (remediation.phase === RemediationPhase.CORRECTION) return SPELLING_CORRECTION;
 
-	if (remediation.phase === RemediationPhase.RECALL) {
-		return {
-			kind: 'recall-from-memory',
-			icon: 'memory',
-			label: 'RECALL FROM MEMORY',
-		};
+	// Successful immediate recall keeps its context marker during the success state.
+	if (remediation.phase === RemediationPhase.RECALL || remediation.phase === RemediationPhase.COMPLETED) {
+		return RECALL_FROM_MEMORY;
 	}
 
 	return null;
