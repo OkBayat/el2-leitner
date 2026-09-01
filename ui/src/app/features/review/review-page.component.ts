@@ -45,6 +45,37 @@ interface ReviewFooterState {
 	secondaryLabel?: string;
 }
 
+const CHECK_ANSWER_LABEL = 'Check answer';
+const CONTINUE_LABEL = 'Continue';
+
+function practiceFooter(title: string, detail: string): ReviewFooterState {
+	return {
+		tone: 'practice',
+		icon: 'practice',
+		title,
+		detail,
+		primaryLabel: CHECK_ANSWER_LABEL,
+		primaryAction: 'submit-answer',
+	};
+}
+
+function continueFooter(
+	tone: 'success' | 'error',
+	icon: 'check' | 'error',
+	title: string,
+	detail: string,
+	primaryAction: 'acknowledge' | 'next' = 'next',
+): ReviewFooterState {
+	return {
+		tone,
+		icon,
+		title,
+		detail,
+		primaryLabel: CONTINUE_LABEL,
+		primaryAction,
+	};
+}
+
 @Component({
 	selector: 'app-review-page',
 	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
@@ -83,61 +114,27 @@ export class ReviewPageComponent implements OnInit {
 		const feedback = this.session.feedback();
 		if (remediation) {
 			if (remediation.phase === RemediationPhase.CORRECTION) {
-				return {
-					tone: 'error',
-					icon: 'error',
-					title: 'Correct solution:',
-					detail: feedback?.spelling || remediation.target,
-					primaryLabel: 'Continue',
-					primaryAction: 'acknowledge',
-				};
+				return continueFooter(
+					'error',
+					'error',
+					'Correct solution:',
+					feedback?.spelling || remediation.target,
+					'acknowledge',
+				);
 			}
 			if (remediation.phase === RemediationPhase.COMPLETED) {
-				return {
-					tone: 'success',
-					icon: 'check',
-					title: 'Correct!',
-					detail: 'You remembered the spelling.',
-					primaryLabel: 'Continue',
-					primaryAction: 'next',
-				};
+				return continueFooter('success', 'check', 'Correct!', 'You remembered the spelling.');
 			}
 			if (remediation.phase === RemediationPhase.COPY) {
-				return {
-					tone: 'practice',
-					icon: 'practice',
-					title: 'Practice the correction',
-					detail: 'Copy the correct spelling exactly once, then check.',
-					primaryLabel: 'Check',
-					primaryAction: 'submit-answer',
-				};
+				return practiceFooter('Practice the correction', 'Copy the correct spelling exactly once, then check.');
 			}
-			return {
-				tone: 'practice',
-				icon: 'practice',
-				title: 'From memory',
-				detail: 'Type the spelling from memory, then check.',
-				primaryLabel: 'Check',
-				primaryAction: 'submit-answer',
-			};
+			return practiceFooter('From memory', 'Type the spelling from memory, then check.');
 		}
 
 		if (feedback) {
-			return feedback.correct ? {
-				tone: 'success',
-				icon: 'check',
-				title: feedback.title,
-				detail: feedback.detail,
-				primaryLabel: 'Continue',
-				primaryAction: 'next',
-			} : {
-				tone: 'error',
-				icon: 'error',
-				title: 'Correct solution:',
-				detail: feedback.spelling,
-				primaryLabel: 'Continue',
-				primaryAction: 'next',
-			};
+			return feedback.correct
+				? continueFooter('success', 'check', feedback.title, feedback.detail)
+				: continueFooter('error', 'error', 'Correct solution:', feedback.spelling);
 		}
 
 		if (this.session.currentTask() === 'review') {
@@ -146,7 +143,7 @@ export class ReviewPageComponent implements OnInit {
 				icon: 'none',
 				title: '',
 				detail: '',
-				primaryLabel: 'Check answer',
+				primaryLabel: CHECK_ANSWER_LABEL,
 				primaryAction: 'submit-answer',
 				secondaryLabel: "I don't know",
 			};
