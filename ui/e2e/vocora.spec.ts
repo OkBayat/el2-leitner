@@ -170,9 +170,7 @@ test('wrong spelling moves through error, yellow memory practice, and green memo
   await initialAnswer.fill(wrong);
   await footer.getByRole('button', { name: 'Check answer' }).click();
 
-  await expect(initialAnswer).toBeVisible();
-  await expect(initialAnswer).toBeDisabled();
-  await expect(initialAnswer).toHaveValue(wrong);
+  await expect(initialAnswer).toHaveCount(0);
   await expect(footer).toHaveClass(/error/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 223, 224)');
   await expect(footer.getByText('Correct solution:')).toBeVisible();
@@ -192,7 +190,6 @@ test('wrong spelling moves through error, yellow memory practice, and green memo
   await expect(page.locator('.spelling-hint')).toHaveCount(0);
 
   await footer.getByRole('button', { name: 'Continue' }).click();
-  await expect(initialAnswer).toHaveCount(0);
   const recallInput = page.getByLabel('Recall from memory');
   await expect(recallInput).toBeVisible();
   await expect(recallInput).toBeFocused();
