@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -23,67 +23,67 @@ import { ShareStoryService } from '../../shared/share-story/share-story.service'
   imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule],
   template: `
     <section class="review-page">
-      <header><h1>مرور امروز</h1><p>مرور موعددار، تمرین آزاد و بازآزمایی املا در یک جریان واحد.</p></header>
+      <header><h1>Today's Review</h1><p>Due reviews, free practice, and spelling rechecks in one flow.</p></header>
 
       @if (!session.active() && !session.completed()) {
         <mat-card class="setup" appearance="outlined">
-          <mat-card-header><mat-card-title>جلسهٔ امروز</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>Today's session</mat-card-title></mat-card-header>
           <mat-card-content>
             <div class="breakdown">
-              <div><strong>{{ dueCount() }}</strong><span>کارت آماده</span></div>
-              <div><strong>{{ newCount() }}</strong><span>لغت جدید</span></div>
-              <div><strong>{{ estimatedMinutes() }}</strong><span>دقیقه تقریبی</span></div>
+              <div><strong>{{ dueCount() }}</strong><span>Ready cards</span></div>
+              <div><strong>{{ newCount() }}</strong><span>New words</span></div>
+              <div><strong>{{ estimatedMinutes() }}</strong><span>Estimated minutes</span></div>
             </div>
             <mat-form-field appearance="outline">
-              <mat-label>حداکثر کارت</mat-label>
+              <mat-label>Maximum cards</mat-label>
               <mat-select [formControl]="limit">
-                <mat-option [value]="0">همه</mat-option><mat-option [value]="10">۱۰ کارت</mat-option>
-                <mat-option [value]="20">۲۰ کارت</mat-option><mat-option [value]="30">۳۰ کارت</mat-option>
+                <mat-option [value]="0">All</mat-option><mat-option [value]="10">10 cards</mat-option>
+                <mat-option [value]="20">20 cards</mat-option><mat-option [value]="30">30 cards</mat-option>
               </mat-select>
             </mat-form-field>
           </mat-card-content>
-          <mat-card-actions><button mat-flat-button (click)="start('review')">شروع جلسه</button><button mat-stroked-button (click)="start('box1')">تمرین آزاد خانهٔ ۱</button></mat-card-actions>
+          <mat-card-actions><button mat-flat-button (click)="start('review')">Start session</button><button mat-stroked-button (click)="start('box1')">Free practice: House 1</button></mat-card-actions>
         </mat-card>
       }
 
       @if (session.active() && session.currentWord(); as word) {
         <div class="session-bar">
-          <button mat-button (click)="exit()">خروج</button>
-          <div><span>{{ session.currentTask() === 'recheck' ? 'بازآزمایی املا' : session.answered() + 1 + ' از ' + session.initialCount() }}</span><mat-progress-bar mode="determinate" [value]="session.progress()" /></div>
-          <span>دقت: {{ session.accuracy() ?? '—' }}٪</span>
+          <button mat-button (click)="exit()">Exit</button>
+          <div><span>{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : session.answered() + 1 + ' of ' + session.initialCount() }}</span><mat-progress-bar mode="determinate" [value]="session.progress()" /></div>
+          <span>Accuracy: {{ session.accuracy() ?? '—' }}%</span>
         </div>
         <mat-card class="flash" appearance="outlined">
-          <mat-card-header><mat-card-subtitle>{{ word.category }} · خانهٔ {{ word.box }}</mat-card-subtitle><mat-card-title>{{ session.currentTask() === 'recheck' ? 'بازآزمایی املا' : 'کلمه را بشنو و املای آن را بنویس' }}</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-subtitle>{{ displayCategory(word.category) }} · House {{ word.box }}</mat-card-subtitle><mat-card-title>{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : 'Listen to the word and type its spelling' }}</mat-card-title></mat-card-header>
           <mat-card-content>
-            <div class="listen"><button mat-fab extended (click)="session.pronounce()">▶ پخش تلفظ</button><button mat-button (click)="session.pronounce(.7)">آهسته‌تر</button></div>
+            <div class="listen"><button mat-fab extended (click)="session.pronounce()">▶ Play pronunciation</button><button mat-button (click)="session.pronounce(.7)">Slower</button></div>
             @if (session.currentTask() === 'review' && !session.feedback()) {
               <form (submit)="$event.preventDefault(); submit()" class="answer-form">
-                <mat-form-field appearance="outline"><mat-label>پاسخ شما</mat-label><input matInput [formControl]="answer" lang="en" dir="ltr" autocomplete="off"></mat-form-field>
-                <button mat-flat-button type="submit" [disabled]="saving()">بررسی پاسخ</button><button mat-button type="button" (click)="dontKnow()">نمی‌دانم</button>
+                <mat-form-field appearance="outline"><mat-label>Your answer</mat-label><input #answerInput matInput [formControl]="answer" lang="en" autocomplete="off"></mat-form-field>
+                <button mat-flat-button type="submit" [disabled]="saving()">Check answer</button><button mat-button type="button" (click)="dontKnow()">I don't know</button>
               </form>
             }
-            @if (session.feedback(); as feedback) { <div class="feedback" [class.wrong]="!feedback.correct"><h2>{{ feedback.title }}</h2><p>{{ feedback.detail }}</p><strong dir="ltr">{{ feedback.spelling }}</strong></div> }
+            @if (session.feedback(); as feedback) { <div class="feedback" [class.wrong]="!feedback.correct"><h2>{{ feedback.title }}</h2><p>{{ feedback.detail }}</p><strong>{{ feedback.spelling }}</strong></div> }
             @if (session.remediation(); as remediation) {
               <section class="remediation">
-                <h3>{{ remediation.phase === Phase.CORRECTION ? 'اصلاح املا' : remediation.phase === Phase.COPY ? 'یک‌بار دقیق بنویس' : 'بدون نگاه کردن دوباره بنویس' }}</h3>
-                @if (remediation.answerVisible) { <p class="target" dir="ltr">{{ remediation.target }}</p><p>{{ hint(remediation) }}</p> }
-                @if (remediation.phase === Phase.CORRECTION) { <button mat-flat-button (click)="acknowledge()">دیدم؛ از حفظ می‌نویسم</button> }
+                <h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
+                @if (remediation.answerVisible) { <p class="target">{{ remediation.target }}</p><p>{{ hint(remediation) }}</p> }
+                @if (remediation.phase === Phase.CORRECTION) { <button mat-flat-button (click)="acknowledge()">Got it; I'll type it from memory</button> }
                 @else if (remediation.phase !== Phase.COMPLETED) {
-                  <mat-form-field appearance="outline"><mat-label>{{ remediation.phase === Phase.COPY ? 'کپی دقیق' : 'یادآوری از حفظ' }}</mat-label><input matInput [formControl]="remediationAnswer" dir="ltr" (keydown.enter)="submitRemediation(); $event.preventDefault()"></mat-form-field>
-                  <button mat-flat-button (click)="submitRemediation()">بررسی</button>
-                } @else { <p>این مرحله کامل شد و بازآزمایی در زمان مناسب داخل همین جلسه انجام می‌شود.</p> }
+                  <mat-form-field appearance="outline"><mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label><input #remediationInput matInput [formControl]="remediationAnswer" (keydown.enter)="submitRemediation(); $event.preventDefault()"></mat-form-field>
+                  <button mat-flat-button (click)="submitRemediation()">Check</button>
+                } @else { <p>This correction is complete. A spelling recheck will appear later in this session.</p> }
               </section>
             }
           </mat-card-content>
-          <mat-card-actions>@if (session.canAdvance()) { <button mat-flat-button (click)="next()">کارت بعدی</button> }</mat-card-actions>
+          <mat-card-actions>@if (session.canAdvance()) { <button mat-flat-button (click)="next()">Next card</button> }</mat-card-actions>
         </mat-card>
       }
 
       @if (session.completed()) {
         <mat-card class="complete" appearance="outlined">
-          <mat-card-title>جلسه کامل شد ★</mat-card-title>
-          <mat-card-content><div class="breakdown"><div><strong>{{ session.correct() }}</strong><span>درست</span></div><div><strong>{{ session.wrong() }}</strong><span>اشتباه</span></div><div><strong>{{ session.accuracy() ?? 0 }}٪</strong><span>دقت</span></div></div></mat-card-content>
-          <mat-card-actions><button mat-flat-button (click)="share.open()">ساخت استوری نتیجه</button><button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">بازگشت به خانه</button><button mat-button (click)="start('box1')">ادامه تمرین آزاد</button></mat-card-actions>
+          <mat-card-title>Session complete ★</mat-card-title>
+          <mat-card-content><div class="breakdown"><div><strong>{{ session.correct() }}</strong><span>Correct</span></div><div><strong>{{ session.wrong() }}</strong><span>Wrong</span></div><div><strong>{{ session.accuracy() ?? 0 }}%</strong><span>Accuracy</span></div></div></mat-card-content>
+          <mat-card-actions><button mat-flat-button (click)="share.open()">Create result story</button><button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">Back home</button><button mat-button (click)="start('box1')">Continue free practice</button></mat-card-actions>
         </mat-card>
       }
     </section>
@@ -94,6 +94,8 @@ import { ShareStoryService } from '../../shared/share-story/share-story.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewPageComponent implements OnInit {
+  @ViewChild('answerInput') private answerInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('remediationInput') private remediationInput?: ElementRef<HTMLInputElement>;
   readonly session = inject(ReviewSessionService);
   readonly store = inject(LearningStoreService);
   readonly router = inject(Router);
@@ -112,14 +114,29 @@ export class ReviewPageComponent implements OnInit {
   readonly estimatedMinutes = computed(() => Math.max(1, Math.ceil(this.dueCount() * .35)));
 
   async ngOnInit(): Promise<void> { await this.store.initialize(); const mode = this.route.snapshot.queryParamMap.get('mode') as ReviewMode | null; if (mode === 'new' || mode === 'box1') await this.start(mode); }
-  async start(mode: ReviewMode): Promise<void> { const ok = await this.session.start(mode, this.limit.value); if (!ok) this.snack.open(mode === 'box1' ? 'هنوز کارتی در خانهٔ ۱ وجود ندارد.' : 'مرور موعدداری وجود ندارد.', 'باشه', { duration: 3000 }); else setTimeout(() => this.session.pronounce(), 200); }
-  async submit(): Promise<void> { if (!this.answer.value.trim()) return; this.saving.set(true); try { await this.session.submit(this.answer.value); this.answer.setValue(''); } catch (error) { this.snack.open(error instanceof Error ? error.message : 'ذخیره پاسخ انجام نشد.', 'بستن'); } finally { this.saving.set(false); } }
+  async start(mode: ReviewMode): Promise<void> {
+    const ok = await this.session.start(mode, this.limit.value);
+    if (!ok) { this.snack.open(mode === 'box1' ? 'There are no cards in House 1 yet.' : 'There are no due reviews.', 'OK', { duration: 3000 }); return; }
+    this.focusAnswerInput();
+    setTimeout(() => this.session.pronounce(), 200);
+  }
+  async submit(): Promise<void> { if (!this.answer.value.trim()) return; this.saving.set(true); try { await this.session.submit(this.answer.value); this.answer.setValue(''); } catch (error) { this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close'); } finally { this.saving.set(false); } }
   async dontKnow(): Promise<void> { this.saving.set(true); try { await this.session.submit('', true); } finally { this.saving.set(false); } }
-  acknowledge(): void { this.session.acknowledgeCorrection(); this.remediationAnswer.setValue(''); }
-  submitRemediation(): void { if (!this.remediationAnswer.value.trim()) return; this.session.submitRemediation(this.remediationAnswer.value); this.remediationAnswer.setValue(''); }
+  acknowledge(): void { this.session.acknowledgeCorrection(); this.remediationAnswer.setValue(''); this.focusRemediationInput(); }
+  submitRemediation(): void { if (!this.remediationAnswer.value.trim()) return; this.session.submitRemediation(this.remediationAnswer.value); this.remediationAnswer.setValue(''); if (this.session.remediation()?.phase !== RemediationPhase.COMPLETED) this.focusRemediationInput(); }
   hint(snapshot: RemediationSnapshot): string { return buildOrthographicHint(snapshot.comparison); }
-  async next(): Promise<void> { await this.session.next(); this.answer.setValue(''); this.remediationAnswer.setValue(''); setTimeout(() => this.session.pronounce(), 180); }
-  async exit(): Promise<void> { const ok = await firstValueFrom(this.dialog.open(ConfirmDialogComponent, { data: { title: 'خروج از جلسه', message: 'پاسخ‌های ثبت‌شده حفظ می‌شوند. جلسه متوقف شود؟', confirmLabel: 'خروج' } }).afterClosed()); if (ok) { await this.session.abandon(); await this.router.navigateByUrl('/dashboard'); } }
+  async next(): Promise<void> {
+    await this.session.next();
+    this.answer.setValue(''); this.remediationAnswer.setValue('');
+    if (!this.session.active()) return;
+    if (this.session.currentTask() === 'review') this.focusAnswerInput(); else this.focusRemediationInput();
+    setTimeout(() => this.session.pronounce(), 180);
+  }
+  async exit(): Promise<void> { const ok = await firstValueFrom(this.dialog.open(ConfirmDialogComponent, { data: { title: 'Exit session', message: 'Saved answers will be kept. Stop this session?', confirmLabel: 'Exit' } }).afterClosed()); if (ok) { await this.session.abandon(); await this.router.navigateByUrl('/dashboard'); } }
+  displayCategory(category: string): string { return !category || category === 'بدون دسته‌بندی' ? 'Uncategorized' : category; }
+
+  private focusAnswerInput(): void { setTimeout(() => this.answerInput?.nativeElement.focus()); }
+  private focusRemediationInput(): void { setTimeout(() => this.remediationInput?.nativeElement.focus()); }
 
   @HostListener('document:keydown', ['$event'])
   async onKeyboard(event: KeyboardEvent): Promise<void> {
