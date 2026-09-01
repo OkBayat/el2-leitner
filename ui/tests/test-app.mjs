@@ -400,8 +400,9 @@ assert.match(document.querySelector('#toast').textContent, /تب یا دستگا
 
 for (const filename of ['login.html', 'register.html']) {
   const authDom = new JSDOM(fs.readFileSync(new URL(filename, root), 'utf8'));
-  const authInputs = [...authDom.window.document.querySelectorAll('#authForm input')];
-  assert.deepEqual(authInputs.map((input) => input.type), ['email', 'password'], `${filename} must request only email and password`);
+  const authFields = [...authDom.window.document.querySelectorAll('#authForm md-outlined-text-field')];
+  assert.deepEqual(authFields.map((field) => field.getAttribute('type')), ['email', 'password'], `${filename} must request only email and password through Material fields`);
+  assert.ok(authDom.window.document.querySelector('script[type="module"][src="./dist/material-web.js"]'), `${filename} must load the Material Web bundle`);
   assert.ok(authDom.window.document.querySelector('script[type="module"][src="./src/features/auth/index.js"]'), `${filename} must boot through the auth composition root`);
 }
 

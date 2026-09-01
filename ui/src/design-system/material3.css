@@ -322,8 +322,7 @@ body {
 }
 
 /* Buttons. */
-.btn,
-.auth-submit {
+.btn {
   min-height: 40px;
   border-radius: var(--md-sys-shape-corner-full);
   font-size: var(--md-sys-typescale-label-large-size);
@@ -334,21 +333,18 @@ body {
     transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
 
-.btn:hover,
-.auth-submit:hover {
+.btn:hover {
   transform: none;
   box-shadow: var(--md-sys-elevation-level1);
 }
 
-.btn-primary,
-.auth-submit {
+.btn-primary {
   border-color: var(--md-sys-color-primary);
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
 }
 
-.btn-primary:hover,
-.auth-submit:hover {
+.btn-primary:hover {
   background: color-mix(in srgb, var(--md-sys-color-on-primary) 8%, var(--md-sys-color-primary));
 }
 
@@ -370,7 +366,6 @@ body {
 }
 
 .icon-btn,
-.leitner-house-back,
 .library-close-btn,
 .library-card-edit {
   display: grid;
@@ -387,7 +382,6 @@ body {
 }
 
 .icon-btn:hover,
-.leitner-house-back:hover,
 .library-close-btn:hover,
 .library-card-edit:hover {
   background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
@@ -403,10 +397,7 @@ body {
 .search-field,
 .filters-row select,
 .library-search-field,
-.library-select-field,
-.auth-field input,
-.leitner-house-controls input,
-.leitner-house-controls select {
+.library-select-field {
   border-color: var(--md-sys-color-outline);
   border-radius: var(--md-sys-shape-corner-extra-small);
   background: var(--md-sys-color-surface-container-highest);
@@ -417,10 +408,7 @@ body {
 .field input,
 .field select,
 .field textarea,
-.answer-input,
-.auth-field input,
-.leitner-house-controls input,
-.leitner-house-controls select {
+.answer-input {
   min-height: 48px;
 }
 
@@ -443,8 +431,7 @@ body {
 .answer-input:focus,
 .search-field:focus-within,
 .library-search-field:focus-within,
-.library-select-field:focus-within,
-.auth-field input:focus {
+.library-select-field:focus-within {
   border-color: var(--md-sys-color-primary);
   outline: 0;
   box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
