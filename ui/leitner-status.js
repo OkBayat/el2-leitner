@@ -158,7 +158,7 @@
         const stage = index + 1;
         const tooltip = `خانه ${faNumber.format(house.box)} · وضعیت ${faNumber.format(stage)} از ${faNumber.format(stateCount)} · ${faNumber.format(count)} لغت`;
         const occupancyClass = count > 0 ? 'is-occupied' : 'is-empty';
-        return `<span class="leitner-segment leitner-segment--${stage} ${occupancyClass}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img"><b>${faNumber.format(count)}</b></span>`;
+        return `<span class="leitner-segment leitner-segment--${stage} ${occupancyClass}" data-stage="${stage}" data-count="${count}" data-tooltip="${tooltip}" aria-label="${tooltip}" role="img" tabindex="0"><b>${faNumber.format(count)}</b></span>`;
       }).join('');
       const ariaLabel = `مشاهدهٔ تمام واژه‌های خانه ${faNumber.format(house.box)}`;
       return `<a class="leitner-row leitner-house--${house.box}" href="leitner-house.html?box=${house.box}" aria-label="${ariaLabel}" data-house="${house.box}" data-state-count="${stateCount}"><div class="leitner-house-label"><span class="leitner-house-icon">${houseIcon()}</span><strong>خانه ${faNumber.format(house.box)}</strong></div><div class="leitner-segments" style="--segment-count:${stateCount}">${segments}</div><div class="leitner-row-total"><strong>${faNumber.format(house.total)}</strong><span>لغت</span></div></a>`;
@@ -297,7 +297,17 @@
       if (typeof schedule === 'function') feedbackTimer = schedule(resetExportFeedback, feedbackDuration);
     };
 
+    const handleSegmentKeydown = (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const segment = event.target?.closest?.('.leitner-segment');
+      const houseLink = segment?.closest?.('.leitner-row[href]');
+      if (!segment || !houseLink) return;
+      event.preventDefault();
+      houseLink.click();
+    };
+
     exportButton?.addEventListener('click', handleExport);
+    root.addEventListener('keydown', handleSegmentKeydown);
     enhance();
 
     const Observer = options.MutationObserver || globalThis.MutationObserver;
@@ -309,6 +319,7 @@
         handleExport,
         destroy() {
           exportButton?.removeEventListener('click', handleExport);
+          root.removeEventListener('keydown', handleSegmentKeydown);
           if (feedbackTimer !== null && typeof cancel === 'function') cancel(feedbackTimer);
         }
       };
@@ -325,6 +336,7 @@
       destroy() {
         observer.disconnect();
         exportButton?.removeEventListener('click', handleExport);
+        root.removeEventListener('keydown', handleSegmentKeydown);
         if (feedbackTimer !== null && typeof cancel === 'function') cancel(feedbackTimer);
       }
     };
