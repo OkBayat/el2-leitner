@@ -7,6 +7,7 @@ import { JSDOM } from "jsdom";
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDir, "..");
 const read = (name) => fs.readFileSync(path.join(uiRoot, name), "utf8");
+const materialPath = "src/design-system/material3.css";
 
 const pages = ["index.html", "library.html", "leitner-house.html", "login.html", "register.html"];
 for (const page of pages) {
@@ -16,15 +17,8 @@ for (const page of pages) {
     .map((link) => link.getAttribute("href")?.split(/[?#]/u, 1)[0])
     .filter(Boolean);
 
-  assert.ok(
-    stylesheets.includes("material3.css"),
-    `${page} must consume the shared Material 3 design-system stylesheet.`
-  );
-  assert.equal(
-    stylesheets.includes("styles.css"),
-    false,
-    `${page} must not load the obsolete compatibility stylesheet.`
-  );
+  assert.ok(stylesheets.includes(materialPath), `${page} must consume the shared Material 3 design-system stylesheet.`);
+  assert.equal(stylesheets.includes("styles.css"), false, `${page} must not load the obsolete compatibility stylesheet.`);
 
   for (const script of document.querySelectorAll("script[src]")) {
     assert.doesNotMatch(
@@ -35,11 +29,9 @@ for (const page of pages) {
   }
 }
 
-assert.equal(
-  fs.existsSync(path.join(uiRoot, "styles.css")),
-  false,
-  "The empty compatibility stylesheet must be deleted rather than kept as dead code."
-);
+for (const obsolete of ["styles.css", "material3.css"]) {
+  assert.equal(fs.existsSync(path.join(uiRoot, obsolete)), false, `${obsolete} must not remain as a dead root asset.`);
+}
 
 const indexMarkup = read("index.html");
 assert.equal(
@@ -48,7 +40,7 @@ assert.equal(
   "Shared component styling must not be duplicated in an inline style block."
 );
 
-const theme = read("material3.css");
+const theme = read(materialPath);
 const requiredTokens = [
   "--md-sys-color-primary",
   "--md-sys-color-on-primary",
