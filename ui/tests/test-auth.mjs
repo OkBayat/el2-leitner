@@ -2,8 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
-const root = new URL('../', import.meta.url);
-const authScript = fs.readFileSync(new URL('auth.js', root), 'utf8');
+import { createAuthPage } from '../src/features/auth/index.js';
 
 function response(status, payload = null) {
   return {
@@ -13,30 +12,28 @@ function response(status, payload = null) {
   };
 }
 
-async function createAuthPage(filename, url, submitResponse) {
+async function createAuthHarness(filename, url, submitResponse) {
   const calls = [];
   const navigations = [];
-  const markup = fs.readFileSync(new URL(filename, root), 'utf8').replace(/<script src="auth\.js"><\/script>/, '');
-  const dom = new JSDOM(markup, {
-    url,
-    runScripts: 'outside-only',
-    beforeParse(window) {
-      window.TextEncoder = globalThis.TextEncoder;
-      window.VazheyarNavigate = (destination) => navigations.push(destination);
-      window.fetch = async (path, options = {}) => {
-        const method = options.method || 'GET';
-        calls.push({ path: String(path), method, body: options.body ? JSON.parse(options.body) : null });
-        if (path === '/api/auth/me') return response(401, { error: { code: 'UNAUTHENTICATED', message: 'Login required' } });
-        return submitResponse(path, method);
-      };
-    }
-  });
-  dom.window.eval(authScript);
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  return { dom, calls, navigations };
+  const markup = fs.readFileSync(new URL(`../${filename}`, import.meta.url), 'utf8');
+  const dom = new JSDOM(markup, { url, pretendToBeVisual: true });
+  const fetcher = async (path, options = {}) => {
+    const method = options.method || 'GET';
+    calls.push({ path: String(path), method, body: options.body ? JSON.parse(options.body) : null });
+    if (path === '/api/auth/me') return response(401, { error: { code: 'UNAUTHENTICATED', message: 'Login required' } });
+    return submitResponse(path, method);
+  };
+  const page = createAuthPage({
+    windowObject: dom.window,
+    documentObject: dom.window.document,
+    fetcher,
+    navigate: (destination) => navigations.push(destination)
+  }).mount();
+  await page.checkExistingSession();
+  return { dom, page, calls, navigations };
 }
 
-const login = await createAuthPage(
+const login = await createAuthHarness(
   'login.html',
   'https://vazheyar.test/login.html?returnTo=%2Fapp%23reports',
   (path, method) => path === '/api/auth/login' && method === 'POST'
@@ -54,7 +51,7 @@ assert.equal(loginCall.path, '/api/auth/login');
 assert.deepEqual(loginCall.body, { email: 'user@example.com', password: 'correct-password' });
 assert.deepEqual(login.navigations, ['/app#reports'], 'Successful login must return to the safe local destination');
 
-const maliciousRedirect = await createAuthPage(
+const maliciousRedirect = await createAuthHarness(
   'login.html',
   'https://vazheyar.test/login.html?returnTo=%2F%5Cevil.example%2Fsteal',
   (path, method) => path === '/api/auth/login' && method === 'POST'
@@ -69,7 +66,7 @@ maliciousRedirect.dom.window.document.querySelector('#authForm').dispatchEvent(
 await new Promise((resolve) => setTimeout(resolve, 10));
 assert.deepEqual(maliciousRedirect.navigations, ['index.html'], 'Login must reject cross-origin backslash redirects');
 
-const invalidEmail = await createAuthPage(
+const invalidEmail = await createAuthHarness(
   'login.html',
   'https://vazheyar.test/login.html',
   () => response(500)
@@ -83,7 +80,7 @@ await new Promise((resolve) => setTimeout(resolve, 5));
 assert.equal(invalidEmail.calls.filter((call) => call.method === 'POST').length, 0, 'Malformed email must be rejected before the API call');
 assert.match(invalidEmail.dom.window.document.querySelector('#authMessage').textContent, /ایمیل معتبر/);
 
-const register = await createAuthPage(
+const register = await createAuthHarness(
   'register.html',
   'https://vazheyar.test/register.html',
   (path, method) => path === '/api/auth/register' && method === 'POST'
@@ -109,4 +106,9 @@ assert.equal(register.navigations.length, 0, 'Failed registration must remain on
 assert.equal(register.dom.window.document.querySelector('#authMessage').textContent, 'این ایمیل قبلاً ثبت شده است.');
 assert.equal(register.dom.window.document.querySelector('#authSubmit').disabled, false);
 
-console.log('All Vazheyar authentication tests passed.');
+for (const harness of [login, maliciousRedirect, invalidEmail, register]) {
+  harness.page.unmount();
+  harness.dom.window.close();
+}
+
+console.log('All Vocora authentication tests passed.');
