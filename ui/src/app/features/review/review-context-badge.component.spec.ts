@@ -8,7 +8,7 @@ describe('review remediation context badge', () => {
 			phase: RemediationPhase.CORRECTION,
 			context: RemediationContext.IMMEDIATE,
 		})).toEqual({
-			kind: 'previous-mistake',
+			kind: 'spelling-correction',
 			icon: 'mistake',
 			label: 'SPELLING CORRECTION',
 		});
@@ -17,6 +17,17 @@ describe('review remediation context badge', () => {
 	it('labels immediate hidden-answer practice as recall from memory', () => {
 		expect(resolveReviewContextBadge({
 			phase: RemediationPhase.RECALL,
+			context: RemediationContext.IMMEDIATE,
+		})).toEqual({
+			kind: 'recall-from-memory',
+			icon: 'memory',
+			label: 'RECALL FROM MEMORY',
+		});
+	});
+
+	it('keeps recall context visible after a correct immediate recall', () => {
+		expect(resolveReviewContextBadge({
+			phase: RemediationPhase.COMPLETED,
 			context: RemediationContext.IMMEDIATE,
 		})).toEqual({
 			kind: 'recall-from-memory',
@@ -36,6 +47,17 @@ describe('review remediation context badge', () => {
 		});
 	});
 
+	it('keeps mistake recheck visible after the recheck is answered correctly', () => {
+		expect(resolveReviewContextBadge({
+			phase: RemediationPhase.COMPLETED,
+			context: RemediationContext.RECHECK,
+		})).toEqual({
+			kind: 'mistake-recheck',
+			icon: 'recheck',
+			label: 'MISTAKE RECHECK',
+		});
+	});
+
 	it('uses copy context whenever the learner can see and copy the correction', () => {
 		expect(resolveReviewContextBadge({
 			phase: RemediationPhase.COPY,
@@ -47,10 +69,7 @@ describe('review remediation context badge', () => {
 		});
 	});
 
-	it('hides the context badge after remediation is complete', () => {
-		expect(resolveReviewContextBadge({
-			phase: RemediationPhase.COMPLETED,
-			context: RemediationContext.IMMEDIATE,
-		})).toBeNull();
+	it('hides the context badge when no remediation is active', () => {
+		expect(resolveReviewContextBadge(null)).toBeNull();
 	});
 });
