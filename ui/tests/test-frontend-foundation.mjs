@@ -69,8 +69,8 @@ assert.equal(resolveSafeReturnTo({ search: '', origin: 'https://vocora.test' }),
     ['current']
   ]);
 
-  await assert.rejects(
-    register.execute({ email: 'new@example.com', password: 'short' }),
+  assert.throws(
+    () => register.execute({ email: 'new@example.com', password: 'short' }),
     (error) => error.code === 'INVALID_PASSWORD_LENGTH'
   );
 }
@@ -120,7 +120,7 @@ assert.deepEqual(filterAndSortWords(sourceWords, { sort: 'due' }).map((word) => 
   const query = new GetLeitnerHouseQuery({ gateway });
   assert.deepEqual(await query.execute('2'), { house: { number: 2 }, summary: { totalWords: 0 }, words: [] });
   assert.deepEqual(calls, [2]);
-  await assert.rejects(query.execute('9'), (error) => error.code === 'INVALID_LEITNER_HOUSE');
+  assert.throws(() => query.execute('9'), (error) => error.code === 'INVALID_LEITNER_HOUSE');
 }
 
 {
