@@ -1,0 +1,34 @@
+name: Generate Material Web Lock
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/generate-material-web-lock.yml'
+      - 'ui/package.json'
+      - 'ui/package-lock.json'
+
+permissions:
+  contents: read
+
+jobs:
+  generate-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Generate exact Material Web lock
+        working-directory: ui
+        run: |
+          npm install --save-exact @material/web@2.5.0
+          npm install --save-dev --save-exact rollup@4.63.1 @rollup/plugin-node-resolve@16.0.3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: material-web-lock
+          path: |
+            ui/package.json
+            ui/package-lock.json
+          if-no-files-found: error
