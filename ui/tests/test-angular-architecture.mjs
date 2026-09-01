@@ -37,6 +37,7 @@ for (const required of [
 const pkg = JSON.parse(read('package.json'));
 assert.equal(pkg.dependencies['@angular/material'], '22.1.4');
 assert.equal(pkg.dependencies['@angular/cdk'], '22.1.4');
+assert.equal(pkg.dependencies.bootstrap, '5.3.8', 'Bootstrap CSS must stay pinned to the approved version.');
 assert.match(pkg.scripts.test, /check:architecture.*ng test/u);
 assert.match(pkg.scripts.e2e, /playwright test/u);
 assert.match(pkg.scripts['build:production'], /ng build/u);
@@ -56,6 +57,9 @@ assert.equal(build.options.browser, 'src/main.ts');
 assert.ok(build.options.assets.some((asset) => asset.input === 'assets'));
 assert.ok(build.options.assets.some((asset) => asset.input === 'data'));
 assert.ok(build.options.assets.some((asset) => asset.input === 'fonts'));
+const bootstrapCss = 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+assert.ok(build.options.styles.includes(bootstrapCss), 'Bootstrap CSS must be loaded globally by Angular.');
+assert.ok(build.options.styles.indexOf(bootstrapCss) < build.options.styles.indexOf('src/styles.scss'), 'Project styles must load after Bootstrap so application overrides keep precedence.');
 
 const theme = read('src/styles.scss');
 assert.match(theme, /@use ['"]@angular\/material['"] as mat/u);
