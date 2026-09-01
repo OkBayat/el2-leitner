@@ -97,6 +97,11 @@ const leitnerCss = read('src/features/leitner-house/presentation/leitner-house.c
 for (const role of ['--md-sys-color-error-container', '--md-sys-color-primary-container', '--md-sys-color-outline-variant', '--md-sys-color-on-surface-variant']) {
   assert.match(leitnerCss, new RegExp(role), `Leitner feature states must consume ${role}.`);
 }
+assert.match(
+  leitnerCss,
+  /\.leitner-house-controls\s+\.leitner-house-search-wrap\s+input\s*\{/u,
+  'The wrapped search input needs enough specificity to remain a single Material field when the design system loads last.'
+);
 
 const packageJson = JSON.parse(read('package.json'));
 assert.equal(packageJson.dependencies, undefined, 'The frontend foundation must stay dependency-free until a concrete dependency is justified.');
