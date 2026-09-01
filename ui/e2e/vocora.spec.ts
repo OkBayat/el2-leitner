@@ -1,11 +1,29 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+const ADMIN_EMAIL = 'e2e-admin@example.com';
+const ADMIN_PASSWORD = 'password123';
+
+async function authenticateAdmin(page: Page): Promise<void> {
+  await page.goto('/register');
+  await page.getByLabel('ایمیل').fill(ADMIN_EMAIL);
+  await page.getByLabel('رمز عبور').fill(ADMIN_PASSWORD);
+  await page.getByRole('button', { name: 'ساخت حساب' }).click();
+
+  const registered = await page.waitForURL(/\/dashboard$/u, { timeout: 4_000 })
+    .then(() => true)
+    .catch(() => false);
+  if (!registered) {
+    await expect(page.getByRole('alert')).toContainText('already registered');
+    await page.goto('/login');
+    await page.getByLabel('ایمیل').fill(ADMIN_EMAIL);
+    await page.getByLabel('رمز عبور').fill(ADMIN_PASSWORD);
+    await page.getByRole('button', { name: 'ورود به Vocora' }).click();
+  }
+  await expect(page).toHaveURL(/\/dashboard$/u);
+}
 
 test('Angular Material app preserves the complete learner and library flow', async ({ page }) => {
-  await page.goto('/register');
-  await page.getByLabel('ایمیل').fill('e2e-admin@example.com');
-  await page.getByLabel('رمز عبور').fill('password123');
-  await page.getByRole('button', { name: 'ساخت حساب' }).click();
-  await expect(page).toHaveURL(/\/dashboard$/u);
+  await authenticateAdmin(page);
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('برنامهٔ امروز')).toBeVisible();
 
