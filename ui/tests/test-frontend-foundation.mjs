@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import { ApiError, HttpClient } from '../src/shared/http/HttpClient.js';
 import { resolveSafeReturnTo } from '../src/shared/navigation/SafeReturnTo.js';
 import { GetCurrentUserQuery, LoginCommand, RegisterCommand } from '../src/features/auth/application/AuthCommands.js';
-import { GetLeitnerHouseQuery } from '../src/features/leitner-house/application/GetLeitnerHouse.js';
-import { filterAndSortWords, formatRelativeDue, parseLeitnerHouse } from '../src/features/leitner-house/domain/LeitnerHouse.js';
+import { GetLeitnerHouseQuery, filterAndSortWords } from '../src/features/leitner-house/application/GetLeitnerHouse.js';
+import { parseLeitnerHouse } from '../src/features/leitner-house/domain/LeitnerHouse.js';
+import { formatRelativeDue } from '../src/features/leitner-house/presentation/LeitnerHousePage.js';
 
 function response(status, payload = null) {
   return {
