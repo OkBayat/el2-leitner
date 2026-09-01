@@ -21,6 +21,20 @@ describe('same-session spelling remediation regressions', () => {
     expect(selectClosestAccepted('center', ['centre', 'center'])).toBe('center');
   });
 
+  it('preserves the legacy main comparison tokens for correct, changed, missing, and extra letters', () => {
+    const replacement = buildSpellingComparison('definate', 'definite');
+    expect(replacement.answerTokens.find((token) => token.value === 'a')).toEqual({ value: 'a', status: 'changed' });
+    expect(replacement.targetTokens.find((token) => token.value === 'i')).toEqual({ value: 'i', status: 'changed' });
+    expect(replacement.answerTokens.some((token) => token.status === 'correct')).toBe(true);
+    expect(replacement.targetTokens.some((token) => token.status === 'correct')).toBe(true);
+
+    const missing = buildSpellingComparison('enviroment', 'environment');
+    expect(missing.targetTokens.find((token) => token.status === 'missing')).toEqual({ value: 'n', status: 'missing' });
+
+    const extra = buildSpellingComparison('environmentt', 'environment');
+    expect(extra.answerTokens.at(-1)).toEqual({ value: 't', status: 'extra' });
+  });
+
   it('enforces correction, hidden recall, copy and final recall', () => {
     const policy = new SameSessionRecheckPolicy(3, 1, 2);
     const attempt = RemediationAttempt.immediate({ wordId: 'environment', accepted: ['environment'], initialAnswer: 'enviroment', policy, now: () => '2026-07-16T10:00:00.000Z' });
