@@ -6,6 +6,7 @@ import { JSDOM } from 'jsdom';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDir, '..');
+const repoRoot = path.resolve(uiRoot, '..');
 const srcRoot = path.join(uiRoot, 'src');
 const read = (relativePath) => fs.readFileSync(path.join(uiRoot, relativePath), 'utf8');
 
@@ -15,11 +16,13 @@ const requiredFiles = [
   'src/features/auth/application/AuthCommands.js',
   'src/features/auth/infrastructure/AuthHttpGateway.js',
   'src/features/auth/presentation/AuthPage.js',
+  'src/features/auth/presentation/auth.css',
   'src/features/auth/index.js',
   'src/features/leitner-house/domain/LeitnerHouse.js',
   'src/features/leitner-house/application/GetLeitnerHouse.js',
   'src/features/leitner-house/infrastructure/LeitnerHouseHttpGateway.js',
   'src/features/leitner-house/presentation/LeitnerHousePage.js',
+  'src/features/leitner-house/presentation/leitner-house.css',
   'src/features/leitner-house/index.js',
   'src/design-system/material3.css'
 ];
@@ -27,12 +30,12 @@ for (const file of requiredFiles) {
   assert.ok(fs.existsSync(path.join(uiRoot, file)), `${file} must exist.`);
 }
 
-for (const obsolete of ['auth.js', 'leitner-house.js', 'material3.css']) {
-  assert.equal(
-    fs.existsSync(path.join(uiRoot, obsolete)),
-    false,
-    `${obsolete} must be removed after its owner moves into src/.`
-  );
+for (const documentation of ['AGENTS.md', 'docs/FRONTEND_ARCHITECTURE.md']) {
+  assert.ok(fs.existsSync(path.join(repoRoot, documentation)), `${documentation} must document the enforced architecture.`);
+}
+
+for (const obsolete of ['auth.js', 'auth.css', 'leitner-house.js', 'leitner-house.css', 'material3.css']) {
+  assert.equal(fs.existsSync(path.join(uiRoot, obsolete)), false, `${obsolete} must be removed after its owner moves into src/.`);
 }
 
 const pageContracts = [
@@ -68,9 +71,7 @@ const allowedRootScripts = new Set([
   'vocabulary.js',
   'word-collections.js'
 ]);
-const rootScripts = fs.readdirSync(uiRoot)
-  .filter((name) => name.endsWith('.js'))
-  .sort();
+const rootScripts = fs.readdirSync(uiRoot).filter((name) => name.endsWith('.js')).sort();
 assert.deepEqual(rootScripts, [...allowedRootScripts].sort(), 'New feature JavaScript must live under src/, not grow the legacy root surface.');
 
 function walk(directory) {
@@ -88,34 +89,22 @@ const imports = (source) => [...source.matchAll(/(?:import|export)\s+(?:[^'";]+?
 
 for (const file of walk(srcRoot)) {
   const relative = path.relative(uiRoot, file).replaceAll(path.sep, '/');
-  const source = fs.readFileSync(file, 'utf8');
-  const specs = imports(source);
+  const specs = imports(fs.readFileSync(file, 'utf8'));
 
   if (relative.includes('/domain/')) {
-    for (const spec of specs) {
-      assert.doesNotMatch(spec, /\/(?:application|infrastructure|presentation)\//u, `${relative}: domain must not depend outward.`);
-    }
+    for (const spec of specs) assert.doesNotMatch(spec, /\/(?:application|infrastructure|presentation)\//u, `${relative}: domain must not depend outward.`);
   }
   if (relative.includes('/application/')) {
-    for (const spec of specs) {
-      assert.doesNotMatch(spec, /\/(?:infrastructure|presentation)\//u, `${relative}: application must not depend on infrastructure/presentation.`);
-    }
+    for (const spec of specs) assert.doesNotMatch(spec, /\/(?:infrastructure|presentation)\//u, `${relative}: application must not depend on infrastructure/presentation.`);
   }
   if (relative.includes('/infrastructure/')) {
-    for (const spec of specs) {
-      assert.doesNotMatch(spec, /\/presentation\//u, `${relative}: infrastructure must not depend on presentation.`);
-    }
+    for (const spec of specs) assert.doesNotMatch(spec, /\/presentation\//u, `${relative}: infrastructure must not depend on presentation.`);
   }
   if (relative.includes('/presentation/')) {
-    for (const spec of specs) {
-      assert.doesNotMatch(spec, /\/infrastructure\//u, `${relative}: presentation must receive dependencies instead of constructing infrastructure.`);
-    }
+    for (const spec of specs) assert.doesNotMatch(spec, /\/infrastructure\//u, `${relative}: presentation must receive dependencies instead of constructing infrastructure.`);
   }
-
   if (relative.startsWith('src/shared/')) {
-    for (const spec of specs) {
-      assert.doesNotMatch(spec, /features\//u, `${relative}: shared code must not depend on a feature.`);
-    }
+    for (const spec of specs) assert.doesNotMatch(spec, /features\//u, `${relative}: shared code must not depend on a feature.`);
   }
 }
 
