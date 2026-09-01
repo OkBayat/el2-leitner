@@ -2,6 +2,7 @@
   "name": "vocora-ui",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "description": "Authenticated vocabulary learning client for Vocora",
   "scripts": {
     "build:data": "node tools/build-vocabulary.mjs data/IELTS_Listening_Core_1500.md vocabulary.js",
