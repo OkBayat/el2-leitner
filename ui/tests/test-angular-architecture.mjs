@@ -27,6 +27,7 @@ for (const required of [
   'src/app/application/review/review-session.service.ts',
   'src/app/features/auth/login-page.component.ts', 'src/app/features/auth/register-page.component.ts',
   'src/app/features/dashboard/dashboard-page.component.ts', 'src/app/features/review/review-page.component.ts',
+  'src/app/features/review/review-page.component.html', 'src/app/features/review/review-page.component.scss',
   'src/app/features/words/words-page.component.ts', 'src/app/features/reports/reports-page.component.ts',
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
@@ -97,12 +98,14 @@ for (const [name, source] of userFacingSources) {
 }
 
 const reviewPage = read('src/app/features/review/review-page.component.ts');
-assert.match(reviewPage, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
+const reviewTemplate = read('src/app/features/review/review-page.component.html');
+const reviewStyles = read('src/app/features/review/review-page.component.scss');
+assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
-assert.match(reviewPage, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
-assert.match(reviewPage, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
-assert.match(reviewPage, /min-height:100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
-assert.match(reviewPage, /@media\(max-width:600px\)/u, 'Review layout must have a dedicated mobile presentation.');
+assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
+assert.match(reviewTemplate, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
+assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
+assert.match(reviewStyles, /@media\(max-width:\s*600px\)/u, 'Review layout must have a dedicated mobile presentation.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 for (const materialModule of ['MatButtonModule', 'MatCardModule', 'MatFormFieldModule', 'MatInputModule', 'MatSelectModule', 'MatDialogModule', 'MatTableModule']) {
