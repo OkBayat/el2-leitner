@@ -48,6 +48,18 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
   await expect(page.getByText("Today's plan")).toBeVisible();
 
+  const houseStatus = page.getByTestId('house-status');
+  await expect(houseStatus).toBeVisible();
+  await expect(houseStatus.locator('mat-progress-bar')).toHaveCount(0);
+  const houseRows = houseStatus.locator('.leitner-row');
+  await expect(houseRows).toHaveCount(5);
+  for (const [index, expectedSegments] of [1, 2, 3, 7, 14].entries()) {
+    await expect(houseRows.nth(index).locator('.leitner-segment')).toHaveCount(expectedSegments);
+  }
+  const segmentWidths = await houseRows.locator('.leitner-segments').evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().width));
+  expect(segmentWidths).toHaveLength(5);
+  for (let index = 1; index < segmentWidths.length; index += 1) expect(segmentWidths[index]).toBeGreaterThan(segmentWidths[index - 1]);
+
   await page.goto('/words');
   await expect(page.getByRole('heading', { name: 'Word Bank' })).toBeVisible();
   await page.getByLabel('Search').fill('Monday');
