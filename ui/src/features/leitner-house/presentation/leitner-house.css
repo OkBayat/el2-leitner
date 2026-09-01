@@ -1,4 +1,4 @@
-/* Feature layout and feature-specific states. Visual values come only from Material roles. */
+/* Feature layout and feature-specific states. Standard controls are Material Web components. */
 .leitner-house-main { min-width: 0; }
 
 .leitner-house-main .nav-item,
@@ -15,18 +15,7 @@
 }
 
 .leitner-house-heading h1 { margin: 0; }
-
-.leitner-house-back {
-  display: inline-grid;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  place-items: center;
-  font: inherit;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-}
+.leitner-house-back { flex: 0 0 auto; }
 
 .leitner-house-content {
   display: grid;
@@ -139,60 +128,22 @@
 
 .leitner-house-controls {
   display: flex;
-  min-width: min(100%, 500px);
+  width: min(100%, 560px);
+  min-width: 0;
   align-items: center;
   gap: 9px;
 }
 
-.leitner-house-search-wrap {
-  display: flex;
+.leitner-house-controls md-outlined-text-field {
   min-width: 0;
-  flex: 1 1 300px;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid var(--md-sys-color-outline);
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface-container-highest);
-  padding-inline: 11px;
+  flex: 1 1 330px;
 }
 
-.leitner-house-search-wrap:focus-within {
-  border-color: var(--md-sys-color-primary);
-  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
+.leitner-house-controls md-outlined-select {
+  width: 190px;
+  flex: 0 0 190px;
 }
 
-.leitner-house-search-wrap > span[aria-hidden="true"] {
-  flex: 0 0 auto;
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 18px;
-}
-
-.leitner-house-controls input,
-.leitner-house-controls select {
-  min-height: 44px;
-  font: inherit;
-  font-size: 12px;
-}
-
-.leitner-house-controls .leitner-house-search-wrap input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  border-radius: 0;
-  outline: none;
-  background: transparent;
-  color: var(--md-sys-color-on-surface);
-  padding: 0;
-  box-shadow: none;
-}
-
-.leitner-house-controls .leitner-house-search-wrap input:focus {
-  border: 0;
-  box-shadow: none;
-}
-
-.leitner-house-sort-wrap { flex: 0 0 175px; }
-.leitner-house-sort-wrap select { width: 100%; padding: 0 11px; }
 .leitner-house-table-wrap { width: 100%; overflow-x: auto; }
 
 .leitner-house-table {
@@ -274,7 +225,7 @@
   .leitner-house-info { grid-template-columns: 1fr; }
   .leitner-house-meta { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .leitner-house-list-head { align-items: stretch; flex-direction: column; }
-  .leitner-house-controls { width: 100%; min-width: 0; }
+  .leitner-house-controls { width: 100%; }
 }
 
 @media (max-width: 680px) {
@@ -283,12 +234,15 @@
   .leitner-house-list-head { padding: 15px; }
   .leitner-house-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .leitner-house-controls { align-items: stretch; flex-direction: column; }
-  .leitner-house-sort-wrap { flex-basis: auto; }
+  .leitner-house-controls md-outlined-text-field,
+  .leitner-house-controls md-outlined-select {
+    width: 100%;
+    flex: 1 1 auto;
+  }
 }
 
 @media (max-width: 430px) {
   .leitner-house-heading { gap: 8px; }
-  .leitner-house-back { width: 42px; height: 42px; flex-basis: 42px; }
   .leitner-house-meta { grid-template-columns: 1fr 1fr; gap: 7px; }
   .leitner-house-meta > div { padding: 9px 10px; }
 }
