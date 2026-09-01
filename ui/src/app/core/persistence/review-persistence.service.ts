@@ -21,7 +21,7 @@ export class ReviewPersistenceService {
         return response.revision;
       } catch (error) {
         lastError = error;
-        const transient = error instanceof ApiError && (error.status === 408 || error.status === 425 || error.status >= 500);
+        const transient = error instanceof ApiError && (error.status === 0 || error.status === 408 || error.status === 425 || error.status >= 500);
         if (!transient || attempt === RETRY_DELAYS_MS.length - 1) throw error;
       }
     }
