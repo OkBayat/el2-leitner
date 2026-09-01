@@ -105,7 +105,14 @@ assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must o
 assert.match(reviewTemplate, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
 assert.match(reviewTemplate, /data-testid="review-action-footer"/u, 'Review actions and feedback must share one stable bottom footer surface.');
 assert.match(reviewTemplate, /form="review-answer-form"/u, 'The bottom Check answer action must submit the review form without moving into the content stage.');
+assert.match(reviewTemplate, /form="remediation-answer-form"/u, 'Retry Check must use the same bottom-action pattern instead of an inline content button.');
 assert.match(reviewTemplate, /Correct solution:/u, 'Wrong-answer footer must expose the accepted solution.');
+assert.equal(reviewTemplate.match(/class="review-answer-form"/gu)?.length, 2, 'Initial and remediation answers must share one form class.');
+assert.equal(reviewTemplate.match(/class="review-answer-field"/gu)?.length, 2, 'Initial and remediation answers must share one Material field class.');
+assert.equal(reviewTemplate.match(/class="review-answer-input"/gu)?.length, 2, 'Initial and remediation answers must share one input class.');
+assert.equal(reviewTemplate.match(/autocapitalize="none"/gu)?.length, 2, 'All spelling inputs must disable mobile auto-capitalization.');
+assert.equal(reviewTemplate.match(/autocorrect="off"/gu)?.length, 2, 'All spelling inputs must disable mobile auto-correction.');
+assert.equal(reviewTemplate.match(/spellcheck="false"/gu)?.length, 2, 'All spelling inputs must disable browser spellcheck assistance.');
 assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
 assert.match(reviewStyles, /\.review-action-footer\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*0;/u, 'Review footer must stay fixed to the viewport bottom.');
 assert.match(reviewStyles, /border-top:\s*2px solid var\(--review-footer-border\)/u, 'Neutral review actions must be separated from content by a full-width top divider.');
@@ -113,6 +120,9 @@ assert.match(reviewStyles, /--review-success-background:\s*#d7ffb8/u, 'Correct f
 assert.match(reviewStyles, /--review-success-action:\s*#58cc02/u, 'Correct feedback must use the approved green primary action.');
 assert.match(reviewStyles, /--review-error-background:\s*#ffdfe0/u, 'Wrong feedback must use the approved light-red footer background.');
 assert.match(reviewStyles, /--review-error-action:\s*#ff4b4b/u, 'Wrong feedback must use the approved red primary action.');
+assert.match(reviewStyles, /--review-practice-background:\s*#fff4cc/u, 'Recall/copy remediation must replace the error state with the approved yellow footer.');
+assert.match(reviewStyles, /--review-practice-action:\s*#ffc800/u, 'Recall/copy remediation must keep one shared yellow primary action treatment.');
+assert.doesNotMatch(reviewStyles, /\.footer-primary|\.footer-secondary|\.neutral-action-inner|\.feedback-action-inner/u, 'Review controls must not reintroduce duplicate legacy footer classes.');
 assert.match(reviewStyles, /@media\(max-width:\s*600px\)/u, 'Review layout must have a dedicated mobile presentation.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
