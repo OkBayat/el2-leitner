@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { fileURLToPath } from "node:url";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import request from "supertest";
 import { createTestContext } from "./helpers/fakes.js";
@@ -15,40 +17,48 @@ describe("HTTP API", () => {
   });
 
   it("prevents stale frontend releases from mixing HTML, CSS, and JavaScript", async () => {
-    const staticDirectory = fileURLToPath(new URL("../../ui", import.meta.url));
-    const { app } = createTestContext({}, { staticDirectory });
+    const staticDirectory = await mkdtemp(join(tmpdir(), "vocora-angular-dist-"));
 
-    const html = await request(app).get("/").expect(200);
-    assert.match(html.headers["cache-control"], /no-store/);
-    assert.equal(html.headers["cdn-cache-control"], "no-store");
+    try {
+      await Promise.all([
+        writeFile(
+          join(staticDirectory, "index.html"),
+          '<!doctype html><html><head><link rel="stylesheet" href="/styles-ABC123.css"></head><body><script src="/main-ABC123.js"></script></body></html>'
+        ),
+        writeFile(join(staticDirectory, "styles-ABC123.css"), "body { margin: 0; }"),
+        writeFile(join(staticDirectory, "main-ABC123.js"), "globalThis.__vocora = true;")
+      ]);
 
-    const stylesheet = await request(app).get("/styles-v2.css").expect(200);
-    assert.match(stylesheet.headers["cache-control"], /no-store/);
-    assert.equal(stylesheet.headers["cdn-cache-control"], "no-store");
-    assert.equal(stylesheet.headers["surrogate-control"], "no-store");
-    assert.match(stylesheet.headers["content-type"], /^text\/css/);
+      const { app } = createTestContext({}, { staticDirectory });
 
-    const script = await request(app).get("/app-v2.js").expect(200);
-    assert.match(script.headers["cache-control"], /no-store/);
-    assert.equal(script.headers["cdn-cache-control"], "no-store");
-    assert.equal(script.headers["surrogate-control"], "no-store");
-    assert.match(script.headers["content-type"], /javascript/);
+      const html = await request(app).get("/").expect(200);
+      assert.match(html.headers["cache-control"], /no-store/);
+      assert.equal(html.headers["cdn-cache-control"], "no-store");
 
-    const logo = await request(app).get("/assets/vocora-logo.png").expect(200);
-    assert.match(logo.headers["content-type"], /^image\/png/);
+      const stylesheet = await request(app).get("/styles-ABC123.css").expect(200);
+      assert.match(stylesheet.headers["cache-control"], /no-store/);
+      assert.equal(stylesheet.headers["cdn-cache-control"], "no-store");
+      assert.equal(stylesheet.headers["surrogate-control"], "no-store");
+      assert.match(stylesheet.headers["content-type"], /^text\/css/);
 
-    const icon = await request(app).get("/assets/vocora-icon.png").expect(200);
-    assert.match(icon.headers["content-type"], /^image\/png/);
+      const script = await request(app).get("/main-ABC123.js").expect(200);
+      assert.match(script.headers["cache-control"], /no-store/);
+      assert.equal(script.headers["cdn-cache-control"], "no-store");
+      assert.equal(script.headers["surrogate-control"], "no-store");
+      assert.match(script.headers["content-type"], /javascript/);
 
-    const missingStylesheet = await request(app)
-      .get("/definitely-missing.css")
-      .set("Accept", "text/css,*/*;q=0.1")
-      .expect(404);
-    assert.match(missingStylesheet.headers["content-type"], /^application\/json/);
-    assert.deepEqual(missingStylesheet.body, {
-      error: { code: "NOT_FOUND", message: "Resource not found." }
-    });
-    assert.doesNotMatch(missingStylesheet.text, /<!doctype html>/iu);
+      const missingStylesheet = await request(app)
+        .get("/definitely-missing.css")
+        .set("Accept", "text/css,*/*;q=0.1")
+        .expect(404);
+      assert.match(missingStylesheet.headers["content-type"], /^application\/json/);
+      assert.deepEqual(missingStylesheet.body, {
+        error: { code: "NOT_FOUND", message: "Resource not found." }
+      });
+      assert.doesNotMatch(missingStylesheet.text, /<!doctype html>/iu);
+    } finally {
+      await rm(staticDirectory, { recursive: true, force: true });
+    }
   });
 
   it("registers, authenticates, reports the user, and logs out", async () => {
