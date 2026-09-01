@@ -1,4 +1,4 @@
-/* Feature layout only. Material visual roles are owned by the shared design system. */
+/* Feature layout and feature-specific states. Visual values come only from Material roles. */
 .leitner-house-main { min-width: 0; }
 
 .leitner-house-main .nav-item,
@@ -35,6 +35,10 @@
 }
 
 .leitner-house-message {
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 28%, var(--md-sys-color-outline-variant));
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
   padding: 14px 16px;
   font-size: 13px;
   line-height: 1.8;
@@ -54,6 +58,9 @@
   display: inline-flex;
   min-height: 30px;
   align-items: center;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
   padding: 5px 11px;
   font-size: 11px;
   font-weight: 750;
@@ -61,11 +68,13 @@
 
 .leitner-house-info-copy h2 {
   margin: 12px 0 5px;
+  color: var(--md-sys-color-on-surface);
   font-size: clamp(18px, 2vw, 25px);
 }
 
 .leitner-house-info-copy p {
   margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 12px;
   line-height: 1.8;
 }
@@ -80,11 +89,15 @@
 
 .leitner-house-meta > div {
   min-width: 0;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-surface-container-low);
   padding: 11px 12px;
 }
 
 .leitner-house-meta dt {
   overflow: hidden;
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -92,6 +105,7 @@
 
 .leitner-house-meta dd {
   margin: 6px 0 0;
+  color: var(--md-sys-color-on-surface);
   font-size: 17px;
   font-weight: 800;
 }
@@ -107,16 +121,19 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 18px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   padding: 19px 20px 15px;
 }
 
 .leitner-house-list-head h2 {
   margin: 0;
+  color: var(--md-sys-color-on-surface);
   font-size: 16px;
 }
 
 .leitner-house-list-head p {
   margin: 4px 0 0;
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 11px;
 }
 
@@ -133,11 +150,20 @@
   flex: 1 1 300px;
   align-items: center;
   gap: 7px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background: var(--md-sys-color-surface-container-highest);
   padding-inline: 11px;
+}
+
+.leitner-house-search-wrap:focus-within {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
 }
 
 .leitner-house-search-wrap > span[aria-hidden="true"] {
   flex: 0 0 auto;
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 18px;
 }
 
@@ -155,7 +181,9 @@
   border-radius: 0;
   outline: none;
   background: transparent;
+  color: var(--md-sys-color-on-surface);
   padding: 0;
+  box-shadow: none;
 }
 
 .leitner-house-sort-wrap { flex: 0 0 175px; }
@@ -182,6 +210,10 @@
   white-space: nowrap;
 }
 
+.leitner-house-table tbody tr:hover td {
+  background: var(--md-sys-color-surface-container-low);
+}
+
 .leitner-house-word {
   display: grid;
   gap: 3px;
@@ -190,12 +222,16 @@
 }
 
 .leitner-house-word strong {
+  color: var(--md-sys-color-on-surface);
   font-size: 13px;
   font-weight: 750;
 }
 
 .leitner-house-word small,
-.leitner-house-secondary { font-size: 10px; }
+.leitner-house-secondary {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 10px;
+}
 
 .leitner-house-mistakes {
   display: inline-flex;
@@ -203,6 +239,9 @@
   min-height: 26px;
   align-items: center;
   justify-content: center;
+  border-radius: var(--md-sys-shape-corner-small);
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
   padding: 3px 7px;
   font-weight: 750;
 }
@@ -211,6 +250,9 @@
   display: inline-flex;
   min-height: 27px;
   align-items: center;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
   padding: 4px 9px;
   font-size: 10px;
   font-weight: 650;
@@ -218,6 +260,7 @@
 }
 
 .leitner-house-empty {
+  color: var(--md-sys-color-on-surface-variant);
   padding: 42px 20px !important;
   text-align: center !important;
 }
