@@ -3,6 +3,8 @@ import { GetCurrentUserQuery, LoginCommand, RegisterCommand } from './applicatio
 import { AuthHttpGateway } from './infrastructure/AuthHttpGateway.js';
 import { AuthPage } from './presentation/AuthPage.js';
 
+const MATERIAL_TAGS = ['md-outlined-text-field', 'md-filled-button'];
+
 export function createAuthPage({
   windowObject = globalThis.window,
   documentObject = globalThis.document,
@@ -23,8 +25,16 @@ export function createAuthPage({
   });
 }
 
+async function waitForMaterial(windowObject) {
+  const registry = windowObject?.customElements;
+  if (!registry?.whenDefined) return;
+  await Promise.all(MATERIAL_TAGS.map((tag) => registry.whenDefined(tag)));
+}
+
 export async function bootAuth(options = {}) {
-  const page = createAuthPage(options).mount();
+  const windowObject = options.windowObject ?? globalThis.window;
+  await waitForMaterial(windowObject);
+  const page = createAuthPage({ ...options, windowObject }).mount();
   await page.checkExistingSession();
   return page;
 }
