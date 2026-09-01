@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.23.2
           cache: npm
           cache-dependency-path: ${{ matrix.component }}/package-lock.json
       - run: npm ci
@@ -76,12 +76,11 @@ jobs:
           test "$IELTS_UNIQUE" -gt 0
           test "$IELTS_UNIQUE" -le 1500
 
-          # Reproduce defaultState() from the browser: all 1500 source items are submitted once,
-          # then the normalized persistence layer collapses equivalent aliases to shared identities.
+          # Reproduce the Angular fresh state from the same markdown source used by CatalogService,
+          # then let normalized persistence collapse equivalent aliases to shared identities.
           node --input-type=module > /tmp/admin-save.json <<'NODE'
-          globalThis.window = {};
-          await import('./ui/vocabulary.js');
-          const words = window.IELTS_CORE_WORDS.map((source, index) => ({
+          const { loadCoreVocabulary } = await import('./ui/tools/ci-vocabulary.mjs');
+          const words = loadCoreVocabulary().map((source, index) => ({
             id: `ci-source-${index + 1}`,
             number: source.number || index + 1,
             term: source.term,
