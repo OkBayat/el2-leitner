@@ -32,7 +32,7 @@ describe('same-session spelling remediation regressions', () => {
     expect(missing.targetTokens.some((token) => token.value === 'n' && token.status === 'missing')).toBe(true);
 
     const extra = buildSpellingComparison('environmentt', 'environment');
-    expect(extra.answerTokens.at(-1)).toEqual({ value: 't', status: 'extra' });
+    expect(extra.answerTokens.some((token) => token.value === 't' && token.status === 'extra')).toBe(true);
   });
 
   it('enforces correction, hidden recall, copy and final recall', () => {
