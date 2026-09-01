@@ -20,20 +20,25 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
     await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
+  await expect(page.getByText("Today's plan")).toBeVisible({ timeout: 10_000 });
 }
 
 async function firstDueTerm(page: Page): Promise<string> {
-  const term = await page.evaluate(async () => {
-    const response = await fetch('/api/state', { credentials: 'include' });
-    const payload = await response.json();
-    const today = new Date().toLocaleDateString('en-CA');
-    const due = payload.state.words
-      .filter((word: any) => word.box > 0 && !word.masteredAt && word.due && word.due <= today && (!word.blockedUntil || word.blockedUntil <= today))
-      .sort((a: any, b: any) => String(a.due).localeCompare(String(b.due)) || b.mistakes - a.mistakes || a.number - b.number);
-    return due[0]?.term as string | undefined;
-  });
-  expect(term).toBeTruthy();
-  return term!;
+  let term = '';
+  await expect.poll(async () => {
+    term = await page.evaluate(async () => {
+      const response = await fetch('/api/state', { credentials: 'include' });
+      const payload = await response.json();
+      const words = Array.isArray(payload.state?.words) ? payload.state.words : [];
+      const today = new Date().toLocaleDateString('en-CA');
+      const due = words
+        .filter((word: any) => word.box > 0 && !word.masteredAt && word.due && word.due <= today && (!word.blockedUntil || word.blockedUntil <= today))
+        .sort((a: any, b: any) => String(a.due).localeCompare(String(b.due)) || b.mistakes - a.mistakes || a.number - b.number);
+      return String(due[0]?.term || '');
+    });
+    return term;
+  }, { timeout: 10_000, message: 'learner state should expose at least one due review card' }).not.toBe('');
+  return term;
 }
 
 test('English LTR Angular app preserves the complete learner and library flow', async ({ page }) => {
