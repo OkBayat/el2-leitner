@@ -50,13 +50,16 @@ ui/src/features/<feature>/
 
 Cross-feature primitives belong in `ui/src/shared/`. The visual system belongs in `ui/src/design-system/`.
 
-The existing root-level frontend scripts are legacy migration surfaces. New features must not add new root-level JavaScript files. When a legacy feature is migrated, delete the previous owner after its regression suite passes against the new implementation.
+The existing root-level frontend scripts are legacy migration surfaces. New features must not add new root-level feature JavaScript files. Build configuration may live at the UI root. When a legacy feature is migrated, delete the previous owner after its regression suite passes against the new implementation.
 
-## 8. Material 3
-- Material 3 is a presentation concern only.
-- `ui/src/design-system/material3.css` owns shared visual roles and states.
-- Feature CSS owns feature layout, not a second palette.
-- Do not add Material JavaScript/runtime dependencies unless a concrete component need justifies the cost and is covered by tests.
+## 8. Material 3 / Material Web
+- Standard controls in migrated and new features use the official `@material/web` components instead of recreating buttons, text fields, selects, checkboxes, or similar primitives with local CSS.
+- Import only the Material components actually used through `ui/src/material-web.js`; do not use `@material/web/all.js` without a measured reason.
+- `ui/src/design-system/material3.css` owns Vocora Material 3 theme roles, shared visual tokens, and temporary compatibility styling for legacy surfaces.
+- Feature CSS owns layout and feature-specific composite states. It must not create a second color palette or reimplement Material primitive internals.
+- Material Web is bundled for production with Rollup into `ui/dist/material-web.js`. `ui/dist/` is generated output and is not committed.
+- CI and Docker must build the bundle from the pinned dependency lock before serving or testing it.
+- Legacy native controls may remain only until their owning feature is migrated with regression coverage; do not add new legacy primitive styling.
 
 ## 9. Definition of done
 A change is not done until:
