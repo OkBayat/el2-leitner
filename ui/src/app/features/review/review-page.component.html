@@ -72,24 +72,6 @@
 						<button mat-button (click)="session.pronounce(.7)">Slower</button>
 					</div>
 
-					@if (session.currentTask() === 'review' && !session.remediation()) {
-						<form class="review-answer-form" (submit)="$event.preventDefault(); submit()">
-							<mat-form-field class="review-answer-field" appearance="outline">
-								<mat-label>Your answer</mat-label>
-								<input
-									#answerInput
-									class="review-answer-input"
-									matInput
-									[formControl]="answer"
-									lang="en"
-									autocomplete="off"
-									autocapitalize="none"
-									autocorrect="off"
-									spellcheck="false">
-							</mat-form-field>
-						</form>
-					}
-
 					@if (session.remediation(); as remediation) {
 						@if (remediation.phase !== Phase.COMPLETED) {
 							<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
@@ -128,26 +110,26 @@
 									</div>
 								</div>
 							}
-
-							@if (remediation.phase !== Phase.CORRECTION) {
-								<form class="review-answer-form mt-4"
-								      (submit)="$event.preventDefault(); submitRemediation()">
-									<mat-form-field class="review-answer-field" appearance="outline">
-										<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
-										<input
-											#remediationInput
-											class="review-answer-input"
-											matInput
-											[formControl]="remediationAnswer"
-											lang="en"
-											autocomplete="off"
-											autocapitalize="none"
-											autocorrect="off"
-											spellcheck="false">
-									</mat-form-field>
-								</form>
-							}
 						}
+					}
+
+					@if (answerFieldState(); as field) {
+						<form class="review-answer-form" (submit)="$event.preventDefault(); submitAnswer()">
+							<mat-form-field class="review-answer-field" appearance="outline">
+								<mat-label>{{ field.label }}</mat-label>
+								<input
+									#answerInput
+									class="review-answer-input"
+									data-testid="review-answer-input"
+									matInput
+									[formControl]="answer"
+									lang="en"
+									autocomplete="off"
+									autocapitalize="none"
+									autocorrect="off"
+									spellcheck="false">
+							</mat-form-field>
+						</form>
 					}
 				</article>
 			</main>
