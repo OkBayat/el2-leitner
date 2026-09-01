@@ -65,14 +65,26 @@
 						<button mat-fab extended (click)="session.pronounce()">▶ Play pronunciation</button>
 						<button mat-button (click)="session.pronounce(.7)">Slower</button>
 					</div>
+
 					@if (session.currentTask() === 'review' && !session.feedback()) {
-						<form id="review-answer-form" (submit)="$event.preventDefault(); submit()" class="answer-form">
-							<mat-form-field appearance="outline">
+						<form id="review-answer-form" class="review-answer-form"
+						      (submit)="$event.preventDefault(); submit()">
+							<mat-form-field class="review-answer-field" appearance="outline">
 								<mat-label>Your answer</mat-label>
-								<input #answerInput matInput [formControl]="answer" lang="en" autocomplete="off">
+								<input
+									#answerInput
+									class="review-answer-input"
+									matInput
+									[formControl]="answer"
+									lang="en"
+									autocomplete="off"
+									autocapitalize="none"
+									autocorrect="off"
+									spellcheck="false">
 							</mat-form-field>
 						</form>
 					}
+
 					@if (session.remediation(); as remediation) {
 						<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
 						@if (remediation.answerVisible) {
@@ -109,13 +121,24 @@
 								</div>
 							</div>
 						}
+
 						@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
-							<mat-form-field appearance="outline">
-								<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
-								<input #remediationInput matInput [formControl]="remediationAnswer"
-								       (keydown.enter)="submitRemediation(); $event.preventDefault()">
-							</mat-form-field>
-							<button mat-flat-button (click)="submitRemediation()">Check</button>
+							<form id="remediation-answer-form" class="review-answer-form"
+							      (submit)="$event.preventDefault(); submitRemediation()">
+								<mat-form-field class="review-answer-field" appearance="outline">
+									<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
+									<input
+										#remediationInput
+										class="review-answer-input"
+										matInput
+										[formControl]="remediationAnswer"
+										lang="en"
+										autocomplete="off"
+										autocapitalize="none"
+										autocorrect="off"
+										spellcheck="false">
+								</mat-form-field>
+							</form>
 						} @else if (remediation.phase === Phase.COMPLETED) {
 							<p>This correction is complete. A spelling recheck will appear later in this session.</p>
 						}
@@ -123,66 +146,75 @@
 				</article>
 			</main>
 
-			@if (session.currentTask() === 'review') {
-				@if (session.feedback(); as feedback) {
-					<footer
-						class="review-action-footer"
-						[class.correct]="feedback.correct"
-						[class.wrong]="!feedback.correct"
-						data-testid="review-action-footer"
-						aria-live="polite">
-						<div class="review-action-inner feedback-action-inner">
-							<div class="feedback-summary">
-								<span class="feedback-status-icon" aria-hidden="true">
-									@if (feedback.correct) {
-										<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
-											<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
-											      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-										</svg>
-									} @else {
+			@if (session.remediation(); as remediation) {
+				@if (remediation.phase === Phase.CORRECTION) {
+					@if (session.feedback(); as feedback) {
+						<footer class="review-action-footer error" data-testid="review-action-footer" aria-live="polite">
+							<div class="review-action-inner">
+								<div class="feedback-summary">
+									<span class="feedback-status-icon" aria-hidden="true">
 										<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
 											<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
 											      stroke-width="3.6" stroke-linecap="round"/>
 										</svg>
-									}
-								</span>
-								<div class="feedback-copy">
-									<h2>{{ feedback.correct ? feedback.title : 'Correct solution:' }}</h2>
-									<p>{{ feedback.correct ? feedback.detail : feedback.spelling }}</p>
+									</span>
+									<div class="feedback-copy">
+										<h2>Correct solution:</h2>
+										<p>{{ feedback.spelling }}</p>
+									</div>
 								</div>
+								<button class="review-action-primary" mat-flat-button type="button" (click)="acknowledge()">Continue</button>
 							</div>
-
-							@if (feedback.correct) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button"
-								        (click)="next()">Continue
-								</button>
-							} @else if (session.remediation()?.phase === Phase.CORRECTION) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button"
-								        (click)="acknowledge()">Continue
-								</button>
-							} @else if (session.canAdvance()) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button"
-								        (click)="next()">Continue
+						</footer>
+					}
+				} @else {
+					<footer class="review-action-footer practice" data-testid="review-action-footer">
+						<div class="review-action-inner">
+							@if (remediation.phase === Phase.COMPLETED) {
+								<button class="review-action-primary" mat-flat-button type="button" (click)="next()">Continue</button>
+							} @else {
+								<button
+									class="review-action-primary"
+									mat-flat-button
+									type="submit"
+									form="remediation-answer-form"
+									[disabled]="!remediationAnswer.value.trim()">Check
 								</button>
 							}
 						</div>
 					</footer>
-				} @else {
-					<footer class="review-action-footer neutral" data-testid="review-action-footer">
-						<div class="review-action-inner neutral-action-inner">
-							<button class="footer-secondary" mat-stroked-button type="button" (click)="dontKnow()">I
-								don't know
-							</button>
-							<button
-								class="footer-primary"
-								mat-flat-button
-								type="submit"
-								form="review-answer-form"
-								[disabled]="saving() || !answer.value.trim()">Check answer
-							</button>
-						</div>
-					</footer>
 				}
+			} @else if (session.feedback(); as feedback) {
+				<footer class="review-action-footer success" data-testid="review-action-footer" aria-live="polite">
+					<div class="review-action-inner">
+						<div class="feedback-summary">
+							<span class="feedback-status-icon" aria-hidden="true">
+								<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
+									<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
+									      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</span>
+							<div class="feedback-copy">
+								<h2>{{ feedback.title }}</h2>
+								<p>{{ feedback.detail }}</p>
+							</div>
+						</div>
+						<button class="review-action-primary" mat-flat-button type="button" (click)="next()">Continue</button>
+					</div>
+				</footer>
+			} @else if (session.currentTask() === 'review') {
+				<footer class="review-action-footer neutral" data-testid="review-action-footer">
+					<div class="review-action-inner">
+						<button class="review-action-secondary" mat-stroked-button type="button" (click)="dontKnow()">I don't know</button>
+						<button
+							class="review-action-primary"
+							mat-flat-button
+							type="submit"
+							form="review-answer-form"
+							[disabled]="saving() || !answer.value.trim()">Check answer
+						</button>
+					</div>
+				</footer>
 			}
 		</div>
 	}
