@@ -59,20 +59,12 @@
 						<button mat-button (click)="session.pronounce(.7)">Slower</button>
 					</div>
 					@if (session.currentTask() === 'review' && !session.feedback()) {
-						<form (submit)="$event.preventDefault(); submit()" class="answer-form">
+						<form id="review-answer-form" (submit)="$event.preventDefault(); submit()" class="answer-form">
 							<mat-form-field appearance="outline">
 								<mat-label>Your answer</mat-label>
 								<input #answerInput matInput [formControl]="answer" lang="en" autocomplete="off">
 							</mat-form-field>
-							<div class="answer-actions">
-								<button mat-flat-button type="submit" [disabled]="saving()">Check answer</button>
-								<button mat-button type="button" (click)="dontKnow()">I don't know</button>
-							</div>
 						</form>
-					}
-					@if (session.feedback(); as feedback) {
-						<div class="feedback" [class.wrong]="!feedback.correct"><h2>{{ feedback.title }}</h2>
-							<p>{{ feedback.detail }}</p><strong>{{ feedback.spelling }}</strong></div>
 					}
 					@if (session.remediation(); as remediation) {
 						<section class="remediation">
@@ -111,29 +103,61 @@
 									</div>
 								</div>
 							}
-							@if (remediation.phase === Phase.CORRECTION) {
-								<button mat-flat-button (click)="acknowledge()">Got it; I'll type it from memory
-								</button>
-							} @else if (remediation.phase !== Phase.COMPLETED) {
+							@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
 								<mat-form-field appearance="outline">
 									<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
 									<input #remediationInput matInput [formControl]="remediationAnswer"
 									       (keydown.enter)="submitRemediation(); $event.preventDefault()">
 								</mat-form-field>
 								<button mat-flat-button (click)="submitRemediation()">Check</button>
-							} @else {
-								<p>This correction is complete. A spelling recheck will appear later in this
-									session.</p>
+							} @else if (remediation.phase === Phase.COMPLETED) {
+								<p>This correction is complete. A spelling recheck will appear later in this session.</p>
 							}
 						</section>
 					}
-					@if (session.canAdvance()) {
-						<div class="flash-actions">
-							<button mat-flat-button (click)="next()">Next card</button>
-						</div>
-					}
 				</article>
 			</main>
+
+			@if (session.currentTask() === 'review') {
+				@if (session.feedback(); as feedback) {
+					<footer
+						class="review-action-footer"
+						[class.correct]="feedback.correct"
+						[class.wrong]="!feedback.correct"
+						data-testid="review-action-footer"
+						aria-live="polite">
+						<div class="review-action-inner feedback-action-inner">
+							<div class="feedback-summary">
+								<span class="feedback-status-icon" aria-hidden="true">{{ feedback.correct ? '✓' : '×' }}</span>
+								<div class="feedback-copy">
+									<h2>{{ feedback.correct ? feedback.title : 'Correct solution:' }}</h2>
+									<p>{{ feedback.correct ? feedback.detail : feedback.spelling }}</p>
+								</div>
+							</div>
+
+							@if (feedback.correct) {
+								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="next()">Continue</button>
+							} @else if (session.remediation()?.phase === Phase.CORRECTION) {
+								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="acknowledge()">Continue</button>
+							} @else if (session.canAdvance()) {
+								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="next()">Continue</button>
+							}
+						</div>
+					</footer>
+				} @else {
+					<footer class="review-action-footer neutral" data-testid="review-action-footer">
+						<div class="review-action-inner neutral-action-inner">
+							<button class="footer-secondary" mat-stroked-button type="button" (click)="dontKnow()">I don't know</button>
+							<button
+								class="footer-primary"
+								mat-flat-button
+								type="submit"
+								form="review-answer-form"
+								[disabled]="saving() || !answer.value.trim()">Check answer</button>
+						</div>
+					</footer>
+				}
+			}
 		</div>
 	}
 
