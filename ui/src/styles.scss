@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/vazirmatn-arabic-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: 'Vazirmatn',
+    density: 0,
+  ));
+  color-scheme: light;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: 'Vazirmatn', system-ui, sans-serif;
+}
+
+html[data-theme='dark'] { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100dvh; margin: 0; background: var(--mat-sys-surface); color: var(--mat-sys-on-surface); }
+button, input, textarea, select { font: inherit; }
+a { color: inherit; }
+.mat-mdc-dialog-container { --mat-dialog-container-shape: 28px; }

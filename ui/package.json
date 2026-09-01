@@ -1,19 +1,20 @@
 {
   "name": "vocora-ui",
   "version": "3.0.0",
+  "private": true,
+  "packageManager": "npm@10.9.8",
+  "description": "Vocora Angular frontend",
   "scripts": {
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "build:production": "ng build --configuration production",
-    "test": "ng test --watch=false --coverage",
-    "test:unit": "ng test --watch=false",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed",
     "check:architecture": "node tests/test-angular-architecture.mjs",
-    "test:legacy": "node tests/test-review-progress.mjs && node tests/test-leitner-graduation.mjs && node tests/test-leitner-same-day-terminal.mjs && node tests/test-leitner-production-persistence.mjs && node tests/test-historical-mastery-repair.mjs && node tests/test-leitner-status.mjs && node tests/test-leitner-wait-day-states.mjs && node tests/test-practice-remediation.mjs && node tests/test-practice-remediation-adapter.mjs && node tests/test-remediation-keyboard-guard.mjs && node tests/test-practice-remediation-recheck-prompt.mjs && node tests/test-session-persistence.mjs && node tests/test-review-write-adapter.mjs"
+    "test": "npm run check:architecture && ng test --watch=false",
+    "test:unit": "ng test --watch=false",
+    "test:regression": "ng test --watch=false",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed"
   },
-  "private": true,
-  "packageManager": "npm@10.9.8",
   "dependencies": {
     "@angular/cdk": "22.1.4",
     "@angular/common": "^22.1.0",
@@ -35,6 +36,5 @@
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
-  },
-  "description": "Vocora Angular frontend"
+  }
 }
