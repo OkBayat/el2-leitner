@@ -44,6 +44,7 @@ async function firstDueTerm(page: Page): Promise<string> {
 async function expectFooterAnchoredToViewport(page: Page): Promise<void> {
   const footer = page.getByTestId('review-action-footer');
   await expect(footer).toBeVisible();
+  await expect(footer).toHaveCount(1);
   const box = await footer.boundingBox();
   expect(box).not.toBeNull();
   const viewport = page.viewportSize();
@@ -110,6 +111,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
   await expect(footer.getByText('Correct!')).toBeVisible();
   await expect(footer.getByRole('button', { name: 'Continue' })).toBeVisible();
+  await expect(footer.locator('.feedback-status-icon svg')).toHaveCount(1);
   await expectFooterAnchoredToViewport(page);
 
   const savedReview = await page.evaluate(async () => {
@@ -151,7 +153,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText(/email, typed answers/i)).toBeVisible();
 });
 
-test('wrong spelling changes from error feedback to the shared yellow retry footer', async ({ page }) => {
+test('wrong spelling moves through error, yellow memory practice, and green memory success', async ({ page }) => {
   await authenticate(page, `e2e-spelling-${Date.now()}@example.com`);
   const term = await firstDueTerm(page);
   const wrong = `${term.slice(0, -1)}${term.endsWith('x') ? 'y' : 'x'}`;
@@ -166,6 +168,7 @@ test('wrong spelling changes from error feedback to the shared yellow retry foot
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 223, 224)');
   await expect(footer.getByText('Correct solution:')).toBeVisible();
   await expect(footer).toContainText(term);
+  await expect(footer.locator('.feedback-status-icon svg')).toHaveCount(1);
   await expectFooterAnchoredToViewport(page);
 
   await expect(page.getByRole('heading', { name: 'Spelling correction' })).toBeVisible();
@@ -188,6 +191,9 @@ test('wrong spelling changes from error feedback to the shared yellow retry foot
   await expect(footer).toHaveClass(/practice/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 244, 204)');
   await expect(footer.getByText('Correct solution:')).toHaveCount(0);
+  await expect(footer.getByText('From memory')).toBeVisible();
+  await expect(footer.getByText('Type the spelling from memory, then check.')).toBeVisible();
+  await expect(footer.locator('.feedback-status-icon svg')).toHaveCount(1);
   await expectFooterAnchoredToViewport(page);
   await expect(page.locator('.session-stage').getByRole('button', { name: 'Check' })).toHaveCount(0);
 
@@ -196,7 +202,14 @@ test('wrong spelling changes from error feedback to the shared yellow retry foot
   await recallInput.fill(term);
   await expect(retryCheck).toBeEnabled();
   await retryCheck.click();
-  await expect(footer).toHaveClass(/practice/u);
+
+  await expect(footer).toHaveClass(/success/u);
+  await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
+  await expect(footer.getByText('Correct!')).toBeVisible();
+  await expect(footer.getByText('You remembered the spelling.')).toBeVisible();
+  await expect(footer.locator('.feedback-status-icon svg')).toHaveCount(1);
+  await expect(footer.getByRole('button', { name: 'Continue' })).toBeVisible();
+  await expectFooterAnchoredToViewport(page);
 });
 
 test('review keeps its bottom action footer fitted on mobile', async ({ page }) => {
