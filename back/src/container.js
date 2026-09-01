@@ -7,6 +7,7 @@ import { LibraryQueries } from "./application/library/LibraryQueries.js";
 import { ActivateVocabulary } from "./application/learning/ActivateVocabulary.js";
 import { ActivateVocabularyBatch } from "./application/learning/ActivateVocabularyBatch.js";
 import { GetLearningState } from "./application/learning/GetLearningState.js";
+import { GetLeitnerHouse } from "./application/learning/GetLeitnerHouse.js";
 import { LearningSessionCommands } from "./application/learning/LearningSessionCommands.js";
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
 import { SaveLearningState } from "./application/learning/SaveLearningState.js";
@@ -58,6 +59,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
       getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
+      getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
       activateVocabularyBatch: new ActivateVocabularyBatch({ vocabularyActivationRepository }),
