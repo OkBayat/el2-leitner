@@ -61,10 +61,11 @@ const allowedRootScripts = new Set([
   'app-v2.js', 'leitner-status.js', 'library-import-template.js', 'library.js',
   'practice-remediation-adapter.js', 'practice-remediation-keyboard-guard.js',
   'practice-remediation-recheck-prompt.js', 'practice-remediation.js',
+  'rollup.config.js',
   'session-persistence.js', 'share-story-v2.js', 'vocabulary.js', 'word-collections.js'
 ]);
 const rootScripts = fs.readdirSync(uiRoot).filter((name) => name.endsWith('.js')).sort();
-assert.deepEqual(rootScripts, [...allowedRootScripts].sort(), 'New feature JavaScript must live under src/, not grow the legacy root surface.');
+assert.deepEqual(rootScripts, [...allowedRootScripts].sort(), 'New feature JavaScript must live under src/; only explicit build configuration may live at the UI root.');
 
 function walk(directory) {
   const result = [];
