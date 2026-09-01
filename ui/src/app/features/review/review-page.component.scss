@@ -308,18 +308,6 @@
 	box-shadow: 0 4px 0 var(--review-error-action-shadow);
 }
 
-.remediation {
-	margin-top: 16px;
-	padding: 18px;
-	border-radius: 18px;
-	background: var(--mat-sys-tertiary-container);
-	color: var(--mat-sys-on-tertiary-container);
-}
-
-.remediation mat-form-field {
-	width: 100%;
-}
-
 .spelling-comparison {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));

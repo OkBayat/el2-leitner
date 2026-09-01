@@ -4,7 +4,8 @@
 			<button class="review-close" mat-icon-button type="button" aria-label="Back to dashboard"
 			        (click)="router.navigateByUrl('/dashboard')">
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="display:block">
-					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+					      stroke-linecap="round"/>
 				</svg>
 			</button>
 			<mat-card class="setup" appearance="outlined">
@@ -40,7 +41,8 @@
 			<div class="session-bar" data-testid="review-session-bar">
 				<button class="session-close" mat-icon-button type="button" aria-label="Exit review" (click)="exit()">
 					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="display:block">
-						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+						      stroke-linecap="round"/>
 					</svg>
 				</button>
 				<div class="session-progress">
@@ -72,53 +74,51 @@
 						</form>
 					}
 					@if (session.remediation(); as remediation) {
-						<section class="remediation">
-							<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
-							@if (remediation.answerVisible) {
-								<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
-									<div class="spelling-row user-spelling-row">
-										<span class="spelling-label">Your answer</span>
-										<div class="spelling-text" data-testid="user-spelling">
-											@if (remediation.comparison.answerTokens.length) {
-												@for (token of remediation.comparison.answerTokens; track $index) {
-													<span
-														class="spelling-token"
-														[class.spelling-correct]="token.status === 'correct'"
-														[class.spelling-changed]="token.status === 'changed'"
-														[class.spelling-extra]="token.status === 'extra'"
-													>{{ tokenValue(token.value) }}</span>
-												}
-											} @else {
-												<span class="spelling-empty">No answer</span>
-											}
-										</div>
+						<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
+						@if (remediation.answerVisible) {
+							<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
+								<div class="spelling-row correct-spelling-row">
+									<span class="spelling-label">Correct spelling</span>
+									<div class="spelling-text" data-testid="correct-spelling">
+										@for (token of remediation.comparison.targetTokens; track $index) {
+											<span
+												class="spelling-token"
+												[class.spelling-correct]="token.status === 'correct'"
+												[class.spelling-changed]="token.status === 'changed'"
+												[class.spelling-missing]="token.status === 'missing'"
+											>{{ tokenValue(token.value) }}</span>
+										}
 									</div>
-									<div class="spelling-row correct-spelling-row">
-										<span class="spelling-label">Correct spelling</span>
-										<div class="spelling-text" data-testid="correct-spelling">
-											@for (token of remediation.comparison.targetTokens; track $index) {
+								</div>
+								<div class="spelling-row user-spelling-row">
+									<span class="spelling-label">Your answer</span>
+									<div class="spelling-text" data-testid="user-spelling">
+										@if (remediation.comparison.answerTokens.length) {
+											@for (token of remediation.comparison.answerTokens; track $index) {
 												<span
 													class="spelling-token"
 													[class.spelling-correct]="token.status === 'correct'"
 													[class.spelling-changed]="token.status === 'changed'"
-													[class.spelling-missing]="token.status === 'missing'"
+													[class.spelling-extra]="token.status === 'extra'"
 												>{{ tokenValue(token.value) }}</span>
 											}
-										</div>
+										} @else {
+											<span class="spelling-empty">No answer</span>
+										}
 									</div>
 								</div>
-							}
-							@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
-								<mat-form-field appearance="outline">
-									<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
-									<input #remediationInput matInput [formControl]="remediationAnswer"
-									       (keydown.enter)="submitRemediation(); $event.preventDefault()">
-								</mat-form-field>
-								<button mat-flat-button (click)="submitRemediation()">Check</button>
-							} @else if (remediation.phase === Phase.COMPLETED) {
-								<p>This correction is complete. A spelling recheck will appear later in this session.</p>
-							}
-						</section>
+							</div>
+						}
+						@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
+							<mat-form-field appearance="outline">
+								<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
+								<input #remediationInput matInput [formControl]="remediationAnswer"
+								       (keydown.enter)="submitRemediation(); $event.preventDefault()">
+							</mat-form-field>
+							<button mat-flat-button (click)="submitRemediation()">Check</button>
+						} @else if (remediation.phase === Phase.COMPLETED) {
+							<p>This correction is complete. A spelling recheck will appear later in this session.</p>
+						}
 					}
 				</article>
 			</main>
@@ -136,11 +136,13 @@
 								<span class="feedback-status-icon" aria-hidden="true">
 									@if (feedback.correct) {
 										<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
-											<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
+											      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
 										</svg>
 									} @else {
 										<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
-											<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+											<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
+											      stroke-width="3.6" stroke-linecap="round"/>
 										</svg>
 									}
 								</span>
@@ -151,24 +153,33 @@
 							</div>
 
 							@if (feedback.correct) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="next()">Continue</button>
+								<button class="footer-primary footer-continue" mat-flat-button type="button"
+								        (click)="next()">Continue
+								</button>
 							} @else if (session.remediation()?.phase === Phase.CORRECTION) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="acknowledge()">Continue</button>
+								<button class="footer-primary footer-continue" mat-flat-button type="button"
+								        (click)="acknowledge()">Continue
+								</button>
 							} @else if (session.canAdvance()) {
-								<button class="footer-primary footer-continue" mat-flat-button type="button" (click)="next()">Continue</button>
+								<button class="footer-primary footer-continue" mat-flat-button type="button"
+								        (click)="next()">Continue
+								</button>
 							}
 						</div>
 					</footer>
 				} @else {
 					<footer class="review-action-footer neutral" data-testid="review-action-footer">
 						<div class="review-action-inner neutral-action-inner">
-							<button class="footer-secondary" mat-stroked-button type="button" (click)="dontKnow()">I don't know</button>
+							<button class="footer-secondary" mat-stroked-button type="button" (click)="dontKnow()">I
+								don't know
+							</button>
 							<button
 								class="footer-primary"
 								mat-flat-button
 								type="submit"
 								form="review-answer-form"
-								[disabled]="saving() || !answer.value.trim()">Check answer</button>
+								[disabled]="saving() || !answer.value.trim()">Check answer
+							</button>
 						</div>
 					</footer>
 				}
