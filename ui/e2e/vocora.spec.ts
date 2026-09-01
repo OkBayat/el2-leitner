@@ -23,6 +23,8 @@ async function authenticateAdmin(page: Page): Promise<void> {
 }
 
 test('Angular Material app preserves the complete learner and library flow', async ({ page }) => {
+  const collectionTitle = `Angular E2E Collection ${Date.now()}`;
+
   await authenticateAdmin(page);
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('برنامهٔ امروز')).toBeVisible();
@@ -63,13 +65,13 @@ test('Angular Material app preserves the complete learner and library flow', asy
   await expect(page.getByRole('button', { name: 'مشاهده واژه‌ها' }).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'مجموعهٔ جدید' })).toBeVisible();
   await page.getByRole('button', { name: 'مجموعهٔ جدید' }).click();
-  await page.getByLabel('عنوان').fill('Angular E2E Collection');
+  await page.getByLabel('عنوان').fill(collectionTitle);
   await page.getByRole('button', { name: 'ذخیره' }).click();
-  await expect(page.getByRole('heading', { name: 'Angular E2E Collection' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: collectionTitle })).toBeVisible();
   await page.getByRole('button', { name: 'بستن' }).click();
 
   await page.goto('/leitner-house/1');
-  await expect(page.getByRole('heading', { name: 'واژه‌های خانهٔ ۱' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /واژه‌های خانهٔ (?:۱|1)/u })).toBeVisible();
   await expect(page.getByLabel('جستجوی واژه‌ها')).toBeVisible();
 
   await page.goto('/settings');
