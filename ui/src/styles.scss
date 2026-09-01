@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use './styles/angular-material-defaults' as material-defaults;
 
 html {
   @include mat.theme((
@@ -9,6 +10,7 @@ html {
     typography: system-ui,
     density: 0,
   ));
+  @include material-defaults.apply();
   color-scheme: light;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
