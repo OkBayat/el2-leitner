@@ -133,7 +133,7 @@ export class ReviewPageComponent implements OnInit {
     setTimeout(() => this.session.pronounce(), 180);
   }
   async exit(): Promise<void> { const ok = await firstValueFrom(this.dialog.open(ConfirmDialogComponent, { data: { title: 'Exit session', message: 'Saved answers will be kept. Stop this session?', confirmLabel: 'Exit' } }).afterClosed()); if (ok) { await this.session.abandon(); await this.router.navigateByUrl('/dashboard'); } }
-  displayCategory(category: string): string { return !category || category === 'بدون دسته‌بندی' ? 'Uncategorized' : category; }
+  displayCategory(category: string): string { return category || 'Uncategorized'; }
 
   private focusAnswerInput(): void { setTimeout(() => this.answerInput?.nativeElement.focus()); }
   private focusRemediationInput(): void { setTimeout(() => this.remediationInput?.nativeElement.focus()); }
