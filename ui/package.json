@@ -13,6 +13,11 @@
     "test:design-system": "npm run check:modules && node tests/test-frontend-foundation.mjs && node tests/test-frontend-architecture.mjs && node tests/test-material3-design-system.mjs && node tests/test-material-web-components.mjs && node tests/test-stylesheet-assets.mjs"
   },
   "devDependencies": {
-    "jsdom": "26.1.0"
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "jsdom": "26.1.0",
+    "rollup": "4.63.1"
+  },
+  "dependencies": {
+    "@material/web": "2.5.0"
   }
 }
