@@ -56,7 +56,15 @@
           },
           "defaultConfiguration": "development"
         },
-        "test": { "builder": "@angular/build:unit-test" }
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.scss"
+            ]
+          }
+        }
       }
     }
   }
