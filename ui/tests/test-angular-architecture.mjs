@@ -27,6 +27,7 @@ for (const required of [
   'src/app/application/review/review-session.service.ts',
   'src/app/features/auth/login-page.component.ts', 'src/app/features/auth/register-page.component.ts',
   'src/app/features/dashboard/dashboard-page.component.ts', 'src/app/features/review/review-page.component.ts',
+  'src/app/features/review/review-page.component.html', 'src/app/features/review/review-page.component.scss',
   'src/app/features/words/words-page.component.ts', 'src/app/features/reports/reports-page.component.ts',
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
@@ -37,6 +38,7 @@ for (const required of [
 const pkg = JSON.parse(read('package.json'));
 assert.equal(pkg.dependencies['@angular/material'], '22.1.4');
 assert.equal(pkg.dependencies['@angular/cdk'], '22.1.4');
+assert.equal(pkg.dependencies.bootstrap, '5.3.8', 'Bootstrap CSS must stay pinned to the approved version.');
 assert.match(pkg.scripts.test, /check:architecture.*ng test/u);
 assert.match(pkg.scripts.e2e, /playwright test/u);
 assert.match(pkg.scripts['build:production'], /ng build/u);
@@ -45,6 +47,9 @@ const routes = read('src/app/app.routes.ts');
 for (const route of ['login', 'register', 'dashboard', 'review', 'words', 'reports', 'settings', 'library', 'leitner-house/:house']) {
   assert.ok(routes.includes(`path: '${route}'`), `Route ${route} must exist.`);
 }
+assert.match(routes, /\{ path: 'review', canActivate: \[authGuard\], loadComponent:/u, 'Review must remain authenticated while living outside the application shell.');
+assert.equal(routes.match(/path: 'review'/gu)?.length, 1, 'Review must have exactly one route owner.');
+assert.ok(routes.indexOf("path: 'review'") < routes.indexOf("loadComponent: () => import('./shared/app-shell/app-shell.component')"), 'Review must be routed before and outside AppShell.');
 
 const angular = JSON.parse(read('angular.json'));
 const build = angular.projects.vocora.architect.build;
@@ -53,6 +58,9 @@ assert.equal(build.options.browser, 'src/main.ts');
 assert.ok(build.options.assets.some((asset) => asset.input === 'assets'));
 assert.ok(build.options.assets.some((asset) => asset.input === 'data'));
 assert.ok(build.options.assets.some((asset) => asset.input === 'fonts'));
+const bootstrapCss = 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+assert.ok(build.options.styles.includes(bootstrapCss), 'Bootstrap CSS must be loaded globally by Angular.');
+assert.ok(build.options.styles.indexOf(bootstrapCss) < build.options.styles.indexOf('src/styles.scss'), 'Project styles must load after Bootstrap so application overrides keep precedence.');
 
 const theme = read('src/styles.scss');
 assert.match(theme, /@use ['"]@angular\/material['"] as mat/u);
@@ -89,8 +97,14 @@ for (const [name, source] of userFacingSources) {
 }
 
 const reviewPage = read('src/app/features/review/review-page.component.ts');
-assert.match(reviewPage, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
+const reviewTemplate = read('src/app/features/review/review-page.component.html');
+const reviewStyles = read('src/app/features/review/review-page.component.scss');
+assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
+assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
+assert.match(reviewTemplate, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
+assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the viewport without depending on AppShell.');
+assert.match(reviewStyles, /@media\(max-width:\s*600px\)/u, 'Review layout must have a dedicated mobile presentation.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 for (const materialModule of ['MatButtonModule', 'MatCardModule', 'MatFormFieldModule', 'MatInputModule', 'MatSelectModule', 'MatDialogModule', 'MatTableModule']) {

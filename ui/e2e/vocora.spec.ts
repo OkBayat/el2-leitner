@@ -68,7 +68,11 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   const dueTerm = await firstDueTerm(page);
 
   await page.goto('/review');
+  await expect(page.getByTestId('review-layout')).toBeVisible();
+  await expect(page.locator('app-shell')).toHaveCount(0);
+  await expect(page.locator('.sidebar, .topbar, .mobile-nav')).toHaveCount(0);
   await page.getByRole('button', { name: 'Start session' }).click();
+  await expect(page.getByTestId('review-session-bar')).toBeVisible();
   const answerInput = page.getByLabel('Your answer');
   await expect(answerInput).toBeVisible();
   await expect(answerInput).toBeFocused();
@@ -140,4 +144,27 @@ test('wrong spelling shows highlights without a hint and Enter continues to reca
   const recallInput = page.getByLabel('Recall from memory');
   await expect(recallInput).toBeVisible();
   await expect(recallInput).toBeFocused();
+});
+
+test('review stays shell-free and viewport-fitted on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await authenticate(page, `e2e-review-mobile-${Date.now()}@example.com`);
+  await firstDueTerm(page);
+
+  await page.goto('/review');
+  const layout = page.getByTestId('review-layout');
+  await expect(layout).toBeVisible();
+  await expect(page.locator('app-shell')).toHaveCount(0);
+  await expect(page.locator('.sidebar, .topbar, .mobile-nav')).toHaveCount(0);
+
+  const box = await layout.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.x).toBe(0);
+  expect(box!.width).toBeGreaterThan(360);
+  expect(box!.width).toBeLessThanOrEqual(390);
+
+  await page.getByRole('button', { name: 'Start session' }).click();
+  await expect(page.getByTestId('review-session-bar')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Exit review' })).toBeVisible();
+  await expect(page.getByLabel('Your answer')).toBeVisible();
 });

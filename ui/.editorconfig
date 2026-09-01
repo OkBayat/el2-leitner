@@ -1,0 +1,10 @@
+root = true
+
+[*]
+indent_style = tab
+indent_size = 1
+tab_width = 4
+
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 4
