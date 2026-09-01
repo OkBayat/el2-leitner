@@ -82,13 +82,13 @@ export function buildSpellingComparison(rawAnswer: string, rawTarget: string): S
 }
 
 export function buildOrthographicHint(comparison: SpellingComparison): string {
-  if (comparison.transposition) return `ترتیب «${comparison.transposition.answer}» را به «${comparison.transposition.target}» جابه‌جا کن.`;
+  if (comparison.transposition) return `Swap “${comparison.transposition.answer}” to “${comparison.transposition.target}”.`;
   const insertions = comparison.operations.filter((op) => op.type === 'insert').map((op) => op.target).filter(Boolean);
   const replacements = comparison.operations.filter((op) => op.type === 'replace');
-  if (insertions.length) return `حرف ${insertions.join('، ')} جا افتاده است.`;
-  if (replacements.length) return replacements.map((op) => `«${op.answer}» باید «${op.target}» باشد`).join('؛ ');
+  if (insertions.length) return `Missing letter${insertions.length > 1 ? 's' : ''}: ${insertions.join(', ')}.`;
+  if (replacements.length) return replacements.map((op) => `“${op.answer}” should be “${op.target}”`).join('; ');
   const deletions = comparison.operations.filter((op) => op.type === 'delete').map((op) => op.answer).filter(Boolean);
-  return deletions.length ? `حرف اضافه: ${deletions.join('، ')}` : 'املای صحیح را یک‌بار با دقت ببین.';
+  return deletions.length ? `Extra letter${deletions.length > 1 ? 's' : ''}: ${deletions.join(', ')}.` : 'Look carefully at the correct spelling once.';
 }
 
 export class SameSessionRecheckPolicy {
