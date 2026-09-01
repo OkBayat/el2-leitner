@@ -54,8 +54,7 @@ export class AuthPage {
 
   setLoading(loading) {
     this.submitButton.disabled = loading;
-    this.submitButton.classList.toggle('loading', loading);
-    this.submitButton.querySelector('.button-label').textContent = loading
+    this.submitButton.textContent = loading
       ? (this.mode === 'register' ? 'در حال ساخت حساب…' : 'در حال ورود…')
       : (this.mode === 'register' ? 'ساخت حساب' : 'ورود به Vocora');
   }
@@ -84,15 +83,10 @@ export class AuthPage {
     event.preventDefault();
     this.setMessage();
 
-    const email = this.emailInput.value.trim();
-    const password = this.passwordInput.value;
+    const email = String(this.emailInput.value || '').trim();
+    const password = String(this.passwordInput.value || '');
     if (!email || !password) {
       this.setMessage(ERROR_MESSAGES.MISSING_CREDENTIALS, true);
-      return;
-    }
-    if (!this.emailInput.validity.valid) {
-      this.setMessage(ERROR_MESSAGES.INVALID_EMAIL, true);
-      this.emailInput.focus();
       return;
     }
 
@@ -104,7 +98,8 @@ export class AuthPage {
     } catch (error) {
       this.setMessage(this.messageFor(error), true);
       this.setLoading(false);
-      this.passwordInput.focus();
+      if (error?.code === 'INVALID_EMAIL') this.emailInput.focus();
+      else this.passwordInput.focus();
     }
   }
 }
