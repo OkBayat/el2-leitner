@@ -16,6 +16,7 @@ window.MutationObserver = class { observe() {} };
 const requests = [];
 let reviewStatus = 200;
 let reviewRevisionOverride = null;
+let reviewNetworkFailures = 0;
 let fullStateStatus = 200;
 
 const firstEvent = {
@@ -81,6 +82,10 @@ window.fetch = async (input, options = {}) => {
   }
   if (path === "/api/learning/sessions") return responseFor({ session: { id: "session-123" } }, 201);
   if (path === "/api/learning/reviews") {
+    if (reviewNetworkFailures > 0) {
+      reviewNetworkFailures -= 1;
+      throw new TypeError("Failed to fetch");
+    }
     const command = JSON.parse(options.body);
     const revision = reviewRevisionOverride ?? Number(command.revision) + 1;
     return reviewStatus === 200
@@ -246,5 +251,28 @@ assert.equal(staleAckResponse.status, 200);
 assert.equal(window.VocoraSessionPersistenceTest.getReviewWriteFailed(), true,
   "a stale server revision acknowledgement must keep the barrier closed");
 assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), 6);
+
+// Repeated transient connection closures must not lose the review. The backend
+// already treats an identical retried review event as idempotent, so transport
+// retries can safely recover after the connection comes back.
+reviewRevisionOverride = null;
+reviewNetworkFailures = 2;
+await window.fetch("/api/state");
+const compactCountBeforeNetworkFailure = requests.filter((request) => request.path === "/api/learning/reviews").length;
+const recoveredResponse = await window.fetch("/api/state", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ revision: 5, state: failedCompactState })
+});
+assert.equal(recoveredResponse.status, 200);
+const recoveredRequests = requests
+  .filter((request) => request.path === "/api/learning/reviews")
+  .slice(compactCountBeforeNetworkFailure);
+assert.equal(recoveredRequests.length, 3,
+  "two consecutive Failed to fetch errors must be retried until the idempotent review succeeds");
+assert.equal(new Set(recoveredRequests.map((request) => request.options.body)).size, 1,
+  "every retry must resend the exact same idempotent review command");
+assert.equal(window.VocoraSessionPersistenceTest.getReviewWriteFailed(), false);
+assert.equal(window.VocoraSessionPersistenceTest.getPendingReviewRevision(), null);
 
 console.log("Compact review persistence adapter tests passed.");

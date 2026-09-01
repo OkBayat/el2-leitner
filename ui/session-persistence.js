@@ -2,6 +2,7 @@
   "use strict";
 
   const originalFetch = window.fetch.bind(window);
+  const REVIEW_RETRY_DELAYS_MS = [0, 150, 450, 900];
   let activeSession = null;
   let completionObserver = null;
   let startPromise = null;
@@ -303,6 +304,14 @@
     };
   }
 
+  function isTransientReviewResponse(response) {
+    return response.status === 408 || response.status === 425 || response.status >= 500;
+  }
+
+  function waitForRetry(delayMs) {
+    return new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
   async function sendCompactReview(command) {
     const options = {
       method: "POST",
@@ -311,15 +320,21 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(command)
     };
-    for (let attempt = 0; attempt < 2; attempt += 1) {
+    let lastError = null;
+    for (let attempt = 0; attempt < REVIEW_RETRY_DELAYS_MS.length; attempt += 1) {
+      const delayMs = REVIEW_RETRY_DELAYS_MS[attempt];
+      if (delayMs > 0) await waitForRetry(delayMs);
       try {
         const response = await originalFetch("/api/learning/reviews", options);
-        if (response.status < 500 || attempt === 1) return response;
+        if (!isTransientReviewResponse(response) || attempt === REVIEW_RETRY_DELAYS_MS.length - 1) {
+          return response;
+        }
       } catch (error) {
-        if (attempt === 1) throw error;
+        lastError = error;
+        if (attempt === REVIEW_RETRY_DELAYS_MS.length - 1) throw error;
       }
     }
-    throw new Error("Review persistence failed.");
+    throw lastError || new Error("Review persistence failed.");
   }
 
   function installFetchContext() {
