@@ -29,6 +29,20 @@ import {RemediationPhase} from '../../domain/remediation/remediation';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {ShareStoryService} from '../../shared/share-story/share-story.service';
 
+type ReviewFooterTone = 'neutral' | 'success' | 'error' | 'practice';
+type ReviewFooterIcon = 'none' | 'check' | 'error' | 'practice';
+type ReviewFooterAction = 'submit-review' | 'acknowledge' | 'submit-remediation' | 'next';
+
+interface ReviewFooterState {
+	tone: ReviewFooterTone;
+	icon: ReviewFooterIcon;
+	title: string;
+	detail: string;
+	primaryLabel: string;
+	primaryAction: ReviewFooterAction;
+	secondaryLabel?: string;
+}
+
 @Component({
 	selector: 'app-review-page',
 	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule],
@@ -56,6 +70,83 @@ export class ReviewPageComponent implements OnInit {
 	readonly dueCount = computed(() => this.state() ? getDueWords(this.state()!).length : 0);
 	readonly newCount = computed(() => this.state() ? getDueWords(this.state()!).filter((word) => word.introducedOn === localDay() && word.box === 1).length : 0);
 	readonly estimatedMinutes = computed(() => Math.max(1, Math.ceil(this.dueCount() * .35)));
+	readonly footerState = computed<ReviewFooterState | null>(() => {
+		if (!this.session.active()) return null;
+
+		const remediation = this.session.remediation();
+		const feedback = this.session.feedback();
+		if (remediation) {
+			if (remediation.phase === RemediationPhase.CORRECTION) {
+				return {
+					tone: 'error',
+					icon: 'error',
+					title: 'Correct solution:',
+					detail: feedback?.spelling || remediation.target,
+					primaryLabel: 'Continue',
+					primaryAction: 'acknowledge',
+				};
+			}
+			if (remediation.phase === RemediationPhase.COMPLETED) {
+				return {
+					tone: 'success',
+					icon: 'check',
+					title: 'Correct!',
+					detail: 'You remembered the spelling.',
+					primaryLabel: 'Continue',
+					primaryAction: 'next',
+				};
+			}
+			if (remediation.phase === RemediationPhase.COPY) {
+				return {
+					tone: 'practice',
+					icon: 'practice',
+					title: 'Practice the correction',
+					detail: 'Copy the correct spelling exactly once, then check.',
+					primaryLabel: 'Check',
+					primaryAction: 'submit-remediation',
+				};
+			}
+			return {
+				tone: 'practice',
+				icon: 'practice',
+				title: 'From memory',
+				detail: 'Type the spelling from memory, then check.',
+				primaryLabel: 'Check',
+				primaryAction: 'submit-remediation',
+			};
+		}
+
+		if (feedback) {
+			return feedback.correct ? {
+				tone: 'success',
+				icon: 'check',
+				title: feedback.title,
+				detail: feedback.detail,
+				primaryLabel: 'Continue',
+				primaryAction: 'next',
+			} : {
+				tone: 'error',
+				icon: 'error',
+				title: 'Correct solution:',
+				detail: feedback.spelling,
+				primaryLabel: 'Continue',
+				primaryAction: 'next',
+			};
+		}
+
+		if (this.session.currentTask() === 'review') {
+			return {
+				tone: 'neutral',
+				icon: 'none',
+				title: '',
+				detail: '',
+				primaryLabel: 'Check answer',
+				primaryAction: 'submit-review',
+				secondaryLabel: "I don't know",
+			};
+		}
+		return null;
+	});
 
 	async ngOnInit(): Promise<void> {
 		const state = await this.store.initialize();
@@ -107,6 +198,28 @@ export class ReviewPageComponent implements OnInit {
 		this.session.submitRemediation(this.remediationAnswer.value);
 		this.remediationAnswer.setValue('');
 		if (this.session.remediation()?.phase !== RemediationPhase.COMPLETED) this.focusRemediationInput();
+	}
+
+	isFooterPrimaryDisabled(footer: ReviewFooterState): boolean {
+		if (footer.primaryAction === 'submit-review') return this.saving() || !this.answer.value.trim();
+		if (footer.primaryAction === 'submit-remediation') return !this.remediationAnswer.value.trim();
+		return false;
+	}
+
+	async handleFooterPrimary(action: ReviewFooterAction): Promise<void> {
+		if (action === 'submit-review') {
+			await this.submit();
+			return;
+		}
+		if (action === 'acknowledge') {
+			this.acknowledge();
+			return;
+		}
+		if (action === 'submit-remediation') {
+			this.submitRemediation();
+			return;
+		}
+		await this.next();
 	}
 
 	tokenValue(value: string): string {
