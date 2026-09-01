@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import { ApiError, HttpClient } from '../src/shared/http/HttpClient.js';
 import { resolveSafeReturnTo } from '../src/shared/navigation/SafeReturnTo.js';
 import { GetCurrentUserQuery, LoginCommand, RegisterCommand } from '../src/features/auth/application/AuthCommands.js';
+import { AuthHttpGateway } from '../src/features/auth/infrastructure/AuthHttpGateway.js';
 import { GetLeitnerHouseQuery, filterAndSortWords } from '../src/features/leitner-house/application/GetLeitnerHouse.js';
 import { parseLeitnerHouse } from '../src/features/leitner-house/domain/LeitnerHouse.js';
+import { LeitnerHouseHttpGateway } from '../src/features/leitner-house/infrastructure/LeitnerHouseHttpGateway.js';
 import { formatRelativeDue } from '../src/features/leitner-house/presentation/LeitnerHousePage.js';
 
 function response(status, payload = null) {
@@ -73,6 +75,23 @@ assert.equal(resolveSafeReturnTo({ search: '', origin: 'https://vocora.test' }),
   );
 }
 
+{
+  const calls = [];
+  const httpClient = {
+    get(path) { calls.push(['get', path]); return Promise.resolve({ user: { id: 1 } }); },
+    post(path, body) { calls.push(['post', path, body]); return Promise.resolve({ user: { id: 1 } }); }
+  };
+  const gateway = new AuthHttpGateway({ httpClient });
+  await gateway.currentUser();
+  await gateway.login({ email: 'a@example.com', password: 'password' });
+  await gateway.register({ email: 'b@example.com', password: 'password' });
+  assert.deepEqual(calls, [
+    ['get', '/api/auth/me'],
+    ['post', '/api/auth/login', { email: 'a@example.com', password: 'password' }],
+    ['post', '/api/auth/register', { email: 'b@example.com', password: 'password' }]
+  ]);
+}
+
 assert.equal(parseLeitnerHouse('1'), 1);
 assert.equal(parseLeitnerHouse(5), 5);
 assert.equal(parseLeitnerHouse('0'), null);
@@ -102,6 +121,20 @@ assert.deepEqual(filterAndSortWords(sourceWords, { sort: 'due' }).map((word) => 
   assert.deepEqual(await query.execute('2'), { house: { number: 2 }, summary: { totalWords: 0 }, words: [] });
   assert.deepEqual(calls, [2]);
   await assert.rejects(query.execute('9'), (error) => error.code === 'INVALID_LEITNER_HOUSE');
+}
+
+{
+  const calls = [];
+  const gateway = new LeitnerHouseHttpGateway({
+    httpClient: {
+      get(path) {
+        calls.push(path);
+        return Promise.resolve({ house: { number: 4 }, words: [] });
+      }
+    }
+  });
+  assert.deepEqual(await gateway.getHouse(4), { house: { number: 4 }, words: [] });
+  assert.deepEqual(calls, ['/api/learning/boxes/4']);
 }
 
 console.log('Frontend foundation behavior tests passed.');
