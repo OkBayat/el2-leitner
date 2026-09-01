@@ -103,7 +103,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText(/email, typed answers/i)).toBeVisible();
 });
 
-test('wrong spelling shows the same token-level comparison highlights as legacy main', async ({ page }) => {
+test('wrong spelling shows highlights without a hint and Enter continues to recall', async ({ page }) => {
   await authenticate(page, `e2e-spelling-${Date.now()}@example.com`);
   const term = await firstDueTerm(page);
   const wrong = `${term.slice(0, -1)}${term.endsWith('x') ? 'y' : 'x'}`;
@@ -122,4 +122,10 @@ test('wrong spelling shows the same token-level comparison highlights as legacy 
   await expect(correctSpelling.locator('.spelling-changed, .spelling-missing')).toHaveCount(1);
   await expect(userSpelling.locator('.spelling-correct').first()).toBeVisible();
   await expect(correctSpelling.locator('.spelling-correct').first()).toBeVisible();
+  await expect(page.locator('.spelling-hint')).toHaveCount(0);
+
+  await page.keyboard.press('Enter');
+  const recallInput = page.getByLabel('Recall from memory');
+  await expect(recallInput).toBeVisible();
+  await expect(recallInput).toBeFocused();
 });
