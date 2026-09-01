@@ -5,12 +5,14 @@ export enum RemediationPhase { CORRECTION = 'correction', RECALL = 'recall', COP
 export enum RemediationContext { IMMEDIATE = 'immediate', RECHECK = 'recheck' }
 
 export interface SpellingOperation { type: 'equal' | 'insert' | 'delete' | 'replace'; answer?: string; target?: string }
+export interface SpellingToken { value: string; status: 'correct' | 'changed' | 'missing' | 'extra' }
 export interface SpellingComparison {
   answer: string;
   target: string;
   distance: number;
   operations: SpellingOperation[];
-  targetTokens: Array<{ value: string; status: 'correct' | 'missing' | 'changed' }>;
+  answerTokens: SpellingToken[];
+  targetTokens: SpellingToken[];
   transposition: { answer: string; target: string } | null;
 }
 
@@ -74,11 +76,32 @@ export function buildSpellingComparison(rawAnswer: string, rawTarget: string): S
     else { operations.push({ type: 'insert', target: b[j - 1] }); j -= 1; }
   }
   operations.reverse();
-  const targetTokens = operations.filter((op) => op.type !== 'delete').map((op) => ({
-    value: op.target || '',
-    status: op.type === 'equal' ? 'correct' as const : op.type === 'insert' ? 'missing' as const : 'changed' as const,
-  }));
-  return { answer, target, distance: matrix[a.length][b.length], operations, targetTokens, transposition: detectTransposition(answer, target) };
+
+  const answerTokens: SpellingToken[] = [];
+  const targetTokens: SpellingToken[] = [];
+  for (const operation of operations) {
+    if (operation.type === 'equal') {
+      answerTokens.push({ value: operation.answer || '', status: 'correct' });
+      targetTokens.push({ value: operation.target || '', status: 'correct' });
+    } else if (operation.type === 'replace') {
+      answerTokens.push({ value: operation.answer || '', status: 'changed' });
+      targetTokens.push({ value: operation.target || '', status: 'changed' });
+    } else if (operation.type === 'delete') {
+      answerTokens.push({ value: operation.answer || '', status: 'extra' });
+    } else {
+      targetTokens.push({ value: operation.target || '', status: 'missing' });
+    }
+  }
+
+  return {
+    answer,
+    target,
+    distance: matrix[a.length][b.length],
+    operations,
+    answerTokens,
+    targetTokens,
+    transposition: detectTransposition(answer, target),
+  };
 }
 
 export function buildOrthographicHint(comparison: SpellingComparison): string {
