@@ -116,8 +116,8 @@ test('wrong spelling shows the same token-level comparison highlights as legacy 
   await expect(page.getByRole('heading', { name: 'Spelling correction' })).toBeVisible();
   const userSpelling = page.getByTestId('user-spelling');
   const correctSpelling = page.getByTestId('correct-spelling');
-  await expect(userSpelling).toContainText(wrong);
-  await expect(correctSpelling).toContainText(term);
+  await expect(userSpelling).toContainText(wrong.toLocaleLowerCase('en'));
+  await expect(correctSpelling).toContainText(term.toLocaleLowerCase('en'));
   await expect(userSpelling.locator('.spelling-changed, .spelling-extra')).toHaveCount(1);
   await expect(correctSpelling.locator('.spelling-changed, .spelling-missing')).toHaveCount(1);
   await expect(userSpelling.locator('.spelling-correct').first()).toBeVisible();
