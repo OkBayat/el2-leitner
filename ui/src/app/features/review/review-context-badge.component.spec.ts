@@ -3,14 +3,14 @@ import {RemediationContext, RemediationPhase} from '../../domain/remediation/rem
 import {resolveReviewContextBadge} from './review-context-badge.component';
 
 describe('review remediation context badge', () => {
-	it('labels the original correction as a previous mistake', () => {
+	it('labels the original correction as spelling correction', () => {
 		expect(resolveReviewContextBadge({
 			phase: RemediationPhase.CORRECTION,
 			context: RemediationContext.IMMEDIATE,
 		})).toEqual({
 			kind: 'previous-mistake',
 			icon: 'mistake',
-			label: 'PREVIOUS MISTAKE',
+			label: 'SPELLING CORRECTION',
 		});
 	});
 
