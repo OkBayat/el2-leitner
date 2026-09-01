@@ -26,14 +26,48 @@ jobs:
         run: |
           npm install --save-exact @material/web@2.5.0
           npm install --save-dev --save-exact rollup@4.63.1 @rollup/plugin-node-resolve@16.0.3
-      - name: Commit generated dependency lock
+      - name: Apply deterministic migration cleanups
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          test_path = Path('ui/tests/test-app.mjs')
+          source = test_path.read_text()
+          old = """  const authInputs = [...authDom.window.document.querySelectorAll('#authForm input')];
+            assert.deepEqual(authInputs.map((input) => input.type), ['email', 'password'], `${filename} must request only email and password`);
+            assert.ok(authDom.window.document.querySelector('script[type=\"module\"][src=\"./src/features/auth/index.js\"]'), `${filename} must boot through the auth composition root`);"""
+          new = """  const authFields = [...authDom.window.document.querySelectorAll('#authForm md-outlined-text-field')];
+            assert.deepEqual(authFields.map((field) => field.getAttribute('type')), ['email', 'password'], `${filename} must request only email and password through Material fields`);
+            assert.ok(authDom.window.document.querySelector('script[type=\"module\"][src=\"./dist/material-web.js\"]'), `${filename} must load the Material Web bundle`);
+            assert.ok(authDom.window.document.querySelector('script[type=\"module\"][src=\"./src/features/auth/index.js\"]'), `${filename} must boot through the auth composition root`);"""
+          if old in source:
+              test_path.write_text(source.replace(old, new))
+
+          css_path = Path('ui/src/design-system/material3.css')
+          css = css_path.read_text()
+          replacements = {
+              '.btn,\n.auth-submit {': '.btn {',
+              '.btn:hover,\n.auth-submit:hover {': '.btn:hover {',
+              '.btn-primary,\n.auth-submit {': '.btn-primary {',
+              '.btn-primary:hover,\n.auth-submit:hover {': '.btn-primary:hover {',
+              '.icon-btn,\n.leitner-house-back,\n.library-close-btn,': '.icon-btn,\n.library-close-btn,',
+              '.icon-btn:hover,\n.leitner-house-back:hover,\n.library-close-btn:hover,': '.icon-btn:hover,\n.library-close-btn:hover,',
+              ',\n.auth-field input,\n.leitner-house-controls input,\n.leitner-house-controls select {': ' {',
+              ',\n.auth-field input,\n.leitner-house-controls input,\n.leitner-house-controls select {\n  min-height: 48px;': ' {\n  min-height: 48px;',
+              ',\n.auth-field input:focus {': ' {',
+          }
+          for before, after in replacements.items():
+              css = css.replace(before, after)
+          css_path.write_text(css)
+          PY
+      - name: Commit generated lock and migration cleanups
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ui/package.json ui/package-lock.json
+          git add ui/package.json ui/package-lock.json ui/tests/test-app.mjs ui/src/design-system/material3.css
           if git diff --cached --quiet; then
-            echo "Dependency lock is already current."
+            echo "Generated files are already current."
             exit 0
           fi
-          git commit -m "build(ui): lock Material Web toolchain"
+          git commit -m "build(ui): lock and integrate Material Web"
           git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
