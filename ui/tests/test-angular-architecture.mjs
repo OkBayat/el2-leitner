@@ -58,6 +58,7 @@ const theme = read('src/styles.scss');
 assert.match(theme, /@use ['"]@angular\/material['"] as mat/u);
 assert.match(theme, /@include mat\.theme/u);
 assert.match(theme, /--mat-sys-/u);
+assert.match(theme, /direction\s*:\s*ltr/u, 'The global document flow must be left-to-right.');
 
 const sourceRoot = path.join(uiRoot, 'src', 'app');
 function walk(dir) {
@@ -70,6 +71,26 @@ for (const file of walk(sourceRoot).filter((item) => item.endsWith('.ts') && !it
   const source = fs.readFileSync(file, 'utf8');
   assert.doesNotMatch(source, /document\.querySelector|innerHTML\s*=|addEventListener\(/u, `${path.relative(uiRoot, file)} must use Angular templates/bindings rather than legacy DOM scripting.`);
 }
+
+const indexHtml = read('src/index.html');
+assert.match(indexHtml, /<html\s+lang="en"\s+dir="ltr">/u, 'The Angular document must declare English LTR semantics.');
+assert.doesNotMatch(indexHtml, /dir="rtl"|lang="fa"/u);
+
+const userFacingSources = [
+  ['src/index.html', indexHtml],
+  ['src/styles.scss', theme],
+  ...walk(sourceRoot)
+    .filter((item) => item.endsWith('.ts') && !item.endsWith('.spec.ts'))
+    .map((file) => [path.relative(uiRoot, file), fs.readFileSync(file, 'utf8')]),
+];
+for (const [name, source] of userFacingSources) {
+  assert.doesNotMatch(source, /\p{Script=Arabic}/u, `${name} must not contain Persian/Arabic UI copy.`);
+  assert.doesNotMatch(source, /fa-IR|dir=["']rtl["']/u, `${name} must not reintroduce Persian locale or RTL presentation.`);
+}
+
+const reviewPage = read('src/app/features/review/review-page.component.ts');
+assert.match(reviewPage, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
+assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
 
 const allSource = walk(sourceRoot).filter((item) => item.endsWith('.ts')).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 for (const materialModule of ['MatButtonModule', 'MatCardModule', 'MatFormFieldModule', 'MatInputModule', 'MatSelectModule', 'MatDialogModule', 'MatTableModule']) {
