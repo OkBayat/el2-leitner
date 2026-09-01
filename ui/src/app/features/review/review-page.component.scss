@@ -286,14 +286,14 @@
 }
 
 .review-action-secondary {
-	min-width: 178px;
+	width: 200px;
 	padding: 0 22px;
 	--mdc-outlined-button-container-height: 50px;
 	--mdc-outlined-button-outline-color: var(--review-footer-border);
 	--mdc-outlined-button-label-text-color: var(--review-footer-muted);
-	border: 2px solid var(--review-footer-border);
-	background: #fff;
-	color: var(--review-footer-muted);
+	border-color: var(--review-footer-border)!important;
+	background: none;
+	color: var(--review-footer-muted)!important;
 	box-shadow: 0 4px 0 var(--review-footer-border);
 }
 

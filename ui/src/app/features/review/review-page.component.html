@@ -123,8 +123,10 @@
 						}
 
 						@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
-							<form id="remediation-answer-form" class="review-answer-form"
-							      (submit)="$event.preventDefault(); submitRemediation()">
+							<form
+								id="remediation-answer-form"
+								class="review-answer-form mt-4"
+							    (submit)="$event.preventDefault(); submitRemediation()">
 								<mat-form-field class="review-answer-field" appearance="outline">
 									<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
 									<input
@@ -205,7 +207,13 @@
 			} @else if (session.currentTask() === 'review') {
 				<footer class="review-action-footer neutral" data-testid="review-action-footer">
 					<div class="review-action-inner">
-						<button class="review-action-secondary" mat-stroked-button type="button" (click)="dontKnow()">I don't know</button>
+						<button
+							class="review-action-secondary"
+							mat-stroked-button
+							type="button"
+							(click)="dontKnow()">
+							I don't know
+						</button>
 						<button
 							class="review-action-primary"
 							mat-flat-button
