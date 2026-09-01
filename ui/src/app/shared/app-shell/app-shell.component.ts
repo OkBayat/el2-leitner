@@ -24,22 +24,22 @@ import { ShareStoryService } from '../share-story/share-story.service';
           }
         </mat-nav-list>
         <div class="sidebar-progress">
-          <div><span>تسلط کل</span><strong>{{ masteryPercent() }}٪</strong></div>
+          <div><span>Overall mastery</span><strong>{{ masteryPercent() }}%</strong></div>
           <mat-progress-bar mode="determinate" [value]="masteryPercent()" />
-          <small>{{ masteredCount() }} از {{ totalWords() }} واژه</small>
+          <small>{{ masteredCount() }} of {{ totalWords() }} words</small>
         </div>
       </mat-sidenav>
       <mat-sidenav-content>
         <mat-toolbar class="topbar">
-          <div class="topbar-title"><strong>Vocora</strong><small>{{ streak() }} روز پیوسته</small></div>
+          <div class="topbar-title"><strong>Vocora</strong><small>{{ streak() }} day streak</small></div>
           <span class="spacer"></span>
-          <span class="user-email" dir="ltr">{{ auth.user()?.email }}</span>
-          <button mat-icon-button type="button" aria-label="ساخت استوری پیشرفت" title="Story Studio" (click)="share.open()">↗</button>
-          <button mat-icon-button type="button" aria-label="تغییر پوسته" (click)="cycleTheme()">◐</button>
-          <button mat-icon-button type="button" aria-label="خروج" (click)="logout()">↪</button>
+          <span class="user-email">{{ auth.user()?.email }}</span>
+          <button mat-icon-button type="button" aria-label="Create progress story" title="Story Studio" (click)="share.open()">↗</button>
+          <button mat-icon-button type="button" aria-label="Change theme" (click)="cycleTheme()">◐</button>
+          <button mat-icon-button type="button" aria-label="Sign out" (click)="logout()">↪</button>
         </mat-toolbar>
         <main class="content"><router-outlet /></main>
-        <nav class="mobile-nav" aria-label="ناوبری موبایل">
+        <nav class="mobile-nav" aria-label="Mobile navigation">
           @for (item of mobileNavItems; track item.path) {
             <a [routerLink]="item.path" routerLinkActive="active-mobile"><span>{{ item.symbol }}</span><small>{{ item.label }}</small></a>
           }
@@ -64,9 +64,9 @@ export class AppShellComponent implements OnInit {
   readonly share = inject(ShareStoryService);
   private readonly theme = inject(ThemeService);
   readonly navItems = [
-    { path: '/dashboard', label: 'خانه', symbol: '⌂' }, { path: '/review', label: 'مرور امروز', symbol: '◎' },
-    { path: '/words', label: 'واژه‌ها', symbol: '≡' }, { path: '/library', label: 'کتابخانه', symbol: '▦' },
-    { path: '/reports', label: 'گزارش رشد', symbol: '↗' }, { path: '/settings', label: 'تنظیمات', symbol: '⚙' },
+    { path: '/dashboard', label: 'Home', symbol: '⌂' }, { path: '/review', label: "Today's Review", symbol: '◎' },
+    { path: '/words', label: 'Words', symbol: '≡' }, { path: '/library', label: 'Library', symbol: '▦' },
+    { path: '/reports', label: 'Progress', symbol: '↗' }, { path: '/settings', label: 'Settings', symbol: '⚙' },
   ];
   readonly mobileNavItems = this.navItems.slice(0, 5);
   readonly totalWords = computed(() => this.store.state()?.words.length || 0);
