@@ -11,7 +11,7 @@ describe('Leitner dashboard distribution', () => {
     const today = '2026-09-01';
     const words = [
       createWord({ id: 'h1', term: 'one', box: 1, due: today }),
-      createWord({ id: 'h2-a', term: 'two-a', box: 2, due: '2026-09-02' }),
+      createWord({ id: 'h2-a', term: 'two-a', box: 2, due: '2026-09-03' }),
       createWord({ id: 'h2-b', term: 'two-b', box: 2, due: today }),
       createWord({ id: 'h4-a', term: 'four-a', box: 4, due: '2026-09-08' }),
       createWord({ id: 'h4-b', term: 'four-b', box: 4, due: '2026-09-05' }),
