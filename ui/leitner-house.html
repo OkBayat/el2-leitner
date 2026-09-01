@@ -31,7 +31,7 @@
     <main class="main-content leitner-house-main">
       <header class="topbar leitner-house-topbar">
         <div class="leitner-house-heading">
-          <button class="leitner-house-back" id="leitnerHouseBackBtn" type="button" aria-label="بازگشت به صفحه قبل" title="بازگشت">←</button>
+          <md-outlined-button class="leitner-house-back" id="leitnerHouseBackBtn" type="button" aria-label="بازگشت به صفحه قبل" title="بازگشت">← بازگشت</md-outlined-button>
           <div>
             <p class="eyebrow">جعبه لایتنر</p>
             <h1 id="leitnerHouseTitle">واژه‌های خانه</h1>
@@ -65,20 +65,13 @@
               <p id="leitnerHouseResults" aria-live="polite">در حال دریافت واژه‌ها…</p>
             </div>
             <div class="leitner-house-controls">
-              <label class="leitner-house-search-wrap">
-                <span class="sr-only">جستجو در واژه‌های خانه</span>
-                <span aria-hidden="true">⌕</span>
-                <input id="leitnerHouseSearch" type="search" autocomplete="off" placeholder="جستجوی واژه، دسته، درس یا تگ…">
-              </label>
-              <label class="leitner-house-sort-wrap">
-                <span class="sr-only">مرتب‌سازی واژه‌ها</span>
-                <select id="leitnerHouseSort">
-                  <option value="mistakes">بیشترین اشتباه</option>
-                  <option value="due">نزدیک‌ترین مرور</option>
-                  <option value="recent">آخرین مرور</option>
-                  <option value="alpha">حروف الفبا</option>
-                </select>
-              </label>
+              <md-outlined-text-field id="leitnerHouseSearch" type="search" label="جستجوی واژه‌ها" autocomplete="off" placeholder="واژه، دسته، درس یا تگ…"></md-outlined-text-field>
+              <md-outlined-select id="leitnerHouseSort" label="مرتب‌سازی">
+                <md-select-option selected value="mistakes" headline="بیشترین اشتباه"></md-select-option>
+                <md-select-option value="due" headline="نزدیک‌ترین مرور"></md-select-option>
+                <md-select-option value="recent" headline="آخرین مرور"></md-select-option>
+                <md-select-option value="alpha" headline="حروف الفبا"></md-select-option>
+              </md-outlined-select>
             </div>
           </div>
 
@@ -104,6 +97,7 @@
     </main>
   </div>
 
+  <script type="module" src="./dist/material-web.js"></script>
   <script type="module" src="./src/features/leitner-house/index.js"></script>
 </body>
 </html>
