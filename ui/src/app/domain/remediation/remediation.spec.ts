@@ -35,6 +35,25 @@ describe('same-session spelling remediation regressions', () => {
     expect(extra.answerTokens.some((token) => token.value === 't' && token.status === 'extra')).toBe(true);
   });
 
+  it('keeps the actual failed recheck answer in the copy-phase comparison', () => {
+    const attempt = RemediationAttempt.recheck({
+      wordId: 'temperament',
+      accepted: ['temperament'],
+      recheckNumber: 1,
+    });
+
+    expect(attempt.phase).toBe(RemediationPhase.RECALL);
+    expect(attempt.submitRecall('temproment')).toBe(false);
+
+    const snapshot = attempt.snapshot();
+    expect(snapshot.phase).toBe(RemediationPhase.COPY);
+    expect(snapshot.comparison.answer).toBe('temproment');
+    expect(snapshot.comparison.target).toBe('temperament');
+    expect(snapshot.comparison.answerTokens.map((token) => token.value).join('')).toBe('temproment');
+    expect(snapshot.comparison.targetTokens.map((token) => token.value).join('')).toBe('temperament');
+    expect(snapshot.comparison.distance).toBeGreaterThan(0);
+  });
+
   it('enforces correction, hidden recall, copy and final recall', () => {
     const policy = new SameSessionRecheckPolicy(3, 1, 2);
     const attempt = RemediationAttempt.immediate({ wordId: 'environment', accepted: ['environment'], initialAnswer: 'enviroment', policy, now: () => '2026-07-16T10:00:00.000Z' });
