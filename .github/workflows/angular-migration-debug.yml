@@ -1,0 +1,43 @@
+name: Angular Migration Debug
+
+on:
+  push:
+    branches:
+      - refactor/angular-material-frontend
+    paths:
+      - '.github/workflows/angular-migration-debug.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.2
+      - name: Capture diagnostics
+        shell: bash
+        run: |
+          set +e
+          mkdir -p /tmp/vocora-debug
+
+          (cd ui && npm ci && npm run build:production) > /tmp/vocora-debug/ui-build.log 2>&1
+          echo $? > /tmp/vocora-debug/ui-build.exit
+
+          (cd back && npm ci && npm test) > /tmp/vocora-debug/back-test.log 2>&1
+          echo $? > /tmp/vocora-debug/back-test.exit
+
+          docker compose build app > /tmp/vocora-debug/docker-build.log 2>&1
+          echo $? > /tmp/vocora-debug/docker-build.exit
+
+          printf 'UI build exit: '; cat /tmp/vocora-debug/ui-build.exit
+          printf 'Back test exit: '; cat /tmp/vocora-debug/back-test.exit
+          printf 'Docker build exit: '; cat /tmp/vocora-debug/docker-build.exit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: angular-migration-debug
+          path: /tmp/vocora-debug
+          if-no-files-found: error
