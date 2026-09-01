@@ -15,9 +15,9 @@ describe('AuthService regression contracts', () => {
   it('normalizes email and validates registration password bounds', () => {
     const { service } = createService();
     expect(service.validate(' USER@Example.COM ', 'password123', true)).toEqual({ email: 'user@example.com', password: 'password123' });
-    expect(() => service.validate('not-email', 'password123', false)).toThrow(/ایمیل معتبر/u);
-    expect(() => service.validate('user@example.com', 'short', true)).toThrow(/حداقل ۸/u);
-    expect(() => service.validate('user@example.com', '🙂'.repeat(19), true)).toThrow(/۷۲ بایت/u);
+    expect(() => service.validate('not-email', 'password123', false)).toThrow(/valid email/u);
+    expect(() => service.validate('user@example.com', 'short', true)).toThrow(/at least 8/u);
+    expect(() => service.validate('user@example.com', '🙂'.repeat(19), true)).toThrow(/72 bytes/u);
   });
 
   it('allows only same-origin local return targets', () => {

@@ -11,8 +11,8 @@ export interface ConfirmDialogData { title: string; message: string; confirmLabe
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>{{ data.message }}</mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button matButton (click)="dialog.close(false)">انصراف</button>
-      <button matButton="filled" [class.danger-action]="data.danger" (click)="dialog.close(true)">{{ data.confirmLabel || 'تأیید' }}</button>
+      <button matButton (click)="dialog.close(false)">Cancel</button>
+      <button matButton="filled" [class.danger-action]="data.danger" (click)="dialog.close(true)">{{ data.confirmLabel || 'Confirm' }}</button>
     </mat-dialog-actions>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

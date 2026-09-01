@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { MySqlLibraryRepository } from "./MySqlLibraryRepository.js";
 
 export const IELTS_COLLECTION_ID = "ielts-listening-core-1500";
+export const IELTS_COLLECTION_TITLE = "1500 IELTS Listening Words";
+export const IELTS_COLLECTION_DESCRIPTION = "1,500 IELTS Listening source items normalized into unique vocabulary entries with equivalent spellings merged.";
 
 export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
   const sourceHash = createHash("sha256").update(sourceText, "utf8").digest("hex");
@@ -15,19 +17,18 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
       `INSERT INTO collections
          (public_id, slug, title, description, kind, visibility, status, content_version,
           source_hash, is_default, published_at, metadata_json)
-       VALUES (?, ?, '1500 IELTS Listening Words',
-         '۱۵۰۰ مورد منبع که پس از یکی‌سازی املاهای هم‌ارز، به واژه‌های یکتای IELTS Listening تبدیل می‌شوند.',
+       VALUES (?, ?, ?, ?,
          'exam', 'public', 'published', 0, NULL, TRUE, CURRENT_TIMESTAMP(3),
          JSON_OBJECT('language', 'en', 'spelling', 'British'))`,
-      [IELTS_COLLECTION_ID, IELTS_COLLECTION_ID]
+      [IELTS_COLLECTION_ID, IELTS_COLLECTION_ID, IELTS_COLLECTION_TITLE, IELTS_COLLECTION_DESCRIPTION]
     );
   } else if (rows[0].source_hash === sourceHash) {
     await pool.execute(
       `UPDATE collections
-       SET is_default = TRUE, visibility = 'public', status = 'published', archived_at = NULL,
+       SET title = ?, description = ?, is_default = TRUE, visibility = 'public', status = 'published', archived_at = NULL,
            published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3))
        WHERE public_id = ?`,
-      [IELTS_COLLECTION_ID]
+      [IELTS_COLLECTION_TITLE, IELTS_COLLECTION_DESCRIPTION, IELTS_COLLECTION_ID]
     );
     return { changed: false, sourceHash };
   }
@@ -37,7 +38,7 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
   const result = await repository.importEntries(IELTS_COLLECTION_ID, parsed, "replace");
   await pool.execute(
     `UPDATE collections
-     SET source_hash = ?, is_default = TRUE, visibility = 'public', status = 'published',
+     SET title = ?, description = ?, source_hash = ?, is_default = TRUE, visibility = 'public', status = 'published',
          published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3)),
          metadata_json = JSON_SET(
            COALESCE(metadata_json, JSON_OBJECT()),
@@ -47,6 +48,8 @@ export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
          )
      WHERE public_id = ?`,
     [
+      IELTS_COLLECTION_TITLE,
+      IELTS_COLLECTION_DESCRIPTION,
       sourceHash,
       parsed.sourceItemCount,
       parsed.entries.length,

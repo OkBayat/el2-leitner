@@ -59,7 +59,7 @@ export class LearningStoreService {
     const currentRevision = this.revisionSignal();
     this.acceptRevision(response.revision, { minimum: currentRevision, maximum: currentRevision });
     if (!response.state) {
-      throw new ApiError('دادهٔ canonical پس از ذخیره‌سازی در دسترس نیست.', 502, 'INVALID_BOOTSTRAP_STATE');
+      throw new ApiError('Canonical data is not available after saving.', 502, 'INVALID_BOOTSTRAP_STATE');
     }
     return hydrateState(response.state);
   }
@@ -67,7 +67,7 @@ export class LearningStoreService {
   private acceptRevision(value: number, range: { minimum: number; maximum?: number }): void {
     const revision = Number(value);
     if (!Number.isSafeInteger(revision) || revision < range.minimum || (range.maximum !== undefined && revision > range.maximum)) {
-      throw new ApiError('نسخهٔ دادهٔ دریافتی معتبر نیست.', 502, 'INVALID_STATE_REVISION');
+      throw new ApiError('The received state revision is invalid.', 502, 'INVALID_STATE_REVISION');
     }
     this.revisionSignal.set(revision);
   }
@@ -100,8 +100,15 @@ export class LearningStoreService {
   async persistCurrent(): Promise<void> { await this.persistState(this.snapshot()); }
 
   private async persistState(state: LearningState): Promise<void> {
-    if (this.writeBlockedSignal()) throw new ApiError('ذخیره‌سازی به‌دلیل تعارض نسخه متوقف شده است.', 409, 'STATE_CONFLICT');
-    try { const response = await this.api.put<{ revision: number }>('/api/state', { state, revision: this.revisionSignal() }); const next = Number(response.revision); if (!Number.isSafeInteger(next) || next <= this.revisionSignal()) throw new ApiError('نسخهٔ ذخیره‌شده معتبر نیست.', 502, 'INVALID_STATE_REVISION'); this.revisionSignal.set(next); }
-    catch (error) { if (error instanceof ApiError && error.code === 'STATE_CONFLICT') this.writeBlockedSignal.set(true); throw error; }
+    if (this.writeBlockedSignal()) throw new ApiError('Saving is blocked because the state revision conflicts with a newer version.', 409, 'STATE_CONFLICT');
+    try {
+      const response = await this.api.put<{ revision: number }>('/api/state', { state, revision: this.revisionSignal() });
+      const next = Number(response.revision);
+      if (!Number.isSafeInteger(next) || next <= this.revisionSignal()) throw new ApiError('The saved state revision is invalid.', 502, 'INVALID_STATE_REVISION');
+      this.revisionSignal.set(next);
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'STATE_CONFLICT') this.writeBlockedSignal.set(true);
+      throw error;
+    }
   }
 }

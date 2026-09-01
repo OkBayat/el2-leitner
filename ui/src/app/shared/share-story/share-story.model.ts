@@ -21,26 +21,26 @@ export function buildShareMoment(state: LearningState, kind: ShareMomentKind): S
   if (kind === 'journey') {
     return {
       kind,
-      title: 'مسیر یادگیری من در Vocora',
-      subtitle: 'پیشرفت واقعی، قدم‌به‌قدم',
+      title: 'My Vocora learning journey',
+      subtitle: 'Real progress, one step at a time',
       primaryValue: String(stats.mastered),
-      primaryLabel: 'واژهٔ مسلط‌شده',
-      secondaryValue: `${accuracy(stats.correct, stats.attempts) ?? 0}٪`,
-      secondaryLabel: 'دقت کلی',
-      caption: `در Vocora تا امروز ${stats.mastered} واژه را به تسلط رسانده‌ام و ${streak} روز پیوستگی دارم.`,
+      primaryLabel: 'mastered words',
+      secondaryValue: `${accuracy(stats.correct, stats.attempts) ?? 0}%`,
+      secondaryLabel: 'overall accuracy',
+      caption: `I've mastered ${stats.mastered} words in Vocora and kept a ${streak}-day streak.`,
     };
   }
   const todayAccuracy = accuracy(today.correct, today.attempts) ?? 0;
   return {
     kind,
-    title: today.attempts ? 'تمرین امروز من در Vocora' : 'شروع مسیر من در Vocora',
-    subtitle: today.attempts ? 'یک جلسهٔ دیگر برای بهتر شدن' : 'از امروز شروع می‌کنم',
+    title: today.attempts ? 'My Vocora practice today' : 'My Vocora journey starts today',
+    subtitle: today.attempts ? 'One more session to get better' : 'Starting today',
     primaryValue: String(today.attempts),
-    primaryLabel: 'پاسخ امروز',
-    secondaryValue: `${todayAccuracy}٪`,
-    secondaryLabel: 'دقت امروز',
+    primaryLabel: 'answers today',
+    secondaryValue: `${todayAccuracy}%`,
+    secondaryLabel: 'accuracy today',
     caption: today.attempts
-      ? `امروز ${today.attempts} پاسخ در Vocora ثبت کردم؛ دقت امروز من ${todayAccuracy}٪ بود.`
-      : 'امروز مسیر یادگیری واژگانم را در Vocora شروع کردم.',
+      ? `I logged ${today.attempts} answers in Vocora today with ${todayAccuracy}% accuracy.`
+      : 'I started my vocabulary learning journey in Vocora today.',
   };
 }

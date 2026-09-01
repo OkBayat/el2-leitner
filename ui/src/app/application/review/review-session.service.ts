@@ -124,13 +124,13 @@ export class ReviewSessionService {
     else this.wrongSignal.update((value) => value + 1);
 
     const detail = !transition.event.correct
-      ? 'کلمه به خانهٔ ۱ برگشت و ارتقا تا فردا قفل شد.'
+      ? 'The word returned to House 1 and promotion is locked until tomorrow.'
       : transition.event.promoted
-        ? transition.event.previousBox === 5 ? 'مرور نهایی انجام شد؛ واژه از چرخهٔ زمان‌بندی خارج شد.' : `از خانهٔ ${transition.event.previousBox} به خانهٔ ${transition.event.newBox} رفت.`
-        : this.mode === 'box1' ? 'تمرین ثبت شد؛ تمرین آزاد جای کارت را تغییر نمی‌دهد.' : 'پاسخ درست ثبت شد؛ هنوز موعد ارتقای بعدی نرسیده است.';
+        ? transition.event.previousBox === 5 ? 'Final review completed; the word has left the scheduled review cycle.' : `Moved from House ${transition.event.previousBox} to House ${transition.event.newBox}.`
+        : this.mode === 'box1' ? 'Practice recorded; free practice does not change the card’s house.' : 'Correct answer recorded; the next promotion is not due yet.';
     this.feedbackSignal.set({
       correct: transition.event.correct,
-      title: transition.event.correct ? 'درست بود!' : `این ${transition.word.mistakes}‌مین خطای تو برای این کلمه است`,
+      title: transition.event.correct ? 'Correct!' : `This is mistake #${transition.word.mistakes} for this word.`,
       detail,
       spelling: transition.word.accepted.join(' / '),
     });

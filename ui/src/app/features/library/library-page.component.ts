@@ -28,38 +28,38 @@ import {
   template: `
     <section class="page">
       <header>
-        <div><h1>کتابخانه</h1><p>{{ collections().length }} مجموعه · {{ totalWords() }} واژه</p></div>
-        @if (canManage()) { <button mat-flat-button (click)="createCollection()">مجموعهٔ جدید</button> }
+        <div><h1>Library</h1><p>{{ collections().length }} collections · {{ totalWords() }} words</p></div>
+        @if (canManage()) { <button mat-flat-button (click)="createCollection()">New collection</button> }
       </header>
 
       <div class="stats">
-        <mat-card appearance="outlined"><strong>{{ collections().length }}</strong><span>مجموعه</span></mat-card>
-        <mat-card appearance="outlined"><strong>{{ totalWords() }}</strong><span>کل واژه‌ها</span></mat-card>
-        <mat-card appearance="outlined"><strong>{{ subscribedWords() }}</strong><span>واژه‌های مجموعه‌های من</span></mat-card>
+        <mat-card appearance="outlined"><strong>{{ collections().length }}</strong><span>Collections</span></mat-card>
+        <mat-card appearance="outlined"><strong>{{ totalWords() }}</strong><span>Total words</span></mat-card>
+        <mat-card appearance="outlined"><strong>{{ subscribedWords() }}</strong><span>Words in my collections</span></mat-card>
       </div>
 
       <div class="filters">
-        <mat-form-field appearance="outline"><mat-label>جستجو</mat-label><input matInput [formControl]="search"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>نوع</mat-label><mat-select [formControl]="kind"><mat-option value="all">همه</mat-option><mat-option value="book">کتاب</mat-option><mat-option value="exam">آزمون</mat-option><mat-option value="topic">موضوعی</mat-option><mat-option value="course">دوره</mat-option></mat-select></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>وضعیت</mat-label><mat-select [formControl]="status"><mat-option value="all">همه</mat-option><mat-option value="subscribed">اضافه‌شده</mat-option><mat-option value="available">اضافه‌نشده</mat-option></mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Search</mat-label><input matInput [formControl]="search"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Type</mat-label><mat-select [formControl]="kind"><mat-option value="all">All</mat-option><mat-option value="book">Book</mat-option><mat-option value="exam">Exam</mat-option><mat-option value="topic">Topic</mat-option><mat-option value="course">Course</mat-option></mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select [formControl]="status"><mat-option value="all">All</mat-option><mat-option value="subscribed">Added</mat-option><mat-option value="available">Not added</mat-option></mat-select></mat-form-field>
       </div>
 
       <div class="cards">
         @for (collection of filtered(); track collection.id) {
           <mat-card appearance="outlined" [attr.id]="collection.id">
-            <mat-card-header><mat-card-title>{{ collection.title }}</mat-card-title><mat-card-subtitle>{{ kindLabel(collection.kind) }} · {{ level(collection) }} · نسخه {{ collection.contentVersion }}</mat-card-subtitle></mat-card-header>
+            <mat-card-header><mat-card-title>{{ collection.title }}</mat-card-title><mat-card-subtitle>{{ kindLabel(collection.kind) }} · {{ level(collection) }} · version {{ collection.contentVersion }}</mat-card-subtitle></mat-card-header>
             <mat-card-content>
-              <p>{{ collection.description || 'مجموعه‌ای از واژه‌ها برای مسیر یادگیری تو.' }}</p>
-              <div class="count"><span>{{ collection.wordCount }} واژه</span><strong>{{ progress(collection).percent }}٪ وارد لایتنر</strong></div>
+              <p>{{ collection.description || 'A vocabulary collection for your learning journey.' }}</p>
+              <div class="count"><span>{{ collection.wordCount }} words</span><strong>{{ progress(collection).percent }}% in Leitner</strong></div>
               <mat-progress-bar mode="determinate" [value]="progress(collection).percent" />
             </mat-card-content>
             <mat-card-actions>
-              <button mat-flat-button (click)="toggle(collection)">{{ collection.subscribed ? '✓ اضافه شده' : 'افزودن به جعبه' }}</button>
-              <button mat-button (click)="open(collection)">مشاهده واژه‌ها</button>
-              @if (canManage()) { <button mat-icon-button (click)="edit(collection)" title="ویرایش">✎</button> }
+              <button mat-flat-button (click)="toggle(collection)">{{ collection.subscribed ? '✓ Added' : 'Add to box' }}</button>
+              <button mat-button (click)="open(collection)">View words</button>
+              @if (canManage()) { <button mat-icon-button (click)="edit(collection)" title="Edit">✎</button> }
             </mat-card-actions>
           </mat-card>
-        } @empty { <p class="empty">مجموعه‌ای با این فیلتر پیدا نشد.</p> }
+        } @empty { <p class="empty">No collections match these filters.</p> }
       </div>
     </section>
   `,
@@ -100,6 +100,6 @@ export class LibraryPageComponent implements OnInit {
   async load(): Promise<void> { const result = await this.api.list(); this.collections.set(result.collections || []); this.canManage.set(Boolean(result.capabilities?.canManage)); }
   async toggle(collection: LibraryCollection): Promise<void> { if (collection.subscribed) await this.api.unsubscribe(collection.id); else await this.api.subscribe(collection.id); await this.load(); }
   async open(collection: LibraryCollection): Promise<void> { const detail = await this.api.get(collection.id); const changed = await firstValueFrom(this.dialog.open(LibraryDetailDialogComponent, { data: { collection: detail.collection, canManage: Boolean(detail.capabilities?.canManage) }, maxWidth: '95vw' }).afterClosed()); if (changed) await this.load(); }
-  async createCollection(): Promise<void> { const value = await firstValueFrom(this.dialog.open(CollectionEditorComponent, { data: { collection: null } }).afterClosed()) as CollectionPayload | undefined; if (!value) return; const result = await this.api.create(value); await this.load(); this.snack.open('مجموعه ساخته شد.', 'باشه', { duration: 2000 }); await this.open(result.collection); }
+  async createCollection(): Promise<void> { const value = await firstValueFrom(this.dialog.open(CollectionEditorComponent, { data: { collection: null } }).afterClosed()) as CollectionPayload | undefined; if (!value) return; const result = await this.api.create(value); await this.load(); this.snack.open('Collection created.', 'OK', { duration: 2000 }); await this.open(result.collection); }
   async edit(collection: LibraryCollection): Promise<void> { const value = await firstValueFrom(this.dialog.open(CollectionEditorComponent, { data: { collection } }).afterClosed()) as CollectionPayload | undefined; if (!value) return; await this.api.update(collection.id, value); await this.load(); }
 }

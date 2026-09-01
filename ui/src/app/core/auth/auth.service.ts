@@ -17,11 +17,11 @@ export class AuthService {
 
   validate(email: string, password: string, register = false): { email: string; password: string } {
     const normalized = this.normalizeEmail(email);
-    if (!normalized || !password) throw new ApiError('ایمیل و رمز عبور را وارد کن.', 0, 'MISSING_CREDENTIALS');
-    if (!/^[^\s@]+@[^\s@]+$/u.test(normalized)) throw new ApiError('یک ایمیل معتبر وارد کن.', 0, 'INVALID_EMAIL');
+    if (!normalized || !password) throw new ApiError('Enter your email and password.', 0, 'MISSING_CREDENTIALS');
+    if (!/^[^\s@]+@[^\s@]+$/u.test(normalized)) throw new ApiError('Enter a valid email address.', 0, 'INVALID_EMAIL');
     const bytes = new TextEncoder().encode(password).length;
-    if (bytes > 72) throw new ApiError(register ? 'رمز عبور نباید بیشتر از ۷۲ بایت باشد.' : 'ایمیل یا رمز عبور درست نیست.', 0, 'PASSWORD_TOO_LONG');
-    if (register && password.length < 8) throw new ApiError('رمز عبور باید حداقل ۸ کاراکتر داشته باشد.', 0, 'INVALID_PASSWORD_LENGTH');
+    if (bytes > 72) throw new ApiError(register ? 'Password must not exceed 72 bytes.' : 'Incorrect email or password.', 0, 'PASSWORD_TOO_LONG');
+    if (register && password.length < 8) throw new ApiError('Password must be at least 8 characters.', 0, 'INVALID_PASSWORD_LENGTH');
     return { email: normalized, password };
   }
 

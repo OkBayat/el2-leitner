@@ -16,7 +16,7 @@ describe('same-session spelling remediation regressions', () => {
     expect(replacement.operations.some((op) => op.type === 'replace' && op.answer === 'a' && op.target === 'i')).toBe(true);
     const transpose = buildSpellingComparison('freind', 'friend');
     expect(transpose.transposition).toEqual({ answer: 'ei', target: 'ie' });
-    expect(buildOrthographicHint(transpose)).toContain('جابه‌جا');
+    expect(buildOrthographicHint(transpose)).toContain('Swap');
     expect(levenshteinDistance('enviroment', 'environment')).toBe(1);
     expect(selectClosestAccepted('center', ['centre', 'center'])).toBe('center');
   });
