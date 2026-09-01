@@ -9,7 +9,7 @@
     "build": "ng build",
     "build:production": "ng build --configuration production",
     "check:architecture": "node tests/test-angular-architecture.mjs",
-    "test": "npm run check:architecture && ng test --watch=false",
+    "test": "npm run check:architecture && ng test --watch=false && npm run build:production",
     "test:unit": "ng test --watch=false",
     "test:regression": "ng test --watch=false",
     "e2e": "playwright test",
