@@ -10,8 +10,8 @@ export class LibraryApiService {
   private readonly api = inject(ApiClientService);
   list(): Promise<LibraryListResponse> { return this.api.get('/api/library'); }
   get(id: string): Promise<LibraryDetailResponse> { return this.api.get(`/api/library/${encodeURIComponent(id)}`); }
-  create(input: Record<string, unknown>): Promise<LibraryDetailResponse> { return this.api.post('/api/library', input); }
-  update(id: string, input: Record<string, unknown>): Promise<LibraryDetailResponse> { return this.api.put(`/api/library/${encodeURIComponent(id)}`, input); }
+  create(input: object): Promise<LibraryDetailResponse> { return this.api.post('/api/library', input); }
+  update(id: string, input: object): Promise<LibraryDetailResponse> { return this.api.put(`/api/library/${encodeURIComponent(id)}`, input); }
   subscribe(id: string): Promise<LibraryDetailResponse> { return this.api.post(`/api/library/${encodeURIComponent(id)}/subscription`); }
   unsubscribe(id: string): Promise<LibraryDetailResponse> { return this.api.delete(`/api/library/${encodeURIComponent(id)}/subscription`); }
   import(id: string, text: string, mode: 'replace' | 'append'): Promise<unknown> { return this.api.post(`/api/library/${encodeURIComponent(id)}/import`, { text, mode }); }
