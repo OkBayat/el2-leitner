@@ -25,7 +25,7 @@ export function libraryProgress(collection: LibraryCollection): { total: number;
 }
 
 export function libraryKindLabel(kind: string): string {
-  return ({ book: 'کتاب', exam: 'آزمون', topic: 'موضوعی', course: 'دوره', personal: 'شخصی', collection: 'مجموعه' } as Record<string, string>)[kind] || 'مجموعه';
+  return ({ book: 'Book', exam: 'Exam', topic: 'Topic', course: 'Course', personal: 'Personal', collection: 'Collection' } as Record<string, string>)[kind] || 'Collection';
 }
 
 function slugify(value: string): string {
@@ -46,23 +46,23 @@ export interface CollectionPayload {
   selector: 'app-collection-editor',
   imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
-    <h2 mat-dialog-title>{{ data.collection ? 'ویرایش مجموعه' : 'مجموعهٔ جدید' }}</h2>
+    <h2 mat-dialog-title>{{ data.collection ? 'Edit collection' : 'New collection' }}</h2>
     <mat-dialog-content>
       <form [formGroup]="form" class="form">
-        <mat-form-field appearance="outline"><mat-label>عنوان</mat-label><input matInput formControlName="title"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>Slug</mat-label><input matInput formControlName="slug" dir="ltr"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>توضیح</mat-label><textarea matInput rows="3" formControlName="description"></textarea></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Title</mat-label><input matInput formControlName="title"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Slug</mat-label><input matInput formControlName="slug"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Description</mat-label><textarea matInput rows="3" formControlName="description"></textarea></mat-form-field>
         <div class="row">
-          <mat-form-field appearance="outline"><mat-label>نوع</mat-label><mat-select formControlName="kind"><mat-option value="book">کتاب</mat-option><mat-option value="exam">آزمون</mat-option><mat-option value="topic">موضوعی</mat-option><mat-option value="course">دوره</mat-option><mat-option value="personal">شخصی</mat-option></mat-select></mat-form-field>
-          <mat-form-field appearance="outline"><mat-label>سطح CEFR</mat-label><input matInput formControlName="level" placeholder="B1"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Type</mat-label><mat-select formControlName="kind"><mat-option value="book">Book</mat-option><mat-option value="exam">Exam</mat-option><mat-option value="topic">Topic</mat-option><mat-option value="course">Course</mat-option><mat-option value="personal">Personal</mat-option></mat-select></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>CEFR level</mat-label><input matInput formControlName="level" placeholder="B1"></mat-form-field>
         </div>
         <div class="row">
-          <mat-form-field appearance="outline"><mat-label>دسترسی</mat-label><mat-select formControlName="visibility"><mat-option value="public">عمومی</mat-option><mat-option value="unlisted">فقط با لینک</mat-option><mat-option value="private">خصوصی</mat-option></mat-select></mat-form-field>
-          <mat-form-field appearance="outline"><mat-label>وضعیت</mat-label><mat-select formControlName="status"><mat-option value="published">منتشرشده</mat-option><mat-option value="draft">پیش‌نویس</mat-option><mat-option value="archived">آرشیو</mat-option></mat-select></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Visibility</mat-label><mat-select formControlName="visibility"><mat-option value="public">Public</mat-option><mat-option value="unlisted">Unlisted</mat-option><mat-option value="private">Private</mat-option></mat-select></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select formControlName="status"><mat-option value="published">Published</mat-option><mat-option value="draft">Draft</mat-option><mat-option value="archived">Archived</mat-option></mat-select></mat-form-field>
         </div>
       </form>
     </mat-dialog-content>
-    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">انصراف</button><button mat-flat-button [disabled]="form.invalid" (click)="save()">ذخیره</button></mat-dialog-actions>
+    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">Cancel</button><button mat-flat-button [disabled]="form.invalid" (click)="save()">Save</button></mat-dialog-actions>
   `,
   styles: [`.form{display:grid;min-width:min(75vw,650px);padding-top:8px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.row{grid-template-columns:1fr}}`],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,14 +103,14 @@ export interface LibraryImportValue { text: string; mode: 'replace' | 'append' }
   selector: 'app-library-import-dialog',
   imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
-    <h2 mat-dialog-title>ورود واژه‌ها</h2>
+    <h2 mat-dialog-title>Import words</h2>
     <mat-dialog-content>
       <input #file hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="loadFile($event)">
-      <button mat-stroked-button (click)="file.click()">انتخاب فایل MD / TXT</button>
-      <mat-form-field appearance="outline" class="wide"><mat-label>متن واژه‌ها</mat-label><textarea matInput rows="12" [formControl]="text"></textarea></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>روش ورود</mat-label><mat-select [formControl]="mode"><mat-option value="replace">جایگزینی محتوا</mat-option><mat-option value="append">افزودن به محتوا</mat-option></mat-select></mat-form-field>
+      <button mat-stroked-button (click)="file.click()">Choose MD / TXT file</button>
+      <mat-form-field appearance="outline" class="wide"><mat-label>Word text</mat-label><textarea matInput rows="12" [formControl]="text"></textarea></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Import mode</mat-label><mat-select [formControl]="mode"><mat-option value="replace">Replace content</mat-option><mat-option value="append">Append to content</mat-option></mat-select></mat-form-field>
     </mat-dialog-content>
-    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">انصراف</button><button mat-flat-button [disabled]="!text.value.trim()" (click)="submit()">ورود</button></mat-dialog-actions>
+    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">Cancel</button><button mat-flat-button [disabled]="!text.value.trim()" (click)="submit()">Import</button></mat-dialog-actions>
   `,
   styles: [`.wide{display:block;width:min(75vw,700px);margin-top:14px}`],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -127,14 +127,14 @@ export class LibraryImportDialogComponent {
   selector: 'app-library-entry-dialog',
   imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule],
   template: `
-    <h2 mat-dialog-title>{{ data.entry ? 'ویرایش واژه' : 'واژهٔ جدید' }}</h2>
+    <h2 mat-dialog-title>{{ data.entry ? 'Edit word' : 'New word' }}</h2>
     <mat-dialog-content><form [formGroup]="form" class="form">
-      <mat-form-field appearance="outline"><mat-label>واژه</mat-label><input matInput formControlName="term" dir="ltr"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>املای جایگزین با /</mat-label><input matInput formControlName="variants" dir="ltr"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>بخش / درس</mat-label><input matInput formControlName="section"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>یادداشت</mat-label><textarea matInput rows="3" formControlName="note"></textarea></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Word</mat-label><input matInput formControlName="term"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Alternative spellings separated by /</mat-label><input matInput formControlName="variants"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Section / lesson</mat-label><input matInput formControlName="section"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Note</mat-label><textarea matInput rows="3" formControlName="note"></textarea></mat-form-field>
     </form></mat-dialog-content>
-    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">انصراف</button><button mat-flat-button [disabled]="form.invalid" (click)="dialog.close(payload())">ذخیره</button></mat-dialog-actions>
+    <mat-dialog-actions align="end"><button mat-button (click)="dialog.close()">Cancel</button><button mat-flat-button [disabled]="form.invalid" (click)="dialog.close(payload())">Save</button></mat-dialog-actions>
   `,
   styles: [`.form{display:grid;min-width:min(70vw,520px);padding-top:8px}`],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -158,20 +158,20 @@ export class LibraryEntryDialogComponent {
     @if (collection(); as c) {
       <h2 mat-dialog-title>{{ c.title }}</h2>
       <mat-dialog-content class="detail">
-        <p>{{ c.description || 'مجموعه‌ای از واژه‌ها برای مسیر یادگیری تو.' }}</p>
-        <mat-chip-set><mat-chip>{{ kindLabel(c.kind) }}</mat-chip><mat-chip>{{ level(c) }}</mat-chip><mat-chip>{{ c.status }}</mat-chip><mat-chip>نسخه {{ c.contentVersion }}</mat-chip></mat-chip-set>
-        <div class="progress"><span>{{ progress(c).entered }} از {{ progress(c).total }} واژه وارد لایتنر شده</span><mat-progress-bar mode="determinate" [value]="progress(c).percent" /></div>
-        <div class="actions"><button mat-flat-button (click)="toggleSubscription()">{{ c.subscribed ? 'حذف از جعبه' : 'افزودن به جعبه' }}</button>@if(data.canManage){<button mat-stroked-button (click)="editCollection()">ویرایش مجموعه</button><button mat-stroked-button (click)="importEntries()">ورود فایل</button><button mat-stroked-button (click)="editEntry()">افزودن واژه</button>}</div>
+        <p>{{ c.description || 'A vocabulary collection for your learning journey.' }}</p>
+        <mat-chip-set><mat-chip>{{ kindLabel(c.kind) }}</mat-chip><mat-chip>{{ level(c) }}</mat-chip><mat-chip>{{ c.status }}</mat-chip><mat-chip>version {{ c.contentVersion }}</mat-chip></mat-chip-set>
+        <div class="progress"><span>{{ progress(c).entered }} of {{ progress(c).total }} words are in Leitner</span><mat-progress-bar mode="determinate" [value]="progress(c).percent" /></div>
+        <div class="actions"><button mat-flat-button (click)="toggleSubscription()">{{ c.subscribed ? 'Remove from box' : 'Add to box' }}</button>@if(data.canManage){<button mat-stroked-button (click)="editCollection()">Edit collection</button><button mat-stroked-button (click)="importEntries()">Import file</button><button mat-stroked-button (click)="editEntry()">Add word</button>}</div>
         @if (c.entries?.length) {
           <table mat-table [dataSource]="c.entries || []">
-            <ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>واژه</th><td mat-cell *matCellDef="let entry"><strong dir="ltr">{{ entry.term }}</strong></td></ng-container>
-            <ng-container matColumnDef="section"><th mat-header-cell *matHeaderCellDef>بخش</th><td mat-cell *matCellDef="let entry">{{ entry.sectionPath || '—' }}</td></ng-container>
+            <ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let entry"><strong>{{ entry.term }}</strong></td></ng-container>
+            <ng-container matColumnDef="section"><th mat-header-cell *matHeaderCellDef>Section</th><td mat-cell *matCellDef="let entry">{{ entry.sectionPath || '—' }}</td></ng-container>
             <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let entry">@if(data.canManage){<button mat-icon-button (click)="editEntry(entry)">✎</button><button mat-icon-button (click)="removeEntry(entry)">×</button>}</td></ng-container>
             <tr mat-header-row *matHeaderRowDef="entryColumns"></tr><tr mat-row *matRowDef="let row; columns: entryColumns"></tr>
           </table>
-        } @else { <p class="empty">واژه‌ای برای نمایش وجود ندارد.</p> }
+        } @else { <p class="empty">No words to display.</p> }
       </mat-dialog-content>
-      <mat-dialog-actions><button mat-button (click)="dialog.close(changed)">بستن</button></mat-dialog-actions>
+      <mat-dialog-actions><button mat-button (click)="dialog.close(changed)">Close</button></mat-dialog-actions>
     }
   `,
   styles: [`.detail{min-width:min(82vw,850px);display:grid;gap:16px}.progress{display:grid;gap:8px}.actions{display:flex;flex-wrap:wrap;gap:8px}table{width:100%}.empty{padding:30px;text-align:center;color:var(--mat-sys-on-surface-variant)}`],
@@ -192,8 +192,8 @@ export class LibraryDetailDialogComponent {
 
   async reload(): Promise<void> { const result = await this.api.get(this.collection().id); this.collection.set(result.collection); }
   async toggleSubscription(): Promise<void> { const collection = this.collection(); if (collection.subscribed) await this.api.unsubscribe(collection.id); else await this.api.subscribe(collection.id); this.changed = true; await this.reload(); }
-  async editCollection(): Promise<void> { const value = await firstValueFrom(this.dialogs.open(CollectionEditorComponent, { data: { collection: this.collection() } }).afterClosed()) as CollectionPayload | undefined; if (!value) return; await this.api.update(this.collection().id, value); this.changed = true; await this.reload(); this.snack.open('مشخصات مجموعه به‌روزرسانی شد.', 'باشه', { duration: 2000 }); }
-  async importEntries(): Promise<void> { const value = await firstValueFrom(this.dialogs.open(LibraryImportDialogComponent).afterClosed()) as LibraryImportValue | undefined; if (!value) return; await this.api.import(this.collection().id, value.text, value.mode); this.changed = true; await this.reload(); this.snack.open('ورود واژه‌ها انجام شد.', 'باشه', { duration: 2200 }); }
+  async editCollection(): Promise<void> { const value = await firstValueFrom(this.dialogs.open(CollectionEditorComponent, { data: { collection: this.collection() } }).afterClosed()) as CollectionPayload | undefined; if (!value) return; await this.api.update(this.collection().id, value); this.changed = true; await this.reload(); this.snack.open('Collection details updated.', 'OK', { duration: 2000 }); }
+  async importEntries(): Promise<void> { const value = await firstValueFrom(this.dialogs.open(LibraryImportDialogComponent).afterClosed()) as LibraryImportValue | undefined; if (!value) return; await this.api.import(this.collection().id, value.text, value.mode); this.changed = true; await this.reload(); this.snack.open('Word import completed.', 'OK', { duration: 2200 }); }
   async editEntry(entry: LibraryEntry | null = null): Promise<void> { const value = await firstValueFrom(this.dialogs.open(LibraryEntryDialogComponent, { data: { entry } }).afterClosed()) as Record<string, unknown> | undefined; if (!value) return; if (entry) await this.api.updateEntry(this.collection().id, entry.id, value); else await this.api.addEntry(this.collection().id, value); this.changed = true; await this.reload(); }
-  async removeEntry(entry: LibraryEntry): Promise<void> { const ok = await firstValueFrom(this.dialogs.open(ConfirmDialogComponent, { data: { title: 'حذف واژه', message: 'این واژه از مجموعه حذف شود؟', confirmLabel: 'حذف', danger: true } }).afterClosed()); if (!ok) return; await this.api.removeEntry(this.collection().id, entry.id); this.changed = true; await this.reload(); }
+  async removeEntry(entry: LibraryEntry): Promise<void> { const ok = await firstValueFrom(this.dialogs.open(ConfirmDialogComponent, { data: { title: 'Delete word', message: 'Remove this word from the collection?', confirmLabel: 'Delete', danger: true } }).afterClosed()); if (!ok) return; await this.api.removeEntry(this.collection().id, entry.id); this.changed = true; await this.reload(); }
 }
