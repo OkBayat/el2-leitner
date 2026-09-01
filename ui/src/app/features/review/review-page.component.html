@@ -72,7 +72,7 @@
 						<button mat-button (click)="session.pronounce(.7)">Slower</button>
 					</div>
 
-					@if (session.currentTask() === 'review' && (!session.remediation() || session.remediation()?.phase === Phase.CORRECTION)) {
+					@if (session.currentTask() === 'review' && !session.remediation()) {
 						<form class="review-answer-form" (submit)="$event.preventDefault(); submit()">
 							<mat-form-field class="review-answer-field" appearance="outline">
 								<mat-label>Your answer</mat-label>
