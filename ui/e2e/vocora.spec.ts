@@ -142,7 +142,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByLabel('Search words')).toBeVisible();
 
   await page.goto('/settings');
-  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+  await expect(page.getByLabel('New words per day')).toBeVisible();
   await page.getByLabel('New words per day').fill('12');
   await page.getByRole('button', { name: 'Save settings' }).click();
   await expect(page.getByText('Settings saved.')).toBeVisible();
@@ -191,8 +191,8 @@ test('wrong spelling moves through error, yellow memory practice, and green memo
   await expect(footer).toHaveClass(/practice/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 244, 204)');
   await expect(footer.getByText('Correct solution:')).toHaveCount(0);
-  await expect(footer.getByText('From memory')).toBeVisible();
-  await expect(footer.getByText('Type the spelling from memory, then check.')).toBeVisible();
+  await expect(footer.getByRole('heading', { name: 'From memory', exact: true })).toBeVisible();
+  await expect(footer.getByText('Type the spelling from memory, then check.', { exact: true })).toBeVisible();
   await expect(footer.locator('.feedback-status-icon svg')).toHaveCount(1);
   await expectFooterAnchoredToViewport(page);
   await expect(page.locator('.session-stage').getByRole('button', { name: 'Check' })).toHaveCount(0);
