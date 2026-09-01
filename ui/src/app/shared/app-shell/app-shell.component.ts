@@ -9,6 +9,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { calculateStreak, totalStats } from '../../domain/learning/learning-rules';
+import { ShareStoryService } from '../share-story/share-story.service';
 
 @Component({
   selector: 'app-shell',
@@ -33,10 +34,16 @@ import { calculateStreak, totalStats } from '../../domain/learning/learning-rule
           <div class="topbar-title"><strong>Vocora</strong><small>{{ streak() }} روز پیوسته</small></div>
           <span class="spacer"></span>
           <span class="user-email" dir="ltr">{{ auth.user()?.email }}</span>
-          <button matIconButton type="button" aria-label="تغییر پوسته" (click)="cycleTheme()">◐</button>
-          <button matIconButton type="button" aria-label="خروج" (click)="logout()">↪</button>
+          <button mat-icon-button type="button" aria-label="ساخت استوری پیشرفت" title="Story Studio" (click)="share.open()">↗</button>
+          <button mat-icon-button type="button" aria-label="تغییر پوسته" (click)="cycleTheme()">◐</button>
+          <button mat-icon-button type="button" aria-label="خروج" (click)="logout()">↪</button>
         </mat-toolbar>
         <main class="content"><router-outlet /></main>
+        <nav class="mobile-nav" aria-label="ناوبری موبایل">
+          @for (item of mobileNavItems; track item.path) {
+            <a [routerLink]="item.path" routerLinkActive="active-mobile"><span>{{ item.symbol }}</span><small>{{ item.label }}</small></a>
+          }
+        </nav>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
@@ -45,20 +52,23 @@ import { calculateStreak, totalStats } from '../../domain/learning/learning-rule
     .brand{display:flex;padding:8px 12px 24px}.brand img{max-width:100%;height:auto}.active-link{background:var(--mat-sys-secondary-container);color:var(--mat-sys-on-secondary-container)}
     .nav-symbol{display:inline-block;width:28px}.sidebar-progress{position:absolute;inset-inline:18px;bottom:24px;display:grid;gap:8px}.sidebar-progress>div{display:flex;justify-content:space-between}.sidebar-progress small{color:var(--mat-sys-on-surface-variant)}
     .topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--mat-sys-surface) 92%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--mat-sys-outline-variant)}
-    .topbar-title{display:grid;line-height:1.2}.topbar-title small,.user-email{font-size:12px;color:var(--mat-sys-on-surface-variant)}.spacer{flex:1}.content{padding:24px;max-width:1440px;margin:auto}
-    @media(max-width:820px){.sidebar{width:210px}.content{padding:16px}.user-email{display:none}} @media(max-width:640px){.sidebar{display:none}}
+    .topbar-title{display:grid;line-height:1.2}.topbar-title small,.user-email{font-size:12px;color:var(--mat-sys-on-surface-variant)}.spacer{flex:1}.content{padding:24px;max-width:1440px;margin:auto}.mobile-nav{display:none}
+    @media(max-width:820px){.sidebar{width:210px}.content{padding:16px}.user-email{display:none}}
+    @media(max-width:640px){.sidebar{display:none}.content{padding:14px 14px 86px}.mobile-nav{position:fixed;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);inset-inline:8px;bottom:8px;padding:6px;border:1px solid var(--mat-sys-outline-variant);border-radius:24px;background:color-mix(in srgb,var(--mat-sys-surface-container) 94%,transparent);backdrop-filter:blur(18px);box-shadow:var(--mat-sys-level2)}.mobile-nav a{display:grid;place-items:center;gap:2px;padding:7px 2px;text-decoration:none;border-radius:16px;color:var(--mat-sys-on-surface-variant)}.mobile-nav a span{font-size:18px}.mobile-nav small{font-size:9px}.mobile-nav .active-mobile{background:var(--mat-sys-secondary-container);color:var(--mat-sys-on-secondary-container)}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly store = inject(LearningStoreService);
+  readonly share = inject(ShareStoryService);
   private readonly theme = inject(ThemeService);
   readonly navItems = [
     { path: '/dashboard', label: 'خانه', symbol: '⌂' }, { path: '/review', label: 'مرور امروز', symbol: '◎' },
     { path: '/words', label: 'واژه‌ها', symbol: '≡' }, { path: '/library', label: 'کتابخانه', symbol: '▦' },
     { path: '/reports', label: 'گزارش رشد', symbol: '↗' }, { path: '/settings', label: 'تنظیمات', symbol: '⚙' },
   ];
+  readonly mobileNavItems = this.navItems.slice(0, 5);
   readonly totalWords = computed(() => this.store.state()?.words.length || 0);
   readonly masteredCount = computed(() => this.store.state() ? totalStats(this.store.state()!).mastered : 0);
   readonly masteryPercent = computed(() => this.totalWords() ? Math.round((this.masteredCount() / this.totalWords()) * 100) : 0);
