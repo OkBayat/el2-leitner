@@ -36,7 +36,7 @@ export function resolveReviewContextBadge(remediation: RemediationContextSnapsho
 		return {
 			kind: 'previous-mistake',
 			icon: 'mistake',
-			label: 'PREVIOUS MISTAKE',
+			label: 'SPELLING CORRECTION',
 		};
 	}
 
