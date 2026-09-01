@@ -28,7 +28,7 @@ export class ApiClientService {
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
         const payload = error.error as { error?: { code?: string; message?: string }; message?: string } | null;
-        throw new ApiError(payload?.error?.message || payload?.message || error.message || 'درخواست انجام نشد.', error.status, payload?.error?.code || 'API_ERROR');
+        throw new ApiError(payload?.error?.message || payload?.message || error.message || 'Request failed.', error.status, payload?.error?.code || 'API_ERROR');
       }
       throw error;
     }
