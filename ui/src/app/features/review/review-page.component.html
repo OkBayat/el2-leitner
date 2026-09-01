@@ -62,7 +62,13 @@
 					</div>
 
 					<div class="listen">
-						<button mat-fab extended (click)="session.pronounce()">▶ Play pronunciation</button>
+						<button
+							mat-fab
+							extended
+							class="play-pronunciation"
+							(click)="session.pronounce()">
+							▶ Play pronunciation
+						</button>
 						<button mat-button (click)="session.pronounce(.7)">Slower</button>
 					</div>
 
