@@ -10,6 +10,7 @@ import {
 export const SCHEMA_VERSION = 2;
 export const BOX_WAIT_DAYS = [0, 1, 2, 3, 7, 14] as const;
 export const PAGE_SIZE = 40;
+const LEGACY_UNCATEGORIZED = '\u0628\u062f\u0648\u0646 \u062f\u0633\u062a\u0647\u200c\u0628\u0646\u062f\u06cc';
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -59,6 +60,11 @@ function uniqueStrings(values: unknown[]): string[] {
   return [...new Set(values.map((item) => String(item ?? '').trim()).filter(Boolean))];
 }
 
+function normalizeCategory(value: unknown): string {
+  const category = String(value ?? '').trim();
+  return !category || category === LEGACY_UNCATEGORIZED ? 'Uncategorized' : category;
+}
+
 export interface WordSource extends Partial<LearningWord> {
   term?: string;
   accepted?: string[];
@@ -77,7 +83,7 @@ export function createWord(source: WordSource, index = 0, now = new Date()): Lea
     number: Number(source.number) || index + 1,
     term: accepted[0] || String(source.term ?? '').trim(),
     accepted,
-    category: source.category || 'بدون دسته‌بندی',
+    category: normalizeCategory(source.category),
     tags,
     lessons,
     notes: source.notes || '',
@@ -378,7 +384,7 @@ export function migrateLegacyProgress(state: LearningState): void {
 
 export function parseWordFile(text: string): WordSource[] {
   const lines = String(text).split(/\r?\n/u);
-  let category = 'بدون دسته‌بندی';
+  let category = 'Uncategorized';
   const results: WordSource[] = [];
   for (const rawLine of lines) {
     const line = rawLine.trim();
@@ -399,7 +405,7 @@ export function parseWordFile(text: string): WordSource[] {
 
 export function mergeImportedWords(stateInput: LearningState, text: string): { state: LearningState; found: number; added: number; skipped: number } {
   const parsed = parseWordFile(text);
-  if (!parsed.length) throw new Error('هیچ کلمه‌ی معتبری در فایل پیدا نشد.');
+  if (!parsed.length) throw new Error('No valid words were found in the file.');
   const state = structuredClone(stateInput);
   const existing = new Set(state.words.flatMap((word) => word.accepted.length ? word.accepted : [word.term]).map(normalizeAnswer));
   let added = 0;
