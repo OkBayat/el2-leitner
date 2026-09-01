@@ -75,8 +75,6 @@
 
 					@if (session.remediation(); as remediation) {
 						@if (remediation.phase !== Phase.COMPLETED) {
-							<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
-
 							@if (remediation.answerVisible) {
 								<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
 									<div class="spelling-row correct-spelling-row">
