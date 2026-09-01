@@ -3,7 +3,7 @@
 		<div class="review-center">
 			<button class="review-close" mat-icon-button type="button" aria-label="Back to dashboard"
 			        (click)="router.navigateByUrl('/dashboard')">
-				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="display:block">
+				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 					      stroke-linecap="round"/>
 				</svg>
@@ -40,7 +40,7 @@
 		<div class="review-session" data-testid="review-session">
 			<div class="session-bar" data-testid="review-session-bar">
 				<button class="session-close" mat-icon-button type="button" aria-label="Exit review" (click)="exit()">
-					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="display:block">
+					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 						      stroke-linecap="round"/>
 					</svg>
@@ -67,8 +67,7 @@
 					</div>
 
 					@if (session.currentTask() === 'review' && !session.feedback()) {
-						<form id="review-answer-form" class="review-answer-form"
-						      (submit)="$event.preventDefault(); submit()">
+						<form class="review-answer-form" (submit)="$event.preventDefault(); submit()">
 							<mat-form-field class="review-answer-field" appearance="outline">
 								<mat-label>Your answer</mat-label>
 								<input
@@ -86,140 +85,120 @@
 					}
 
 					@if (session.remediation(); as remediation) {
-						<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
-						@if (remediation.answerVisible) {
-							<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
-								<div class="spelling-row correct-spelling-row">
-									<span class="spelling-label">Correct spelling</span>
-									<div class="spelling-text" data-testid="correct-spelling">
-										@for (token of remediation.comparison.targetTokens; track $index) {
-											<span
-												class="spelling-token"
-												[class.spelling-correct]="token.status === 'correct'"
-												[class.spelling-changed]="token.status === 'changed'"
-												[class.spelling-missing]="token.status === 'missing'"
-											>{{ tokenValue(token.value) }}</span>
-										}
-									</div>
-								</div>
-								<div class="spelling-row user-spelling-row">
-									<span class="spelling-label">Your answer</span>
-									<div class="spelling-text" data-testid="user-spelling">
-										@if (remediation.comparison.answerTokens.length) {
-											@for (token of remediation.comparison.answerTokens; track $index) {
+						@if (remediation.phase !== Phase.COMPLETED) {
+							<h3>{{ remediation.phase === Phase.CORRECTION ? 'Spelling correction' : remediation.phase === Phase.COPY ? 'Type it carefully once' : 'Type it again from memory' }}</h3>
+
+							@if (remediation.answerVisible) {
+								<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
+									<div class="spelling-row correct-spelling-row">
+										<span class="spelling-label">Correct spelling</span>
+										<div class="spelling-text" data-testid="correct-spelling">
+											@for (token of remediation.comparison.targetTokens; track $index) {
 												<span
 													class="spelling-token"
 													[class.spelling-correct]="token.status === 'correct'"
 													[class.spelling-changed]="token.status === 'changed'"
-													[class.spelling-extra]="token.status === 'extra'"
+													[class.spelling-missing]="token.status === 'missing'"
 												>{{ tokenValue(token.value) }}</span>
 											}
-										} @else {
-											<span class="spelling-empty">No answer</span>
-										}
+										</div>
+									</div>
+									<div class="spelling-row user-spelling-row">
+										<span class="spelling-label">Your answer</span>
+										<div class="spelling-text" data-testid="user-spelling">
+											@if (remediation.comparison.answerTokens.length) {
+												@for (token of remediation.comparison.answerTokens; track $index) {
+													<span
+														class="spelling-token"
+														[class.spelling-correct]="token.status === 'correct'"
+														[class.spelling-changed]="token.status === 'changed'"
+														[class.spelling-extra]="token.status === 'extra'"
+													>{{ tokenValue(token.value) }}</span>
+												}
+											} @else {
+												<span class="spelling-empty">No answer</span>
+											}
+										</div>
 									</div>
 								</div>
-							</div>
-						}
+							}
 
-						@if (remediation.phase !== Phase.CORRECTION && remediation.phase !== Phase.COMPLETED) {
-							<form
-								id="remediation-answer-form"
-								class="review-answer-form mt-4"
-							    (submit)="$event.preventDefault(); submitRemediation()">
-								<mat-form-field class="review-answer-field" appearance="outline">
-									<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
-									<input
-										#remediationInput
-										class="review-answer-input"
-										matInput
-										[formControl]="remediationAnswer"
-										lang="en"
-										autocomplete="off"
-										autocapitalize="none"
-										autocorrect="off"
-										spellcheck="false">
-								</mat-form-field>
-							</form>
-						} @else if (remediation.phase === Phase.COMPLETED) {
-							<p>This correction is complete. A spelling recheck will appear later in this session.</p>
+							@if (remediation.phase !== Phase.CORRECTION) {
+								<form class="review-answer-form mt-4"
+								      (submit)="$event.preventDefault(); submitRemediation()">
+									<mat-form-field class="review-answer-field" appearance="outline">
+										<mat-label>{{ remediation.phase === Phase.COPY ? 'Exact copy' : 'Recall from memory' }}</mat-label>
+										<input
+											#remediationInput
+											class="review-answer-input"
+											matInput
+											[formControl]="remediationAnswer"
+											lang="en"
+											autocomplete="off"
+											autocapitalize="none"
+											autocorrect="off"
+											spellcheck="false">
+									</mat-form-field>
+								</form>
+							}
 						}
 					}
 				</article>
 			</main>
 
-			@if (session.remediation(); as remediation) {
-				@if (remediation.phase === Phase.CORRECTION) {
-					@if (session.feedback(); as feedback) {
-						<footer class="review-action-footer error" data-testid="review-action-footer" aria-live="polite">
-							<div class="review-action-inner">
-								<div class="feedback-summary">
-									<span class="feedback-status-icon" aria-hidden="true">
-										<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
-											<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
-											      stroke-width="3.6" stroke-linecap="round"/>
-										</svg>
-									</span>
-									<div class="feedback-copy">
-										<h2>Correct solution:</h2>
-										<p>{{ feedback.spelling }}</p>
-									</div>
+			@if (footerState(); as footer) {
+				<footer
+					class="review-action-footer"
+					[class.neutral]="footer.tone === 'neutral'"
+					[class.success]="footer.tone === 'success'"
+					[class.error]="footer.tone === 'error'"
+					[class.practice]="footer.tone === 'practice'"
+					data-testid="review-action-footer"
+					aria-live="polite">
+					<div class="review-action-inner">
+						@if (footer.title) {
+							<div class="feedback-summary">
+								<span class="feedback-status-icon" aria-hidden="true">
+									@switch (footer.icon) {
+										@case ('check') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
+												      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+											</svg>
+										}
+										@case ('error') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
+												      stroke-width="3.6" stroke-linecap="round"/>
+											</svg>
+										}
+										@case ('practice') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M12 5.5V13.5" fill="none" stroke="currentColor" stroke-width="3.2"
+												      stroke-linecap="round"/>
+												<circle cx="12" cy="18" r="1.8" fill="currentColor"/>
+											</svg>
+										}
+									}
+								</span>
+								<div class="feedback-copy">
+									<h2>{{ footer.title }}</h2>
+									<p>{{ footer.detail }}</p>
 								</div>
-								<button class="review-action-primary" mat-flat-button type="button" (click)="acknowledge()">Continue</button>
 							</div>
-						</footer>
-					}
-				} @else {
-					<footer class="review-action-footer practice" data-testid="review-action-footer">
-						<div class="review-action-inner">
-							@if (remediation.phase === Phase.COMPLETED) {
-								<button class="review-action-primary" mat-flat-button type="button" (click)="next()">Continue</button>
-							} @else {
-								<button
-									class="review-action-primary"
-									mat-flat-button
-									type="submit"
-									form="remediation-answer-form"
-									[disabled]="!remediationAnswer.value.trim()">Check
-								</button>
-							}
-						</div>
-					</footer>
-				}
-			} @else if (session.feedback(); as feedback) {
-				<footer class="review-action-footer success" data-testid="review-action-footer" aria-live="polite">
-					<div class="review-action-inner">
-						<div class="feedback-summary">
-							<span class="feedback-status-icon" aria-hidden="true">
-								<svg width="44" height="44" viewBox="0 0 24 24" style="display:block">
-									<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
-									      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-								</svg>
-							</span>
-							<div class="feedback-copy">
-								<h2>{{ feedback.title }}</h2>
-								<p>{{ feedback.detail }}</p>
-							</div>
-						</div>
-						<button class="review-action-primary" mat-flat-button type="button" (click)="next()">Continue</button>
-					</div>
-				</footer>
-			} @else if (session.currentTask() === 'review') {
-				<footer class="review-action-footer neutral" data-testid="review-action-footer">
-					<div class="review-action-inner">
-						<button
-							class="review-action-secondary"
-							mat-stroked-button
-							type="button"
-							(click)="dontKnow()">
-							I don't know
-						</button>
+						} @else if (footer.secondaryLabel) {
+							<button class="review-action-secondary" mat-stroked-button type="button" (click)="dontKnow()">
+								{{ footer.secondaryLabel }}
+							</button>
+						}
+
 						<button
 							class="review-action-primary"
 							mat-flat-button
-							type="submit"
-							form="review-answer-form"
-							[disabled]="saving() || !answer.value.trim()">Check answer
+							type="button"
+							[disabled]="isFooterPrimaryDisabled(footer)"
+							(click)="handleFooterPrimary(footer.primaryAction)">
+							{{ footer.primaryLabel }}
 						</button>
 					</div>
 				</footer>
