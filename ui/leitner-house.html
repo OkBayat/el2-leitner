@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f8f5">
+  <title>واژه‌های خانه | Vocora</title>
+  <link rel="icon" href="assets/vocora-icon.png" type="image/png" sizes="384x384">
+  <link rel="apple-touch-icon" href="assets/vocora-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="leitner-house.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="ناوبری اصلی">
+      <a class="brand" href="index.html#dashboard" aria-label="Vocora">
+        <img class="leitner-house-brand-logo" src="assets/vocora-logo.png" alt="Vocora" width="185" height="46">
+      </a>
+
+      <nav class="main-nav">
+        <a class="nav-item" href="index.html#dashboard"><span>⌂</span> خانه</a>
+        <a class="nav-item" href="index.html#review"><span>◎</span> مرور امروز</a>
+        <a class="nav-item" href="index.html#words"><span>≡</span> واژه‌ها</a>
+        <a class="library-nav-link" href="library.html"><span>▦</span> کتابخانه</a>
+        <a class="nav-item" href="index.html#reports"><span>↗</span> گزارش رشد</a>
+        <a class="nav-item" href="index.html#settings"><span>⚙</span> تنظیمات</a>
+      </nav>
+    </aside>
+
+    <main class="main-content leitner-house-main">
+      <header class="topbar leitner-house-topbar">
+        <div class="leitner-house-heading">
+          <button class="leitner-house-back" id="leitnerHouseBackBtn" type="button" aria-label="بازگشت به صفحه قبل" title="بازگشت">←</button>
+          <div>
+            <p class="eyebrow">جعبه لایتنر</p>
+            <h1 id="leitnerHouseTitle">واژه‌های خانه</h1>
+          </div>
+        </div>
+      </header>
+
+      <section class="leitner-house-content" aria-labelledby="leitnerHouseTitle">
+        <div id="leitnerHouseError" class="leitner-house-message hidden" role="alert"></div>
+
+        <article class="panel leitner-house-info" id="leitnerHouseInfo" aria-live="polite">
+          <div class="leitner-house-info-copy">
+            <span class="leitner-house-number" id="leitnerHouseNumber">خانه —</span>
+            <h2 id="leitnerHouseHeadline">در حال بارگذاری اطلاعات خانه…</h2>
+            <p id="leitnerHouseDescription">همهٔ واژه‌های فعال این خانه در این صفحه نمایش داده می‌شوند.</p>
+          </div>
+          <dl class="leitner-house-meta">
+            <div><dt>تعداد واژه‌ها</dt><dd id="leitnerHouseTotal">—</dd></div>
+            <div><dt>موعد مرور</dt><dd id="leitnerHouseDue">—</dd></div>
+            <div><dt>مجموع خطاها</dt><dd id="leitnerHouseMistakes">—</dd></div>
+            <div><dt>مجموع تلاش‌ها</dt><dd id="leitnerHouseAttempts">—</dd></div>
+            <div><dt>فاصلهٔ مرور</dt><dd id="leitnerHouseInterval">—</dd></div>
+            <div><dt>تعداد وضعیت‌ها</dt><dd id="leitnerHouseStateCount">—</dd></div>
+          </dl>
+        </article>
+
+        <article class="panel leitner-house-list-panel">
+          <div class="leitner-house-list-head">
+            <div>
+              <h2>فهرست واژه‌ها</h2>
+              <p id="leitnerHouseResults" aria-live="polite">در حال دریافت واژه‌ها…</p>
+            </div>
+            <div class="leitner-house-controls">
+              <label class="leitner-house-search-wrap">
+                <span class="sr-only">جستجو در واژه‌های خانه</span>
+                <span aria-hidden="true">⌕</span>
+                <input id="leitnerHouseSearch" type="search" autocomplete="off" placeholder="جستجوی واژه، دسته، درس یا تگ…">
+              </label>
+              <label class="leitner-house-sort-wrap">
+                <span class="sr-only">مرتب‌سازی واژه‌ها</span>
+                <select id="leitnerHouseSort">
+                  <option value="mistakes">بیشترین اشتباه</option>
+                  <option value="due">نزدیک‌ترین مرور</option>
+                  <option value="recent">آخرین مرور</option>
+                  <option value="alpha">حروف الفبا</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="leitner-house-table-wrap">
+            <table class="leitner-house-table">
+              <thead>
+                <tr>
+                  <th scope="col">واژه</th>
+                  <th scope="col">دسته / درس</th>
+                  <th scope="col">تلاش</th>
+                  <th scope="col">اشتباه</th>
+                  <th scope="col">مرور بعدی</th>
+                  <th scope="col">آخرین مرور</th>
+                </tr>
+              </thead>
+              <tbody id="leitnerHouseWordsBody">
+                <tr><td colspan="6" class="leitner-house-empty">در حال بارگذاری…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="leitner-house.js"></script>
+</body>
+</html>

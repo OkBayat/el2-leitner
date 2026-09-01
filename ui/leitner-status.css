@@ -130,6 +130,20 @@
   align-items: center;
   gap: 12px;
   min-height: 34px;
+  border-radius: 10px;
+  color: inherit;
+  padding: 2px 4px;
+  text-decoration: none;
+  transition: background .16s ease, box-shadow .16s ease;
+}
+
+.leitner-row:hover {
+  background: color-mix(in srgb, var(--primary-soft) 48%, transparent);
+}
+
+.leitner-row:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 24%, transparent);
+  outline-offset: 2px;
 }
 
 /*
@@ -235,7 +249,7 @@
   background: color-mix(in srgb, var(--house-a) 22%, var(--surface));
   color: var(--text);
   box-shadow: none;
-  cursor: default;
+  cursor: pointer;
   filter: none;
   transition: background .16s ease, color .16s ease, filter .16s ease;
 }
