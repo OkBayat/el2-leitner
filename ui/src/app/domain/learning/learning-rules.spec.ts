@@ -33,7 +33,8 @@ describe('learning rules regression', () => {
   });
 
   it('wrong answers return a card to box one and lock promotion until tomorrow', () => {
-    const result = applyReview(stateWithWord(4), 'word-1', 'enviroment', 'review', new Date('2026-09-01T10:00:00'));
+    const state = stateWithWord(4);
+    const result = applyReview(state, state.words[0].id, 'enviroment', 'review', new Date('2026-09-01T10:00:00'));
     expect(result.word.box).toBe(1);
     expect(result.word.due).toBe('2026-09-02');
     expect(result.word.blockedUntil).toBe('2026-09-02');
@@ -42,7 +43,8 @@ describe('learning rules regression', () => {
   });
 
   it('promotes a due card only once per calendar day', () => {
-    const first = applyReview(stateWithWord(2), 'word-1', 'environment', 'review', new Date('2026-09-01T10:00:00'));
+    const state = stateWithWord(2);
+    const first = applyReview(state, state.words[0].id, 'environment', 'review', new Date('2026-09-01T10:00:00'));
     expect(first.word.box).toBe(3);
     expect(first.word.due).toBe('2026-09-04');
     first.word.due = '2026-09-01';
@@ -64,7 +66,8 @@ describe('learning rules regression', () => {
   });
 
   it('graduates a due box-five success out of scheduled review', () => {
-    const result = applyReview(stateWithWord(5), 'word-1', 'environment', 'review', new Date('2026-09-01T10:00:00'));
+    const state = stateWithWord(5);
+    const result = applyReview(state, state.words[0].id, 'environment', 'review', new Date('2026-09-01T10:00:00'));
     expect(result.word.box).toBe(5);
     expect(result.word.due).toBeNull();
     expect(result.word.masteredAt).toBeTruthy();
