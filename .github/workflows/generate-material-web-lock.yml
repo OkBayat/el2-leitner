@@ -4,17 +4,18 @@ on:
   pull_request:
     paths:
       - '.github/workflows/generate-material-web-lock.yml'
-      - 'ui/package.json'
-      - 'ui/package-lock.json'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate-lock:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -25,10 +26,14 @@ jobs:
         run: |
           npm install --save-exact @material/web@2.5.0
           npm install --save-dev --save-exact rollup@4.63.1 @rollup/plugin-node-resolve@16.0.3
-      - uses: actions/upload-artifact@v4
-        with:
-          name: material-web-lock
-          path: |
-            ui/package.json
-            ui/package-lock.json
-          if-no-files-found: error
+      - name: Commit generated dependency lock
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ui/package.json ui/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Dependency lock is already current."
+            exit 0
+          fi
+          git commit -m "build(ui): lock Material Web toolchain"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
