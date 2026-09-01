@@ -142,7 +142,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByLabel('Search words')).toBeVisible();
 
   await page.goto('/settings');
-  await expect(page.getByLabel('New words per day')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
   await page.getByLabel('New words per day').fill('12');
   await page.getByRole('button', { name: 'Save settings' }).click();
   await expect(page.getByText('Settings saved.')).toBeVisible();
