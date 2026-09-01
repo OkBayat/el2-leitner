@@ -1,15 +1,40 @@
 {
   "name": "vocora-ui",
-  "version": "2.0.0",
-  "private": true,
-  "description": "Authenticated vocabulary learning client for Vocora",
+  "version": "3.0.0",
   "scripts": {
-    "build:data": "node tools/build-vocabulary.mjs data/IELTS_Listening_Core_1500.md vocabulary.js",
-    "test": "node --check app-v2.js && node --check auth.js && node --check share-story-v2.js && node --check vocabulary.js && node --check leitner-status.js && node --check leitner-house.js && node --check practice-remediation.js && node --check practice-remediation-keyboard-guard.js && node --check practice-remediation-adapter.js && node --check practice-remediation-recheck-prompt.js && node --check library.js && node --check library-import-template.js && node --check word-collections.js && node --check session-persistence.js && node tests/test-branding.mjs && node tests/test-auth.mjs && node tests/test-share-story.mjs && node tests/test-app.mjs && node tests/test-review-progress.mjs && node tests/test-leitner-graduation.mjs && node tests/test-leitner-same-day-terminal.mjs && node tests/test-leitner-production-persistence.mjs && node tests/test-historical-mastery-repair.mjs && node tests/test-leitner-status.mjs && node tests/test-leitner-wait-day-states.mjs && node tests/test-leitner-house.mjs && node tests/test-practice-remediation.mjs && node tests/test-practice-remediation-adapter.mjs && node tests/test-remediation-keyboard-guard.mjs && node tests/test-practice-remediation-recheck-prompt.mjs && node tests/test-library.mjs && node tests/test-library-import-template.mjs && node tests/test-word-collections.mjs && node tests/test-word-bank-lesson-search-activation-real-app.mjs && node tests/test-word-bank-column-alignment-real-app.mjs && node tests/test-word-bank-network.mjs && node tests/test-word-bank-click-baseline.mjs && node tests/test-word-save-progress.mjs && node tests/test-word-save-progress-real-app.mjs && node tests/test-session-persistence.mjs && node tests/test-review-write-adapter.mjs && node tests/test-stylesheet-assets.mjs",
-    "test:leitner": "node --check app-v2.js && node --check leitner-status.js && node --check leitner-house.js && node tests/test-leitner-graduation.mjs && node tests/test-leitner-same-day-terminal.mjs && node tests/test-leitner-production-persistence.mjs && node tests/test-historical-mastery-repair.mjs && node tests/test-leitner-status.mjs && node tests/test-leitner-wait-day-states.mjs && node tests/test-leitner-house.mjs",
-    "test:remediation": "node --check practice-remediation.js && node --check practice-remediation-keyboard-guard.js && node --check practice-remediation-adapter.js && node --check practice-remediation-recheck-prompt.js && node tests/test-practice-remediation.mjs && node tests/test-practice-remediation-adapter.mjs && node tests/test-remediation-keyboard-guard.mjs && node tests/test-practice-remediation-recheck-prompt.mjs"
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "build:production": "ng build --configuration production",
+    "test": "ng test --watch=false --coverage",
+    "test:unit": "ng test --watch=false",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "check:architecture": "node tests/test-angular-architecture.mjs",
+    "test:legacy": "node tests/test-review-progress.mjs && node tests/test-leitner-graduation.mjs && node tests/test-leitner-same-day-terminal.mjs && node tests/test-leitner-production-persistence.mjs && node tests/test-historical-mastery-repair.mjs && node tests/test-leitner-status.mjs && node tests/test-leitner-wait-day-states.mjs && node tests/test-practice-remediation.mjs && node tests/test-practice-remediation-adapter.mjs && node tests/test-remediation-keyboard-guard.mjs && node tests/test-practice-remediation-recheck-prompt.mjs && node tests/test-session-persistence.mjs && node tests/test-review-write-adapter.mjs"
+  },
+  "private": true,
+  "packageManager": "npm@10.9.8",
+  "dependencies": {
+    "@angular/cdk": "22.1.4",
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/material": "22.1.4",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "jsdom": "26.1.0"
-  }
+    "@angular/build": "^22.1.4",
+    "@angular/cli": "^22.1.4",
+    "@angular/compiler-cli": "^22.1.0",
+    "@playwright/test": "1.55.0",
+    "jsdom": "26.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
+  },
+  "description": "Vocora Angular frontend"
 }
