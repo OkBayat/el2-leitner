@@ -30,16 +30,19 @@ export class LearningStoreService {
     this.loadingSignal.set(true);
     try {
       const response = await this.api.get<LearningStateResponse>('/api/state');
-      if (!Number.isSafeInteger(response.revision) || response.revision < 0) throw new ApiError('نسخهٔ دادهٔ دریافتی معتبر نیست.', 502, 'INVALID_STATE_REVISION');
-      this.revisionSignal.set(response.revision);
+      this.acceptRevision(response.revision, { minimum: 0 });
       let state: LearningState;
-      let legacyMigrated = false;
-      if (response.state) state = hydrateState(response.state);
-      else {
-        const initial = await this.loadInitialState(); state = initial.state; legacyMigrated = initial.legacyMigrated;
-        await this.persistState(state);
-        if (legacyMigrated) { try { globalThis.localStorage?.removeItem(LEGACY_STORAGE_KEY); } catch { /* uploaded safely */ } }
+      if (response.state) {
+        state = hydrateState(response.state);
+      } else {
+        const initial = await this.loadInitialState();
+        await this.persistState(initial.state);
+        state = await this.reloadCanonicalBootstrap();
+        if (initial.legacyMigrated) {
+          try { globalThis.localStorage?.removeItem(LEGACY_STORAGE_KEY); } catch { /* uploaded and canonicalized safely */ }
+        }
       }
+
       const daily = ensureDailyWords(state, localDay());
       state = daily.state;
       if (daily.activated.length) {
@@ -49,6 +52,24 @@ export class LearningStoreService {
       this.stateSignal.set(state);
       return state;
     } finally { this.loadingSignal.set(false); }
+  }
+
+  private async reloadCanonicalBootstrap(): Promise<LearningState> {
+    const response = await this.api.get<LearningStateResponse>('/api/state?view=bootstrap');
+    const currentRevision = this.revisionSignal();
+    this.acceptRevision(response.revision, { minimum: currentRevision, maximum: currentRevision });
+    if (!response.state) {
+      throw new ApiError('دادهٔ canonical پس از ذخیره‌سازی در دسترس نیست.', 502, 'INVALID_BOOTSTRAP_STATE');
+    }
+    return hydrateState(response.state);
+  }
+
+  private acceptRevision(value: number, range: { minimum: number; maximum?: number }): void {
+    const revision = Number(value);
+    if (!Number.isSafeInteger(revision) || revision < range.minimum || (range.maximum !== undefined && revision > range.maximum)) {
+      throw new ApiError('نسخهٔ دادهٔ دریافتی معتبر نیست.', 502, 'INVALID_STATE_REVISION');
+    }
+    this.revisionSignal.set(revision);
   }
 
   private async loadInitialState(): Promise<{ state: LearningState; legacyMigrated: boolean }> {
