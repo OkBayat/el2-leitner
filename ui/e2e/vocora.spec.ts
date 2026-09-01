@@ -5,9 +5,9 @@ const ADMIN_PASSWORD = 'password123';
 
 async function authenticateAdmin(page: Page): Promise<void> {
   await page.goto('/register');
-  await page.getByLabel('ایمیل').fill(ADMIN_EMAIL);
-  await page.getByLabel('رمز عبور').fill(ADMIN_PASSWORD);
-  await page.getByRole('button', { name: 'ساخت حساب' }).click();
+  await page.getByLabel('Email').fill(ADMIN_EMAIL);
+  await page.getByLabel('Password').fill(ADMIN_PASSWORD);
+  await page.getByRole('button', { name: 'Create account' }).click();
 
   const registered = await page.waitForURL(/\/dashboard$/u, { timeout: 4_000 })
     .then(() => true)
@@ -15,23 +15,23 @@ async function authenticateAdmin(page: Page): Promise<void> {
   if (!registered) {
     await expect(page.getByRole('alert')).toContainText('already registered');
     await page.goto('/login');
-    await page.getByLabel('ایمیل').fill(ADMIN_EMAIL);
-    await page.getByLabel('رمز عبور').fill(ADMIN_PASSWORD);
-    await page.getByRole('button', { name: 'ورود به Vocora' }).click();
+    await page.getByLabel('Email').fill(ADMIN_EMAIL);
+    await page.getByLabel('Password').fill(ADMIN_PASSWORD);
+    await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
 }
 
-test('Angular Material app preserves the complete learner and library flow', async ({ page }) => {
-  const collectionTitle = `Angular E2E Collection ${Date.now()}`;
-
+test('English LTR Angular app preserves the complete learner and library flow', async ({ page }) => {
   await authenticateAdmin(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('برنامهٔ امروز')).toBeVisible();
+  await expect(page.getByText("Today's plan")).toBeVisible();
 
   await page.goto('/words');
-  await expect(page.getByRole('heading', { name: 'بانک واژه‌ها' })).toBeVisible();
-  await page.getByLabel('جستجو').fill('Monday');
+  await expect(page.getByRole('heading', { name: 'Word Bank' })).toBeVisible();
+  await page.getByLabel('Search').fill('Monday');
   await expect(page.getByText('Monday', { exact: true })).toBeVisible();
 
   const firstDueTerm = await page.evaluate(async () => {
@@ -46,11 +46,13 @@ test('Angular Material app preserves the complete learner and library flow', asy
   expect(firstDueTerm).toBeTruthy();
 
   await page.goto('/review');
-  await page.getByRole('button', { name: 'شروع جلسه' }).click();
-  await expect(page.getByLabel('پاسخ شما')).toBeVisible();
-  await page.getByLabel('پاسخ شما').fill(firstDueTerm!);
-  await page.getByRole('button', { name: 'بررسی پاسخ' }).click();
-  await expect(page.getByText('درست بود!')).toBeVisible();
+  await page.getByRole('button', { name: 'Start session' }).click();
+  const answerInput = page.getByLabel('Your answer');
+  await expect(answerInput).toBeVisible();
+  await expect(answerInput).toBeFocused();
+  await answerInput.fill(firstDueTerm!);
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText('Correct!')).toBeVisible();
 
   const savedReview = await page.evaluate(async () => {
     const response = await fetch('/api/state', { credentials: 'include' });
@@ -60,28 +62,33 @@ test('Angular Material app preserves the complete learner and library flow', asy
   expect(savedReview.correct).toBe(true);
   expect(savedReview.term).toBe(firstDueTerm);
 
+  await page.getByRole('button', { name: 'Next card' }).click();
+  await expect(answerInput).toBeVisible();
+  await expect(answerInput).toBeFocused();
+
   await page.goto('/library');
-  await expect(page.getByRole('heading', { name: 'کتابخانه' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'مشاهده واژه‌ها' }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'مجموعهٔ جدید' })).toBeVisible();
-  await page.getByRole('button', { name: 'مجموعهٔ جدید' }).click();
-  await page.getByLabel('عنوان').fill(collectionTitle);
-  await page.getByRole('button', { name: 'ذخیره' }).click();
+  await expect(page.getByRole('heading', { name: 'Library' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'View words' }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New collection' })).toBeVisible();
+  await page.getByRole('button', { name: 'New collection' }).click();
+  const collectionTitle = `Angular E2E Collection ${Date.now()}`;
+  await page.getByLabel('Title').fill(collectionTitle);
+  await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('heading', { name: collectionTitle })).toBeVisible();
-  await page.getByRole('button', { name: 'بستن' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
 
   await page.goto('/leitner-house/1');
-  await expect(page.getByRole('heading', { name: /واژه‌های خانهٔ (?:۱|1)/u })).toBeVisible();
-  await expect(page.getByLabel('جستجوی واژه‌ها')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'House 1 words' })).toBeVisible();
+  await expect(page.getByLabel('Search words')).toBeVisible();
 
   await page.goto('/settings');
-  await expect(page.getByRole('heading', { name: 'تنظیمات' })).toBeVisible();
-  await page.getByLabel('تعداد لغت جدید در روز').fill('12');
-  await page.getByRole('button', { name: 'ذخیره تنظیمات' }).click();
-  await expect(page.getByText('تنظیمات ذخیره شد.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+  await page.getByLabel('New words per day').fill('12');
+  await page.getByRole('button', { name: 'Save settings' }).click();
+  await expect(page.getByText('Settings saved.')).toBeVisible();
 
-  await page.getByRole('button', { name: 'ساخت استوری پیشرفت' }).click();
+  await page.getByRole('button', { name: 'Create progress story' }).click();
   await expect(page.getByRole('heading', { name: 'Story Studio' })).toBeVisible();
   await expect(page.locator('canvas[width="1080"][height="1920"]')).toBeVisible();
-  await expect(page.getByText(/ایمیل، پاسخ تایپ‌شده/u)).toBeVisible();
+  await expect(page.getByText(/email, typed answers/i)).toBeVisible();
 });
