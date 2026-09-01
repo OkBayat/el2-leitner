@@ -138,13 +138,14 @@ export interface RemediationSnapshot {
 }
 
 export class RemediationAttempt {
-  readonly target: string;
-  readonly comparison: SpellingComparison;
+  target: string;
   phase: RemediationPhase;
   recallFailures = 0;
   copyFailures = 0;
   private firstRecall = true;
   private completedAt: string | null = null;
+  private readonly initialAnswer: string;
+  private lastAnswer: string;
 
   private constructor(
     readonly context: RemediationContext,
@@ -158,8 +159,9 @@ export class RemediationAttempt {
     if (!wordId) throw new Error('wordId is required');
     if (!accepted.length) throw new Error('accepted spellings are required');
     if (context === RemediationContext.RECHECK && recheckNumber < 1) throw new Error('recheckNumber must be positive');
-    this.target = selectClosestAccepted(initialAnswer, accepted);
-    this.comparison = buildSpellingComparison(initialAnswer, this.target);
+    this.initialAnswer = String(initialAnswer ?? '');
+    this.lastAnswer = this.initialAnswer;
+    this.target = selectClosestAccepted(this.initialAnswer, accepted);
     this.phase = context === RemediationContext.IMMEDIATE ? RemediationPhase.CORRECTION : RemediationPhase.RECALL;
   }
 
@@ -172,33 +174,49 @@ export class RemediationAttempt {
   static recheck({ wordId, accepted, recheckNumber, policy = new SameSessionRecheckPolicy(), now = () => new Date().toISOString() }: {
     wordId: string; accepted: string[]; recheckNumber: number; policy?: SameSessionRecheckPolicy; now?: () => string;
   }): RemediationAttempt {
-    return new RemediationAttempt(RemediationContext.RECHECK, wordId, accepted, recheckNumber, policy, accepted[0], now);
+    return new RemediationAttempt(RemediationContext.RECHECK, wordId, accepted, recheckNumber, policy, '', now);
   }
 
   snapshot(): RemediationSnapshot {
-    return { phase: this.phase, context: this.context, target: this.target, answerVisible: this.phase === RemediationPhase.CORRECTION || this.phase === RemediationPhase.COPY, recallFailures: this.recallFailures, copyFailures: this.copyFailures, comparison: this.comparison };
+    const answerForComparison = this.phase === RemediationPhase.CORRECTION ? this.initialAnswer : this.lastAnswer;
+    return {
+      phase: this.phase,
+      context: this.context,
+      target: this.target,
+      answerVisible: this.phase === RemediationPhase.CORRECTION || this.phase === RemediationPhase.COPY,
+      recallFailures: this.recallFailures,
+      copyFailures: this.copyFailures,
+      comparison: buildSpellingComparison(answerForComparison, this.target),
+    };
   }
 
   acknowledgeCorrection(): void {
     if (this.phase !== RemediationPhase.CORRECTION) throw new Error('Invalid remediation transition');
     this.phase = RemediationPhase.RECALL;
+    this.lastAnswer = '';
   }
 
   submitRecall(answer: string): boolean {
     if (this.phase !== RemediationPhase.RECALL) throw new Error('Invalid remediation transition');
-    const correct = this.accepted.some((item) => defaultNormalize(item) === defaultNormalize(answer));
+    const value = String(answer ?? '');
+    this.lastAnswer = value;
+    const correct = this.accepted.some((item) => defaultNormalize(item) === defaultNormalize(value));
     if (correct) { this.complete(); return true; }
     this.recallFailures += 1;
     this.firstRecall = false;
+    this.target = selectClosestAccepted(value, this.accepted);
     this.phase = RemediationPhase.COPY;
     return false;
   }
 
   submitCopy(answer: string): boolean {
     if (this.phase !== RemediationPhase.COPY) throw new Error('Invalid remediation transition');
-    const correct = this.accepted.some((item) => defaultNormalize(item) === defaultNormalize(answer));
+    const value = String(answer ?? '');
+    this.lastAnswer = value;
+    const correct = this.accepted.some((item) => defaultNormalize(item) === defaultNormalize(value));
     if (!correct) { this.copyFailures += 1; return false; }
     this.phase = RemediationPhase.RECALL;
+    this.lastAnswer = '';
     return true;
   }
 
