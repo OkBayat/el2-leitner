@@ -50,8 +50,12 @@
 						class="visually-hidden">{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : session.answered() + 1 + ' of ' + session.initialCount() }}</span>
 					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
 				</div>
-				<span
-					class="session-count">{{ session.currentTask() === 'recheck' ? 'Recheck' : session.answered() + 1 + ' / ' + session.initialCount() }}</span>
+				@let sessionAccuracy = session.accuracy();
+				<span class="session-count">
+					<span data-testid="session-accuracy">Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }}</span>
+					<span aria-hidden="true"> · </span>
+					<span>{{ session.currentTask() === 'recheck' ? 'Recheck' : session.answered() + 1 + ' / ' + session.initialCount() }}</span>
+				</span>
 			</div>
 
 			<main class="session-stage">
