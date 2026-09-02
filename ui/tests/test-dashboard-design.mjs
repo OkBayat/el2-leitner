@@ -35,6 +35,10 @@ assert.match(packageJson, /"chart\.js":\s*"4\.5\.1"/u, 'Chart.js must be the sin
 assert.match(chartTs, /from 'chart\.js'/u, 'The shared learning chart must use Chart.js directly.');
 assert.match(chartTs, /LearningChartType = 'bar' \| 'line' \| 'doughnut'/u, 'One shared adapter must support bar, line, and doughnut charts.');
 assert.match(chartTs, /Chart\.register\(/u, 'Chart.js controllers and elements must be explicitly registered for tree shaking.');
+assert.match(chartTs, /--vocora-chart-primary:rgb\(26 115 232\)/u, 'Charts must use the approved visible blue accent instead of unresolved Material colors.');
+assert.match(chartTs, /--vocora-chart-track:rgb\(218 220 224\)/u, 'Doughnut charts must keep a visible neutral track for the unfilled portion.');
+assert.match(chartTs, /primary:\s*token\('--vocora-chart-primary'/u, 'Chart rendering must read the stable chart accent token.');
+assert.match(chartTs, /track:\s*token\('--vocora-chart-track'/u, 'Doughnut rendering must read the stable track token.');
 assert.match(dashboardHtml, /data-testid="leitner-coverage-stat"/u, 'The Leitner coverage summary needs a stable regression locator.');
 assert.match(dashboardHtml, /type="doughnut"/u, 'Words in Leitner must render as a doughnut chart rather than a bare number.');
 assert.match(dashboardHtml, /leitnerCoverage\(\)\.entered\.toLocaleString/u, 'The coverage card must show entered versus total word counts.');
@@ -47,6 +51,8 @@ assert.doesNotMatch(dashboardTs, /\{label: 'Words in Leitner', value:/u, 'Words 
 assert.match(shellTs, /MatMenuModule/u, 'The compact hamburger/account navigation should use Angular Material menus.');
 assert.match(shellHtml, /class="topbar"/u, 'The application shell must use the minimal top bar.');
 assert.match(shellHtml, /class="product-tabs"/u, 'Primary destinations must remain visible as compact top tabs on larger screens.');
+assert.doesNotMatch(shellStyles, /\.topbar\s*\{[^}]*border-bottom/u, 'The top header must not render a bottom separator.');
+assert.doesNotMatch(shellStyles, /\.product-tabs\s*\{[^}]*border-bottom/u, 'The desktop navigation strip must not render a bottom separator.');
 assert.match(shellHtml, /class="mobile-nav"/u, 'Phones must restore the base branch bottom navigation.');
 assert.match(shellHtml, /@for \(item of primaryNavItems; track item\.path\)/u, 'Desktop and mobile navigation must reuse the same primary destination model.');
 assert.doesNotMatch(shellHtml, /mat-sidenav|sidebar-progress/u, 'The redesigned shell must not restore the old permanent desktop sidebar.');
