@@ -1,4 +1,9 @@
-<header class="topbar">
+<header
+	class="topbar"
+	[class.is-hidden]="mobileNavHidden()"
+	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
+	[attr.inert]="mobileNavHidden() ? '' : null"
+>
 	<button mat-icon-button type="button" [matMenuTriggerFor]="navigationMenu" aria-label="Open navigation menu">
 		<span class="topbar-icon" aria-hidden="true">☰</span>
 	</button>
@@ -69,7 +74,11 @@
 	aria-label="Mobile navigation"
 >
 	@for (item of primaryNavItems; track item.path) {
-		<a [routerLink]="item.path" routerLinkActive="active-mobile" [attr.tabindex]="mobileNavHidden() ? -1 : null">
+		<a
+			[routerLink]="item.path"
+			routerLinkActive="active-mobile"
+			[attr.tabindex]="mobileNavHidden() ? -1 : null"
+		>
 			<span aria-hidden="true">{{ item.symbol }}</span>
 			<small>{{ item.label }}</small>
 		</a>
