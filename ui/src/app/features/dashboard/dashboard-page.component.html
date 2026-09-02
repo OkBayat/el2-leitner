@@ -88,7 +88,26 @@
 						<h2 id="house-status-title">House status</h2>
 						<p>Leitner waiting states</p>
 					</div>
-					<span class="panel-meta">{{ houseDistribution().total.toLocaleString('en-US') }} words</span>
+					<div class="leitner-heading-actions">
+						<button
+							class="leitner-export-btn"
+							mat-stroked-button
+							type="button"
+							data-testid="copy-house-one"
+							[class.is-copied]="houseOneCopyStatus() === 'copied'"
+							[class.is-failed]="houseOneCopyStatus() === 'failed'"
+							[disabled]="houseOneExportCount() === 0 || houseOneCopyStatus() === 'copying'"
+							[attr.aria-label]="houseOneExportCount() ? 'Copy all House 1 words with mistake counts' : 'House 1 has no words to copy'"
+							(click)="copyHouseOne()"
+						>
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<rect x="8" y="8" width="11" height="11" rx="2" />
+								<path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+							</svg>
+							<span>{{ houseOneCopyLabel() }}</span>
+						</button>
+						<span class="panel-meta">{{ houseDistribution().total.toLocaleString('en-US') }} words</span>
+					</div>
 				</header>
 
 				<div class="leitner-list">

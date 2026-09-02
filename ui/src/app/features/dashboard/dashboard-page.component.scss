@@ -221,6 +221,54 @@
 	padding: 7px 0;
 }
 
+.leitner-heading {
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.leitner-heading-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.leitner-export-btn {
+	min-width: 0;
+	min-height: 32px;
+	padding: 0 10px;
+	--mdc-outlined-button-container-height: 32px;
+	--mdc-outlined-button-container-shape: 999px;
+	--mdc-outlined-button-label-text-size: 11px;
+	--mdc-outlined-button-label-text-weight: 650;
+}
+
+.leitner-export-btn svg {
+	width: 15px;
+	height: 15px;
+	margin-right: 6px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.leitner-export-btn.is-copied {
+	--mdc-outlined-button-outline-color: var(--mat-sys-primary);
+	--mdc-outlined-button-label-text-color: var(--mat-sys-on-primary-container);
+	background: var(--mat-sys-primary-container);
+	color: var(--mat-sys-on-primary-container);
+}
+
+.leitner-export-btn.is-failed {
+	--mdc-outlined-button-outline-color: var(--mat-sys-error);
+	--mdc-outlined-button-label-text-color: var(--mat-sys-on-error-container);
+	background: var(--mat-sys-error-container);
+	color: var(--mat-sys-on-error-container);
+}
+
 .chart-content {
 	padding: 8px 18px 18px;
 	border-top: 1px solid var(--mat-sys-outline-variant);
@@ -408,6 +456,21 @@
 
 	.leitner-coverage-content small {
 		max-width: none;
+	}
+
+	.leitner-heading > div:first-child {
+		flex: 1 1 100%;
+	}
+
+	.leitner-heading-actions {
+		width: 100%;
+		justify-content: space-between;
+		margin-left: 0;
+	}
+
+	.leitner-export-btn {
+		min-height: 30px;
+		--mdc-outlined-button-container-height: 30px;
 	}
 
 	.leitner-row {
