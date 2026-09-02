@@ -21,6 +21,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {ReviewSessionService} from '../../application/review/review-session.service';
+import {ReviewAnswerSoundService, type ReviewAnswerSoundOutcome} from '../../core/sound/review-answer-sound.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
 import {getDueWords, localDay} from '../../domain/learning/learning-rules';
@@ -94,6 +95,7 @@ export class ReviewPageComponent implements OnInit {
 	private readonly snack = inject(MatSnackBar);
 	private readonly dialog = inject(MatDialog);
 	private readonly theme = inject(ThemeService);
+	private readonly answerSound = inject(ReviewAnswerSoundService);
 	readonly Phase = RemediationPhase;
 	readonly answer = new FormControl('', {nonNullable: true});
 	readonly limit = new FormControl(0, {nonNullable: true});
@@ -166,6 +168,7 @@ export class ReviewPageComponent implements OnInit {
 	}
 
 	async start(mode: ReviewMode): Promise<void> {
+		this.answerSound.stop();
 		const ok = await this.session.start(mode, this.limit.value);
 		if (!ok) {
 			this.snack.open(mode === 'box1' ? 'There are no cards in House 1 yet.' : 'There are no due reviews.', 'OK', {duration: 3000});
@@ -190,6 +193,7 @@ export class ReviewPageComponent implements OnInit {
 		this.saving.set(true);
 		try {
 			await this.session.submit('', true);
+			this.answerSound.play('incorrect');
 		} catch (error) {
 			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
 		} finally {
@@ -198,6 +202,7 @@ export class ReviewPageComponent implements OnInit {
 	}
 
 	acknowledge(): void {
+		this.answerSound.stop();
 		this.session.acknowledgeCorrection();
 		this.prepareAnswerInput();
 	}
@@ -226,6 +231,7 @@ export class ReviewPageComponent implements OnInit {
 	}
 
 	async next(): Promise<void> {
+		this.answerSound.stop();
 		await this.session.next();
 		this.prepareAnswerInput(false);
 		if (!this.session.active()) return;
@@ -242,6 +248,7 @@ export class ReviewPageComponent implements OnInit {
 			}
 		}).afterClosed());
 		if (ok) {
+			this.answerSound.stop();
 			await this.session.abandon();
 			await this.router.navigateByUrl('/dashboard');
 		}
@@ -256,6 +263,8 @@ export class ReviewPageComponent implements OnInit {
 		this.saving.set(true);
 		try {
 			await this.session.submit(submittedAnswer);
+			const feedback = this.session.feedback();
+			if (feedback) this.answerSound.play(feedback.correct ? 'correct' : 'incorrect');
 		} catch (error) {
 			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
 		} finally {
@@ -265,9 +274,23 @@ export class ReviewPageComponent implements OnInit {
 
 	private submitRemediationAnswer(): void {
 		const submittedAnswer = this.answer.value;
+		const previousPhase = this.session.remediation()?.phase ?? null;
 		this.session.submitRemediation(submittedAnswer);
-		if (this.session.remediation()?.phase === RemediationPhase.COMPLETED) return;
+		const nextPhase = this.session.remediation()?.phase ?? null;
+		const outcome = this.remediationSoundOutcome(previousPhase, nextPhase);
+		if (outcome) this.answerSound.play(outcome);
+		if (nextPhase === RemediationPhase.COMPLETED) return;
 		this.prepareAnswerInput();
+	}
+
+	private remediationSoundOutcome(previousPhase: RemediationPhase | null, nextPhase: RemediationPhase | null): ReviewAnswerSoundOutcome | null {
+		if (previousPhase === RemediationPhase.RECALL) {
+			return nextPhase === RemediationPhase.COMPLETED ? 'correct' : 'incorrect';
+		}
+		if (previousPhase === RemediationPhase.COPY) {
+			return nextPhase === RemediationPhase.RECALL ? 'correct' : 'incorrect';
+		}
+		return null;
 	}
 
 	private prepareAnswerInput(focus = true): void {
