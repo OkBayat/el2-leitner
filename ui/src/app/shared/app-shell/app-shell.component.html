@@ -61,3 +61,12 @@
 <main class="content">
 	<router-outlet />
 </main>
+
+<nav class="mobile-nav" aria-label="Mobile navigation">
+	@for (item of primaryNavItems; track item.path) {
+		<a [routerLink]="item.path" routerLinkActive="active-mobile">
+			<span aria-hidden="true">{{ item.symbol }}</span>
+			<small>{{ item.label }}</small>
+		</a>
+	}
+</nav>
