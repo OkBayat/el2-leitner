@@ -69,6 +69,8 @@ const pwaStyles = read('src/pwa.scss');
 const server = read('../back/src/createApp.js');
 const dockerfile = read('../back/Dockerfile');
 
+assert.match(appRoot, /PwaInstallService/u, 'The application root must instantiate install-prompt capture during bootstrap.');
+assert.match(appRoot, /pwaInstallation\.mode\(\)/u, 'The one-shot Android install prompt listener must be active before Settings is opened.');
 assert.match(appRoot, /PwaUpdateService/u, 'The application root must start the service-worker update lifecycle.');
 assert.match(appRoot, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
 assert.match(installService, /beforeinstallprompt/u, 'Chromium install prompts must be captured for an explicit user action.');
