@@ -216,8 +216,9 @@ test('word edits use a compact request and survive a full page reload', async ({
     writes.push({ path, body: request.postDataJSON() });
   });
 
+  await page.locator('.table-wrap').evaluate((element) => { element.scrollLeft = element.scrollWidth; });
   const editButton = page.locator('button[aria-label="Edit word"]').first();
-  await editButton.scrollIntoViewIfNeeded();
+  await expect(editButton).toBeVisible();
   await editButton.click();
   await page.getByLabel('English word or phrase').fill('Monday edited');
   await page.getByLabel('Alternative spellings separated by /').fill('Monday / Mondays');
@@ -239,8 +240,9 @@ test('word edits use a compact request and survive a full page reload', async ({
   await page.reload();
   await page.getByLabel('Search').fill('Monday edited');
   await expect(page.locator('strong').filter({ hasText: 'Monday edited' }).first()).toBeVisible();
+  await page.locator('.table-wrap').evaluate((element) => { element.scrollLeft = element.scrollWidth; });
   const reloadedEditButton = page.locator('button[aria-label="Edit word"]').first();
-  await reloadedEditButton.scrollIntoViewIfNeeded();
+  await expect(reloadedEditButton).toBeVisible();
   await reloadedEditButton.click();
   await expect(page.getByLabel('English word or phrase')).toHaveValue('Monday edited');
   await expect(page.getByLabel('Note or meaning')).toHaveValue('e2e edit persisted');
