@@ -3,7 +3,14 @@ html {
 	--safe-area-right: env(safe-area-inset-right, 0px);
 	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
 	--safe-area-left: env(safe-area-inset-left, 0px);
+	--vocora-system-chrome-color: #f8f9ff;
 	min-height: 100%;
+}
+
+@media(display-mode: standalone) {
+	html, body {
+		background: var(--vocora-system-chrome-color, var(--mat-sys-surface));
+	}
 }
 
 app-shell .topbar {
