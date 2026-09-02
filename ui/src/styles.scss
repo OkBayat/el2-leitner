@@ -45,13 +45,6 @@ body {
 	text-align: left;
 }
 
-@media(display-mode: standalone) {
-	html, body {
-		overflow-x: hidden;
-		overscroll-behavior-y: none;
-	}
-}
-
 button, input, textarea, select {
 	font: inherit;
 }
