@@ -14,8 +14,8 @@ import { SaveLearningState } from "./application/learning/SaveLearningState.js";
 import { UpdateVocabulary } from "./application/learning/UpdateVocabulary.js";
 import { LibraryAdminPolicy } from "./domain/library/LibraryAdminPolicy.js";
 import { VocabularyFileParser } from "./domain/library/VocabularyFileParser.js";
+import { MySqlEditableLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningBootstrapRepository.js";
 import { MySqlEditableLearningStateRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningStateRepository.js";
-import { MySqlLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js";
 import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySqlLibraryRepository.js";
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
@@ -32,7 +32,7 @@ export function createContainer({ pool, config, adapters = {} }) {
   const learningBootstrapRepository = adapters.learningBootstrapRepository
     ?? (adapters.learningStateRepository
       ? learningStateRepository
-      : new MySqlLearningBootstrapRepository(pool, learningStateRepository));
+      : new MySqlEditableLearningBootstrapRepository(pool, learningStateRepository));
   const libraryRepository = adapters.libraryRepository ?? new MySqlLibraryRepository(pool);
   const practiceSessionRepository =
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
