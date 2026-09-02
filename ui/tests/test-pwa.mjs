@@ -21,6 +21,7 @@ assert.match(pkg.scripts.test, /build:production.*check:pwa/u, 'The complete tes
 
 const angular = JSON.parse(read('angular.json'));
 assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/manifest.webmanifest'), 'Angular must publish the web app manifest at the origin root.');
+assert.ok(angular.projects.vocora.architect.build.options.styles.includes('src/pwa.scss'), 'The installed-app safe-area stylesheet must be part of every build.');
 
 const manifest = JSON.parse(read('src/manifest.webmanifest'));
 assert.equal(manifest.id, '/', 'The PWA needs a stable app identity.');
@@ -63,9 +64,8 @@ const installCard = read('src/app/shared/pwa/pwa-install-card.component.ts');
 const routes = read('src/app/app.routes.ts');
 const authGuard = read('src/app/core/auth/auth.guard.ts');
 const settings = read('src/app/features/settings/settings-page.component.ts');
-const shellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
-const reviewStyles = read('src/app/features/review/review-page.component.scss');
 const globalStyles = read('src/styles.scss');
+const pwaStyles = read('src/pwa.scss');
 const server = read('../back/src/createApp.js');
 
 assert.match(appRoot, /PwaUpdateService/u, 'The application root must start the service-worker update lifecycle.');
@@ -81,8 +81,8 @@ assert.match(settings, /<app-pwa-install-card/u, 'Installation controls must liv
 assert.match(routes, /path:\s*'offline'/u, 'A cold offline launch must have an unguarded route.');
 assert.match(authGuard, /error instanceof ApiError && error\.status === 0/u, 'Network failures during authentication must route to the offline fallback.');
 assert.match(globalStyles, /--safe-area-bottom:\s*env\(safe-area-inset-bottom/u, 'Global safe-area tokens must support installed iPhones.');
-assert.match(shellStyles, /var\(--safe-area-bottom\)/u, 'Mobile app chrome must respect the Home indicator safe area.');
-assert.match(reviewStyles, /var\(--safe-area-bottom\)/u, 'The fixed review footer must respect the Home indicator safe area.');
+assert.match(pwaStyles, /app-shell \.mobile-nav[\s\S]*var\(--safe-area-bottom\)/u, 'Mobile app chrome must respect the Home indicator safe area.');
+assert.match(pwaStyles, /app-review-page \.review-action-footer[\s\S]*var\(--safe-area-bottom\)/u, 'The fixed review footer must respect the Home indicator safe area.');
 assert.match(server, /manifest\.webmanifest/u, 'The server must give the manifest deterministic headers.');
 assert.match(server, /Service-Worker-Allowed/u, 'The service-worker scope must be explicit.');
 
@@ -96,7 +96,7 @@ assert.equal(builtManifest.id, manifest.id, 'The built manifest must match sourc
 const worker = fs.readFileSync(path.join(distRoot, 'service-worker.js'), 'utf8');
 assert.match(worker, /const CACHE_NAME = CACHE_PREFIX \+ "[0-9a-f]{20}";/u, 'The generated cache must be content-versioned.');
 assert.match(worker, /request\.mode === 'navigate'/u, 'Offline navigation must fall back to the cached app shell.');
-assert.match(worker, /\^\\\/api\(\?:\\\/\|\$\)/u, 'API traffic must be explicitly excluded from the service-worker cache.');
+assert.match(worker, /url\.pathname === '\/service-worker\.js'.*api/u, 'API traffic must be explicitly excluded from the service-worker cache.');
 assert.match(worker, /removeOldCaches/u, 'Obsolete app versions must be removed after activation.');
 
 const precacheMatch = worker.match(/const PRECACHE_URLS = Object\.freeze\((\[[\s\S]*?\])\);/u);
