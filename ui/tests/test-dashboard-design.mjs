@@ -21,7 +21,7 @@ assert.match(dashboardHtml, /\[style\.width\.%\]="houseWidths\[house\.box - 1\]"
 assert.match(dashboardHtml, /data-testid="house-status"/u, 'House status needs its stable regression locator.');
 assert.match(dashboardHtml, />Today's plan</u, 'The current dashboard E2E contract must keep the Today plan label.');
 assert.match(dashboardHtml, /Today's progress/u, 'The minimal dashboard must expose the compact daily progress summary.');
-assert.match(dashboardHtml, /Words in Leitner/u, 'The summary row must expose total active Leitner words.');
+assert.match(dashboardTs, /label: 'Words in Leitner'/u, 'The summary row must expose total active Leitner words.');
 assert.equal(dashboardHtml.match(/class="leitner-row"/gu)?.length, 1, 'One template loop must own all five Leitner rows.');
 
 assert.match(shellTs, /MatMenuModule/u, 'The compact hamburger/account navigation should use Angular Material menus.');
