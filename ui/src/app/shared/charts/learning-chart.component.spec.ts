@@ -38,6 +38,8 @@ describe('Chart.js learning chart adapter', () => {
 		expect(config.type).toBe('doughnut');
 		expect(config.data.datasets[0].data).toEqual([1337, 1554]);
 		expect(config.data.datasets[0].backgroundColor).toEqual(['rgb(26 115 232)', 'rgb(218 220 224)']);
+		expect(config.options?.cutout).toBe('82%');
+		expect(config.options?.rotation).toBe(0);
 		expect(doughnutPercent(coverage)).toBe(46);
 	});
 
