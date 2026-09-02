@@ -45,16 +45,19 @@
 						      stroke-linecap="round"/>
 					</svg>
 				</button>
+				@let bar = sessionBarState();
 				<div class="session-progress">
-					<span
-						class="visually-hidden">{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : session.answered() + 1 + ' of ' + session.initialCount() }}</span>
+					<span class="visually-hidden">{{ bar.accessibleLabel }}</span>
 					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
 				</div>
-				@let sessionAccuracy = session.accuracy();
 				<span class="session-count">
-					<span data-testid="session-accuracy">Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }}</span>
+					<span data-testid="session-accuracy">Accuracy: {{ bar.accuracyLabel }}</span>
+					@if (bar.recheck) {
+						<span aria-hidden="true"> · </span>
+						<span data-testid="session-recheck">Recheck</span>
+					}
 					<span aria-hidden="true"> · </span>
-					<span>{{ session.currentTask() === 'recheck' ? 'Recheck' : session.answered() + 1 + ' / ' + session.initialCount() }}</span>
+					<span data-testid="session-counter">{{ bar.counterLabel }}</span>
 				</span>
 			</div>
 
