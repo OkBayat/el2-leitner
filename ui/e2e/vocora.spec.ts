@@ -70,6 +70,15 @@ async function expectLowercaseMobileInput(input: ReturnType<Page['getByLabel']>)
   await expect(input).toHaveAttribute('spellcheck', 'false');
 }
 
+async function expectReadonlyCorrectAnswer(input: ReturnType<Page['getByLabel']>): Promise<void> {
+  await expect(input).toBeEnabled();
+  await expect(input).toHaveAttribute('readonly', '');
+  const field = input.locator('xpath=ancestor::mat-form-field');
+  await expect(field).toHaveClass(/review-answer-correct/u);
+  await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS('background-color', 'rgb(239, 255, 229)');
+  await expect(field.locator('.mdc-notched-outline__leading')).toHaveCSS('border-color', 'rgb(88, 204, 2)');
+}
+
 test('English LTR Angular app preserves the complete learner and library flow', async ({ page }) => {
   await authenticate(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -123,7 +132,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(sessionAccuracy).toHaveText('Accuracy: 100%');
   await expect(sharedInput).toHaveCount(1);
   await expect(answerInput).toBeVisible();
-  await expect(answerInput).toBeDisabled();
+  await expectReadonlyCorrectAnswer(answerInput);
   await expect(answerInput).toHaveValue(dueTerm);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
@@ -144,6 +153,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(sharedInput).toHaveCount(1);
   await expect(answerInput).toBeVisible();
   await expect(answerInput).toBeEnabled();
+  await expect(answerInput).not.toHaveAttribute('readonly', '');
   await expect(answerInput).toHaveValue('');
   await expect(answerInput).toBeFocused();
 
@@ -238,7 +248,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(finalRecallInput).toBeVisible();
-  await expect(finalRecallInput).toBeDisabled();
+  await expectReadonlyCorrectAnswer(finalRecallInput);
   await expect(finalRecallInput).toHaveValue(term);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer.getByText('Correct!')).toBeVisible();
@@ -247,7 +257,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await expectFooterAnchoredToViewport(page);
 });
 
-test('scheduled spelling recheck keeps the shared input visible and disabled after a correct answer', async ({ page }) => {
+test('scheduled spelling recheck keeps the shared input visible and readonly after a correct answer', async ({ page }) => {
   await authenticate(page, `e2e-recheck-${Date.now()}@example.com`);
   const terms = await dueTerms(page);
   const missedTerm = terms[0];
@@ -266,7 +276,7 @@ test('scheduled spelling recheck keeps the shared input visible and disabled aft
   await immediateRecall.fill(missedTerm);
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(immediateRecall).toBeVisible();
-  await expect(immediateRecall).toBeDisabled();
+  await expectReadonlyCorrectAnswer(immediateRecall);
   await expect(immediateRecall).toHaveValue(missedTerm);
   await footer.getByRole('button', { name: 'Continue' }).click();
 
@@ -297,7 +307,7 @@ test('scheduled spelling recheck keeps the shared input visible and disabled aft
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(recheckInput).toBeVisible();
-  await expect(recheckInput).toBeDisabled();
+  await expectReadonlyCorrectAnswer(recheckInput);
   await expect(recheckInput).toHaveValue(missedTerm);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer.getByText('Correct!')).toBeVisible();
