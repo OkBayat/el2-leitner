@@ -12,6 +12,7 @@ import {
 	LineElement,
 	PointElement,
 	Tooltip,
+	type TooltipItem,
 } from 'chart.js';
 
 export type LearningChartType = 'bar' | 'line' | 'doughnut';
@@ -120,7 +121,7 @@ export function buildLearningChartConfig(
 				tooltip: {
 					displayColors: false,
 					callbacks: {
-						label: (context) => `${context.parsed.y === null ? '—' : Math.round(context.parsed.y)}${suffix}`,
+						label: (context: TooltipItem<any>) => `${context.parsed.y === null ? '—' : Math.round(context.parsed.y)}${suffix}`,
 					},
 				},
 			},
@@ -143,7 +144,7 @@ export function buildLearningChartConfig(
 					border: {display: false},
 					ticks: {
 						color: palette.text,
-						callback: (value) => `${Math.round(Number(value))}${suffix}`,
+						callback: (value: string | number) => `${Math.round(Number(value))}${suffix}`,
 					},
 				},
 			},
