@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {buildLearningChartGeometry, type LearningChartPoint} from './learning-chart.component';
+import {buildLearningChartConfig, doughnutPercent, type LearningChartPoint} from './learning-chart.component';
 
 const points: LearningChartPoint[] = [
 	{key: 'a', label: 'Aug 20', value: 10},
@@ -7,46 +7,41 @@ const points: LearningChartPoint[] = [
 	{key: 'c', label: 'Aug 22', value: 30},
 ];
 
-describe('buildLearningChartGeometry', () => {
-	it('scales bars against the real maximum instead of collapsing them to the baseline', () => {
-		const chart = buildLearningChartGeometry(points, 'bar');
-		expect(chart.points[0].barHeight).toBeGreaterThan(50);
-		expect(chart.points[2].barHeight).toBeGreaterThan(chart.points[1].barHeight);
-		expect(chart.points[1].barHeight).toBeGreaterThan(chart.points[0].barHeight);
-		expect(chart.points[2].barY).toBe(chart.plotTop);
+describe('Chart.js learning chart adapter', () => {
+	it('builds the dashboard activity as a real bar chart', () => {
+		const config = buildLearningChartConfig(points, 'bar');
+		expect(config.type).toBe('bar');
+		expect(config.data.labels).toEqual(['Aug 20', 'Aug 21', 'Aug 22']);
+		expect(config.data.datasets[0].data).toEqual([10, 20, 30]);
 	});
 
-	it('pins accuracy charts to a 0-100 scale and builds a connected line', () => {
-		const chart = buildLearningChartGeometry([
-			{key: '1', label: '8/1', value: 68},
-			{key: '2', label: '8/2', value: 74},
-			{key: '3', label: '8/3', value: 83},
-		], 'line', 0, 100);
-		expect(chart.min).toBe(0);
-		expect(chart.max).toBe(100);
-		expect(chart.linePath).toMatch(/^M /u);
-		expect(chart.linePath.match(/L /gu)?.length).toBe(2);
-		expect(chart.points[2].y).toBeLessThan(chart.points[0].y);
-	});
-
-	it('breaks a line across missing daily values instead of fabricating data', () => {
-		const chart = buildLearningChartGeometry([
+	it('pins accuracy lines to 0-100 and preserves missing values as gaps', () => {
+		const config = buildLearningChartConfig([
 			{key: '1', label: '8/1', value: 68},
 			{key: '2', label: '8/2', value: null},
 			{key: '3', label: '8/3', value: 83},
-		], 'line', 0, 100);
-		expect(chart.linePath.match(/M /gu)?.length).toBe(2);
-		expect(chart.areaPath).toBe('');
+		], 'line', 0, 100, '%');
+		expect(config.type).toBe('line');
+		expect(config.data.datasets[0].data).toEqual([68, null, 83]);
+		expect(config.options?.scales?.['y']?.min).toBe(0);
+		expect(config.options?.scales?.['y']?.max).toBe(100);
 	});
 
-	it('reduces x-axis labels on long line charts while keeping the final date visible', () => {
-		const longSeries = Array.from({length: 30}, (_, index) => ({
-			key: String(index),
-			label: `8/${index + 1}`,
-			value: 70,
-		}));
-		const chart = buildLearningChartGeometry(longSeries, 'line', 0, 100);
-		expect(chart.points.filter((point) => point.showLabel).length).toBeLessThan(15);
-		expect(chart.points.at(-1)?.showLabel).toBe(true);
+	it('builds a clean doughnut chart for part-to-whole coverage', () => {
+		const coverage: LearningChartPoint[] = [
+			{key: 'entered', label: 'In Leitner', value: 1337},
+			{key: 'remaining', label: 'Not yet added', value: 1554},
+		];
+		const config = buildLearningChartConfig(coverage, 'doughnut');
+		expect(config.type).toBe('doughnut');
+		expect(config.data.datasets[0].data).toEqual([1337, 1554]);
+		expect(doughnutPercent(coverage)).toBe(46);
+	});
+
+	it('returns zero coverage for an empty vocabulary', () => {
+		expect(doughnutPercent([
+			{key: 'entered', label: 'In Leitner', value: 0},
+			{key: 'remaining', label: 'Not yet added', value: 0},
+		])).toBe(0);
 	});
 });
