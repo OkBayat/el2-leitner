@@ -67,6 +67,21 @@ describe("Sentence practice corpus", () => {
       "I withdrew some cash from the bank.",
       "The clerk counted the cash carefully.",
     ]);
+    assert.deepEqual(sentencesFor(corpus, 186), [
+      "The speaker described it as full-time.",
+      "The notes say that it is full-time.",
+      "The reviewer considered it full-time.",
+    ]);
+    assert.deepEqual(sentencesFor(corpus, 298), [
+      "A balanced diet includes foods from several groups.",
+      "The nutritionist recommended a balanced diet.",
+      "Regular exercise is easier to maintain with a balanced diet.",
+    ]);
+    assert.deepEqual(sentencesFor(corpus, 340), [
+      "The physician examined the patient.",
+      "Please make an appointment with a physician.",
+      "The physician reviewed the test results.",
+    ]);
     assert.deepEqual(sentencesFor(corpus, 450), [
       "A whale is a cetacean.",
       "The researcher identified the animal as a cetacean.",
@@ -76,6 +91,11 @@ describe("Sentence practice corpus", () => {
       "Please turn left at the traffic lights.",
       "You should turn right after the bridge.",
       "You need to turn at the next corner.",
+    ]);
+    assert.deepEqual(sentencesFor(corpus, 1113), [
+      "The speaker described it as in stock.",
+      "The notes say that it is in stock.",
+      "The reviewer considered it in stock.",
     ]);
     assert.deepEqual(sentencesFor(corpus, 1467), [
       "Researchers will analyse the survey data.",

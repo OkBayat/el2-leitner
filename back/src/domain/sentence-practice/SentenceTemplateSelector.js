@@ -15,6 +15,7 @@ import {
   DIRECTION_TEMPLATES,
   VERB_TEMPLATES,
 } from "./SentenceCuratedTemplates.js";
+import { SENTENCE_CONTEXT_OVERRIDES } from "./SentenceContextOverrides.js";
 
 function categoryTemplates(category) {
   const context = CATEGORY_CONTEXTS.get(category);
@@ -84,7 +85,8 @@ function adjectiveTemplates() {
 
 export function templatesFor(item) {
   const normalizedTerm = normalizeVocabularyForm(item.answerText);
-  const curated = CURATED_TERM_TEMPLATES.get(normalizedTerm);
+  const curated = SENTENCE_CONTEXT_OVERRIDES.get(normalizedTerm)
+    ?? CURATED_TERM_TEMPLATES.get(normalizedTerm);
   if (curated) return curated;
 
   const verbTemplates = VERB_TEMPLATES.get(normalizedTerm);
@@ -100,6 +102,8 @@ export function templatesFor(item) {
     if (templates) return templates;
   }
 
+  if (ADJECTIVE_TERMS.has(normalizedTerm)) return adjectiveTemplates();
+
   if (item.category === "School subjects and disciplines") {
     return [
       `She chose ${TARGET} as her main subject.`,
@@ -111,16 +115,16 @@ export function templatesFor(item) {
   if (item.category === "Health, medicine and nutrition") {
     if (item.sourceItemNumber >= 297 && item.sourceItemNumber <= 325) {
       return [
-        `The meal plan includes the ${TARGET}.`,
-        `The nutritionist explained the role of the ${TARGET}.`,
-        `The food guide provides more information about the ${TARGET}.`,
+        `The meal plan contains ${TARGET}.`,
+        `The nutritionist explained the role of ${TARGET}.`,
+        `The food guide provides more information about ${TARGET}.`,
       ];
     }
     if (item.sourceItemNumber === 295 || (item.sourceItemNumber >= 326 && item.sourceItemNumber <= 357)) {
       return [
-        `The doctor discussed the ${TARGET} with the patient.`,
-        `The clinic provides information about the ${TARGET}.`,
-        `The patient asked a question about the ${TARGET}.`,
+        `The health lecture included a section on ${TARGET}.`,
+        `The clinic provides information about ${TARGET}.`,
+        `The patient asked a question about ${TARGET}.`,
       ];
     }
   }
@@ -175,7 +179,10 @@ export function templatesFor(item) {
   }
 
   if (item.category === "Work and employment" && (
-    (item.sourceItemNumber >= 691 && item.sourceItemNumber <= 718)
+    (item.sourceItemNumber >= 691 && item.sourceItemNumber <= 698)
+    || (item.sourceItemNumber >= 700 && item.sourceItemNumber <= 702)
+    || (item.sourceItemNumber >= 704 && item.sourceItemNumber <= 705)
+    || (item.sourceItemNumber >= 709 && item.sourceItemNumber <= 718)
     || (item.sourceItemNumber >= 721 && item.sourceItemNumber <= 723)
   )) {
     return [
@@ -187,9 +194,9 @@ export function templatesFor(item) {
 
   if (item.category === "Tourism and hospitality" && item.sourceItemNumber >= 773 && item.sourceItemNumber <= 799) {
     return [
-      `The guest reserved the ${TARGET}.`,
-      `The hotel offers the ${TARGET} during the summer.`,
-      `The brochure describes the ${TARGET}.`,
+      `The brochure contains information about the ${TARGET}.`,
+      `The guest asked about the ${TARGET}.`,
+      `The travel guide mentioned the ${TARGET}.`,
     ];
   }
 
@@ -280,6 +287,5 @@ export function templatesFor(item) {
     ];
   }
 
-  if (ADJECTIVE_TERMS.has(normalizedTerm)) return adjectiveTemplates();
   return categoryTemplates(item.category);
 }

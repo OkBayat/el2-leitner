@@ -76,5 +76,5 @@ export const ADJECTIVE_TERMS = new Set([
   "indigenous", "straight", "sufficient", "distinct", "different", "nuclear", "professional",
   "sustainable", "pleased", "impressed", "surprised", "uncertain", "cognitive", "electronic",
   "short", "local", "average", "dead", "modern", "slow", "strong", "natural", "calming", "awake",
-  "separate", "successful", "cancelled",
+  "separate", "successful", "cancelled", "in stock", "out of stock", "second-hand", "overdue",
 ]);
