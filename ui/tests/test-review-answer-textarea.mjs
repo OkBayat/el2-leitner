@@ -36,12 +36,28 @@ assert.match(
 assert.match(
 	styles,
 	/\.review-answer-input\s*\{[\s\S]*?height:\s*2rem!important;[\s\S]*?font-size:\s*1\.2rem!important;/u,
-	'The component must retain the baseline input height and typography.',
+	'The component must retain the baseline answer typography.',
 );
 assert.match(
 	globalStyles,
-	/textarea\.review-answer-input\s*\{[\s\S]*?height:\s*calc\(2rem - 5px\)!important;/u,
-	'The textarea presentation must be exactly 5px shorter than the baseline input height.',
+	/mat-form-field\.review-answer-field\s*\{[\s\S]*?--mat-form-field-container-height:\s*46px;[\s\S]*?--mat-form-field-container-vertical-padding:\s*11px;/u,
+	'The visible Material answer field must be 46px tall, exactly 10px below the default 56px height.',
 );
+assert.match(
+	globalStyles,
+	/mat-form-field\.review-answer-field \.mat-mdc-text-field-wrapper\s*\{[\s\S]*?height:\s*46px;/u,
+	'The MDC outlined wrapper must enforce the 46px visible height rather than only shrinking the textarea content.',
+);
+assert.match(
+	globalStyles,
+	/mat-form-field\.review-answer-field \.mat-mdc-form-field-infix\s*\{[\s\S]*?min-height:\s*46px;[\s\S]*?padding-top:\s*11px;[\s\S]*?padding-bottom:\s*11px;/u,
+	'The Material infix must align the label and text within the shorter field.',
+);
+assert.match(
+	globalStyles,
+	/textarea\.review-answer-input\s*\{[\s\S]*?height:\s*22px!important;[\s\S]*?line-height:\s*22px!important;/u,
+	'The one-line textarea content must fit inside the 46px Material field without restoring multiline height.',
+);
+assert.doesNotMatch(globalStyles, /calc\(2rem - 5px\)/u, 'The ineffective 5px-only textarea reduction must not remain.');
 
 console.log('Review answer textarea regression checks passed.');
