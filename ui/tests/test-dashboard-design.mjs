@@ -61,7 +61,9 @@ for (const house of ['2', '3', '4', '5']) {
 assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-tone\) 16%, var\(--mat-sys-surface\)\)/u, 'Occupied states should use a light airy tint rather than a saturated block.');
 assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-tone\) 6%, var\(--mat-sys-surface\)\)/u, 'Empty states should remain visually quiet.');
 assert.match(leitnerPalette, /\.leitner-house-name::before/u, 'Each house label should have a small restrained color cue.');
-assert.match(leitnerPalette, /border-bottom:\s*2px solid var\(--mat-sys-outline-variant\)/u, 'Leitner house rows must keep the stronger two-pixel separator.');
+assert.match(dashboardStyles, /\.leitner-row\s*\{[^}]*border-bottom:\s*1px solid var\(--mat-sys-outline-variant\)/u, 'Leitner rows themselves must keep the original one-pixel separator.');
+assert.doesNotMatch(leitnerPalette, /\.leitner-row\s*\{[^}]*border-bottom:\s*2px solid var\(--mat-sys-outline-variant\)/u, 'The stronger border must not be applied to whole Leitner rows.');
+assert.match(leitnerPalette, /\.leitner-row \.leitner-segment\s*\{[^}]*border:\s*0;[^}]*border-bottom:\s*2px solid var\(--mat-sys-outline-variant\)/u, 'Each Leitner state cell must use only the requested two-pixel bottom border.');
 assert.doesNotMatch(leitnerPalette, /linear-gradient|radial-gradient/u, 'The storage-inspired palette must remain flat and simple.');
 
 assert.match(dashboardStyles, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/u, 'Desktop summary metrics must remain a compact four-column strip.');
