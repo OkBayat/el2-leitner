@@ -102,6 +102,8 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.locator('.sidebar, .topbar, .mobile-nav')).toHaveCount(0);
   await page.getByRole('button', { name: 'Start session' }).click();
   await expect(page.getByTestId('review-session-bar')).toBeVisible();
+  const sessionAccuracy = page.getByTestId('session-accuracy');
+  await expect(sessionAccuracy).toHaveText('Accuracy: —');
   await expectFooterAnchoredToViewport(page);
 
   const footer = page.getByTestId('review-action-footer');
@@ -118,6 +120,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(checkAnswer).toBeEnabled();
   await checkAnswer.click();
 
+  await expect(sessionAccuracy).toHaveText('Accuracy: 100%');
   await expect(sharedInput).toHaveCount(1);
   await expect(answerInput).toBeVisible();
   await expect(answerInput).toBeDisabled();
@@ -213,7 +216,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await expect(footer.getByRole('heading', { name: 'From memory', exact: true })).toBeVisible();
 
   await recallInput.fill(`${term}x`);
-  await footer.getByRole('button', { name: 'Check' }).click();
+  await footer.getByRole('button', { name: 'Check answer' }).click();
   const copyInput = page.getByLabel('Exact copy');
   await expect(sharedInput).toHaveCount(1);
   await expect(copyInput).toBeVisible();
@@ -223,7 +226,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await expect(footer.getByRole('heading', { name: 'Practice the correction', exact: true })).toBeVisible();
 
   await copyInput.fill(term);
-  await footer.getByRole('button', { name: 'Check' }).click();
+  await footer.getByRole('button', { name: 'Check answer' }).click();
   const finalRecallInput = page.getByLabel('Recall from memory');
   await expect(sharedInput).toHaveCount(1);
   await expect(finalRecallInput).toBeVisible();
@@ -232,7 +235,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await expect(finalRecallInput).toBeFocused();
 
   await finalRecallInput.fill(term);
-  await footer.getByRole('button', { name: 'Check' }).click();
+  await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(finalRecallInput).toBeVisible();
   await expect(finalRecallInput).toBeDisabled();
@@ -261,16 +264,20 @@ test('scheduled spelling recheck keeps the shared input visible and disabled aft
 
   const immediateRecall = page.getByLabel('Recall from memory');
   await immediateRecall.fill(missedTerm);
-  await footer.getByRole('button', { name: 'Check' }).click();
+  await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(immediateRecall).toBeVisible();
   await expect(immediateRecall).toBeDisabled();
   await expect(immediateRecall).toHaveValue(missedTerm);
   await footer.getByRole('button', { name: 'Continue' }).click();
 
   const recheckHeading = page.getByRole('heading', { name: 'Spelling recheck' });
-  for (let index = 1; index < terms.length && !(await recheckHeading.isVisible()); index += 1) {
+  for (let index = 1; index < terms.length; index += 1) {
+    await expect.poll(async () => (
+      (await recheckHeading.isVisible()) || (await page.getByLabel('Your answer').isVisible())
+    ), { timeout: 8_000 }).toBe(true);
+    if (await recheckHeading.isVisible()) break;
+
     const interveningInput = page.getByLabel('Your answer');
-    await expect(interveningInput).toBeVisible();
     await interveningInput.fill(terms[index]);
     await footer.getByRole('button', { name: 'Check answer' }).click();
     await expect(footer.getByText('Correct!')).toBeVisible();
@@ -287,7 +294,7 @@ test('scheduled spelling recheck keeps the shared input visible and disabled aft
   await expectLowercaseMobileInput(recheckInput);
 
   await recheckInput.fill(missedTerm);
-  await footer.getByRole('button', { name: 'Check' }).click();
+  await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(recheckInput).toBeVisible();
   await expect(recheckInput).toBeDisabled();
@@ -318,6 +325,7 @@ test('review keeps its bottom action footer fitted on mobile', async ({ page }) 
 
   await page.getByRole('button', { name: 'Start session' }).click();
   await expect(page.getByTestId('review-session-bar')).toBeVisible();
+  await expect(page.getByTestId('session-accuracy')).toHaveText('Accuracy: —');
   await expect(page.getByRole('button', { name: 'Exit review' })).toBeVisible();
   const answerInput = page.getByLabel('Your answer');
   await expect(page.getByTestId('review-answer-input')).toHaveCount(1);
