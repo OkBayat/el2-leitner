@@ -19,7 +19,12 @@ export interface ReviewAnswerFieldContext {
 
 export function buildReviewAnswerFieldState(context: ReviewAnswerFieldContext): ReviewAnswerFieldState | null {
 	if (!context.active) return null;
-	if (context.remediationPhase === RemediationPhase.CORRECTION) return null;
+
+	if (context.remediationPhase === RemediationPhase.CORRECTION) {
+		return context.currentTask === 'review'
+			? {label: 'Your answer', action: 'review', readOnly: true, feedbackTone: 'incorrect'}
+			: null;
+	}
 
 	if (context.remediationPhase) {
 		const completed = context.remediationPhase === RemediationPhase.COMPLETED;
