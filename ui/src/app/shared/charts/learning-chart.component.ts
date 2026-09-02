@@ -83,8 +83,8 @@ export function buildLearningChartConfig(
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
-				cutout: '72%',
-				rotation: -90,
+				cutout: '82%',
+				rotation: 0,
 				animation: {duration: 220},
 				plugins: {
 					legend: {display: false},
