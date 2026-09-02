@@ -11,6 +11,7 @@ import { ReviewSessionService } from '../../application/review/review-session.se
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { buildLeitnerDistribution } from '../../domain/learning/leitner-distribution';
 import { accuracy, getDueWords, hardWords, localDay, totalStats } from '../../domain/learning/learning-rules';
+import { LearningChartComponent, type LearningChartPoint } from '../../shared/charts/learning-chart.component';
 
 @Component({
   selector: 'app-new-words-dialog',
@@ -26,7 +27,7 @@ export class NewWordsDialogComponent {
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [MatButtonModule, MatCardModule, RouterLink],
+  imports: [MatButtonModule, MatCardModule, RouterLink, LearningChartComponent],
   template: `
     @if(state(); as s){
       <section class="page">
@@ -49,9 +50,16 @@ export class NewWordsDialogComponent {
 
         <div class="grid">
           <mat-card appearance="outlined" class="activity-card">
-            <mat-card-header><mat-card-title>14-day activity</mat-card-title></mat-card-header>
-            <mat-card-content class="bars">
-              @for(day of activity(); track day.day){<div class="bar-column"><span>{{ day.value }}</span><i [style.height.%]="day.height"></i><small>{{ day.label }}</small></div>}
+            <mat-card-header>
+              <mat-card-title>14-day activity</mat-card-title>
+              <mat-card-subtitle>Correct primary answers per day</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <app-learning-chart
+                type="bar"
+                [points]="activity()"
+                ariaLabel="Correct primary answers over the last 14 days"
+              />
             </mat-card-content>
           </mat-card>
 
@@ -107,7 +115,7 @@ export class NewWordsDialogComponent {
     }
   `,
   styles: [`
-    :host{display:block}.page{display:grid;gap:20px}.page>header{padding:32px;border-radius:28px;background:var(--mat-sys-primary-container);color:var(--mat-sys-on-primary-container)}header h1{font-size:clamp(26px,4vw,42px);margin:6px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.stats mat-card{padding:18px}.stats mat-card-title{font-size:30px}.grid{display:grid;grid-template-columns:minmax(280px,1fr) minmax(500px,820px);gap:18px;align-items:stretch}.grid mat-card{padding:18px}.bars{display:flex;height:170px;align-items:end;gap:6px}.bar-column{display:grid;flex:1;height:100%;align-content:end;text-align:center;gap:3px}.bar-column i{display:block;min-height:3px;background:var(--mat-sys-primary);border-radius:8px}.bar-column small{font-size:9px;color:var(--mat-sys-on-surface-variant)}.hard-word{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--mat-sys-outline-variant)}.spacer{flex:1}
+    :host{display:block}.page{display:grid;gap:20px}.page>header{padding:32px;border-radius:28px;background:var(--mat-sys-primary-container);color:var(--mat-sys-on-primary-container)}header h1{font-size:clamp(26px,4vw,42px);margin:6px 0}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.stats mat-card{padding:18px}.stats mat-card-title{font-size:30px}.grid{display:grid;grid-template-columns:minmax(280px,1fr) minmax(500px,820px);gap:18px;align-items:stretch}.grid mat-card{padding:18px}.activity-card{min-width:0;background:linear-gradient(155deg,color-mix(in srgb,var(--mat-sys-primary) 5%,var(--mat-sys-surface)) 0%,var(--mat-sys-surface) 42%)}.chart-content{padding-top:8px}.hard-word{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--mat-sys-outline-variant)}.spacer{flex:1}
 
     .leitner-status-card{position:relative;isolation:isolate;min-width:0;overflow:visible;background:radial-gradient(circle at 0 0,color-mix(in srgb,var(--mat-sys-primary) 10%,transparent) 0 42px,transparent 43px),radial-gradient(circle at 0 0,color-mix(in srgb,var(--mat-sys-primary) 5%,transparent) 0 76px,transparent 77px),var(--mat-sys-surface)}
     .leitner-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}.leitner-head>div{display:grid;gap:3px}.leitner-total{display:inline-flex;min-height:31px;align-items:center;border:1px solid var(--mat-sys-outline-variant);border-radius:999px;background:var(--mat-sys-surface-container-low);color:var(--mat-sys-on-surface-variant);padding:5px 11px;font-size:11px;white-space:nowrap}.leitner-list{display:grid;gap:8px;overflow:visible}
@@ -141,12 +149,14 @@ export class DashboardPageComponent implements OnInit {
   });
   readonly hardest = computed(() => this.state() ? hardWords(this.state()!, 3) : []);
   readonly houseDistribution = computed(() => buildLeitnerDistribution(this.state()?.words || [], localDay()));
-  readonly activity = computed(() => {
+  readonly activity = computed<LearningChartPoint[]>(() => {
     const state = this.state(); if (!state) return [];
     const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
     const days = Array.from({ length: 14 }, (_, i) => { const date = new Date(); date.setDate(date.getDate() - (13 - i)); return date; });
-    const max = Math.max(...days.map((date) => state.daily[localDay(date)]?.correct || 0), 1);
-    return days.map((date) => { const day = localDay(date), value = state.daily[day]?.correct || 0; return { day, value, height: value ? Math.max(8, Math.round(value / max * 100)) : 2, label: formatter.format(date) }; });
+    return days.map((date) => {
+      const day = localDay(date);
+      return { key: day, value: state.daily[day]?.correct || 0, label: formatter.format(date) };
+    });
   });
 
   async ngOnInit(): Promise<void> { await this.store.initialize(); }
