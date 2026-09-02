@@ -8,14 +8,15 @@ const points: LearningChartPoint[] = [
 ];
 
 describe('Chart.js learning chart adapter', () => {
-	it('builds the dashboard activity as a real bar chart', () => {
+	it('builds the dashboard activity as a real blue bar chart', () => {
 		const config = buildLearningChartConfig(points, 'bar');
 		expect(config.type).toBe('bar');
 		expect(config.data.labels).toEqual(['Aug 20', 'Aug 21', 'Aug 22']);
 		expect(config.data.datasets[0].data).toEqual([10, 20, 30]);
+		expect(config.data.datasets[0].backgroundColor).toBe('rgb(26 115 232)');
 	});
 
-	it('pins accuracy lines to 0-100 and preserves missing values as gaps', () => {
+	it('pins accuracy lines to 0-100, preserves missing values as gaps, and uses the blue chart accent', () => {
 		const config = buildLearningChartConfig([
 			{key: '1', label: '8/1', value: 68},
 			{key: '2', label: '8/2', value: null},
@@ -23,11 +24,12 @@ describe('Chart.js learning chart adapter', () => {
 		], 'line', 0, 100, '%');
 		expect(config.type).toBe('line');
 		expect(config.data.datasets[0].data).toEqual([68, null, 83]);
+		expect(config.data.datasets[0].borderColor).toBe('rgb(26 115 232)');
 		expect(config.options?.scales?.['y']?.min).toBe(0);
 		expect(config.options?.scales?.['y']?.max).toBe(100);
 	});
 
-	it('builds a clean doughnut chart for part-to-whole coverage', () => {
+	it('builds a clearly split blue and gray doughnut chart for part-to-whole coverage', () => {
 		const coverage: LearningChartPoint[] = [
 			{key: 'entered', label: 'In Leitner', value: 1337},
 			{key: 'remaining', label: 'Not yet added', value: 1554},
@@ -35,6 +37,7 @@ describe('Chart.js learning chart adapter', () => {
 		const config = buildLearningChartConfig(coverage, 'doughnut');
 		expect(config.type).toBe('doughnut');
 		expect(config.data.datasets[0].data).toEqual([1337, 1554]);
+		expect(config.data.datasets[0].backgroundColor).toEqual(['rgb(26 115 232)', 'rgb(218 220 224)']);
 		expect(doughnutPercent(coverage)).toBe(46);
 	});
 
