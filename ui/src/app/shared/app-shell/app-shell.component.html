@@ -62,9 +62,14 @@
 	<router-outlet />
 </main>
 
-<nav class="mobile-nav" aria-label="Mobile navigation">
+<nav
+	class="mobile-nav"
+	[class.is-hidden]="mobileNavHidden()"
+	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
+	aria-label="Mobile navigation"
+>
 	@for (item of primaryNavItems; track item.path) {
-		<a [routerLink]="item.path" routerLinkActive="active-mobile">
+		<a [routerLink]="item.path" routerLinkActive="active-mobile" [attr.tabindex]="mobileNavHidden() ? -1 : null">
 			<span aria-hidden="true">{{ item.symbol }}</span>
 			<small>{{ item.label }}</small>
 		</a>
