@@ -48,7 +48,9 @@ The checked-in IELTS list remains the source of truth:
 ui/data/IELTS_Listening_Core_1500.md
 ```
 
-`SentenceCorpus.js` parses that file and creates three deterministic, category-aware sentences for every numbered source item. Frequently used form-completion vocabulary has curated natural examples; all other categories use grammatical context-safe templates. Generation fails when any invariant is violated, including duplicate source numbers, missing targets, repeated targets inside one sentence, duplicate variants or excessive length.
+`SentenceCorpus.js` parses that file and creates three deterministic sentences for every numbered source item. It uses curated examples for high-risk grammar and common form-completion vocabulary, plus category-, part-of-speech- and source-range-aware contexts for the rest. Generated prompts use each answer as a complete term in a natural sentence; they never fall back to answer instructions such as “type this word” or quote the target as a vocabulary label.
+
+Generation fails when any invariant is violated, including duplicate or non-continuous source numbers, missing targets, a target embedded only inside another word, repeated complete targets inside one sentence, duplicate variants, answer-instruction fallback text or excessive length.
 
 Database setup applies the migration, seeds the built-in vocabulary collection and then seeds the sentence corpus. Manual commands are also available:
 
@@ -79,6 +81,8 @@ The authenticated query returns cards grouped by canonical vocabulary ID, all ac
 ## Test coverage
 
 - Full 1,500-item / 4,500-sentence corpus coverage and uniqueness.
+- Natural-context safeguards across nouns, verbs, directions, form fields and spelling traps.
+- Complete-term boundary detection, including targets whose letters also occur inside another word.
 - Accepted spelling aliases.
 - Curated sentence examples and exact target splitting.
 - Transactional, batched and idempotent database seeding.
