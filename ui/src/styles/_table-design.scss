@@ -1,0 +1,110 @@
+@mixin apply() {
+	.mat-mdc-table {
+		width: 100%;
+		background: transparent;
+		color: var(--mat-sys-on-surface);
+	}
+
+	.mat-mdc-header-row {
+		min-height: 46px;
+		background: var(--mat-sys-surface);
+	}
+
+	.mat-mdc-header-cell {
+		padding: 0 16px;
+		border-bottom: 0;
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: .01em;
+	}
+
+	.mat-mdc-row {
+		min-height: 52px;
+		background: transparent;
+		transition: background-color 120ms ease;
+	}
+
+	.mat-mdc-row:hover,
+	.mat-mdc-row:focus-within {
+		background: rgb(232 240 254);
+	}
+
+	.mat-mdc-cell {
+		padding: 10px 16px;
+		border-bottom: 0;
+		color: var(--mat-sys-on-surface);
+		font-size: 13px;
+		line-height: 1.45;
+	}
+
+	.mat-mdc-table strong {
+		font-weight: 600;
+	}
+
+	.mat-mdc-table small {
+		margin-top: 2px;
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 11px;
+	}
+
+	.mat-mdc-table .collection-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 2px;
+	}
+
+	.mat-mdc-table .collection-label.mat-mdc-button {
+		min-width: 0;
+		padding: 0 7px;
+		--mdc-text-button-container-height: 28px;
+		--mdc-text-button-label-text-size: 12px;
+		--mdc-text-button-label-text-color: var(--mat-sys-on-surface-variant);
+		border-radius: 6px;
+		font-weight: 500;
+	}
+
+	.mat-mdc-table .collection-label.mat-mdc-button:hover {
+		background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+		color: var(--mat-sys-on-surface);
+	}
+
+	.mat-column-actions {
+		width: 140px;
+		text-align: right;
+	}
+
+	.mat-mdc-row .row-actions {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(4px);
+		transition: opacity 100ms ease, transform 100ms ease;
+		visibility: hidden;
+	}
+
+	.mat-mdc-row:hover .row-actions,
+	.mat-mdc-row:focus-within .row-actions {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateX(0);
+		visibility: visible;
+	}
+
+	.mat-mdc-table .row-actions .mat-mdc-icon-button {
+		width: 32px;
+		height: 32px;
+		padding: 4px;
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 17px;
+	}
+
+	.mat-mdc-table .row-actions .mat-mdc-icon-button:hover {
+		background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+		color: var(--mat-sys-on-surface);
+	}
+
+	.table-wrap {
+		border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent) !important;
+	}
+}

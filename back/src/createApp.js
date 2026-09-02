@@ -21,10 +21,8 @@ function setNoStoreHeaders(res) {
 function setStaticCacheHeaders(res, filePath) {
   const extension = path.extname(filePath).toLowerCase();
   if (extension === ".html" || extension === ".css" || extension === ".js") {
-    // Frontend modules wrap fetch in a strict load order. Serving even one old
-    // script beside a new index can restore an already-fixed persistence bug,
-    // so executable frontend assets are intentionally never stored by browsers,
-    // reverse proxies, or CDNs.
+    // A mixed frontend release is more damaging than the bandwidth saved by
+    // caching executable assets. Keep browser/CDN behavior deterministic.
     setNoStoreHeaders(res);
   }
 }
@@ -34,6 +32,17 @@ function isHtmlNavigationRequest(req) {
   const extension = path.extname(req.path).toLowerCase();
   if (extension && extension !== ".html") return false;
   return Boolean(req.accepts("html"));
+}
+
+function resolveSpaIndex(staticDirectory) {
+  const candidates = [
+    path.join(staticDirectory, "index.html"),
+    // Angular source trees keep the HTML shell under src/. Production Docker
+    // copies dist/browser into staticDirectory, so the first candidate wins in
+    // production while tests/dev tooling can still exercise SPA fallback.
+    path.join(staticDirectory, "src", "index.html")
+  ];
+  return candidates.find((candidate) => existsSync(candidate)) || null;
 }
 
 function installOriginTiming(req, res, next) {
@@ -100,14 +109,17 @@ export function createApp({
   });
 
   if (staticDirectory && existsSync(staticDirectory)) {
+    const spaIndex = resolveSpaIndex(staticDirectory);
     app.use(express.static(staticDirectory, { index: "index.html", setHeaders: setStaticCacheHeaders }));
-    app.use((req, res, next) => {
-      if (!isHtmlNavigationRequest(req)) return next();
-      setNoStoreHeaders(res);
-      res.sendFile(path.join(staticDirectory, "index.html"), (error) => {
-        if (error) next(error);
+    if (spaIndex) {
+      app.use((req, res, next) => {
+        if (!isHtmlNavigationRequest(req)) return next();
+        setNoStoreHeaders(res);
+        res.sendFile(spaIndex, (error) => {
+          if (error) next(error);
+        });
       });
-    });
+    }
   }
 
   app.use((_req, res) => {

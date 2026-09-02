@@ -4,3 +4,7 @@ node_modules/
 .env
 coverage/
 .nyc_output/
+ui/dist/
+ui/.angular/
+ui/playwright-report/
+ui/test-results/

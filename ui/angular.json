@@ -1,0 +1,63 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": "693c4cd3-89b7-4048-9196-505b562af2b8"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "vocora": {
+      "projectType": "application",
+      "schematics": { "@schematics/angular:component": { "style": "scss", "changeDetection": "OnPush" } },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "outputPath": { "base": "dist", "browser": "browser" },
+            "assets": [
+              { "glob": "**/*", "input": "assets", "output": "assets" },
+              { "glob": "**/*", "input": "fonts", "output": "fonts" },
+              { "glob": "**/*", "input": "data", "output": "data" }
+            ],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.scss"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                { "type": "initial", "maximumWarning": "850kB", "maximumError": "1.4MB" },
+                { "type": "anyComponentStyle", "maximumWarning": "8kB", "maximumError": "16kB" }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": false },
+                "fonts": true
+              },
+              "outputHashing": "all"
+            },
+            "development": { "optimization": false, "extractLicenses": false, "sourceMap": true }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": { "buildTarget": "vocora:build:production" },
+            "development": { "buildTarget": "vocora:build:development" }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": { "builder": "@angular/build:unit-test" }
+      }
+    }
+  }
+}

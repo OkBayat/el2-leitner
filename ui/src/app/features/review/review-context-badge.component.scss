@@ -1,0 +1,50 @@
+:host {
+	display: block;
+}
+
+.review-context-badge {
+	--review-context-accent: #ff9600;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 18px;
+	color: var(--review-context-accent);
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: .035em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.review-context-badge-label {
+	margin: 0;
+	font: inherit;
+	letter-spacing: inherit;
+	line-height: inherit;
+	text-transform: inherit;
+	color: inherit;
+}
+
+.review-context-badge-icon {
+	width: 24px;
+	height: 24px;
+	flex: 0 0 24px;
+	display: grid;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--review-context-accent);
+	color: #fff;
+}
+
+.review-context-badge-icon svg {
+	width: 15px;
+	height: 15px;
+	display: block;
+}
+
+@media(max-width: 600px) {
+	.review-context-badge {
+		margin-bottom: 14px;
+		font-size: 12px;
+	}
+}

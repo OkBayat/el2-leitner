@@ -1,0 +1,149 @@
+@if (state()) {
+	<section class="page" data-testid="dashboard-page">
+		<header class="page-heading">
+			<div>
+				<h1>Home</h1>
+				<p>Your vocabulary learning dashboard</p>
+			</div>
+			<time>{{ todayLabel }}</time>
+		</header>
+
+		<section class="today-card" aria-labelledby="today-plan-title">
+			<div class="today-plan">
+				<p class="eyebrow">Today's plan</p>
+				@if (dueCount()) {
+					<h2 id="today-plan-title">{{ dueCount() }} reviews are waiting for you.</h2>
+					<p>Finish the reviews that are due, then continue with new words when you are ready.</p>
+				} @else {
+					<h2 id="today-plan-title">You're done for today.</h2>
+					<p>All scheduled reviews are complete. Practice freely or add more words if you want to continue.</p>
+				}
+
+				<div class="today-actions">
+					@if (dueCount()) {
+						<button mat-flat-button type="button" (click)="goReview()">Start today's review</button>
+					}
+					<button mat-stroked-button type="button" (click)="startBoxOne()">Free practice: House 1</button>
+					<button mat-stroked-button type="button" (click)="addNewWords()">Add new words</button>
+				</div>
+			</div>
+
+			<aside class="today-summary" aria-label="Today's progress">
+				<span class="summary-label">Today's progress</span>
+				<strong>{{ todayNewCount() }} / {{ dailyNewGoal() }}</strong>
+				<span class="summary-note">new words completed</span>
+				<mat-progress-bar mode="determinate" [value]="todayProgress()" />
+				<div class="summary-status">
+					<span aria-hidden="true">✓</span>
+					<span>{{ dueCount() }} reviews remaining</span>
+				</div>
+			</aside>
+		</section>
+
+		<section class="stats" aria-label="Learning summary">
+			@for (card of statCards(); track card.label) {
+				<article class="stat">
+					<span>{{ card.label }}</span>
+					<strong>{{ card.value }}</strong>
+					<small>{{ card.note }}</small>
+				</article>
+			}
+
+			<article class="stat leitner-coverage-stat" data-testid="leitner-coverage-stat">
+				<span>Words in Leitner</span>
+				<div class="leitner-coverage-content">
+					<app-learning-chart
+						type="doughnut"
+						[points]="leitnerCoverage().points"
+						centerLabel="in Leitner"
+						[attr.data-percentage]="leitnerCoverage().percent"
+						ariaLabel="Percentage of vocabulary that has entered the Leitner system"
+					/>
+					<small>{{ leitnerCoverage().entered.toLocaleString('en-US') }} of {{ leitnerCoverage().total.toLocaleString('en-US') }} words</small>
+				</div>
+			</article>
+		</section>
+
+		<div class="dashboard-grid">
+			<section class="panel activity-panel" aria-labelledby="activity-title">
+				<header class="panel-heading">
+					<div>
+						<h2 id="activity-title">14-day activity</h2>
+						<p>Correct primary answers per day</p>
+					</div>
+					<a routerLink="/reports">View progress</a>
+				</header>
+				<div class="chart-content">
+					<app-learning-chart
+						type="bar"
+						[points]="activity()"
+						ariaLabel="Correct primary answers over the last 14 days"
+					/>
+				</div>
+			</section>
+
+			<section class="panel leitner-status-card" data-testid="house-status" aria-labelledby="house-status-title">
+				<header class="panel-heading leitner-heading">
+					<div>
+						<h2 id="house-status-title">House status</h2>
+						<p>Leitner waiting states</p>
+					</div>
+					<span class="panel-meta">{{ houseDistribution().total.toLocaleString('en-US') }} words</span>
+				</header>
+
+				<div class="leitner-list">
+					@for (house of houseDistribution().houses; track house.box) {
+						<a
+							class="leitner-row"
+							[routerLink]="['/leitner-house', house.box]"
+							[attr.aria-label]="'View all words in House ' + house.box"
+							[attr.data-house]="house.box"
+							[attr.data-state-count]="house.segments.length"
+						>
+							<strong class="leitner-house-name">House {{ house.box }}</strong>
+
+							<div
+								class="leitner-segments"
+								[style.width.%]="houseWidths[house.box - 1]"
+								[style.--segment-count]="house.segments.length"
+							>
+								@for (count of house.segments; track $index) {
+									<span
+										class="leitner-segment"
+										[class.is-occupied]="count > 0"
+									>{{ count }}</span>
+								}
+							</div>
+
+							<span class="leitner-total">{{ house.total }}</span>
+						</a>
+					}
+				</div>
+			</section>
+
+			<section class="panel attention-panel" aria-labelledby="attention-title">
+				<header class="panel-heading">
+					<div>
+						<h2 id="attention-title">Needs more attention</h2>
+						<p>Words with the highest recent error count</p>
+					</div>
+					<button mat-button type="button" (click)="router.navigateByUrl('/words')">View all</button>
+				</header>
+
+				<div class="attention-list">
+					@if (hardest().length) {
+						@for (word of hardest(); track word.id) {
+							<div class="attention-row">
+								<strong>{{ word.term }}</strong>
+								<span class="mistakes">{{ word.mistakes }} mistakes</span>
+								<span>{{ word.attempts }} attempts</span>
+							</div>
+						}
+					} @else {
+						<p class="empty-state">No mistakes recorded yet.</p>
+					}
+				</div>
+			</section>
+		</div>
+	</section>
+}

@@ -1,0 +1,225 @@
+<section class="review-page" data-testid="review-layout">
+	@if (!session.active() && !session.completed()) {
+		<div class="review-center">
+			<button class="review-close" mat-icon-button type="button" aria-label="Back to dashboard"
+			        (click)="router.navigateByUrl('/dashboard')">
+				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+					      stroke-linecap="round"/>
+				</svg>
+			</button>
+			<mat-card class="setup" appearance="outlined">
+				<mat-card-header>
+					<mat-card-title>Today's Review</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<div class="breakdown">
+						<div><strong>{{ dueCount() }}</strong><span>Ready cards</span></div>
+						<div><strong>{{ newCount() }}</strong><span>New words</span></div>
+						<div><strong>{{ estimatedMinutes() }}</strong><span>Estimated minutes</span></div>
+					</div>
+					<mat-form-field appearance="outline">
+						<mat-label>Maximum cards</mat-label>
+						<mat-select [formControl]="limit">
+							<mat-option [value]="0">All</mat-option>
+							<mat-option [value]="10">10 cards</mat-option>
+							<mat-option [value]="20">20 cards</mat-option>
+							<mat-option [value]="30">30 cards</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</mat-card-content>
+				<mat-card-actions>
+					<button mat-flat-button (click)="start('review')">Start session</button>
+					<button mat-stroked-button (click)="start('box1')">Free practice: House 1</button>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	}
+
+	@if (session.active() && session.currentWord(); as word) {
+		<div class="review-session" data-testid="review-session">
+			<div class="session-bar" data-testid="review-session-bar">
+				<button class="session-close" mat-icon-button type="button" aria-label="Exit review" (click)="exit()">
+					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+						      stroke-linecap="round"/>
+					</svg>
+				</button>
+				@let bar = sessionBarState();
+				@let sessionAccuracy = session.accuracy();
+				<div class="session-progress">
+					<span class="visually-hidden">
+						Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }} · {{ bar.recheck ? 'Recheck' : bar.counterLabel }}
+					</span>
+					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
+				</div>
+				<span class="session-count">
+					<span data-testid="session-accuracy">Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }}</span>
+					<span aria-hidden="true"> · </span>
+					@if (bar.recheck) {
+						<span data-testid="session-recheck">Recheck</span>
+					} @else {
+						<span data-testid="session-counter">{{ bar.counterLabel }}</span>
+					}
+				</span>
+			</div>
+
+			<main class="session-stage">
+				<article class="flash">
+					<app-review-context-badge/>
+					<div class="flash-heading">
+						<span>{{ displayCategory(word.category) }} · House {{ word.box }}</span>
+						<h1>{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : 'Listen to the word and type its spelling' }}</h1>
+					</div>
+
+					<div class="listen">
+						<button
+							mat-fab
+							extended
+							class="play-pronunciation"
+							(click)="session.pronounce()">
+							▶ Play pronunciation
+						</button>
+						<button mat-button (click)="session.pronounce(.7)">Slower</button>
+					</div>
+
+					@if (session.remediation(); as remediation) {
+						@if (remediation.phase !== Phase.COMPLETED) {
+							@if (remediation.answerVisible) {
+								<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
+									<div class="spelling-row correct-spelling-row">
+										<span class="spelling-label">Correct spelling</span>
+										<div class="spelling-text" data-testid="correct-spelling">
+											@for (token of remediation.comparison.targetTokens; track $index) {
+												<span
+													class="spelling-token"
+													[class.spelling-correct]="token.status === 'correct'"
+													[class.spelling-changed]="token.status === 'changed'"
+													[class.spelling-missing]="token.status === 'missing'"
+												>{{ tokenValue(token.value) }}</span>
+											}
+										</div>
+									</div>
+									<div class="spelling-row user-spelling-row">
+										<span class="spelling-label">Your answer</span>
+										<div class="spelling-text" data-testid="user-spelling">
+											@if (remediation.comparison.answerTokens.length) {
+												@for (token of remediation.comparison.answerTokens; track $index) {
+													<span
+														class="spelling-token"
+														[class.spelling-correct]="token.status === 'correct'"
+														[class.spelling-changed]="token.status === 'changed'"
+														[class.spelling-extra]="token.status === 'extra'"
+													>{{ tokenValue(token.value) }}</span>
+												}
+											} @else {
+												<span class="spelling-empty">No answer</span>
+											}
+										</div>
+									</div>
+								</div>
+							}
+						}
+					}
+
+					@if (answerFieldState(); as field) {
+						<form class="review-answer-form" (submit)="$event.preventDefault(); submitAnswer()">
+							<mat-form-field class="review-answer-field" appearance="outline">
+								<mat-label>{{ field.label }}</mat-label>
+								<input
+									#answerInput
+									class="review-answer-input"
+									data-testid="review-answer-input"
+									matInput
+									[formControl]="answer"
+									lang="en"
+									autocomplete="off"
+									autocapitalize="none"
+									autocorrect="off"
+									spellcheck="false">
+							</mat-form-field>
+						</form>
+					}
+				</article>
+			</main>
+
+			@if (footerState(); as footer) {
+				<footer
+					class="review-action-footer"
+					[class.neutral]="footer.tone === 'neutral'"
+					[class.success]="footer.tone === 'success'"
+					[class.error]="footer.tone === 'error'"
+					[class.practice]="footer.tone === 'practice'"
+					data-testid="review-action-footer"
+					aria-live="polite">
+					<div class="review-action-inner">
+						@if (footer.title) {
+							<div class="feedback-summary">
+								<span class="feedback-status-icon" aria-hidden="true">
+									@switch (footer.icon) {
+										@case ('check') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
+												      stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+											</svg>
+										}
+										@case ('error') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
+												      stroke-width="3.6" stroke-linecap="round"/>
+											</svg>
+										}
+										@case ('practice') {
+											<svg width="44" height="44" viewBox="0 0 24 24">
+												<path d="M12 5.5V13.5" fill="none" stroke="currentColor" stroke-width="3.2"
+												      stroke-linecap="round"/>
+												<circle cx="12" cy="18" r="1.8" fill="currentColor"/>
+											</svg>
+										}
+									}
+								</span>
+								<div class="feedback-copy">
+									<h2>{{ footer.title }}</h2>
+									<p>{{ footer.detail }}</p>
+								</div>
+							</div>
+						} @else if (footer.secondaryLabel) {
+							<button class="review-action-secondary" mat-stroked-button type="button" (click)="dontKnow()">
+								{{ footer.secondaryLabel }}
+							</button>
+						}
+
+						<button
+							class="review-action-primary"
+							mat-flat-button
+							type="button"
+							[disabled]="isFooterPrimaryDisabled(footer)"
+							(click)="handleFooterPrimary(footer.primaryAction)">
+							{{ footer.primaryLabel }}
+						</button>
+					</div>
+				</footer>
+			}
+		</div>
+	}
+
+	@if (session.completed()) {
+		<div class="review-center">
+			<mat-card class="complete" appearance="outlined">
+				<mat-card-title>Session complete ★</mat-card-title>
+				<mat-card-content>
+					<div class="breakdown">
+						<div><strong>{{ session.correct() }}</strong><span>Correct</span></div>
+						<div><strong>{{ session.wrong() }}</strong><span>Wrong</span></div>
+						<div><strong>{{ session.accuracy() ?? 0 }}%</strong><span>Accuracy</span></div>
+					</div>
+				</mat-card-content>
+				<mat-card-actions>
+					<button mat-flat-button (click)="share.open()">Create result story</button>
+					<button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">Back home</button>
+					<button mat-button (click)="start('box1')">Continue free practice</button>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	}
+</section>
