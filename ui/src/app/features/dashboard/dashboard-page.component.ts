@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal} from '@angular/core';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
@@ -12,6 +12,9 @@ import {LearningStoreService} from '../../core/state/learning-store.service';
 import {buildLeitnerDistribution} from '../../domain/learning/leitner-distribution';
 import {accuracy, getDueWords, hardWords, localDay, totalStats} from '../../domain/learning/learning-rules';
 import {LearningChartComponent, type LearningChartPoint} from '../../shared/charts/learning-chart.component';
+import {buildHouseOneEntries, buildHouseOneExport, copyTextToClipboard} from './house-one-export';
+
+type HouseOneCopyStatus = 'idle' | 'copying' | 'copied' | 'failed';
 
 @Component({
 	selector: 'app-new-words-dialog',
@@ -48,12 +51,14 @@ export class NewWordsDialogComponent {
 	styleUrl: 'dashboard-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPageComponent implements OnInit {
+export class DashboardPageComponent implements OnInit, OnDestroy {
 	readonly store = inject(LearningStoreService);
 	readonly review = inject(ReviewSessionService);
 	readonly router = inject(Router);
 	private readonly dialog = inject(MatDialog);
+	private houseOneCopyResetTimer: ReturnType<typeof setTimeout> | null = null;
 	readonly state = this.store.state;
+	readonly houseOneCopyStatus = signal<HouseOneCopyStatus>('idle');
 
 	// Keep the current increasing widths so the five Leitner houses retain their pyramid silhouette.
 	readonly houseWidths = [40, 54, 70, 85, 100] as const;
@@ -71,6 +76,15 @@ export class DashboardPageComponent implements OnInit {
 		day: 'numeric',
 	}).format(new Date());
 	readonly houseDistribution = computed(() => buildLeitnerDistribution(this.state()?.words || [], localDay()));
+	readonly houseOneExportCount = computed(() => buildHouseOneEntries(this.state()?.words || []).length);
+	readonly houseOneCopyLabel = computed(() => {
+		switch (this.houseOneCopyStatus()) {
+			case 'copying': return 'Copying…';
+			case 'copied': return 'Copied';
+			case 'failed': return 'Copy failed';
+			default: return 'Copy House 1';
+		}
+	});
 	readonly leitnerCoverage = computed(() => {
 		const words = this.state()?.words || [];
 		const total = words.length;
@@ -116,12 +130,31 @@ export class DashboardPageComponent implements OnInit {
 		await this.store.initialize();
 	}
 
+	ngOnDestroy(): void {
+		if (this.houseOneCopyResetTimer !== null) clearTimeout(this.houseOneCopyResetTimer);
+	}
+
 	goReview(): void {
 		void this.router.navigateByUrl('/review');
 	}
 
 	async startBoxOne(): Promise<void> {
 		await this.router.navigate(['/review'], {queryParams: {mode: 'box1'}});
+	}
+
+	async copyHouseOne(): Promise<void> {
+		if (this.houseOneCopyStatus() === 'copying') return;
+		const text = buildHouseOneExport(this.state()?.words || []);
+		if (!text) return;
+
+		if (this.houseOneCopyResetTimer !== null) clearTimeout(this.houseOneCopyResetTimer);
+		this.houseOneCopyStatus.set('copying');
+		const copied = await copyTextToClipboard(text);
+		this.houseOneCopyStatus.set(copied ? 'copied' : 'failed');
+		this.houseOneCopyResetTimer = setTimeout(() => {
+			this.houseOneCopyStatus.set('idle');
+			this.houseOneCopyResetTimer = null;
+		}, 1600);
 	}
 
 	async addNewWords(): Promise<void> {
