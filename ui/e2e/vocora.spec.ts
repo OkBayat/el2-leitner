@@ -76,7 +76,7 @@ async function expectReadonlyCorrectAnswer(input: ReturnType<Page['getByLabel']>
   await expect(input).toHaveAttribute('readonly', 'true');
   const field = input.locator('xpath=ancestor::mat-form-field');
   await expect(field).toHaveClass(/review-answer-correct/u);
-  await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS('background-color', 'rgb(239, 255, 229)');
+  await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS('background-color', 'rgb(215, 255, 184)');
   for (const segment of ['.mdc-notched-outline__leading', '.mdc-notched-outline__notch', '.mdc-notched-outline__trailing']) {
     await expect(field.locator(segment)).toHaveCSS('border-color', 'rgb(88, 204, 2)');
   }
@@ -216,8 +216,9 @@ test('word edits use a compact request and survive a full page reload', async ({
     writes.push({ path, body: request.postDataJSON() });
   });
 
-  await page.locator('.table-wrap').evaluate((element) => { element.scrollLeft = element.scrollWidth; });
-  const editButton = page.locator('button[aria-label="Edit word"]').first();
+  const mondayRow = page.getByRole('row').filter({ hasText: /^Monday/u });
+  await mondayRow.hover();
+  const editButton = mondayRow.getByRole('button', { name: 'Edit word' });
   await expect(editButton).toBeVisible();
   await editButton.click();
   await page.getByLabel('English word or phrase').fill('Monday edited');
@@ -239,11 +240,10 @@ test('word edits use a compact request and survive a full page reload', async ({
 
   await page.reload();
   await page.getByLabel('Search').fill('Monday edited');
-  await expect(page.locator('strong').filter({ hasText: 'Monday edited' }).first()).toBeVisible();
-  await page.locator('.table-wrap').evaluate((element) => { element.scrollLeft = element.scrollWidth; });
-  const reloadedEditButton = page.locator('button[aria-label="Edit word"]').first();
-  await expect(reloadedEditButton).toBeVisible();
-  await reloadedEditButton.click();
+  const editedRow = page.getByRole('row').filter({ hasText: /^Monday edited/u });
+  await expect(editedRow.locator('strong').filter({ hasText: 'Monday edited' })).toBeVisible();
+  await editedRow.hover();
+  await editedRow.getByRole('button', { name: 'Edit word' }).click();
   await expect(page.getByLabel('English word or phrase')).toHaveValue('Monday edited');
   await expect(page.getByLabel('Note or meaning')).toHaveValue('e2e edit persisted');
 });
