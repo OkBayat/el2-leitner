@@ -283,7 +283,8 @@ export class ReviewPageComponent implements OnInit {
 	async onKeyboard(event: KeyboardEvent): Promise<void> {
 		if (!this.session.active()) return;
 		const target = event.target as HTMLElement | null;
-		const typing = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
+		const input = target?.tagName === 'INPUT' ? target as HTMLInputElement : null;
+		const typing = Boolean(input && !input.readOnly) || target?.tagName === 'TEXTAREA';
 		if (event.key === ' ' && !typing && !this.session.feedback()) {
 			event.preventDefault();
 			this.session.pronounce();
