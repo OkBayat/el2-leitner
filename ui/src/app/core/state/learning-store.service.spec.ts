@@ -30,7 +30,7 @@ describe('LearningStoreService regressions', () => {
       put: vi.fn().mockResolvedValue({ revision: 1 }),
     };
     const catalog = { loadCoreVocabulary: vi.fn().mockResolvedValue([{ term: 'alpha' }, { term: 'beta' }]) };
-    const vocabulary = { activateBatch: vi.fn().mockResolvedValue(2), activate: vi.fn() };
+    const vocabulary = { activateBatch: vi.fn().mockResolvedValue(2), activate: vi.fn(), update: vi.fn() };
     const store = setup(api, catalog, vocabulary);
 
     const state = await store.initialize();
@@ -48,7 +48,7 @@ describe('LearningStoreService regressions', () => {
     localStorage.setItem('vazheyar-ielts-state-v1', JSON.stringify(legacy));
     const failingApi = { get: vi.fn().mockResolvedValue({ state: null, revision: 0 }), put: vi.fn().mockRejectedValue(new Error('offline')) };
     const catalog = { loadCoreVocabulary: vi.fn() };
-    const vocabulary = { activateBatch: vi.fn(), activate: vi.fn() };
+    const vocabulary = { activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn() };
     await expect(setup(failingApi, catalog, vocabulary).initialize()).rejects.toThrow('offline');
     expect(localStorage.getItem('vazheyar-ielts-state-v1')).not.toBeNull();
 
@@ -64,5 +64,55 @@ describe('LearningStoreService regressions', () => {
     const state = await store.initialize();
     expect(state.words[0].id).toBe('db-legacy-id');
     expect(localStorage.getItem('vazheyar-ielts-state-v1')).toBeNull();
+  });
+
+  it('persists a single word edit through the compact vocabulary command instead of PUT /api/state', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([{ id: 'db-circumstance', term: 'circumstance' }]);
+    Object.assign(canonical.words[0], {
+      box: 1,
+      due: '2099-01-01',
+      introducedOn: '2026-08-01',
+      category: 'Discussion',
+      notes: '',
+    });
+    const api = {
+      get: vi.fn().mockResolvedValue({ state: canonical, revision: 12 }),
+      put: vi.fn(),
+    };
+    const catalog = { loadCoreVocabulary: vi.fn() };
+    const vocabulary = {
+      activateBatch: vi.fn(),
+      activate: vi.fn(),
+      update: vi.fn().mockResolvedValue({
+        revision: 13,
+        word: {
+          id: 'db-circumstance',
+          term: 'circumstances',
+          accepted: ['circumstances', 'circumstance'],
+          category: 'Discussion',
+          notes: 'plural preferred',
+        },
+      }),
+    };
+    const store = setup(api, catalog, vocabulary);
+    await store.initialize();
+
+    const state = await store.update((draft) => {
+      const word = draft.words[0];
+      word.term = 'circumstances';
+      word.accepted = ['circumstances', 'circumstance'];
+      word.notes = 'plural preferred';
+    });
+
+    expect(vocabulary.update).toHaveBeenCalledWith(12, 'db-circumstance', {
+      term: 'circumstances',
+      acceptedForms: ['circumstances', 'circumstance'],
+      category: 'Discussion',
+      notes: 'plural preferred',
+    });
+    expect(api.put).not.toHaveBeenCalled();
+    expect(store.revision()).toBe(13);
+    expect(state.words[0].term).toBe('circumstances');
   });
 });
