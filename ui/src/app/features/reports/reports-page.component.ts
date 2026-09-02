@@ -5,12 +5,73 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { accuracy, calculateStreak, daysAgo, hardWords, isActiveLeitnerWord, totalStats } from '../../domain/learning/learning-rules';
+import { LearningChartComponent, type LearningChartPoint } from '../../shared/charts/learning-chart.component';
 
 @Component({
   selector: 'app-reports-page',
-  imports: [MatButtonModule, MatCardModule, MatProgressBarModule, MatTableModule],
-  template: `@if(state(); as s){<section class="page"><header><div><h1>Progress Report</h1><p>A clear view of your learning trend and weak spots</p></div><button mat-flat-button (click)="exportAnalysis()">Export for ChatGPT analysis</button></header><div class="stats">@for(card of cards(); track card.label){<mat-card appearance="outlined"><mat-card-subtitle>{{ card.label }}</mat-card-subtitle><mat-card-title>{{ card.value }}</mat-card-title></mat-card>}</div><mat-card appearance="outlined"><mat-card-header><mat-card-title>30-day accuracy</mat-card-title></mat-card-header><mat-card-content class="trend">@for(day of trend(); track day.day){<div><span>{{ day.value === null ? '—' : day.value + '%' }}</span><i [style.height.%]="day.value ?? 2"></i><small>{{ day.label }}</small></div>}</mat-card-content></mat-card><mat-card appearance="outlined"><mat-card-header><mat-card-title>Progress metrics</mat-card-title></mat-card-header><mat-card-content>@for(metric of metrics(); track metric.label){<div class="metric"><div><span>{{ metric.label }}</span><strong>{{ metric.value }}%</strong></div><mat-progress-bar mode="determinate" [value]="metric.value"/><small>{{ metric.detail }}</small></div>}</mat-card-content></mat-card><mat-card appearance="outlined"><mat-card-header><mat-card-title>Hardest words</mat-card-title></mat-card-header><mat-card-content><table mat-table [dataSource]="hardest()"><ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let w"><strong>{{ w.term }}</strong></td></ng-container><ng-container matColumnDef="mistakes"><th mat-header-cell *matHeaderCellDef>Mistakes</th><td mat-cell *matCellDef="let w">{{ w.mistakes }}</td></ng-container><ng-container matColumnDef="attempts"><th mat-header-cell *matHeaderCellDef>Attempts</th><td mat-cell *matCellDef="let w">{{ w.attempts }}</td></ng-container><ng-container matColumnDef="accuracy"><th mat-header-cell *matHeaderCellDef>Accuracy</th><td mat-cell *matCellDef="let w">{{ wordAccuracy(w) }}%</td></ng-container><tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr></table></mat-card-content></mat-card></section>}`,
-  styles: [`:host{display:block}.page{display:grid;gap:18px}header{display:flex;justify-content:space-between;align-items:center}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stats mat-card{padding:18px}.stats mat-card-title{font-size:28px}.trend{display:flex;height:220px;align-items:end;gap:5px}.trend>div{display:grid;flex:1;height:100%;align-content:end;text-align:center}.trend i{display:block;min-height:2px;background:var(--mat-sys-primary);border-radius:6px}.trend small{font-size:8px}.metric{display:grid;gap:7px;margin:14px 0}.metric>div{display:flex;justify-content:space-between}table{width:100%}@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}header{align-items:stretch;flex-direction:column;gap:12px}}`],
+  imports: [MatButtonModule, MatCardModule, MatProgressBarModule, MatTableModule, LearningChartComponent],
+  template: `
+    @if(state(); as s){
+      <section class="page">
+        <header>
+          <div><h1>Progress Report</h1><p>A clear view of your learning trend and weak spots</p></div>
+          <button mat-flat-button (click)="exportAnalysis()">Export for ChatGPT analysis</button>
+        </header>
+
+        <div class="stats">
+          @for(card of cards(); track card.label){
+            <mat-card appearance="outlined"><mat-card-subtitle>{{ card.label }}</mat-card-subtitle><mat-card-title>{{ card.value }}</mat-card-title></mat-card>
+          }
+        </div>
+
+        <mat-card appearance="outlined" class="accuracy-card">
+          <mat-card-header>
+            <mat-card-title>30-day accuracy</mat-card-title>
+            <mat-card-subtitle>Daily accuracy from primary answers; gaps mean no answers were recorded that day</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content class="chart-content">
+            <app-learning-chart
+              type="line"
+              [points]="trend()"
+              [min]="0"
+              [max]="100"
+              suffix="%"
+              ariaLabel="Daily answer accuracy over the last 30 days"
+            />
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>Progress metrics</mat-card-title></mat-card-header>
+          <mat-card-content>
+            @for(metric of metrics(); track metric.label){
+              <div class="metric">
+                <div><span>{{ metric.label }}</span><strong>{{ metric.value }}%</strong></div>
+                <mat-progress-bar mode="determinate" [value]="metric.value"/>
+                <small>{{ metric.detail }}</small>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>Hardest words</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="hardest()">
+              <ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let w"><strong>{{ w.term }}</strong></td></ng-container>
+              <ng-container matColumnDef="mistakes"><th mat-header-cell *matHeaderCellDef>Mistakes</th><td mat-cell *matCellDef="let w">{{ w.mistakes }}</td></ng-container>
+              <ng-container matColumnDef="attempts"><th mat-header-cell *matHeaderCellDef>Attempts</th><td mat-cell *matCellDef="let w">{{ w.attempts }}</td></ng-container>
+              <ng-container matColumnDef="accuracy"><th mat-header-cell *matHeaderCellDef>Accuracy</th><td mat-cell *matCellDef="let w">{{ wordAccuracy(w) }}%</td></ng-container>
+              <tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      </section>
+    }
+  `,
+  styles: [`
+    :host{display:block}.page{display:grid;gap:18px}header{display:flex;justify-content:space-between;align-items:center}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stats mat-card{padding:18px}.stats mat-card-title{font-size:28px}.accuracy-card{overflow:hidden;background:linear-gradient(155deg,color-mix(in srgb,var(--mat-sys-primary) 5%,var(--mat-sys-surface)) 0%,var(--mat-sys-surface) 44%)}.chart-content{padding-top:8px}.metric{display:grid;gap:7px;margin:14px 0}.metric>div{display:flex;justify-content:space-between}table{width:100%}@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}header{align-items:stretch;flex-direction:column;gap:12px}}
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsPageComponent implements OnInit {
@@ -26,12 +87,16 @@ export class ReportsPageComponent implements OnInit {
     { label: 'Active days', value: this.activeDays() },
   ]);
   readonly hardest = computed(() => this.state() ? hardWords(this.state()!, 30) : []);
-  readonly trend = computed(() => {
+  readonly trend = computed<LearningChartPoint[]>(() => {
     const state = this.state(); if (!state) return [];
     const formatter = new Intl.DateTimeFormat('en-US', { month: 'numeric', day: 'numeric' });
     return Array.from({ length: 30 }, (_, i) => daysAgo(29 - i)).map((day) => {
       const record = state.daily[day];
-      return { day, value: record?.attempts ? Math.round(record.correct / record.attempts * 100) : null, label: formatter.format(new Date(`${day}T12:00:00`)) };
+      return {
+        key: day,
+        value: record?.attempts ? Math.round(record.correct / record.attempts * 100) : null,
+        label: formatter.format(new Date(`${day}T12:00:00`)),
+      };
     });
   });
   readonly metrics = computed(() => {
