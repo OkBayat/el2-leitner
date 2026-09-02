@@ -110,6 +110,9 @@ assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stabl
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
 assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
 assert.match(reviewTemplate, /data-testid="review-session-bar"/u, 'Review page must own its compact session progress bar.');
+assert.equal(reviewTemplate.match(/data-testid="session-accuracy"/gu)?.length, 1, 'The session bar must expose one live accuracy value.');
+assert.match(reviewTemplate, /@let sessionAccuracy = session\.accuracy\(\);/u, 'The session bar must reuse the existing ReviewSessionService accuracy signal.');
+assert.match(reviewTemplate, /Accuracy:\s*\{\{ sessionAccuracy === null \? '—' : sessionAccuracy \+ '%' \}\}/u, 'Live session accuracy must show an em dash before the first answer and a percentage afterwards.');
 assert.equal(reviewTemplate.match(/data-testid="review-action-footer"/gu)?.length, 1, 'All review states must render through one shared footer block.');
 assert.equal(reviewTemplate.match(/class="review-action-primary"/gu)?.length, 1, 'All review states must reuse one primary footer button.');
 assert.equal(reviewTemplate.match(/class="review-action-secondary"/gu)?.length, 1, 'The optional secondary action must have one shared template owner.');
