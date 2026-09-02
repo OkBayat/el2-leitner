@@ -1,0 +1,29 @@
+.review-answer-field.review-answer-correct {
+	--mdc-outlined-text-field-outline-color: var(--review-success-action);
+	--mdc-outlined-text-field-hover-outline-color: var(--review-success-action);
+	--mdc-outlined-text-field-focus-outline-color: var(--review-success-action);
+	--mdc-outlined-text-field-label-text-color: var(--review-success-action-shadow);
+	--mdc-outlined-text-field-focus-label-text-color: var(--review-success-action-shadow);
+}
+
+.review-answer-field.review-answer-incorrect {
+	--mdc-outlined-text-field-outline-color: var(--review-error-action);
+	--mdc-outlined-text-field-hover-outline-color: var(--review-error-action);
+	--mdc-outlined-text-field-focus-outline-color: var(--review-error-action);
+	--mdc-outlined-text-field-label-text-color: var(--review-error-action-shadow);
+	--mdc-outlined-text-field-focus-label-text-color: var(--review-error-action-shadow);
+}
+
+:host ::ng-deep .review-answer-field.review-answer-correct .mat-mdc-text-field-wrapper {
+	background: #efffe5;
+	border-radius: 4px;
+}
+
+:host ::ng-deep .review-answer-field.review-answer-incorrect .mat-mdc-text-field-wrapper {
+	background: #fff0f0;
+	border-radius: 4px;
+}
+
+.review-answer-input[readonly] {
+	cursor: text;
+}
