@@ -26,8 +26,10 @@ assert.equal(dashboardHtml.match(/class="leitner-row"/gu)?.length, 1, 'One templ
 
 assert.match(shellTs, /MatMenuModule/u, 'The compact hamburger/account navigation should use Angular Material menus.');
 assert.match(shellHtml, /class="topbar"/u, 'The application shell must use the minimal top bar.');
-assert.match(shellHtml, /class="product-tabs"/u, 'Primary destinations must remain visible as compact top tabs.');
-assert.doesNotMatch(shellHtml, /mat-sidenav|sidebar-progress|mobile-nav/u, 'The redesigned shell must not restore the old permanent sidebar or floating bottom nav.');
+assert.match(shellHtml, /class="product-tabs"/u, 'Primary destinations must remain visible as compact top tabs on larger screens.');
+assert.match(shellHtml, /class="mobile-nav"/u, 'Phones must restore the base branch bottom navigation.');
+assert.match(shellHtml, /@for \(item of primaryNavItems; track item\.path\)/u, 'Desktop and mobile navigation must reuse the same primary destination model.');
+assert.doesNotMatch(shellHtml, /mat-sidenav|sidebar-progress/u, 'The redesigned shell must not restore the old permanent desktop sidebar.');
 
 for (const [name, styles] of [
 	['dashboard', dashboardStyles],
@@ -40,6 +42,10 @@ for (const [name, styles] of [
 
 assert.match(dashboardStyles, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/u, 'Desktop summary metrics must remain a compact four-column strip.');
 assert.match(dashboardStyles, /@media\(max-width:\s*640px\)/u, 'Dashboard must keep an explicit phone layout.');
-assert.match(shellStyles, /overflow-x:\s*auto/u, 'Top navigation must remain usable on narrow screens.');
+assert.match(shellStyles, /overflow-x:\s*auto/u, 'Desktop/tablet top navigation must remain usable when space is constrained.');
+assert.match(shellStyles, /@media\(max-width:\s*640px\)[\s\S]*\.product-tabs\s*\{[\s\S]*display:\s*none/u, 'Top navigation must be hidden on phones.');
+assert.match(shellStyles, /\.mobile-nav\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*8px/u, 'Phone navigation must stay fixed at the bottom like the base branch.');
+assert.match(shellStyles, /grid-template-columns:\s*repeat\(5, minmax\(0, 1fr\)\)/u, 'Phone navigation must keep the five primary destinations evenly distributed.');
+assert.match(shellStyles, /\.content\s*\{[\s\S]*padding:\s*18px 0 92px/u, 'Phone content must reserve space for the fixed bottom navigation.');
 
 console.log('Minimal dashboard design contract passed.');
