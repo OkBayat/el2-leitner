@@ -12,13 +12,13 @@ describe('review answer field state', () => {
 		})).toBeNull();
 	});
 
-	it('keeps a wrong primary review answer visible, readonly, and red during spelling correction', () => {
+	it('does not render the answer input on the spelling-correction screen', () => {
 		expect(buildReviewAnswerFieldState({
 			active: true,
 			currentTask: 'review',
 			feedbackCorrect: false,
 			remediationPhase: RemediationPhase.CORRECTION,
-		})).toEqual({label: 'Your answer', action: 'review', readOnly: true, feedbackTone: 'incorrect'});
+		})).toBeNull();
 	});
 
 	it('keeps the normal review answer editable until feedback arrives', () => {
@@ -30,7 +30,7 @@ describe('review answer field state', () => {
 		})).toEqual({label: 'Your answer', action: 'review', readOnly: false, feedbackTone: null});
 	});
 
-	it('locks correct and incorrect review feedback as readonly with matching feedback tones', () => {
+	it('locks correct feedback as readonly and green without defining an incorrect color state', () => {
 		expect(buildReviewAnswerFieldState({
 			active: true,
 			currentTask: 'review',
@@ -42,7 +42,7 @@ describe('review answer field state', () => {
 			currentTask: 'review',
 			feedbackCorrect: false,
 			remediationPhase: null,
-		})).toEqual({label: 'Your answer', action: 'review', readOnly: true, feedbackTone: 'incorrect'});
+		})).toEqual({label: 'Your answer', action: 'review', readOnly: true, feedbackTone: null});
 	});
 
 	it('uses the same editable field for recall and copy, then keeps successful recall readonly', () => {
