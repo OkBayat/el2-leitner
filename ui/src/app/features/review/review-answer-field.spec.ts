@@ -3,19 +3,22 @@ import {RemediationPhase} from '../../domain/remediation/remediation';
 import {buildReviewAnswerFieldState} from './review-answer-field';
 
 describe('review answer field state', () => {
-	it('does not render outside an active session or during spelling correction', () => {
+	it('does not render outside an active session', () => {
 		expect(buildReviewAnswerFieldState({
 			active: false,
 			currentTask: 'review',
 			feedbackCorrect: null,
 			remediationPhase: null,
 		})).toBeNull();
+	});
+
+	it('keeps a wrong primary review answer visible, readonly, and red during spelling correction', () => {
 		expect(buildReviewAnswerFieldState({
 			active: true,
 			currentTask: 'review',
 			feedbackCorrect: false,
 			remediationPhase: RemediationPhase.CORRECTION,
-		})).toBeNull();
+		})).toEqual({label: 'Your answer', action: 'review', readOnly: true, feedbackTone: 'incorrect'});
 	});
 
 	it('keeps the normal review answer editable until feedback arrives', () => {
