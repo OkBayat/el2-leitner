@@ -4,6 +4,7 @@ import { authGuard } from './core/auth/auth.guard';
 export const appRoutes: Routes = [
   { path: 'login', loadComponent: () => import('./features/auth/login-page.component').then((m) => m.LoginPageComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
+  { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
   {
     path: '',
