@@ -46,18 +46,21 @@
 					</svg>
 				</button>
 				@let bar = sessionBarState();
+				@let sessionAccuracy = session.accuracy();
 				<div class="session-progress">
-					<span class="visually-hidden">{{ bar.accessibleLabel }}</span>
+					<span class="visually-hidden">
+						Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }} · {{ bar.recheck ? 'Recheck' : bar.counterLabel }}
+					</span>
 					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
 				</div>
 				<span class="session-count">
-					<span data-testid="session-accuracy">Accuracy: {{ bar.accuracyLabel }}</span>
-					@if (bar.recheck) {
-						<span aria-hidden="true"> · </span>
-						<span data-testid="session-recheck">Recheck</span>
-					}
+					<span data-testid="session-accuracy">Accuracy: {{ sessionAccuracy === null ? '—' : sessionAccuracy + '%' }}</span>
 					<span aria-hidden="true"> · </span>
-					<span data-testid="session-counter">{{ bar.counterLabel }}</span>
+					@if (bar.recheck) {
+						<span data-testid="session-recheck">Recheck</span>
+					} @else {
+						<span data-testid="session-counter">{{ bar.counterLabel }}</span>
+					}
 				</span>
 			</div>
 
