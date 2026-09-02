@@ -13,6 +13,9 @@ const dashboardStyles = read('src/app/features/dashboard/dashboard-page.componen
 const shellTs = read('src/app/shared/app-shell/app-shell.component.ts');
 const shellHtml = read('src/app/shared/app-shell/app-shell.component.html');
 const shellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
+const chartTs = read('src/app/shared/charts/learning-chart.component.ts');
+const reportsTs = read('src/app/features/reports/reports-page.component.ts');
+const packageJson = read('package.json');
 const globalStyles = read('src/styles.scss');
 const leitnerPalette = read('src/styles/_leitner-google-palette.scss');
 
@@ -23,11 +26,23 @@ assert.match(dashboardHtml, /\[style\.width\.%\]="houseWidths\[house\.box - 1\]"
 assert.match(dashboardHtml, /data-testid="house-status"/u, 'House status needs its stable regression locator.');
 assert.match(dashboardHtml, />Today's plan</u, 'The current dashboard E2E contract must keep the Today plan label.');
 assert.match(dashboardHtml, /Today's progress/u, 'The minimal dashboard must expose the compact daily progress summary.');
-assert.match(dashboardTs, /label: 'Words in Leitner'/u, 'The summary row must expose total active Leitner words.');
 assert.equal(dashboardHtml.match(/class="leitner-row"/gu)?.length, 1, 'One template loop must own all five Leitner rows.');
 assert.doesNotMatch(dashboardHtml, /data-tooltip|\[attr\.title\]/u, 'Leitner state cells must not expose hover tooltip attributes.');
 assert.doesNotMatch(dashboardTs, /segmentTooltip/u, 'Dashboard TypeScript must not retain obsolete tooltip-building logic.');
 assert.doesNotMatch(dashboardStyles, /leitner-segment::after|leitner-segment:hover::after|attr\(data-tooltip\)/u, 'Leitner tooltip pseudo-elements must be removed from the stylesheet.');
+
+assert.match(packageJson, /"chart\.js":\s*"4\.5\.1"/u, 'Chart.js must be the single charting dependency.');
+assert.match(chartTs, /from 'chart\.js'/u, 'The shared learning chart must use Chart.js directly.');
+assert.match(chartTs, /LearningChartType = 'bar' \| 'line' \| 'doughnut'/u, 'One shared adapter must support bar, line, and doughnut charts.');
+assert.match(chartTs, /Chart\.register\(/u, 'Chart.js controllers and elements must be explicitly registered for tree shaking.');
+assert.match(dashboardHtml, /data-testid="leitner-coverage-stat"/u, 'The Leitner coverage summary needs a stable regression locator.');
+assert.match(dashboardHtml, /type="doughnut"/u, 'Words in Leitner must render as a doughnut chart rather than a bare number.');
+assert.match(dashboardHtml, /leitnerCoverage\(\)\.entered\.toLocaleString/u, 'The coverage card must show entered versus total word counts.');
+assert.match(dashboardTs, /readonly leitnerCoverage = computed/u, 'Leitner coverage must be derived from learning state.');
+assert.match(dashboardTs, /word\.introducedOn \|\| word\.box > 0 \|\| word\.masteredAt/u, 'Coverage must include words that have ever entered Leitner, including mastered/legacy active words.');
+assert.match(dashboardHtml, /type="bar"/u, 'Dashboard activity must use the same chart adapter for bar charts.');
+assert.match(reportsTs, /type="line"/u, 'Reports must use the same chart adapter for line charts.');
+assert.doesNotMatch(dashboardTs, /\{label: 'Words in Leitner', value:/u, 'Words in Leitner must not fall back to the old bare-number stat card.');
 
 assert.match(shellTs, /MatMenuModule/u, 'The compact hamburger/account navigation should use Angular Material menus.');
 assert.match(shellHtml, /class="topbar"/u, 'The application shell must use the minimal top bar.');
@@ -72,6 +87,7 @@ assert.match(leitnerPalette, /\.leitner-segment\.is-occupied:hover\s*\{[^}]*bord
 assert.doesNotMatch(leitnerPalette, /linear-gradient|radial-gradient/u, 'The storage-inspired palette must remain flat and simple.');
 
 assert.match(dashboardStyles, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/u, 'Desktop summary metrics must remain a compact four-column strip.');
+assert.match(dashboardStyles, /\.leitner-coverage-content\s*\{[\s\S]*display:\s*flex/u, 'Coverage chart and counts should fit inside the existing compact stat card.');
 assert.match(dashboardStyles, /@media\(max-width:\s*640px\)/u, 'Dashboard must keep an explicit phone layout.');
 assert.match(shellStyles, /overflow-x:\s*auto/u, 'Desktop/tablet top navigation must remain usable when space is constrained.');
 assert.match(shellStyles, /@media\(max-width:\s*640px\)[\s\S]*\.product-tabs\s*\{[\s\S]*display:\s*none/u, 'Top navigation must be hidden on phones.');
@@ -82,4 +98,4 @@ assert.match(shellStyles, /\.content\s*\{[\s\S]*padding:\s*18px 0 92px/u, 'Phone
 assert.match(shellStyles, /\.mobile-nav\.is-hidden\s*\{[\s\S]*translateY\(calc\(100% \+ 20px\)\)/u, 'Hidden phone navigation must slide below the viewport rather than disappearing abruptly.');
 assert.match(shellStyles, /@media\(prefers-reduced-motion:\s*reduce\)[\s\S]*\.topbar[\s\S]*\.mobile-nav/u, 'Mobile header and navigation animation must respect reduced-motion preferences.');
 
-console.log('Minimal dashboard design contract passed.');
+console.log('Chart.js Leitner coverage design contract passed.');
