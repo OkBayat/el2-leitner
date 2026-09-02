@@ -20,10 +20,17 @@ function setNoStoreHeaders(res) {
 
 function setStaticCacheHeaders(res, filePath) {
   const extension = path.extname(filePath).toLowerCase();
-  if (extension === ".html" || extension === ".css" || extension === ".js") {
+  const filename = path.basename(filePath).toLowerCase();
+  if (extension === ".html" || extension === ".css" || extension === ".js" || filename === "manifest.webmanifest") {
     // A mixed frontend release is more damaging than the bandwidth saved by
     // caching executable assets. Keep browser/CDN behavior deterministic.
     setNoStoreHeaders(res);
+  }
+  if (filename === "service-worker.js") {
+    res.setHeader("Service-Worker-Allowed", "/");
+  }
+  if (filename === "manifest.webmanifest") {
+    res.setHeader("Content-Type", "application/manifest+json; charset=utf-8");
   }
 }
 

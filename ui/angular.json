@@ -22,13 +22,15 @@
             "inlineStyleLanguage": "scss",
             "outputPath": { "base": "dist", "browser": "browser" },
             "assets": [
+              "src/manifest.webmanifest",
               { "glob": "**/*", "input": "assets", "output": "assets" },
               { "glob": "**/*", "input": "fonts", "output": "fonts" },
               { "glob": "**/*", "input": "data", "output": "data" }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/pwa.scss"
             ]
           },
           "configurations": {

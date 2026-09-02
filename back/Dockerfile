@@ -12,6 +12,7 @@ COPY ui/src ./src
 COPY ui/assets ./assets
 COPY ui/fonts ./fonts
 COPY ui/data ./data
+COPY ui/tools ./tools
 RUN npm run build:production
 
 FROM node:22-alpine AS runtime
