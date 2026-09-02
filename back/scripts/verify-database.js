@@ -51,6 +51,45 @@ async function verify() {
       throw new Error("Built-in duplicate-alias metadata is inconsistent.");
     }
 
+    const [sentenceRows] = await pool.execute(
+      `SELECT COUNT(*) AS total,
+              COUNT(DISTINCT source_item_number) AS source_items,
+              COUNT(DISTINCT vocabulary_entry_id) AS vocabulary_entries,
+              COUNT(DISTINCT source_hash) AS source_hashes
+       FROM vocabulary_sentences
+       WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'`
+    );
+    const sentenceTotal = Number(sentenceRows[0]?.total ?? 0);
+    const coveredSourceItems = Number(sentenceRows[0]?.source_items ?? 0);
+    const coveredVocabularyEntries = Number(sentenceRows[0]?.vocabulary_entries ?? 0);
+    const sentenceSourceHashes = Number(sentenceRows[0]?.source_hashes ?? 0);
+    if (sentenceTotal !== sourceItemCount * 3) {
+      throw new Error(`Expected ${sourceItemCount * 3} active sentence variants, found ${sentenceTotal}.`);
+    }
+    if (coveredSourceItems !== sourceItemCount) {
+      throw new Error(`Expected sentence coverage for ${sourceItemCount} source items, found ${coveredSourceItems}.`);
+    }
+    if (coveredVocabularyEntries !== uniqueVocabularyCount) {
+      throw new Error(
+        `Sentence vocabulary coverage mismatch: expected ${uniqueVocabularyCount}, found ${coveredVocabularyEntries}.`
+      );
+    }
+    if (sentenceSourceHashes !== 1) {
+      throw new Error(`Expected one active sentence corpus version, found ${sentenceSourceHashes}.`);
+    }
+    const [sentenceVariantRows] = await pool.execute(
+      `SELECT COUNT(*) AS total FROM (
+         SELECT source_item_number
+         FROM vocabulary_sentences
+         WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'
+         GROUP BY source_item_number
+         HAVING COUNT(*) <> 3 OR COUNT(DISTINCT variant_number) <> 3
+       ) invalid_sentence_items`
+    );
+    if (Number(sentenceVariantRows[0]?.total ?? 0) !== 0) {
+      throw new Error("At least one IELTS source item does not have exactly three sentence variants.");
+    }
+
     const [legacyRows] = await pool.execute(
       `SELECT COUNT(*) AS total
        FROM learning_states ls
@@ -85,7 +124,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries and have ${sentenceTotal} sentence variants; migration, alias reconciliation, sentence coverage, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();

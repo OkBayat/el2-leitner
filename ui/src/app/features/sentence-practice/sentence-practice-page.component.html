@@ -1,0 +1,153 @@
+<section class="review-page sentence-practice-page" data-testid="sentence-practice-page">
+	@if (loading()) {
+		<div class="review-center">
+			<p class="loading-state" role="status">Preparing sentence practice…</p>
+		</div>
+	} @else if (empty() && !session.completed()) {
+		<div class="review-center">
+			<button class="review-close" mat-icon-button type="button" aria-label="Back to dashboard"
+				(click)="router.navigateByUrl('/dashboard')">
+				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+						stroke-linecap="round"/>
+				</svg>
+			</button>
+			<mat-card class="setup" appearance="outlined">
+				<mat-card-header>
+					<mat-card-title>No sentence cards are ready</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<p>Add words to House 1 first. Only free sentence practice uses this page; daily review cards are not changed here.</p>
+				</mat-card-content>
+				<mat-card-actions>
+					<button mat-flat-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	}
+
+	@if (session.active() && session.currentPrompt(); as prompt) {
+		<div class="review-session" data-testid="sentence-practice-session">
+			<div class="session-bar">
+				<button class="session-close" mat-icon-button type="button" aria-label="Exit sentence practice" (click)="exit()">
+					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
+							stroke-linecap="round"/>
+					</svg>
+				</button>
+				<div class="session-progress">
+					<span class="visually-hidden">Sentence practice progress: {{ session.progress() }}%</span>
+					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
+				</div>
+				<span class="session-count">
+					<span>Accuracy: {{ session.accuracy() === null ? '—' : session.accuracy() + '%' }}</span>
+					<span aria-hidden="true"> · </span>
+					<span data-testid="sentence-counter">{{ counterLabel() }}</span>
+				</span>
+			</div>
+
+			<main class="session-stage">
+				<article class="flash sentence-flash">
+					<div class="sentence-mode-badge">Sentence practice</div>
+					<div class="flash-heading">
+						<span>{{ prompt.sentence.category }} · House {{ prompt.card.box }}</span>
+						<h1>{{ prompt.retryNumber ? 'Try the word again in a new sentence' : 'Listen and complete the sentence' }}</h1>
+					</div>
+
+					<div class="listen">
+						<button mat-fab extended class="play-pronunciation" type="button" (click)="session.pronounce()">
+							▶ Play pronunciation
+						</button>
+						<button mat-button type="button" (click)="session.pronounce(.7)">Slower</button>
+					</div>
+
+					<form class="sentence-answer-form" (submit)="$event.preventDefault(); session.feedback() ? next() : submit()">
+						<p class="sentence-text" data-testid="sentence-cloze">
+							<span>{{ prompt.sentence.before }}</span><input
+								#answerInput
+								class="sentence-answer-input"
+								data-testid="sentence-answer-input"
+								[style.width]="inputWidth()"
+								[formControl]="answer"
+								[readOnly]="session.feedback() !== null"
+								[attr.aria-invalid]="session.feedback()?.correct === false"
+								(keydown.enter)="$event.preventDefault(); session.feedback() ? next() : submit()"
+								aria-label="Missing word"
+								enterkeyhint="go"
+								lang="en"
+								autocomplete="off"
+								autocapitalize="none"
+								autocorrect="off"
+								spellcheck="false"><span>{{ prompt.sentence.after }}</span>
+						</p>
+					</form>
+				</article>
+			</main>
+
+			@if (footer(); as state) {
+				<footer
+					class="review-action-footer"
+					[class.neutral]="state.tone === 'neutral'"
+					[class.success]="state.tone === 'success'"
+					[class.error]="state.tone === 'error'"
+					data-testid="sentence-action-footer"
+					aria-live="polite">
+					<div class="review-action-inner">
+						@if (state.title) {
+							<div class="feedback-summary">
+								<span class="feedback-status-icon" aria-hidden="true">
+									@if (state.tone === 'success') {
+										<svg width="44" height="44" viewBox="0 0 24 24">
+											<path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor"
+												stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									} @else {
+										<svg width="44" height="44" viewBox="0 0 24 24">
+											<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor"
+												stroke-width="3.6" stroke-linecap="round"/>
+										</svg>
+									}
+								</span>
+								<div class="feedback-copy">
+									<h2>{{ state.title }}</h2>
+									<p data-testid="sentence-correct-answer">{{ state.detail }}</p>
+								</div>
+							</div>
+						} @else {
+							<p class="sentence-instruction">Type the missing word, then press Enter.</p>
+						}
+
+						<button
+							class="review-action-primary"
+							mat-flat-button
+							type="button"
+							[disabled]="!session.feedback() && !answer.value.trim()"
+							(click)="handlePrimary()">
+							{{ state.label }}
+						</button>
+					</div>
+				</footer>
+			}
+		</div>
+	}
+
+	@if (session.completed()) {
+		<div class="review-center">
+			<mat-card class="complete" appearance="outlined">
+				<mat-card-title>Sentence practice complete ★</mat-card-title>
+				<mat-card-content>
+					<div class="breakdown">
+						<div><strong>{{ session.correct() }}</strong><span>Correct</span></div>
+						<div><strong>{{ session.wrong() }}</strong><span>Wrong</span></div>
+						<div><strong>{{ session.accuracy() ?? 0 }}%</strong><span>Accuracy</span></div>
+					</div>
+					<p class="practice-note">No Leitner house or daily-review due date was changed.</p>
+				</mat-card-content>
+				<mat-card-actions>
+					<button mat-flat-button type="button" (click)="restart()">Practice again</button>
+					<button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	}
+</section>

@@ -142,6 +142,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 		await this.router.navigate(['/review'], {queryParams: {mode: 'box1'}});
 	}
 
+	async startSentencePractice(): Promise<void> {
+		await this.router.navigate(['/sentence'], {queryParams: {house: 1}});
+	}
+
 	async copyHouseOne(): Promise<void> {
 		if (this.houseOneCopyStatus() === 'copying') return;
 		const text = buildHouseOneExport(this.state()?.words || []);

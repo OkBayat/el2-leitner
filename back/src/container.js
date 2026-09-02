@@ -12,6 +12,7 @@ import { LearningSessionCommands } from "./application/learning/LearningSessionC
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
 import { SaveLearningState } from "./application/learning/SaveLearningState.js";
 import { UpdateVocabulary } from "./application/learning/UpdateVocabulary.js";
+import { GetSentencePracticeCards } from "./application/sentence-practice/GetSentencePracticeCards.js";
 import { LibraryAdminPolicy } from "./domain/library/LibraryAdminPolicy.js";
 import { VocabularyFileParser } from "./domain/library/VocabularyFileParser.js";
 import { MySqlEditableLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningBootstrapRepository.js";
@@ -19,6 +20,7 @@ import { MySqlEditableLearningStateRepository } from "./infrastructure/persisten
 import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySqlLibraryRepository.js";
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
+import { MySqlSentencePracticeRepository } from "./infrastructure/persistence/mysql/MySqlSentencePracticeRepository.js";
 import { MySqlUserRepository } from "./infrastructure/persistence/mysql/MySqlUserRepository.js";
 import { MySqlVocabularyActivationRepository } from "./infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
@@ -38,6 +40,8 @@ export function createContainer({ pool, config, adapters = {} }) {
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
   const reviewProgressRepository =
     adapters.reviewProgressRepository ?? new MySqlReviewProgressRepository(pool);
+  const sentencePracticeRepository =
+    adapters.sentencePracticeRepository ?? new MySqlSentencePracticeRepository(pool);
   const vocabularyActivationRepository =
     adapters.vocabularyActivationRepository ?? new MySqlVocabularyActivationRepository(pool);
   const vocabularySourceRepository =
@@ -61,6 +65,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getCurrentUser: new GetCurrentUser({ userRepository }),
       getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
       getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
+      getSentencePracticeCards: new GetSentencePracticeCards({ sentencePracticeRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       updateVocabulary: new UpdateVocabulary({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),

@@ -10,6 +10,7 @@ import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/
 import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
+import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -165,6 +166,16 @@ async function setupDatabase() {
     });
     if (seedResult.changed) console.info(`Seeded ${seedResult.total} IELTS library entries.`);
 
+    const sentenceSeedResult = await seedSentencePractice({
+      pool: applicationPool,
+      sourceText
+    });
+    if (sentenceSeedResult.changed) {
+      console.info(
+        `Seeded ${sentenceSeedResult.sentenceCount} sentence variants for ${sentenceSeedResult.sourceItemCount} IELTS source items.`
+      );
+    }
+
     const learningRepository = new MySqlLearningStateRepository(applicationPool);
     const migrated = await learningRepository.migrateAllLegacyStates();
     if (migrated) console.info(`Migrated ${migrated} legacy learning state(s) to normalized tables.`);
@@ -186,6 +197,7 @@ async function setupDatabase() {
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM vocabulary_sentences LIMIT 0");
   } finally {
     await applicationPool.end();
   }

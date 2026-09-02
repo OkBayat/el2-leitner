@@ -6,6 +6,7 @@ export const appRoutes: Routes = [
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
+  { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },
   {
     path: '',
     canActivate: [authGuard],

@@ -183,6 +183,11 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json(result);
   });
 
+  router.get("/learning/sentence-practice", authenticate, async (req, res) => {
+    const result = await useCases.getSentencePracticeCards.execute(req.auth.userId, req.query.house ?? 1);
+    res.status(200).json(result);
+  });
+
   router.get("/state", authenticate, async (req, res) => {
     const result = await useCases.getLearningState.execute(req.auth.userId, { view: req.query.view });
     res.status(200).json(result);
