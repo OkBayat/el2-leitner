@@ -53,7 +53,7 @@ describe('ThemeService system chrome', () => {
 	});
 
 	it('follows device theme changes only while the app theme is set to system', () => {
-		let changeListener: (() => void) | null = null;
+		let changeListener: () => void = () => undefined;
 		const query = {
 			matches: true,
 			addEventListener: vi.fn((_type: string, listener: () => void) => { changeListener = listener; }),
@@ -66,12 +66,12 @@ describe('ThemeService system chrome', () => {
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe(DARK_SYSTEM_CHROME_COLOR);
 
 		query.matches = false;
-		changeListener?.();
+		changeListener();
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe(LIGHT_SYSTEM_CHROME_COLOR);
 
 		service.apply('dark');
 		query.matches = false;
-		changeListener?.();
+		changeListener();
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe(DARK_SYSTEM_CHROME_COLOR);
 	});
 });
