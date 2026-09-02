@@ -8,7 +8,6 @@
 
 	[data-testid='house-status'] .leitner-row {
 		--house-tone: var(--leitner-google-blue);
-		border-bottom: 2px solid var(--mat-sys-outline-variant);
 	}
 
 	[data-testid='house-status'] .leitner-row[data-house='2'] {
@@ -47,19 +46,18 @@
 	}
 
 	[data-testid='house-status'] .leitner-row .leitner-segment {
-		border-color: color-mix(in srgb, var(--house-tone) 32%, var(--mat-sys-outline-variant));
+		border: 0;
+		border-bottom: 2px solid var(--mat-sys-outline-variant);
 		background: color-mix(in srgb, var(--house-tone) 16%, var(--mat-sys-surface));
 		color: var(--mat-sys-on-surface);
 	}
 
 	[data-testid='house-status'] .leitner-row .leitner-segment:not(.is-occupied) {
-		border-color: color-mix(in srgb, var(--house-tone) 16%, var(--mat-sys-outline-variant));
 		background: color-mix(in srgb, var(--house-tone) 6%, var(--mat-sys-surface));
 		color: var(--mat-sys-on-surface-variant);
 	}
 
 	[data-testid='house-status'] .leitner-row .leitner-segment.is-occupied:hover {
-		border-color: color-mix(in srgb, var(--house-tone) 50%, var(--mat-sys-outline-variant));
 		background: color-mix(in srgb, var(--house-tone) 24%, var(--mat-sys-surface));
 	}
 
