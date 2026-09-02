@@ -77,8 +77,9 @@ async function expectReadonlyCorrectAnswer(input: ReturnType<Page['getByLabel']>
   const field = input.locator('xpath=ancestor::mat-form-field');
   await expect(field).toHaveClass(/review-answer-correct/u);
   await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS('background-color', 'rgb(215, 255, 184)');
+  await expect(field.locator('.mat-mdc-floating-label')).toHaveCSS('color', 'rgb(88, 204, 2)');
   for (const segment of ['.mdc-notched-outline__leading', '.mdc-notched-outline__notch', '.mdc-notched-outline__trailing']) {
-    await expect(field.locator(segment)).toHaveCSS('border-color', 'rgb(88, 204, 2)');
+    await expect(field.locator(segment)).toHaveCSS('border-top-color', 'rgb(88, 204, 2)');
   }
 }
 
