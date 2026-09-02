@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, OnInit, computed, inject, signal} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
@@ -7,6 +7,10 @@ import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
 import {calculateStreak} from '../../domain/learning/learning-rules';
 import {ShareStoryService} from '../share-story/share-story.service';
+
+const MOBILE_NAV_BREAKPOINT = 640;
+const MOBILE_NAV_SCROLL_THRESHOLD = 8;
+const MOBILE_NAV_TOP_SAFE_ZONE = 12;
 
 @Component({
 	selector: 'app-shell',
@@ -20,6 +24,8 @@ export class AppShellComponent implements OnInit {
 	readonly store = inject(LearningStoreService);
 	readonly share = inject(ShareStoryService);
 	private readonly theme = inject(ThemeService);
+	private lastScrollY = 0;
+	readonly mobileNavHidden = signal(false);
 	readonly navItems = [
 		{path: '/dashboard', label: 'Home', symbol: '⌂'},
 		{path: '/review', label: "Today's Review", symbol: '◷'},
@@ -41,6 +47,32 @@ export class AppShellComponent implements OnInit {
 	async ngOnInit(): Promise<void> {
 		const state = await this.store.initialize();
 		this.theme.apply(state.settings.theme);
+		this.lastScrollY = window.scrollY;
+	}
+
+	@HostListener('window:scroll')
+	onWindowScroll(): void {
+		const currentScrollY = Math.max(0, window.scrollY);
+		if (window.innerWidth > MOBILE_NAV_BREAKPOINT) {
+			this.mobileNavHidden.set(false);
+			this.lastScrollY = currentScrollY;
+			return;
+		}
+
+		if (currentScrollY <= MOBILE_NAV_TOP_SAFE_ZONE) {
+			this.mobileNavHidden.set(false);
+			this.lastScrollY = currentScrollY;
+			return;
+		}
+
+		const delta = currentScrollY - this.lastScrollY;
+		if (delta >= MOBILE_NAV_SCROLL_THRESHOLD) {
+			this.mobileNavHidden.set(true);
+			this.lastScrollY = currentScrollY;
+		} else if (delta <= -MOBILE_NAV_SCROLL_THRESHOLD) {
+			this.mobileNavHidden.set(false);
+			this.lastScrollY = currentScrollY;
+		}
 	}
 
 	async logout(): Promise<void> {
