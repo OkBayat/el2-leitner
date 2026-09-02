@@ -45,18 +45,18 @@ button, input, textarea, select {
 }
 
 mat-form-field.review-answer-field {
-	--mat-form-field-container-height: 46px;
-	--mat-form-field-container-vertical-padding: 11px;
+	--mat-form-field-container-height: 51px;
+	--mat-form-field-container-vertical-padding: 14.5px;
 }
 
 mat-form-field.review-answer-field .mat-mdc-text-field-wrapper {
-	height: 46px;
+	height: 51px;
 }
 
 mat-form-field.review-answer-field .mat-mdc-form-field-infix {
-	min-height: 46px;
-	padding-top: 11px;
-	padding-bottom: 11px;
+	min-height: 51px;
+	padding-top: 14.5px;
+	padding-bottom: 14.5px;
 }
 
 textarea.review-answer-input {
