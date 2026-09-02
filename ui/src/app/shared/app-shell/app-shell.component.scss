@@ -167,6 +167,22 @@
 }
 
 @media(max-width: 640px) {
+	.topbar {
+		opacity: 1;
+		transform: translateY(0);
+		transition: transform 220ms ease, opacity 180ms ease, visibility 0s linear 0s;
+		visibility: visible;
+		will-change: transform, opacity;
+	}
+
+	.topbar.is-hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(calc(-100% - 1px));
+		transition: transform 220ms ease, opacity 180ms ease, visibility 0s linear 220ms;
+		visibility: hidden;
+	}
+
 	.product-tabs {
 		display: none;
 	}
@@ -242,6 +258,8 @@
 }
 
 @media(prefers-reduced-motion: reduce) {
+	.topbar,
+	.topbar.is-hidden,
 	.mobile-nav,
 	.mobile-nav.is-hidden {
 		transition: none;
