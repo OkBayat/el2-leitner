@@ -1,0 +1,86 @@
+<header
+	class="topbar"
+	[class.is-hidden]="mobileNavHidden()"
+	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
+	[attr.inert]="mobileNavHidden() ? '' : null"
+>
+	<button mat-icon-button type="button" [matMenuTriggerFor]="navigationMenu" aria-label="Open navigation menu">
+		<span class="topbar-icon" aria-hidden="true">☰</span>
+	</button>
+
+	<a class="brand" routerLink="/dashboard" aria-label="Vocora home">
+		<img src="/assets/vocora-icon.png" alt="" width="34" height="34">
+		<span>Vocora</span>
+	</a>
+
+	<span class="spacer"></span>
+
+	<span class="streak">{{ streak() }} day streak</span>
+	<button mat-icon-button type="button" aria-label="Create progress story" title="Story Studio" (click)="share.open()">
+		<span class="topbar-icon" aria-hidden="true">↗</span>
+	</button>
+	<a mat-icon-button routerLink="/settings" aria-label="Settings" title="Settings">
+		<span class="topbar-icon" aria-hidden="true">⚙</span>
+	</a>
+	<button mat-icon-button type="button" aria-label="Change theme" title="Change theme" (click)="cycleTheme()">
+		<span class="topbar-icon" aria-hidden="true">◐</span>
+	</button>
+	<button class="avatar" type="button" [matMenuTriggerFor]="userMenu" aria-label="Open account menu">
+		{{ userInitials() }}
+	</button>
+</header>
+
+<mat-menu #navigationMenu="matMenu">
+	@for (item of navItems; track item.path) {
+		<a mat-menu-item [routerLink]="item.path">
+			<span class="menu-symbol" aria-hidden="true">{{ item.symbol }}</span>
+			<span>{{ item.label }}</span>
+		</a>
+	}
+</mat-menu>
+
+<mat-menu #userMenu="matMenu">
+	<div class="account-email" (click)="$event.stopPropagation()">{{ auth.user()?.email }}</div>
+	<button mat-menu-item type="button" (click)="logout()">
+		<span class="menu-symbol" aria-hidden="true">↪</span>
+		<span>Sign out</span>
+	</button>
+</mat-menu>
+
+<nav class="product-tabs" aria-label="Primary navigation">
+	<div class="product-tabs-inner">
+		@for (item of primaryNavItems; track item.path) {
+			<a
+				mat-stroked-button
+				class="product-tab"
+				[routerLink]="item.path"
+				routerLinkActive="active-tab"
+			>
+				<span aria-hidden="true">{{ item.symbol }}</span>
+				<span>{{ item.label }}</span>
+			</a>
+		}
+	</div>
+</nav>
+
+<main class="content">
+	<router-outlet />
+</main>
+
+<nav
+	class="mobile-nav"
+	[class.is-hidden]="mobileNavHidden()"
+	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
+	aria-label="Mobile navigation"
+>
+	@for (item of primaryNavItems; track item.path) {
+		<a
+			[routerLink]="item.path"
+			routerLinkActive="active-mobile"
+			[attr.tabindex]="mobileNavHidden() ? -1 : null"
+		>
+			<span aria-hidden="true">{{ item.symbol }}</span>
+			<small>{{ item.label }}</small>
+		</a>
+	}
+</nav>

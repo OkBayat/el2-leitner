@@ -1,42 +1,43 @@
 {
-  "name": "vocora-ui",
-  "version": "3.0.0",
-  "private": true,
-  "packageManager": "npm@10.9.8",
-  "description": "Vocora Angular frontend",
-  "scripts": {
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build",
-    "build:production": "ng build --configuration production",
-    "check:architecture": "node tests/test-angular-architecture.mjs",
-    "check:production-csp": "node tests/test-production-csp.mjs",
-    "test": "npm run check:architecture && ng test --watch=false && npm run build:production && npm run check:production-csp",
-    "test:unit": "ng test --watch=false",
-    "test:regression": "ng test --watch=false",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed"
-  },
-  "dependencies": {
-    "@angular/cdk": "22.1.4",
-    "@angular/common": "^22.1.0",
-    "@angular/compiler": "^22.1.0",
-    "@angular/core": "^22.1.0",
-    "@angular/forms": "^22.1.0",
-    "@angular/material": "22.1.4",
-    "@angular/platform-browser": "^22.1.0",
-    "@angular/router": "^22.1.0",
-    "bootstrap": "5.3.8",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@angular/build": "^22.1.4",
-    "@angular/cli": "^22.1.4",
-    "@angular/compiler-cli": "^22.1.0",
-    "@playwright/test": "1.55.0",
-    "jsdom": "26.1.0",
-    "prettier": "^3.8.1",
-    "typescript": "~6.0.2",
-    "vitest": "^4.0.8"
-  }
+    "name": "vocora-ui",
+    "version": "3.0.0",
+    "private": true,
+    "packageManager": "npm@10.9.8",
+    "description": "Vocora Angular frontend",
+    "scripts": {
+        "start": "ng serve --proxy-config proxy.conf.json",
+        "build": "ng build",
+        "build:production": "ng build --configuration production",
+        "check:architecture": "node tests/test-angular-architecture.mjs",
+        "check:dashboard-design": "node tests/test-dashboard-design.mjs",
+        "check:production-csp": "node tests/test-production-csp.mjs",
+        "test": "npm run check:architecture && npm run check:dashboard-design && ng test --watch=false && npm run build:production && npm run check:production-csp",
+        "test:unit": "ng test --watch=false",
+        "test:regression": "ng test --watch=false",
+        "e2e": "playwright test",
+        "e2e:headed": "playwright test --headed"
+    },
+    "dependencies": {
+        "@angular/cdk": "22.1.4",
+        "@angular/common": "^22.1.0",
+        "@angular/compiler": "^22.1.0",
+        "@angular/core": "^22.1.0",
+        "@angular/forms": "^22.1.0",
+        "@angular/material": "22.1.4",
+        "@angular/platform-browser": "^22.1.0",
+        "@angular/router": "^22.1.0",
+        "bootstrap": "5.3.8",
+        "rxjs": "~7.8.0",
+        "tslib": "^2.3.0"
+    },
+    "devDependencies": {
+        "@angular/build": "^22.1.4",
+        "@angular/cli": "^22.1.4",
+        "@angular/compiler-cli": "^22.1.0",
+        "@playwright/test": "1.55.0",
+        "jsdom": "26.1.0",
+        "prettier": "^3.8.1",
+        "typescript": "~6.0.2",
+        "vitest": "^4.0.8"
+    }
 }
