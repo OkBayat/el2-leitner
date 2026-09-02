@@ -1,5 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent } from 'rxjs';
 import { ThemeMode } from '../../domain/learning/models';
 
 export const LIGHT_SYSTEM_CHROME_COLOR = '#f8f9ff';
@@ -14,15 +16,14 @@ export class ThemeService {
 
   constructor() {
     const query = this.systemThemeQuery;
-    if (!query?.addEventListener) return;
+    if (!query) return;
 
-    const onSystemThemeChanged = () => {
-      if (this.activeMode !== 'system') return;
-      this.applyResolved(query.matches ? 'dark' : 'light');
-    };
-
-    query.addEventListener('change', onSystemThemeChanged);
-    this.destroyRef.onDestroy(() => query.removeEventListener('change', onSystemThemeChanged));
+    fromEvent<MediaQueryListEvent>(query, 'change')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.activeMode !== 'system') return;
+        this.applyResolved(query.matches ? 'dark' : 'light');
+      });
   }
 
   apply(mode: ThemeMode): void {
