@@ -1,84 +1,57 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { AuthService } from '../../core/auth/auth.service';
-import { LearningStoreService } from '../../core/state/learning-store.service';
-import { ThemeService } from '../../core/theme/theme.service';
-import { calculateStreak, totalStats } from '../../domain/learning/learning-rules';
-import { ShareStoryService } from '../share-story/share-story.service';
+import {ChangeDetectionStrategy, Component, OnInit, computed, inject} from '@angular/core';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {MatButtonModule} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
+import {AuthService} from '../../core/auth/auth.service';
+import {LearningStoreService} from '../../core/state/learning-store.service';
+import {ThemeService} from '../../core/theme/theme.service';
+import {calculateStreak} from '../../domain/learning/learning-rules';
+import {ShareStoryService} from '../share-story/share-story.service';
 
 @Component({
-  selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatListModule, MatProgressBarModule, MatSidenavModule, MatToolbarModule],
-  template: `
-    <mat-sidenav-container class="shell">
-      <mat-sidenav mode="side" opened class="sidebar">
-        <a class="brand" routerLink="/dashboard" aria-label="Vocora"><img src="/assets/vocora-logo.png" alt="Vocora" width="185" height="46"></a>
-        <mat-nav-list>
-          @for (item of navItems; track item.path) {
-            <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link"><span class="nav-symbol">{{ item.symbol }}</span>{{ item.label }}</a>
-          }
-        </mat-nav-list>
-        <div class="sidebar-progress">
-          <div><span>Overall mastery</span><strong>{{ masteryPercent() }}%</strong></div>
-          <mat-progress-bar mode="determinate" [value]="masteryPercent()" />
-          <small>{{ masteredCount() }} of {{ totalWords() }} words</small>
-        </div>
-      </mat-sidenav>
-      <mat-sidenav-content>
-        <mat-toolbar class="topbar">
-          <div class="topbar-title"><strong>Vocora</strong><small>{{ streak() }} day streak</small></div>
-          <span class="spacer"></span>
-          <span class="user-email">{{ auth.user()?.email }}</span>
-          <button mat-icon-button type="button" aria-label="Create progress story" title="Story Studio" (click)="share.open()">↗</button>
-          <button mat-icon-button type="button" aria-label="Change theme" (click)="cycleTheme()">◐</button>
-          <button mat-icon-button type="button" aria-label="Sign out" (click)="logout()">↪</button>
-        </mat-toolbar>
-        <main class="content"><router-outlet /></main>
-        <nav class="mobile-nav" aria-label="Mobile navigation">
-          @for (item of mobileNavItems; track item.path) {
-            <a [routerLink]="item.path" routerLinkActive="active-mobile"><span>{{ item.symbol }}</span><small>{{ item.label }}</small></a>
-          }
-        </nav>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
-  `,
-  styles: [`
-    :host{display:block;min-height:100dvh}.shell{min-height:100dvh}.sidebar{width:250px;padding:20px 14px;background:var(--mat-sys-surface-container-low)}
-    .brand{display:flex;padding:8px 12px 24px}.brand img{max-width:100%;height:auto}.active-link{background:var(--mat-sys-secondary-container);color:var(--mat-sys-on-secondary-container)}
-    .nav-symbol{display:inline-block;width:28px}.sidebar-progress{position:absolute;inset-inline:18px;bottom:24px;display:grid;gap:8px}.sidebar-progress>div{display:flex;justify-content:space-between}.sidebar-progress small{color:var(--mat-sys-on-surface-variant)}
-    .topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--mat-sys-surface) 92%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--mat-sys-outline-variant)}
-    .topbar-title{display:grid;line-height:1.2}.topbar-title small,.user-email{font-size:12px;color:var(--mat-sys-on-surface-variant)}.spacer{flex:1}.content{padding:24px;max-width:1440px;margin:auto}.mobile-nav{display:none}
-    @media(max-width:820px){.sidebar{width:210px}.content{padding:16px}.user-email{display:none}}
-    @media(max-width:640px){.sidebar{display:none}.content{padding:14px 14px 86px}.mobile-nav{position:fixed;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);inset-inline:8px;bottom:8px;padding:6px;border:1px solid var(--mat-sys-outline-variant);border-radius:24px;background:color-mix(in srgb,var(--mat-sys-surface-container) 94%,transparent);backdrop-filter:blur(18px);box-shadow:var(--mat-sys-level2)}.mobile-nav a{display:grid;place-items:center;gap:2px;padding:7px 2px;text-decoration:none;border-radius:16px;color:var(--mat-sys-on-surface-variant)}.mobile-nav a span{font-size:18px}.mobile-nav small{font-size:9px}.mobile-nav .active-mobile{background:var(--mat-sys-secondary-container);color:var(--mat-sys-on-secondary-container)}}
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+	selector: 'app-shell',
+	imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatMenuModule],
+	templateUrl: 'app-shell.component.html',
+	styleUrl: 'app-shell.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent implements OnInit {
-  readonly auth = inject(AuthService);
-  readonly store = inject(LearningStoreService);
-  readonly share = inject(ShareStoryService);
-  private readonly theme = inject(ThemeService);
-  readonly navItems = [
-    { path: '/dashboard', label: 'Home', symbol: '⌂' }, { path: '/review', label: "Today's Review", symbol: '◎' },
-    { path: '/words', label: 'Words', symbol: '≡' }, { path: '/library', label: 'Library', symbol: '▦' },
-    { path: '/reports', label: 'Progress', symbol: '↗' }, { path: '/settings', label: 'Settings', symbol: '⚙' },
-  ];
-  readonly mobileNavItems = this.navItems.slice(0, 5);
-  readonly totalWords = computed(() => this.store.state()?.words.length || 0);
-  readonly masteredCount = computed(() => this.store.state() ? totalStats(this.store.state()!).mastered : 0);
-  readonly masteryPercent = computed(() => this.totalWords() ? Math.round((this.masteredCount() / this.totalWords()) * 100) : 0);
-  readonly streak = computed(() => this.store.state() ? calculateStreak(this.store.state()!) : 0);
+	readonly auth = inject(AuthService);
+	readonly store = inject(LearningStoreService);
+	readonly share = inject(ShareStoryService);
+	private readonly theme = inject(ThemeService);
+	readonly navItems = [
+		{path: '/dashboard', label: 'Home', symbol: '⌂'},
+		{path: '/review', label: "Today's Review", symbol: '◷'},
+		{path: '/words', label: 'Words', symbol: '▤'},
+		{path: '/library', label: 'Library', symbol: '▦'},
+		{path: '/reports', label: 'Progress', symbol: '↗'},
+		{path: '/settings', label: 'Settings', symbol: '⚙'},
+	] as const;
+	readonly primaryNavItems = this.navItems.filter((item) => item.path !== '/settings');
+	readonly streak = computed(() => this.store.state() ? calculateStreak(this.store.state()!) : 0);
+	readonly userInitials = computed(() => {
+		const email = this.auth.user()?.email || 'Vocora';
+		const localPart = email.split('@')[0].replace(/[^a-z0-9]+/giu, ' ').trim();
+		const words = localPart.split(/\s+/u).filter(Boolean);
+		if (words.length > 1) return `${words[0][0]}${words[1][0]}`.toUpperCase();
+		return localPart.slice(0, 2).toUpperCase() || 'VO';
+	});
 
-  async ngOnInit(): Promise<void> { const state = await this.store.initialize(); this.theme.apply(state.settings.theme); }
-  async logout(): Promise<void> { await this.auth.logout(); }
-  async cycleTheme(): Promise<void> {
-    const order = { system: 'light', light: 'dark', dark: 'system' } as const;
-    const state = await this.store.update((draft) => { draft.settings.theme = order[draft.settings.theme]; });
-    this.theme.apply(state.settings.theme);
-  }
+	async ngOnInit(): Promise<void> {
+		const state = await this.store.initialize();
+		this.theme.apply(state.settings.theme);
+	}
+
+	async logout(): Promise<void> {
+		await this.auth.logout();
+	}
+
+	async cycleTheme(): Promise<void> {
+		const order = {system: 'light', light: 'dark', dark: 'system'} as const;
+		const state = await this.store.update((draft) => {
+			draft.settings.theme = order[draft.settings.theme];
+		});
+		this.theme.apply(state.settings.theme);
+	}
 }
