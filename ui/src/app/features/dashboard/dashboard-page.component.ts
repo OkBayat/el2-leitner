@@ -71,6 +71,22 @@ export class DashboardPageComponent implements OnInit {
 		day: 'numeric',
 	}).format(new Date());
 	readonly houseDistribution = computed(() => buildLeitnerDistribution(this.state()?.words || [], localDay()));
+	readonly leitnerCoverage = computed(() => {
+		const words = this.state()?.words || [];
+		const total = words.length;
+		const entered = words.filter((word) => Boolean(word.introducedOn || word.box > 0 || word.masteredAt)).length;
+		const remaining = Math.max(0, total - entered);
+		const points: LearningChartPoint[] = [
+			{key: 'entered', label: 'In Leitner', value: entered},
+			{key: 'remaining', label: 'Not yet added', value: remaining},
+		];
+		return {
+			entered,
+			total,
+			percent: total ? Math.round(entered / total * 100) : 0,
+			points,
+		};
+	});
 	readonly statCards = computed(() => {
 		const stats = this.stats();
 		const overallAccuracy = accuracy(stats.correct, stats.attempts);
@@ -78,7 +94,6 @@ export class DashboardPageComponent implements OnInit {
 			{label: 'Due reviews', value: this.dueCount(), note: 'words'},
 			{label: 'Overall accuracy', value: overallAccuracy === null ? '—' : `${overallAccuracy}%`, note: 'all primary answers'},
 			{label: 'Mastered', value: stats.mastered, note: 'House 5'},
-			{label: 'Words in Leitner', value: this.houseDistribution().total.toLocaleString('en-US'), note: 'total active words'},
 		];
 	});
 	readonly hardest = computed(() => this.state() ? hardWords(this.state()!, 3) : []);

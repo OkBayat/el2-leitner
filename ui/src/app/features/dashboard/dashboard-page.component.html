@@ -48,6 +48,20 @@
 					<small>{{ card.note }}</small>
 				</article>
 			}
+
+			<article class="stat leitner-coverage-stat" data-testid="leitner-coverage-stat">
+				<span>Words in Leitner</span>
+				<div class="leitner-coverage-content">
+					<app-learning-chart
+						type="doughnut"
+						[points]="leitnerCoverage().points"
+						centerLabel="in Leitner"
+						[attr.data-percentage]="leitnerCoverage().percent"
+						ariaLabel="Percentage of vocabulary that has entered the Leitner system"
+					/>
+					<small>{{ leitnerCoverage().entered.toLocaleString('en-US') }} of {{ leitnerCoverage().total.toLocaleString('en-US') }} words</small>
+				</div>
+			</article>
 		</section>
 
 		<div class="dashboard-grid">

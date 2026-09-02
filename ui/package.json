@@ -10,8 +10,9 @@
         "build:production": "ng build --configuration production",
         "check:architecture": "node tests/test-angular-architecture.mjs",
         "check:dashboard-design": "node tests/test-dashboard-design.mjs",
+        "check:table-design": "node tests/test-table-design.mjs",
         "check:production-csp": "node tests/test-production-csp.mjs",
-        "test": "npm run check:architecture && npm run check:dashboard-design && ng test --watch=false && npm run build:production && npm run check:production-csp",
+        "test": "npm run check:architecture && npm run check:dashboard-design && npm run check:table-design && ng test --watch=false && npm run build:production && npm run check:production-csp",
         "test:unit": "ng test --watch=false",
         "test:regression": "ng test --watch=false",
         "e2e": "playwright test",
@@ -27,6 +28,7 @@
         "@angular/platform-browser": "^22.1.0",
         "@angular/router": "^22.1.0",
         "bootstrap": "5.3.8",
+        "chart.js": "4.5.1",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0"
     },

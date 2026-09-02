@@ -13,7 +13,6 @@
 	align-items: center;
 	gap: 10px;
 	padding: 0 20px;
-	border-bottom: 1px solid var(--mat-sys-outline-variant);
 	background: color-mix(in srgb, var(--mat-sys-surface) 96%, transparent);
 	backdrop-filter: blur(8px);
 }
@@ -94,7 +93,6 @@
 }
 
 .product-tabs {
-	border-bottom: 1px solid var(--mat-sys-outline-variant);
 	background: var(--mat-sys-surface);
 }
 
