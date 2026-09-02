@@ -28,17 +28,64 @@ import {ReviewMode} from '../../domain/learning/models';
 import {RemediationPhase} from '../../domain/remediation/remediation';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {ShareStoryService} from '../../shared/share-story/share-story.service';
+import {buildReviewAnswerFieldState, type ReviewAnswerFieldState} from './review-answer-field';
+import {ReviewContextBadgeComponent} from './review-context-badge.component';
+import {buildReviewSessionBarState} from './review-session-bar';
+
+type ReviewFooterTone = 'neutral' | 'success' | 'error' | 'practice';
+type ReviewFooterIcon = 'none' | 'check' | 'error' | 'practice';
+type ReviewFooterAction = 'submit-answer' | 'acknowledge' | 'next';
+
+interface ReviewFooterState {
+	tone: ReviewFooterTone;
+	icon: ReviewFooterIcon;
+	title: string;
+	detail: string;
+	primaryLabel: string;
+	primaryAction: ReviewFooterAction;
+	secondaryLabel?: string;
+}
+
+const CHECK_ANSWER_LABEL = 'Check answer';
+const CONTINUE_LABEL = 'Continue';
+
+function practiceFooter(title: string, detail: string): ReviewFooterState {
+	return {
+		tone: 'practice',
+		icon: 'practice',
+		title,
+		detail,
+		primaryLabel: CHECK_ANSWER_LABEL,
+		primaryAction: 'submit-answer',
+	};
+}
+
+function continueFooter(
+	tone: 'success' | 'error',
+	icon: 'check' | 'error',
+	title: string,
+	detail: string,
+	primaryAction: 'acknowledge' | 'next' = 'next',
+): ReviewFooterState {
+	return {
+		tone,
+		icon,
+		title,
+		detail,
+		primaryLabel: CONTINUE_LABEL,
+		primaryAction,
+	};
+}
 
 @Component({
 	selector: 'app-review-page',
-	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule],
+	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
 	templateUrl: 'review-page.component.html',
 	styleUrl: 'review-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewPageComponent implements OnInit {
 	@ViewChild('answerInput') private answerInput?: ElementRef<HTMLInputElement>;
-	@ViewChild('remediationInput') private remediationInput?: ElementRef<HTMLInputElement>;
 	readonly session = inject(ReviewSessionService);
 	readonly store = inject(LearningStoreService);
 	readonly router = inject(Router);
@@ -49,13 +96,67 @@ export class ReviewPageComponent implements OnInit {
 	private readonly theme = inject(ThemeService);
 	readonly Phase = RemediationPhase;
 	readonly answer = new FormControl('', {nonNullable: true});
-	readonly remediationAnswer = new FormControl('', {nonNullable: true});
 	readonly limit = new FormControl(0, {nonNullable: true});
 	readonly saving = signal(false);
 	readonly state = this.store.state;
 	readonly dueCount = computed(() => this.state() ? getDueWords(this.state()!).length : 0);
 	readonly newCount = computed(() => this.state() ? getDueWords(this.state()!).filter((word) => word.introducedOn === localDay() && word.box === 1).length : 0);
 	readonly estimatedMinutes = computed(() => Math.max(1, Math.ceil(this.dueCount() * .35)));
+	readonly sessionBarState = computed(() => buildReviewSessionBarState({
+		answered: this.session.answered(),
+		initialCount: this.session.initialCount(),
+		freePractice: this.session.freePractice(),
+		recheck: this.session.currentTask() === 'recheck',
+	}));
+	readonly answerFieldState = computed<ReviewAnswerFieldState | null>(() => buildReviewAnswerFieldState({
+		active: this.session.active(),
+		currentTask: this.session.currentTask(),
+		hasFeedback: Boolean(this.session.feedback()),
+		remediationPhase: this.session.remediation()?.phase ?? null,
+	}));
+	readonly footerState = computed<ReviewFooterState | null>(() => {
+		if (!this.session.active()) return null;
+
+		const remediation = this.session.remediation();
+		const feedback = this.session.feedback();
+		if (remediation) {
+			if (remediation.phase === RemediationPhase.CORRECTION) {
+				return continueFooter(
+					'error',
+					'error',
+					'Correct solution:',
+					feedback?.spelling || remediation.target,
+					'acknowledge',
+				);
+			}
+			if (remediation.phase === RemediationPhase.COMPLETED) {
+				return continueFooter('success', 'check', 'Correct!', 'You remembered the spelling.');
+			}
+			if (remediation.phase === RemediationPhase.COPY) {
+				return practiceFooter('Practice the correction', 'Copy the correct spelling exactly once, then check.');
+			}
+			return practiceFooter('From memory', 'Type the spelling from memory, then check.');
+		}
+
+		if (feedback) {
+			return feedback.correct
+				? continueFooter('success', 'check', feedback.title, feedback.detail)
+				: continueFooter('error', 'error', 'Correct solution:', feedback.spelling);
+		}
+
+		if (this.session.currentTask() === 'review') {
+			return {
+				tone: 'neutral',
+				icon: 'none',
+				title: '',
+				detail: '',
+				primaryLabel: CHECK_ANSWER_LABEL,
+				primaryAction: 'submit-answer',
+				secondaryLabel: "I don't know",
+			};
+		}
+		return null;
+	});
 
 	async ngOnInit(): Promise<void> {
 		const state = await this.store.initialize();
@@ -70,27 +171,28 @@ export class ReviewPageComponent implements OnInit {
 			this.snack.open(mode === 'box1' ? 'There are no cards in House 1 yet.' : 'There are no due reviews.', 'OK', {duration: 3000});
 			return;
 		}
-		this.focusAnswerInput();
+		this.prepareAnswerInput();
 		setTimeout(() => this.session.pronounce(), 200);
 	}
 
-	async submit(): Promise<void> {
-		if (!this.answer.value.trim()) return;
-		this.saving.set(true);
-		try {
-			await this.session.submit(this.answer.value);
-			this.answer.setValue('');
-		} catch (error) {
-			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
-		} finally {
-			this.saving.set(false);
+	async submitAnswer(): Promise<void> {
+		const field = this.answerFieldState();
+		if (!field || field.disabled || this.answer.disabled || !this.answer.value.trim()) return;
+		if (field.action === 'review') {
+			await this.submitReviewAnswer();
+			return;
 		}
+		this.submitRemediationAnswer();
 	}
 
 	async dontKnow(): Promise<void> {
+		this.answer.disable({emitEvent: false});
 		this.saving.set(true);
 		try {
 			await this.session.submit('', true);
+		} catch (error) {
+			this.answer.enable({emitEvent: false});
+			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
 		} finally {
 			this.saving.set(false);
 		}
@@ -98,15 +200,24 @@ export class ReviewPageComponent implements OnInit {
 
 	acknowledge(): void {
 		this.session.acknowledgeCorrection();
-		this.remediationAnswer.setValue('');
-		this.focusRemediationInput();
+		this.prepareAnswerInput();
 	}
 
-	submitRemediation(): void {
-		if (!this.remediationAnswer.value.trim()) return;
-		this.session.submitRemediation(this.remediationAnswer.value);
-		this.remediationAnswer.setValue('');
-		if (this.session.remediation()?.phase !== RemediationPhase.COMPLETED) this.focusRemediationInput();
+	isFooterPrimaryDisabled(footer: ReviewFooterState): boolean {
+		if (footer.primaryAction === 'submit-answer') return this.saving() || this.answer.disabled || !this.answer.value.trim();
+		return false;
+	}
+
+	async handleFooterPrimary(action: ReviewFooterAction): Promise<void> {
+		if (action === 'submit-answer') {
+			await this.submitAnswer();
+			return;
+		}
+		if (action === 'acknowledge') {
+			this.acknowledge();
+			return;
+		}
+		await this.next();
 	}
 
 	tokenValue(value: string): string {
@@ -115,10 +226,9 @@ export class ReviewPageComponent implements OnInit {
 
 	async next(): Promise<void> {
 		await this.session.next();
-		this.answer.setValue('');
-		this.remediationAnswer.setValue('');
+		this.prepareAnswerInput(false);
 		if (!this.session.active()) return;
-		if (this.session.currentTask() === 'review') this.focusAnswerInput(); else this.focusRemediationInput();
+		if (this.answerFieldState() && !this.answerFieldState()!.disabled) this.focusAnswerInput();
 		setTimeout(() => this.session.pronounce(), 180);
 	}
 
@@ -140,12 +250,41 @@ export class ReviewPageComponent implements OnInit {
 		return category || 'Uncategorized';
 	}
 
-	private focusAnswerInput(): void {
-		setTimeout(() => this.answerInput?.nativeElement.focus());
+	private async submitReviewAnswer(): Promise<void> {
+		const submittedAnswer = this.answer.value;
+		this.answer.disable({emitEvent: false});
+		this.saving.set(true);
+		try {
+			await this.session.submit(submittedAnswer);
+		} catch (error) {
+			this.answer.enable({emitEvent: false});
+			this.snack.open(error instanceof Error ? error.message : 'Could not save your answer.', 'Close');
+		} finally {
+			this.saving.set(false);
+		}
 	}
 
-	private focusRemediationInput(): void {
-		setTimeout(() => this.remediationInput?.nativeElement.focus());
+	private submitRemediationAnswer(): void {
+		const submittedAnswer = this.answer.value;
+		this.answer.disable({emitEvent: false});
+		try {
+			this.session.submitRemediation(submittedAnswer);
+		} catch (error) {
+			this.answer.enable({emitEvent: false});
+			throw error;
+		}
+		if (this.session.remediation()?.phase === RemediationPhase.COMPLETED) return;
+		this.prepareAnswerInput();
+	}
+
+	private prepareAnswerInput(focus = true): void {
+		this.answer.enable({emitEvent: false});
+		this.answer.setValue('', {emitEvent: false});
+		if (focus) this.focusAnswerInput();
+	}
+
+	private focusAnswerInput(): void {
+		setTimeout(() => this.answerInput?.nativeElement.focus());
 	}
 
 	@HostListener('document:keydown', ['$event'])

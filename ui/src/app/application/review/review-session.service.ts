@@ -36,6 +36,7 @@ export class ReviewSessionService {
   private readonly wrongSignal = signal(0);
   private readonly initialCountSignal = signal(0);
   private readonly currentTaskSignal = signal<'review' | 'recheck'>('review');
+  private readonly freePracticeSignal = signal(false);
   private queue: string[] = [];
   private rechecks = new SameSessionRecheckQueue();
   private remediationAttempt: RemediationAttempt | null = null;
@@ -56,8 +57,9 @@ export class ReviewSessionService {
   readonly wrong = this.wrongSignal.asReadonly();
   readonly initialCount = this.initialCountSignal.asReadonly();
   readonly currentTask = this.currentTaskSignal.asReadonly();
+  readonly freePractice = this.freePracticeSignal.asReadonly();
   readonly accuracy = computed(() => this.answeredSignal() ? Math.round((this.correctSignal() / this.answeredSignal()) * 100) : null);
-  readonly progress = computed(() => this.mode === 'box1' ? 100 : this.initialCountSignal() ? Math.min(100, Math.round((this.answeredSignal() / this.initialCountSignal()) * 100)) : 0);
+  readonly progress = computed(() => this.freePracticeSignal() ? 100 : this.initialCountSignal() ? Math.min(100, Math.round((this.answeredSignal() / this.initialCountSignal()) * 100)) : 0);
 
   prepareNewWords(ids: string[]): void { this.preparedNewIds = [...ids]; }
   hasPreparedNewWords(): boolean { return this.preparedNewIds.length > 0; }
@@ -66,6 +68,7 @@ export class ReviewSessionService {
     await this.store.initialize();
     const state = this.store.snapshot();
     this.mode = mode;
+    this.freePracticeSignal.set(mode === 'box1');
     this.rechecks.clear();
     this.remediationAttempt = null;
     this.currentRecheck = null;
