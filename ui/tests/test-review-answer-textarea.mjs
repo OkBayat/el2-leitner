@@ -7,6 +7,7 @@ const testDir = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDir, '..');
 const template = fs.readFileSync(path.join(uiRoot, 'src/app/features/review/review-page.component.html'), 'utf8');
 const styles = fs.readFileSync(path.join(uiRoot, 'src/app/features/review/review-page.component.scss'), 'utf8');
+const globalStyles = fs.readFileSync(path.join(uiRoot, 'src/styles.scss'), 'utf8');
 
 assert.match(
 	template,
@@ -35,7 +36,12 @@ assert.match(
 assert.match(
 	styles,
 	/\.review-answer-input\s*\{[\s\S]*?height:\s*2rem!important;[\s\S]*?font-size:\s*1\.2rem!important;/u,
-	'The textarea must retain the existing input height and typography.',
+	'The component must retain the baseline input height and typography.',
+);
+assert.match(
+	globalStyles,
+	/textarea\.review-answer-input\s*\{[\s\S]*?height:\s*calc\(2rem - 5px\)!important;/u,
+	'The textarea presentation must be exactly 5px shorter than the baseline input height.',
 );
 
 console.log('Review answer textarea regression checks passed.');
