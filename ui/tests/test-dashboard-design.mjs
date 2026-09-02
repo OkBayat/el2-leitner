@@ -35,6 +35,7 @@ assert.match(shellTs, /delta >= MOBILE_NAV_SCROLL_THRESHOLD[\s\S]*mobileNavHidde
 assert.match(shellTs, /delta <= -MOBILE_NAV_SCROLL_THRESHOLD[\s\S]*mobileNavHidden\.set\(false\)/u, 'Scrolling up must reveal the mobile navigation.');
 assert.match(shellTs, /currentScrollY <= MOBILE_NAV_TOP_SAFE_ZONE[\s\S]*mobileNavHidden\.set\(false\)/u, 'The mobile navigation must remain visible at the top of the page.');
 assert.match(shellHtml, /\[class\.is-hidden\]="mobileNavHidden\(\)"/u, 'The mobile navigation must bind its hidden presentation to one signal.');
+assert.match(shellHtml, /\[attr\.aria-hidden\]="mobileNavHidden\(\) \? 'true' : null"/u, 'The hidden navigation must be removed from the accessibility tree.');
 assert.match(shellHtml, /\[attr\.tabindex\]="mobileNavHidden\(\) \? -1 : null"/u, 'Hidden mobile navigation links must leave the keyboard tab order.');
 
 for (const [name, styles] of [
