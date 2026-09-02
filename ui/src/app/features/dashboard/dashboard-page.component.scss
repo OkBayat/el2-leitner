@@ -131,7 +131,7 @@
 .stat {
 	display: flex;
 	min-width: 0;
-	min-height: 108px;
+	min-height: 128px;
 	flex-direction: column;
 	justify-content: center;
 	padding: 18px 22px;
@@ -157,6 +157,23 @@
 
 .stat small {
 	margin-top: 3px;
+}
+
+.leitner-coverage-stat {
+	align-items: flex-start;
+}
+
+.leitner-coverage-content {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-top: 6px;
+}
+
+.leitner-coverage-content small {
+	max-width: 92px;
+	margin: 0;
+	line-height: 1.45;
 }
 
 .dashboard-grid {
@@ -387,6 +404,10 @@
 
 	.stat:last-child {
 		border-bottom: 0;
+	}
+
+	.leitner-coverage-content small {
+		max-width: none;
 	}
 
 	.leitner-row {
