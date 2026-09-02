@@ -61,6 +61,7 @@ export class ReviewSessionService {
 
   prepareNewWords(ids: string[]): void { this.preparedNewIds = [...ids]; }
   hasPreparedNewWords(): boolean { return this.preparedNewIds.length > 0; }
+  isFreePractice(): boolean { return this.mode === 'box1'; }
 
   async start(mode: ReviewMode = 'review', limit = 0): Promise<boolean> {
     await this.store.initialize();
