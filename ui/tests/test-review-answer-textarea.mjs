@@ -40,23 +40,23 @@ assert.match(
 );
 assert.match(
 	globalStyles,
-	/mat-form-field\.review-answer-field\s*\{[\s\S]*?--mat-form-field-container-height:\s*46px;[\s\S]*?--mat-form-field-container-vertical-padding:\s*11px;/u,
-	'The visible Material answer field must be 46px tall, exactly 10px below the default 56px height.',
+	/mat-form-field\.review-answer-field\s*\{[\s\S]*?--mat-form-field-container-height:\s*51px;[\s\S]*?--mat-form-field-container-vertical-padding:\s*14\.5px;/u,
+	'The visible Material answer field must be 51px tall, 5px taller than the previous 46px version.',
 );
 assert.match(
 	globalStyles,
-	/mat-form-field\.review-answer-field \.mat-mdc-text-field-wrapper\s*\{[\s\S]*?height:\s*46px;/u,
-	'The MDC outlined wrapper must enforce the 46px visible height rather than only shrinking the textarea content.',
+	/mat-form-field\.review-answer-field \.mat-mdc-text-field-wrapper\s*\{[\s\S]*?height:\s*51px;/u,
+	'The MDC outlined wrapper must enforce the 51px visible height.',
 );
 assert.match(
 	globalStyles,
-	/mat-form-field\.review-answer-field \.mat-mdc-form-field-infix\s*\{[\s\S]*?min-height:\s*46px;[\s\S]*?padding-top:\s*11px;[\s\S]*?padding-bottom:\s*11px;/u,
-	'The Material infix must align the label and text within the shorter field.',
+	/mat-form-field\.review-answer-field \.mat-mdc-form-field-infix\s*\{[\s\S]*?min-height:\s*51px;[\s\S]*?padding-top:\s*14\.5px;[\s\S]*?padding-bottom:\s*14\.5px;/u,
+	'The Material infix must keep the answer vertically aligned within the 51px field.',
 );
 assert.match(
 	globalStyles,
 	/textarea\.review-answer-input\s*\{[\s\S]*?height:\s*22px!important;[\s\S]*?line-height:\s*22px!important;/u,
-	'The one-line textarea content must fit inside the 46px Material field without restoring multiline height.',
+	'The one-line textarea content must remain single-line inside the 51px Material field.',
 );
 assert.doesNotMatch(globalStyles, /calc\(2rem - 5px\)/u, 'The ineffective 5px-only textarea reduction must not remain.');
 
