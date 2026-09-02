@@ -5,13 +5,17 @@
 	--mat-form-field-outlined-outline-color: var(--review-success-action);
 	--mat-form-field-outlined-hover-outline-color: var(--review-success-action);
 	--mat-form-field-outlined-focus-outline-color: var(--review-success-action);
-	--mdc-outlined-text-field-label-text-color: var(--review-success-action-shadow);
-	--mdc-outlined-text-field-focus-label-text-color: var(--review-success-action-shadow);
+	--mdc-outlined-text-field-label-text-color: var(--review-success-action);
+	--mdc-outlined-text-field-focus-label-text-color: var(--review-success-action);
 }
 
 :host ::ng-deep .review-answer-field.review-answer-correct .mat-mdc-text-field-wrapper {
 	background: var(--review-success-background);
 	border-radius: 4px;
+}
+
+:host ::ng-deep .review-answer-field.review-answer-correct .mat-mdc-floating-label {
+	color: var(--review-success-action)!important;
 }
 
 :host ::ng-deep .review-answer-field.review-answer-correct .mdc-notched-outline__trailing {
