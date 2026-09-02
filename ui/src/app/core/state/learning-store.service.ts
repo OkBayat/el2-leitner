@@ -6,6 +6,35 @@ import { activateUnseenWords, createFreshState, ensureDailyWords, hydrateState, 
 import { LearningState, LearningStateResponse, LearningWord } from '../../domain/learning/models';
 
 const LEGACY_STORAGE_KEY = 'vazheyar-ielts-state-v1';
+const EDITABLE_WORD_KEYS = new Set<keyof LearningWord>(['term', 'accepted', 'category', 'notes']);
+
+export interface VocabularyEditCandidate {
+  index: number;
+  word: LearningWord;
+}
+
+function stableWord(word: LearningWord): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(word).filter(([key]) => !EDITABLE_WORD_KEYS.has(key as keyof LearningWord)));
+}
+
+export function detectSingleVocabularyEdit(before: LearningState, after: LearningState): VocabularyEditCandidate | null {
+  if (before.words.length !== after.words.length) return null;
+  const beforeRoot = { ...before, words: [], updatedAt: '' };
+  const afterRoot = { ...after, words: [], updatedAt: '' };
+  if (JSON.stringify(beforeRoot) !== JSON.stringify(afterRoot)) return null;
+
+  const changed: number[] = [];
+  for (let index = 0; index < before.words.length; index += 1) {
+    if (JSON.stringify(before.words[index]) !== JSON.stringify(after.words[index])) changed.push(index);
+  }
+  if (changed.length !== 1) return null;
+
+  const index = changed[0];
+  const previous = before.words[index];
+  const next = after.words[index];
+  if (previous.id !== next.id || JSON.stringify(stableWord(previous)) !== JSON.stringify(stableWord(next))) return null;
+  return { index, word: next };
+}
 
 @Injectable({ providedIn: 'root' })
 export class LearningStoreService {
@@ -95,9 +124,40 @@ export class LearningStoreService {
     this.replaceLocal(result.state, revision); return result;
   }
 
-  async update(mutator: (state: LearningState) => void): Promise<LearningState> { const state = this.snapshot(); mutator(state); state.updatedAt = new Date().toISOString(); await this.persistState(state); this.stateSignal.set(state); return state; }
+  async update(mutator: (state: LearningState) => void): Promise<LearningState> {
+    const before = this.snapshot();
+    const state = structuredClone(before);
+    mutator(state);
+    state.updatedAt = new Date().toISOString();
+    const vocabularyEdit = detectSingleVocabularyEdit(before, state);
+    if (vocabularyEdit) {
+      await this.persistVocabularyEdit(state, vocabularyEdit);
+      return state;
+    }
+    await this.persistState(state);
+    this.stateSignal.set(state);
+    return state;
+  }
+
   async replaceAndPersist(state: LearningState): Promise<void> { await this.persistState(state); this.stateSignal.set(structuredClone(state)); }
   async persistCurrent(): Promise<void> { await this.persistState(this.snapshot()); }
+
+  private async persistVocabularyEdit(state: LearningState, edit: VocabularyEditCandidate): Promise<void> {
+    if (this.writeBlockedSignal()) throw new ApiError('Saving is blocked because the state revision conflicts with a newer version.', 409, 'STATE_CONFLICT');
+    try {
+      const result = await this.vocabularyApi.update(this.revisionSignal(), edit.word.id, {
+        term: edit.word.term,
+        acceptedForms: edit.word.accepted,
+        category: edit.word.category,
+        notes: edit.word.notes,
+      });
+      state.words[edit.index] = { ...state.words[edit.index], ...result.word };
+      this.replaceLocal(state, result.revision);
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'STATE_CONFLICT') this.writeBlockedSignal.set(true);
+      throw error;
+    }
+  }
 
   private async persistState(state: LearningState): Promise<void> {
     if (this.writeBlockedSignal()) throw new ApiError('Saving is blocked because the state revision conflicts with a newer version.', 409, 'STATE_CONFLICT');
