@@ -129,18 +129,24 @@
 								[class.review-answer-correct]="field.feedbackTone === 'correct'"
 								appearance="outline">
 								<mat-label>{{ field.label }}</mat-label>
-								<input
+								<textarea
 									#answerInput
 									class="review-answer-input"
 									data-testid="review-answer-input"
 									matInput
+									rows="1"
+									wrap="off"
+									enterkeyhint="go"
+									aria-multiline="false"
+									style="resize: none; overflow: hidden; white-space: nowrap;"
 									[formControl]="answer"
 									[readonly]="field.readOnly || saving()"
+									(keydown.enter)="$event.preventDefault(); field.readOnly ? next() : submitAnswer()"
 									lang="en"
 									autocomplete="off"
 									autocapitalize="none"
 									autocorrect="off"
-									spellcheck="false">
+									spellcheck="false"></textarea>
 							</mat-form-field>
 						</form>
 					}
