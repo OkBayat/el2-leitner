@@ -103,7 +103,6 @@ export class ReviewPageComponent implements OnInit {
 	readonly newCount = computed(() => this.state() ? getDueWords(this.state()!).filter((word) => word.introducedOn === localDay() && word.box === 1).length : 0);
 	readonly estimatedMinutes = computed(() => Math.max(1, Math.ceil(this.dueCount() * .35)));
 	readonly sessionBarState = computed(() => buildReviewSessionBarState({
-		accuracy: this.session.accuracy(),
 		answered: this.session.answered(),
 		initialCount: this.session.initialCount(),
 		freePractice: this.session.isFreePractice(),
