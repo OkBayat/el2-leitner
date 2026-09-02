@@ -25,6 +25,9 @@ assert.match(dashboardHtml, />Today's plan</u, 'The current dashboard E2E contra
 assert.match(dashboardHtml, /Today's progress/u, 'The minimal dashboard must expose the compact daily progress summary.');
 assert.match(dashboardTs, /label: 'Words in Leitner'/u, 'The summary row must expose total active Leitner words.');
 assert.equal(dashboardHtml.match(/class="leitner-row"/gu)?.length, 1, 'One template loop must own all five Leitner rows.');
+assert.doesNotMatch(dashboardHtml, /data-tooltip|\[attr\.title\]/u, 'Leitner state cells must not expose hover tooltip attributes.');
+assert.doesNotMatch(dashboardTs, /segmentTooltip/u, 'Dashboard TypeScript must not retain obsolete tooltip-building logic.');
+assert.doesNotMatch(dashboardStyles, /leitner-segment::after|leitner-segment:hover::after|attr\(data-tooltip\)/u, 'Leitner tooltip pseudo-elements must be removed from the stylesheet.');
 
 assert.match(shellTs, /MatMenuModule/u, 'The compact hamburger/account navigation should use Angular Material menus.');
 assert.match(shellHtml, /class="topbar"/u, 'The application shell must use the minimal top bar.');
