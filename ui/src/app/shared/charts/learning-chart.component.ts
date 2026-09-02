@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 
 export type LearningChartType = 'bar' | 'line' | 'doughnut';
+type LearningChartConfiguration = ChartConfiguration<any, any[], unknown>;
 
 export interface LearningChartPoint {
 	key: string;
@@ -60,7 +61,7 @@ export function buildLearningChartConfig(
 	requestedMax: number | null = null,
 	suffix = '',
 	palette: LearningChartPalette = FALLBACK_PALETTE,
-): ChartConfiguration {
+): LearningChartConfiguration {
 	const labels = points.map((point) => point.label);
 	const values = points.map((point) => finiteOrNull(point.value));
 
