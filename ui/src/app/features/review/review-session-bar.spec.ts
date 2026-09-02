@@ -4,76 +4,46 @@ import {buildReviewSessionBarState} from './review-session-bar';
 describe('buildReviewSessionBarState', () => {
 	it('shows the next card position for scheduled review', () => {
 		expect(buildReviewSessionBarState({
-			accuracy: 69,
 			answered: 120,
 			initialCount: 411,
 			freePractice: false,
 			recheck: false,
-		})).toEqual({
-			accuracyLabel: '69%',
-			counterLabel: '121 / 411',
-			recheck: false,
-			accessibleLabel: 'Accuracy: 69% · 121 / 411',
-		});
+		})).toEqual({counterLabel: '121 / 411', recheck: false});
 	});
 
-	it('keeps the completed primary-card count visible during a scheduled recheck', () => {
+	it('hides the scheduled-review count during a recheck', () => {
 		expect(buildReviewSessionBarState({
-			accuracy: 69,
 			answered: 120,
 			initialCount: 411,
 			freePractice: false,
 			recheck: true,
-		})).toEqual({
-			accuracyLabel: '69%',
-			counterLabel: '120 / 411',
-			recheck: true,
-			accessibleLabel: 'Accuracy: 69% · Recheck · 120 / 411',
-		});
+		})).toEqual({counterLabel: null, recheck: true});
 	});
 
 	it('shows an answer count instead of a finite denominator in House 1 free practice', () => {
 		expect(buildReviewSessionBarState({
-			accuracy: 69,
 			answered: 120,
 			initialCount: 411,
 			freePractice: true,
 			recheck: false,
-		})).toEqual({
-			accuracyLabel: '69%',
-			counterLabel: '120 answers',
-			recheck: false,
-			accessibleLabel: 'Accuracy: 69% · 120 answers',
-		});
+		})).toEqual({counterLabel: '120 answers', recheck: false});
 	});
 
-	it('does not count a House 1 recheck as another answer', () => {
+	it('hides the House 1 answer count during a recheck', () => {
 		expect(buildReviewSessionBarState({
-			accuracy: 69,
 			answered: 120,
 			initialCount: 411,
 			freePractice: true,
 			recheck: true,
-		})).toEqual({
-			accuracyLabel: '69%',
-			counterLabel: '120 answers',
-			recheck: true,
-			accessibleLabel: 'Accuracy: 69% · Recheck · 120 answers',
-		});
+		})).toEqual({counterLabel: null, recheck: true});
 	});
 
-	it('uses an em dash and zero answers before the first free-practice answer', () => {
+	it('uses the singular answer label when exactly one primary answer was submitted', () => {
 		expect(buildReviewSessionBarState({
-			accuracy: null,
-			answered: 0,
+			answered: 1,
 			initialCount: 411,
 			freePractice: true,
 			recheck: false,
-		})).toEqual({
-			accuracyLabel: '—',
-			counterLabel: '0 answers',
-			recheck: false,
-			accessibleLabel: 'Accuracy: — · 0 answers',
-		});
+		})).toEqual({counterLabel: '1 answer', recheck: false});
 	});
 });
