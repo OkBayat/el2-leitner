@@ -44,6 +44,12 @@ button, input, textarea, select {
 	font: inherit;
 }
 
+textarea.review-answer-input {
+	resize: none;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 a {
 	color: inherit;
 }
