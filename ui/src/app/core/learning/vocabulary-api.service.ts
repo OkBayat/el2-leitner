@@ -7,6 +7,24 @@ export interface VocabularySourceInfo {
   collections: Array<{ id: string; title: string }>;
 }
 
+export interface VocabularyEditInput {
+  term: string;
+  acceptedForms: string[];
+  category: string;
+  notes: string;
+}
+
+export interface VocabularyEditResult {
+  revision: number;
+  word: {
+    id: string;
+    term: string;
+    accepted: string[];
+    category: string;
+    notes: string;
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class VocabularyApiService {
   private readonly api = inject(ApiClientService);
@@ -21,6 +39,15 @@ export class VocabularyApiService {
     return this.requireNextRevision(response.revision, revision);
   }
 
+  async update(revision: number, vocabularyId: string, input: VocabularyEditInput): Promise<VocabularyEditResult> {
+    const response = await this.api.put<VocabularyEditResult>(
+      `/api/learning/vocabulary/${encodeURIComponent(vocabularyId)}`,
+      { revision, ...input },
+    );
+    this.requireNextRevision(response.revision, revision);
+    return response;
+  }
+
   async sources(ids: string[]): Promise<VocabularySourceInfo[]> {
     if (!ids.length) return [];
     const response = await this.api.get<{ sources: VocabularySourceInfo[] }>(`/api/library/vocabulary-sources?ids=${encodeURIComponent(ids.slice(0, 50).join(','))}`);
@@ -28,7 +55,7 @@ export class VocabularyApiService {
   }
 
   private requireNextRevision(next: number, current: number): number {
-    if (!Number.isSafeInteger(next) || next !== current + 1) throw new Error('Invalid vocabulary activation revision.');
+    if (!Number.isSafeInteger(next) || next !== current + 1) throw new Error('Invalid vocabulary revision.');
     return next;
   }
 }

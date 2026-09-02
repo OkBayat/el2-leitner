@@ -11,10 +11,11 @@ import { GetLeitnerHouse } from "./application/learning/GetLeitnerHouse.js";
 import { LearningSessionCommands } from "./application/learning/LearningSessionCommands.js";
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
 import { SaveLearningState } from "./application/learning/SaveLearningState.js";
+import { UpdateVocabulary } from "./application/learning/UpdateVocabulary.js";
 import { LibraryAdminPolicy } from "./domain/library/LibraryAdminPolicy.js";
 import { VocabularyFileParser } from "./domain/library/VocabularyFileParser.js";
-import { MySqlEfficientLearningStateRepository } from "./infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js";
-import { MySqlLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js";
+import { MySqlEditableLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningBootstrapRepository.js";
+import { MySqlEditableLearningStateRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningStateRepository.js";
 import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySqlLibraryRepository.js";
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
@@ -27,11 +28,11 @@ import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
 export function createContainer({ pool, config, adapters = {} }) {
   const userRepository = adapters.userRepository ?? new MySqlUserRepository(pool);
   const learningStateRepository =
-    adapters.learningStateRepository ?? new MySqlEfficientLearningStateRepository(pool);
+    adapters.learningStateRepository ?? new MySqlEditableLearningStateRepository(pool);
   const learningBootstrapRepository = adapters.learningBootstrapRepository
     ?? (adapters.learningStateRepository
       ? learningStateRepository
-      : new MySqlLearningBootstrapRepository(pool, learningStateRepository));
+      : new MySqlEditableLearningBootstrapRepository(pool, learningStateRepository));
   const libraryRepository = adapters.libraryRepository ?? new MySqlLibraryRepository(pool);
   const practiceSessionRepository =
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
@@ -61,6 +62,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
       getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),
+      updateVocabulary: new UpdateVocabulary({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
       activateVocabularyBatch: new ActivateVocabularyBatch({ vocabularyActivationRepository }),
       getVocabularySources: new GetVocabularySources({ vocabularySourceRepository }),

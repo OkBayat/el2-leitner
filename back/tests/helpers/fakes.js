@@ -52,6 +52,29 @@ export class InMemoryLearningStateRepository {
     this.states.set(key, { state: structuredClone(state), revision });
     return revision;
   }
+
+  async updateVocabulary(userId, word, expectedRevision) {
+    const key = String(userId);
+    const current = this.states.get(key);
+    const currentRevision = current?.revision ?? 0;
+    if (currentRevision !== expectedRevision) {
+      throw new ConflictError(
+        "STATE_CONFLICT",
+        "Learning state was updated by another session. Reload and try again."
+      );
+    }
+    const state = structuredClone(current?.state);
+    const target = state?.words?.find((item) => String(item.id) === String(word.id));
+    if (!target) throw new NotFoundError("VOCABULARY_NOT_FOUND", "Vocabulary was not found for this learner.");
+    target.term = word.term;
+    target.accepted = [...word.accepted];
+    target.category = word.category;
+    target.notes = word.notes;
+    state.updatedAt = new Date().toISOString();
+    const revision = expectedRevision + 1;
+    this.states.set(key, { state, revision });
+    return revision;
+  }
 }
 
 export class InMemoryLibraryRepository {
