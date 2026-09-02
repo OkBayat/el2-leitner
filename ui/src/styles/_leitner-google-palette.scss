@@ -1,0 +1,68 @@
+@mixin apply() {
+	[data-testid='house-status'] {
+		--leitner-google-blue: rgb(66 133 244);
+		--leitner-google-green: rgb(52 168 83);
+		--leitner-google-yellow: rgb(251 188 4);
+		--leitner-google-red: rgb(234 67 53);
+	}
+
+	[data-testid='house-status'] .leitner-row {
+		--house-tone: var(--leitner-google-blue);
+	}
+
+	[data-testid='house-status'] .leitner-row[data-house='2'] {
+		--house-tone: var(--leitner-google-green);
+	}
+
+	[data-testid='house-status'] .leitner-row[data-house='3'] {
+		--house-tone: var(--leitner-google-yellow);
+	}
+
+	[data-testid='house-status'] .leitner-row[data-house='4'] {
+		--house-tone: var(--leitner-google-red);
+	}
+
+	[data-testid='house-status'] .leitner-row[data-house='5'] {
+		--house-tone: color-mix(in srgb, var(--leitner-google-blue) 68%, var(--leitner-google-green));
+	}
+
+	[data-testid='house-status'] .leitner-row:hover {
+		background: color-mix(in srgb, var(--house-tone) 5%, var(--mat-sys-surface));
+	}
+
+	[data-testid='house-status'] .leitner-house-name {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+	}
+
+	[data-testid='house-status'] .leitner-house-name::before {
+		width: 8px;
+		height: 8px;
+		flex: 0 0 8px;
+		border-radius: 50%;
+		background: var(--house-tone);
+		content: '';
+	}
+
+	[data-testid='house-status'] .leitner-row .leitner-segment {
+		border-color: color-mix(in srgb, var(--house-tone) 32%, var(--mat-sys-outline-variant));
+		background: color-mix(in srgb, var(--house-tone) 16%, var(--mat-sys-surface));
+		color: var(--mat-sys-on-surface);
+	}
+
+	[data-testid='house-status'] .leitner-row .leitner-segment:not(.is-occupied) {
+		border-color: color-mix(in srgb, var(--house-tone) 16%, var(--mat-sys-outline-variant));
+		background: color-mix(in srgb, var(--house-tone) 6%, var(--mat-sys-surface));
+		color: var(--mat-sys-on-surface-variant);
+	}
+
+	[data-testid='house-status'] .leitner-row .leitner-segment.is-occupied:hover {
+		border-color: color-mix(in srgb, var(--house-tone) 50%, var(--mat-sys-outline-variant));
+		background: color-mix(in srgb, var(--house-tone) 24%, var(--mat-sys-surface));
+	}
+
+	[data-testid='house-status'] .leitner-row:focus-visible {
+		outline-color: color-mix(in srgb, var(--house-tone) 42%, transparent);
+	}
+}
