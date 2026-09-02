@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -45,7 +45,7 @@ export class WordDialogComponent {
 @Component({
   selector: 'app-words-page',
   imports: [ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
-  template: `<section class="page"><header><div><h1>Word Bank</h1><p>{{ filtered().length }} words</p></div><div><input #fileInput hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="importFile($event)"><button mat-stroked-button (click)="fileInput.click()">Import MD / TXT</button><button mat-flat-button (click)="editWord()">Add word</button></div></header><div class="filters"><mat-form-field appearance="outline"><mat-label>Search</mat-label><input matInput [formControl]="search" (input)="page.set(1)"></mat-form-field><mat-form-field appearance="outline"><mat-label>House</mat-label><mat-select [formControl]="box" (selectionChange)="page.set(1)"><mat-option value="all">All</mat-option><mat-option value="0">Not introduced</mat-option>@for(h of [1,2,3,4,5]; track h){<mat-option [value]="String(h)">House {{ h }}</mat-option>}</mat-select></mat-form-field><mat-form-field appearance="outline"><mat-label>Sort</mat-label><mat-select [formControl]="sort"><mat-option value="number">Original order</mat-option><mat-option value="mistakes">Most mistakes</mat-option><mat-option value="due">Next due</mat-option><mat-option value="alpha">Alphabetical</mat-option></mat-select></mat-form-field></div><div class="table-wrap"><table mat-table [dataSource]="pageWords()"><ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let word"><strong>{{ word.accepted.join(' / ') }}</strong></td></ng-container><ng-container matColumnDef="source"><th mat-header-cell *matHeaderCellDef>Collections</th><td mat-cell *matCellDef="let word"><div class="collection-actions">@for(source of sourcesFor(word); track source.id){<button mat-button type="button" class="collection-label" (click)="router.navigate(['/library'],{fragment:source.id})">{{ source.title }}</button>}@if(!sourcesFor(word).length){<button mat-button type="button" class="collection-label">My words</button>}</div></td></ng-container><ng-container matColumnDef="lesson"><th mat-header-cell *matHeaderCellDef>Category / lesson</th><td mat-cell *matCellDef="let word">{{ category(word.category) }} · {{ word.lessons.join(', ') || '—' }}</td></ng-container><ng-container matColumnDef="box"><th mat-header-cell *matHeaderCellDef>House</th><td mat-cell *matCellDef="let word">{{ word.masteredAt ? 'Mastered' : word.box ? 'House ' + word.box : 'Not introduced' }}</td></ng-container><ng-container matColumnDef="stats"><th mat-header-cell *matHeaderCellDef>Attempts / mistakes</th><td mat-cell *matCellDef="let word">{{ word.attempts }} / {{ word.mistakes }}</td></ng-container><ng-container matColumnDef="due"><th mat-header-cell *matHeaderCellDef>Next review</th><td mat-cell *matCellDef="let word">{{ word.due || '—' }}</td></ng-container><ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let word"><div class="row-actions"><button mat-icon-button type="button" title="Play pronunciation" aria-label="Play pronunciation" (click)="speakWord(word)">🔊</button>@if(word.box===0){<button mat-icon-button type="button" title="Add to House 1" aria-label="Add to House 1" (click)="activate(word)">＋</button>}<button mat-icon-button type="button" title="Edit" aria-label="Edit word" (click)="editWord(word)">✎</button><button mat-icon-button type="button" title="Delete" aria-label="Delete word" (click)="deleteWord(word)">×</button></div></td></ng-container><tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr></table></div><footer><button mat-stroked-button [disabled]="page()<=1" (click)="previous()">Previous</button><span>Page {{ page() }} of {{ totalPages() }}</span><button mat-stroked-button [disabled]="page()>=totalPages()" (click)="next()">Next</button></footer></section>`,
+  template: `<section class="page"><header><div><h1>Word Bank</h1><p>{{ filtered().length }} words</p></div><div><input #fileInput hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="importFile($event)"><button mat-stroked-button (click)="fileInput.click()">Import MD / TXT</button><button mat-flat-button (click)="editWord()">Add word</button></div></header><div class="filters"><mat-form-field appearance="outline"><mat-label>Search</mat-label><input matInput [formControl]="search" (input)="page.set(1)"></mat-form-field><mat-form-field appearance="outline"><mat-label>House</mat-label><mat-select [formControl]="box" (selectionChange)="page.set(1)"><mat-option value="all">All</mat-option><mat-option value="0">Not introduced</mat-option>@for(h of [1,2,3,4,5]; track h){<mat-option [value]="String(h)">House {{ h }}</mat-option>}</mat-select></mat-form-field><mat-form-field appearance="outline"><mat-label>Sort</mat-label><mat-select [formControl]="sort"><mat-option value="number">Original order</mat-option><mat-option value="mistakes">Most mistakes</mat-option><mat-option value="due">Next due</mat-option><mat-option value="alpha">Alphabetical</mat-option></mat-select></mat-form-field></div><div class="table-wrap"><table mat-table [dataSource]="pageWords()"><ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let word"><strong>{{ word.accepted.join(' / ') }}</strong></td></ng-container><ng-container matColumnDef="source"><th mat-header-cell *matHeaderCellDef>Collections</th><td mat-cell *matCellDef="let word"><div class="collection-actions">@for(source of sourcesFor(word); track source.id){<button mat-button type="button" class="collection-label" (click)="router.navigate(['/library'],{fragment:source.id})">{{ source.title }}</button>}@if(!sourcesFor(word).length){<span class="collection-empty">—</span>}</div></td></ng-container><ng-container matColumnDef="lesson"><th mat-header-cell *matHeaderCellDef>Category / lesson</th><td mat-cell *matCellDef="let word">{{ category(word.category) }} · {{ word.lessons.join(', ') || '—' }}</td></ng-container><ng-container matColumnDef="box"><th mat-header-cell *matHeaderCellDef>House</th><td mat-cell *matCellDef="let word">{{ word.masteredAt ? 'Mastered' : word.box ? 'House ' + word.box : 'Not introduced' }}</td></ng-container><ng-container matColumnDef="stats"><th mat-header-cell *matHeaderCellDef>Attempts / mistakes</th><td mat-cell *matCellDef="let word">{{ word.attempts }} / {{ word.mistakes }}</td></ng-container><ng-container matColumnDef="due"><th mat-header-cell *matHeaderCellDef>Next review</th><td mat-cell *matCellDef="let word">{{ word.due || '—' }}</td></ng-container><ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let word"><div class="row-actions"><button mat-icon-button type="button" title="Play pronunciation" aria-label="Play pronunciation" (click)="speakWord(word)">🔊</button>@if(word.box===0){<button mat-icon-button type="button" title="Add to House 1" aria-label="Add to House 1" (click)="activate(word)">＋</button>}<button mat-icon-button type="button" title="Edit" aria-label="Edit word" (click)="editWord(word)">✎</button><button mat-icon-button type="button" title="Delete" aria-label="Delete word" (click)="deleteWord(word)">×</button></div></td></ng-container><tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr></table></div><footer><button mat-stroked-button [disabled]="page()<=1" (click)="previous()">Previous</button><span>Page {{ page() }} of {{ totalPages() }}</span><button mat-stroked-button [disabled]="page()>=totalPages()" (click)="next()">Next</button></footer></section>`,
   styles: [`:host{display:block}.page{display:grid;gap:16px}header{display:flex;justify-content:space-between;align-items:center;gap:16px}header>div:last-child,.row-actions,footer{display:flex;gap:8px;align-items:center}.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}.table-wrap{overflow:auto;border:1px solid var(--mat-sys-outline-variant);border-radius:20px}table{width:100%;min-width:900px}footer{justify-content:center}.row-actions{white-space:nowrap}@media(max-width:760px){header{align-items:stretch;flex-direction:column}.filters{grid-template-columns:1fr}}`],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -67,6 +67,7 @@ export class WordsPageComponent implements OnInit {
   readonly columns = ['term', 'source', 'lesson', 'box', 'stats', 'due', 'actions'];
   readonly String = String;
   readonly category = englishCategory;
+  private sourceRequest = 0;
   readonly filtered = computed(() => {
     const state = this.store.state();
     if (!state) return [];
@@ -83,12 +84,34 @@ export class WordsPageComponent implements OnInit {
   });
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / PAGE_SIZE)));
   readonly pageWords = computed(() => { const p = Math.min(this.page(), this.totalPages()); return this.filtered().slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE); });
+  private readonly visibleSourceIds = computed(() => this.pageWords().map((word) => word.id));
 
-  async ngOnInit(): Promise<void> { await this.store.initialize(); await this.refreshSources(); }
+  constructor() {
+    effect(() => {
+      const ids = this.visibleSourceIds();
+      void this.loadSources(ids);
+    });
+  }
+
+  async ngOnInit(): Promise<void> { await this.store.initialize(); }
   sourcesFor(word: LearningWord): Array<{ id: string; title: string }> { return this.sources().get(word.id) || []; }
-  async refreshSources(): Promise<void> { const ids = this.pageWords().map((word) => word.id); const result = await this.vocab.sources(ids); const map = new Map<string, Array<{ id: string; title: string }>>(); result.forEach((item: VocabularySourceInfo) => map.set(item.vocabularyId, item.collections)); this.sources.set(map); }
-  async previous(): Promise<void> { this.page.update((value) => Math.max(1, value - 1)); await this.refreshSources(); }
-  async next(): Promise<void> { this.page.update((value) => Math.min(this.totalPages(), value + 1)); await this.refreshSources(); }
+  private async loadSources(ids: string[]): Promise<void> {
+    const request = ++this.sourceRequest;
+    if (!ids.length) { this.sources.set(new Map()); return; }
+    try {
+      const result = await this.vocab.sources(ids);
+      if (request !== this.sourceRequest) return;
+      const visibleIds = this.visibleSourceIds();
+      if (visibleIds.length !== ids.length || visibleIds.some((id, index) => id !== ids[index])) return;
+      const map = new Map<string, Array<{ id: string; title: string }>>();
+      result.forEach((item: VocabularySourceInfo) => map.set(item.vocabularyId, item.collections));
+      this.sources.set(map);
+    } catch {
+      if (request === this.sourceRequest) this.sources.set(new Map());
+    }
+  }
+  previous(): void { this.page.update((value) => Math.max(1, value - 1)); }
+  next(): void { this.page.update((value) => Math.min(this.totalPages(), value + 1)); }
   speakWord(word: LearningWord): void { this.speech.speak(word.term, this.store.snapshot().settings.voiceRate); }
   async activate(word: LearningWord): Promise<void> { await this.store.activateWord(word); this.snack.open(`“${word.term}” was added to House 1.`, 'OK', { duration: 2500 }); }
   async editWord(word: LearningWord | null = null): Promise<void> {

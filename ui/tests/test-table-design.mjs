@@ -42,4 +42,9 @@ assert.match(words, /<button mat-button type="button" class="collection-label"/u
 assert.match(tableStyles, /\.collection-label\.mat-mdc-button/u, 'Collection buttons must receive the minimal table treatment.');
 assert.match(tableStyles, /\.mat-mdc-header-cell[\s\S]*font-size:\s*12px;[\s\S]*font-weight:\s*600/u, 'Headers should remain compact rather than visually heavy.');
 
+assert.doesNotMatch(words, />My words</u, 'Missing collection provenance must never be presented as a fabricated “My words” collection.');
+assert.match(words, /class="collection-empty">—<\/span>/u, 'Words with no proven collection source should render a neutral unavailable marker.');
+assert.match(words, /effect\(\(\) => \{[\s\S]*visibleSourceIds\(\)[\s\S]*loadSources/u, 'Collection sources must reload whenever the visible Word Bank page changes.');
+assert.match(words, /request !== this\.sourceRequest/u, 'Late collection-source responses must not overwrite the current visible page.');
+
 console.log('Google-like table design contract passed.');
