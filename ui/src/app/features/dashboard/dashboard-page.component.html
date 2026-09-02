@@ -98,7 +98,6 @@
 							[class.is-failed]="houseOneCopyStatus() === 'failed'"
 							[disabled]="houseOneExportCount() === 0 || houseOneCopyStatus() === 'copying'"
 							[attr.aria-label]="houseOneExportCount() ? 'Copy all House 1 words with mistake counts' : 'House 1 has no words to copy'"
-							[attr.title]="houseOneExportCount() ? 'Copy all House 1 words with mistake counts' : 'House 1 has no words to copy'"
 							(click)="copyHouseOne()"
 						>
 							<svg viewBox="0 0 24 24" aria-hidden="true">
