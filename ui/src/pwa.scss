@@ -6,13 +6,6 @@ html {
 	min-height: 100%;
 }
 
-@media(display-mode: standalone) {
-	html, body {
-		overflow-x: hidden;
-		overscroll-behavior-y: none;
-	}
-}
-
 app-shell .topbar {
 	height: calc(64px + var(--safe-area-top));
 	padding-top: var(--safe-area-top);
