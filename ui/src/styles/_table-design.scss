@@ -1,6 +1,5 @@
 @mixin apply() {
 	.mat-mdc-table {
-		--vocora-table-divider: color-mix(in srgb, var(--mat-sys-outline-variant) 55%, transparent);
 		width: 100%;
 		background: transparent;
 		color: var(--mat-sys-on-surface);
@@ -13,7 +12,7 @@
 
 	.mat-mdc-header-cell {
 		padding: 0 16px;
-		border-bottom: 1px solid var(--vocora-table-divider);
+		border-bottom: 0;
 		color: var(--mat-sys-on-surface-variant);
 		font-size: 12px;
 		font-weight: 600;
@@ -23,24 +22,20 @@
 	.mat-mdc-row {
 		min-height: 52px;
 		background: transparent;
-		transition: background-color 140ms ease;
+		transition: background-color 120ms ease;
 	}
 
 	.mat-mdc-row:hover,
 	.mat-mdc-row:focus-within {
-		background: var(--mat-sys-surface-container-low);
+		background: rgb(232 240 254);
 	}
 
 	.mat-mdc-cell {
 		padding: 10px 16px;
-		border-bottom: 1px solid var(--vocora-table-divider);
+		border-bottom: 0;
 		color: var(--mat-sys-on-surface);
 		font-size: 13px;
 		line-height: 1.45;
-	}
-
-	.mat-mdc-row:last-child .mat-mdc-cell {
-		border-bottom: 0;
 	}
 
 	.mat-mdc-table strong {
@@ -53,21 +48,30 @@
 		font-size: 11px;
 	}
 
-	.mat-mdc-table .mat-mdc-chip {
-		--mdc-chip-outline-color: color-mix(in srgb, var(--mat-sys-outline-variant) 52%, transparent);
-		--mdc-chip-label-text-color: var(--mat-sys-on-surface-variant);
-		--mdc-chip-container-height: 30px;
-		--mdc-chip-label-text-size: 12px;
-		background: color-mix(in srgb, var(--mat-sys-surface-container-low) 72%, transparent);
+	.mat-mdc-table .collection-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 2px;
 	}
 
-	.mat-mdc-table .mat-mdc-chip:hover {
-		--mdc-chip-outline-color: color-mix(in srgb, var(--mat-sys-outline-variant) 68%, transparent);
-		background: var(--mat-sys-surface-container);
+	.mat-mdc-table .collection-label.mat-mdc-button {
+		min-width: 0;
+		padding: 0 7px;
+		--mdc-text-button-container-height: 28px;
+		--mdc-text-button-label-text-size: 12px;
+		--mdc-text-button-label-text-color: var(--mat-sys-on-surface-variant);
+		border-radius: 6px;
+		font-weight: 500;
+	}
+
+	.mat-mdc-table .collection-label.mat-mdc-button:hover {
+		background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+		color: var(--mat-sys-on-surface);
 	}
 
 	.mat-column-actions {
-		width: 104px;
+		width: 140px;
 		text-align: right;
 	}
 
@@ -75,7 +79,7 @@
 		opacity: 0;
 		pointer-events: none;
 		transform: translateX(4px);
-		transition: opacity 120ms ease, transform 120ms ease;
+		transition: opacity 100ms ease, transform 100ms ease;
 		visibility: hidden;
 	}
 
@@ -88,28 +92,19 @@
 	}
 
 	.mat-mdc-table .row-actions .mat-mdc-icon-button {
-		width: 34px;
-		height: 34px;
-		padding: 5px;
+		width: 32px;
+		height: 32px;
+		padding: 4px;
 		color: var(--mat-sys-on-surface-variant);
-		font-size: 18px;
+		font-size: 17px;
 	}
 
 	.mat-mdc-table .row-actions .mat-mdc-icon-button:hover {
-		background: var(--mat-sys-surface-container-high);
+		background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
 		color: var(--mat-sys-on-surface);
 	}
 
 	.table-wrap {
-		border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 58%, transparent) !important;
-	}
-
-	@media(hover: none), (pointer: coarse) {
-		.mat-mdc-row .row-actions {
-			opacity: 1;
-			pointer-events: auto;
-			transform: none;
-			visibility: visible;
-		}
+		border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 45%, transparent) !important;
 	}
 }
