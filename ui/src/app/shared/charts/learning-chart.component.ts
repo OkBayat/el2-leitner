@@ -45,10 +45,10 @@ Chart.register(
 );
 
 const FALLBACK_PALETTE: LearningChartPalette = {
-	primary: 'rgb(25 103 210)',
-	track: 'rgb(232 234 237)',
-	text: 'rgb(95 99 104)',
-	grid: 'rgb(218 220 224)',
+	primary: 'rgb(26 115 232)',
+	track: 'rgb(218 220 224)',
+	text: 'rgb(60 64 67)',
+	grid: 'rgb(232 234 237)',
 };
 
 function finiteOrNull(value: number | null): number | null {
@@ -75,6 +75,7 @@ export function buildLearningChartConfig(
 					data: values.map((value) => value ?? 0),
 					backgroundColor: points.map((_, index) => index === 0 ? palette.primary : palette.track),
 					borderWidth: 0,
+					hoverBackgroundColor: points.map((_, index) => index === 0 ? palette.primary : palette.track),
 					hoverBorderWidth: 0,
 					hoverOffset: 0,
 				}],
@@ -83,6 +84,7 @@ export function buildLearningChartConfig(
 				responsive: true,
 				maintainAspectRatio: false,
 				cutout: '72%',
+				rotation: -90,
 				animation: {duration: 220},
 				plugins: {
 					legend: {display: false},
@@ -100,6 +102,7 @@ export function buildLearningChartConfig(
 			datasets: [{
 				data: values,
 				backgroundColor: isBar ? palette.primary : 'transparent',
+				hoverBackgroundColor: isBar ? palette.primary : 'transparent',
 				borderColor: palette.primary,
 				borderWidth: isBar ? 0 : 3,
 				borderRadius: isBar ? 7 : 0,
@@ -177,7 +180,7 @@ export function doughnutPercent(points: LearningChartPoint[]): number {
 		</div>
 	`,
 	styles: [`
-		:host{display:block;min-width:0}.chart-frame{position:relative;width:100%;height:270px}.chart-frame canvas{display:block;width:100%!important;height:100%!important}.chart-frame.is-doughnut{width:86px;height:86px;min-width:86px}.doughnut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.doughnut-center strong{color:var(--mat-sys-on-surface);font-size:20px;font-weight:500;letter-spacing:-.03em;line-height:1}.doughnut-center span{margin-top:4px;color:var(--mat-sys-on-surface-variant);font-size:9px;font-weight:600}@media(max-width:700px){.chart-frame:not(.is-doughnut){height:245px}}
+		:host{display:block;min-width:0;--vocora-chart-primary:rgb(26 115 232);--vocora-chart-track:rgb(218 220 224);--vocora-chart-text:rgb(60 64 67);--vocora-chart-grid:rgb(232 234 237)}.chart-frame{position:relative;width:100%;height:270px}.chart-frame canvas{display:block;width:100%!important;height:100%!important}.chart-frame.is-doughnut{width:86px;height:86px;min-width:86px}.doughnut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.doughnut-center strong{color:var(--mat-sys-on-surface);font-size:20px;font-weight:500;letter-spacing:-.03em;line-height:1}.doughnut-center span{margin-top:4px;color:var(--mat-sys-on-surface-variant);font-size:9px;font-weight:600}@media(max-width:700px){.chart-frame:not(.is-doughnut){height:245px}}
 	`],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -230,12 +233,12 @@ export class LearningChartComponent implements AfterViewInit, OnDestroy {
 
 	private palette(): LearningChartPalette {
 		const styles = getComputedStyle(this.host.nativeElement);
-		const role = (name: string, fallback: string) => styles.getPropertyValue(name).trim() || fallback;
+		const token = (name: string, fallback: string) => styles.getPropertyValue(name).trim() || fallback;
 		return {
-			primary: role('--mat-sys-primary', FALLBACK_PALETTE.primary),
-			track: role('--mat-sys-surface-container-high', FALLBACK_PALETTE.track),
-			text: role('--mat-sys-on-surface-variant', FALLBACK_PALETTE.text),
-			grid: role('--mat-sys-outline-variant', FALLBACK_PALETTE.grid),
+			primary: token('--vocora-chart-primary', FALLBACK_PALETTE.primary),
+			track: token('--vocora-chart-track', FALLBACK_PALETTE.track),
+			text: token('--vocora-chart-text', FALLBACK_PALETTE.text),
+			grid: token('--vocora-chart-grid', FALLBACK_PALETTE.grid),
 		};
 	}
 }
