@@ -105,7 +105,7 @@ export class ReviewPageComponent implements OnInit {
 	readonly sessionBarState = computed(() => buildReviewSessionBarState({
 		answered: this.session.answered(),
 		initialCount: this.session.initialCount(),
-		freePractice: this.session.isFreePractice(),
+		freePractice: this.session.freePractice(),
 		recheck: this.session.currentTask() === 'recheck',
 	}));
 	readonly answerFieldState = computed<ReviewAnswerFieldState | null>(() => buildReviewAnswerFieldState({
