@@ -30,6 +30,12 @@ assert.match(shellHtml, /class="product-tabs"/u, 'Primary destinations must rema
 assert.match(shellHtml, /class="mobile-nav"/u, 'Phones must restore the base branch bottom navigation.');
 assert.match(shellHtml, /@for \(item of primaryNavItems; track item\.path\)/u, 'Desktop and mobile navigation must reuse the same primary destination model.');
 assert.doesNotMatch(shellHtml, /mat-sidenav|sidebar-progress/u, 'The redesigned shell must not restore the old permanent desktop sidebar.');
+assert.match(shellTs, /@HostListener\('window:scroll'\)/u, 'Mobile navigation visibility must react through Angular scroll handling.');
+assert.match(shellTs, /delta >= MOBILE_NAV_SCROLL_THRESHOLD[\s\S]*mobileNavHidden\.set\(true\)/u, 'Scrolling down must hide the mobile navigation.');
+assert.match(shellTs, /delta <= -MOBILE_NAV_SCROLL_THRESHOLD[\s\S]*mobileNavHidden\.set\(false\)/u, 'Scrolling up must reveal the mobile navigation.');
+assert.match(shellTs, /currentScrollY <= MOBILE_NAV_TOP_SAFE_ZONE[\s\S]*mobileNavHidden\.set\(false\)/u, 'The mobile navigation must remain visible at the top of the page.');
+assert.match(shellHtml, /\[class\.is-hidden\]="mobileNavHidden\(\)"/u, 'The mobile navigation must bind its hidden presentation to one signal.');
+assert.match(shellHtml, /\[attr\.tabindex\]="mobileNavHidden\(\) \? -1 : null"/u, 'Hidden mobile navigation links must leave the keyboard tab order.');
 
 for (const [name, styles] of [
 	['dashboard', dashboardStyles],
@@ -47,5 +53,7 @@ assert.match(shellStyles, /@media\(max-width:\s*640px\)[\s\S]*\.product-tabs\s*\
 assert.match(shellStyles, /\.mobile-nav\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*8px/u, 'Phone navigation must stay fixed at the bottom like the base branch.');
 assert.match(shellStyles, /grid-template-columns:\s*repeat\(5, minmax\(0, 1fr\)\)/u, 'Phone navigation must keep the five primary destinations evenly distributed.');
 assert.match(shellStyles, /\.content\s*\{[\s\S]*padding:\s*18px 0 92px/u, 'Phone content must reserve space for the fixed bottom navigation.');
+assert.match(shellStyles, /\.mobile-nav\.is-hidden\s*\{[\s\S]*translateY\(calc\(100% \+ 20px\)\)/u, 'Hidden phone navigation must slide below the viewport rather than disappearing abruptly.');
+assert.match(shellStyles, /@media\(prefers-reduced-motion:\s*reduce\)/u, 'Mobile navigation animation must respect reduced-motion preferences.');
 
 console.log('Minimal dashboard design contract passed.');
