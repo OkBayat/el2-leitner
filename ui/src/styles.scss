@@ -45,6 +45,7 @@ button, input, textarea, select {
 }
 
 textarea.review-answer-input {
+	height: calc(2rem - 5px)!important;
 	resize: none;
 	overflow: hidden;
 	white-space: nowrap;
