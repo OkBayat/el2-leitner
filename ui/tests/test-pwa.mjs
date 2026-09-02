@@ -86,6 +86,9 @@ assert.match(authGuard, /error instanceof ApiError && error\.status === 0/u, 'Ne
 assert.match(globalStyles, /--safe-area-bottom:\s*env\(safe-area-inset-bottom/u, 'Global safe-area tokens must support installed iPhones.');
 assert.match(pwaStyles, /app-shell \.mobile-nav[\s\S]*var\(--safe-area-bottom\)/u, 'Mobile app chrome must respect the Home indicator safe area.');
 assert.match(pwaStyles, /app-review-page \.review-action-footer[\s\S]*var\(--safe-area-bottom\)/u, 'The fixed review footer must respect the Home indicator safe area.');
+const standaloneRootOverflow = /@media\s*\(\s*display-mode\s*:\s*standalone\s*\)\s*\{[\s\S]*?html\s*,\s*body\s*\{[\s\S]*?(?:overflow(?:-[xy])?|overscroll-behavior(?:-[xy])?)\s*:/u;
+assert.doesNotMatch(globalStyles, standaloneRootOverflow, 'Standalone mode must not turn the root document into a separate overflow container; the viewport must remain vertically scrollable.');
+assert.doesNotMatch(pwaStyles, standaloneRootOverflow, 'PWA-only styles must not lock or replace native viewport scrolling in the installed app.');
 assert.match(server, /manifest\.webmanifest/u, 'The server must give the manifest deterministic headers.');
 assert.match(server, /Service-Worker-Allowed/u, 'The service-worker scope must be explicit.');
 assert.match(
