@@ -62,8 +62,10 @@ assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-ton
 assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-tone\) 6%, var\(--mat-sys-surface\)\)/u, 'Empty states should remain visually quiet.');
 assert.match(leitnerPalette, /\.leitner-house-name::before/u, 'Each house label should have a small restrained color cue.');
 assert.match(dashboardStyles, /\.leitner-row\s*\{[^}]*border-bottom:\s*1px solid var\(--mat-sys-outline-variant\)/u, 'Leitner rows themselves must keep the original one-pixel separator.');
-assert.doesNotMatch(leitnerPalette, /\.leitner-row\s*\{[^}]*border-bottom:\s*2px solid var\(--mat-sys-outline-variant\)/u, 'The stronger border must not be applied to whole Leitner rows.');
-assert.match(leitnerPalette, /\.leitner-row \.leitner-segment\s*\{[^}]*border:\s*0;[^}]*border-bottom:\s*2px solid var\(--mat-sys-outline-variant\)/u, 'Each Leitner state cell must use only the requested two-pixel bottom border.');
+assert.doesNotMatch(leitnerPalette, /\.leitner-row\s*\{[^}]*border-bottom:\s*2px/u, 'The stronger border must not be applied to whole Leitner rows.');
+assert.match(leitnerPalette, /\.leitner-row \.leitner-segment\s*\{[^}]*border:\s*0;[^}]*border-bottom:\s*2px solid color-mix\(in srgb, var\(--house-tone\) 32%, var\(--mat-sys-outline-variant\)\)/u, 'Occupied Leitner state cells must keep their original house-colored border, changed only to a two-pixel bottom edge.');
+assert.match(leitnerPalette, /\.leitner-segment:not\(\.is-occupied\)\s*\{[^}]*border-bottom-color:\s*color-mix\(in srgb, var\(--house-tone\) 16%, var\(--mat-sys-outline-variant\)\)/u, 'Empty cells must keep their quieter original house-colored border tone.');
+assert.match(leitnerPalette, /\.leitner-segment\.is-occupied:hover\s*\{[^}]*border-bottom-color:\s*color-mix\(in srgb, var\(--house-tone\) 50%, var\(--mat-sys-outline-variant\)\)/u, 'Hovered occupied cells must keep the original stronger house-colored border tone.');
 assert.doesNotMatch(leitnerPalette, /linear-gradient|radial-gradient/u, 'The storage-inspired palette must remain flat and simple.');
 
 assert.match(dashboardStyles, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/u, 'Desktop summary metrics must remain a compact four-column strip.');
