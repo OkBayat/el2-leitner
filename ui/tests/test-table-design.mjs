@@ -21,14 +21,25 @@ for (const source of [words, house, reports]) {
 	assert.match(source, /<table mat-table/u, 'Every data-table feature must use the shared Material table surface.');
 }
 
-assert.match(tableStyles, /\.mat-mdc-row:hover,[\s\S]*\.mat-mdc-row:focus-within[\s\S]*background:\s*var\(--mat-sys-surface-container-low\)/u, 'Rows need a subtle hover/focus background.');
-assert.match(tableStyles, /\.mat-mdc-row \.row-actions[\s\S]*opacity:\s*0;[\s\S]*visibility:\s*hidden/u, 'Desktop row actions must stay visually quiet until interaction.');
-assert.match(tableStyles, /\.mat-mdc-row:hover \.row-actions,[\s\S]*\.mat-mdc-row:focus-within \.row-actions[\s\S]*opacity:\s*1/u, 'Row actions must appear on hover and keyboard focus.');
-assert.match(tableStyles, /@media\(hover:\s*none\),\s*\(pointer:\s*coarse\)[\s\S]*\.row-actions[\s\S]*opacity:\s*1/u, 'Touch users must never lose access to row actions.');
-assert.match(tableStyles, /--mdc-chip-outline-color:\s*color-mix\(in srgb, var\(--mat-sys-outline-variant\) 52%, transparent\)/u, 'Table chips need a softer outline than the previous default.');
-assert.match(tableStyles, /--vocora-table-divider:\s*color-mix\(in srgb, var\(--mat-sys-outline-variant\) 55%, transparent\)/u, 'Table separators should be visually lighter.');
-assert.match(tableStyles, /\.mat-mdc-header-cell[\s\S]*font-size:\s*12px;[\s\S]*font-weight:\s*600/u, 'Headers should remain compact rather than visually heavy.');
-assert.match(words, /class="row-actions"/u, 'Word Bank actions must participate in the shared hover-only action treatment.');
-assert.match(words, /<mat-chip/u, 'Word Bank collection chips must participate in the shared soft-chip treatment.');
+assert.match(tableStyles, /\.mat-mdc-cell\s*\{[^}]*border-bottom:\s*0;/u, 'Body rows must not have horizontal separators.');
+assert.match(tableStyles, /\.mat-mdc-header-cell\s*\{[^}]*border-bottom:\s*0;/u, 'The compact table header must not add a heavy separator.');
+assert.doesNotMatch(tableStyles, /--vocora-table-divider/u, 'Removed row separators must not leave an obsolete divider token behind.');
+assert.match(tableStyles, /\.mat-mdc-row:hover,[\s\S]*\.mat-mdc-row:focus-within[\s\S]*background:\s*rgb\(232 240 254\)/u, 'Rows must use the requested Google-like light blue hover color.');
 
-console.log('Minimal table design contract passed.');
+assert.match(tableStyles, /\.mat-mdc-row \.row-actions[\s\S]*opacity:\s*0;[\s\S]*pointer-events:\s*none;[\s\S]*visibility:\s*hidden/u, 'Row actions must be fully hidden before row interaction.');
+assert.match(tableStyles, /\.mat-mdc-row:hover \.row-actions,[\s\S]*\.mat-mdc-row:focus-within \.row-actions[\s\S]*opacity:\s*1;[\s\S]*pointer-events:\s*auto;[\s\S]*visibility:\s*visible/u, 'Row actions must appear only while the row is hovered or keyboard-focused.');
+assert.doesNotMatch(tableStyles, /@media\(hover:\s*none\)[\s\S]*\.row-actions[\s\S]*opacity:\s*1/u, 'There must not be a blanket rule that keeps row actions permanently visible.');
+
+assert.match(words, /SpeechService/u, 'Word Bank must reuse the shared speech service.');
+assert.match(words, /title="Play pronunciation"[\s\S]*\(click\)="speakWord\(word\)"/u, 'Pronunciation must be available as a row action.');
+assert.match(words, /speakWord\(word: LearningWord\): void \{ this\.speech\.speak\(word\.term, this\.store\.snapshot\(\)\.settings\.voiceRate\); \}/u, 'Pronunciation must preserve the configured voice rate from the previous implementation.');
+assert.match(words, /title="Edit"/u, 'Edit must remain a hover row action.');
+assert.match(words, /title="Delete"/u, 'Delete must remain a hover row action.');
+
+assert.doesNotMatch(words, /MatChipsModule|<mat-chip/u, 'Collection labels must no longer use Material chips.');
+assert.match(words, /class="collection-actions"/u, 'Collection labels need a lightweight shared container.');
+assert.match(words, /<button mat-button type="button" class="collection-label"/u, 'Collection labels must use simple Material text buttons.');
+assert.match(tableStyles, /\.collection-label\.mat-mdc-button/u, 'Collection buttons must receive the minimal table treatment.');
+assert.match(tableStyles, /\.mat-mdc-header-cell[\s\S]*font-size:\s*12px;[\s\S]*font-weight:\s*600/u, 'Headers should remain compact rather than visually heavy.');
+
+console.log('Google-like table design contract passed.');
