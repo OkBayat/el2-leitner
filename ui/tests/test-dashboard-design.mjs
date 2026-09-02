@@ -13,6 +13,8 @@ const dashboardStyles = read('src/app/features/dashboard/dashboard-page.componen
 const shellTs = read('src/app/shared/app-shell/app-shell.component.ts');
 const shellHtml = read('src/app/shared/app-shell/app-shell.component.html');
 const shellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
+const globalStyles = read('src/styles.scss');
+const leitnerPalette = read('src/styles/_leitner-google-palette.scss');
 
 assert.match(dashboardTs, /templateUrl:\s*'dashboard-page\.component\.html'/u, 'Dashboard markup should have one dedicated template owner.');
 assert.match(dashboardTs, /styleUrl:\s*'dashboard-page\.component\.scss'/u, 'Dashboard layout should have one dedicated style owner.');
@@ -47,6 +49,19 @@ for (const [name, styles] of [
 	assert.doesNotMatch(styles, /#[0-9a-f]{3,8}\b/iu, `${name} must use Material system roles instead of a local color palette.`);
 	assert.match(styles, /var\(--mat-sys-/u, `${name} must remain owned by Material 3 system roles.`);
 }
+
+assert.match(globalStyles, /@use '.\/styles\/leitner-google-palette' as leitner-google-palette/u, 'The deliberate Leitner palette must have one global style owner.');
+assert.match(globalStyles, /@include leitner-google-palette\.apply\(\)/u, 'The Leitner palette must be applied through the global theme composition root.');
+for (const color of ['rgb(66 133 244)', 'rgb(52 168 83)', 'rgb(251 188 4)', 'rgb(234 67 53)']) {
+	assert.ok(leitnerPalette.includes(color), `Leitner palette must keep the approved storage-inspired color ${color}.`);
+}
+for (const house of ['2', '3', '4', '5']) {
+	assert.match(leitnerPalette, new RegExp(`data-house='${house}'`, 'u'), `House ${house} needs an explicit palette mapping.`);
+}
+assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-tone\) 16%, var\(--mat-sys-surface\)\)/u, 'Occupied states should use a light airy tint rather than a saturated block.');
+assert.match(leitnerPalette, /background:\s*color-mix\(in srgb, var\(--house-tone\) 6%, var\(--mat-sys-surface\)\)/u, 'Empty states should remain visually quiet.');
+assert.match(leitnerPalette, /\.leitner-house-name::before/u, 'Each house label should have a small restrained color cue.');
+assert.doesNotMatch(leitnerPalette, /linear-gradient|radial-gradient/u, 'The storage-inspired palette must remain flat and simple.');
 
 assert.match(dashboardStyles, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/u, 'Desktop summary metrics must remain a compact four-column strip.');
 assert.match(dashboardStyles, /@media\(max-width:\s*640px\)/u, 'Dashboard must keep an explicit phone layout.');
