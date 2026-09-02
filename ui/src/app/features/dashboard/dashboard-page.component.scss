@@ -256,7 +256,6 @@
 }
 
 .leitner-segment {
-	position: relative;
 	display: grid;
 	min-width: 0;
 	height: 30px;
@@ -277,33 +276,6 @@
 
 .leitner-segment.is-occupied:hover {
 	background: var(--mat-sys-secondary-container);
-}
-
-.leitner-segment::after {
-	content: attr(data-tooltip);
-	position: absolute;
-	z-index: 5;
-	bottom: calc(100% + 7px);
-	left: 50%;
-	width: max-content;
-	max-width: 230px;
-	padding: 6px 9px;
-	border-radius: 6px;
-	background: var(--mat-sys-inverse-surface);
-	color: var(--mat-sys-inverse-on-surface);
-	font-size: 10px;
-	font-weight: 400;
-	line-height: 1.4;
-	opacity: 0;
-	pointer-events: none;
-	transform: translateX(-50%) translateY(2px);
-	transition: opacity 120ms ease, transform 120ms ease;
-	white-space: nowrap;
-}
-
-.leitner-segment:hover::after {
-	opacity: 1;
-	transform: translateX(-50%);
 }
 
 .leitner-total {
