@@ -124,7 +124,11 @@
 
 					@if (answerFieldState(); as field) {
 						<form class="review-answer-form" (submit)="$event.preventDefault(); submitAnswer()">
-							<mat-form-field class="review-answer-field" appearance="outline">
+							<mat-form-field
+								class="review-answer-field"
+								[class.review-answer-correct]="field.feedbackTone === 'correct'"
+								[class.review-answer-incorrect]="field.feedbackTone === 'incorrect'"
+								appearance="outline">
 								<mat-label>{{ field.label }}</mat-label>
 								<input
 									#answerInput
@@ -132,6 +136,7 @@
 									data-testid="review-answer-input"
 									matInput
 									[formControl]="answer"
+									[readonly]="field.readOnly || saving()"
 									lang="en"
 									autocomplete="off"
 									autocapitalize="none"
