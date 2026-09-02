@@ -59,16 +59,21 @@ export class PwaInstallService {
 		this.secureContext = Boolean(globalThis.isSecureContext);
 
 		if (typeof window === 'undefined') return;
-		const displayMode = window.matchMedia('(display-mode: standalone)');
-		this.displayModeStandalone.set(displayMode.matches);
-		this.installedSignal.set(isStandaloneApp(this.navigatorSnapshot, displayMode.matches));
+		const displayMode = typeof window.matchMedia === 'function'
+			? window.matchMedia('(display-mode: standalone)')
+			: null;
+		const standalone = displayMode?.matches ?? false;
+		this.displayModeStandalone.set(standalone);
+		this.installedSignal.set(isStandaloneApp(this.navigatorSnapshot, standalone));
 
-		fromEvent<MediaQueryListEvent>(displayMode, 'change')
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe((event) => {
-				this.displayModeStandalone.set(event.matches);
-				this.installedSignal.set(isStandaloneApp(this.navigatorSnapshot, event.matches));
-			});
+		if (displayMode) {
+			fromEvent<MediaQueryListEvent>(displayMode, 'change')
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe((event) => {
+					this.displayModeStandalone.set(event.matches);
+					this.installedSignal.set(isStandaloneApp(this.navigatorSnapshot, event.matches));
+				});
+		}
 
 		fromEvent<BeforeInstallPromptEvent>(window, 'beforeinstallprompt')
 			.pipe(takeUntilDestroyed(this.destroyRef))
