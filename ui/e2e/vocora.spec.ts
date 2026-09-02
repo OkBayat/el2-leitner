@@ -70,13 +70,37 @@ async function expectLowercaseMobileInput(input: ReturnType<Page['getByLabel']>)
   await expect(input).toHaveAttribute('spellcheck', 'false');
 }
 
-async function expectReadonlyCorrectAnswer(input: ReturnType<Page['getByLabel']>): Promise<void> {
+async function expectReadonlyAnswer(input: ReturnType<Page['getByLabel']>, tone: 'correct' | 'incorrect'): Promise<void> {
   await expect(input).toBeEnabled();
-  await expect(input).toHaveAttribute('readonly', '');
+  await expect(input).not.toBeEditable();
+  await expect(input).toHaveAttribute('readonly', 'true');
   const field = input.locator('xpath=ancestor::mat-form-field');
-  await expect(field).toHaveClass(/review-answer-correct/u);
-  await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS('background-color', 'rgb(239, 255, 229)');
-  await expect(field.locator('.mdc-notched-outline__leading')).toHaveCSS('border-color', 'rgb(88, 204, 2)');
+  const correct = tone === 'correct';
+  await expect(field).toHaveClass(correct ? /review-answer-correct/u : /review-answer-incorrect/u);
+  await expect(field.locator('.mat-mdc-text-field-wrapper')).toHaveCSS(
+    'background-color',
+    correct ? 'rgb(239, 255, 229)' : 'rgb(255, 240, 240)',
+  );
+  await expect(field.locator('.mdc-notched-outline__leading')).toHaveCSS(
+    'border-color',
+    correct ? 'rgb(88, 204, 2)' : 'rgb(255, 75, 75)',
+  );
+}
+
+async function installFeedbackSoundSpy(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    (window as any).__vocoraPlayedReviewSounds = [];
+    HTMLMediaElement.prototype.play = function play(): Promise<void> {
+      const src = this.getAttribute('src') || this.src;
+      (window as any).__vocoraPlayedReviewSounds.push(new URL(src, window.location.href).pathname);
+      return Promise.resolve();
+    };
+  });
+}
+
+async function expectLastFeedbackSound(page: Page, filename: string): Promise<void> {
+  await expect.poll(async () => page.evaluate(() => (window as any).__vocoraPlayedReviewSounds?.at(-1) || null))
+    .toBe(`/assets/${filename}`);
 }
 
 test('English LTR Angular app preserves the complete learner and library flow', async ({ page }) => {
@@ -132,7 +156,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(sessionAccuracy).toHaveText('Accuracy: 100%');
   await expect(sharedInput).toHaveCount(1);
   await expect(answerInput).toBeVisible();
-  await expectReadonlyCorrectAnswer(answerInput);
+  await expectReadonlyAnswer(answerInput, 'correct');
   await expect(answerInput).toHaveValue(dueTerm);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(215, 255, 184)');
@@ -152,8 +176,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await footer.getByRole('button', { name: 'Continue' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(answerInput).toBeVisible();
-  await expect(answerInput).toBeEnabled();
-  await expect(answerInput).not.toHaveAttribute('readonly', '');
+  await expect(answerInput).toBeEditable();
   await expect(answerInput).toHaveValue('');
   await expect(answerInput).toBeFocused();
 
@@ -184,7 +207,8 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText(/email, typed answers/i)).toBeVisible();
 });
 
-test('one shared spelling input covers correction, recall, copy, and completed remediation states', async ({ page }) => {
+test('one shared spelling input covers correction, recall, copy, completed remediation, and feedback sounds', async ({ page }) => {
+  await installFeedbackSoundSpy(page);
   await authenticate(page, `e2e-spelling-${Date.now()}@example.com`);
   const term = await firstDueTerm(page);
   const wrong = wrongSpelling(term);
@@ -193,11 +217,15 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await page.getByRole('button', { name: 'Start session' }).click();
   const footer = page.getByTestId('review-action-footer');
   const sharedInput = page.getByTestId('review-answer-input');
+  const wrongInput = page.getByLabel('Your answer');
   await expect(sharedInput).toHaveCount(1);
-  await page.getByLabel('Your answer').fill(wrong);
+  await wrongInput.fill(wrong);
   await footer.getByRole('button', { name: 'Check answer' }).click();
 
-  await expect(sharedInput).toHaveCount(0);
+  await expect(sharedInput).toHaveCount(1);
+  await expect(wrongInput).toHaveValue(wrong);
+  await expectReadonlyAnswer(wrongInput, 'incorrect');
+  await expectLastFeedbackSound(page, 'wrong-answer-song.mp3');
   await expect(footer).toHaveClass(/error/u);
   await expect(footer).toHaveCSS('background-color', 'rgb(255, 223, 224)');
   await expect(footer.getByText('Correct solution:')).toBeVisible();
@@ -218,7 +246,7 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   const recallInput = page.getByLabel('Recall from memory');
   await expect(sharedInput).toHaveCount(1);
   await expect(recallInput).toBeVisible();
-  await expect(recallInput).toBeEnabled();
+  await expect(recallInput).toBeEditable();
   await expect(recallInput).toHaveValue('');
   await expect(recallInput).toBeFocused();
   await expectLowercaseMobileInput(recallInput);
@@ -227,20 +255,22 @@ test('one shared spelling input covers correction, recall, copy, and completed r
 
   await recallInput.fill(`${term}x`);
   await footer.getByRole('button', { name: 'Check answer' }).click();
+  await expectLastFeedbackSound(page, 'wrong-answer-song.mp3');
   const copyInput = page.getByLabel('Exact copy');
   await expect(sharedInput).toHaveCount(1);
   await expect(copyInput).toBeVisible();
-  await expect(copyInput).toBeEnabled();
+  await expect(copyInput).toBeEditable();
   await expect(copyInput).toHaveValue('');
   await expect(copyInput).toBeFocused();
   await expect(footer.getByRole('heading', { name: 'Practice the correction', exact: true })).toBeVisible();
 
   await copyInput.fill(term);
   await footer.getByRole('button', { name: 'Check answer' }).click();
+  await expectLastFeedbackSound(page, 'correct-answer-song.mp3');
   const finalRecallInput = page.getByLabel('Recall from memory');
   await expect(sharedInput).toHaveCount(1);
   await expect(finalRecallInput).toBeVisible();
-  await expect(finalRecallInput).toBeEnabled();
+  await expect(finalRecallInput).toBeEditable();
   await expect(finalRecallInput).toHaveValue('');
   await expect(finalRecallInput).toBeFocused();
 
@@ -248,7 +278,8 @@ test('one shared spelling input covers correction, recall, copy, and completed r
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(finalRecallInput).toBeVisible();
-  await expectReadonlyCorrectAnswer(finalRecallInput);
+  await expectReadonlyAnswer(finalRecallInput, 'correct');
+  await expectLastFeedbackSound(page, 'correct-answer-song.mp3');
   await expect(finalRecallInput).toHaveValue(term);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer.getByText('Correct!')).toBeVisible();
@@ -267,16 +298,20 @@ test('scheduled spelling recheck keeps the shared input visible and readonly aft
   const footer = page.getByTestId('review-action-footer');
   const sharedInput = page.getByTestId('review-answer-input');
 
-  await page.getByLabel('Your answer').fill(wrongSpelling(missedTerm));
+  const missedInput = page.getByLabel('Your answer');
+  const missedAnswer = wrongSpelling(missedTerm);
+  await missedInput.fill(missedAnswer);
   await footer.getByRole('button', { name: 'Check answer' }).click();
-  await expect(sharedInput).toHaveCount(0);
+  await expect(sharedInput).toHaveCount(1);
+  await expect(missedInput).toHaveValue(missedAnswer);
+  await expectReadonlyAnswer(missedInput, 'incorrect');
   await footer.getByRole('button', { name: 'Continue' }).click();
 
   const immediateRecall = page.getByLabel('Recall from memory');
   await immediateRecall.fill(missedTerm);
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(immediateRecall).toBeVisible();
-  await expectReadonlyCorrectAnswer(immediateRecall);
+  await expectReadonlyAnswer(immediateRecall, 'correct');
   await expect(immediateRecall).toHaveValue(missedTerm);
   await footer.getByRole('button', { name: 'Continue' }).click();
 
@@ -298,7 +333,7 @@ test('scheduled spelling recheck keeps the shared input visible and readonly aft
   const recheckInput = page.getByLabel('Recall from memory');
   await expect(sharedInput).toHaveCount(1);
   await expect(recheckInput).toBeVisible();
-  await expect(recheckInput).toBeEnabled();
+  await expect(recheckInput).toBeEditable();
   await expect(recheckInput).toHaveValue('');
   await expect(recheckInput).toBeFocused();
   await expectLowercaseMobileInput(recheckInput);
@@ -307,7 +342,7 @@ test('scheduled spelling recheck keeps the shared input visible and readonly aft
   await footer.getByRole('button', { name: 'Check answer' }).click();
   await expect(sharedInput).toHaveCount(1);
   await expect(recheckInput).toBeVisible();
-  await expectReadonlyCorrectAnswer(recheckInput);
+  await expectReadonlyAnswer(recheckInput, 'correct');
   await expect(recheckInput).toHaveValue(missedTerm);
   await expect(footer).toHaveClass(/success/u);
   await expect(footer.getByText('Correct!')).toBeVisible();
