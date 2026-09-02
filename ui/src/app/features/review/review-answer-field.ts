@@ -1,17 +1,19 @@
 import {RemediationPhase} from '../../domain/remediation/remediation';
 
 export type ReviewAnswerFieldAction = 'review' | 'remediation';
+export type ReviewAnswerFieldFeedbackTone = 'correct' | 'incorrect' | null;
 
 export interface ReviewAnswerFieldState {
 	label: 'Your answer' | 'Recall from memory' | 'Exact copy';
 	action: ReviewAnswerFieldAction;
-	disabled: boolean;
+	readOnly: boolean;
+	feedbackTone: ReviewAnswerFieldFeedbackTone;
 }
 
 export interface ReviewAnswerFieldContext {
 	active: boolean;
 	currentTask: 'review' | 'recheck';
-	hasFeedback: boolean;
+	feedbackCorrect: boolean | null;
 	remediationPhase: RemediationPhase | null;
 }
 
@@ -20,10 +22,12 @@ export function buildReviewAnswerFieldState(context: ReviewAnswerFieldContext): 
 	if (context.remediationPhase === RemediationPhase.CORRECTION) return null;
 
 	if (context.remediationPhase) {
+		const completed = context.remediationPhase === RemediationPhase.COMPLETED;
 		return {
 			label: context.remediationPhase === RemediationPhase.COPY ? 'Exact copy' : 'Recall from memory',
 			action: 'remediation',
-			disabled: context.remediationPhase === RemediationPhase.COMPLETED,
+			readOnly: completed,
+			feedbackTone: completed ? 'correct' : null,
 		};
 	}
 
@@ -31,6 +35,7 @@ export function buildReviewAnswerFieldState(context: ReviewAnswerFieldContext): 
 	return {
 		label: 'Your answer',
 		action: 'review',
-		disabled: context.hasFeedback,
+		readOnly: context.feedbackCorrect !== null,
+		feedbackTone: context.feedbackCorrect === null ? null : context.feedbackCorrect ? 'correct' : 'incorrect',
 	};
 }
