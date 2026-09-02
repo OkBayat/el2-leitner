@@ -109,10 +109,6 @@ export class DashboardPageComponent implements OnInit {
 		await this.router.navigate(['/review'], {queryParams: {mode: 'box1'}});
 	}
 
-	segmentTooltip(box: number, stage: number, stateCount: number, count: number): string {
-		return `House ${box} · State ${stage} of ${stateCount} · ${count} ${count === 1 ? 'word' : 'words'}`;
-	}
-
 	async addNewWords(): Promise<void> {
 		const state = this.store.snapshot();
 		const available = state.words
