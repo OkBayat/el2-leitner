@@ -67,6 +67,7 @@ const settings = read('src/app/features/settings/settings-page.component.ts');
 const globalStyles = read('src/styles.scss');
 const pwaStyles = read('src/pwa.scss');
 const server = read('../back/src/createApp.js');
+const dockerfile = read('../back/Dockerfile');
 
 assert.match(appRoot, /PwaUpdateService/u, 'The application root must start the service-worker update lifecycle.');
 assert.match(appRoot, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
@@ -85,6 +86,11 @@ assert.match(pwaStyles, /app-shell \.mobile-nav[\s\S]*var\(--safe-area-bottom\)/
 assert.match(pwaStyles, /app-review-page \.review-action-footer[\s\S]*var\(--safe-area-bottom\)/u, 'The fixed review footer must respect the Home indicator safe area.');
 assert.match(server, /manifest\.webmanifest/u, 'The server must give the manifest deterministic headers.');
 assert.match(server, /Service-Worker-Allowed/u, 'The service-worker scope must be explicit.');
+assert.match(
+	dockerfile,
+	/COPY ui\/tools \.\/tools[\s\S]*RUN npm run build:production/u,
+	'The Docker production stage must include the service-worker generator before running the UI build.',
+);
 
 assert.ok(fs.existsSync(distRoot), 'Production output must exist before PWA validation.');
 for (const required of ['index.html', 'manifest.webmanifest', 'service-worker.js']) {
