@@ -10,7 +10,7 @@
 }
 
 :host ::ng-deep .review-answer-field.review-answer-correct .mat-mdc-text-field-wrapper {
-	background: #efffe5;
+	background: var(--review-success-background);
 	border-radius: 4px;
 }
 
