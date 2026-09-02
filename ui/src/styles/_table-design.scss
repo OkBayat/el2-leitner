@@ -1,0 +1,115 @@
+@mixin apply() {
+	.mat-mdc-table {
+		--vocora-table-divider: color-mix(in srgb, var(--mat-sys-outline-variant) 55%, transparent);
+		width: 100%;
+		background: transparent;
+		color: var(--mat-sys-on-surface);
+	}
+
+	.mat-mdc-header-row {
+		min-height: 46px;
+		background: var(--mat-sys-surface);
+	}
+
+	.mat-mdc-header-cell {
+		padding: 0 16px;
+		border-bottom: 1px solid var(--vocora-table-divider);
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: .01em;
+	}
+
+	.mat-mdc-row {
+		min-height: 52px;
+		background: transparent;
+		transition: background-color 140ms ease;
+	}
+
+	.mat-mdc-row:hover,
+	.mat-mdc-row:focus-within {
+		background: var(--mat-sys-surface-container-low);
+	}
+
+	.mat-mdc-cell {
+		padding: 10px 16px;
+		border-bottom: 1px solid var(--vocora-table-divider);
+		color: var(--mat-sys-on-surface);
+		font-size: 13px;
+		line-height: 1.45;
+	}
+
+	.mat-mdc-row:last-child .mat-mdc-cell {
+		border-bottom: 0;
+	}
+
+	.mat-mdc-table strong {
+		font-weight: 600;
+	}
+
+	.mat-mdc-table small {
+		margin-top: 2px;
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 11px;
+	}
+
+	.mat-mdc-table .mat-mdc-chip {
+		--mdc-chip-outline-color: color-mix(in srgb, var(--mat-sys-outline-variant) 52%, transparent);
+		--mdc-chip-label-text-color: var(--mat-sys-on-surface-variant);
+		--mdc-chip-container-height: 30px;
+		--mdc-chip-label-text-size: 12px;
+		background: color-mix(in srgb, var(--mat-sys-surface-container-low) 72%, transparent);
+	}
+
+	.mat-mdc-table .mat-mdc-chip:hover {
+		--mdc-chip-outline-color: color-mix(in srgb, var(--mat-sys-outline-variant) 68%, transparent);
+		background: var(--mat-sys-surface-container);
+	}
+
+	.mat-column-actions {
+		width: 104px;
+		text-align: right;
+	}
+
+	.mat-mdc-row .row-actions {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(4px);
+		transition: opacity 120ms ease, transform 120ms ease;
+		visibility: hidden;
+	}
+
+	.mat-mdc-row:hover .row-actions,
+	.mat-mdc-row:focus-within .row-actions {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateX(0);
+		visibility: visible;
+	}
+
+	.mat-mdc-table .row-actions .mat-mdc-icon-button {
+		width: 34px;
+		height: 34px;
+		padding: 5px;
+		color: var(--mat-sys-on-surface-variant);
+		font-size: 18px;
+	}
+
+	.mat-mdc-table .row-actions .mat-mdc-icon-button:hover {
+		background: var(--mat-sys-surface-container-high);
+		color: var(--mat-sys-on-surface);
+	}
+
+	.table-wrap {
+		border-color: color-mix(in srgb, var(--mat-sys-outline-variant) 58%, transparent) !important;
+	}
+
+	@media(hover: none), (pointer: coarse) {
+		.mat-mdc-row .row-actions {
+			opacity: 1;
+			pointer-events: auto;
+			transform: none;
+			visibility: visible;
+		}
+	}
+}
