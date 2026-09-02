@@ -30,6 +30,7 @@ import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog
 import {ShareStoryService} from '../../shared/share-story/share-story.service';
 import {buildReviewAnswerFieldState, type ReviewAnswerFieldState} from './review-answer-field';
 import {ReviewContextBadgeComponent} from './review-context-badge.component';
+import {buildReviewSessionBarState} from './review-session-bar';
 
 type ReviewFooterTone = 'neutral' | 'success' | 'error' | 'practice';
 type ReviewFooterIcon = 'none' | 'check' | 'error' | 'practice';
@@ -101,6 +102,13 @@ export class ReviewPageComponent implements OnInit {
 	readonly dueCount = computed(() => this.state() ? getDueWords(this.state()!).length : 0);
 	readonly newCount = computed(() => this.state() ? getDueWords(this.state()!).filter((word) => word.introducedOn === localDay() && word.box === 1).length : 0);
 	readonly estimatedMinutes = computed(() => Math.max(1, Math.ceil(this.dueCount() * .35)));
+	readonly sessionBarState = computed(() => buildReviewSessionBarState({
+		accuracy: this.session.accuracy(),
+		answered: this.session.answered(),
+		initialCount: this.session.initialCount(),
+		freePractice: this.session.isFreePractice(),
+		recheck: this.session.currentTask() === 'recheck',
+	}));
 	readonly answerFieldState = computed<ReviewAnswerFieldState | null>(() => buildReviewAnswerFieldState({
 		active: this.session.active(),
 		currentTask: this.session.currentTask(),
