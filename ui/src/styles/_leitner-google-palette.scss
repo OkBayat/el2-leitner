@@ -8,6 +8,7 @@
 
 	[data-testid='house-status'] .leitner-row {
 		--house-tone: var(--leitner-google-blue);
+		border-bottom: 2px solid var(--mat-sys-outline-variant);
 	}
 
 	[data-testid='house-status'] .leitner-row[data-house='2'] {
