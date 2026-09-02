@@ -13,6 +13,11 @@ html {
 		density: 0,
 	));
 	@include material-defaults.apply();
+	--safe-area-top: env(safe-area-inset-top, 0px);
+	--safe-area-right: env(safe-area-inset-right, 0px);
+	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
+	--safe-area-left: env(safe-area-inset-left, 0px);
+	min-height: 100%;
 	color-scheme: light;
 	background: var(--mat-sys-surface);
 	color: var(--mat-sys-on-surface);
@@ -38,6 +43,13 @@ body {
 	background: var(--mat-sys-surface);
 	color: var(--mat-sys-on-surface);
 	text-align: left;
+}
+
+@media(display-mode: standalone) {
+	html, body {
+		overflow-x: hidden;
+		overscroll-behavior-y: none;
+	}
 }
 
 button, input, textarea, select {
