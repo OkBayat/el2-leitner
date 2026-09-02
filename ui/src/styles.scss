@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
 @use './styles/angular-material-defaults' as material-defaults;
 @use './styles/leitner-google-palette' as leitner-google-palette;
+@use './styles/table-design' as table-design;
 
 html {
 	@include mat.theme((
@@ -20,6 +21,7 @@ html {
 }
 
 @include leitner-google-palette.apply();
+@include table-design.apply();
 
 html[data-theme='dark'] {
 	color-scheme: dark;
