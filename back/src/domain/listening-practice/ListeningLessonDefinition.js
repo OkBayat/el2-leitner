@@ -54,10 +54,9 @@ function array(value, sourceName, label) {
   return value;
 }
 
-function assertSequential(values, sourceName, label) {
-  const sorted = [...values].sort((left, right) => left - right);
-  sorted.forEach((value, index) => {
-    if (value !== index + 1) fail(sourceName, `${label} must be sequential starting at 1.`);
+function assertOrderedSequence(values, sourceName, label) {
+  values.forEach((value, index) => {
+    if (value !== index + 1) fail(sourceName, `${label} must be ordered sequentially starting at 1.`);
   });
 }
 
@@ -131,7 +130,7 @@ function parseGroup(raw, sourceName, ids) {
   const questions = array(input.questions, sourceName, `${id} questions`).map((question) =>
     parseQuestion(question, sourceName, ids)
   );
-  assertSequential(questions.map((question) => question.position), sourceName, `${id} question positions`);
+  assertOrderedSequence(questions.map((question) => question.position), sourceName, `${id} question positions`);
   const expectedResponseType = taskType === "multiple_choice_single" ? "single_choice" : "text";
   if (questions.some((question) => question.responseType !== expectedResponseType)) {
     fail(sourceName, `${id} questions must use responseType ${expectedResponseType}.`);
@@ -165,9 +164,9 @@ export function parseListeningLessonDefinition(raw, sourceName = "listening less
 
   const ids = { groupIds: new Set(), questionIds: new Set(), optionIds: new Set() };
   const groups = array(input.groups, sourceName, "groups").map((group) => parseGroup(group, sourceName, ids));
-  assertSequential(groups.map((group) => group.position), sourceName, "group positions");
+  assertOrderedSequence(groups.map((group) => group.position), sourceName, "group positions");
   const questions = groups.flatMap((group) => group.questions);
-  assertSequential(questions.map((question) => question.number), sourceName, "question numbers");
+  assertOrderedSequence(questions.map((question) => question.number), sourceName, "question numbers");
 
   return {
     schemaVersion: 1,

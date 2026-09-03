@@ -13,7 +13,7 @@ async function lesson() {
 }
 
 describe("BBC listening lesson definition", () => {
-  it("validates the first BBC lesson as four IELTS groups and thirteen sequential questions", async () => {
+  it("validates the first BBC lesson as four ordered IELTS groups and thirteen ordered questions", async () => {
     const parsed = await lesson();
     assert.equal(parsed.provider, "bbc_6_minute_english");
     assert.equal(parsed.groups.length, 4);
@@ -34,6 +34,22 @@ describe("BBC listening lesson definition", () => {
     assert.throws(
       () => parseListeningLessonDefinition(raw, "duplicate.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /question numbers/u.test(error.message)
+    );
+  });
+
+  it("rejects out-of-order groups and questions instead of rendering the wrong IELTS sequence", async () => {
+    const reversedGroups = JSON.parse(await readFile(lessonUrl, "utf8"));
+    reversedGroups.groups.reverse();
+    assert.throws(
+      () => parseListeningLessonDefinition(reversedGroups, "reversed-groups.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /group positions/u.test(error.message)
+    );
+
+    const reversedQuestions = JSON.parse(await readFile(lessonUrl, "utf8"));
+    reversedQuestions.groups[0].questions.reverse();
+    assert.throws(
+      () => parseListeningLessonDefinition(reversedQuestions, "reversed-questions.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /question positions/u.test(error.message)
     );
   });
 
