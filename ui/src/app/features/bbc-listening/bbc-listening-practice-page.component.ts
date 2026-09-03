@@ -45,11 +45,12 @@ export class BbcListeningPracticePageComponent implements OnInit {
     { initialValue: this.answers.getRawValue() },
   );
   readonly answeredCount = computed(() => {
-    const lesson = this.session.lesson();
-    return lesson ? countAnsweredListeningQuestions(lesson, this.answerValues()) : 0;
+    const test = this.session.test();
+    return test ? countAnsweredListeningQuestions(test, this.answerValues()) : 0;
   });
   readonly canSubmit = computed(() => Boolean(
     this.session.lesson()
+    && this.session.test()
     && !this.submitted()
     && !this.session.submitting(),
   ));
@@ -62,15 +63,16 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const lessonSlug = this.route.snapshot.paramMap.get('lessonSlug')?.trim();
-    if (!lessonSlug) {
-      this.routeError.set('The listening lesson could not be identified.');
+    const testId = this.route.snapshot.paramMap.get('testId')?.trim();
+    if (!lessonSlug || !testId) {
+      this.routeError.set('The listening test could not be identified.');
       return;
     }
-    const started = await this.session.start(lessonSlug);
-    const lesson = this.session.lesson();
-    if (!started || !lesson) return;
+    const started = await this.session.start(lessonSlug, testId);
+    const test = this.session.test();
+    if (!started || !test) return;
 
-    for (const group of lesson.groups) {
+    for (const group of test.groups) {
       for (const question of group.questions) {
         this.answers.addControl(question.id, new FormControl('', { nonNullable: true }));
       }
@@ -111,7 +113,7 @@ export class BbcListeningPracticePageComponent implements OnInit {
         return next;
       });
     } catch (error) {
-      this.vocabularyError.set(error instanceof Error ? error.message : 'Could not add the word to House 1.');
+      this.vocabularyError.set(error instanceof Error ? error.message : 'Could not add the answer to House 1.');
     } finally {
       this.addingVocabulary.set(null);
     }
