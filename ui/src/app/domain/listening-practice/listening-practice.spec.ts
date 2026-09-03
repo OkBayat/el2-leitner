@@ -1,19 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
-  ListeningLesson,
+  ListeningTest,
   buildListeningSubmission,
   countAnsweredListeningQuestions,
   splitListeningBlankPrompt,
 } from './listening-practice';
 
-const lesson: ListeningLesson = {
-  id: 'lesson-1',
-  slug: 'lesson-1',
-  title: 'Lesson',
-  description: null,
-  episodeCode: '1',
-  episodeDate: '2026-09-03',
-  sourceUrl: 'https://example.com',
+const test: ListeningTest = {
+  id: 'test-1',
+  title: 'Test 1',
+  position: 1,
   questionCount: 2,
   groups: [{
     id: 'group-1',
@@ -44,10 +40,10 @@ describe('listening practice domain helpers', () => {
     expect(() => splitListeningBlankPrompt('No blank')).toThrow(/exactly one blank/u);
   });
 
-  it('counts trimmed answers and emits a complete ordered submission', () => {
+  it('counts trimmed answers and emits a complete ordered test submission', () => {
     const values = { q1: ' day ', q2: '' };
-    expect(countAnsweredListeningQuestions(lesson, values)).toBe(1);
-    expect(buildListeningSubmission(lesson, values)).toEqual([
+    expect(countAnsweredListeningQuestions(test, values)).toBe(1);
+    expect(buildListeningSubmission(test, values)).toEqual([
       { questionId: 'q1', value: ' day ' },
       { questionId: 'q2', value: '' },
     ]);
