@@ -131,7 +131,7 @@ function answerPayload() {
     [1, "day"], [2, "long term"], [3, "typhoons"], [4, "tropical"], [5, "slowly"],
     [6, "bbc-260903-question-6-option-b"], [7, "bbc-260903-question-7-option-a"],
     [8, "bbc-260903-question-8-option-a"], [9, "inland"], [10, "coast"],
-    [11, "10 metres"], [12, "2C"], [13, "Atlantic"]
+    [11, "10 metres"], [12, "2C"]
   ];
   return {
     answers: values.map(([number, value]) => ({ questionId: `bbc-260903-question-${number}`, value }))
@@ -168,7 +168,7 @@ describe("BBC listening API", () => {
     assert.equal(Object.hasOwn(choiceQuestion.options[0], "correct"), false);
   });
 
-  it("grades and persists a 10/13 result idempotently", async () => {
+  it("grades an incomplete submission and persists unanswered questions as incorrect idempotently", async () => {
     const { app, listeningPracticeRepository } = await createListeningTestContext();
     const learner = await register(app, "score@example.com");
     const started = await learner
@@ -181,6 +181,8 @@ describe("BBC listening API", () => {
       .expect(200);
     assert.deepEqual(first.body.score, { correct: 10, wrong: 3, total: 13, percentage: 76.9 });
     assert.equal(first.body.results[9].correctAnswer, "sea levels");
+    assert.equal(first.body.results[12].submittedAnswer, "No answer");
+    assert.equal(first.body.results[12].correct, false);
 
     const retry = await learner
       .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
