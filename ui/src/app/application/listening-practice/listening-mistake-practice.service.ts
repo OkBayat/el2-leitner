@@ -9,8 +9,8 @@ export class ListeningMistakePracticeService {
   private readonly store = inject(LearningStoreService);
 
   async addToHouseOne(term: string): Promise<LearningWord> {
-    const current = await this.store.initialize();
-    const capture = captureListeningMistakeInHouseOne(current, term);
+    await this.store.initialize();
+    const capture = captureListeningMistakeInHouseOne(this.store.snapshot(), term);
     await this.store.replaceAndPersist(capture.state);
     const canonical = await this.store.refreshCanonical();
     const normalized = normalizeAnswer(term);
