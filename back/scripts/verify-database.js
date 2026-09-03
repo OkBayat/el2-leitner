@@ -52,47 +52,37 @@ async function verify() {
     }
 
     const [sentenceRows] = await pool.execute(
-      `SELECT COUNT(*) AS total,
-              COUNT(DISTINCT source_item_number) AS source_items,
-              COUNT(DISTINCT source_hash) AS source_hashes
+      `SELECT COUNT(*) AS total
        FROM sentences
-       WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'`
+       WHERE status = 'active'`
     );
     const sentenceTotal = Number(sentenceRows[0]?.total ?? 0);
-    const coveredSourceItems = Number(sentenceRows[0]?.source_items ?? 0);
-    const sentenceSourceHashes = Number(sentenceRows[0]?.source_hashes ?? 0);
-    if (sentenceTotal !== sourceItemCount * 3) {
-      throw new Error(`Expected ${sourceItemCount * 3} active sentence variants, found ${sentenceTotal}.`);
-    }
-    if (coveredSourceItems !== sourceItemCount) {
-      throw new Error(`Expected seeded sentence provenance for ${sourceItemCount} source items, found ${coveredSourceItems}.`);
-    }
-    if (sentenceSourceHashes !== 1) {
-      throw new Error(`Expected one active sentence corpus version, found ${sentenceSourceHashes}.`);
-    }
-
-    const [sentenceVariantRows] = await pool.execute(
-      `SELECT COUNT(*) AS total FROM (
-         SELECT source_item_number
-         FROM sentences
-         WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'
-         GROUP BY source_item_number
-         HAVING COUNT(*) <> 3 OR COUNT(DISTINCT variant_number) <> 3
-       ) invalid_sentence_items`
-    );
-    if (Number(sentenceVariantRows[0]?.total ?? 0) !== 0) {
-      throw new Error("At least one IELTS source item does not have exactly three seeded sentence variants.");
-    }
+    if (sentenceTotal <= 0) throw new Error("The independent sentence catalog is empty.");
 
     const [forbiddenSentenceColumnRows] = await pool.execute(
       `SELECT COUNT(*) AS total
        FROM information_schema.COLUMNS
        WHERE TABLE_SCHEMA = DATABASE()
          AND TABLE_NAME = 'sentences'
-         AND COLUMN_NAME IN ('vocabulary_entry_id', 'word_id', 'answer_text')`
+         AND COLUMN_NAME IN (
+           'vocabulary_entry_id', 'word_id', 'answer_text',
+           'language_code', 'source_key', 'source_item_number',
+           'variant_number', 'category', 'source_hash'
+         )`
     );
     if (Number(forbiddenSentenceColumnRows[0]?.total ?? 0) !== 0) {
-      throw new Error("Sentence catalog must not contain vocabulary-link or target-answer columns.");
+      throw new Error("Sentence catalog contains columns that are no longer part of the minimal runtime schema.");
+    }
+
+    const [requiredSentenceColumnRows] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'sentences'
+         AND COLUMN_NAME IN ('id', 'sentence_text', 'status', 'created_at', 'updated_at')`
+    );
+    if (Number(requiredSentenceColumnRows[0]?.total ?? 0) !== 5) {
+      throw new Error("Sentence catalog is missing one or more required runtime columns.");
     }
 
     const [sentenceForeignKeyRows] = await pool.execute(
@@ -150,7 +140,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} IELTS source items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the independent sentence catalog contains ${sentenceTotal} seeded sentences with no vocabulary foreign keys.`
+      `Database verification passed: ${sourceItemCount} IELTS source items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the minimal independent sentence catalog contains ${sentenceTotal} active rows.`
     );
   } finally {
     await pool.end();
