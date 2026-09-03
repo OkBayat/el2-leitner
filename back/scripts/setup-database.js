@@ -12,6 +12,7 @@ import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persisten
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
 import { seedListeningLessons } from "../src/infrastructure/persistence/mysql/seedListeningLessons.js";
+import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -168,6 +169,11 @@ async function setupDatabase() {
     });
     if (seedResult.changed) console.info(`Seeded ${seedResult.total} IELTS library entries.`);
 
+    const sentenceSeedResult = await seedSentencePractice({ pool: applicationPool });
+    if (sentenceSeedResult.changed) {
+      console.info(`Seeded ${sentenceSeedResult.sentenceCount} curated independent sentences.`);
+    }
+
     const listeningDefinitions = await loadListeningLessonDefinitions(BBC_LISTENING_DIRECTORY);
     const listeningSeedResult = await seedListeningLessons({
       pool: applicationPool,
@@ -200,6 +206,7 @@ async function setupDatabase() {
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM sentences LIMIT 0");
     await applicationPool.query("SELECT 1 FROM listening_lessons LIMIT 0");
   } finally {
     await applicationPool.end();
