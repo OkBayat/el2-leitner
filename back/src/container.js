@@ -1,6 +1,9 @@
 import { GetCurrentUser } from "./application/auth/GetCurrentUser.js";
 import { LoginUser } from "./application/auth/LoginUser.js";
 import { RegisterUser } from "./application/auth/RegisterUser.js";
+import { ListListeningLessons } from "./application/listening-practice/ListListeningLessons.js";
+import { StartListeningAttempt } from "./application/listening-practice/StartListeningAttempt.js";
+import { SubmitListeningAttempt } from "./application/listening-practice/SubmitListeningAttempt.js";
 import { GetVocabularySources } from "./application/library/GetVocabularySources.js";
 import { LibraryCommands } from "./application/library/LibraryCommands.js";
 import { LibraryQueries } from "./application/library/LibraryQueries.js";
@@ -17,6 +20,7 @@ import { VocabularyFileParser } from "./domain/library/VocabularyFileParser.js";
 import { MySqlEditableLearningBootstrapRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningBootstrapRepository.js";
 import { MySqlEditableLearningStateRepository } from "./infrastructure/persistence/mysql/MySqlEditableLearningStateRepository.js";
 import { MySqlLibraryRepository } from "./infrastructure/persistence/mysql/MySqlLibraryRepository.js";
+import { MySqlListeningPracticeRepository } from "./infrastructure/persistence/mysql/MySqlListeningPracticeRepository.js";
 import { MySqlPracticeSessionRepository } from "./infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlReviewProgressRepository } from "./infrastructure/persistence/mysql/MySqlReviewProgressRepository.js";
 import { MySqlUserRepository } from "./infrastructure/persistence/mysql/MySqlUserRepository.js";
@@ -34,6 +38,8 @@ export function createContainer({ pool, config, adapters = {} }) {
       ? learningStateRepository
       : new MySqlEditableLearningBootstrapRepository(pool, learningStateRepository));
   const libraryRepository = adapters.libraryRepository ?? new MySqlLibraryRepository(pool);
+  const listeningPracticeRepository =
+    adapters.listeningPracticeRepository ?? new MySqlListeningPracticeRepository(pool);
   const practiceSessionRepository =
     adapters.practiceSessionRepository ?? new MySqlPracticeSessionRepository(pool);
   const reviewProgressRepository =
@@ -59,6 +65,9 @@ export function createContainer({ pool, config, adapters = {} }) {
       registerUser: new RegisterUser({ userRepository, passwordHasher }),
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
+      listListeningLessons: new ListListeningLessons({ listeningPracticeRepository }),
+      startListeningAttempt: new StartListeningAttempt({ listeningPracticeRepository }),
+      submitListeningAttempt: new SubmitListeningAttempt({ listeningPracticeRepository }),
       getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
       getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
       saveLearningState: new SaveLearningState({ learningStateRepository }),

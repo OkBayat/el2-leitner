@@ -51,6 +51,39 @@ async function verify() {
       throw new Error("Built-in duplicate-alias metadata is inconsistent.");
     }
 
+    const [listeningRows] = await pool.execute(
+      `SELECT l.id,
+              (SELECT COUNT(*) FROM listening_question_groups g WHERE g.lesson_id = l.id) AS groups_total,
+              (SELECT COUNT(*) FROM listening_questions q WHERE q.lesson_id = l.id) AS questions_total,
+              (SELECT COUNT(*)
+                 FROM listening_question_options o
+                 JOIN listening_questions q ON q.id = o.question_id
+                WHERE q.lesson_id = l.id) AS options_total,
+              (SELECT COUNT(*)
+                 FROM listening_questions q
+                 LEFT JOIN listening_question_answers a ON a.question_id = q.id
+                WHERE q.lesson_id = l.id AND a.id IS NULL) AS questions_without_answers
+       FROM listening_lessons l
+       WHERE l.public_id = 'bbc-6-minute-english-260903'
+         AND l.provider = 'bbc_6_minute_english'
+         AND l.status = 'published'
+       LIMIT 1`
+    );
+    if (!listeningRows[0]) throw new Error("The built-in BBC 6 Minute English lesson is missing.");
+    const listening = listeningRows[0];
+    if (Number(listening.groups_total) !== 4) {
+      throw new Error(`Expected 4 BBC question groups, found ${listening.groups_total}.`);
+    }
+    if (Number(listening.questions_total) !== 13) {
+      throw new Error(`Expected 13 BBC listening questions, found ${listening.questions_total}.`);
+    }
+    if (Number(listening.options_total) !== 9) {
+      throw new Error(`Expected 9 BBC multiple-choice options, found ${listening.options_total}.`);
+    }
+    if (Number(listening.questions_without_answers) !== 0) {
+      throw new Error("At least one BBC listening question has no answer key.");
+    }
+
     const [legacyRows] = await pool.execute(
       `SELECT COUNT(*) AS total
        FROM learning_states ls
@@ -85,7 +118,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC listening catalog contains 1 lesson and 13 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();

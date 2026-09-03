@@ -1,0 +1,66 @@
+<section class="bbc-lessons-page" data-testid="bbc-lessons-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Listening practice</p>
+      <h1>BBC 6 Minute English</h1>
+      <p class="page-intro">
+        Listen to a BBC episode, answer IELTS-style questions, and submit the complete exercise for a score.
+      </p>
+    </div>
+  </header>
+
+  <aside class="practice-note" aria-label="Practice instructions">
+    <strong>How it works</strong>
+    <span>Open the BBC audio, listen without reading the transcript, complete every question, and submit once.</span>
+  </aside>
+
+  @if (loading()) {
+    <p class="status" role="status">Loading lessons…</p>
+  } @else if (error()) {
+    <section class="status error" role="alert">
+      <p>{{ error() }}</p>
+      <button mat-stroked-button type="button" (click)="load()">Try again</button>
+    </section>
+  } @else if (lessons().length === 0) {
+    <p class="status">No BBC listening lessons are available yet.</p>
+  } @else {
+    <div class="lesson-list">
+      @for (lesson of lessons(); track lesson.id) {
+        <article
+          class="lesson-card"
+          [attr.data-testid]="'bbc-lesson-' + lesson.slug"
+        >
+          <div class="lesson-copy">
+            <div class="lesson-meta">
+              <span>BBC 6 Minute English</span>
+              @if (lesson.episodeDate) {
+                <time [attr.datetime]="lesson.episodeDate">
+                  {{ lesson.episodeDate | date:'d MMM y':'UTC' }}
+                </time>
+              }
+            </div>
+            <h2>{{ lesson.title }}</h2>
+            @if (lesson.description) {
+              <p>{{ lesson.description }}</p>
+            }
+            <span class="question-count">{{ lesson.questionCount }} IELTS-style questions</span>
+          </div>
+
+          <div class="lesson-actions">
+            <a
+              mat-flat-button
+              [routerLink]="[lesson.slug, 'practice']"
+              data-testid="start-bbc-lesson"
+            >Start lesson</a>
+            <a
+              mat-button
+              [href]="lesson.sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Open BBC episode</a>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

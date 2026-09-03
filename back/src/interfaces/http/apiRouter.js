@@ -67,6 +67,25 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json({ user: req.auth.user });
   });
 
+  router.get("/listening/bbc/lessons", authenticate, async (_req, res) => {
+    const result = await useCases.listListeningLessons.execute();
+    res.status(200).json(result);
+  });
+
+  router.post("/listening/bbc/lessons/:lessonSlug/attempts", authenticate, async (req, res) => {
+    const result = await useCases.startListeningAttempt.execute(req.auth.userId, req.params.lessonSlug);
+    res.status(201).json(result);
+  });
+
+  router.post("/listening/bbc/attempts/:attemptId/submit", authenticate, async (req, res) => {
+    const result = await useCases.submitListeningAttempt.execute(
+      req.auth.userId,
+      req.params.attemptId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
   router.get("/library/vocabulary-sources", authenticate, async (req, res) => {
     const result = await useCases.getVocabularySources.execute(req.auth.userId, { ids: req.query.ids });
     res.status(200).json(result);

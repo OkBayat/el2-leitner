@@ -16,6 +16,8 @@ export const appRoutes: Routes = [
       { path: 'reports', loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent) },
       { path: 'settings', loadComponent: () => import('./features/settings/settings-page.component').then((m) => m.SettingsPageComponent) },
       { path: 'library', loadComponent: () => import('./features/library/library-page.component').then((m) => m.LibraryPageComponent) },
+      { path: 'bbc-6-minute-english/:lessonSlug/practice', loadComponent: () => import('./features/bbc-listening/bbc-listening-practice-page.component').then((m) => m.BbcListeningPracticePageComponent) },
+      { path: 'bbc-6-minute-english', loadComponent: () => import('./features/bbc-listening/bbc-lessons-page.component').then((m) => m.BbcLessonsPageComponent) },
       { path: 'leitner-house/:house', loadComponent: () => import('./features/leitner-house/leitner-house-page.component').then((m) => m.LeitnerHousePageComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
