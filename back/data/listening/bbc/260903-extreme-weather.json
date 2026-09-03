@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "publicId": "bbc-6-minute-english-260903",
   "provider": "bbc_6_minute_english",
   "slug": "climate-change-extreme-weather",
@@ -10,66 +10,209 @@
   "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260903",
   "status": "published",
   "publishedAt": "2026-09-03T00:00:00.000Z",
-  "groups": [
+  "tests": [
     {
-      "id": "bbc-260903-group-1",
+      "id": "test-1",
+      "title": "Test 1",
       "position": 1,
-      "heading": "Questions 1–5",
-      "taskType": "note_completion",
-      "instruction": "Complete the notes below.",
-      "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "maxWords": 2,
-      "maxNumbers": 1,
-      "questions": [
-        {"id":"bbc-260903-question-1","number":1,"position":1,"responseType":"text","prompt":"Weather is what people see and feel every {{blank}}.","answers":["day"]},
-        {"id":"bbc-260903-question-2","number":2,"position":2,"responseType":"text","prompt":"Climate deals with changes over the {{blank}}.","answers":["long term"]},
-        {"id":"bbc-260903-question-3","number":3,"position":3,"responseType":"text","prompt":"Tropical storms include hurricanes, cyclones and {{blank}}.","answers":["typhoons"]},
-        {"id":"bbc-260903-question-4","number":4,"position":4,"responseType":"text","prompt":"These storms form over warm {{blank}} waters.","answers":["tropical"]},
-        {"id":"bbc-260903-question-5","number":5,"position":5,"responseType":"text","prompt":"Scientists think storms may move more {{blank}} in the future.","answers":["slowly"]}
+      "groups": [
+        {
+          "id": "bbc-260903-group-1",
+          "position": 1,
+          "heading": "Questions 1–5",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {"id":"bbc-260903-question-1","number":1,"position":1,"responseType":"text","prompt":"Weather is what people see and feel every {{blank}}.","answers":["day"]},
+            {"id":"bbc-260903-question-2","number":2,"position":2,"responseType":"text","prompt":"Climate deals with changes over the {{blank}}.","answers":["long term"]},
+            {"id":"bbc-260903-question-3","number":3,"position":3,"responseType":"text","prompt":"Tropical storms include hurricanes, cyclones and {{blank}}.","answers":["typhoons"]},
+            {"id":"bbc-260903-question-4","number":4,"position":4,"responseType":"text","prompt":"These storms form over warm {{blank}} waters.","answers":["tropical"]},
+            {"id":"bbc-260903-question-5","number":5,"position":5,"responseType":"text","prompt":"Scientists think storms may move more {{blank}} in the future.","answers":["slowly"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-group-2",
+          "position": 2,
+          "heading": "Questions 6–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {"id":"bbc-260903-question-6","number":6,"position":1,"responseType":"single_choice","prompt":"Why can slower storms create more flooding?","options":[{"id":"bbc-260903-question-6-option-a","label":"A","text":"They become larger immediately."},{"id":"bbc-260903-question-6-option-b","label":"B","text":"They remain in the same area for longer."},{"id":"bbc-260903-question-6-option-c","label":"C","text":"They always happen near the ocean."}],"answer":"B"},
+            {"id":"bbc-260903-question-7","number":7,"position":2,"responseType":"single_choice","prompt":"What is the main difference between landslides and mudslides?","options":[{"id":"bbc-260903-question-7-option-a","label":"A","text":"Mudslides contain more liquid material."},{"id":"bbc-260903-question-7-option-b","label":"B","text":"Landslides only happen after storms."},{"id":"bbc-260903-question-7-option-c","label":"C","text":"Mudslides are less dangerous."}],"answer":"A"},
+            {"id":"bbc-260903-question-8","number":8,"position":3,"responseType":"single_choice","prompt":"When can both landslides and mudslides occur?","options":[{"id":"bbc-260903-question-8-option-a","label":"A","text":"After particularly heavy rain."},{"id":"bbc-260903-question-8-option-b","label":"B","text":"Only when sea levels rise."},{"id":"bbc-260903-question-8-option-c","label":"C","text":"Before tropical storms form."}],"answer":"A"}
+          ]
+        },
+        {
+          "id": "bbc-260903-group-3",
+          "position": 3,
+          "heading": "Questions 9–11",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {"id":"bbc-260903-question-9","number":9,"position":1,"responseType":"text","prompt":"A storm surge is a body of water that gets swept {{blank}}.","answers":["inland"]},
+            {"id":"bbc-260903-question-10","number":10,"position":2,"responseType":"text","prompt":"Climate change is warming the seas and {{blank}} are rising.","answers":["sea levels"]},
+            {"id":"bbc-260903-question-11","number":11,"position":3,"responseType":"text","prompt":"Storm surges can be up to {{blank}} high.","answers":["10 metres","ten metres","10 meters","ten meters"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-group-4",
+          "position": 4,
+          "heading": "Questions 12–13",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {"id":"bbc-260903-question-12","number":12,"position":1,"responseType":"text","prompt":"By how much has Earth's average temperature increased since 1970? {{blank}}","answers":["around 1C","1C","around 1°C","1°C","one degree","1 degree","around 1 degree","1 degree Celsius"]},
+            {"id":"bbc-260903-question-13","number":13,"position":2,"responseType":"text","prompt":"Which region is warming three times faster than the average rate? {{blank}}","answers":["the Arctic","Arctic"]}
+          ]
+        }
       ]
     },
     {
-      "id": "bbc-260903-group-2",
+      "id": "test-2",
+      "title": "Test 2",
       "position": 2,
-      "heading": "Questions 6–8",
-      "taskType": "multiple_choice_single",
-      "instruction": "Choose the correct answer, A, B or C.",
-      "answerInstruction": "Choose ONE letter for each answer.",
-      "maxWords": null,
-      "maxNumbers": null,
-      "questions": [
-        {"id":"bbc-260903-question-6","number":6,"position":1,"responseType":"single_choice","prompt":"Why can slower storms create more flooding?","options":[{"id":"bbc-260903-question-6-option-a","label":"A","text":"They become larger immediately."},{"id":"bbc-260903-question-6-option-b","label":"B","text":"They remain in the same area for longer."},{"id":"bbc-260903-question-6-option-c","label":"C","text":"They always happen near the ocean."}],"answer":"B"},
-        {"id":"bbc-260903-question-7","number":7,"position":2,"responseType":"single_choice","prompt":"What is the main difference between landslides and mudslides?","options":[{"id":"bbc-260903-question-7-option-a","label":"A","text":"Mudslides contain more liquid material."},{"id":"bbc-260903-question-7-option-b","label":"B","text":"Landslides only happen after storms."},{"id":"bbc-260903-question-7-option-c","label":"C","text":"Mudslides are less dangerous."}],"answer":"A"},
-        {"id":"bbc-260903-question-8","number":8,"position":3,"responseType":"single_choice","prompt":"When can both landslides and mudslides occur?","options":[{"id":"bbc-260903-question-8-option-a","label":"A","text":"After particularly heavy rain."},{"id":"bbc-260903-question-8-option-b","label":"B","text":"Only when sea levels rise."},{"id":"bbc-260903-question-8-option-c","label":"C","text":"Before tropical storms form."}],"answer":"A"}
+      "groups": [
+        {
+          "id": "bbc-260903-t2-group-1",
+          "position": 1,
+          "heading": "Questions 1–5",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {"id":"bbc-260903-t2-question-1","number":1,"position":1,"responseType":"text","prompt":"Climate is more {{blank}} than weather.","answers":["long-term"]},
+            {"id":"bbc-260903-t2-question-2","number":2,"position":2,"responseType":"text","prompt":"Hurricanes are the regional name used in the {{blank}}.","answers":["Atlantic"]},
+            {"id":"bbc-260903-t2-question-3","number":3,"position":3,"responseType":"text","prompt":"Cyclones are the regional name used in the {{blank}}.","answers":["Indian Ocean"]},
+            {"id":"bbc-260903-t2-question-4","number":4,"position":4,"responseType":"text","prompt":"Typhoons are the regional name used in the {{blank}}.","answers":["West Pacific"]},
+            {"id":"bbc-260903-t2-question-5","number":5,"position":5,"responseType":"text","prompt":"As the world warms, scientists think tropical storms will become more {{blank}}.","answers":["destructive"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-t2-group-2",
+          "position": 2,
+          "heading": "Questions 6–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {"id":"bbc-260903-t2-question-6","number":6,"position":1,"responseType":"single_choice","prompt":"What happens when a storm remains over the same area for longer?","options":[{"id":"bbc-260903-t2-question-6-option-a","label":"A","text":"Its winds can stay stronger for longer."},{"id":"bbc-260903-t2-question-6-option-b","label":"B","text":"Its rain stops sooner."},{"id":"bbc-260903-t2-question-6-option-c","label":"C","text":"It immediately moves inland."}],"answer":"A"},
+            {"id":"bbc-260903-t2-question-7","number":7,"position":2,"responseType":"single_choice","prompt":"Which set of hazards can become more likely when rain lasts longer?","options":[{"id":"bbc-260903-t2-question-7-option-a","label":"A","text":"Flooding, landslides and mudslides."},{"id":"bbc-260903-t2-question-7-option-b","label":"B","text":"Droughts, earthquakes and volcanoes."},{"id":"bbc-260903-t2-question-7-option-c","label":"C","text":"Snowstorms and avalanches only."}],"answer":"A"},
+            {"id":"bbc-260903-t2-question-8","number":8,"position":3,"responseType":"single_choice","prompt":"How are mudslides described compared with landslides?","options":[{"id":"bbc-260903-t2-question-8-option-a","label":"A","text":"They tend to be faster and more liquid."},{"id":"bbc-260903-t2-question-8-option-b","label":"B","text":"They are always slower and drier."},{"id":"bbc-260903-t2-question-8-option-c","label":"C","text":"They only occur near the sea."}],"answer":"A"}
+          ]
+        },
+        {
+          "id": "bbc-260903-t2-group-3",
+          "position": 3,
+          "heading": "Questions 9–11",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {"id":"bbc-260903-t2-question-9","number":9,"position":1,"responseType":"text","prompt":"A storm surge can cause widespread {{blank}}.","answers":["flooding"]},
+            {"id":"bbc-260903-t2-question-10","number":10,"position":2,"responseType":"text","prompt":"Climate change is warming the seas and sea levels are {{blank}}.","answers":["rising"]},
+            {"id":"bbc-260903-t2-question-11","number":11,"position":3,"responseType":"text","prompt":"Sea water in a storm surge is pushed by strong storm {{blank}}.","answers":["winds"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-t2-group-4",
+          "position": 4,
+          "heading": "Questions 12–13",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {"id":"bbc-260903-t2-question-12","number":12,"position":1,"responseType":"text","prompt":"How high can a storm surge be? {{blank}}","answers":["10 metres","ten metres","10 meters","ten meters"]},
+            {"id":"bbc-260903-t2-question-13","number":13,"position":2,"responseType":"text","prompt":"About how much has Earth's average temperature increased since 1970? {{blank}}","answers":["1 degree","one degree","1C","1°C"]}
+          ]
+        }
       ]
     },
     {
-      "id": "bbc-260903-group-3",
+      "id": "test-3",
+      "title": "Test 3",
       "position": 3,
-      "heading": "Questions 9–11",
-      "taskType": "sentence_completion",
-      "instruction": "Complete the sentences below.",
-      "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-      "maxWords": 3,
-      "maxNumbers": 1,
-      "questions": [
-        {"id":"bbc-260903-question-9","number":9,"position":1,"responseType":"text","prompt":"A storm surge is a body of water that gets swept {{blank}}.","answers":["inland"]},
-        {"id":"bbc-260903-question-10","number":10,"position":2,"responseType":"text","prompt":"Climate change is warming the seas and {{blank}} are rising.","answers":["sea levels"]},
-        {"id":"bbc-260903-question-11","number":11,"position":3,"responseType":"text","prompt":"Storm surges can be up to {{blank}} high.","answers":["10 metres","ten metres","10 meters","ten meters"]}
-      ]
-    },
-    {
-      "id": "bbc-260903-group-4",
-      "position": 4,
-      "heading": "Questions 12–13",
-      "taskType": "short_answer",
-      "instruction": "Answer the questions below.",
-      "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "maxWords": 2,
-      "maxNumbers": 1,
-      "questions": [
-        {"id":"bbc-260903-question-12","number":12,"position":1,"responseType":"text","prompt":"By how much has Earth's average temperature increased since 1970? {{blank}}","answers":["around 1C","1C","around 1°C","1°C","one degree","1 degree","around 1 degree","1 degree Celsius"]},
-        {"id":"bbc-260903-question-13","number":13,"position":2,"responseType":"text","prompt":"Which region is warming three times faster than the average rate? {{blank}}","answers":["the Arctic","Arctic"]}
+      "groups": [
+        {
+          "id": "bbc-260903-t3-group-1",
+          "position": 1,
+          "heading": "Questions 1–4",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {"id":"bbc-260903-t3-question-1","number":1,"position":1,"responseType":"single_choice","prompt":"Which statement best describes weather?","options":[{"id":"bbc-260903-t3-question-1-option-a","label":"A","text":"What people see and feel every day."},{"id":"bbc-260903-t3-question-1-option-b","label":"B","text":"Only changes measured over centuries."},{"id":"bbc-260903-t3-question-1-option-c","label":"C","text":"The average temperature of the Arctic only."}],"answer":"A"},
+            {"id":"bbc-260903-t3-question-2","number":2,"position":2,"responseType":"single_choice","prompt":"Which statement best describes climate?","options":[{"id":"bbc-260903-t3-question-2-option-a","label":"A","text":"It is more long-term than weather."},{"id":"bbc-260903-t3-question-2-option-b","label":"B","text":"It changes every few minutes."},{"id":"bbc-260903-t3-question-2-option-c","label":"C","text":"It only describes tropical storms."}],"answer":"A"},
+            {"id":"bbc-260903-t3-question-3","number":3,"position":3,"responseType":"single_choice","prompt":"Where do tropical storms form?","options":[{"id":"bbc-260903-t3-question-3-option-a","label":"A","text":"Over warm tropical waters."},{"id":"bbc-260903-t3-question-3-option-b","label":"B","text":"Over cold mountain ranges."},{"id":"bbc-260903-t3-question-3-option-c","label":"C","text":"Only over dry deserts."}],"answer":"A"},
+            {"id":"bbc-260903-t3-question-4","number":4,"position":4,"responseType":"single_choice","prompt":"What do scientists expect as the world warms?","options":[{"id":"bbc-260903-t3-question-4-option-a","label":"A","text":"Tropical storms may become more destructive."},{"id":"bbc-260903-t3-question-4-option-b","label":"B","text":"Tropical storms will disappear completely."},{"id":"bbc-260903-t3-question-4-option-c","label":"C","text":"Sea levels will immediately fall."}],"answer":"A"}
+          ]
+        },
+        {
+          "id": "bbc-260903-t3-group-2",
+          "position": 2,
+          "heading": "Questions 5–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {"id":"bbc-260903-t3-question-5","number":5,"position":1,"responseType":"text","prompt":"Scientists think storms are {{blank}} down.","answers":["slowing"]},
+            {"id":"bbc-260903-t3-question-6","number":6,"position":2,"responseType":"text","prompt":"If storms stay over one area, the rain lasts {{blank}}.","answers":["longer"]},
+            {"id":"bbc-260903-t3-question-7","number":7,"position":3,"responseType":"text","prompt":"A landslide moves earth or rock quickly down a {{blank}}.","answers":["slope"]},
+            {"id":"bbc-260903-t3-question-8","number":8,"position":4,"responseType":"text","prompt":"Mudslides tend to be faster and more {{blank}}.","answers":["liquid"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-t3-group-3",
+          "position": 3,
+          "heading": "Questions 9–11",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {"id":"bbc-260903-t3-question-9","number":9,"position":1,"responseType":"text","prompt":"Landslides and mudslides can happen after particularly {{blank}}.","answers":["heavy rain","heavy rainfall"]},
+            {"id":"bbc-260903-t3-question-10","number":10,"position":2,"responseType":"text","prompt":"A storm surge is a body of water swept {{blank}}.","answers":["inland"]},
+            {"id":"bbc-260903-t3-question-11","number":11,"position":3,"responseType":"text","prompt":"Storm surges produce more {{blank}} than any other element of storms.","answers":["casualties"]}
+          ]
+        },
+        {
+          "id": "bbc-260903-t3-group-4",
+          "position": 4,
+          "heading": "Questions 12–13",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {"id":"bbc-260903-t3-question-12","number":12,"position":1,"responseType":"text","prompt":"How much faster is the Arctic warming than the average rate? {{blank}}","answers":["3 times","three times"]},
+            {"id":"bbc-260903-t3-question-13","number":13,"position":2,"responseType":"text","prompt":"Heatwaves and wildfires are mentioned together with what other extreme event? {{blank}}","answers":["floods"]}
+          ]
+        }
       ]
     }
   ]
