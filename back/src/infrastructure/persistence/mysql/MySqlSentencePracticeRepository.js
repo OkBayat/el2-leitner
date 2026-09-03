@@ -15,6 +15,12 @@ function booleanPhrase(form) {
   return `"${form.replace(/[+><()~*"@-]/gu, " ").replace(/\s+/gu, " ").trim()}"`;
 }
 
+function sourceIdentity(row) {
+  return row.source_item_number === null
+    ? `id:${row.id}`
+    : `${row.source_key ?? "unknown"}:${row.source_item_number}`;
+}
+
 export class MySqlSentencePracticeRepository {
   constructor(pool) {
     this.pool = pool;
@@ -57,8 +63,10 @@ export class MySqlSentencePracticeRepository {
     const forms = cleanAcceptedForms(acceptedForms);
     if (!forms.length) return [];
     const candidateLimit = Math.max(6, Math.min(200, Math.trunc(Number(limit) || 48)));
-    const byId = new Map();
+    const rawLimit = Math.min(800, candidateLimit * 4);
+    const bySourceSentence = new Map();
     const projection = `SELECT id,
+              source_key,
               source_item_number,
               variant_number,
               category,
@@ -69,6 +77,13 @@ export class MySqlSentencePracticeRepository {
               audio_license,
               audio_attribution_url
        FROM sentences`;
+    const collect = (rows) => {
+      for (const row of rows) {
+        const key = sourceIdentity(row);
+        if (!bySourceSentence.has(key)) bySourceSentence.set(key, row);
+        if (bySourceSentence.size >= candidateLimit) break;
+      }
+    };
 
     const searchable = forms.filter(fullTextSearchable);
     if (searchable.length) {
@@ -80,18 +95,18 @@ export class MySqlSentencePracticeRepository {
              AND language_code = ?
              AND audio_url IS NOT NULL
              AND MATCH(sentence_text) AGAINST (? IN BOOLEAN MODE)
-           ORDER BY id DESC
-           LIMIT ${candidateLimit}`,
+           ORDER BY source_item_number DESC, audio_id ASC
+           LIMIT ${rawLimit}`,
           [languageCode, booleanQuery]
         );
-        for (const row of rows) byId.set(String(row.id), row);
+        collect(rows);
       }
     }
 
     // MySQL full-text indexes ignore very short tokens and stop words. The
     // bounded LIKE fallback keeps terms such as "is", "May" and "at" usable
     // without ever loading the 800k+ row catalog into application memory.
-    if (byId.size < Math.min(12, candidateLimit)) {
+    if (bySourceSentence.size < Math.min(12, candidateLimit)) {
       const conditions = forms.map((form) => /[A-Z]/u.test(form)
         ? "BINARY sentence_text LIKE ?"
         : "sentence_text LIKE ?");
@@ -101,14 +116,14 @@ export class MySqlSentencePracticeRepository {
            AND language_code = ?
            AND audio_url IS NOT NULL
            AND (${conditions.join(" OR ")})
-         ORDER BY id DESC
-         LIMIT ${candidateLimit}`,
+         ORDER BY source_item_number DESC, audio_id ASC
+         LIMIT ${rawLimit}`,
         [languageCode, ...forms.map((form) => `%${form}%`)]
       );
-      for (const row of rows) byId.set(String(row.id), row);
+      collect(rows);
     }
 
-    return [...byId.values()].slice(0, candidateLimit).map((row) => ({
+    return [...bySourceSentence.values()].slice(0, candidateLimit).map((row) => ({
       id: String(row.id),
       sourceItemNumber: row.source_item_number === null ? null : Number(row.source_item_number),
       variantNumber: row.variant_number === null ? null : Number(row.variant_number),
