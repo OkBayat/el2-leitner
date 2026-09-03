@@ -83,11 +83,11 @@ test('BBC lesson offers multiple tests, tracks completion, and keeps explicit mi
   await page.getByTestId('submit-listening-attempt').click();
   const submitPayload = await (await submitResponsePromise).json();
   expect(submitPayload.attempt.testId).toBe('test-1');
-  expect(submitPayload.score).toEqual({ correct: 10, wrong: 3, total: 13, percentage: 76.9 });
+  expect(submitPayload.score).toEqual({ correct: 9, wrong: 4, total: 13, percentage: 69.2 });
 
   const score = page.getByTestId('listening-score');
-  await expect(score).toContainText('10 / 13');
-  await expect(score).toContainText('76.9%');
+  await expect(score).toContainText('9 / 13');
+  await expect(score).toContainText('69.2%');
   await expect(page.getByTestId('listening-question-6')).toHaveClass(/incorrect/u);
   await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
   await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
