@@ -71,7 +71,8 @@ describe("BBC listening lesson definition", () => {
     assert.equal(test1[0].acceptedAnswers[0].text, "laptops");
     assert.match(test1[1].prompt, /Australia/iu);
     assert.match(test1[2].prompt, /University of/iu);
-    assert.match(test1[3].prompt, /intentional/iu);
+    assert.match(test1[3].prompt, /Goodacre says adults should be more/iu);
+    assert.equal(test1[3].acceptedAnswers[0].text, "intentional");
     assert.match(test1[4].prompt, /needs to be higher/iu);
     assert.match(test1[9].prompt, /parents are very/iu);
     assert.match(test1[11].prompt, /moving somewhere/iu);
