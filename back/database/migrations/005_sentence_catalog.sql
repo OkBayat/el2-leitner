@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS vocabulary_sentences;
+
 CREATE TABLE IF NOT EXISTS sentences (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   language_code VARCHAR(16) NOT NULL DEFAULT 'en',

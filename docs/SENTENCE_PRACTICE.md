@@ -74,12 +74,14 @@ ui/data/IELTS_Listening_Core_1500.md
 
 The seed creates three natural deterministic sentences for each of the 1,500 source items, giving 4,500 initial sentence rows. Source item number, variant number, category and corpus hash are stored only as provenance for idempotent seeding; they are not vocabulary relationships and are nullable for independently added sentences.
 
-Database setup applies migration 005, seeds the built-in vocabulary collection independently, and seeds the independent sentence catalog:
+Database setup applies `005_sentence_catalog.sql`, seeds the built-in vocabulary collection independently, and seeds the independent sentence catalog:
 
 ```bash
 cd back
 npm run db:setup
 ```
+
+The migration first removes the temporary `vocabulary_sentences` table if a developer had already run an earlier revision of PR #55. Because the new migration filename is different, the migration runner can apply it without checksum conflicts and then the normal seed rebuilds the independent sentence corpus. Fresh databases simply skip that drop.
 
 Optional commands:
 
@@ -105,7 +107,7 @@ Tests enforce:
 
 - exactly 1,500 source items and 4,500 initial seeded sentences;
 - no sentence foreign keys or vocabulary-link columns;
-- no `vocabulary_sentences` or `sentence_word_links` table;
+- no `vocabulary_sentences` or `sentence_word_links` table after migration;
 - no vocabulary lookup during sentence seeding;
 - complete-term regex matching (`name` does not match `surname`);
 - phrase/hyphen matching and accepted aliases;
