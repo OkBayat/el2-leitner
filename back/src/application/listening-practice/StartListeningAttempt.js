@@ -63,6 +63,7 @@ function publicLesson(lesson) {
     episodeCode: lesson.episodeCode,
     episodeDate: lesson.episodeDate,
     sourceUrl: lesson.sourceUrl,
+    audioUrl: `/api/listening/bbc/lessons/${encodeURIComponent(lesson.slug)}/audio`,
     questionCount: lesson.questionCount,
     testCount: lesson.testCount
   };
