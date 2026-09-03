@@ -22,6 +22,7 @@ async function storedLessonRow() {
     episode_code: definition.episodeCode,
     episode_date: definition.episodeDate,
     source_url: definition.sourceUrl,
+    audio_file: "bbc-6-minute-english-260903.mp3",
     schema_version: definition.schemaVersion,
     question_count: definition.questionCount,
     content_version: 1,
@@ -30,7 +31,7 @@ async function storedLessonRow() {
 }
 
 describe("MySqlListeningPracticeRepository JSON persistence", () => {
-  it("loads three tests from one lesson aggregate while keeping answer keys out of the public projection", async () => {
+  it("loads three tests and audio metadata while keeping answer keys out of the public projection", async () => {
     const row = await storedLessonRow();
     const pool = {
       async execute() { return [[row]]; }
@@ -51,12 +52,27 @@ describe("MySqlListeningPracticeRepository JSON persistence", () => {
     assert.equal(publicLesson.questionCount, 39);
     assert.equal(publicLesson.tests[0].questionCount, 13);
     assert.equal(publicLesson.sourceUrl, row.source_url);
+    assert.equal(publicLesson.audioFile, "bbc-6-minute-english-260903.mp3");
     assert.equal(Object.hasOwn(publicLesson.tests[0].groups[0].questions[0], "acceptedAnswers"), false);
     assert.equal(Object.hasOwn(publicLesson.tests[0].groups[1].questions[0], "correctOptionId"), false);
     assert.equal(privateLesson.tests[0].groups[0].questions[0].acceptedAnswers[0].text, "day");
     assert.equal(
       privateLesson.tests[0].groups[1].questions[0].correctOptionId,
       "bbc-260903-question-6-option-b"
+    );
+  });
+
+  it("loads the published audio filename without parsing answer content", async () => {
+    const pool = {
+      async execute(sql) {
+        assert.match(sql, /SELECT audio_file/u);
+        return [[{ audio_file: "bbc-6-minute-english-260903.mp3" }]];
+      }
+    };
+    const repository = new MySqlListeningPracticeRepository(pool);
+    assert.deepEqual(
+      await repository.findPublishedAudioBySlug("bbc_6_minute_english", "climate-change-extreme-weather"),
+      { audioFile: "bbc-6-minute-english-260903.mp3" }
     );
   });
 
