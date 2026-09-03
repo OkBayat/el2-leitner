@@ -1,6 +1,7 @@
 import { GetCurrentUser } from "./application/auth/GetCurrentUser.js";
 import { LoginUser } from "./application/auth/LoginUser.js";
 import { RegisterUser } from "./application/auth/RegisterUser.js";
+import { GetListeningEpisodeAudio } from "./application/listening-practice/GetListeningEpisodeAudio.js";
 import { ListListeningLessons } from "./application/listening-practice/ListListeningLessons.js";
 import { StartListeningAttempt } from "./application/listening-practice/StartListeningAttempt.js";
 import { SubmitListeningAttempt } from "./application/listening-practice/SubmitListeningAttempt.js";
@@ -61,10 +62,12 @@ export function createContainer({ pool, config, adapters = {} }) {
     tokenService,
     authCookie: config.auth.cookie,
     authRateLimit: config.auth.rateLimit,
+    listeningAudioDirectory: config.listening.audioDirectory,
     useCases: {
       registerUser: new RegisterUser({ userRepository, passwordHasher }),
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
+      getListeningEpisodeAudio: new GetListeningEpisodeAudio({ listeningPracticeRepository }),
       listListeningLessons: new ListListeningLessons({ listeningPracticeRepository }),
       startListeningAttempt: new StartListeningAttempt({ listeningPracticeRepository }),
       submitListeningAttempt: new SubmitListeningAttempt({ listeningPracticeRepository }),
