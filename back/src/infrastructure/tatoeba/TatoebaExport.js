@@ -2,7 +2,7 @@ export const TATOEBA_SOURCE_KEY = "tatoeba";
 export const TATOEBA_SENTENCES_URL = "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2";
 export const TATOEBA_AUDIO_URL = "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_with_audio.tsv.bz2";
 export const TATOEBA_AUDIO_DOWNLOAD_BASE_URL = "https://tatoeba.org/audio/download";
-export const TATOEBA_MINIMUM_ENGLISH_AUDIO_SENTENCES = 849_774;
+export const TATOEBA_MINIMUM_ENGLISH_AUDIO_RECORDINGS = 849_774;
 
 function positiveId(value, field) {
   const parsed = Number(value);
@@ -40,14 +40,6 @@ export function parseTatoebaAudioLine(line) {
 
 export function isReusableTatoebaAudio(audio) {
   return Boolean(audio?.license?.trim());
-}
-
-export function pickPreferredTatoebaAudio(current, candidate) {
-  if (!current) return candidate;
-  const currentReusable = isReusableTatoebaAudio(current);
-  const candidateReusable = isReusableTatoebaAudio(candidate);
-  if (candidateReusable !== currentReusable) return candidateReusable ? candidate : current;
-  return candidate.audioId < current.audioId ? candidate : current;
 }
 
 export function tatoebaAudioDownloadUrl(audioId) {
