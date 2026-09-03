@@ -18,6 +18,7 @@ RUN npm run build:production
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
+RUN apk add --no-cache bzip2
 COPY --chown=node:node back ./back
 COPY --from=ui-build --chown=node:node /app/ui/dist/browser ./ui
 COPY --from=backend-dependencies /app/back/node_modules ./back/node_modules
