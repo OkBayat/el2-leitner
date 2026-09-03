@@ -17,13 +17,17 @@ import {
 } from "./helpers/fakes.js";
 
 const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const screenTimeLessonUrl = new URL(
+  "../data/listening/bbc/260618-limiting-screen-time-for-children.json",
+  import.meta.url
+);
 
 class InMemoryListeningPracticeRepository {
   constructor(lesson) {
     this.lesson = {
       databaseId: 1,
       contentVersion: 1,
-      audioFile: "bbc-6-minute-english-260903.mp3",
+      audioFile: `${lesson.publicId}.mp3`,
       ...structuredClone(lesson)
     };
     this.attempts = new Map();
@@ -111,10 +115,13 @@ class InMemoryListeningPracticeRepository {
   }
 }
 
-async function createListeningTestContext() {
+async function createListeningTestContext(
+  sourceUrl = lessonUrl,
+  sourceName = "260903-extreme-weather.json"
+) {
   const lesson = parseListeningLessonDefinition(
-    JSON.parse(await readFile(lessonUrl, "utf8")),
-    "260903-extreme-weather.json"
+    JSON.parse(await readFile(sourceUrl, "utf8")),
+    sourceName
   );
   const listeningPracticeRepository = new InMemoryListeningPracticeRepository(lesson);
   const config = loadConfig({
@@ -200,6 +207,31 @@ describe("BBC listening API", () => {
     assert.equal(Object.hasOwn(textQuestion, "answers"), false);
     assert.equal(Object.hasOwn(choiceQuestion, "correctOptionId"), false);
     assert.equal(Object.hasOwn(choiceQuestion.options[0], "correct"), false);
+  });
+
+  it("lists and starts the new limiting-screen-time lesson with its own audio URL", async () => {
+    const { app, listeningPracticeRepository } = await createListeningTestContext(
+      screenTimeLessonUrl,
+      "260618-limiting-screen-time-for-children.json"
+    );
+    const learner = await register(app, "screen-time-listening@example.com");
+
+    const catalog = await learner.get("/api/listening/bbc/lessons").expect(200);
+    assert.equal(catalog.body.lessons[0].slug, "limiting-screen-time-for-children");
+    assert.equal(catalog.body.lessons[0].testCount, 3);
+    assert.equal(catalog.body.lessons[0].questionCount, 39);
+
+    const started = await learner
+      .post("/api/listening/bbc/lessons/limiting-screen-time-for-children/tests/test-1/attempts")
+      .expect(201);
+    assert.equal(started.body.test.id, "test-1");
+    assert.equal(started.body.test.questionCount, 13);
+    assert.equal(
+      started.body.lesson.audioUrl,
+      "/api/listening/bbc/lessons/limiting-screen-time-for-children/audio"
+    );
+    assert.equal(listeningPracticeRepository.lesson.audioFile, "bbc-6-minute-english-260618.mp3");
+    assert.equal(Object.hasOwn(started.body.test.groups[0].questions[0], "acceptedAnswers"), false);
   });
 
   it("grades an incomplete Test 1 submission and reports completion only for Test 1", async () => {
