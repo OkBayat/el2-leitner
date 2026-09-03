@@ -71,7 +71,7 @@ describe('BBC listening pages', () => {
     expect(page.error()).toBeNull();
   });
 
-  it('allows incomplete submission and can add an incorrect one-word answer to House 1', async () => {
+  it('allows incomplete submission and can add phrase or choice mistakes to House 1', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
     const attemptSignal = signal<ListeningAttempt | null>({
       id: 'attempt-1',
@@ -82,7 +82,7 @@ describe('BBC listening pages', () => {
     const resultSignal = signal<ListeningAttemptResult | null>(null);
     const start = vi.fn().mockResolvedValue(true);
     const submit = vi.fn().mockResolvedValue(true);
-    const addToHouseOne = vi.fn().mockResolvedValue({ id: 'db-inland', term: 'inland', box: 1 });
+    const addToHouseOne = vi.fn().mockResolvedValue({ id: 'db-sea-levels', term: 'sea levels', box: 1 });
     const session = {
       lesson: lessonSignal,
       attempt: attemptSignal,
@@ -117,17 +117,33 @@ describe('BBC listening pages', () => {
     await page.submit();
     expect(submit).toHaveBeenCalledWith({ q1: 'day', q2: '' });
 
-    const wrongWord = {
+    const phraseMistake = {
       questionId: 'q1',
       number: 1,
       responseType: 'text' as const,
       correct: false,
       submittedAnswer: 'coast',
-      correctAnswer: 'inland',
+      correctAnswer: 'sea levels',
     };
-    expect(page.vocabularyCandidate(wrongWord)).toBe('inland');
-    await page.addVocabularyToHouseOne('inland');
-    expect(addToHouseOne).toHaveBeenCalledWith('inland');
-    expect(page.isVocabularyAdded('INLAND')).toBe(true);
+    const choiceMistake = {
+      questionId: 'q2',
+      number: 2,
+      responseType: 'single_choice' as const,
+      correct: false,
+      submittedAnswer: 'A. First',
+      correctAnswer: 'B. Second option',
+    };
+    const numericMistake = {
+      ...phraseMistake,
+      correctAnswer: '1C',
+    };
+
+    expect(page.vocabularyCandidate(phraseMistake)).toBe('sea levels');
+    expect(page.vocabularyCandidate(choiceMistake)).toBe('Second option');
+    expect(page.vocabularyCandidate(numericMistake)).toBeNull();
+
+    await page.addVocabularyToHouseOne('sea levels');
+    expect(addToHouseOne).toHaveBeenCalledWith('sea levels');
+    expect(page.isVocabularyAdded('SEA LEVELS')).toBe(true);
   });
 });
