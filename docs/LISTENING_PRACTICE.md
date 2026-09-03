@@ -1,6 +1,6 @@
 # Listening Practice
 
-Listening Practice is an independent Vocora bounded context for lesson-based, server-graded listening exercises. The first provider is **BBC 6 Minute English**. It remains separate from Vocabulary, Leitner review, and Sentence Practice unless the learner explicitly chooses to capture a missed vocabulary word for later practice.
+Listening Practice is an independent Vocora bounded context for lesson-based, server-graded listening exercises. The first provider is **BBC 6 Minute English**. It remains separate from Vocabulary, Leitner review, and Sentence Practice unless the learner explicitly chooses to capture a missed answer for later practice.
 
 ## User flow
 
@@ -10,7 +10,7 @@ Listening Practice is an independent Vocora bounded context for lesson-based, se
 4. Answer as many text-completion and single-choice questions as possible.
 5. Submit the whole exercise; unanswered questions are graded as incorrect.
 6. Review the server-calculated score and the correct/incorrect result for every question.
-7. For an incorrect text answer whose correct solution is exactly one lexical word, optionally choose **Add to House 1**.
+7. For an incorrect answer whose correct solution contains text but no numeric characters, optionally choose **Add to House 1**.
 
 The first built-in lesson is episode `260903`, **How is climate change affecting extreme weather?**, with 13 IELTS-style questions in four groups.
 
@@ -24,13 +24,13 @@ Listening Practice
     └── submitted-answer and result snapshots in JSON
 
 Explicit learner action only
-└── missed one-word vocabulary
+└── missed non-numeric answer
     └── Vocabulary / Leitner House 1
 ```
 
 Submitting or grading a listening attempt does not write `user_vocabulary_progress`, `review_events`, Leitner houses, due dates, streaks, or mistake counters. The only cross-context write is an explicit **Add to House 1** action after feedback is visible.
 
-That action reuses Vocora's existing learning-state persistence instead of giving Listening Practice its own vocabulary storage. Existing vocabulary is moved back to House 1 for relearning. If the term is not already visible to the learner, normal vocabulary resolution either reuses an existing shared entry or creates a private vocabulary entry and membership in the learner's existing personal collection. Newly captured words use the personal section/category **Listening mistakes** rather than creating a new global catch-all collection.
+That action reuses Vocora's existing learning-state persistence instead of giving Listening Practice its own vocabulary storage. Existing vocabulary is moved back to House 1 for relearning. If the answer is not already visible to the learner, normal vocabulary resolution either reuses an existing shared entry or creates a private vocabulary entry and membership in the learner's existing personal collection. Newly captured answers use the personal section/category **Listening mistakes** rather than creating a new global catch-all collection.
 
 ## Why lesson content is JSON
 
@@ -53,9 +53,9 @@ Queries and commands are separate application use cases:
 - `ListListeningLessons` — catalog query
 - `StartListeningAttempt` — starts a server-owned attempt and returns a public lesson projection
 - `SubmitListeningAttempt` — grades through the Domain layer and completes the attempt atomically
-- `ListeningMistakePracticeService` — explicit UI application service that hands a validated missed word to the existing learning-state command path
+- `ListeningMistakePracticeService` — explicit UI application service that hands a validated missed answer to the existing learning-state command path
 
-The Listening Domain contains lesson validation, strict IELTS answer normalization, grading, and the rule that only an incorrect single lexical text answer can become a vocabulary-capture candidate. It has no Express or MySQL dependency. MySQL access for listening attempts remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
+The Listening Domain contains lesson validation, strict IELTS answer normalization, grading, and the rule that only an incorrect non-numeric textual answer can become a vocabulary-capture candidate. It has no Express or MySQL dependency. MySQL access for listening attempts remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
 
 ## Answer-key security
 
@@ -71,7 +71,17 @@ Text matching normalizes only presentation-equivalent input:
 
 Spelling, singular/plural forms, and different words are not corrected or accepted automatically. Alternative valid spellings must be listed explicitly in the lesson JSON.
 
-The House 1 action is deliberately narrower than grading. It is shown only when the correct answer consists of exactly one lexical word (including normal apostrophe/hyphen compounds). Numeric answers such as `10`, answers containing numbers such as `10 metres`, multi-word answers such as `sea levels`, and multiple-choice feedback never offer vocabulary capture.
+The House 1 action is deliberately based on answer content rather than question type. Single words such as `inland`, phrases such as `sea levels`, and the textual correct option from a multiple-choice question are eligible. The displayed `A.`, `B.`, or `C.` label is removed before a multiple-choice answer is captured. Any answer containing a numeric character is not eligible, including `1C`, `10`, and `10 metres`. Unicode digits are rejected as well.
+
+## IELTS content contract
+
+Listening content must preserve genuine IELTS Listening behavior rather than only looking IELTS-like:
+
+- questions are authored in the same chronological order in which their answers appear in the audio
+- question `N` must be answerable before question `N+1` unless an official IELTS task type intentionally has different internal behavior, such as matching
+- group boundaries, instructions, word/number limits, and response types follow real IELTS Listening conventions
+- distractors are plausible and based on the audio context rather than unrelated filler
+- spelling and word-form rules remain strict, as in IELTS
 
 ## Content format
 
@@ -101,7 +111,7 @@ The shared lesson row must not contain learner state. Attempts remain separate b
 | `GET` | `/api/listening/bbc/lessons` | List published BBC lessons |
 | `POST` | `/api/listening/bbc/lessons/:lessonSlug/attempts` | Start an attempt and receive questions without keys |
 | `POST` | `/api/listening/bbc/attempts/:attemptId/submit` | Grade, persist, and return the result |
-| `PUT` | `/api/state` | Existing learning command reused only when the learner explicitly captures a missed word |
+| `PUT` | `/api/state` | Existing learning command reused only when the learner explicitly captures a missed answer |
 
 All endpoints require authentication and use `Cache-Control: no-store` through the existing API router policy. Submission is idempotent: retrying a completed attempt returns `result_json` rather than creating duplicate answer records.
 
@@ -110,16 +120,16 @@ All endpoints require authentication and use `Cache-Control: no-store` through t
 Coverage includes:
 
 - Domain validation and strict answer normalization
-- Text and multiple-choice grading
-- 10/13 score calculation for the built-in lesson
+- text and multiple-choice grading
 - incomplete submission with unanswered questions graded as incorrect
 - single-aggregate JSON seed, true no-op reseeding and content-version changes
 - CQRS use-case projections and lesson-version conflicts
 - authenticated API behavior, cross-user isolation, and answer-key non-disclosure
-- real-database verification of the two-table JSON model and the 4-group/13-question lesson
-- one-word vocabulary candidate rules, including rejection of numbers and multi-word answers
-- creation of a new Listening-mistake word in House 1 and reset of an existing/mastered word to House 1 without erasing historical counters
+- real-database verification of the two-table JSON model
+- mistake-candidate rules for single words, multi-word phrases, and multiple-choice answers
+- rejection of ASCII and Unicode numeric answers
+- creation of a new Listening-mistake answer in House 1 and reset of existing/mastered vocabulary without erasing historical counters
 - canonical vocabulary reload after full-state persistence
 - Angular domain, application-service, and page-state unit tests
 - Angular architecture contract for separate HTML/SCSS/TS files, OnPush, Material controls, typed reactive forms, and the explicit House 1 action
-- Production Playwright flow proving listening submit itself leaves learning state untouched, then proving an explicit one-word capture appears in House 1
+- production Playwright coverage proving submit itself leaves learning state untouched, a multiple-choice mistake offers capture, `sea levels` can be added to House 1, and `1C` cannot
