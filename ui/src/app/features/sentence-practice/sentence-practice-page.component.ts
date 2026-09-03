@@ -98,7 +98,7 @@ export class SentencePracticePageComponent implements OnInit {
 			this.empty.set(!started);
 			if (started) {
 				this.prepareInput();
-				setTimeout(() => this.session.pronounce(), 200);
+				setTimeout(() => this.session.playSentence(), 200);
 			}
 		} catch (error) {
 			this.empty.set(true);
@@ -120,7 +120,7 @@ export class SentencePracticePageComponent implements OnInit {
 		await this.session.next();
 		if (!this.session.active()) return;
 		this.prepareInput();
-		setTimeout(() => this.session.pronounce(), 180);
+		setTimeout(() => this.session.playSentence(), 180);
 	}
 
 	async restart(): Promise<void> {
@@ -129,7 +129,7 @@ export class SentencePracticePageComponent implements OnInit {
 		this.empty.set(!started);
 		if (started) {
 			this.prepareInput();
-			setTimeout(() => this.session.pronounce(), 180);
+			setTimeout(() => this.session.playSentence(), 180);
 		}
 	}
 
@@ -164,7 +164,7 @@ export class SentencePracticePageComponent implements OnInit {
 		const typing = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
 		if (event.key === ' ' && !typing && !this.session.feedback()) {
 			event.preventDefault();
-			this.session.pronounce();
+			this.session.playSentence();
 		}
 	}
 }
