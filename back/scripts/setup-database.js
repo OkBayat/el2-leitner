@@ -175,7 +175,7 @@ async function setupDatabase() {
     });
     if (listeningSeedResult.changed) {
       console.info(
-        `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.questionCount} question(s).`
+        `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.testCount} test(s) and ${listeningSeedResult.questionCount} question(s).`
       );
     }
 
