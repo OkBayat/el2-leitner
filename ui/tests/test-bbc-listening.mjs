@@ -26,6 +26,10 @@ const required = [
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.html',
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.scss',
   'src/app/features/bbc-listening/bbc-listening-pages.spec.ts',
+  'src/app/features/bbc-listening/listening-audio-player.component.ts',
+  'src/app/features/bbc-listening/listening-audio-player.component.html',
+  'src/app/features/bbc-listening/listening-audio-player.component.scss',
+  'src/app/features/bbc-listening/listening-audio-player.component.spec.ts',
   'e2e/bbc-listening.spec.ts',
 ];
 for (const file of required) assert.ok(exists(file), `${file} is required for BBC listening practice.`);
@@ -52,6 +56,7 @@ assert.ok(
 for (const component of [
   'src/app/features/bbc-listening/bbc-lessons-page.component.ts',
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.ts',
+  'src/app/features/bbc-listening/listening-audio-player.component.ts',
 ]) {
   const source = read(component);
   assert.match(source, /templateUrl:/u, `${component} must use a separate HTML file.`);
@@ -72,6 +77,8 @@ assert.match(practice, /FormRecord<FormControl<string>>/u, 'Dynamic answers must
 assert.match(practice, /toSignal\(/u, 'Answer progress must react to typed form value changes under OnPush.');
 assert.match(practice, /paramMap\.get\('testId'\)/u, 'Practice must resolve the selected test from the route.');
 assert.match(practice, /ListeningMistakePracticeService/u, 'Wrong-answer capture must be orchestrated through an application service.');
+assert.match(practice, /ListeningAudioPlayerComponent/u, 'Episode audio must be rendered through its own component.');
+assert.match(template, /app-listening-audio-player/u, 'The selected test must contain the in-app episode player.');
 assert.match(template, /test\.groups/u, 'The practice page must render only the selected test groups.');
 assert.match(template, /mat-radio-group/u, 'Single-choice IELTS questions must use Material radio controls.');
 assert.match(template, /data-testid="submit-listening-attempt"/u, 'The selected test needs one stable submit action.');
@@ -81,6 +88,14 @@ assert.match(template, /\[readonly\]="submitted\(\)"/u, 'Text answers must be lo
 assert.match(template, /\[disabled\]="submitted\(\)"/u, 'Choice answers must be locked after submission.');
 assert.match(template, /result\.score\.correct/u, 'The server score must be rendered after submission.');
 assert.match(template, /feedback\?\.correct/u, 'Every answer must show correct or incorrect feedback.');
+
+const audioPlayer = read('src/app/features/bbc-listening/listening-audio-player.component.html');
+assert.match(audioPlayer, /<audio/u, 'The player must use the browser audio element.');
+assert.doesNotMatch(audioPlayer, /autoplay/u, 'Listening audio must never autoplay.');
+assert.match(audioPlayer, /audio-play/u, 'The player must expose Play.');
+assert.match(audioPlayer, /audio-stop/u, 'The player must expose Stop.');
+assert.match(audioPlayer, /audio-back-5/u, 'The player must expose five-second rewind.');
+assert.match(audioPlayer, /audio-forward-5/u, 'The player must expose five-second forward seek.');
 
 const mistakeDomain = read('src/app/domain/listening-practice/listening-mistake-practice.ts');
 assert.match(mistakeDomain, /HAS_NUMBER/u, 'House 1 capture must reject answers containing numbers.');
