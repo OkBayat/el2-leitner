@@ -67,13 +67,17 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(200).json({ user: req.auth.user });
   });
 
-  router.get("/listening/bbc/lessons", authenticate, async (_req, res) => {
-    const result = await useCases.listListeningLessons.execute();
+  router.get("/listening/bbc/lessons", authenticate, async (req, res) => {
+    const result = await useCases.listListeningLessons.execute(req.auth.userId);
     res.status(200).json(result);
   });
 
-  router.post("/listening/bbc/lessons/:lessonSlug/attempts", authenticate, async (req, res) => {
-    const result = await useCases.startListeningAttempt.execute(req.auth.userId, req.params.lessonSlug);
+  router.post("/listening/bbc/lessons/:lessonSlug/tests/:testId/attempts", authenticate, async (req, res) => {
+    const result = await useCases.startListeningAttempt.execute(
+      req.auth.userId,
+      req.params.lessonSlug,
+      req.params.testId
+    );
     res.status(201).json(result);
   });
 
