@@ -172,7 +172,7 @@ async function setupDatabase() {
     });
     if (sentenceSeedResult.changed) {
       console.info(
-        `Seeded ${sentenceSeedResult.sentenceCount} sentence variants for ${sentenceSeedResult.sourceItemCount} IELTS source items.`
+        `Seeded ${sentenceSeedResult.sentenceCount} independent sentences from ${sentenceSeedResult.sourceItemCount} IELTS source items.`
       );
     }
 
@@ -197,7 +197,7 @@ async function setupDatabase() {
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
-    await applicationPool.query("SELECT 1 FROM vocabulary_sentences LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM sentences LIMIT 0");
   } finally {
     await applicationPool.end();
   }

@@ -1,93 +1,116 @@
 # Sentence Practice
 
-Sentence Practice is a free-practice mode that reuses the vocabulary already placed in a learner's Leitner houses, but it does **not** perform a Leitner review.
+Sentence Practice is a free-practice mode. It reuses the learner's active Leitner words, but it does **not** perform a Leitner review and the sentence catalog is deliberately independent from vocabulary storage.
 
-## Learner experience
+## Core model
 
-1. The Home page exposes **Sentence practice: House 1**.
-2. `/sentence?house=1` loads every active, non-mastered House 1 word that has sentence coverage.
-3. The target word is pronounced automatically and can also be replayed at the normal or slower rate.
-4. A sentence is rendered with the target replaced by an inline text input. The input has only a bottom border and receives focus automatically.
-5. Enter checks the spelling against every accepted vocabulary form.
-6. Correct and incorrect answers remain visible in the same input until Continue/Enter.
-7. An incorrect word is inserted after three other prompts and uses a different sentence variant when possible. It keeps returning until answered correctly.
+`sentences` is the only sentence source of truth:
 
-The endpoint accepts houses 1–5 so additional Home actions can be added without changing the domain or persistence contract.
+```text
+sentences
+- id
+- language_code
+- sentence_text
+- optional source/provenance metadata
+- status
+```
 
-## Isolation from scheduled review
+There is intentionally **no** `vocabulary_entry_id`, `word_id`, `answer_text`, foreign key, join table or persisted word-to-sentence relation.
 
-Sentence Practice intentionally does not call the review command endpoint and never writes `review_events` or `user_vocabulary_progress`. It therefore cannot:
+A sentence can be added independently:
 
-- promote or demote a word;
-- alter `due_date`, streaks, attempts or mistake counts;
-- add a daily-review answer;
-- send a wrong card into the main daily-review remediation queue.
+```sql
+INSERT INTO sentences (language_code, sentence_text, status)
+VALUES ('en', 'Her name is Sara.', 'active');
+```
 
-Only the existing `practice_sessions` aggregate is used to record session-level counts and duration. The session mode is `sentence-house-{n}`.
+No second write is required. The next Sentence Practice session can discover that row for `name` by searching the sentence text.
 
-## Data model
+## Runtime lookup
 
-Migration `005_sentence_practice.sql` creates `vocabulary_sentences`.
+At session start the backend performs two reads:
 
-Each row:
+1. active words and accepted spellings for the requested Leitner house;
+2. active English sentences from the independent catalog.
 
-- references the canonical `vocabulary_entries.id`;
-- preserves the original 1–1500 source item number;
-- stores one of three variants;
-- stores the source category, complete sentence and audible primary answer;
-- is versioned with a deterministic source hash;
-- is unique by `(source_key, source_item_number, variant_number)`.
+The Domain layer compiles accepted spellings into Unicode-aware regular expressions and finds complete terms only. For `name`:
 
-A source item that is an accepted alias of another item still retains its own three sentences while linking to the same canonical vocabulary entry. This means the 1,500 source rows produce exactly 4,500 sentence rows even though the core collection normalizes equivalent vocabulary aliases.
+```text
+Her name is Sara.       -> match
+My name is Mohammad.    -> match
+Her surname is Sara.    -> no match
+```
 
-## Corpus generation and seeding
+For a matching sentence the regex result itself determines the cloze boundaries:
 
-The checked-in IELTS list remains the source of truth:
+```text
+Her [name] is Sara.
+
+before = "Her "
+after  = " is Sara."
+```
+
+No start/end positions are stored in the database.
+
+Accepted aliases also participate in search. If the learner's word is `colour / color`, a sentence containing either spelling is valid. Capitalized proper terms such as `May` are matched case-sensitively so the month is not confused with modal `may`.
+
+A sentence containing the target more than once is rejected because leaving a second visible occurrence would reveal the answer.
+
+## Randomness and future indexing
+
+The active sentence corpus is shuffled for each practice-deck request and up to six matching contexts are selected per word. The UI chooses among those contexts and a failed word returns after three other prompts with a different context when possible.
+
+The current corpus is only a few thousand rows, so scanning it once per session is intentionally simple and avoids N+1 database queries. When sentence volume grows, `MySqlSentencePracticeRepository.findActiveSentences()` is the replacement point for an inverted/full-text/search index. Such an index is derived data only; `sentences` remains the source of truth and can always rebuild the index.
+
+This means adding a new sentence never requires searching all vocabulary and creating link records first.
+
+## Initial corpus and seeding
+
+The checked-in IELTS list remains the generator input:
 
 ```text
 ui/data/IELTS_Listening_Core_1500.md
 ```
 
-`SentenceCorpus.js` parses that file and creates three deterministic sentences for every numbered source item. It uses curated examples for high-risk grammar and common form-completion vocabulary, plus category-, part-of-speech- and source-range-aware contexts for the rest. Generated prompts use each answer as a complete term in a natural sentence; they never fall back to answer instructions such as “type this word” or quote the target as a vocabulary label.
+The seed creates three natural deterministic sentences for each of the 1,500 source items, giving 4,500 initial sentence rows. Source item number, variant number, category and corpus hash are stored only as provenance for idempotent seeding; they are not vocabulary relationships and are nullable for independently added sentences.
 
-Generation fails when any invariant is violated, including duplicate or non-continuous source numbers, missing targets, a target embedded only inside another word, repeated complete targets inside one sentence, duplicate variants, answer-instruction fallback text or excessive length.
-
-Database setup applies the migration, seeds the built-in vocabulary collection and then seeds the sentence corpus. Manual commands are also available:
+Database setup applies migration 005, seeds the built-in vocabulary collection independently, and seeds the independent sentence catalog:
 
 ```bash
 cd back
-npm run db:validate:sentences   # generate and validate without a database write
-npm run db:seed:sentences       # idempotent database seed
+npm run db:setup
 ```
 
-The seed:
+Optional commands:
 
-1. hashes the generator version and source file;
-2. resolves every source form through `vocabulary_forms` in the built-in collection;
-3. fails before writing if any item cannot be linked;
-4. upserts in batches inside one transaction;
-5. removes rows from older generator versions;
-6. verifies 1,500 covered source items and 4,500 active sentences;
-7. skips the write transaction entirely when an identical corpus is already present.
-
-## API
-
-```http
-GET /api/learning/sentence-practice?house=1
+```bash
+npm run db:validate:sentences
+npm run db:seed:sentences
 ```
 
-The authenticated query returns cards grouped by canonical vocabulary ID, all accepted spellings and sentence segments (`before` and `after`) so the UI never performs unsafe string replacement.
+## Review isolation
 
-## Test coverage
+Sentence Practice never writes the learning/review aggregates. It cannot:
 
-- Full 1,500-item / 4,500-sentence corpus coverage and uniqueness.
-- Natural-context safeguards across nouns, verbs, directions, form fields and spelling traps.
-- Complete-term boundary detection, including targets whose letters also occur inside another word.
-- Accepted spelling aliases.
-- Curated sentence examples and exact target splitting.
-- Transactional, batched and idempotent database seeding.
-- Backend card grouping and invalid-house validation.
-- Authentication and HTTP response contract.
-- Answer normalization.
-- Three-card retry spacing, finite-deck flushing and different-sentence retries.
-- Existing backend, Angular, production build, PWA, Docker smoke and browser suites run in CI.
+- promote or demote a card;
+- alter `due_date`, streaks, attempts or mistakes;
+- create a `review_event`;
+- put a wrong sentence-practice answer into daily-review remediation.
+
+Only the existing `practice_sessions` aggregate records session-level counts and duration with mode `sentence-house-{n}`.
+
+## Regression coverage
+
+Tests enforce:
+
+- exactly 1,500 source items and 4,500 initial seeded sentences;
+- no sentence foreign keys or vocabulary-link columns;
+- no `vocabulary_sentences` or `sentence_word_links` table;
+- no vocabulary lookup during sentence seeding;
+- complete-term regex matching (`name` does not match `surname`);
+- phrase/hyphen matching and accepted aliases;
+- proper-term case handling (`May` does not match `may`);
+- duplicate-target rejection;
+- automatic discovery of a newly inserted independent sentence;
+- random sentence selection and different-context retries;
+- unchanged learning state during browser E2E practice.

@@ -4,69 +4,126 @@ import { describe, it } from "node:test";
 import { GetSentencePracticeCards } from "../src/application/sentence-practice/GetSentencePracticeCards.js";
 
 class StubSentencePracticeRepository {
-  constructor(rows = []) {
-    this.rows = rows;
+  constructor({ words = [], sentences = [] } = {}) {
+    this.words = words;
+    this.sentences = sentences;
     this.calls = [];
   }
 
-  async findForHouse(userId, house) {
-    this.calls.push({ userId, house });
-    return structuredClone(this.rows);
+  async findWordsForHouse(userId, house) {
+    this.calls.push({ method: "words", userId, house });
+    return structuredClone(this.words);
+  }
+
+  async findActiveSentences(languageCode) {
+    this.calls.push({ method: "sentences", languageCode });
+    return structuredClone(this.sentences);
   }
 }
 
-const row = (overrides = {}) => ({
+const word = (overrides = {}) => ({
   wordId: "word-name",
   term: "name",
   acceptedForm: "name",
   box: 1,
   mistakes: 2,
-  sentenceId: "sentence-1",
-  sourceItemNumber: 12,
-  variantNumber: 1,
-  category: "Personal details and form completion",
-  sentenceText: "My name is Mohammad.",
-  answerText: "name",
-  ...overrides,
+  ...overrides
+});
+
+const sentence = (overrides = {}) => ({
+  id: "sentence-1",
+  sourceItemNumber: null,
+  variantNumber: null,
+  category: "Manual",
+  text: "Her name is Sara.",
+  ...overrides
 });
 
 describe("GetSentencePracticeCards", () => {
-  it("groups accepted forms and sentence variants without exposing duplicate SQL rows", async () => {
-    const repository = new StubSentencePracticeRepository([
-      row(),
-      row({ acceptedForm: "Name" }),
-      row({ sentenceId: "sentence-2", variantNumber: 2, sentenceText: "What is your name?" }),
-      row({ sentenceId: "sentence-2", variantNumber: 2, sentenceText: "What is your name?", acceptedForm: "Name" }),
-    ]);
-    const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository });
+  it("discovers independent sentences by regex instead of a stored vocabulary relation", async () => {
+    const repository = new StubSentencePracticeRepository({
+      words: [word(), word({ acceptedForm: "Name" })],
+      sentences: [
+        sentence({ id: "surname", text: "Her surname is Sara." }),
+        sentence({ id: "manual-name", text: "Her name is Sara." }),
+        sentence({ id: "seed-name", sourceItemNumber: 12, variantNumber: 1, text: "My name is Mohammad." })
+      ]
+    });
+    const query = new GetSentencePracticeCards({
+      sentencePracticeRepository: repository,
+      random: () => 0.999
+    });
 
     const result = await query.execute("user-1", "1");
 
-    assert.deepEqual(repository.calls, [{ userId: "user-1", house: 1 }]);
+    assert.deepEqual(repository.calls, [
+      { method: "words", userId: "user-1", house: 1 },
+      { method: "sentences", languageCode: "en" }
+    ]);
     assert.deepEqual(result.practice, { mode: "sentence", house: 1, retryGap: 3 });
     assert.deepEqual(result.summary, { totalWords: 1, totalSentences: 2 });
     assert.deepEqual(result.cards[0].accepted, ["name", "Name"]);
-    assert.deepEqual(result.cards[0].sentences.map((sentence) => ({ before: sentence.before, after: sentence.after })), [
-      { before: "My ", after: " is Mohammad." },
-      { before: "What is your ", after: "?" },
+    assert.deepEqual(result.cards[0].sentences.map(({ id, before, after }) => ({ id, before, after })), [
+      { id: "manual-name", before: "Her ", after: " is Sara." },
+      { id: "seed-name", before: "My ", after: " is Mohammad." }
     ]);
   });
 
-  it("returns an empty practice deck when the selected house has no covered words", async () => {
+  it("automatically uses a newly added sentence without any linking row", async () => {
+    const repository = new StubSentencePracticeRepository({
+      words: [word()],
+      sentences: [sentence({ id: "new-row", text: "His name appears on the ticket." })]
+    });
     const query = new GetSentencePracticeCards({
-      sentencePracticeRepository: new StubSentencePracticeRepository(),
+      sentencePracticeRepository: repository,
+      random: () => 0.999
     });
 
     const result = await query.execute("user-1", 1);
 
-    assert.equal(result.summary.totalWords, 0);
-    assert.equal(result.summary.totalSentences, 0);
+    assert.equal(result.cards[0].sentences[0].id, "new-row");
+    assert.equal(result.cards[0].sentences[0].before, "His ");
+    assert.equal(result.cards[0].sentences[0].after, " appears on the ticket.");
+  });
+
+  it("matches an accepted alias even when the canonical spelling is not present in the sentence", async () => {
+    const repository = new StubSentencePracticeRepository({
+      words: [
+        word({ wordId: "word-colour", term: "colour", acceptedForm: "colour", mistakes: 0 }),
+        word({ wordId: "word-colour", term: "colour", acceptedForm: "color", mistakes: 0 })
+      ],
+      sentences: [sentence({ id: "color-row", text: "The color is easy to see." })]
+    });
+    const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository, random: () => 0.999 });
+
+    const result = await query.execute("user-1", 1);
+
+    assert.deepEqual(result.cards[0].accepted, ["colour", "color"]);
+    assert.deepEqual(result.cards[0].sentences[0], {
+      id: "color-row",
+      sourceItemNumber: null,
+      variantNumber: null,
+      category: "Manual",
+      text: "The color is easy to see.",
+      before: "The ",
+      after: " is easy to see."
+    });
+  });
+
+  it("does not scan the sentence catalog when the selected house has no active words", async () => {
+    const repository = new StubSentencePracticeRepository();
+    const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository });
+
+    const result = await query.execute("user-1", 1);
+
+    assert.deepEqual(result.summary, { totalWords: 0, totalSentences: 0 });
     assert.deepEqual(result.cards, []);
+    assert.deepEqual(repository.calls, [{ method: "words", userId: "user-1", house: 1 }]);
   });
 
   it("rejects a house outside the canonical Leitner range", async () => {
     const query = new GetSentencePracticeCards({
-      sentencePracticeRepository: new StubSentencePracticeRepository(),
+      sentencePracticeRepository: new StubSentencePracticeRepository()
     });
 
     await assert.rejects(

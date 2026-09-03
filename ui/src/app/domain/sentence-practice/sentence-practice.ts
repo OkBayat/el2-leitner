@@ -1,7 +1,7 @@
 export interface SentencePracticeSentence {
 	id: string;
-	sourceItemNumber: number;
-	variantNumber: number;
+	sourceItemNumber: number | null;
+	variantNumber: number | null;
 	category: string;
 	text: string;
 	before: string;

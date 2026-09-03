@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
-import { parseSentenceSource } from "../src/domain/sentence-practice/SentenceCorpus.js";
 import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const sourceUrl = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
@@ -24,13 +23,13 @@ class FakeSentenceSeedConnection {
   }
 
   async execute(sql, parameters) {
-    if (sql.startsWith("INSERT INTO vocabulary_sentences")) {
+    if (sql.startsWith("INSERT INTO sentences")) {
       this.insertCalls += 1;
-      this.pendingTotal += parameters.length / 9;
-      this.pendingHash = parameters[7];
-      return [{ affectedRows: parameters.length / 9 }];
+      this.pendingTotal += parameters.length / 8;
+      this.pendingHash = parameters[6];
+      return [{ affectedRows: parameters.length / 8 }];
     }
-    if (sql.includes("DELETE FROM vocabulary_sentences")) {
+    if (sql.includes("DELETE FROM sentences")) {
       this.deletedStaleRows = true;
       return [{ affectedRows: 0 }];
     }
@@ -44,7 +43,7 @@ class FakeSentenceSeedConnection {
       sourceItems: 1_500,
       sourceHashes: 1,
       sourceHash: this.pendingHash,
-      activeTotal: this.pendingTotal,
+      activeTotal: this.pendingTotal
     };
   }
 
@@ -58,24 +57,24 @@ class FakeSentenceSeedConnection {
 }
 
 class FakeSentenceSeedPool {
-  constructor(vocabularyRows) {
-    this.vocabularyRows = vocabularyRows;
+  constructor() {
     this.state = { total: 0, sourceItems: 0, sourceHashes: 0, sourceHash: null, activeTotal: 0 };
     this.connections = [];
     this.beginCalls = 0;
+    this.readQueries = [];
   }
 
   async execute(sql) {
-    if (sql.includes("FROM vocabulary_sentences")) {
+    this.readQueries.push(sql);
+    if (sql.includes("FROM sentences")) {
       return [[{
         total: this.state.total,
         source_items: this.state.sourceItems,
         source_hashes: this.state.sourceHashes,
         source_hash: this.state.sourceHash,
-        active_total: this.state.activeTotal,
+        active_total: this.state.activeTotal
       }]];
     }
-    if (sql.includes("FROM collections c")) return [this.vocabularyRows];
     throw new Error(`Unexpected seed pool query: ${sql}`);
   }
 
@@ -87,14 +86,9 @@ class FakeSentenceSeedPool {
 }
 
 describe("sentence-practice database seed", () => {
-  it("upserts all 4,500 variants transactionally and skips an unchanged rerun", async () => {
+  it("seeds 4,500 independent sentence rows without looking up vocabulary IDs", async () => {
     const sourceText = await readFile(sourceUrl, "utf8");
-    const forms = parseSentenceSource(sourceText)
-      .flatMap((item, itemIndex) => item.normalizedForms.map((normalizedForm) => ({
-        vocabulary_entry_id: String(itemIndex + 1),
-        normalized_form: normalizedForm,
-      })));
-    const pool = new FakeSentenceSeedPool(forms);
+    const pool = new FakeSentenceSeedPool();
 
     const first = await seedSentencePractice({ pool, sourceText });
 
@@ -108,6 +102,7 @@ describe("sentence-practice database seed", () => {
     assert.equal(pool.connections[0].committed, true);
     assert.equal(pool.connections[0].rolledBack, false);
     assert.equal(pool.connections[0].released, true);
+    assert.equal(pool.readQueries.some((sql) => /vocabulary_entries|vocabulary_forms|collection_entries/u.test(sql)), false);
 
     const second = await seedSentencePractice({ pool, sourceText });
 

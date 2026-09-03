@@ -1,66 +1,101 @@
 import { parseLeitnerHouse } from "../../domain/learning/LeitnerHouse.js";
-import { splitSentenceAtAnswer } from "../../domain/sentence-practice/SentenceCorpus.js";
+import { createSentenceMatcher } from "../../domain/sentence-practice/SentenceMatcher.js";
 
-function sentenceProjection(row) {
-  const split = splitSentenceAtAnswer(row.sentenceText, row.answerText);
+const MAX_SENTENCES_PER_CARD = 6;
+
+function shuffled(items, random) {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+function emptyResult(house) {
   return {
-    id: row.sentenceId,
-    sourceItemNumber: row.sourceItemNumber,
-    variantNumber: row.variantNumber,
-    category: row.category,
-    text: row.sentenceText,
-    before: split.before,
-    after: split.after,
+    practice: { mode: "sentence", house, retryGap: 3 },
+    summary: { totalWords: 0, totalSentences: 0 },
+    cards: []
+  };
+}
+
+function groupWords(rows) {
+  const cards = new Map();
+  for (const row of rows) {
+    let card = cards.get(row.wordId);
+    if (!card) {
+      card = {
+        id: row.wordId,
+        term: row.term,
+        accepted: [],
+        acceptedSet: new Set(),
+        box: row.box,
+        mistakes: row.mistakes
+      };
+      cards.set(row.wordId, card);
+    }
+    if (!card.acceptedSet.has(row.acceptedForm)) {
+      card.acceptedSet.add(row.acceptedForm);
+      card.accepted.push(row.acceptedForm);
+    }
+  }
+  return [...cards.values()];
+}
+
+function projectSentence(sentence, match) {
+  return {
+    id: sentence.id,
+    sourceItemNumber: sentence.sourceItemNumber,
+    variantNumber: sentence.variantNumber,
+    category: sentence.category,
+    text: sentence.text,
+    before: match.before,
+    after: match.after
   };
 }
 
 export class GetSentencePracticeCards {
-  constructor({ sentencePracticeRepository }) {
+  constructor({ sentencePracticeRepository, random = Math.random }) {
     this.sentencePracticeRepository = sentencePracticeRepository;
+    this.random = random;
   }
 
   async execute(userId, houseInput = 1) {
     const house = parseLeitnerHouse(houseInput);
-    const rows = await this.sentencePracticeRepository.findForHouse(userId, house);
-    const cards = new Map();
+    const wordRows = await this.sentencePracticeRepository.findWordsForHouse(userId, house);
+    if (!wordRows.length) return emptyResult(house);
 
-    for (const row of rows) {
-      let card = cards.get(row.wordId);
-      if (!card) {
-        card = {
-          id: row.wordId,
-          term: row.term,
-          accepted: [],
-          acceptedSet: new Set(),
-          box: row.box,
-          mistakes: row.mistakes,
-          sentences: [],
-          sentenceIds: new Set(),
-        };
-        cards.set(row.wordId, card);
+    const sentenceRows = await this.sentencePracticeRepository.findActiveSentences("en");
+    const randomizedSentences = shuffled(sentenceRows, this.random);
+    const cards = [];
+
+    for (const grouped of groupWords(wordRows)) {
+      const accepted = grouped.accepted.length ? grouped.accepted : [grouped.term];
+      const matchSentence = createSentenceMatcher(accepted);
+      const matches = [];
+
+      for (const sentence of randomizedSentences) {
+        const match = matchSentence(sentence.text);
+        if (!match) continue;
+        matches.push(projectSentence(sentence, match));
+        if (matches.length >= MAX_SENTENCES_PER_CARD) break;
       }
-      if (!card.acceptedSet.has(row.acceptedForm)) {
-        card.acceptedSet.add(row.acceptedForm);
-        card.accepted.push(row.acceptedForm);
-      }
-      if (!card.sentenceIds.has(row.sentenceId)) {
-        card.sentenceIds.add(row.sentenceId);
-        card.sentences.push(sentenceProjection(row));
-      }
+
+      if (!matches.length) continue;
+      const { acceptedSet: _acceptedSet, ...card } = grouped;
+      cards.push({ ...card, sentences: matches });
     }
 
-    const projectedCards = [...cards.values()].map(({ acceptedSet: _acceptedSet, sentenceIds: _sentenceIds, ...card }) => card);
     return {
-      practice: {
-        mode: "sentence",
-        house,
-        retryGap: 3,
-      },
+      practice: { mode: "sentence", house, retryGap: 3 },
       summary: {
-        totalWords: projectedCards.length,
-        totalSentences: projectedCards.reduce((total, card) => total + card.sentences.length, 0),
+        totalWords: cards.length,
+        totalSentences: cards.reduce((total, card) => total + card.sentences.length, 0)
       },
-      cards: projectedCards,
+      cards
     };
   }
 }
+
+export { MAX_SENTENCES_PER_CARD };
