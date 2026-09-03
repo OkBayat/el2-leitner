@@ -23,6 +23,7 @@ const lesson: ListeningLesson = {
   episodeCode: '260903',
   episodeDate: '2026-09-03',
   sourceUrl: 'https://www.bbc.co.uk/example',
+  audioUrl: '/api/listening/bbc/lessons/climate-change-extreme-weather/audio',
   questionCount: 39,
   testCount: 3,
 };
@@ -59,7 +60,15 @@ const test: ListeningTest = {
 };
 
 const lessonSummary: ListeningLessonSummary = {
-  ...lesson,
+  id: lesson.id,
+  slug: lesson.slug,
+  title: lesson.title,
+  description: lesson.description,
+  episodeCode: lesson.episodeCode,
+  episodeDate: lesson.episodeDate,
+  sourceUrl: lesson.sourceUrl,
+  questionCount: lesson.questionCount,
+  testCount: lesson.testCount,
   tests: [
     { id: 'test-1', title: 'Test 1', position: 1, questionCount: 13, completed: true, completedAt: '2026-09-03T08:00:00.000Z' },
     { id: 'test-2', title: 'Test 2', position: 2, questionCount: 13, completed: false, completedAt: null },
@@ -89,7 +98,7 @@ describe('BBC listening pages', () => {
     expect(page.error()).toBeNull();
   });
 
-  it('loads the selected test, allows incomplete submission and can add phrase or choice mistakes to House 1', async () => {
+  it('loads the selected test with its in-app audio, allows incomplete submission and can add mistakes to House 1', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
     const testSignal = signal<ListeningTest | null>(test);
     const attemptSignal = signal<ListeningAttempt | null>({
@@ -135,6 +144,7 @@ describe('BBC listening pages', () => {
     await page.ngOnInit();
 
     expect(start).toHaveBeenCalledWith(lesson.slug, test.id);
+    expect(page.session.lesson()?.audioUrl).toBe('/api/listening/bbc/lessons/climate-change-extreme-weather/audio');
     expect(Object.keys(page.answers.controls)).toEqual(['q1', 'q2']);
     expect(page.answeredCount()).toBe(0);
     expect(page.canSubmit()).toBe(true);
