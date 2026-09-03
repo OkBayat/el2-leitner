@@ -4,14 +4,14 @@
       <p class="eyebrow">Listening practice</p>
       <h1>BBC 6 Minute English</h1>
       <p class="page-intro">
-        Listen to a BBC episode, answer IELTS-style questions, and submit the complete exercise for a score.
+        Listen to a BBC episode and practise it with multiple IELTS-style tests. Each test keeps its own completion status.
       </p>
     </div>
   </header>
 
   <aside class="practice-note" aria-label="Practice instructions">
     <strong>How it works</strong>
-    <span>Open the BBC audio, listen without reading the transcript, complete every question, and submit once.</span>
+    <span>Choose any test, listen without reading the transcript, submit when ready, and return later for the other tests.</span>
   </aside>
 
   @if (loading()) {
@@ -43,17 +43,31 @@
             @if (lesson.description) {
               <p>{{ lesson.description }}</p>
             }
-            <span class="question-count">{{ lesson.questionCount }} IELTS-style questions</span>
+            <span class="question-count">
+              {{ lesson.testCount }} IELTS-style tests · {{ lesson.questionCount }} questions in total
+            </span>
           </div>
 
           <div class="lesson-actions">
-            <a
-              mat-flat-button
-              [routerLink]="[lesson.slug, 'practice']"
-              data-testid="start-bbc-lesson"
-            >Start lesson</a>
+            <div class="test-picker" aria-label="Choose a test">
+              @for (test of lesson.tests; track test.id) {
+                <a
+                  mat-stroked-button
+                  class="test-button"
+                  [class.completed]="test.completed"
+                  [routerLink]="[lesson.slug, 'tests', test.id, 'practice']"
+                  [attr.data-testid]="'start-bbc-' + test.id"
+                >
+                  <span class="test-title">{{ test.title }}</span>
+                  <span class="test-status">
+                    {{ test.completed ? '✓ Completed' : 'Start' }}
+                  </span>
+                </a>
+              }
+            </div>
             <a
               mat-button
+              class="episode-link"
               [href]="lesson.sourceUrl"
               target="_blank"
               rel="noopener noreferrer"
