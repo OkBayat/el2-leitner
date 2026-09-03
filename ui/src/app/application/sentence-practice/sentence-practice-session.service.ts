@@ -83,8 +83,9 @@ export class SentencePracticeSessionService {
 	pronounce(multiplier = 1): boolean {
 		const prompt = this.currentPromptSignal();
 		if (!prompt) return false;
+		const sentenceText = prompt.sentence.text.trim();
 		return this.speech.speak(
-			prompt.card.term,
+			sentenceText || prompt.card.term,
 			this.store.snapshot().settings.voiceRate * multiplier,
 		);
 	}
