@@ -18,7 +18,7 @@ async function learningState(page: Page): Promise<unknown> {
   });
 }
 
-test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise', async ({ page }) => {
+test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise in audio order', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -41,6 +41,9 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
   await expect(page.locator('app-shell')).toHaveCount(0);
   await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
   await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(13);
+  await expect(page.getByTestId('listening-question-8')).toContainText('landslides and mudslides');
+  await expect(page.getByTestId('listening-question-9')).toContainText('swept');
+  await expect(page.getByTestId('listening-question-10')).toContainText('sea');
   await expect(page.getByTestId('submit-listening-attempt')).toBeDisabled();
   await expect(page.getByText('Correct answer:', { exact: false })).toHaveCount(0);
 
@@ -50,7 +53,7 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
     3: 'typhoons',
     4: 'tropical',
     5: 'slowly',
-    9: 'heavy rain',
+    9: 'inland',
     10: 'coast',
     11: '10 metres',
     12: '2C',
@@ -78,7 +81,7 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
   await expect(score).toContainText('76.9%');
   await expect(page.getByTestId('listening-question-1')).toHaveClass(/correct/u);
   await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
-  await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: inland');
+  await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
   await expect(page.getByTestId('listening-question-13')).toContainText('Correct answer: the Arctic');
   await expect(page.getByTestId('listening-answer-1')).not.toBeEditable();
