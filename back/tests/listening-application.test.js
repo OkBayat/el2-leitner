@@ -21,59 +21,91 @@ async function fixture() {
 }
 
 describe("Listening practice CQRS use cases", () => {
-  it("keeps catalog reads and attempt writes separate while hiding answer keys", async () => {
+  it("lists test completion and starts only the selected test without exposing answer keys", async () => {
     const lesson = await fixture();
+    const catalogLesson = {
+      ...lesson,
+      tests: lesson.tests.map((test, index) => ({
+        ...test,
+        completed: index === 0,
+        completedAt: index === 0 ? "2026-09-03T08:10:00.000Z" : null
+      }))
+    };
     const calls = [];
     const repository = {
-      async listPublishedLessons(provider) {
-        calls.push(["list", provider]);
-        return [lesson];
+      async listPublishedLessons(provider, userId) {
+        calls.push(["list", provider, userId]);
+        return [catalogLesson];
       },
       async findPublishedLessonBySlug(provider, slug, options) {
         calls.push(["find", provider, slug, options]);
         return lesson;
       },
-      async startAttempt(userId) {
-        calls.push(["start", userId]);
+      async startAttempt(userId, _lesson, test) {
+        calls.push(["start", userId, test.id]);
         return {
           id: "attempt-1",
+          testId: test.id,
           status: "active",
           startedAt: "2026-09-03T08:00:00.000Z",
-          totalQuestions: 13
+          totalQuestions: test.questionCount
         };
       }
     };
 
-    const catalog = await new ListListeningLessons({ listeningPracticeRepository: repository }).execute();
+    const catalog = await new ListListeningLessons({ listeningPracticeRepository: repository }).execute("user-1");
     const started = await new StartListeningAttempt({ listeningPracticeRepository: repository })
-      .execute("user-1", lesson.slug);
+      .execute("user-1", lesson.slug, "test-2");
 
-    assert.equal(catalog.lessons[0].questionCount, 13);
-    assert.equal(started.lesson.groups.length, 4);
-    assert.equal(Object.hasOwn(started.lesson.groups[0].questions[0], "acceptedAnswers"), false);
-    assert.equal(Object.hasOwn(started.lesson.groups[1].questions[0], "correctOptionId"), false);
+    assert.equal(catalog.lessons[0].testCount, 3);
+    assert.equal(catalog.lessons[0].tests[0].completed, true);
+    assert.equal(catalog.lessons[0].tests[1].completed, false);
+    assert.equal(started.test.id, "test-2");
+    assert.equal(started.test.questionCount, 13);
+    assert.equal(started.attempt.testId, "test-2");
+    assert.equal(Object.hasOwn(started.test.groups[0].questions[0], "acceptedAnswers"), false);
+    assert.equal(Object.hasOwn(started.test.groups[1].questions[0], "correctOptionId"), false);
+    assert.deepEqual(calls[0], ["list", "bbc_6_minute_english", "user-1"]);
     assert.deepEqual(calls[1], [
       "find",
       "bbc_6_minute_english",
       "climate-change-extreme-weather",
       { includeAnswers: false }
     ]);
+    assert.deepEqual(calls[2], ["start", "user-1", "test-2"]);
   });
 
-  it("grades through the domain and delegates one completed result write", async () => {
+  it("rejects an unknown test before starting an attempt", async () => {
     const lesson = await fixture();
+    let started = false;
+    const repository = {
+      async findPublishedLessonBySlug() { return lesson; },
+      async startAttempt() { started = true; }
+    };
+    await assert.rejects(
+      () => new StartListeningAttempt({ listeningPracticeRepository: repository })
+        .execute("user-1", lesson.slug, "test-99"),
+      (error) => error.code === "LISTENING_TEST_NOT_FOUND"
+    );
+    assert.equal(started, false);
+  });
+
+  it("grades the test selected by the attempt and delegates one completed result write", async () => {
+    const lesson = await fixture();
+    const test = lesson.tests[0];
     let savedGrade;
     const repository = {
       async getAttemptForGrading() {
         return {
-          attempt: { id: "attempt-1", lessonContentVersion: 1 },
+          attempt: { id: "attempt-1", testId: "test-1", lessonContentVersion: 1 },
           lesson,
+          test,
           completedResult: null
         };
       },
       async completeAttempt(_userId, _attemptId, grade) {
         savedGrade = grade;
-        return { attempt: { id: "attempt-1" }, ...grade };
+        return { attempt: { id: "attempt-1", testId: "test-1" }, ...grade };
       }
     };
     const result = await new SubmitListeningAttempt({ listeningPracticeRepository: repository }).execute(
@@ -91,8 +123,9 @@ describe("Listening practice CQRS use cases", () => {
     const repository = {
       async getAttemptForGrading() {
         return {
-          attempt: { id: "attempt-1", lessonContentVersion: 1 },
+          attempt: { id: "attempt-1", testId: "test-1", lessonContentVersion: 1 },
           lesson: { ...lesson, contentVersion: 2 },
+          test: lesson.tests[0],
           completedResult: null
         };
       }
