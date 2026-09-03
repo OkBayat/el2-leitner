@@ -48,6 +48,7 @@ describe('SentencePracticeSessionService', () => {
 		learningApi.startSession.mockResolvedValue({ session: { id: 'session-1' } });
 		learningApi.completeSession.mockResolvedValue({});
 		learningApi.abandonSession.mockResolvedValue({});
+		speech.speak.mockReturnValue(true);
 		store.initialize.mockResolvedValue(storeState);
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
@@ -59,6 +60,19 @@ describe('SentencePracticeSessionService', () => {
 				{ provide: LearningStoreService, useValue: store },
 			],
 		});
+	});
+
+	it('pronounces the full active sentence at normal and slower rates', async () => {
+		const service = TestBed.inject(SentencePracticeSessionService);
+		expect(await service.start(1)).toBe(true);
+		const prompt = service.currentPrompt()!;
+
+		expect(prompt.sentence.text).not.toBe(prompt.card.term);
+		expect(service.pronounce()).toBe(true);
+		expect(speech.speak).toHaveBeenLastCalledWith(prompt.sentence.text, .85);
+
+		expect(service.pronounce(.75)).toBe(true);
+		expect(speech.speak).toHaveBeenLastCalledWith(prompt.sentence.text, .85 * .75);
 	});
 
 	it('rechecks a wrong answer with a different sentence without recording a Leitner review', async () => {
