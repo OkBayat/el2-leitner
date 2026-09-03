@@ -147,7 +147,7 @@ describe("Listening grading", () => {
     const result = gradeListeningAttempt(await lesson(), [
       { questionId: "bbc-260903-question-2", value: "  LONG   TERM  " },
       { questionId: "bbc-260903-question-11", value: "ten meters" },
-      { questionId: "bbc-260903-question-12", value: "1°C" },
+      { questionId: "bbc-260903-question-12", value: "one degree" },
       { questionId: "bbc-260903-question-13", value: "Arctic" }
     ]);
     assert.equal(result.score.correct, 4);

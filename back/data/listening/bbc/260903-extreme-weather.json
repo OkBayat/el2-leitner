@@ -166,7 +166,7 @@
           "position": 1,
           "responseType": "text",
           "prompt": "By how much has Earth's average temperature increased since 1970? {{blank}}",
-          "answers": ["around 1C", "1C", "around 1°C", "1°C", "1 degree Celsius"]
+          "answers": ["around 1C", "1C", "around 1°C", "1°C", "one degree", "1 degree", "around 1 degree", "1 degree Celsius"]
         },
         {
           "id": "bbc-260903-question-13",
