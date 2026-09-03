@@ -19,45 +19,45 @@ export function genericSourceTemplates(category) {
     return [
       `The discussion included useful information about ${TARGET}.`,
       `The report gives a practical example involving ${TARGET}.`,
-      `The lecturer returned to ${TARGET} later in the lesson.`,
+      `The lecturer mentioned ${TARGET} again later in the lesson.`,
     ];
   }
 
   if (leaf === "adjectives") {
     return [
-      `The speaker described the situation as ${TARGET}.`,
-      `The reviewer considered the result ${TARGET}.`,
-      `They found the experience surprisingly ${TARGET}.`,
+      `The speaker used “${TARGET}” as a description.`,
+      `The reviewer chose “${TARGET}” as the best description.`,
+      `The example showed how “${TARGET}” can be used naturally.`,
     ];
   }
 
   if (["verbs", "verb phrases"].includes(leaf)) {
     return [
-      `The lesson includes a practical example built around ${TARGET}.`,
-      `The teacher returned to ${TARGET} during the exercise.`,
-      `The group discussed how ${TARGET} works in context.`,
+      `The lesson included an example using “${TARGET}”.`,
+      `The teacher reviewed how “${TARGET}” is used during the exercise.`,
+      `The group discussed how “${TARGET}” is used in context.`,
     ];
   }
 
   if (leaf === "adverbs") {
     return [
-      `The report uses ${TARGET} to qualify the statement.`,
-      `The speaker included ${TARGET} in the explanation.`,
-      `The lecturer highlighted ${TARGET} during the example.`,
+      `The report used “${TARGET}” to qualify the statement.`,
+      `The speaker included “${TARGET}” in the explanation.`,
+      `The lecturer highlighted “${TARGET}” during the example.`,
     ];
   }
 
   if (["phrases", "idioms"].includes(leaf)) {
     return [
-      `The conversation naturally included the expression ${TARGET}.`,
-      `The lesson gives a useful context for ${TARGET}.`,
-      `The speaker returned to ${TARGET} later in the discussion.`,
+      `The conversation naturally included “${TARGET}”.`,
+      `The lesson showed a useful context for “${TARGET}”.`,
+      `The speaker used “${TARGET}” later in the discussion.`,
     ];
   }
 
   return [
-    `The conversation included a clear example involving ${TARGET}.`,
-    `The lesson returned to ${TARGET} during the discussion.`,
-    `The notes include a short example connected with ${TARGET}.`,
+    `The teacher gave a clear example using “${TARGET}”.`,
+    `The term “${TARGET}” came up during the discussion.`,
+    `The notes included another example with “${TARGET}”.`,
   ];
 }
