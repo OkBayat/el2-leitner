@@ -58,9 +58,11 @@
                   [routerLink]="[lesson.slug, 'tests', test.id, 'practice']"
                   [attr.data-testid]="'start-bbc-' + test.id"
                 >
-                  <span class="test-title">{{ test.title }}</span>
-                  <span class="test-status">
-                    {{ test.completed ? '✓ Completed' : 'Start' }}
+                  <span class="test-button-content">
+                    <span class="test-title">{{ test.title }}</span>
+                    <span class="test-status">
+                      {{ test.completed ? '✓ Completed' : 'Start' }}
+                    </span>
                   </span>
                 </a>
               }
