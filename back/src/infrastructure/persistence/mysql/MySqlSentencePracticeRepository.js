@@ -36,24 +36,19 @@ export class MySqlSentencePracticeRepository {
     }));
   }
 
-  async findActiveSentences(languageCode = "en") {
+  async findActiveSentences() {
     const [rows] = await this.pool.execute(
-      `SELECT id,
-              source_item_number,
-              variant_number,
-              category,
-              sentence_text
+      `SELECT id, sentence_text
        FROM sentences
-       WHERE status = 'active' AND language_code = ?
-       ORDER BY id`,
-      [languageCode]
+       WHERE status = 'active'
+       ORDER BY id`
     );
 
     return rows.map((row) => ({
       id: String(row.id),
-      sourceItemNumber: row.source_item_number === null ? null : Number(row.source_item_number),
-      variantNumber: row.variant_number === null ? null : Number(row.variant_number),
-      category: String(row.category ?? "General"),
+      sourceItemNumber: null,
+      variantNumber: null,
+      category: "General",
       text: String(row.sentence_text)
     }));
   }
