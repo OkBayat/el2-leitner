@@ -7,6 +7,7 @@ import { ListeningAttemptService } from './listening-attempt.service';
 const started: ListeningAttemptStartResponse = {
   attempt: {
     id: 'attempt-1',
+    testId: 'test-2',
     status: 'active',
     startedAt: '2026-09-03T08:00:00.000Z',
     totalQuestions: 1,
@@ -19,6 +20,13 @@ const started: ListeningAttemptStartResponse = {
     episodeCode: '1',
     episodeDate: '2026-09-03',
     sourceUrl: 'https://example.com',
+    questionCount: 3,
+    testCount: 3,
+  },
+  test: {
+    id: 'test-2',
+    title: 'Test 2',
+    position: 2,
     questionCount: 1,
     groups: [{
       id: 'group-1',
@@ -47,7 +55,7 @@ describe('ListeningAttemptService', () => {
     });
   });
 
-  it('starts a clean server-owned attempt and submits every question in lesson order', async () => {
+  it('starts the selected server-owned test and submits its questions in order', async () => {
     api.startBbcAttempt.mockResolvedValue(started);
     api.submitBbcAttempt.mockResolvedValue({
       attempt: { ...started.attempt, status: 'completed', submittedAt: '2026-09-03T08:06:00.000Z' },
@@ -63,10 +71,11 @@ describe('ListeningAttemptService', () => {
     });
     const service = TestBed.inject(ListeningAttemptService);
 
-    expect(await service.start('lesson-1')).toBe(true);
+    expect(await service.start('lesson-1', 'test-2')).toBe(true);
+    expect(service.test()?.title).toBe('Test 2');
     expect(await service.submit({ q1: 'day' })).toBe(true);
 
-    expect(api.startBbcAttempt).toHaveBeenCalledWith('lesson-1');
+    expect(api.startBbcAttempt).toHaveBeenCalledWith('lesson-1', 'test-2');
     expect(api.submitBbcAttempt).toHaveBeenCalledWith('attempt-1', [
       { questionId: 'q1', value: 'day' },
     ]);
@@ -74,13 +83,14 @@ describe('ListeningAttemptService', () => {
     expect(service.submitting()).toBe(false);
   });
 
-  it('surfaces API errors and does not leave loading flags active', async () => {
-    api.startBbcAttempt.mockRejectedValue(new Error('Lesson unavailable'));
+  it('surfaces API errors and clears both lesson and test state', async () => {
+    api.startBbcAttempt.mockRejectedValue(new Error('Test unavailable'));
     const service = TestBed.inject(ListeningAttemptService);
 
-    expect(await service.start('lesson-1')).toBe(false);
-    expect(service.error()).toBe('Lesson unavailable');
+    expect(await service.start('lesson-1', 'test-2')).toBe(false);
+    expect(service.error()).toBe('Test unavailable');
     expect(service.loading()).toBe(false);
     expect(service.lesson()).toBeNull();
+    expect(service.test()).toBeNull();
   });
 });
