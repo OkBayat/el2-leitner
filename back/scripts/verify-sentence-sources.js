@@ -1,8 +1,8 @@
 import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
-import { SENTENCES_PER_SOURCE_ITEM } from "../src/domain/sentence-practice/SentenceCorpus.js";
-import { SENTENCE_SOURCE_DEFINITIONS } from "../src/infrastructure/sentence-practice/SentenceSourceCatalog.js";
+import { SENTENCES_PER_SOURCE_ITEM, buildSentenceCorpus } from "../src/domain/sentence-practice/SentenceCorpus.js";
+import { loadSentenceSources } from "../src/infrastructure/sentence-practice/SentenceSourceCatalog.js";
 
 loadEnvironment({ path: new URL("../.env", import.meta.url), quiet: true });
 loadEnvironment({ path: new URL("../../.env", import.meta.url), quiet: true });
@@ -24,56 +24,55 @@ async function verify() {
   });
 
   try {
+    const sources = await loadSentenceSources();
+    const expectedTexts = new Set();
     let totalItems = 0;
-    let totalSentences = 0;
-    for (const source of SENTENCE_SOURCE_DEFINITIONS) {
-      const [rows] = await pool.execute(
-        `SELECT COUNT(*) AS total,
-                COUNT(DISTINCT source_item_number) AS source_items,
-                COUNT(DISTINCT source_hash) AS source_hashes
-         FROM sentences
-         WHERE source_key = ? AND status = 'active'`,
-        [source.key]
-      );
+    let generatedSentences = 0;
+
+    for (const source of sources) {
+      const corpus = buildSentenceCorpus(source.sourceText);
       const expectedSentences = source.expectedSourceItems * SENTENCES_PER_SOURCE_ITEM;
-      const actualSentences = Number(rows[0]?.total ?? 0);
-      const actualItems = Number(rows[0]?.source_items ?? 0);
-      const sourceHashes = Number(rows[0]?.source_hashes ?? 0);
-      if (actualSentences !== expectedSentences || actualItems !== source.expectedSourceItems || sourceHashes !== 1) {
+      if (corpus.sourceItemCount !== source.expectedSourceItems || corpus.sentenceCount !== expectedSentences) {
         throw new Error(
-          `${source.key}: expected ${source.expectedSourceItems} items/${expectedSentences} sentences/1 hash; found ${actualItems}/${actualSentences}/${sourceHashes}.`
+          `${source.key}: expected ${source.expectedSourceItems} items/${expectedSentences} sentences; generated ${corpus.sourceItemCount}/${corpus.sentenceCount}.`
         );
       }
+      totalItems += corpus.sourceItemCount;
+      generatedSentences += corpus.sentenceCount;
+      for (const record of corpus.records) expectedTexts.add(record.sentenceText);
+    }
 
-      const [invalidRows] = await pool.execute(
-        `SELECT COUNT(*) AS total FROM (
-           SELECT source_item_number
-           FROM sentences
-           WHERE source_key = ? AND status = 'active'
-           GROUP BY source_item_number
-           HAVING COUNT(*) <> ? OR COUNT(DISTINCT variant_number) <> ?
-         ) invalid_source_items`,
-        [source.key, SENTENCES_PER_SOURCE_ITEM, SENTENCES_PER_SOURCE_ITEM]
+    const [rows] = await pool.execute(
+      `SELECT sentence_text
+       FROM sentences
+       WHERE status = 'active'`
+    );
+    const activeTexts = new Set(rows.map((row) => String(row.sentence_text)));
+    const missing = [...expectedTexts].filter((sentenceText) => !activeTexts.has(sentenceText));
+    if (missing.length) {
+      throw new Error(
+        `Sentence catalog is missing ${missing.length} generated sentence(s); first missing sentence: ${missing[0]}`
       );
-      if (Number(invalidRows[0]?.total ?? 0) !== 0) {
-        throw new Error(`${source.key}: at least one source item does not have exactly three variants.`);
-      }
-      totalItems += actualItems;
-      totalSentences += actualSentences;
     }
 
     const [forbiddenRows] = await pool.execute(
       `SELECT COUNT(*) AS total
-       FROM information_schema.KEY_COLUMN_USAGE
+       FROM information_schema.COLUMNS
        WHERE TABLE_SCHEMA = DATABASE()
          AND TABLE_NAME = 'sentences'
-         AND REFERENCED_TABLE_NAME IS NOT NULL`
+         AND COLUMN_NAME IN (
+           'language_code', 'source_key', 'source_item_number',
+           'variant_number', 'category', 'source_hash',
+           'vocabulary_entry_id', 'word_id', 'answer_text'
+         )`
     );
     if (Number(forbiddenRows[0]?.total ?? 0) !== 0) {
-      throw new Error("Sentence catalog must remain independent and contain no foreign keys.");
+      throw new Error("Sentence catalog contains deprecated provenance or vocabulary-link columns.");
     }
 
-    console.info(`Sentence-source verification passed: ${totalItems} source items -> ${totalSentences} independent sentences.`);
+    console.info(
+      `Sentence-source verification passed: ${totalItems} source items -> ${generatedSentences} generated variants -> ${expectedTexts.size} distinct active sentence texts.`
+    );
   } finally {
     await pool.end();
   }
