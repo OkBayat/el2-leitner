@@ -50,6 +50,7 @@ export function captureListeningMistakeInHouseOne(
   );
   const created = !word;
   const newlyIntroduced = !word || (word.box === 0 && !word.introducedOn);
+  const daily = newlyIntroduced ? todayRecord(state, day) : null;
 
   if (!word) {
     const nextNumber = Math.max(0, ...state.words.map((item) => Number(item.number) || 0)) + 1;
@@ -75,7 +76,7 @@ export function captureListeningMistakeInHouseOne(
     word.addedSource = LISTENING_MISTAKE_SOURCE;
   }
 
-  if (newlyIntroduced) todayRecord(state, day).newAdded += 1;
+  if (daily) daily.newAdded += 1;
   state.updatedAt = now.toISOString();
   return { state, word, created, newlyIntroduced };
 }
