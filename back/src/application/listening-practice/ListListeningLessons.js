@@ -9,7 +9,16 @@ function publicSummary(lesson) {
     episodeCode: lesson.episodeCode,
     episodeDate: lesson.episodeDate,
     sourceUrl: lesson.sourceUrl,
-    questionCount: lesson.questionCount
+    questionCount: lesson.questionCount,
+    testCount: lesson.testCount,
+    tests: lesson.tests.map((test) => ({
+      id: test.id,
+      title: test.title,
+      position: test.position,
+      questionCount: test.questionCount,
+      completed: test.completed,
+      completedAt: test.completedAt
+    }))
   };
 }
 
@@ -18,8 +27,8 @@ export class ListListeningLessons {
     this.listeningPracticeRepository = listeningPracticeRepository;
   }
 
-  async execute() {
-    const lessons = await this.listeningPracticeRepository.listPublishedLessons(BBC_SIX_MINUTE_ENGLISH);
+  async execute(userId) {
+    const lessons = await this.listeningPracticeRepository.listPublishedLessons(BBC_SIX_MINUTE_ENGLISH, userId);
     return { provider: BBC_SIX_MINUTE_ENGLISH, lessons: lessons.map(publicSummary) };
   }
 }
