@@ -3,9 +3,12 @@ import { fileURLToPath } from "node:url";
 import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
-import { SENTENCES_PER_SOURCE_ITEM, buildSentenceCorpus } from "../src/domain/sentence-practice/SentenceCorpus.js";
-import { loadSentenceSources } from "../src/infrastructure/sentence-practice/SentenceSourceCatalog.js";
-import { seedSentenceSources } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
+import {
+  CURATED_SENTENCE_CATALOG_VERSION,
+  EXPECTED_CURATED_SENTENCE_COUNT,
+  loadCuratedSentenceCatalog,
+} from "../src/infrastructure/sentence-practice/CuratedSentenceCatalog.js";
+import { seedSentenceCatalog } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const dryRun = process.argv.includes("--dry-run");
 
@@ -23,23 +26,11 @@ function required(name) {
 }
 
 async function main() {
-  const sources = await loadSentenceSources();
+  const sentences = await loadCuratedSentenceCatalog();
   if (dryRun) {
-    let totalItems = 0;
-    let totalSentences = 0;
-    for (const source of sources) {
-      const corpus = buildSentenceCorpus(source.sourceText);
-      const expectedSentences = source.expectedSourceItems * SENTENCES_PER_SOURCE_ITEM;
-      if (corpus.sourceItemCount !== source.expectedSourceItems || corpus.sentenceCount !== expectedSentences) {
-        throw new Error(
-          `${source.key}: expected ${source.expectedSourceItems} source items and ${expectedSentences} sentences; generated ${corpus.sourceItemCount} and ${corpus.sentenceCount}.`
-        );
-      }
-      totalItems += corpus.sourceItemCount;
-      totalSentences += corpus.sentenceCount;
-      console.info(`${source.label}: ${corpus.sourceItemCount} items -> ${corpus.sentenceCount} sentences.`);
-    }
-    console.info(`Sentence catalog is valid: ${totalItems} source items -> ${totalSentences} sentence variants.`);
+    console.info(
+      `Curated sentence catalog ${CURATED_SENTENCE_CATALOG_VERSION} is valid: ${sentences.length} natural sentences.`
+    );
     return;
   }
 
@@ -56,13 +47,16 @@ async function main() {
   });
 
   try {
-    const result = await seedSentenceSources({ pool, sources });
-    for (const sourceResult of result.results) {
-      console.info(
-        `${sourceResult.changed ? "Seeded" : "Verified"} ${sourceResult.sentenceCount} sentence variants for ${sourceResult.sourceItemCount} items from ${sourceResult.sourceKey}.`
+    const result = await seedSentenceCatalog({ pool, sentences });
+    if (result.sentenceCount !== EXPECTED_CURATED_SENTENCE_COUNT) {
+      throw new Error(
+        `Expected ${EXPECTED_CURATED_SENTENCE_COUNT} curated sentences; seed reported ${result.sentenceCount}.`
       );
     }
-    console.info(`Sentence catalog total: ${result.sourceItemCount} source items, ${result.sentenceCount} sentence variants.`);
+    console.info(
+      `${result.changed ? "Seeded" : "Verified"} curated sentence catalog ${CURATED_SENTENCE_CATALOG_VERSION}: `
+      + `${result.sentenceCount} sentences (${result.insertedCount} inserted).`
+    );
   } finally {
     await pool.end();
   }

@@ -1,8 +1,10 @@
 import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
-import { SENTENCES_PER_SOURCE_ITEM, buildSentenceCorpus } from "../src/domain/sentence-practice/SentenceCorpus.js";
-import { loadSentenceSources } from "../src/infrastructure/sentence-practice/SentenceSourceCatalog.js";
+import {
+  EXPECTED_CURATED_SENTENCE_COUNT,
+  loadCuratedSentenceCatalog,
+} from "../src/infrastructure/sentence-practice/CuratedSentenceCatalog.js";
 
 loadEnvironment({ path: new URL("../.env", import.meta.url), quiet: true });
 loadEnvironment({ path: new URL("../../.env", import.meta.url), quiet: true });
@@ -24,35 +26,38 @@ async function verify() {
   });
 
   try {
-    const sources = await loadSentenceSources();
-    const expectedTexts = new Set();
-    let totalItems = 0;
-    let generatedSentences = 0;
-
-    for (const source of sources) {
-      const corpus = buildSentenceCorpus(source.sourceText);
-      const expectedSentences = source.expectedSourceItems * SENTENCES_PER_SOURCE_ITEM;
-      if (corpus.sourceItemCount !== source.expectedSourceItems || corpus.sentenceCount !== expectedSentences) {
-        throw new Error(
-          `${source.key}: expected ${source.expectedSourceItems} items/${expectedSentences} sentences; generated ${corpus.sourceItemCount}/${corpus.sentenceCount}.`
-        );
-      }
-      totalItems += corpus.sourceItemCount;
-      generatedSentences += corpus.sentenceCount;
-      for (const record of corpus.records) expectedTexts.add(record.sentenceText);
-    }
-
+    const expected = await loadCuratedSentenceCatalog();
     const [rows] = await pool.execute(
       `SELECT sentence_text
        FROM sentences
        WHERE status = 'active'`
     );
     const activeTexts = new Set(rows.map((row) => String(row.sentence_text)));
-    const missing = [...expectedTexts].filter((sentenceText) => !activeTexts.has(sentenceText));
+    const missing = expected.filter((sentenceText) => !activeTexts.has(sentenceText));
     if (missing.length) {
       throw new Error(
-        `Sentence catalog is missing ${missing.length} generated sentence(s); first missing sentence: ${missing[0]}`
+        `Sentence catalog is missing ${missing.length} curated sentence(s); first missing sentence: ${missing[0]}`
       );
+    }
+
+    const [unsafeRows] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM sentences
+       WHERE status = 'active'
+         AND (
+           LOCATE(CHAR(34), sentence_text) > 0
+           OR LOCATE(CONVERT(0xE2809C USING utf8mb4), sentence_text) > 0
+           OR LOCATE(CONVERT(0xE2809D USING utf8mb4), sentence_text) > 0
+           OR sentence_text LIKE 'The discussion included useful information about %'
+           OR REGEXP_LIKE(
+             sentence_text,
+             '(practical[[:space:]]+example|short[[:space:]]+example|example[[:space:]]+using|example[[:space:]]+with|clear[[:space:]]+example[[:space:]]+involving|lesson[[:space:]]+returned[[:space:]]+to|teacher[[:space:]]+returned[[:space:]]+to|lecturer[[:space:]]+returned[[:space:]]+to|mentioned.+later[[:space:]]+in[[:space:]]+the[[:space:]]+lesson|used[[:space:]]+in[[:space:]]+context|reviewed[[:space:]]+how.+is[[:space:]]+used|as[[:space:]]+a[[:space:]]+description|best[[:space:]]+description|naturally[[:space:]]+included|useful[[:space:]]+context[[:space:]]+for|term.+came[[:space:]]+up[[:space:]]+during[[:space:]]+the[[:space:]]+discussion|works[[:space:]]+in[[:space:]]+context)',
+             'i'
+           )
+         )`
+    );
+    if (Number(unsafeRows[0]?.total ?? 0) !== 0) {
+      throw new Error("Active sentence catalog contains quoted targets or rejected generic/metalinguistic templates.");
     }
 
     const [forbiddenRows] = await pool.execute(
@@ -71,7 +76,7 @@ async function verify() {
     }
 
     console.info(
-      `Sentence-source verification passed: ${totalItems} source items -> ${generatedSentences} generated variants -> ${expectedTexts.size} distinct active sentence texts.`
+      `Curated sentence verification passed: ${EXPECTED_CURATED_SENTENCE_COUNT} natural seed sentences are active and no rejected templates remain.`
     );
   } finally {
     await pool.end();
@@ -79,6 +84,6 @@ async function verify() {
 }
 
 verify().catch((error) => {
-  console.error("Sentence-source verification failed:", error.message);
+  console.error("Curated sentence verification failed:", error.message);
   process.exitCode = 1;
 });

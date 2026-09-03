@@ -1,16 +1,12 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
-import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
-
-const sourceUrl = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
+import { seedSentenceCatalog } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 class FakeSentenceSeedConnection {
   constructor(pool) {
     this.pool = pool;
-    this.pendingTexts = [];
-    this.insertCalls = 0;
+    this.pending = [];
     this.committed = false;
     this.rolledBack = false;
     this.released = false;
@@ -21,21 +17,16 @@ class FakeSentenceSeedConnection {
   }
 
   async execute(sql, parameters) {
-    if (sql.startsWith("INSERT INTO sentences")) {
-      this.insertCalls += 1;
-      this.pendingTexts.push(...parameters.map(String));
-      assert.doesNotMatch(
-        sql,
-        /language_code|source_key|source_item_number|variant_number|category|source_hash/u
-      );
-      return [{ affectedRows: parameters.length }];
+    if (!sql.startsWith("INSERT INTO sentences")) {
+      throw new Error(`Unexpected seed connection query: ${sql}`);
     }
-    throw new Error(`Unexpected seed connection query: ${sql}`);
+    this.pending.push(...parameters);
+    return [{ affectedRows: parameters.length }];
   }
 
   async commit() {
     this.committed = true;
-    this.pendingTexts.forEach((sentenceText) => this.pool.activeTexts.add(sentenceText));
+    for (const sentence of this.pending) this.pool.rows.add(sentence);
   }
 
   async rollback() {
@@ -49,7 +40,7 @@ class FakeSentenceSeedConnection {
 
 class FakeSentenceSeedPool {
   constructor() {
-    this.activeTexts = new Set();
+    this.rows = new Set();
     this.connections = [];
     this.beginCalls = 0;
     this.readQueries = [];
@@ -58,7 +49,7 @@ class FakeSentenceSeedPool {
   async execute(sql) {
     this.readQueries.push(sql);
     if (sql.includes("FROM sentences")) {
-      return [[...this.activeTexts].map((sentence_text) => ({ sentence_text }))];
+      return [[...this.rows].map((sentence_text) => ({ sentence_text }))];
     }
     throw new Error(`Unexpected seed pool query: ${sql}`);
   }
@@ -70,34 +61,26 @@ class FakeSentenceSeedPool {
   }
 }
 
-describe("sentence-practice database seed", () => {
-  it("seeds sentence text only, deduplicates identical rows, and stays idempotent", async () => {
-    const sourceText = await readFile(sourceUrl, "utf8");
+describe("curated sentence database seed", () => {
+  it("inserts only missing sentence text and is idempotent without vocabulary lookups", async () => {
     const pool = new FakeSentenceSeedPool();
+    const sentences = [
+      "Please install the software before the meeting.",
+      "It is easy to get into debt if you spend more than you earn.",
+      "Please install the software before the meeting.",
+    ];
 
-    const first = await seedSentencePractice({ pool, sourceText });
-
-    assert.equal(first.changed, true);
-    assert.equal(first.sourceItemCount, 1_500);
-    assert.equal(first.sentenceCount, 4_500);
-    assert.equal(first.uniqueSentenceCount, 4_499);
-    assert.equal(first.insertedCount, 4_499);
-    assert.equal(pool.activeTexts.size, 4_499);
+    const first = await seedSentenceCatalog({ pool, sentences });
+    assert.deepEqual(first, { changed: true, sentenceCount: 2, insertedCount: 2 });
+    assert.equal(pool.rows.size, 2);
     assert.equal(pool.connections.length, 1);
-    assert.equal(pool.connections[0].pendingTexts.length, 4_499);
-    assert.equal(pool.connections[0].insertCalls, 18);
     assert.equal(pool.connections[0].committed, true);
     assert.equal(pool.connections[0].rolledBack, false);
     assert.equal(pool.connections[0].released, true);
-    assert.equal(
-      pool.readQueries.some((sql) => /vocabulary_entries|vocabulary_forms|collection_entries|source_key|source_hash/u.test(sql)),
-      false
-    );
+    assert.equal(pool.readQueries.some((sql) => /vocabulary_entries|vocabulary_forms|collection_entries/u.test(sql)), false);
 
-    const second = await seedSentencePractice({ pool, sourceText });
-
-    assert.equal(second.changed, false);
-    assert.equal(second.insertedCount, 0);
+    const second = await seedSentenceCatalog({ pool, sentences });
+    assert.deepEqual(second, { changed: false, sentenceCount: 2, insertedCount: 0 });
     assert.equal(pool.connections.length, 1, "an unchanged rerun must not open a write transaction");
   });
 });

@@ -1,12 +1,7 @@
-import {
-  EXPECTED_SENTENCE_SOURCE_ITEMS,
-  SENTENCE_CORPUS_SOURCE,
-  SENTENCE_CORPUS_VERSION,
-  SENTENCES_PER_SOURCE_ITEM,
-  buildSentenceCorpus
-} from "../../../domain/sentence-practice/SentenceCorpus.js";
+import { loadCuratedSentenceCatalog } from "../../sentence-practice/CuratedSentenceCatalog.js";
 
 const INSERT_BATCH_SIZE = 250;
+const CURATED_SOURCE_ITEM_COUNT = 3_766;
 
 async function activeSentenceTexts(executor) {
   const [rows] = await executor.execute(
@@ -17,14 +12,17 @@ async function activeSentenceTexts(executor) {
   return new Set(rows.map((row) => String(row.sentence_text)));
 }
 
-function uniqueSentenceRecords(records) {
+function uniqueSentenceTexts(sentences) {
+  if (!Array.isArray(sentences)) throw new Error("Sentence seed must be an array of sentence texts.");
   const seen = new Set();
   const unique = [];
-  for (const record of records) {
-    if (seen.has(record.sentenceText)) continue;
-    seen.add(record.sentenceText);
-    unique.push(record);
+  for (const value of sentences) {
+    const sentenceText = String(value ?? "").trim();
+    if (!sentenceText || seen.has(sentenceText)) continue;
+    seen.add(sentenceText);
+    unique.push(sentenceText);
   }
+  if (!unique.length) throw new Error("Sentence seed is empty.");
   return unique;
 }
 
@@ -34,39 +32,13 @@ function insertStatement(batch) {
           VALUES ${values}`;
 }
 
-export async function seedSentencePractice({
-  pool,
-  sourceText,
-  sourceKey = SENTENCE_CORPUS_SOURCE,
-  sourceVersion = SENTENCE_CORPUS_VERSION,
-  expectedSourceItems = EXPECTED_SENTENCE_SOURCE_ITEMS,
-}) {
-  void sourceVersion;
-  const corpus = buildSentenceCorpus(sourceText);
-  if (corpus.sourceItemCount !== expectedSourceItems) {
-    throw new Error(
-      `Sentence corpus ${sourceKey} must cover exactly ${expectedSourceItems} source items; found ${corpus.sourceItemCount}.`
-    );
-  }
-  const expectedSentenceCount = corpus.sourceItemCount * SENTENCES_PER_SOURCE_ITEM;
-  if (corpus.sentenceCount !== expectedSentenceCount) {
-    throw new Error(
-      `Sentence corpus generation failed for ${sourceKey}: expected ${expectedSentenceCount}, generated ${corpus.sentenceCount}.`
-    );
-  }
-
-  const uniqueRecords = uniqueSentenceRecords(corpus.records);
+export async function seedSentenceCatalog({ pool, sentences }) {
+  const expected = uniqueSentenceTexts(sentences);
   const current = await activeSentenceTexts(pool);
-  const missing = uniqueRecords.filter((record) => !current.has(record.sentenceText));
+  const missing = expected.filter((sentenceText) => !current.has(sentenceText));
+
   if (!missing.length) {
-    return {
-      changed: false,
-      sourceKey,
-      sourceItemCount: corpus.sourceItemCount,
-      sentenceCount: corpus.sentenceCount,
-      uniqueSentenceCount: uniqueRecords.length,
-      insertedCount: 0
-    };
+    return { changed: false, sentenceCount: expected.length, insertedCount: 0 };
   }
 
   const connection = await pool.getConnection();
@@ -74,10 +46,7 @@ export async function seedSentencePractice({
     await connection.beginTransaction();
     for (let offset = 0; offset < missing.length; offset += INSERT_BATCH_SIZE) {
       const batch = missing.slice(offset, offset + INSERT_BATCH_SIZE);
-      await connection.execute(
-        insertStatement(batch),
-        batch.map((record) => record.sentenceText)
-      );
+      await connection.execute(insertStatement(batch), batch);
     }
     await connection.commit();
   } catch (error) {
@@ -88,39 +57,35 @@ export async function seedSentencePractice({
   }
 
   const verified = await activeSentenceTexts(pool);
-  const missingAfterWrite = uniqueRecords.filter((record) => !verified.has(record.sentenceText));
+  const missingAfterWrite = expected.filter((sentenceText) => !verified.has(sentenceText));
   if (missingAfterWrite.length) {
     throw new Error(
-      `Sentence corpus verification failed for ${sourceKey}: ${missingAfterWrite.length} expected sentence(s) are still missing.`
+      `Curated sentence catalog verification failed: ${missingAfterWrite.length} sentence(s) are still missing.`
     );
   }
 
+  return { changed: true, sentenceCount: expected.length, insertedCount: missing.length };
+}
+
+// Compatibility entry point for database setup code created earlier in this PR.
+// sourceText/source metadata are intentionally ignored: imported-book template generation is no longer a seed source.
+export async function seedSentencePractice({ pool }) {
+  const sentences = await loadCuratedSentenceCatalog();
+  const result = await seedSentenceCatalog({ pool, sentences });
   return {
-    changed: true,
-    sourceKey,
-    sourceItemCount: corpus.sourceItemCount,
-    sentenceCount: corpus.sentenceCount,
-    uniqueSentenceCount: uniqueRecords.length,
-    insertedCount: missing.length
+    ...result,
+    sourceKey: "curated-sentence-catalog-v2",
+    sourceItemCount: CURATED_SOURCE_ITEM_COUNT,
   };
 }
 
-export async function seedSentenceSources({ pool, sources }) {
-  const results = [];
-  for (const source of sources) {
-    results.push(await seedSentencePractice({
-      pool,
-      sourceText: source.sourceText,
-      sourceKey: source.key,
-      sourceVersion: source.version,
-      expectedSourceItems: source.expectedSourceItems,
-    }));
-  }
+export async function seedSentenceSources({ pool }) {
+  const result = await seedSentencePractice({ pool });
   return {
-    changed: results.some((result) => result.changed),
-    sourceItemCount: results.reduce((total, result) => total + result.sourceItemCount, 0),
-    sentenceCount: results.reduce((total, result) => total + result.sentenceCount, 0),
-    insertedCount: results.reduce((total, result) => total + result.insertedCount, 0),
-    results,
+    changed: result.changed,
+    sourceItemCount: result.sourceItemCount,
+    sentenceCount: result.sentenceCount,
+    insertedCount: result.insertedCount,
+    results: [result],
   };
 }
