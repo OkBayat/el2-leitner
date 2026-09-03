@@ -10,7 +10,6 @@ import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/
 import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
-import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -165,16 +164,6 @@ async function setupDatabase() {
       parser: new VocabularyFileParser()
     });
     if (seedResult.changed) console.info(`Seeded ${seedResult.total} IELTS library entries.`);
-
-    const sentenceSeedResult = await seedSentencePractice({
-      pool: applicationPool,
-      sourceText
-    });
-    if (sentenceSeedResult.changed) {
-      console.info(
-        `Seeded ${sentenceSeedResult.sentenceCount} independent sentences from ${sentenceSeedResult.sourceItemCount} IELTS source items.`
-      );
-    }
 
     const learningRepository = new MySqlLearningStateRepository(applicationPool);
     const migrated = await learningRepository.migrateAllLegacyStates();
