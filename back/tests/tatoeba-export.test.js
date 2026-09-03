@@ -5,7 +5,6 @@ import {
   isReusableTatoebaAudio,
   parseTatoebaAudioLine,
   parseTatoebaSentenceLine,
-  pickPreferredTatoebaAudio,
   tatoebaAudioDownloadUrl,
 } from "../src/infrastructure/tatoeba/TatoebaExport.js";
 
@@ -32,18 +31,20 @@ describe("TatoebaExport", () => {
     assert.equal(tatoebaAudioDownloadUrl(456), "https://tatoeba.org/audio/download/456");
   });
 
-  it("prefers reusable licensed audio when a sentence has multiple recordings", () => {
+  it("keeps separate audio rows when the same sentence has multiple recordings", () => {
+    const first = parseTatoebaAudioLine("123\t100\tspeaker-a\tCC0\t");
+    const second = parseTatoebaAudioLine("123\t200\tspeaker-b\tCC BY 4.0\thttps://example.test/b");
+
+    assert.equal(first.sentenceId, second.sentenceId);
+    assert.notEqual(first.audioId, second.audioId);
+    assert.deepEqual([first.audioId, second.audioId], [100, 200]);
+  });
+
+  it("marks only recordings with an explicit license as reusable", () => {
     const restricted = parseTatoebaAudioLine("123\t100\tspeaker-a\t\t");
     const reusable = parseTatoebaAudioLine("123\t200\tspeaker-b\tCC BY 4.0\thttps://example.test/b");
 
     assert.equal(isReusableTatoebaAudio(restricted), false);
     assert.equal(isReusableTatoebaAudio(reusable), true);
-    assert.deepEqual(pickPreferredTatoebaAudio(restricted, reusable), reusable);
-  });
-
-  it("chooses the lowest audio id deterministically when licenses are equivalent", () => {
-    const high = parseTatoebaAudioLine("123\t300\ta\tCC0\t");
-    const low = parseTatoebaAudioLine("123\t250\tb\tCC BY 4.0\t");
-    assert.deepEqual(pickPreferredTatoebaAudio(high, low), low);
   });
 });
