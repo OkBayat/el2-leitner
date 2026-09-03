@@ -13,7 +13,7 @@ async function lesson() {
 }
 
 describe("BBC listening lesson definition", () => {
-  it("validates the first BBC lesson as four ordered IELTS groups and thirteen ordered questions", async () => {
+  it("validates the first BBC lesson as four ordered IELTS groups and thirteen questions in audio order", async () => {
     const parsed = await lesson();
     assert.equal(parsed.provider, "bbc_6_minute_english");
     assert.equal(parsed.groups.length, 4);
@@ -24,8 +24,14 @@ describe("BBC listening lesson definition", () => {
       "sentence_completion",
       "short_answer"
     ]);
-    assert.deepEqual(parsed.groups.flatMap((group) => group.questions).map((question) => question.number),
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+    const questions = parsed.groups.flatMap((group) => group.questions);
+    assert.deepEqual(questions.map((question) => question.number), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+    assert.match(questions[7].prompt, /landslides and mudslides occur/u);
+    assert.match(questions[8].prompt, /swept/u);
+    assert.match(questions[9].prompt, /sea.*rising/u);
+    assert.match(questions[10].prompt, /10|storm surges/u);
+    assert.match(questions[11].prompt, /temperature increased/u);
+    assert.match(questions[12].prompt, /three times faster/u);
   });
 
   it("rejects duplicate question numbers", async () => {
@@ -115,7 +121,7 @@ describe("Listening grading", () => {
       [6, "bbc-260903-question-6-option-b"],
       [7, "bbc-260903-question-7-option-a"],
       [8, "bbc-260903-question-8-option-a"],
-      [9, "heavy rain"],
+      [9, "inland"],
       [10, "coast"],
       [11, "10 metres"],
       [12, "2C"],
@@ -128,7 +134,7 @@ describe("Listening grading", () => {
 
     assert.deepEqual(result.score, { correct: 10, wrong: 3, total: 13, percentage: 76.9 });
     assert.equal(result.results[9].correct, false);
-    assert.equal(result.results[9].correctAnswer, "inland");
+    assert.equal(result.results[9].correctAnswer, "sea levels");
     assert.equal(result.results[5].submittedAnswer, "B. They remain in the same area for longer.");
   });
 
