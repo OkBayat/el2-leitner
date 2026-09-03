@@ -53,7 +53,7 @@ class FakePool {
 }
 
 describe("BBC listening seed", () => {
-  it("stores the complete versioned exercise as one JSON aggregate and seeds it idempotently", async () => {
+  it("stores all lesson tests as one versioned JSON aggregate and seeds it idempotently", async () => {
     const definition = parseListeningLessonDefinition(
       JSON.parse(await readFile(lessonUrl, "utf8")),
       "260903-extreme-weather.json"
@@ -66,25 +66,28 @@ describe("BBC listening seed", () => {
     revisedDefinition.description = `${definition.description} Updated.`;
     const revised = await seedListeningLessons({ pool, definitions: [revisedDefinition] });
 
-    assert.deepEqual(first, { changed: true, lessonCount: 1, questionCount: 13 });
-    assert.deepEqual(second, { changed: false, lessonCount: 1, questionCount: 13 });
-    assert.deepEqual(revised, { changed: true, lessonCount: 1, questionCount: 13 });
+    assert.deepEqual(first, { changed: true, lessonCount: 1, testCount: 3, questionCount: 39 });
+    assert.deepEqual(second, { changed: false, lessonCount: 1, testCount: 3, questionCount: 39 });
+    assert.deepEqual(revised, { changed: true, lessonCount: 1, testCount: 3, questionCount: 39 });
     assert.equal(pool.connection.lesson.version, 2);
     assert.equal(pool.connection.commits, 3);
     assert.equal(pool.connection.rollbacks, 0);
     assert.equal(pool.connection.releases, 3);
 
     const content = pool.connection.lesson.content;
-    const questions = content.groups.flatMap((group) => group.questions);
-    assert.equal(content.schemaVersion, 1);
-    assert.equal(content.groups.length, 4);
-    assert.equal(questions.length, 13);
-    assert.deepEqual(questions[0].acceptedAnswers[0], {
+    assert.equal(content.schemaVersion, 2);
+    assert.equal(content.tests.length, 3);
+    assert.deepEqual(content.tests.map((test) => [test.id, test.questionCount]), [
+      ["test-1", 13], ["test-2", 13], ["test-3", 13]
+    ]);
+    const firstQuestions = content.tests[0].groups.flatMap((group) => group.questions);
+    assert.equal(firstQuestions.length, 13);
+    assert.deepEqual(firstQuestions[0].acceptedAnswers[0], {
       text: "day",
       normalized: "day",
       primary: true
     });
-    assert.equal(questions[5].correctOptionId, "bbc-260903-question-6-option-b");
+    assert.equal(firstQuestions[5].correctOptionId, "bbc-260903-question-6-option-b");
 
     const allSql = pool.connection.statements.map((statement) => statement.sql);
     assert.equal(allSql.filter((sql) => sql.startsWith("INSERT INTO listening_lessons")).length, 1);
