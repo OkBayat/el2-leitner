@@ -11,10 +11,14 @@ const exists = (relative) => fs.existsSync(path.join(uiRoot, relative));
 const required = [
   'src/app/domain/listening-practice/listening-practice.ts',
   'src/app/domain/listening-practice/listening-practice.spec.ts',
+  'src/app/domain/listening-practice/listening-mistake-practice.ts',
+  'src/app/domain/listening-practice/listening-mistake-practice.spec.ts',
   'src/app/core/listening-practice/listening-practice-api.service.ts',
   'src/app/core/listening-practice/listening-practice-api.service.spec.ts',
   'src/app/application/listening-practice/listening-attempt.service.ts',
   'src/app/application/listening-practice/listening-attempt.service.spec.ts',
+  'src/app/application/listening-practice/listening-mistake-practice.service.ts',
+  'src/app/application/listening-practice/listening-mistake-practice.service.spec.ts',
   'src/app/features/bbc-listening/bbc-lessons-page.component.ts',
   'src/app/features/bbc-listening/bbc-lessons-page.component.html',
   'src/app/features/bbc-listening/bbc-lessons-page.component.scss',
@@ -60,12 +64,19 @@ const practice = read('src/app/features/bbc-listening/bbc-listening-practice-pag
 const template = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.html');
 assert.match(practice, /FormRecord<FormControl<string>>/u, 'Dynamic answers must use typed reactive forms.');
 assert.match(practice, /toSignal\(/u, 'Answer progress must react to typed form value changes under OnPush.');
+assert.match(practice, /ListeningMistakePracticeService/u, 'Wrong-word capture must be orchestrated through an application service.');
 assert.match(template, /mat-radio-group/u, 'Single-choice IELTS questions must use Material radio controls.');
 assert.match(template, /data-testid="submit-listening-attempt"/u, 'The complete exercise needs one stable submit action.');
+assert.match(template, /add-listening-word-/u, 'Incorrect one-word answers need a stable House 1 action.');
+assert.match(template, /Add to House 1/u, 'The House 1 action must be explicit to the learner.');
 assert.match(template, /\[readonly\]="submitted\(\)"/u, 'Text answers must be locked after submission.');
 assert.match(template, /\[disabled\]="submitted\(\)"/u, 'Choice answers must be locked after submission.');
 assert.match(template, /result\.score\.correct/u, 'The server score must be rendered after submission.');
 assert.match(template, /feedback\?\.correct/u, 'Every answer must show correct or incorrect feedback.');
+
+const mistakeDomain = read('src/app/domain/listening-practice/listening-mistake-practice.ts');
+assert.match(mistakeDomain, /SINGLE_LEXICAL_WORD/u, 'House 1 capture must reject numbers and multi-word answers in the domain.');
+assert.match(mistakeDomain, /Listening mistakes/u, 'New captured vocabulary must use the dedicated personal category.');
 
 const api = read('src/app/core/listening-practice/listening-practice-api.service.ts');
 assert.match(api, /\/api\/listening\/bbc\/lessons/u);
