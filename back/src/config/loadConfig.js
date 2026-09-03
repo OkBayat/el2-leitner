@@ -1,4 +1,10 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { ValidationError } from "../domain/errors.js";
+
+const DEFAULT_LISTENING_AUDIO_DIRECTORY = fileURLToPath(
+  new URL("../../data/listening/audio/", import.meta.url)
+);
 
 function numberFromEnv(value, fallback, name) {
   const parsed = Number(value ?? fallback);
@@ -76,6 +82,11 @@ export function loadConfig(env = process.env) {
     },
     library: {
       adminEmails: emailListFromEnv(env.LIBRARY_ADMIN_EMAILS)
+    },
+    listening: {
+      audioDirectory: env.LISTENING_AUDIO_DIRECTORY
+        ? path.resolve(env.LISTENING_AUDIO_DIRECTORY)
+        : DEFAULT_LISTENING_AUDIO_DIRECTORY
     }
   };
 }

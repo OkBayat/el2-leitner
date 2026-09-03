@@ -31,10 +31,13 @@ export class AppShellComponent implements OnInit {
 		{path: '/review', label: "Today's Review", symbol: '◷'},
 		{path: '/words', label: 'Words', symbol: '▤'},
 		{path: '/library', label: 'Library', symbol: '▦'},
+		{path: '/bbc-6-minute-english', label: 'BBC 6 Minute English', symbol: '◉'},
 		{path: '/reports', label: 'Progress', symbol: '↗'},
 		{path: '/settings', label: 'Settings', symbol: '⚙'},
 	] as const;
-	readonly primaryNavItems = this.navItems.filter((item) => item.path !== '/settings');
+	readonly primaryNavItems = this.navItems.filter((item) =>
+		item.path !== '/settings' && item.path !== '/bbc-6-minute-english'
+	);
 	readonly streak = computed(() => this.store.state() ? calculateStreak(this.store.state()!) : 0);
 	readonly userInitials = computed(() => {
 		const email = this.auth.user()?.email || 'Vocora';

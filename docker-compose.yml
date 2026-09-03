@@ -108,6 +108,8 @@ services:
       COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
       TRUST_PROXY: ${TRUST_PROXY:-false}
       LIBRARY_ADMIN_EMAILS: ${LIBRARY_ADMIN_EMAILS:-}
+    volumes:
+      - ./back/data/listening/audio:/app/back/data/listening/audio:ro
     ports:
       - "${APP_HOST:-0.0.0.0}:${APP_PORT:-3000}:3000"
     healthcheck:

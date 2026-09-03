@@ -55,6 +55,13 @@ export class LearningStoreService {
 
   initialize(): Promise<LearningState> { this.initializePromise ??= this.load(); return this.initializePromise; }
 
+  async refreshCanonical(): Promise<LearningState> {
+    if (!this.stateSignal()) await this.initialize();
+    const state = await this.reloadCanonicalBootstrap();
+    this.stateSignal.set(state);
+    return state;
+  }
+
   private async load(): Promise<LearningState> {
     this.loadingSignal.set(true);
     try {

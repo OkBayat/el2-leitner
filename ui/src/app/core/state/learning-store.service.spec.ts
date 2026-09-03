@@ -115,4 +115,39 @@ describe('LearningStoreService regressions', () => {
     expect(store.revision()).toBe(13);
     expect(state.words[0].term).toBe('circumstances');
   });
+
+  it('refreshes canonical vocabulary after a full-state write without advancing the revision', async () => {
+    localStorage.clear();
+    const initial = createFreshState([{
+      id: 'browser-inland',
+      term: 'inland',
+      box: 1,
+      due: '2026-09-03',
+      introducedOn: '2026-09-03',
+    }]);
+    const canonical = createFreshState([{
+      id: 'db-inland',
+      term: 'inland',
+      box: 1,
+      due: '2026-09-03',
+      introducedOn: '2026-09-03',
+    }]);
+    const api = {
+      get: vi.fn()
+        .mockResolvedValueOnce({ state: initial, revision: 7 })
+        .mockResolvedValueOnce({ state: canonical, revision: 7 }),
+      put: vi.fn(),
+    };
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn(),
+    });
+
+    await store.initialize();
+    const refreshed = await store.refreshCanonical();
+
+    expect(api.get).toHaveBeenNthCalledWith(2, '/api/state?view=bootstrap');
+    expect(refreshed.words[0].id).toBe('db-inland');
+    expect(store.state()?.words[0].id).toBe('db-inland');
+    expect(store.revision()).toBe(7);
+  });
 });

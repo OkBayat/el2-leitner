@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { Router } from "express";
 import { rateLimit } from "express-rate-limit";
 import { createAuthMiddleware } from "./authMiddleware.js";
@@ -24,7 +26,13 @@ function createAuthRateLimiter(options) {
   });
 }
 
-export function createApiRouter({ useCases, tokenService, authCookie, authRateLimit }) {
+export function createApiRouter({
+  useCases,
+  tokenService,
+  authCookie,
+  authRateLimit,
+  listeningAudioDirectory
+}) {
   const router = Router();
   const authLimiter = createAuthRateLimiter(authRateLimit);
   const authenticate = createAuthMiddleware({
@@ -65,6 +73,50 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
 
   router.get("/auth/me", authenticate, (req, res) => {
     res.status(200).json({ user: req.auth.user });
+  });
+
+  router.get("/listening/bbc/lessons", authenticate, async (req, res) => {
+    const result = await useCases.listListeningLessons.execute(req.auth.userId);
+    res.status(200).json(result);
+  });
+
+  router.get("/listening/bbc/lessons/:lessonSlug/audio", authenticate, async (req, res, next) => {
+    const { fileName } = await useCases.getListeningEpisodeAudio.execute(req.params.lessonSlug);
+    const absolutePath = path.resolve(listeningAudioDirectory, fileName);
+    const expectedRoot = `${path.resolve(listeningAudioDirectory)}${path.sep}`;
+    if (!absolutePath.startsWith(expectedRoot) || !existsSync(absolutePath)) {
+      res.status(404).json({
+        error: { code: "LISTENING_AUDIO_NOT_FOUND", message: "Listening episode audio was not found." }
+      });
+      return;
+    }
+    res.type("audio/mpeg");
+    res.sendFile(fileName, {
+      root: listeningAudioDirectory,
+      acceptRanges: true,
+      cacheControl: false,
+      lastModified: false
+    }, (error) => {
+      if (error && !res.headersSent) next(error);
+    });
+  });
+
+  router.post("/listening/bbc/lessons/:lessonSlug/tests/:testId/attempts", authenticate, async (req, res) => {
+    const result = await useCases.startListeningAttempt.execute(
+      req.auth.userId,
+      req.params.lessonSlug,
+      req.params.testId
+    );
+    res.status(201).json(result);
+  });
+
+  router.post("/listening/bbc/attempts/:attemptId/submit", authenticate, async (req, res) => {
+    const result = await useCases.submitListeningAttempt.execute(
+      req.auth.userId,
+      req.params.attemptId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
   });
 
   router.get("/library/vocabulary-sources", authenticate, async (req, res) => {
