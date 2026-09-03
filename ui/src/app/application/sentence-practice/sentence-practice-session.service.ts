@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LearningApiService } from '../../core/learning/learning-api.service';
+import { SentenceAudioService } from '../../core/audio/sentence-audio.service';
 import { SentencePracticeApiService } from '../../core/sentence-practice/sentence-practice-api.service';
-import { SpeechService } from '../../core/speech/speech.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import {
 	SentencePracticePrompt,
@@ -19,7 +19,7 @@ export interface SentencePracticeFeedback {
 export class SentencePracticeSessionService {
 	private readonly api = inject(SentencePracticeApiService);
 	private readonly learningApi = inject(LearningApiService);
-	private readonly speech = inject(SpeechService);
+	private readonly audio = inject(SentenceAudioService);
 	private readonly store = inject(LearningStoreService);
 	private readonly currentPromptSignal = signal<SentencePracticePrompt | null>(null);
 	private readonly activeSignal = signal(false);
@@ -53,7 +53,7 @@ export class SentencePracticeSessionService {
 	readonly canAdvance = computed(() => Boolean(this.feedbackSignal()));
 
 	async start(house = 1): Promise<boolean> {
-		this.speech.cancel();
+		this.audio.stop();
 		this.activeSignal.set(false);
 		this.completedSignal.set(false);
 		this.currentPromptSignal.set(null);
@@ -80,13 +80,10 @@ export class SentencePracticeSessionService {
 		return true;
 	}
 
-	pronounce(multiplier = 1): boolean {
+	playSentence(rate = 1): boolean {
 		const prompt = this.currentPromptSignal();
 		if (!prompt) return false;
-		return this.speech.speak(
-			prompt.card.term,
-			this.store.snapshot().settings.voiceRate * multiplier,
-		);
+		return this.audio.play(prompt.sentence.audioUrl, rate);
 	}
 
 	submit(answer: string): void {
@@ -111,6 +108,7 @@ export class SentencePracticeSessionService {
 
 	async next(): Promise<void> {
 		if (!this.feedbackSignal() || !this.activeSignal()) return;
+		this.audio.stop();
 		this.feedbackSignal.set(null);
 		const prompt = this.queue?.next() ?? null;
 		this.currentPromptSignal.set(prompt);
@@ -123,7 +121,7 @@ export class SentencePracticeSessionService {
 				await this.learningApi.abandonSession(this.backendSessionId, this.durationSeconds());
 			}
 		} finally {
-			this.speech.cancel();
+			this.audio.stop();
 			this.backendSessionId = null;
 			this.queue?.clear();
 			this.queue = null;
@@ -139,7 +137,7 @@ export class SentencePracticeSessionService {
 	}
 
 	private async finish(): Promise<void> {
-		this.speech.cancel();
+		this.audio.stop();
 		this.activeSignal.set(false);
 		this.completedSignal.set(true);
 		this.currentPromptSignal.set(null);
