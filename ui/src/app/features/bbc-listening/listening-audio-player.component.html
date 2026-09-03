@@ -1,0 +1,29 @@
+<section class="audio-player" data-testid="listening-audio-player" aria-label="Episode audio player">
+  <audio
+    #audio
+    [src]="src()"
+    preload="metadata"
+    (loadedmetadata)="syncState()"
+    (timeupdate)="syncState()"
+    (play)="syncState()"
+    (pause)="syncState()"
+    (ended)="syncState()"
+    (error)="onAudioError()"
+  ></audio>
+
+  <div class="audio-copy">
+    <strong>Episode audio</strong>
+    <span>{{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}</span>
+  </div>
+
+  <div class="audio-controls">
+    <button mat-stroked-button type="button" data-testid="audio-back-5" (click)="skip(-5)">−5 sec</button>
+    <button mat-flat-button type="button" data-testid="audio-play" [disabled]="playing()" (click)="play()">Play</button>
+    <button mat-stroked-button type="button" data-testid="audio-stop" (click)="stop()">Stop</button>
+    <button mat-stroked-button type="button" data-testid="audio-forward-5" (click)="skip(5)">+5 sec</button>
+  </div>
+
+  @if (error()) {
+    <p class="audio-error" role="alert">{{ error() }}</p>
+  }
+</section>

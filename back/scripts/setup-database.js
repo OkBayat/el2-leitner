@@ -6,11 +6,12 @@ import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
+import { loadListeningLessonDefinitions } from "../src/infrastructure/content/loadListeningLessonDefinitions.js";
 import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
 import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
-import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
+import { seedListeningLessons } from "../src/infrastructure/persistence/mysql/seedListeningLessons.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -18,6 +19,7 @@ const DATABASE_IDENTIFIER_PATTERN = /^[A-Za-z0-9_]+$/;
 const APPLICATION_USER_HOST = "%";
 const MIGRATIONS_DIRECTORY = new URL("../database/migrations/", import.meta.url);
 const IELTS_SOURCE = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
+const BBC_LISTENING_DIRECTORY = new URL("../data/listening/bbc/", import.meta.url);
 
 for (const environmentFile of [
   new URL("../.env", import.meta.url),
@@ -166,13 +168,14 @@ async function setupDatabase() {
     });
     if (seedResult.changed) console.info(`Seeded ${seedResult.total} IELTS library entries.`);
 
-    const sentenceSeedResult = await seedSentencePractice({
+    const listeningDefinitions = await loadListeningLessonDefinitions(BBC_LISTENING_DIRECTORY);
+    const listeningSeedResult = await seedListeningLessons({
       pool: applicationPool,
-      sourceText
+      definitions: listeningDefinitions
     });
-    if (sentenceSeedResult.changed) {
+    if (listeningSeedResult.changed) {
       console.info(
-        `Seeded ${sentenceSeedResult.sentenceCount} independent sentences from ${sentenceSeedResult.sourceItemCount} IELTS source items.`
+        `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.testCount} test(s) and ${listeningSeedResult.questionCount} question(s).`
       );
     }
 
@@ -197,7 +200,7 @@ async function setupDatabase() {
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
-    await applicationPool.query("SELECT 1 FROM sentences LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM listening_lessons LIMIT 0");
   } finally {
     await applicationPool.end();
   }

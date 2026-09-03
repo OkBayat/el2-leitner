@@ -1,0 +1,175 @@
+<section class="practice-page" data-testid="bbc-listening-practice-page">
+  @if (session.loading()) {
+    <p class="page-status" role="status">Preparing your listening exercise…</p>
+  } @else if (routeError() || (!session.lesson() && session.error())) {
+    <section class="page-status error" role="alert">
+      <p>{{ routeError() || session.error() }}</p>
+      <a mat-stroked-button routerLink="/bbc-6-minute-english">Back to lessons</a>
+    </section>
+  } @else if (session.lesson(); as lesson) {
+    @if (session.test(); as test) {
+      <header class="practice-header">
+        <div class="header-copy">
+          <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
+          <p class="eyebrow">IELTS Listening Practice · {{ test.title }}</p>
+          <h1>{{ lesson.title }}</h1>
+          <p>Answer as many of the {{ test.questionCount }} questions as you can, then submit when you are ready.</p>
+        </div>
+        <a
+          mat-flat-button
+          [href]="lesson.sourceUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Open BBC episode</a>
+      </header>
+
+      <app-listening-audio-player [src]="lesson.audioUrl" />
+
+      @if (session.result(); as result) {
+        <section class="score-card" data-testid="listening-score" aria-live="polite">
+          <div>
+            <span>Your score</span>
+            <strong>{{ result.score.correct }} / {{ result.score.total }}</strong>
+          </div>
+          <div>
+            <span>Percentage</span>
+            <strong>{{ result.score.percentage }}%</strong>
+          </div>
+          <div>
+            <span>Correct</span>
+            <strong>{{ result.score.correct }}</strong>
+          </div>
+          <div>
+            <span>Incorrect</span>
+            <strong>{{ result.score.wrong }}</strong>
+          </div>
+        </section>
+      }
+
+      <form [formGroup]="answers" (ngSubmit)="submit()" novalidate>
+        @for (group of test.groups; track group.id) {
+          <section class="question-group" [attr.data-task-type]="group.taskType">
+            <header class="group-heading">
+              <h2>{{ group.heading }}</h2>
+              <p>{{ group.instruction }}</p>
+              <strong>{{ group.answerInstruction }}</strong>
+            </header>
+
+            <div class="questions">
+              @for (question of group.questions; track question.id) {
+                @let feedback = resultFor(question.id);
+                <article
+                  class="question"
+                  [class.correct]="feedback?.correct === true"
+                  [class.incorrect]="feedback?.correct === false"
+                  [attr.data-testid]="'listening-question-' + question.number"
+                >
+                  @if (question.responseType === 'text') {
+                    @let parts = promptParts(question.prompt);
+                    <div class="completion-line">
+                      <strong class="question-number">{{ question.number }}.</strong>
+                      <span>{{ parts.before }}</span>
+                      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <input
+                          matInput
+                          [formControl]="answerControl(question.id)"
+                          [readonly]="submitted()"
+                          [attr.aria-label]="'Answer for question ' + question.number"
+                          [attr.data-testid]="'listening-answer-' + question.number"
+                          autocomplete="off"
+                          autocapitalize="none"
+                          autocorrect="off"
+                          spellcheck="false"
+                        >
+                      </mat-form-field>
+                      <span>{{ parts.after }}</span>
+                    </div>
+                  } @else {
+                    <div class="choice-question">
+                      <p>
+                        <strong class="question-number">{{ question.number }}.</strong>
+                        <span>{{ question.prompt }}</span>
+                      </p>
+                      <mat-radio-group
+                        class="choice-options"
+                        [formControl]="answerControl(question.id)"
+                        [disabled]="submitted()"
+                        [attr.aria-label]="'Options for question ' + question.number"
+                      >
+                        @for (option of question.options; track option.id) {
+                          <mat-radio-button
+                            [value]="option.id"
+                            [attr.data-testid]="'listening-option-' + question.number + '-' + option.label"
+                          >
+                            <strong>{{ option.label }}.</strong>
+                            <span>{{ option.text }}</span>
+                          </mat-radio-button>
+                        }
+                      </mat-radio-group>
+                    </div>
+                  }
+
+                  @if (feedback) {
+                    <div class="answer-feedback" [class.correct]="feedback.correct" role="status">
+                      <strong>{{ feedback.correct ? 'Correct' : 'Incorrect' }}</strong>
+                      @if (!feedback.correct) {
+                        <span>Your answer: {{ feedback.submittedAnswer }}</span>
+                        <span>Correct answer: {{ feedback.correctAnswer }}</span>
+                        @if (vocabularyCandidate(feedback); as vocabulary) {
+                          <button
+                            mat-stroked-button
+                            type="button"
+                            class="add-vocabulary-button"
+                            [disabled]="addingVocabulary() !== null || isVocabularyAdded(vocabulary)"
+                            [attr.data-testid]="'add-listening-word-' + question.number"
+                            (click)="addVocabularyToHouseOne(vocabulary)"
+                          >
+                            @if (isVocabularyAdded(vocabulary)) {
+                              Added to House 1
+                            } @else if (addingVocabulary() === vocabulary) {
+                              Adding…
+                            } @else {
+                              Add to House 1
+                            }
+                          </button>
+                        }
+                      }
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        @if (session.error()) {
+          <p class="submission-error" role="alert">{{ session.error() }}</p>
+        }
+        @if (vocabularyError()) {
+          <p class="submission-error" role="alert">{{ vocabularyError() }}</p>
+        }
+
+        <footer class="submit-panel">
+          @if (!submitted()) {
+            <div>
+              <strong>{{ answeredCount() }} / {{ test.questionCount }} answered</strong>
+              <span>Unanswered questions will be marked incorrect.</span>
+            </div>
+            <button
+              mat-flat-button
+              type="submit"
+              [disabled]="!canSubmit()"
+              data-testid="submit-listening-attempt"
+            >{{ session.submitting() ? 'Submitting…' : 'Submit answers' }}</button>
+          } @else {
+            <div>
+              <strong>{{ test.title }} completed</strong>
+              <span>Review the marked answers above.</span>
+            </div>
+            <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
+          }
+        </footer>
+      </form>
+    }
+  }
+</section>

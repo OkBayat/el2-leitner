@@ -10,11 +10,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "db:setup": "node scripts/setup-database.js && node scripts/seed-sentence-practice.js",
-    "db:verify": "node scripts/verify-database.js && node scripts/verify-sentence-sources.js",
-    "db:seed:sentences": "node scripts/seed-sentence-practice.js",
-    "db:validate:sentences": "node scripts/seed-sentence-practice.js --dry-run",
-    "test": "node --test",
+    "db:setup": "node scripts/setup-database.js",
+    "db:verify": "node scripts/verify-database.js",
+    "db:validate:listening": "node scripts/validate-listening-lessons.js",
+    "test": "npm run db:validate:listening && node --test",
     "test:watch": "node --test --watch"
   },
   "dependencies": {

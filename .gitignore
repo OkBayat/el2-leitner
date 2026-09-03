@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 *.log
+*.mp3
 .env
 coverage/
 .nyc_output/

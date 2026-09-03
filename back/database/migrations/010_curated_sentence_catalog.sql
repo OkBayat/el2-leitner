@@ -1,6 +1,6 @@
 -- Remove sentence rows produced by the rejected generic/metalinguistic templates.
 -- The curated sentence seed runs after migrations and restores only reviewed natural sentences.
--- This migration also repairs databases that already ran migration 006 with the old quote-based cleanup.
+-- This migration also repairs databases that already ran the earlier quote-based cleanup.
 
 DELETE FROM sentences
 WHERE LOCATE(CHAR(34), sentence_text) > 0
