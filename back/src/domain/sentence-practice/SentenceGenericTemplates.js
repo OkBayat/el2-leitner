@@ -1,5 +1,33 @@
 import { TARGET } from "./SentenceTemplateCatalog.js";
 
+const FREQUENCY_ADVERBS = new Set([
+  "always",
+  "usually",
+  "often",
+  "sometimes",
+  "occasionally",
+  "rarely",
+  "seldom",
+  "never",
+]);
+
+const DEGREE_ADVERBS = new Set([
+  "absolutely",
+  "almost",
+  "completely",
+  "extremely",
+  "fairly",
+  "highly",
+  "nearly",
+  "quite",
+  "rather",
+  "really",
+  "so",
+  "too",
+  "totally",
+  "very",
+]);
+
 function categoryParts(category) {
   return String(category || "")
     .split(" / ")
@@ -15,56 +43,67 @@ function importedBookParts(category) {
   return { leaf: parts.at(-1).toLocaleLowerCase("en") };
 }
 
-export function legacyImportedSourceTemplates(category) {
+export function naturalImportedSourceTemplates(category, answerText = "") {
   const imported = importedBookParts(category);
   if (!imported) return null;
   const { leaf } = imported;
+  const normalizedAnswer = String(answerText).trim().toLocaleLowerCase("en");
 
   if (["nouns", "compound nouns"].includes(leaf)) {
     return [
-      `The discussion included useful information about ${TARGET}.`,
-      `The report gives a practical example involving ${TARGET}.`,
-      `The lecturer mentioned ${TARGET} again later in the lesson.`,
+      `The ${TARGET} played an important role in the decision.`,
+      `They discussed the ${TARGET} before the meeting ended.`,
+      `The report included new information about the ${TARGET}.`,
     ];
   }
 
   if (leaf === "adjectives") {
     return [
-      `The speaker used “${TARGET}” as a description.`,
-      `The reviewer chose “${TARGET}” as the best description.`,
-      `The example showed how “${TARGET}” can be used naturally.`,
+      `The situation seemed ${TARGET} at first.`,
+      `They described the experience as ${TARGET}.`,
+      `The result was surprisingly ${TARGET}.`,
     ];
   }
 
   if (["verbs", "verb phrases"].includes(leaf)) {
     return [
-      `The lesson included an example using “${TARGET}”.`,
-      `The teacher reviewed how “${TARGET}” is used during the exercise.`,
-      `The group discussed how “${TARGET}” is used in context.`,
+      `They decided to ${TARGET} before the deadline.`,
+      `We may need to ${TARGET} again tomorrow.`,
+      `Everyone had a chance to ${TARGET}.`,
     ];
   }
 
   if (leaf === "adverbs") {
+    if (FREQUENCY_ADVERBS.has(normalizedAnswer)) {
+      return [
+        `They ${TARGET} arrive early.`,
+        `She ${TARGET} checks the details twice.`,
+        `We ${TARGET} meet on Fridays.`,
+      ];
+    }
+    if (DEGREE_ADVERBS.has(normalizedAnswer)) {
+      return [
+        `The task was ${TARGET} difficult.`,
+        `The result was ${TARGET} different from what we expected.`,
+        `The room became ${TARGET} quiet.`,
+      ];
+    }
     return [
-      `The report used “${TARGET}” to qualify the statement.`,
-      `The speaker included “${TARGET}” in the explanation.`,
-      `The lecturer highlighted “${TARGET}” during the example.`,
+      `She responded ${TARGET} to the question.`,
+      `The situation changed ${TARGET}.`,
+      `He spoke ${TARGET} during the meeting.`,
     ];
   }
 
   if (["phrases", "idioms"].includes(leaf)) {
     return [
-      `The conversation naturally included “${TARGET}”.`,
-      `The lesson showed a useful context for “${TARGET}”.`,
-      `The speaker used “${TARGET}” later in the discussion.`,
+      `People sometimes ${TARGET} when circumstances change.`,
+      `They had to ${TARGET} before they could continue.`,
+      `We may need to ${TARGET} in this situation.`,
     ];
   }
 
-  return [
-    `The teacher gave a clear example using “${TARGET}”.`,
-    `The term “${TARGET}” came up during the discussion.`,
-    `The notes included another example with “${TARGET}”.`,
-  ];
+  return null;
 }
 
 export function genericSourceTemplates(category) {
