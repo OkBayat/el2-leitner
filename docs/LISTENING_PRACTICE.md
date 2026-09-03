@@ -13,7 +13,16 @@ Listening Practice is an independent Vocora bounded context for lesson-based, se
 7. Return to the lesson catalog. The completed test is marked **✓ Completed** while unfinished tests remain available.
 8. For an incorrect answer whose correct solution contains text but no numeric characters, optionally choose **Add to House 1**.
 
-The first built-in lesson is episode `260903`, **How is climate change affecting extreme weather?**, with **3 independent IELTS-style tests of 13 questions each** (39 questions in total).
+## Built-in BBC lessons
+
+Each built-in episode currently contains **3 independent IELTS-style tests of 13 questions each**.
+
+| Episode | Lesson | Audio filename |
+|---|---|---|
+| `260903` | How is climate change affecting extreme weather? | `bbc-6-minute-english-260903.mp3` |
+| `260618` | Limiting screen time for children | `bbc-6-minute-english-260618.mp3` |
+
+The `260618` lesson is authored from the BBC transcript supplied for **Limiting screen time for children**. Across all three tests, question order follows the episode chronology: screen-time context and regulation → Emily Goodacre on intentional use and higher expectations → enabling child development → Becky Kennedy on eager parents and small shifts → moving devices out of view / setting children up for success → the final smartphone-ownership answer.
 
 ## Lesson and test aggregate
 
@@ -45,10 +54,11 @@ back/data/listening/audio/
 
 Docker Compose bind-mounts that directory read-only into the app container. A deployment may alternatively override the directory with `LISTENING_AUDIO_DIRECTORY`.
 
-The database stores only the filename in `listening_lessons.audio_file`. The first lesson uses:
+The database stores only the filename in `listening_lessons.audio_file`. The seed derives it deterministically from the lesson public id, for example:
 
 ```text
 bbc-6-minute-english-260903.mp3
+bbc-6-minute-english-260618.mp3
 ```
 
 The browser never receives a filesystem path. The selected-test response exposes an authenticated application URL:
@@ -82,8 +92,6 @@ This keeps the card lightweight while making completion state persistent across 
 Listening Practice
 ├── shared lesson aggregate
 │   └── tests, groups, questions, options and private answer keys in versioned JSON
-├── local episode audio
-│   └── filename in DB; MP3 outside Git
 └── learner attempts
     ├── selected test id
     └── submitted-answer and result snapshots in JSON
@@ -101,19 +109,28 @@ That action reuses Vocora's existing learning-state persistence instead of givin
 
 A lesson and all of its tests are authored, validated, loaded, and versioned as one aggregate. Vocora does not currently query or edit individual listening questions through SQL. Keeping the exercise tree in one versioned JSON document follows KISS/YAGNI and makes new IELTS task types and additional tests easy to add.
 
-`listening_lessons.content_json` contains `schemaVersion`, ordered tests, ordered question groups and IELTS instructions, prompts, multiple-choice options, private accepted answers, and correct option IDs. Relational columns remain only for metadata used to identify, filter, sort, version, summarize, or locate audio for lessons.
+`listening_lessons.content_json` contains:
+
+- `schemaVersion`
+- ordered tests
+- ordered question groups and IELTS instructions
+- prompts
+- multiple-choice options
+- private accepted answers and correct option IDs
+
+Relational columns remain only for metadata used to identify, filter, sort, version, or summarize lessons.
 
 ## CQRS application layer
 
 Queries and commands are separate application use cases:
 
 - `ListListeningLessons` — catalog query including per-test completion for the authenticated learner
-- `GetListeningEpisodeAudio` — resolves the safe local filename for an authenticated published lesson
-- `StartListeningAttempt` — starts the specifically selected test and returns only its public projection plus application audio URL
+- `GetListeningEpisodeAudio` — resolves safe published audio metadata
+- `StartListeningAttempt` — starts the specifically selected test and returns only its public projection
 - `SubmitListeningAttempt` — reloads the attempt's private test, grades it through the Domain layer, and completes the attempt atomically
 - `ListeningMistakePracticeService` — explicit UI application service that hands a validated missed answer to the existing learning-state command path
 
-The Listening Domain contains lesson/test validation, strict IELTS answer normalization, and grading. It has no Express, Angular, or MySQL dependency. MySQL access for listening attempts/audio metadata remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
+The Listening Domain contains lesson/test validation, strict IELTS answer normalization, and grading. It has no Express, Angular, or MySQL dependency. MySQL access for listening attempts remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
 
 ## Answer-key security
 
@@ -131,8 +148,6 @@ Every test must behave like IELTS Listening rather than merely look similar:
 - distractors are plausible and grounded in the episode
 - spelling and word-form grading stays strict
 
-The first lesson's three tests are all authored against the same BBC episode but use different IELTS-style prompts and task mixes while preserving audio order.
-
 ## House 1 capture policy
 
 The House 1 action is based on answer content rather than question type. Any incorrect correct-answer text containing letters and **no numeric character** is eligible, including multi-word answers and textual Multiple Choice options. For Multiple Choice, the display label (`A.`, `B.`, `C.`) is removed before capture.
@@ -143,7 +158,7 @@ Eligible examples include `inland`, `sea levels`, `the Arctic`, and textual Mult
 
 Built-in lessons are version-controlled JSON under `back/data/listening/<provider>/`. The current aggregate schema is `schemaVersion: 2`, where a lesson owns a `tests` array.
 
-`npm run db:validate:listening` validates content before tests and deployment. `db:setup` seeds definitions transactionally. SHA-256 makes unchanged seeds true no-ops; content changes increment `content_version`; open attempts cannot be graded against a newer lesson version.
+`npm run db:validate:listening` validates every JSON lesson before tests and deployment. `db:setup` seeds all definitions transactionally. SHA-256 makes unchanged seeds true no-ops; content changes increment `content_version`; open attempts cannot be graded against a newer lesson version.
 
 ## Database
 
@@ -154,7 +169,7 @@ Migration `007_listening_practice.sql` creates the two core Listening tables:
 
 Migration `008_listening_tests.sql` adds `test_id` to `listening_attempts`, backfills existing attempts to `test-1`, and adds indexes for per-test completion queries.
 
-Migration `009_listening_audio.sql` adds `listening_lessons.audio_file` and backfills the deterministic `<public_id>.mp3` filename. No MP3 binary is stored in MySQL or Git.
+Migration `009_listening_audio.sql` adds the per-lesson local MP3 filename.
 
 No per-question relational tables are introduced.
 
@@ -163,7 +178,7 @@ No per-question relational tables are introduced.
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/api/listening/bbc/lessons` | List lessons plus the authenticated learner's per-test completion state |
-| `GET` | `/api/listening/bbc/lessons/:lessonSlug/audio` | Authenticated byte-range MP3 delivery from the configured local audio directory |
+| `GET` | `/api/listening/bbc/lessons/:lessonSlug/audio` | Stream the authenticated lesson MP3 with byte-range seeking |
 | `POST` | `/api/listening/bbc/lessons/:lessonSlug/tests/:testId/attempts` | Start the selected test and receive its questions without answer keys |
 | `POST` | `/api/listening/bbc/attempts/:attemptId/submit` | Grade and complete that attempt |
 | `PUT` | `/api/state` | Existing Learning command reused only when the learner explicitly captures a missed answer |
@@ -178,20 +193,18 @@ The lesson card renders `lesson.tests` dynamically. Each test button routes to:
 /bbc-6-minute-english/:lessonSlug/tests/:testId/practice
 ```
 
-The practice page remains outside `AppShell`, reads both route parameters, renders only the selected test, and embeds the episode audio player above the question groups. Components remain standalone, `OnPush`, Material-based, and use separate `.ts`, `.html`, and `.scss` files with typed reactive forms.
+The practice page remains outside `AppShell`, reads both route parameters, renders only the selected test, and embeds the in-app audio player. Components remain standalone, `OnPush`, Material-based, and use separate `.ts`, `.html`, and `.scss` files with typed reactive forms.
 
 ## Tests
 
 Coverage includes:
 
 - schema-v2 Domain validation for multiple ordered tests
-- 13 sequential questions per test and IELTS audio-order regression
-- JSON seed idempotency for 3 tests / 39 questions plus deterministic audio filename
-- selected-test CQRS, safe audio-filename CQRS, and unknown-test rejection
+- 13 sequential questions per test and IELTS audio-order regression for both built-in episodes
+- JSON seed idempotency and deterministic audio filenames
+- selected-test CQRS and unknown-test rejection
 - per-user/per-test completion query behavior
-- authenticated API selection, completion, answer-key non-disclosure, idempotent submission, and cross-user isolation
-- authenticated audio API, byte-range seeking, and missing-file 404 behavior without committing an MP3 fixture
-- MySQL test-aware/audio-aware persistence and database verification
-- Angular domain/API/application/page/player/architecture tests, including explicit no-autoplay and Play/Stop/±5 controls
-- production Playwright flow: all three tests initially show `Start`, Test 1 is completed, and the catalog then shows `✓ Completed` only for Test 1; the player is present with no autoplay
-- existing House 1 mistake-capture coverage, including multi-word/Multiple Choice answers and numeric rejection
+- authenticated API selection, completion, answer-key non-disclosure, idempotent submission, cross-user isolation, and the new `260618` lesson
+- MySQL test-aware persistence and database verification for both built-in lessons
+- Angular domain/API/application/page/player/architecture tests
+- production Playwright flow covering both catalog cards, three tests per lesson, completion tracking, in-app audio presence/no-autoplay, and House 1 mistake capture
