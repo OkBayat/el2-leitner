@@ -12,7 +12,7 @@ function fullTextSearchable(form) {
 }
 
 function booleanPhrase(form) {
-  return `\"${form.replace(/[+\-><()~*\"@]/gu, " ").replace(/\s+/gu, " ").trim()}\"`;
+  return `"${form.replace(/[+><()~*"@-]/gu, " ").replace(/\s+/gu, " ").trim()}"`;
 }
 
 export class MySqlSentencePracticeRepository {
@@ -72,7 +72,7 @@ export class MySqlSentencePracticeRepository {
 
     const searchable = forms.filter(fullTextSearchable);
     if (searchable.length) {
-      const booleanQuery = searchable.map(booleanPhrase).filter((value) => value !== '\"\"').join(" ");
+      const booleanQuery = searchable.map(booleanPhrase).filter((value) => value !== '""').join(" ");
       if (booleanQuery) {
         const [rows] = await this.pool.execute(
           `${projection}
