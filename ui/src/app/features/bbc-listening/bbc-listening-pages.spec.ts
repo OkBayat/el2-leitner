@@ -70,7 +70,7 @@ describe('BBC listening pages', () => {
     expect(page.error()).toBeNull();
   });
 
-  it('creates one typed control per question and submits only when all are answered', async () => {
+  it('creates one typed control per question and allows submission with unanswered questions', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
     const attemptSignal = signal<ListeningAttempt | null>({
       id: 'attempt-1',
@@ -106,14 +106,14 @@ describe('BBC listening pages', () => {
 
     expect(start).toHaveBeenCalledWith(lesson.slug);
     expect(Object.keys(page.answers.controls)).toEqual(['q1', 'q2']);
-    expect(page.canSubmit()).toBe(false);
+    expect(page.answeredCount()).toBe(0);
+    expect(page.canSubmit()).toBe(true);
 
     page.answerControl('q1').setValue('day');
-    page.answerControl('q2').setValue('q2-b');
-    expect(page.answeredCount()).toBe(2);
+    expect(page.answeredCount()).toBe(1);
     expect(page.canSubmit()).toBe(true);
 
     await page.submit();
-    expect(submit).toHaveBeenCalledWith({ q1: 'day', q2: 'q2-b' });
+    expect(submit).toHaveBeenCalledWith({ q1: 'day', q2: '' });
   });
 });
