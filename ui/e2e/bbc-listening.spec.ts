@@ -18,7 +18,7 @@ async function learningState(page: Page): Promise<any> {
   });
 }
 
-test('BBC listening keeps IELTS grading isolated until the learner explicitly adds a non-numeric mistake to House 1', async ({ page }) => {
+test('BBC lesson offers multiple tests, tracks completion, and keeps explicit mistake capture isolated', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -26,18 +26,25 @@ test('BBC listening keeps IELTS grading isolated until the learner explicitly ad
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
   await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
   await expect(page.getByText('How is climate change affecting extreme weather?')).toBeVisible();
-  await expect(page.getByText('13 IELTS-style questions')).toBeVisible();
+  await expect(page.getByText('3 IELTS-style tests · 39 questions in total')).toBeVisible();
+  await expect(page.getByTestId('start-bbc-test-1')).toContainText('Test 1');
+  await expect(page.getByTestId('start-bbc-test-1')).toContainText('Start');
+  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Test 2');
+  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Start');
+  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Test 3');
+  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Start');
 
   const startResponsePromise = page.waitForResponse((response) =>
     response.request().method() === 'POST'
-    && response.url().includes('/api/listening/bbc/lessons/climate-change-extreme-weather/attempts')
+    && response.url().includes('/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-1/attempts')
     && response.status() === 201
   );
-  await page.getByTestId('start-bbc-lesson').click();
+  await page.getByTestId('start-bbc-test-1').click();
   await startResponsePromise;
 
-  await expect(page).toHaveURL(/\/bbc-6-minute-english\/climate-change-extreme-weather\/practice$/u);
+  await expect(page).toHaveURL(/\/bbc-6-minute-english\/climate-change-extreme-weather\/tests\/test-1\/practice$/u);
   await expect(page.getByTestId('bbc-listening-practice-page')).toBeVisible();
+  await expect(page.getByText('IELTS Listening Practice · Test 1')).toBeVisible();
   await expect(page.locator('app-shell')).toHaveCount(0);
   await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
   await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(13);
@@ -75,17 +82,17 @@ test('BBC listening keeps IELTS grading isolated until the learner explicitly ad
   );
   await page.getByTestId('submit-listening-attempt').click();
   const submitPayload = await (await submitResponsePromise).json();
-  expect(submitPayload.score).toEqual({ correct: 9, wrong: 4, total: 13, percentage: 69.2 });
+  expect(submitPayload.attempt.testId).toBe('test-1');
+  expect(submitPayload.score).toEqual({ correct: 10, wrong: 3, total: 13, percentage: 76.9 });
 
   const score = page.getByTestId('listening-score');
-  await expect(score).toContainText('9 / 13');
-  await expect(score).toContainText('69.2%');
+  await expect(score).toContainText('10 / 13');
+  await expect(score).toContainText('76.9%');
   await expect(page.getByTestId('listening-question-6')).toHaveClass(/incorrect/u);
   await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
   await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
   await expect(page.getByTestId('listening-question-13')).toContainText('Your answer: No answer');
-
   await expect(page.getByTestId('add-listening-word-6')).toBeVisible();
   await expect(page.getByTestId('add-listening-word-10')).toBeVisible();
   await expect(page.getByTestId('add-listening-word-12')).toHaveCount(0);
@@ -112,4 +119,16 @@ test('BBC listening keeps IELTS grading isolated until the learner explicitly ad
   expect(seaLevels).toBeTruthy();
   expect(seaLevels.box).toBe(1);
   expect(seaLevels.addedSource).toBe('listening-mistake');
+
+  const catalogResponse = page.waitForResponse((response) =>
+    response.request().method() === 'GET'
+    && new URL(response.url()).pathname === '/api/listening/bbc/lessons'
+    && response.status() === 200
+  );
+  await page.getByRole('link', { name: 'Back to tests' }).click();
+  await catalogResponse;
+  await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
+  await expect(page.getByTestId('start-bbc-test-1')).toContainText('✓ Completed');
+  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Start');
+  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Start');
 });
