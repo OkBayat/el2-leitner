@@ -32,7 +32,7 @@ async function upsertLesson(connection, definition, hash) {
     await connection.execute(
       `UPDATE listening_lessons
        SET provider = ?, slug = ?, title = ?, description = ?, episode_code = ?, episode_date = ?,
-           audio_url = ?, status = ?, schema_version = ?, question_count = ?, content_version = ?,
+           source_url = ?, status = ?, schema_version = ?, question_count = ?, content_version = ?,
            source_hash = ?, content_json = ?, published_at = ?
        WHERE id = ?`,
       [
@@ -58,7 +58,7 @@ async function upsertLesson(connection, definition, hash) {
 
   const [result] = await connection.execute(
     `INSERT INTO listening_lessons
-       (public_id, provider, slug, title, description, episode_code, episode_date, audio_url,
+       (public_id, provider, slug, title, description, episode_code, episode_date, source_url,
         status, schema_version, question_count, content_version, source_hash, content_json, published_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [

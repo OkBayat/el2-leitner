@@ -26,7 +26,7 @@ function mapLessonMetadata(row) {
     description: row.description === null ? null : String(row.description),
     episodeCode: row.episode_code === null ? null : String(row.episode_code),
     episodeDate: row.episode_date === null ? null : String(row.episode_date),
-    sourceUrl: String(row.audio_url),
+    sourceUrl: String(row.source_url),
     contentVersion: Number(row.content_version),
     questionCount: Number(row.question_count)
   };
@@ -108,7 +108,7 @@ export class MySqlListeningPracticeRepository {
   async listPublishedLessons(provider) {
     const [rows] = await this.pool.execute(
       `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
-              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, audio_url,
+              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
               content_version, question_count
        FROM listening_lessons
        WHERE provider = ? AND status = 'published'
@@ -121,7 +121,7 @@ export class MySqlListeningPracticeRepository {
   async findPublishedLessonBySlug(provider, slug, { includeAnswers = false } = {}) {
     const [rows] = await this.pool.execute(
       `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
-              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, audio_url,
+              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
               schema_version, question_count, content_version, content_json
        FROM listening_lessons
        WHERE provider = ? AND slug = ? AND status = 'published'
@@ -162,7 +162,7 @@ export class MySqlListeningPracticeRepository {
               a.status, a.started_at, a.submitted_at, a.total_count,
               l.id AS lesson_database_id, l.public_id AS lesson_public_id, l.provider, l.slug,
               l.title, l.description, l.episode_code,
-              DATE_FORMAT(l.episode_date, '%Y-%m-%d') AS episode_date, l.audio_url,
+              DATE_FORMAT(l.episode_date, '%Y-%m-%d') AS episode_date, l.source_url,
               l.schema_version, l.question_count, l.content_version, l.content_json
        FROM listening_attempts a
        JOIN listening_lessons l ON l.id = a.lesson_id
@@ -190,7 +190,7 @@ export class MySqlListeningPracticeRepository {
       description: row.description,
       episode_code: row.episode_code,
       episode_date: row.episode_date,
-      audio_url: row.audio_url,
+      source_url: row.source_url,
       schema_version: row.schema_version,
       question_count: row.question_count,
       content_version: row.content_version,

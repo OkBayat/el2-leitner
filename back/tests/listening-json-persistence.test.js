@@ -21,7 +21,7 @@ async function storedLessonRow() {
     description: definition.description,
     episode_code: definition.episodeCode,
     episode_date: definition.episodeDate,
-    audio_url: definition.sourceUrl,
+    source_url: definition.sourceUrl,
     schema_version: definition.schemaVersion,
     question_count: definition.questionCount,
     content_version: 1,
@@ -49,6 +49,7 @@ describe("MySqlListeningPracticeRepository JSON persistence", () => {
 
     assert.equal(publicLesson.groups.length, 4);
     assert.equal(publicLesson.questionCount, 13);
+    assert.equal(publicLesson.sourceUrl, row.source_url);
     assert.equal(Object.hasOwn(publicLesson.groups[0].questions[0], "acceptedAnswers"), false);
     assert.equal(Object.hasOwn(publicLesson.groups[1].questions[0], "correctOptionId"), false);
     assert.equal(privateLesson.groups[0].questions[0].acceptedAnswers[0].text, "day");

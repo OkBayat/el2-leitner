@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS listening_lessons (
   description TEXT NULL,
   episode_code VARCHAR(64) NULL,
   episode_date DATE NULL,
-  audio_url VARCHAR(1000) NOT NULL,
+  source_url VARCHAR(1000) NOT NULL,
   status VARCHAR(32) NOT NULL DEFAULT 'draft',
   schema_version SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   question_count SMALLINT UNSIGNED NOT NULL,
