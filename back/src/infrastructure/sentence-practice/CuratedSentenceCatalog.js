@@ -59,8 +59,12 @@ export async function loadCuratedSentenceCatalog() {
     .map((chunk) => chunk.replace(/\s+/gu, ""))
     .join("");
   const compressed = Buffer.from(encodedCatalog, "base64");
-  const text = (
+  const recoveredText = (
     await gunzipAsync(compressed, { finishFlush: zlibConstants.Z_SYNC_FLUSH })
   ).toString("utf8");
-  return parseCuratedSentenceCatalog(text);
+  const lastCompleteLine = recoveredText.lastIndexOf("\n");
+  const completeText = lastCompleteLine >= 0
+    ? recoveredText.slice(0, lastCompleteLine)
+    : recoveredText;
+  return parseCuratedSentenceCatalog(completeText);
 }
