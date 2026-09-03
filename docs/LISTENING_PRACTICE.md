@@ -22,7 +22,7 @@ Each built-in episode currently contains **3 independent IELTS-style tests of 13
 | `260903` | How is climate change affecting extreme weather? | `bbc-6-minute-english-260903.mp3` |
 | `260618` | Limiting screen time for children | `bbc-6-minute-english-260618.mp3` |
 
-The `260618` lesson is authored from the BBC transcript supplied for **Limiting screen time for children**. Across all three tests, question order follows the episode chronology: screen-time context and regulation → Emily Goodacre on intentional use and higher expectations → enabling child development → Becky Kennedy on eager parents and small shifts → moving devices out of view / setting children up for success → the final smartphone-ownership answer.
+The `260618` lesson is authored from the BBC transcript **Limiting screen time for children**. Across all three tests, question order follows the episode chronology: screen-time context and regulation → Emily Goodacre on intentional use and higher expectations → enabling child development → Becky Kennedy on eager parents and small shifts → moving devices out of view / setting children up for success → the final smartphone-ownership answer.
 
 ## Lesson and test aggregate
 
