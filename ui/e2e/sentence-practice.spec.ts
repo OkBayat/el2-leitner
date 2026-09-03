@@ -34,26 +34,37 @@ async function installSpeechSpy(page: Page): Promise<void> {
 	});
 }
 
-async function spokenWord(page: Page, index: number): Promise<string> {
-	let word = '';
+async function spokenSentence(page: Page, index: number): Promise<string> {
+	let sentence = '';
 	await expect.poll(async () => {
-		word = await page.evaluate((position) => (window as any).__vocoraSpokenWords?.[position]?.text || '', index);
-		return word;
-	}, { timeout: 5_000, message: `pronunciation ${index + 1} should be played` }).not.toBe('');
-	return word;
+		sentence = await page.evaluate((position) => (window as any).__vocoraSpokenWords?.[position]?.text || '', index);
+		return sentence;
+	}, { timeout: 5_000, message: `sentence pronunciation ${index + 1} should be played` }).not.toBe('');
+	return sentence;
 }
 
 async function sentenceContext(page: Page): Promise<string[]> {
 	return page.getByTestId('sentence-cloze').locator('span').allTextContents();
 }
 
-async function answerCurrentCard(page: Page, pronunciationIndex: number): Promise<string> {
-	const word = await spokenWord(page, pronunciationIndex);
+function answerFromSentence(sentence: string, context: string[]): string {
+	const [before = '', after = ''] = context;
+	if (!sentence.startsWith(before) || !sentence.endsWith(after)) {
+		throw new Error(`Spoken sentence does not match visible cloze context: ${sentence}`);
+	}
+	const end = after ? sentence.length - after.length : sentence.length;
+	return sentence.slice(before.length, end);
+}
+
+async function answerCurrentCard(page: Page, pronunciationIndex: number): Promise<{ answer: string; sentence: string }> {
+	const sentence = await spokenSentence(page, pronunciationIndex);
+	const context = await sentenceContext(page);
+	const answer = answerFromSentence(sentence, context);
 	const input = page.getByTestId('sentence-answer-input');
-	await input.fill(word);
+	await input.fill(answer);
 	await input.press('Enter');
 	await expect(page.getByTestId('sentence-action-footer')).toHaveClass(/success/u);
-	return word;
+	return { answer, sentence };
 }
 
 test('Sentence Practice keeps Leitner state isolated and retries a failed word in a different sentence', async ({ page }) => {
@@ -83,8 +94,10 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 	await expect(input).toHaveCSS('border-right-width', '0px');
 	await expect(input).not.toHaveCSS('border-bottom-width', '0px');
 
-	const firstWord = await spokenWord(page, 0);
+	const firstSentence = await spokenSentence(page, 0);
 	const firstContext = await sentenceContext(page);
+	const firstWord = answerFromSentence(firstSentence, firstContext);
+	expect(firstSentence.length).toBeGreaterThan(firstWord.length);
 	await input.fill('__wrong__');
 	await input.press('Enter');
 
@@ -99,9 +112,11 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 		await page.getByRole('button', { name: 'Continue' }).click();
 	}
 
-	const retryWord = await spokenWord(page, 4);
+	const retrySentence = await spokenSentence(page, 4);
 	const retryContext = await sentenceContext(page);
+	const retryWord = answerFromSentence(retrySentence, retryContext);
 	expect(retryWord).toBe(firstWord);
+	expect(retrySentence).not.toBe(firstSentence);
 	expect(retryContext).not.toEqual(firstContext);
 	await expect(page.getByText('Try the word again in a new sentence')).toBeVisible();
 	await answerCurrentCard(page, 4);
