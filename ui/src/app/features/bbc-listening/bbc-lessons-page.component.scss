@@ -62,7 +62,7 @@ h1 {
 
 .lesson-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
   gap: 28px;
   align-items: center;
   padding: 24px;
@@ -99,8 +99,44 @@ h1 {
 
 .lesson-actions {
   display: grid;
+  gap: 10px;
+}
+
+.test-picker {
+  display: grid;
   gap: 8px;
-  min-width: 170px;
+}
+
+.test-button {
+  width: 100%;
+}
+
+.test-button ::ng-deep .mdc-button__label {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.test-button.completed {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 7%, transparent);
+}
+
+.test-title {
+  color: var(--mat-sys-on-surface);
+  font-weight: 700;
+}
+
+.test-status {
+  color: var(--mat-sys-primary);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.episode-link {
+  justify-self: stretch;
 }
 
 .status {
@@ -132,9 +168,5 @@ h1 {
   .lesson-card {
     gap: 20px;
     padding: 20px;
-  }
-
-  .lesson-actions {
-    min-width: 0;
   }
 }
