@@ -36,6 +36,16 @@ function optionalString(value, sourceName, label, options = {}) {
   return string(value, sourceName, label, options);
 }
 
+function optionalIsoDate(value, sourceName, label) {
+  const result = optionalString(value, sourceName, label, { max: 10, pattern: DATE_PATTERN });
+  if (!result) return null;
+  const parsed = new Date(`${result}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== result) {
+    fail(sourceName, `${label} must be a valid ISO date.`);
+  }
+  return result;
+}
+
 function positiveInteger(value, sourceName, label) {
   const result = Number(value);
   if (!Number.isSafeInteger(result) || result <= 0) fail(sourceName, `${label} must be a positive integer.`);
@@ -62,6 +72,34 @@ function assertOrderedSequence(values, sourceName, label) {
 
 function countToken(text, token) {
   return text.split(token).length - 1;
+}
+
+function answerPartCounts(text) {
+  const tokens = text.match(/\S+/gu) || [];
+  return {
+    words: tokens.filter((token) => /\p{L}/u.test(token)).length,
+    numbers: tokens.filter((token) => /\p{N}/u.test(token)).length
+  };
+}
+
+function assertTextAnswersFitGroupLimits(questions, maxWords, maxNumbers, sourceName, groupId) {
+  for (const question of questions) {
+    for (const [index, answer] of question.acceptedAnswers.entries()) {
+      const counts = answerPartCounts(answer.text);
+      if (maxWords !== null && counts.words > maxWords) {
+        fail(
+          sourceName,
+          `${groupId} ${question.id} answer ${index + 1} exceeds maxWords (${maxWords}).`
+        );
+      }
+      if (maxNumbers !== null && counts.numbers > maxNumbers) {
+        fail(
+          sourceName,
+          `${groupId} ${question.id} answer ${index + 1} exceeds maxNumbers (${maxNumbers}).`
+        );
+      }
+    }
+  }
 }
 
 function parseOption(raw, sourceName, questionLabel, optionIds, labels) {
@@ -135,6 +173,9 @@ function parseGroup(raw, sourceName, ids) {
   if (questions.some((question) => question.responseType !== expectedResponseType)) {
     fail(sourceName, `${id} questions must use responseType ${expectedResponseType}.`);
   }
+  if (expectedResponseType === "text") {
+    assertTextAnswersFitGroupLimits(questions, maxWords, maxNumbers, sourceName, id);
+  }
   return { id, position, heading, taskType, instruction, answerInstruction, maxWords, maxNumbers, questions };
 }
 
@@ -148,7 +189,7 @@ export function parseListeningLessonDefinition(raw, sourceName = "listening less
   const title = string(input.title, sourceName, "title", { max: 255 });
   const description = optionalString(input.description, sourceName, "description", { max: 4000 });
   const episodeCode = optionalString(input.episodeCode, sourceName, "episodeCode", { max: 64 });
-  const episodeDate = optionalString(input.episodeDate, sourceName, "episodeDate", { max: 10, pattern: DATE_PATTERN });
+  const episodeDate = optionalIsoDate(input.episodeDate, sourceName, "episodeDate");
   const sourceUrl = string(input.sourceUrl, sourceName, "sourceUrl", { max: 1000 });
   let parsedUrl;
   try {

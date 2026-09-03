@@ -53,6 +53,31 @@ describe("BBC listening lesson definition", () => {
     );
   });
 
+  it("rejects impossible episode dates before MySQL seeding", async () => {
+    const raw = JSON.parse(await readFile(lessonUrl, "utf8"));
+    raw.episodeDate = "2026-02-30";
+    assert.throws(
+      () => parseListeningLessonDefinition(raw, "invalid-date.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /valid ISO date/u.test(error.message)
+    );
+  });
+
+  it("rejects accepted answers that violate their IELTS word or number limit", async () => {
+    const tooManyWords = JSON.parse(await readFile(lessonUrl, "utf8"));
+    tooManyWords.groups[0].questions[0].answers = ["one extra answer"];
+    assert.throws(
+      () => parseListeningLessonDefinition(tooManyWords, "too-many-words.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /maxWords/u.test(error.message)
+    );
+
+    const tooManyNumbers = JSON.parse(await readFile(lessonUrl, "utf8"));
+    tooManyNumbers.groups[0].questions[0].answers = ["day 1 2"];
+    assert.throws(
+      () => parseListeningLessonDefinition(tooManyNumbers, "too-many-numbers.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /maxNumbers/u.test(error.message)
+    );
+  });
+
   it("keeps completion and multiple-choice response types aligned with their IELTS group", async () => {
     const raw = JSON.parse(await readFile(lessonUrl, "utf8"));
     raw.groups[0].questions[0] = structuredClone(raw.groups[1].questions[0]);
