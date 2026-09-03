@@ -29,7 +29,9 @@ export interface ListeningLessonSummary extends ListeningLessonBase {
   tests: ListeningTestSummary[];
 }
 
-export type ListeningLesson = ListeningLessonBase;
+export interface ListeningLesson extends ListeningLessonBase {
+  audioUrl: string;
+}
 
 interface ListeningQuestionBase {
   id: string;
