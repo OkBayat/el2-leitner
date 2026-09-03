@@ -1,8 +1,8 @@
 # Sentence Practice
 
-Sentence Practice is a free-practice mode. It reuses the learner's active Leitner words, but it does **not** perform a Leitner review and the sentence catalog is deliberately independent from vocabulary storage.
+Sentence Practice is a free-practice mode. It reuses the learner's active Leitner words, but it does **not** perform a Leitner review. The sentence catalog remains independent from vocabulary storage.
 
-## Core model
+## Source of truth
 
 `sentences` is the only sentence source of truth:
 
@@ -11,108 +11,138 @@ sentences
 - id
 - language_code
 - sentence_text
-- optional source/provenance metadata
+- source_key / source_item_number
+- audio_id / audio_url
+- audio_contributor / audio_license / audio_attribution_url
 - status
 ```
 
-There is intentionally **no** `vocabulary_entry_id`, `word_id`, `answer_text`, foreign key, join table or persisted word-to-sentence relation.
+There is intentionally no `vocabulary_entry_id`, `word_id`, `answer_text`, foreign key, join table or persisted vocabulary-to-sentence relation.
 
-A sentence can be added independently:
+PR #55 initially generated 4,500 local example sentences without recorded audio. Those rows are no longer seeded. The Tatoeba importer atomically replaces the sentence catalog, so after a successful import the old generated audio-less rows are gone.
 
-```sql
-INSERT INTO sentences (language_code, sentence_text, status)
-VALUES ('en', 'Her name is Sara.', 'active');
-```
+## Tatoeba import
 
-No second write is required. The next Sentence Practice session can discover that row for `name` by searching the sentence text.
-
-## Runtime lookup
-
-At session start the backend performs two reads:
-
-1. active words and accepted spellings for the requested Leitner house;
-2. active English sentences from the independent catalog.
-
-The Domain layer compiles accepted spellings into Unicode-aware regular expressions and finds complete terms only. For `name`:
+Vocora uses Tatoeba's official weekly English exports:
 
 ```text
-Her name is Sara.       -> match
-My name is Mohammad.    -> match
-Her surname is Sara.    -> no match
+https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2
+https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_with_audio.tsv.bz2
 ```
 
-For a matching sentence the regex result itself determines the cloze boundaries:
+Tatoeba's documented formats are:
 
 ```text
-Her [name] is Sara.
+sentences:
+Sentence id [tab] Lang [tab] Text
 
-before = "Her "
-after  = " is Sara."
+audio:
+Sentence id [tab] Audio id [tab] Username [tab] License [tab] Attribution URL
 ```
 
-No start/end positions are stored in the database.
+A sentence can have multiple recordings. Vocora stores exactly one row per unique English sentence with audio and chooses the recording deterministically:
 
-Accepted aliases also participate in search. If the learner's word is `colour / color`, a sentence containing either spelling is valid. Capitalized proper terms such as `May` are matched case-sensitively so the month is not confused with modal `may`.
+1. prefer a recording with an explicit reusable license;
+2. if equivalent recordings remain, choose the lowest audio id.
 
-A sentence containing the target more than once is rejected because leaving a second visible occurrence would reveal the answer.
-
-## Randomness and future indexing
-
-The active sentence corpus is shuffled for each practice-deck request and up to six matching contexts are selected per word. The UI chooses among those contexts and a failed word returns after three other prompts with a different context when possible.
-
-The current corpus is only a few thousand rows, so scanning it once per session is intentionally simple and avoids N+1 database queries. When sentence volume grows, `MySqlSentencePracticeRepository.findActiveSentences()` is the replacement point for an inverted/full-text/search index. Such an index is derived data only; `sentences` remains the source of truth and can always rebuild the index.
-
-This means adding a new sentence never requires searching all vocabulary and creating link records first.
-
-## Initial corpus and seeding
-
-The checked-in IELTS list remains the generator input:
+The stored audio URL follows Tatoeba's documented per-recording endpoint:
 
 ```text
-ui/data/IELTS_Listening_Core_1500.md
+https://tatoeba.org/audio/download/{audioId}
 ```
 
-The seed creates three natural deterministic sentences for each of the 1,500 source items, giving 4,500 initial sentence rows. Source item number, variant number, category and corpus hash are stored only as provenance for idempotent seeding; they are not vocabulary relationships and are nullable for independently added sentences.
-
-Database setup applies `005_sentence_catalog.sql`, seeds the built-in vocabulary collection independently, and seeds the independent sentence catalog:
+Run migrations/setup first, then run the explicit network-backed import:
 
 ```bash
 cd back
 npm run db:setup
+npm run db:import:tatoeba-sentences
+npm run db:verify
 ```
 
-The migration first removes the temporary `vocabulary_sentences` table if a developer had already run an earlier revision of PR #55. Because the new migration filename is different, the migration runner can apply it without checksum conflicts and then the normal seed rebuilds the independent sentence corpus. Fresh databases simply skip that drop.
+The importer requires `bzip2` or `bunzip2`. The backend Alpine container provides the expected environment for the command.
 
-Optional commands:
+The default safety floor is **849,774 unique English sentences with audio**, matching the corpus size requested when this importer was introduced. Tatoeba changes continuously, so importing a newer weekly export may produce a larger count. To pin a specific snapshot during an operational run, use:
 
 ```bash
-npm run db:validate:sentences
-npm run db:seed:sentences
+npm run db:import:tatoeba-sentences -- --expected-count=<exact-count>
 ```
+
+For already-downloaded exports:
+
+```bash
+npm run db:import:tatoeba-sentences -- \
+  --sentences-file=/path/to/eng_sentences.tsv.bz2 \
+  --audio-file=/path/to/eng_sentences_with_audio.tsv.bz2
+```
+
+### Atomic replacement
+
+The importer never deletes the current catalog first. It:
+
+1. downloads/opens both official exports;
+2. stages all audio metadata;
+3. builds a new `sentences_tatoeba_import` table in batches;
+4. validates unique sentence count, text and audio metadata;
+5. atomically renames the new table into place;
+6. drops the previous audio-less table only after the successful swap.
+
+A failed download, parse, count check or insert leaves the current `sentences` table untouched. A MySQL named lock also prevents two imports from running concurrently.
+
+### Audio licensing
+
+Tatoeba states that when the audio export's license field is empty, that recording may not be reused outside Tatoeba. Vocora still imports the sentence and its audio metadata so the requested corpus is complete, but marks a row `restricted` if the selected recording has no reusable license. Runtime Sentence Practice only queries `active` rows, so restricted audio is never played by the application.
+
+The contributor, license and attribution URL are retained in the database so a later local-audio download can preserve attribution requirements.
+
+## Runtime lookup at 800k+ rows
+
+The old 4,500-row implementation loaded and shuffled the entire active sentence table at session start. That is not acceptable for the Tatoeba corpus.
+
+For each Leitner word, `MySqlSentencePracticeRepository.findCandidateSentences()` now performs a bounded indexed lookup:
+
+- MySQL FULLTEXT lookup for normal words/phrases;
+- a small bounded `LIKE` fallback for short tokens/stop words such as `is`, `at` and case-sensitive proper terms such as `May`;
+- the existing Unicode-aware domain matcher then verifies complete-term boundaries and rejects false positives such as `name` inside `surname`.
+
+At most 48 database candidates are considered per vocabulary card and at most six verified contexts are returned to the UI. `sentences` remains the source of truth; no vocabulary links are materialized.
+
+## Whole-sentence audio
+
+Every returned practice sentence contains its Tatoeba `audioUrl`. Sentence Practice no longer calls `SpeechSynthesis` for the target word.
+
+When a prompt opens:
+
+1. the full natural human recording is played automatically;
+2. **Play sentence** replays the recording;
+3. **Slower** replays the same recording at 0.75x;
+4. moving to the next prompt, finishing or abandoning stops the current audio.
+
+The production Content Security Policy allows media from `https://tatoeba.org` only in addition to same-origin media.
 
 ## Review isolation
 
 Sentence Practice never writes the learning/review aggregates. It cannot:
 
 - promote or demote a card;
-- alter `due_date`, streaks, attempts or mistakes;
-- create a `review_event`;
+- alter due dates, streaks, attempts or mistakes;
+- create a review event;
 - put a wrong sentence-practice answer into daily-review remediation.
 
 Only the existing `practice_sessions` aggregate records session-level counts and duration with mode `sentence-house-{n}`.
 
 ## Regression coverage
 
-Tests enforce:
+Tests cover:
 
-- exactly 1,500 source items and 4,500 initial seeded sentences;
-- no sentence foreign keys or vocabulary-link columns;
-- no `vocabulary_sentences` or `sentence_word_links` table after migration;
-- no vocabulary lookup during sentence seeding;
-- complete-term regex matching (`name` does not match `surname`);
-- phrase/hyphen matching and accepted aliases;
-- proper-term case handling (`May` does not match `may`);
-- duplicate-target rejection;
-- automatic discovery of a newly inserted independent sentence;
-- random sentence selection and different-context retries;
-- unchanged learning state during browser E2E practice.
+- Tatoeba sentence/audio export parsing;
+- deterministic preference for licensed audio;
+- audio download URL generation;
+- bounded candidate lookup instead of loading the complete corpus;
+- complete-term matching and accepted aliases;
+- whole-sentence audio playback and slower playback;
+- different-context retries;
+- unchanged Leitner state during browser E2E practice;
+- schema/audio invariants and removal of generated IELTS sentence rows after import.
+
+CI intentionally does not download the 800k+ Tatoeba corpus. A fresh database is valid with an empty `sentences` table until the explicit import command is run; browser E2E uses a small Tatoeba-shaped fixture while backend/domain tests exercise the import and lookup contracts.
