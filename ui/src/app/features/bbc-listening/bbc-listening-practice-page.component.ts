@@ -45,15 +45,11 @@ export class BbcListeningPracticePageComponent implements OnInit {
     const lesson = this.session.lesson();
     return lesson ? countAnsweredListeningQuestions(lesson, this.answerValues()) : 0;
   });
-  readonly canSubmit = computed(() => {
-    const lesson = this.session.lesson();
-    return Boolean(
-      lesson
-      && !this.submitted()
-      && !this.session.submitting()
-      && this.answeredCount() === lesson.questionCount,
-    );
-  });
+  readonly canSubmit = computed(() => Boolean(
+    this.session.lesson()
+    && !this.submitted()
+    && !this.session.submitting(),
+  ));
 
   private readonly route = inject(ActivatedRoute);
 
