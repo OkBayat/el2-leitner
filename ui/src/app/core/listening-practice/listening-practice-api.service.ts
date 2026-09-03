@@ -15,9 +15,9 @@ export class ListeningPracticeApiService {
     return this.api.get('/api/listening/bbc/lessons');
   }
 
-  startBbcAttempt(lessonSlug: string): Promise<ListeningAttemptStartResponse> {
+  startBbcAttempt(lessonSlug: string, testId: string): Promise<ListeningAttemptStartResponse> {
     return this.api.post(
-      `/api/listening/bbc/lessons/${encodeURIComponent(lessonSlug)}/attempts`,
+      `/api/listening/bbc/lessons/${encodeURIComponent(lessonSlug)}/tests/${encodeURIComponent(testId)}/attempts`,
     );
   }
 
