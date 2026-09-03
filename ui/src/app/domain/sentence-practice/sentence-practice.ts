@@ -6,6 +6,11 @@ export interface SentencePracticeSentence {
 	text: string;
 	before: string;
 	after: string;
+	audioId: string;
+	audioUrl: string;
+	audioContributor: string | null;
+	audioLicense: string | null;
+	audioAttributionUrl: string | null;
 }
 
 export interface SentencePracticeCard {
