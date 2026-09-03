@@ -5,7 +5,7 @@ import { createFreshState } from '../../domain/learning/learning-rules';
 import { ListeningMistakePracticeService } from './listening-mistake-practice.service';
 
 describe('ListeningMistakePracticeService', () => {
-  it('persists the House 1 capture and reloads canonical server vocabulary', async () => {
+  it('persists the House 1 capture from the latest snapshot and reloads canonical server vocabulary', async () => {
     const initial = createFreshState([{ id: 'weather', term: 'weather' }], new Date('2026-09-03T08:00:00Z'));
     const canonical = createFreshState([
       { id: 'weather', term: 'weather' },
@@ -22,6 +22,7 @@ describe('ListeningMistakePracticeService', () => {
     ], new Date('2026-09-03T08:00:00Z'));
     const store = {
       initialize: vi.fn().mockResolvedValue(initial),
+      snapshot: vi.fn().mockReturnValue(initial),
       replaceAndPersist: vi.fn().mockResolvedValue(undefined),
       refreshCanonical: vi.fn().mockResolvedValue(canonical),
     };
@@ -35,6 +36,8 @@ describe('ListeningMistakePracticeService', () => {
     const service = TestBed.inject(ListeningMistakePracticeService);
     const word = await service.addToHouseOne('typhoons');
 
+    expect(store.initialize).toHaveBeenCalledTimes(1);
+    expect(store.snapshot).toHaveBeenCalledTimes(1);
     expect(store.replaceAndPersist).toHaveBeenCalledTimes(1);
     const persisted = store.replaceAndPersist.mock.calls[0][0];
     expect(persisted.words.find((item: any) => item.term === 'typhoons')?.box).toBe(1);
@@ -47,6 +50,7 @@ describe('ListeningMistakePracticeService', () => {
     const initial = createFreshState([], new Date('2026-09-03T08:00:00Z'));
     const store = {
       initialize: vi.fn().mockResolvedValue(initial),
+      snapshot: vi.fn().mockReturnValue(initial),
       replaceAndPersist: vi.fn().mockResolvedValue(undefined),
       refreshCanonical: vi.fn().mockResolvedValue(initial),
     };
