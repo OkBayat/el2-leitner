@@ -12,7 +12,7 @@
         <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
         <p class="eyebrow">IELTS Listening Practice</p>
         <h1>{{ lesson.title }}</h1>
-        <p>Answer all {{ lesson.questionCount }} questions before submitting the exercise.</p>
+        <p>Answer as many of the {{ lesson.questionCount }} questions as you can, then submit when you are ready.</p>
       </div>
       <a
         mat-flat-button
@@ -129,7 +129,7 @@
         @if (!submitted()) {
           <div>
             <strong>{{ answeredCount() }} / {{ lesson.questionCount }} answered</strong>
-            <span>Results are shown only after one complete submission.</span>
+            <span>Unanswered questions will be marked incorrect.</span>
           </div>
           <button
             mat-flat-button
