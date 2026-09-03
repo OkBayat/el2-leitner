@@ -18,7 +18,7 @@ async function learningState(page: Page): Promise<any> {
   });
 }
 
-test('BBC lesson offers multiple tests, tracks completion, and keeps explicit mistake capture isolated', async ({ page }) => {
+test('BBC lesson offers multiple tests, in-app audio controls, completion tracking, and isolated mistake capture', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -47,6 +47,16 @@ test('BBC lesson offers multiple tests, tracks completion, and keeps explicit mi
   await expect(page.getByText('IELTS Listening Practice · Test 1')).toBeVisible();
   await expect(page.locator('app-shell')).toHaveCount(0);
   await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
+
+  await expect(page.getByTestId('listening-audio-player')).toBeVisible();
+  await expect(page.getByTestId('audio-play')).toBeVisible();
+  await expect(page.getByTestId('audio-stop')).toBeVisible();
+  await expect(page.getByTestId('audio-back-5')).toBeVisible();
+  await expect(page.getByTestId('audio-forward-5')).toBeVisible();
+  const audio = page.locator('audio');
+  await expect(audio).toHaveAttribute('src', '/api/listening/bbc/lessons/climate-change-extreme-weather/audio');
+  await expect(audio).not.toHaveAttribute('autoplay', /.*/u);
+
   await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(13);
   await expect(page.getByTestId('listening-question-8')).toContainText('landslides and mudslides');
   await expect(page.getByTestId('listening-question-9')).toContainText('swept');
