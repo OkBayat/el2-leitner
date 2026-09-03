@@ -71,7 +71,7 @@ Text matching normalizes only presentation-equivalent input:
 
 Spelling, singular/plural forms, and different words are not corrected or accepted automatically. Alternative valid spellings must be listed explicitly in the lesson JSON.
 
-The House 1 action is based on answer content rather than question type. Single words such as `inland`, phrases such as `sea levels`, and the textual correct option from a multiple-choice question are eligible. The displayed `A.`, `B.`, or `C.` label is removed before a multiple-choice answer is captured. Any answer containing a numeric character is not eligible, including `1C`, `10`, `10 metres`, and Unicode-digit equivalents.
+The House 1 action is based on answer content rather than question type. Single words such as `inland`, phrases such as `sea levels`, and textual correct options from multiple-choice questions are eligible. For multiple choice, the display label (`A.`, `B.`, or `C.`) is removed before capture. Any answer containing a numeric character is not eligible, including `1C`, `10`, `10 metres`, and Unicode-digit equivalents.
 
 ## IELTS content contract
 
