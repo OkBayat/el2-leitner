@@ -6,7 +6,7 @@ export const appRoutes: Routes = [
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
-  { path: 'bbc-6-minute-english/:lessonSlug/practice', canActivate: [authGuard], loadComponent: () => import('./features/bbc-listening/bbc-listening-practice-page.component').then((m) => m.BbcListeningPracticePageComponent) },
+  { path: 'bbc-6-minute-english/:lessonSlug/tests/:testId/practice', canActivate: [authGuard], loadComponent: () => import('./features/bbc-listening/bbc-listening-practice-page.component').then((m) => m.BbcListeningPracticePageComponent) },
   {
     path: '',
     canActivate: [authGuard],
