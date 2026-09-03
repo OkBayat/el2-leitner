@@ -7,7 +7,7 @@ function sourceHash(definition) {
 function storedContent(definition) {
   return {
     schemaVersion: definition.schemaVersion,
-    groups: definition.groups
+    tests: definition.tests
   };
 }
 
@@ -86,15 +86,17 @@ export async function seedListeningLessons({ pool, definitions }) {
   const connection = await pool.getConnection();
   let changed = false;
   let questionCount = 0;
+  let testCount = 0;
   try {
     await connection.beginTransaction();
     for (const definition of definitions) {
       const lesson = await upsertLesson(connection, definition, sourceHash(definition));
       changed ||= lesson.changed;
       questionCount += definition.questionCount;
+      testCount += definition.testCount;
     }
     await connection.commit();
-    return { changed, lessonCount: definitions.length, questionCount };
+    return { changed, lessonCount: definitions.length, testCount, questionCount };
   } catch (error) {
     await connection.rollback();
     throw error;
