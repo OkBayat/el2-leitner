@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ListeningAttemptService } from '../../application/listening-practice/listening-attempt.service';
+import { ListeningMistakePracticeService } from '../../application/listening-practice/listening-mistake-practice.service';
 import { ListeningPracticeApiService } from '../../core/listening-practice/listening-practice-api.service';
 import type {
   ListeningAttempt,
@@ -70,7 +71,7 @@ describe('BBC listening pages', () => {
     expect(page.error()).toBeNull();
   });
 
-  it('creates one typed control per question and allows submission with unanswered questions', async () => {
+  it('allows incomplete submission and can add an incorrect one-word answer to House 1', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
     const attemptSignal = signal<ListeningAttempt | null>({
       id: 'attempt-1',
@@ -81,6 +82,7 @@ describe('BBC listening pages', () => {
     const resultSignal = signal<ListeningAttemptResult | null>(null);
     const start = vi.fn().mockResolvedValue(true);
     const submit = vi.fn().mockResolvedValue(true);
+    const addToHouseOne = vi.fn().mockResolvedValue({ id: 'db-inland', term: 'inland', box: 1 });
     const session = {
       lesson: lessonSignal,
       attempt: attemptSignal,
@@ -94,6 +96,7 @@ describe('BBC listening pages', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ListeningAttemptService, useValue: session },
+        { provide: ListeningMistakePracticeService, useValue: { addToHouseOne } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: (name: string) => name === 'lessonSlug' ? lesson.slug : null } } },
@@ -111,9 +114,20 @@ describe('BBC listening pages', () => {
 
     page.answerControl('q1').setValue('day');
     expect(page.answeredCount()).toBe(1);
-    expect(page.canSubmit()).toBe(true);
-
     await page.submit();
     expect(submit).toHaveBeenCalledWith({ q1: 'day', q2: '' });
+
+    const wrongWord = {
+      questionId: 'q1',
+      number: 1,
+      responseType: 'text' as const,
+      correct: false,
+      submittedAnswer: 'coast',
+      correctAnswer: 'inland',
+    };
+    expect(page.vocabularyCandidate(wrongWord)).toBe('inland');
+    await page.addVocabularyToHouseOne('inland');
+    expect(addToHouseOne).toHaveBeenCalledWith('inland');
+    expect(page.isVocabularyAdded('INLAND')).toBe(true);
   });
 });
