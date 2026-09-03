@@ -16,11 +16,16 @@ function card(id: string, term = id): SentencePracticeCard {
 		sentences: [1, 2, 3].map((variant) => ({
 			id: `${id}-sentence-${variant}`,
 			sourceItemNumber: variant,
-			variantNumber: variant,
-			category: 'Test',
+			variantNumber: 1,
+			category: 'Tatoeba',
 			text: `Before ${term} after ${variant}.`,
 			before: 'Before ',
 			after: ` after ${variant}.`,
+			audioId: `${variant}`,
+			audioUrl: `https://tatoeba.org/audio/download/${variant}`,
+			audioContributor: 'speaker',
+			audioLicense: 'CC BY 4.0',
+			audioAttributionUrl: null,
 		})),
 	};
 }
