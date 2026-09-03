@@ -8,6 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { ListeningAttemptService } from '../../application/listening-practice/listening-attempt.service';
+import { ListeningMistakePracticeService } from '../../application/listening-practice/listening-mistake-practice.service';
+import { normalizeAnswer } from '../../domain/learning/learning-rules';
+import { listeningVocabularyCandidate } from '../../domain/listening-practice/listening-mistake-practice';
 import {
   ListeningPromptParts,
   ListeningQuestionResult,
@@ -50,8 +53,12 @@ export class BbcListeningPracticePageComponent implements OnInit {
     && !this.submitted()
     && !this.session.submitting(),
   ));
+  readonly addingVocabulary = signal<string | null>(null);
+  readonly addedVocabulary = signal<ReadonlySet<string>>(new Set());
+  readonly vocabularyError = signal<string | null>(null);
 
   private readonly route = inject(ActivatedRoute);
+  private readonly mistakePractice = inject(ListeningMistakePracticeService);
 
   async ngOnInit(): Promise<void> {
     const lessonSlug = this.route.snapshot.paramMap.get('lessonSlug')?.trim();
@@ -82,6 +89,32 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   resultFor(questionId: string): ListeningQuestionResult | null {
     return this.resultsByQuestion().get(questionId) ?? null;
+  }
+
+  vocabularyCandidate(result: ListeningQuestionResult): string | null {
+    return listeningVocabularyCandidate(result);
+  }
+
+  isVocabularyAdded(term: string): boolean {
+    return this.addedVocabulary().has(normalizeAnswer(term));
+  }
+
+  async addVocabularyToHouseOne(term: string): Promise<void> {
+    if (this.addingVocabulary() || this.isVocabularyAdded(term)) return;
+    this.vocabularyError.set(null);
+    this.addingVocabulary.set(term);
+    try {
+      await this.mistakePractice.addToHouseOne(term);
+      this.addedVocabulary.update((current) => {
+        const next = new Set(current);
+        next.add(normalizeAnswer(term));
+        return next;
+      });
+    } catch (error) {
+      this.vocabularyError.set(error instanceof Error ? error.message : 'Could not add the word to House 1.');
+    } finally {
+      this.addingVocabulary.set(null);
+    }
   }
 
   async submit(): Promise<void> {
