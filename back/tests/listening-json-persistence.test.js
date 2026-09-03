@@ -25,12 +25,12 @@ async function storedLessonRow() {
     schema_version: definition.schemaVersion,
     question_count: definition.questionCount,
     content_version: 1,
-    content_json: JSON.stringify({ schemaVersion: definition.schemaVersion, groups: definition.groups })
+    content_json: JSON.stringify({ schemaVersion: definition.schemaVersion, tests: definition.tests })
   };
 }
 
 describe("MySqlListeningPracticeRepository JSON persistence", () => {
-  it("loads one lesson JSON aggregate while keeping answer keys out of the public projection", async () => {
+  it("loads three tests from one lesson aggregate while keeping answer keys out of the public projection", async () => {
     const row = await storedLessonRow();
     const pool = {
       async execute() { return [[row]]; }
@@ -47,24 +47,49 @@ describe("MySqlListeningPracticeRepository JSON persistence", () => {
       { includeAnswers: true }
     );
 
-    assert.equal(publicLesson.groups.length, 4);
-    assert.equal(publicLesson.questionCount, 13);
+    assert.equal(publicLesson.testCount, 3);
+    assert.equal(publicLesson.questionCount, 39);
+    assert.equal(publicLesson.tests[0].questionCount, 13);
     assert.equal(publicLesson.sourceUrl, row.source_url);
-    assert.equal(Object.hasOwn(publicLesson.groups[0].questions[0], "acceptedAnswers"), false);
-    assert.equal(Object.hasOwn(publicLesson.groups[1].questions[0], "correctOptionId"), false);
-    assert.equal(privateLesson.groups[0].questions[0].acceptedAnswers[0].text, "day");
+    assert.equal(Object.hasOwn(publicLesson.tests[0].groups[0].questions[0], "acceptedAnswers"), false);
+    assert.equal(Object.hasOwn(publicLesson.tests[0].groups[1].questions[0], "correctOptionId"), false);
+    assert.equal(privateLesson.tests[0].groups[0].questions[0].acceptedAnswers[0].text, "day");
     assert.equal(
-      privateLesson.groups[1].questions[0].correctOptionId,
+      privateLesson.tests[0].groups[1].questions[0].correctOptionId,
       "bbc-260903-question-6-option-b"
     );
   });
 
-  it("stores one submitted-answer JSON snapshot and one idempotent result JSON snapshot", async () => {
+  it("reports completion separately for each test", async () => {
+    const row = await storedLessonRow();
+    let call = 0;
+    const pool = {
+      async execute() {
+        call += 1;
+        if (call === 1) return [[row]];
+        return [[{
+          lesson_id: 1,
+          test_id: "test-2",
+          completed_at: new Date("2026-09-03T09:00:00.000Z")
+        }]];
+      }
+    };
+    const repository = new MySqlListeningPracticeRepository(pool);
+    const lessons = await repository.listPublishedLessons("bbc_6_minute_english", "user-1");
+
+    assert.deepEqual(lessons[0].tests.map((test) => [test.id, test.completed]), [
+      ["test-1", false], ["test-2", true], ["test-3", false]
+    ]);
+    assert.equal(lessons[0].tests[1].completedAt, "2026-09-03T09:00:00.000Z");
+  });
+
+  it("stores test identity with one submitted-answer JSON snapshot and one idempotent result snapshot", async () => {
     const attemptRow = {
       database_id: 9,
       public_id: "attempt-1",
       user_id: "user-1",
       lesson_id: 1,
+      test_id: "test-2",
       lesson_content_version: 1,
       status: "active",
       started_at: new Date("2026-09-03T08:00:00.000Z"),
@@ -123,6 +148,7 @@ describe("MySqlListeningPracticeRepository JSON persistence", () => {
     const first = await repository.completeAttempt("user-1", "attempt-1", grade);
     const second = await repository.completeAttempt("user-1", "attempt-1", grade);
 
+    assert.equal(first.attempt.testId, "test-2");
     assert.equal(updateCount, 1);
     assert.deepEqual(second, first);
     assert.deepEqual(JSON.parse(updateValues[3]), {
