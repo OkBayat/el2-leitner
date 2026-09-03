@@ -9,7 +9,6 @@ export const SENTENCES_PER_SOURCE_ITEM = 3;
 export const EXPECTED_SENTENCE_SOURCE_ITEMS = 1_500;
 
 const MAX_SENTENCE_LENGTH = 1_000;
-
 const WORD_CHARACTER_PATTERN = /[\p{L}\p{N}]/u;
 
 function targetOccurrenceIndexes(text, needle) {
@@ -69,7 +68,6 @@ export function parseSentenceSource(sourceText) {
 
   const sectionStack = [];
   const items = [];
-  const seenNumbers = new Set();
 
   for (const rawLine of sourceText.split(/\r?\n/u)) {
     const heading = rawLine.match(/^\s*(#{2,6})\s+(.+?)\s*$/u);
@@ -82,20 +80,20 @@ export function parseSentenceSource(sourceText) {
 
     const numbered = rawLine.match(/^\s*(\d+)[.)]\s+(.+?)\s*$/u);
     if (!numbered) continue;
-    const sourceItemNumber = Number(numbered[1]);
-    if (!Number.isSafeInteger(sourceItemNumber) || sourceItemNumber <= 0 || seenNumbers.has(sourceItemNumber)) {
+    const rawSourceNumber = Number(numbered[1]);
+    if (!Number.isSafeInteger(rawSourceNumber) || rawSourceNumber <= 0) {
       throw new ValidationError(
         "INVALID_SENTENCE_SOURCE_NUMBER",
-        `Sentence source item number ${numbered[1]} is invalid or duplicated.`
+        `Sentence source item number ${numbered[1]} is invalid.`
       );
     }
-    seenNumbers.add(sourceItemNumber);
 
     const rawForms = numbered[2].split(/\s+\/\s+/u).map((value) => value.trim()).filter(Boolean);
     const forms = cleanVocabularyForms(rawForms[0], rawForms.slice(1));
     const category = sectionStack.filter(Boolean).join(" / ") || "Uncategorized";
     items.push({
-      sourceItemNumber,
+      sourceItemNumber: items.length + 1,
+      rawSourceNumber,
       category,
       answerText: forms[0].form,
       acceptedForms: forms.map(({ form }) => form),
@@ -105,14 +103,6 @@ export function parseSentenceSource(sourceText) {
 
   if (!items.length) {
     throw new ValidationError("EMPTY_SENTENCE_SOURCE", "No numbered vocabulary items were found for sentence practice.");
-  }
-  for (let index = 0; index < items.length; index += 1) {
-    if (items[index].sourceItemNumber !== index + 1) {
-      throw new ValidationError(
-        "NON_SEQUENTIAL_SENTENCE_SOURCE",
-        `Sentence source numbering must be continuous from 1; expected ${index + 1}, found ${items[index].sourceItemNumber}.`
-      );
-    }
   }
   return items;
 }

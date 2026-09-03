@@ -46,6 +46,7 @@ export class SentencePracticePageComponent implements OnInit {
 	readonly answer = new FormControl('', { nonNullable: true });
 	readonly loading = signal(true);
 	readonly empty = signal(false);
+	readonly saving = signal(false);
 	private readonly route = inject(ActivatedRoute);
 	private readonly dialog = inject(MatDialog);
 	private readonly snack = inject(MatSnackBar);
@@ -76,6 +77,7 @@ export class SentencePracticePageComponent implements OnInit {
 	readonly counterLabel = computed(() => {
 		const prompt = this.session.currentPrompt();
 		if (prompt?.retryNumber) return `Retry ${prompt.retryNumber}`;
+		if (this.session.freePractice()) return `${this.session.answered()} practiced`;
 		return `${Math.min(this.session.primaryAnswered() + 1, this.session.initialCount())} / ${this.session.initialCount()}`;
 	});
 	readonly inputWidth = computed(() => {
@@ -108,14 +110,22 @@ export class SentencePracticePageComponent implements OnInit {
 		}
 	}
 
-	submit(): void {
-		if (this.session.feedback() || !this.answer.value.trim()) return;
-		this.session.submit(this.answer.value);
-		this.answerSound.play(this.session.feedback()?.correct ? 'correct' : 'incorrect');
+	async submit(): Promise<void> {
+		if (this.saving() || this.session.feedback() || !this.answer.value.trim()) return;
+		this.saving.set(true);
+		try {
+			await this.session.submit(this.answer.value);
+			const feedback = this.session.feedback();
+			if (feedback) this.answerSound.play(feedback.correct ? 'correct' : 'incorrect');
+		} catch (error) {
+			this.snack.open(error instanceof Error ? error.message : 'Could not save this practice answer.', 'Close');
+		} finally {
+			this.saving.set(false);
+		}
 	}
 
 	async next(): Promise<void> {
-		if (!this.session.canAdvance()) return;
+		if (!this.session.canAdvance() || this.saving()) return;
 		this.answerSound.stop();
 		await this.session.next();
 		if (!this.session.active()) return;
@@ -137,7 +147,7 @@ export class SentencePracticePageComponent implements OnInit {
 		const confirmed = await firstValueFrom(this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: 'Exit sentence practice',
-				message: 'This practice does not change any Leitner house. Stop the current session?',
+				message: 'Practice counts are saved, but this mode does not change any Leitner house. Stop the current session?',
 				confirmLabel: 'Exit',
 			},
 		}).afterClosed());
@@ -147,9 +157,9 @@ export class SentencePracticePageComponent implements OnInit {
 		await this.router.navigateByUrl('/dashboard');
 	}
 
-	handlePrimary(): void {
-		if (this.session.feedback()) void this.next();
-		else this.submit();
+	async handlePrimary(): Promise<void> {
+		if (this.session.feedback()) await this.next();
+		else await this.submit();
 	}
 
 	private prepareInput(): void {

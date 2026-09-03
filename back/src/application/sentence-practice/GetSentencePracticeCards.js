@@ -1,7 +1,7 @@
 import { parseLeitnerHouse } from "../../domain/learning/LeitnerHouse.js";
 import { createSentenceMatcher } from "../../domain/sentence-practice/SentenceMatcher.js";
 
-const MAX_SENTENCES_PER_CARD = 6;
+const MAX_SENTENCES_PER_CARD = 12;
 
 function shuffled(items, random) {
   const result = [...items];
@@ -67,7 +67,6 @@ export class GetSentencePracticeCards {
     if (!wordRows.length) return emptyResult(house);
 
     const sentenceRows = await this.sentencePracticeRepository.findActiveSentences("en");
-    const randomizedSentences = shuffled(sentenceRows, this.random);
     const cards = [];
 
     for (const grouped of groupWords(wordRows)) {
@@ -75,16 +74,17 @@ export class GetSentencePracticeCards {
       const matchSentence = createSentenceMatcher(accepted);
       const matches = [];
 
-      for (const sentence of randomizedSentences) {
+      for (const sentence of sentenceRows) {
         const match = matchSentence(sentence.text);
-        if (!match) continue;
-        matches.push(projectSentence(sentence, match));
-        if (matches.length >= MAX_SENTENCES_PER_CARD) break;
+        if (match) matches.push(projectSentence(sentence, match));
       }
 
       if (!matches.length) continue;
       const { acceptedSet: _acceptedSet, ...card } = grouped;
-      cards.push({ ...card, sentences: matches });
+      cards.push({
+        ...card,
+        sentences: shuffled(matches, this.random).slice(0, MAX_SENTENCES_PER_CARD)
+      });
     }
 
     return {

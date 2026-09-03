@@ -1,17 +1,12 @@
-import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
-import {
-  EXPECTED_SENTENCE_SOURCE_ITEMS,
-  SENTENCES_PER_SOURCE_ITEM,
-  buildSentenceCorpus,
-} from "../src/domain/sentence-practice/SentenceCorpus.js";
-import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
+import { SENTENCES_PER_SOURCE_ITEM, buildSentenceCorpus } from "../src/domain/sentence-practice/SentenceCorpus.js";
+import { loadSentenceSources } from "../src/infrastructure/sentence-practice/SentenceSourceCatalog.js";
+import { seedSentenceSources } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
-const IELTS_SOURCE = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
 const dryRun = process.argv.includes("--dry-run");
 
 for (const environmentFile of [
@@ -28,18 +23,23 @@ function required(name) {
 }
 
 async function main() {
-  const sourceText = await readFile(IELTS_SOURCE, "utf8");
+  const sources = await loadSentenceSources();
   if (dryRun) {
-    const corpus = buildSentenceCorpus(sourceText);
-    const expectedSentences = EXPECTED_SENTENCE_SOURCE_ITEMS * SENTENCES_PER_SOURCE_ITEM;
-    if (corpus.sourceItemCount !== EXPECTED_SENTENCE_SOURCE_ITEMS || corpus.sentenceCount !== expectedSentences) {
-      throw new Error(
-        `Expected ${EXPECTED_SENTENCE_SOURCE_ITEMS} source items and ${expectedSentences} sentences; generated ${corpus.sourceItemCount} and ${corpus.sentenceCount}.`
-      );
+    let totalItems = 0;
+    let totalSentences = 0;
+    for (const source of sources) {
+      const corpus = buildSentenceCorpus(source.sourceText);
+      const expectedSentences = source.expectedSourceItems * SENTENCES_PER_SOURCE_ITEM;
+      if (corpus.sourceItemCount !== source.expectedSourceItems || corpus.sentenceCount !== expectedSentences) {
+        throw new Error(
+          `${source.key}: expected ${source.expectedSourceItems} source items and ${expectedSentences} sentences; generated ${corpus.sourceItemCount} and ${corpus.sentenceCount}.`
+        );
+      }
+      totalItems += corpus.sourceItemCount;
+      totalSentences += corpus.sentenceCount;
+      console.info(`${source.label}: ${corpus.sourceItemCount} items -> ${corpus.sentenceCount} sentences.`);
     }
-    console.info(
-      `Sentence corpus is valid: ${corpus.sourceItemCount} source items produce ${corpus.sentenceCount} sentence variants.`
-    );
+    console.info(`Sentence catalog is valid: ${totalItems} source items -> ${totalSentences} sentence variants.`);
     return;
   }
 
@@ -56,10 +56,13 @@ async function main() {
   });
 
   try {
-    const result = await seedSentencePractice({ pool, sourceText });
-    console.info(
-      `${result.changed ? "Seeded" : "Verified"} ${result.sentenceCount} sentence variants for ${result.sourceItemCount} source items.`
-    );
+    const result = await seedSentenceSources({ pool, sources });
+    for (const sourceResult of result.results) {
+      console.info(
+        `${sourceResult.changed ? "Seeded" : "Verified"} ${sourceResult.sentenceCount} sentence variants for ${sourceResult.sourceItemCount} items from ${sourceResult.sourceKey}.`
+      );
+    }
+    console.info(`Sentence catalog total: ${result.sourceItemCount} source items, ${result.sentenceCount} sentence variants.`);
   } finally {
     await pool.end();
   }

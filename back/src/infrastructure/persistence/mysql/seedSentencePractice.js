@@ -10,9 +10,9 @@ import {
 
 const INSERT_BATCH_SIZE = 250;
 
-function corpusHash(sourceText) {
+function corpusHash(sourceText, sourceVersion) {
   return createHash("sha256")
-    .update(SENTENCE_CORPUS_VERSION, "utf8")
+    .update(sourceVersion, "utf8")
     .update("\0", "utf8")
     .update(sourceText, "utf8")
     .digest("hex");
@@ -23,7 +23,7 @@ function asNumber(value) {
   return Number.isFinite(number) ? number : 0;
 }
 
-async function currentCorpusState(pool, sourceHash) {
+async function currentCorpusState(pool, sourceKey, sourceHash) {
   const [rows] = await pool.execute(
     `SELECT COUNT(*) AS total,
             COUNT(DISTINCT source_item_number) AS source_items,
@@ -32,7 +32,7 @@ async function currentCorpusState(pool, sourceHash) {
             SUM(status = 'active') AS active_total
      FROM sentences
      WHERE source_key = ?`,
-    [SENTENCE_CORPUS_SOURCE]
+    [sourceKey]
   );
   const row = rows[0] ?? {};
   return {
@@ -74,10 +74,10 @@ function insertStatement(batch) {
             updated_at = CURRENT_TIMESTAMP(3)`;
 }
 
-function insertParameters(batch, sourceHash) {
+function insertParameters(batch, sourceKey, sourceHash) {
   return batch.flatMap((record) => [
     "en",
-    SENTENCE_CORPUS_SOURCE,
+    sourceKey,
     record.sourceItemNumber,
     record.variantNumber,
     record.category,
@@ -87,25 +87,32 @@ function insertParameters(batch, sourceHash) {
   ]);
 }
 
-export async function seedSentencePractice({ pool, sourceText }) {
+export async function seedSentencePractice({
+  pool,
+  sourceText,
+  sourceKey = SENTENCE_CORPUS_SOURCE,
+  sourceVersion = SENTENCE_CORPUS_VERSION,
+  expectedSourceItems = EXPECTED_SENTENCE_SOURCE_ITEMS,
+}) {
   const corpus = buildSentenceCorpus(sourceText);
-  if (corpus.sourceItemCount !== EXPECTED_SENTENCE_SOURCE_ITEMS) {
+  if (corpus.sourceItemCount !== expectedSourceItems) {
     throw new Error(
-      `Sentence corpus must cover exactly ${EXPECTED_SENTENCE_SOURCE_ITEMS} source items; found ${corpus.sourceItemCount}.`
+      `Sentence corpus ${sourceKey} must cover exactly ${expectedSourceItems} source items; found ${corpus.sourceItemCount}.`
     );
   }
   const expectedSentenceCount = corpus.sourceItemCount * SENTENCES_PER_SOURCE_ITEM;
   if (corpus.sentenceCount !== expectedSentenceCount) {
     throw new Error(
-      `Sentence corpus generation failed: expected ${expectedSentenceCount}, generated ${corpus.sentenceCount}.`
+      `Sentence corpus generation failed for ${sourceKey}: expected ${expectedSentenceCount}, generated ${corpus.sentenceCount}.`
     );
   }
 
-  const sourceHash = corpusHash(sourceText);
-  const current = await currentCorpusState(pool, sourceHash);
+  const sourceHash = corpusHash(sourceText, sourceVersion);
+  const current = await currentCorpusState(pool, sourceKey, sourceHash);
   if (current.matches(corpus.sourceItemCount, corpus.sentenceCount)) {
     return {
       changed: false,
+      sourceKey,
       sourceHash,
       sourceItemCount: corpus.sourceItemCount,
       sentenceCount: corpus.sentenceCount
@@ -117,12 +124,15 @@ export async function seedSentencePractice({ pool, sourceText }) {
     await connection.beginTransaction();
     for (let offset = 0; offset < corpus.records.length; offset += INSERT_BATCH_SIZE) {
       const batch = corpus.records.slice(offset, offset + INSERT_BATCH_SIZE);
-      await connection.execute(insertStatement(batch), insertParameters(batch, sourceHash));
+      await connection.execute(
+        insertStatement(batch),
+        insertParameters(batch, sourceKey, sourceHash)
+      );
     }
     await connection.execute(
       `DELETE FROM sentences
        WHERE source_key = ? AND source_hash <> ?`,
-      [SENTENCE_CORPUS_SOURCE, sourceHash]
+      [sourceKey, sourceHash]
     );
     await connection.commit();
   } catch (error) {
@@ -132,17 +142,37 @@ export async function seedSentencePractice({ pool, sourceText }) {
     connection.release();
   }
 
-  const verified = await currentCorpusState(pool, sourceHash);
+  const verified = await currentCorpusState(pool, sourceKey, sourceHash);
   if (!verified.matches(corpus.sourceItemCount, corpus.sentenceCount)) {
     throw new Error(
-      `Sentence corpus verification failed: expected ${corpus.sourceItemCount} source items and ${corpus.sentenceCount} sentences; found ${verified.sourceItems} and ${verified.total}.`
+      `Sentence corpus verification failed for ${sourceKey}: expected ${corpus.sourceItemCount} source items and ${corpus.sentenceCount} sentences; found ${verified.sourceItems} and ${verified.total}.`
     );
   }
 
   return {
     changed: true,
+    sourceKey,
     sourceHash,
     sourceItemCount: corpus.sourceItemCount,
     sentenceCount: corpus.sentenceCount
+  };
+}
+
+export async function seedSentenceSources({ pool, sources }) {
+  const results = [];
+  for (const source of sources) {
+    results.push(await seedSentencePractice({
+      pool,
+      sourceText: source.sourceText,
+      sourceKey: source.key,
+      sourceVersion: source.version,
+      expectedSourceItems: source.expectedSourceItems,
+    }));
+  }
+  return {
+    changed: results.some((result) => result.changed),
+    sourceItemCount: results.reduce((total, result) => total + result.sourceItemCount, 0),
+    sentenceCount: results.reduce((total, result) => total + result.sentenceCount, 0),
+    results,
   };
 }

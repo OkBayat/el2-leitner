@@ -17,7 +17,7 @@
 					<mat-card-title>No sentence cards are ready</mat-card-title>
 				</mat-card-header>
 				<mat-card-content>
-					<p>Add words to House 1 first. Only free sentence practice uses this page; daily review cards are not changed here.</p>
+					<p>Add words to House 1 first. Sentence practice counts toward today's practice totals without changing daily-review scheduling.</p>
 				</mat-card-content>
 				<mat-card-actions>
 					<button mat-flat-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
@@ -69,7 +69,7 @@
 								data-testid="sentence-answer-input"
 								[style.width]="inputWidth()"
 								[formControl]="answer"
-								[readOnly]="session.feedback() !== null"
+								[readOnly]="saving() || session.feedback() !== null"
 								[attr.aria-invalid]="session.feedback()?.correct === false"
 								(keydown.enter)="$event.preventDefault(); session.feedback() ? next() : submit()"
 								aria-label="Missing word"
@@ -121,7 +121,7 @@
 							class="review-action-primary"
 							mat-flat-button
 							type="button"
-							[disabled]="!session.feedback() && !answer.value.trim()"
+							[disabled]="saving() || (!session.feedback() && !answer.value.trim())"
 							(click)="handlePrimary()">
 							{{ state.label }}
 						</button>
@@ -141,7 +141,7 @@
 						<div><strong>{{ session.wrong() }}</strong><span>Wrong</span></div>
 						<div><strong>{{ session.accuracy() ?? 0 }}%</strong><span>Accuracy</span></div>
 					</div>
-					<p class="practice-note">No Leitner house or daily-review due date was changed.</p>
+					<p class="practice-note">Practice totals were counted for today; no Leitner house or daily-review due date was changed.</p>
 				</mat-card-content>
 				<mat-card-actions>
 					<button mat-flat-button type="button" (click)="restart()">Practice again</button>

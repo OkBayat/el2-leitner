@@ -32,20 +32,25 @@ describe('SentencePracticeSessionService', () => {
 	const sentenceApi = { getDeck: vi.fn() };
 	const learningApi = {
 		startSession: vi.fn(),
+		recordSessionAttempt: vi.fn(),
 		completeSession: vi.fn(),
 		abandonSession: vi.fn(),
 	};
 	const speech = { speak: vi.fn(), cancel: vi.fn() };
-	const storeState = { settings: { voiceRate: .85 } };
+	const storeState = { settings: { voiceRate: .85 }, daily: {} };
 	const store = {
 		initialize: vi.fn(),
-		snapshot: vi.fn(() => storeState),
+		snapshot: vi.fn(() => structuredClone(storeState)),
+		replaceLocal: vi.fn(),
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
 		sentenceApi.getDeck.mockResolvedValue(structuredClone(deck));
 		learningApi.startSession.mockResolvedValue({ session: { id: 'session-1' } });
+		learningApi.recordSessionAttempt.mockResolvedValue({
+			daily: { day: '2026-09-03', attempts: 1, correct: 1, wrong: 0, newAdded: 0, sessions: 0, durationSeconds: 0 },
+		});
 		learningApi.completeSession.mockResolvedValue({});
 		learningApi.abandonSession.mockResolvedValue({});
 		speech.speak.mockReturnValue(true);
@@ -75,14 +80,45 @@ describe('SentencePracticeSessionService', () => {
 		expect(speech.speak).toHaveBeenLastCalledWith(prompt.sentence.text, .85 * .75);
 	});
 
+	it('records each sentence answer in daily practice totals without using review persistence', async () => {
+		const service = TestBed.inject(SentencePracticeSessionService);
+		await service.start(1);
+		await service.submit('name');
+
+		expect(learningApi.recordSessionAttempt).toHaveBeenCalledWith('session-1', {
+			day: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/u),
+			correct: true,
+		});
+		expect(store.replaceLocal).toHaveBeenCalledWith(expect.objectContaining({
+			daily: expect.objectContaining({
+				'2026-09-03': expect.objectContaining({ attempts: 1, correct: 1, wrong: 0 }),
+			}),
+		}));
+	});
+
+	it('keeps House 1 sentence practice active after the first deck cycle', async () => {
+		const service = TestBed.inject(SentencePracticeSessionService);
+		await service.start(1);
+		await service.submit('name');
+		await service.next();
+
+		expect(service.freePractice()).toBe(true);
+		expect(service.active()).toBe(true);
+		expect(service.completed()).toBe(false);
+		expect(service.currentPrompt()).not.toBeNull();
+	});
+
 	it('rechecks a wrong answer with a different sentence without recording a Leitner review', async () => {
 		const service = TestBed.inject(SentencePracticeSessionService);
 
-		expect(await service.start(1)).toBe(true);
-		expect(learningApi.startSession).toHaveBeenCalledWith('sentence-house-1', 1);
+		expect(await service.start(2)).toBe(true);
+		expect(learningApi.startSession).toHaveBeenCalledWith('sentence-house-2', 1);
 		const firstSentenceId = service.currentPrompt()!.sentence.id;
 
-		service.submit('wrong');
+		learningApi.recordSessionAttempt.mockResolvedValueOnce({
+			daily: { day: '2026-09-03', attempts: 1, correct: 0, wrong: 1, newAdded: 0, sessions: 0, durationSeconds: 0 },
+		});
+		await service.submit('wrong');
 		expect(service.feedback()).toEqual({
 			correct: false,
 			submittedAnswer: 'wrong',
@@ -96,7 +132,7 @@ describe('SentencePracticeSessionService', () => {
 		expect(service.currentPrompt()!.retryNumber).toBe(1);
 		expect(service.currentPrompt()!.sentence.id).not.toBe(firstSentenceId);
 
-		service.submit('NAME');
+		await service.submit('NAME');
 		await service.next();
 
 		expect(service.completed()).toBe(true);
@@ -106,7 +142,6 @@ describe('SentencePracticeSessionService', () => {
 			correctCount: 1,
 			wrongCount: 1,
 		}));
-		// This service has no ReviewPersistenceService dependency: the only writes are practice-session lifecycle calls.
 		expect(learningApi.startSession).toHaveBeenCalledTimes(1);
 		expect(learningApi.completeSession).toHaveBeenCalledTimes(1);
 		expect(learningApi.abandonSession).not.toHaveBeenCalled();

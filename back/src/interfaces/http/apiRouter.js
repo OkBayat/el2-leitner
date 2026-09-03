@@ -136,6 +136,15 @@ export function createApiRouter({ useCases, tokenService, authCookie, authRateLi
     res.status(201).json(result);
   });
 
+  router.post("/learning/sessions/:sessionId/attempts", authenticate, async (req, res) => {
+    const result = await useCases.learningSessionCommands.recordAttempt(
+      req.auth.userId,
+      req.params.sessionId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
   router.put("/learning/sessions/:sessionId/complete", authenticate, async (req, res) => {
     const result = await useCases.learningSessionCommands.complete(
       req.auth.userId,

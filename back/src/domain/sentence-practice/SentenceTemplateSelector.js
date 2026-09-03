@@ -16,6 +16,7 @@ import {
   VERB_TEMPLATES,
 } from "./SentenceCuratedTemplates.js";
 import { SENTENCE_CONTEXT_OVERRIDES } from "./SentenceContextOverrides.js";
+import { genericSourceTemplates } from "./SentenceGenericTemplates.js";
 
 function categoryTemplates(category) {
   const context = CATEGORY_CONTEXTS.get(category);
@@ -91,6 +92,9 @@ export function templatesFor(item) {
 
   const verbTemplates = VERB_TEMPLATES.get(normalizedTerm);
   if (verbTemplates) return verbTemplates;
+
+  const importedSourceTemplates = genericSourceTemplates(item.category);
+  if (importedSourceTemplates) return importedSourceTemplates;
 
   if (item.category === "Directions and map language") {
     const directionTemplates = DIRECTION_TEMPLATES.get(normalizedTerm);

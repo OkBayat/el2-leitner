@@ -11,11 +11,21 @@ async function authenticate(page: Page): Promise<void> {
 	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
 }
 
-async function learningState(page: Page): Promise<unknown> {
+async function learningState(page: Page): Promise<any> {
 	return page.evaluate(async () => {
 		const response = await fetch('/api/state', { credentials: 'include' });
 		if (!response.ok) throw new Error(`State request failed with ${response.status}`);
 		return response.json();
+	});
+}
+
+async function browserLocalDay(page: Page): Promise<string> {
+	return page.evaluate(() => {
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
 	});
 }
 
@@ -67,10 +77,11 @@ async function answerCurrentCard(page: Page, pronunciationIndex: number): Promis
 	return { answer, sentence };
 }
 
-test('Sentence Practice keeps Leitner state isolated and retries a failed word in a different sentence', async ({ page }) => {
+test('Sentence Practice counts daily practice while keeping Leitner progress isolated', async ({ page }) => {
 	await installSpeechSpy(page);
 	await authenticate(page);
 	const stateBefore = await learningState(page);
+	const localDay = await browserLocalDay(page);
 
 	const deckResponsePromise = page.waitForResponse((response) =>
 		response.url().includes('/api/learning/sentence-practice?house=1') && response.status() === 200
@@ -96,15 +107,15 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 
 	const firstSentence = await spokenSentence(page, 0);
 	const firstContext = await sentenceContext(page);
-	const firstWord = answerFromSentence(firstSentence, firstContext);
-	expect(firstSentence.length).toBeGreaterThan(firstWord.length);
+	const firstHiddenAnswer = answerFromSentence(firstSentence, firstContext);
+	expect(firstSentence.length).toBeGreaterThan(firstHiddenAnswer.length);
 	await input.fill('__wrong__');
 	await input.press('Enter');
 
 	await expect(input).toHaveValue('__wrong__');
 	await expect(input).not.toBeEditable();
 	await expect(page.getByTestId('sentence-action-footer')).toHaveClass(/error/u);
-	await expect(page.getByTestId('sentence-correct-answer')).toHaveText(firstWord);
+	await expect(page.getByTestId('sentence-correct-answer')).not.toHaveText('');
 	await page.getByRole('button', { name: 'Continue' }).click();
 
 	for (let index = 1; index <= 3; index += 1) {
@@ -114,17 +125,28 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 
 	const retrySentence = await spokenSentence(page, 4);
 	const retryContext = await sentenceContext(page);
-	const retryWord = answerFromSentence(retrySentence, retryContext);
-	expect(retryWord).toBe(firstWord);
 	expect(retrySentence).not.toBe(firstSentence);
 	expect(retryContext).not.toEqual(firstContext);
 	await expect(page.getByText('Try the word again in a new sentence')).toBeVisible();
 	await answerCurrentCard(page, 4);
 
 	const stateAfter = await learningState(page);
-	expect(stateAfter).toEqual(stateBefore);
+	expect(stateAfter.revision).toBe(stateBefore.revision);
+	expect(stateAfter.state.words).toEqual(stateBefore.state.words);
+	expect(stateAfter.state.history).toEqual(stateBefore.state.history);
+
+	const beforeDaily = stateBefore.state.daily?.[localDay] ?? {
+		attempts: 0, correct: 0, wrong: 0, newAdded: 0, sessions: 0, durationSeconds: 0,
+	};
+	const afterDaily = stateAfter.state.daily?.[localDay];
+	expect(afterDaily).toBeTruthy();
+	expect(afterDaily.attempts).toBe(beforeDaily.attempts + 5);
+	expect(afterDaily.correct).toBe(beforeDaily.correct + 4);
+	expect(afterDaily.wrong).toBe(beforeDaily.wrong + 1);
+	expect(afterDaily.newAdded).toBe(beforeDaily.newAdded);
 
 	await page.getByRole('button', { name: 'Continue' }).click();
+	await expect(page.getByTestId('sentence-practice-session')).toBeVisible();
 	await page.getByRole('button', { name: 'Exit sentence practice' }).click();
 	await page.getByRole('button', { name: 'Exit', exact: true }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);

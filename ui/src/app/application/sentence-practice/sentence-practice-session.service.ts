@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { LearningApiService } from '../../core/learning/learning-api.service';
+import { LearningApiService, PracticeDailyStats } from '../../core/learning/learning-api.service';
 import { SentencePracticeApiService } from '../../core/sentence-practice/sentence-practice-api.service';
 import { SpeechService } from '../../core/speech/speech.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
+import { localDay } from '../../domain/learning/learning-rules';
 import {
 	SentencePracticePrompt,
 	SentencePracticeQueue,
@@ -30,10 +31,10 @@ export class SentencePracticeSessionService {
 	private readonly wrongSignal = signal(0);
 	private readonly primaryAnsweredSignal = signal(0);
 	private readonly initialCountSignal = signal(0);
+	private readonly houseSignal = signal(1);
 	private queue: SentencePracticeQueue | null = null;
 	private backendSessionId: string | null = null;
 	private startedAt = 0;
-	private house = 1;
 
 	readonly currentPrompt = this.currentPromptSignal.asReadonly();
 	readonly active = this.activeSignal.asReadonly();
@@ -44,12 +45,15 @@ export class SentencePracticeSessionService {
 	readonly wrong = this.wrongSignal.asReadonly();
 	readonly initialCount = this.initialCountSignal.asReadonly();
 	readonly primaryAnswered = this.primaryAnsweredSignal.asReadonly();
+	readonly freePractice = computed(() => this.houseSignal() === 1);
 	readonly accuracy = computed(() => this.answeredSignal()
 		? Math.round(this.correctSignal() / this.answeredSignal() * 100)
 		: null);
-	readonly progress = computed(() => this.initialCountSignal()
-		? Math.min(100, Math.round(this.primaryAnsweredSignal() / this.initialCountSignal() * 100))
-		: 0);
+	readonly progress = computed(() => this.freePractice()
+		? 100
+		: this.initialCountSignal()
+			? Math.min(100, Math.round(this.primaryAnsweredSignal() / this.initialCountSignal() * 100))
+			: 0);
 	readonly canAdvance = computed(() => Boolean(this.feedbackSignal()));
 
 	async start(house = 1): Promise<boolean> {
@@ -64,10 +68,10 @@ export class SentencePracticeSessionService {
 		if (!cards.length) return false;
 
 		const session = await this.learningApi.startSession(`sentence-house-${house}`, cards.length);
-		this.house = house;
+		this.houseSignal.set(house);
 		this.backendSessionId = session.session.id;
 		this.startedAt = Date.now();
-		this.queue = new SentencePracticeQueue(cards, deck.practice.retryGap);
+		this.queue = new SentencePracticeQueue(cards, deck.practice.retryGap, Math.random, house === 1);
 		this.initialCountSignal.set(cards.length);
 		this.primaryAnsweredSignal.set(0);
 		this.answeredSignal.set(0);
@@ -90,11 +94,16 @@ export class SentencePracticeSessionService {
 		);
 	}
 
-	submit(answer: string): void {
+	async submit(answer: string): Promise<void> {
 		const prompt = this.currentPromptSignal();
-		if (!prompt || !this.activeSignal() || this.feedbackSignal()) return;
+		if (!prompt || !this.activeSignal() || this.feedbackSignal() || !this.backendSessionId) return;
 		const accepted = prompt.card.accepted.length ? prompt.card.accepted : [prompt.card.term];
 		const correct = isAcceptedSentenceAnswer(answer, accepted);
+		const attempt = await this.learningApi.recordSessionAttempt(this.backendSessionId, {
+			day: localDay(),
+			correct,
+		});
+		this.applyDailyStats(attempt.daily);
 
 		this.answeredSignal.update((value) => value + 1);
 		if (prompt.primary) this.primaryAnsweredSignal.update((value) => value + 1);
@@ -136,7 +145,20 @@ export class SentencePracticeSessionService {
 	}
 
 	async restart(): Promise<boolean> {
-		return this.start(this.house);
+		return this.start(this.houseSignal());
+	}
+
+	private applyDailyStats(daily: PracticeDailyStats): void {
+		const state = this.store.snapshot();
+		state.daily[daily.day] = {
+			attempts: daily.attempts,
+			correct: daily.correct,
+			wrong: daily.wrong,
+			newAdded: daily.newAdded,
+			sessions: daily.sessions,
+			durationSeconds: daily.durationSeconds,
+		};
+		this.store.replaceLocal(state);
 	}
 
 	private async finish(): Promise<void> {
