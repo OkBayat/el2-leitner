@@ -66,6 +66,31 @@ describe("Sentence source catalog", () => {
     assert.equal(items.at(-1).sourceItemNumber, 542);
   });
 
+  it("keeps imported phrases structurally safe and gives get into debt real usage contexts", async () => {
+    const sources = await loadSentenceSources();
+    const imported = sources.filter((source) => source.key !== "ielts-listening-core-1500");
+    const records = imported.flatMap((source) => buildSentenceCorpus(source.sourceText).records);
+
+    const unsafePatterns = [
+      /The lesson returned to .+ during the discussion\./u,
+      /The teacher returned to .+ during the exercise\./u,
+      /The speaker returned to .+ later in the discussion\./u,
+      /They found the experience surprisingly .+\./u,
+    ];
+    for (const record of records) {
+      for (const pattern of unsafePatterns) assert.doesNotMatch(record.sentenceText, pattern);
+    }
+
+    const debt = records
+      .filter((record) => record.answerText === "get into debt")
+      .map((record) => record.sentenceText);
+    assert.deepEqual(debt, [
+      "It is easy to get into debt if you spend more than you earn.",
+      "Many people get into debt when they rely too much on credit cards.",
+      "Students can get into debt if they borrow more money than they can repay.",
+    ]);
+  });
+
   it("keeps source definitions immutable and independently versioned", () => {
     assert.equal(Object.isFrozen(SENTENCE_SOURCE_DEFINITIONS), true);
     for (const source of SENTENCE_SOURCE_DEFINITIONS) {
