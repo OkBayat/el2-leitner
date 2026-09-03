@@ -9,6 +9,8 @@ import type {
   ListeningAttempt,
   ListeningAttemptResult,
   ListeningLesson,
+  ListeningLessonSummary,
+  ListeningTest,
 } from '../../domain/listening-practice/listening-practice';
 import { BbcLessonsPageComponent } from './bbc-lessons-page.component';
 import { BbcListeningPracticePageComponent } from './bbc-listening-practice-page.component';
@@ -21,6 +23,14 @@ const lesson: ListeningLesson = {
   episodeCode: '260903',
   episodeDate: '2026-09-03',
   sourceUrl: 'https://www.bbc.co.uk/example',
+  questionCount: 39,
+  testCount: 3,
+};
+
+const test: ListeningTest = {
+  id: 'test-2',
+  title: 'Test 2',
+  position: 2,
   questionCount: 2,
   groups: [{
     id: 'group-1',
@@ -48,12 +58,19 @@ const lesson: ListeningLesson = {
   }],
 };
 
-const { groups: _groups, ...lessonSummary } = lesson;
+const lessonSummary: ListeningLessonSummary = {
+  ...lesson,
+  tests: [
+    { id: 'test-1', title: 'Test 1', position: 1, questionCount: 13, completed: true, completedAt: '2026-09-03T08:00:00.000Z' },
+    { id: 'test-2', title: 'Test 2', position: 2, questionCount: 13, completed: false, completedAt: null },
+    { id: 'test-3', title: 'Test 3', position: 3, questionCount: 13, completed: false, completedAt: null },
+  ],
+};
 
 describe('BBC listening pages', () => {
   beforeEach(() => TestBed.resetTestingModule());
 
-  it('loads the BBC lesson catalog through the query service', async () => {
+  it('loads the BBC lesson catalog with independent test completion state', async () => {
     const listBbcLessons = vi.fn().mockResolvedValue({
       provider: 'bbc_6_minute_english',
       lessons: [lessonSummary],
@@ -67,14 +84,17 @@ describe('BBC listening pages', () => {
 
     expect(listBbcLessons).toHaveBeenCalledTimes(1);
     expect(page.lessons()).toHaveLength(1);
+    expect(page.lessons()[0].tests.map((item) => item.completed)).toEqual([true, false, false]);
     expect(page.loading()).toBe(false);
     expect(page.error()).toBeNull();
   });
 
-  it('allows incomplete submission and can add phrase or choice mistakes to House 1', async () => {
+  it('loads the selected test, allows incomplete submission and can add phrase or choice mistakes to House 1', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
+    const testSignal = signal<ListeningTest | null>(test);
     const attemptSignal = signal<ListeningAttempt | null>({
       id: 'attempt-1',
+      testId: 'test-2',
       status: 'active',
       startedAt: '2026-09-03T08:00:00.000Z',
       totalQuestions: 2,
@@ -85,6 +105,7 @@ describe('BBC listening pages', () => {
     const addToHouseOne = vi.fn().mockResolvedValue({ id: 'db-sea-levels', term: 'sea levels', box: 1 });
     const session = {
       lesson: lessonSignal,
+      test: testSignal,
       attempt: attemptSignal,
       result: resultSignal,
       loading: signal(false),
@@ -99,7 +120,13 @@ describe('BBC listening pages', () => {
         { provide: ListeningMistakePracticeService, useValue: { addToHouseOne } },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: (name: string) => name === 'lessonSlug' ? lesson.slug : null } } },
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (name: string) => name === 'lessonSlug' ? lesson.slug : name === 'testId' ? test.id : null,
+              },
+            },
+          },
         },
       ],
     });
@@ -107,7 +134,7 @@ describe('BBC listening pages', () => {
 
     await page.ngOnInit();
 
-    expect(start).toHaveBeenCalledWith(lesson.slug);
+    expect(start).toHaveBeenCalledWith(lesson.slug, test.id);
     expect(Object.keys(page.answers.controls)).toEqual(['q1', 'q2']);
     expect(page.answeredCount()).toBe(0);
     expect(page.canSubmit()).toBe(true);
@@ -133,10 +160,7 @@ describe('BBC listening pages', () => {
       submittedAnswer: 'A. First',
       correctAnswer: 'B. Second option',
     };
-    const numericMistake = {
-      ...phraseMistake,
-      correctAnswer: '1C',
-    };
+    const numericMistake = { ...phraseMistake, correctAnswer: '1C' };
 
     expect(page.vocabularyCandidate(phraseMistake)).toBe('sea levels');
     expect(page.vocabularyCandidate(choiceMistake)).toBe('Second option');
