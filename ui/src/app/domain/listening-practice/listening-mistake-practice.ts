@@ -5,7 +5,9 @@ import { ListeningQuestionResult } from './listening-practice';
 export const LISTENING_MISTAKE_CATEGORY = 'Listening mistakes';
 export const LISTENING_MISTAKE_SOURCE = 'listening-mistake';
 
-const SINGLE_LEXICAL_WORD = /^\p{L}+(?:['’-]\p{L}+)*$/u;
+const HAS_LETTER = /\p{L}/u;
+const HAS_NUMBER = /\p{N}/u;
+const CHOICE_LABEL_PREFIX = /^[A-Z]\.\s*/u;
 
 export interface ListeningMistakeCapture {
   state: LearningState;
@@ -14,12 +16,21 @@ export interface ListeningMistakeCapture {
   newlyIntroduced: boolean;
 }
 
+function normalizeVocabularyCandidate(value: unknown, responseType?: ListeningQuestionResult['responseType']): string | null {
+  let answer = String(value ?? '')
+    .normalize('NFKC')
+    .replace(/\s+/gu, ' ')
+    .trim();
+  if (responseType === 'single_choice') answer = answer.replace(CHOICE_LABEL_PREFIX, '').trim();
+  if (!answer || HAS_NUMBER.test(answer) || !HAS_LETTER.test(answer)) return null;
+  return answer;
+}
+
 export function listeningVocabularyCandidate(
   result: Pick<ListeningQuestionResult, 'correct' | 'responseType' | 'correctAnswer'>,
 ): string | null {
-  if (result.correct || result.responseType !== 'text') return null;
-  const answer = String(result.correctAnswer || '').normalize('NFKC').trim();
-  return SINGLE_LEXICAL_WORD.test(answer) ? answer : null;
+  if (result.correct) return null;
+  return normalizeVocabularyCandidate(result.correctAnswer, result.responseType);
 }
 
 export function captureListeningMistakeInHouseOne(
@@ -27,8 +38,8 @@ export function captureListeningMistakeInHouseOne(
   rawTerm: string,
   now = new Date(),
 ): ListeningMistakeCapture {
-  const term = String(rawTerm || '').normalize('NFKC').trim();
-  if (!SINGLE_LEXICAL_WORD.test(term)) throw new Error('Only one vocabulary word can be added to House 1.');
+  const term = normalizeVocabularyCandidate(rawTerm);
+  if (!term) throw new Error('Only non-numeric vocabulary answers can be added to House 1.');
 
   const normalized = normalizeAnswer(term);
   const state = structuredClone(input);
