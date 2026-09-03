@@ -1,5 +1,6 @@
 ALTER TABLE sentences
   MODIFY COLUMN source_item_number BIGINT UNSIGNED NULL,
+  MODIFY COLUMN variant_number SMALLINT UNSIGNED NULL,
   MODIFY COLUMN sentence_text TEXT NOT NULL,
   ADD COLUMN audio_id BIGINT UNSIGNED NULL AFTER sentence_text,
   ADD COLUMN audio_url VARCHAR(512) NULL AFTER audio_id,
