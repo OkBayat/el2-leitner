@@ -79,6 +79,7 @@ async function verify() {
 
     const [sentenceRows] = await pool.execute(
       `SELECT COUNT(*) AS total,
+              COUNT(DISTINCT audio_id) AS unique_audio,
               COUNT(DISTINCT source_item_number) AS source_sentences,
               SUM(source_key = 'tatoeba') AS tatoeba_rows,
               SUM(audio_id IS NULL OR audio_url IS NULL OR sentence_text = '') AS invalid_audio_rows,
@@ -87,6 +88,7 @@ async function verify() {
        FROM sentences`
     );
     const sentenceTotal = Number(sentenceRows[0]?.total ?? 0);
+    const uniqueAudio = Number(sentenceRows[0]?.unique_audio ?? 0);
     const sourceSentences = Number(sentenceRows[0]?.source_sentences ?? 0);
     const tatoebaRows = Number(sentenceRows[0]?.tatoeba_rows ?? 0);
     const invalidAudioRows = Number(sentenceRows[0]?.invalid_audio_rows ?? 0);
@@ -95,10 +97,13 @@ async function verify() {
 
     // Fresh databases intentionally have an empty catalog until the explicit,
     // network-backed Tatoeba import is run. Once populated, every row must be
-    // a unique audio-backed Tatoeba sentence.
+    // one unique audio recording. Multiple recordings may share a source sentence.
     if (sentenceTotal > 0) {
       if (tatoebaRows !== sentenceTotal) throw new Error("Non-Tatoeba sentence rows remain in the catalog.");
-      if (sourceSentences !== sentenceTotal) throw new Error("Sentence catalog contains duplicate Tatoeba sentence ids.");
+      if (uniqueAudio !== sentenceTotal) throw new Error("Sentence catalog contains duplicate Tatoeba audio ids.");
+      if (sourceSentences <= 0 || sourceSentences > sentenceTotal) {
+        throw new Error("Sentence catalog has an invalid Tatoeba source-sentence count.");
+      }
       if (invalidAudioRows !== 0) throw new Error(`${invalidAudioRows} sentence row(s) are missing text or audio metadata.`);
       if (unlicensedActiveRows !== 0) {
         throw new Error(`${unlicensedActiveRows} unlicensed Tatoeba audio row(s) are incorrectly marked active.`);
@@ -176,7 +181,7 @@ async function verify() {
     console.info(
       `Database verification passed: ${sourceItemCount} IELTS source items normalize to ${uniqueVocabularyCount} unique vocabulary entries; ` +
       (sentenceTotal
-        ? `the sentence catalog contains ${sentenceTotal} unique audio-backed Tatoeba sentences.`
+        ? `the sentence catalog contains ${sentenceTotal} unique audio recordings across ${sourceSentences} Tatoeba sentences.`
         : "the sentence catalog is empty and ready for the explicit Tatoeba import.")
     );
   } finally {
