@@ -21,19 +21,26 @@ function verifyListeningContent(row) {
   if (Number(content.schemaVersion) !== Number(row.schema_version)) {
     throw new Error("BBC listening schema version does not match its stored JSON aggregate.");
   }
-  if (!Array.isArray(content.groups) || content.groups.length !== 4) {
-    throw new Error(`Expected 4 BBC question groups, found ${content.groups?.length ?? 0}.`);
+  if (!Array.isArray(content.tests) || content.tests.length !== 3) {
+    throw new Error(`Expected 3 BBC listening tests, found ${content.tests?.length ?? 0}.`);
   }
-  const questions = content.groups.flatMap((group) => Array.isArray(group.questions) ? group.questions : []);
-  if (questions.length !== 13 || Number(row.question_count) !== 13) {
-    throw new Error(`Expected 13 BBC listening questions, found ${questions.length}.`);
+  const expectedIds = ["test-1", "test-2", "test-3"];
+  const questions = [];
+  for (const [index, test] of content.tests.entries()) {
+    if (test.id !== expectedIds[index]) {
+      throw new Error(`Expected BBC test ${expectedIds[index]}, found ${test.id || "unknown"}.`);
+    }
+    if (!Array.isArray(test.groups) || test.groups.length !== 4) {
+      throw new Error(`Expected 4 question groups in ${test.id}, found ${test.groups?.length ?? 0}.`);
+    }
+    const testQuestions = test.groups.flatMap((group) => Array.isArray(group.questions) ? group.questions : []);
+    if (testQuestions.length !== 13 || Number(test.questionCount) !== 13) {
+      throw new Error(`Expected 13 questions in ${test.id}, found ${testQuestions.length}.`);
+    }
+    questions.push(...testQuestions);
   }
-  const optionCount = questions.reduce(
-    (total, question) => total + (Array.isArray(question.options) ? question.options.length : 0),
-    0
-  );
-  if (optionCount !== 9) {
-    throw new Error(`Expected 9 BBC multiple-choice options, found ${optionCount}.`);
+  if (questions.length !== 39 || Number(row.question_count) !== 39) {
+    throw new Error(`Expected 39 BBC listening questions in total, found ${questions.length}.`);
   }
   const missingAnswer = questions.find((question) => {
     if (question.responseType === "text") {
@@ -97,6 +104,17 @@ async function verify() {
     if (!listeningRows[0]) throw new Error("The built-in BBC 6 Minute English lesson is missing.");
     verifyListeningContent(listeningRows[0]);
 
+    const [attemptColumns] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'listening_attempts'
+         AND COLUMN_NAME = 'test_id'`
+    );
+    if (Number(attemptColumns[0].total) !== 1) {
+      throw new Error("listening_attempts.test_id is required for per-test completion tracking.");
+    }
+
     const [obsoleteListeningTables] = await pool.execute(
       `SELECT COUNT(*) AS total
        FROM information_schema.TABLES
@@ -147,7 +165,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC listening catalog contains one JSON-backed lesson with 13 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC lesson contains 3 JSON-backed tests and 39 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
