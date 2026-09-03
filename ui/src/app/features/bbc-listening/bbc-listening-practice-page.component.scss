@@ -207,6 +207,12 @@ h1 {
   color: var(--mat-sys-on-surface);
 }
 
+.add-vocabulary-button {
+  margin-inline-start: auto;
+  align-self: center;
+  white-space: nowrap;
+}
+
 .submit-panel {
   display: flex;
   justify-content: space-between;
@@ -287,5 +293,10 @@ h1 {
 
   .choice-options {
     padding-left: 8px;
+  }
+
+  .add-vocabulary-button {
+    width: 100%;
+    margin-inline-start: 0;
   }
 }
