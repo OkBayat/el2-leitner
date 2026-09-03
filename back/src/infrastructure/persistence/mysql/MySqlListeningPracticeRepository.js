@@ -27,6 +27,7 @@ function mapLessonMetadata(row) {
     episodeCode: row.episode_code === null ? null : String(row.episode_code),
     episodeDate: row.episode_date === null ? null : String(row.episode_date),
     sourceUrl: String(row.source_url),
+    audioFile: row.audio_file === null || row.audio_file === undefined ? null : String(row.audio_file),
     contentVersion: Number(row.content_version),
     questionCount: Number(row.question_count)
   };
@@ -137,7 +138,7 @@ export class MySqlListeningPracticeRepository {
     const [rows, completionRows] = await Promise.all([
       this.pool.execute(
         `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
-                DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
+                DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url, audio_file,
                 schema_version, content_version, question_count, content_json
          FROM listening_lessons
          WHERE provider = ? AND status = 'published'
@@ -161,10 +162,24 @@ export class MySqlListeningPracticeRepository {
     return rows[0].map((row) => mapCatalogLesson(row, completions));
   }
 
+  async findPublishedAudioBySlug(provider, slug) {
+    const [rows] = await this.pool.execute(
+      `SELECT audio_file
+       FROM listening_lessons
+       WHERE provider = ? AND slug = ? AND status = 'published'
+       LIMIT 1`,
+      [provider, slug]
+    );
+    if (!rows[0] || !rows[0].audio_file) {
+      throw new NotFoundError("LISTENING_AUDIO_NOT_FOUND", "Listening episode audio was not found.");
+    }
+    return { audioFile: String(rows[0].audio_file) };
+  }
+
   async findPublishedLessonBySlug(provider, slug, { includeAnswers = false } = {}) {
     const [rows] = await this.pool.execute(
       `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
-              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
+              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url, audio_file,
               schema_version, question_count, content_version, content_json
        FROM listening_lessons
        WHERE provider = ? AND slug = ? AND status = 'published'
@@ -206,7 +221,7 @@ export class MySqlListeningPracticeRepository {
               a.status, a.started_at, a.submitted_at, a.total_count,
               l.id AS lesson_database_id, l.public_id AS lesson_public_id, l.provider, l.slug,
               l.title, l.description, l.episode_code,
-              DATE_FORMAT(l.episode_date, '%Y-%m-%d') AS episode_date, l.source_url,
+              DATE_FORMAT(l.episode_date, '%Y-%m-%d') AS episode_date, l.source_url, l.audio_file,
               l.schema_version, l.question_count, l.content_version, l.content_json
        FROM listening_attempts a
        JOIN listening_lessons l ON l.id = a.lesson_id
@@ -235,6 +250,7 @@ export class MySqlListeningPracticeRepository {
       episode_code: row.episode_code,
       episode_date: row.episode_date,
       source_url: row.source_url,
+      audio_file: row.audio_file,
       schema_version: row.schema_version,
       question_count: row.question_count,
       content_version: row.content_version,
