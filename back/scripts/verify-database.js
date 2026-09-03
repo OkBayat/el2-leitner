@@ -94,7 +94,7 @@ async function verify() {
     }
 
     const [listeningRows] = await pool.execute(
-      `SELECT schema_version, question_count, content_json
+      `SELECT schema_version, question_count, audio_file, content_json
        FROM listening_lessons
        WHERE public_id = 'bbc-6-minute-english-260903'
          AND provider = 'bbc_6_minute_english'
@@ -102,6 +102,9 @@ async function verify() {
        LIMIT 1`
     );
     if (!listeningRows[0]) throw new Error("The built-in BBC 6 Minute English lesson is missing.");
+    if (listeningRows[0].audio_file !== "bbc-6-minute-english-260903.mp3") {
+      throw new Error(`Unexpected BBC audio filename: ${listeningRows[0].audio_file || "missing"}.`);
+    }
     verifyListeningContent(listeningRows[0]);
 
     const [attemptColumns] = await pool.execute(
@@ -113,6 +116,17 @@ async function verify() {
     );
     if (Number(attemptColumns[0].total) !== 1) {
       throw new Error("listening_attempts.test_id is required for per-test completion tracking.");
+    }
+
+    const [audioColumns] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'listening_lessons'
+         AND COLUMN_NAME = 'audio_file'`
+    );
+    if (Number(audioColumns[0].total) !== 1) {
+      throw new Error("listening_lessons.audio_file is required for local episode audio.");
     }
 
     const [obsoleteListeningTables] = await pool.execute(
@@ -165,7 +179,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC lesson contains 3 JSON-backed tests and 39 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC lesson contains 3 JSON-backed tests, 39 graded questions, and local audio metadata; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
