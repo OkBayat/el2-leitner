@@ -24,10 +24,13 @@ export class SubmitListeningAttempt {
     if (state.attempt.lessonContentVersion !== state.lesson.contentVersion) {
       throw new ConflictError(
         "LISTENING_LESSON_UPDATED",
-        "This lesson changed after the attempt started. Start the lesson again."
+        "This lesson changed after the attempt started. Start the test again."
       );
     }
-    const grade = gradeListeningAttempt(state.lesson, input.answers);
+    if (!state.test || state.test.id !== state.attempt.testId) {
+      throw new NotFoundError("LISTENING_TEST_NOT_FOUND", "Listening test was not found.");
+    }
+    const grade = gradeListeningAttempt(state.test, input.answers);
     return this.listeningPracticeRepository.completeAttempt(userId, state.attempt.id, grade);
   }
 }
