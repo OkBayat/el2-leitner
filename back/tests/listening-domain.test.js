@@ -26,12 +26,12 @@ describe("BBC listening lesson definition", () => {
     ]);
     const questions = parsed.groups.flatMap((group) => group.questions);
     assert.deepEqual(questions.map((question) => question.number), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
-    assert.match(questions[7].prompt, /landslides and mudslides occur/u);
-    assert.match(questions[8].prompt, /swept/u);
-    assert.match(questions[9].prompt, /sea.*rising/u);
-    assert.match(questions[10].prompt, /10|storm surges/u);
-    assert.match(questions[11].prompt, /temperature increased/u);
-    assert.match(questions[12].prompt, /three times faster/u);
+    assert.match(questions[7].prompt, /landslides and mudslides occur/iu);
+    assert.match(questions[8].prompt, /swept/iu);
+    assert.match(questions[9].prompt, /sea.*rising/iu);
+    assert.match(questions[10].prompt, /storm surges/iu);
+    assert.match(questions[11].prompt, /temperature increased/iu);
+    assert.match(questions[12].prompt, /three times faster/iu);
   });
 
   it("rejects duplicate question numbers", async () => {
