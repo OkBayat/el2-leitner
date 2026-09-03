@@ -7,9 +7,20 @@ import { gradeListeningAttempt } from "../src/domain/listening-practice/Listenin
 import { parseListeningLessonDefinition } from "../src/domain/listening-practice/ListeningLessonDefinition.js";
 
 const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const screenTimeLessonUrl = new URL(
+  "../data/listening/bbc/260618-limiting-screen-time-for-children.json",
+  import.meta.url
+);
 
 async function lesson() {
   return parseListeningLessonDefinition(JSON.parse(await readFile(lessonUrl, "utf8")), "260903-extreme-weather.json");
+}
+
+async function screenTimeLesson() {
+  return parseListeningLessonDefinition(
+    JSON.parse(await readFile(screenTimeLessonUrl, "utf8")),
+    "260618-limiting-screen-time-for-children.json"
+  );
 }
 
 async function firstTest() {
@@ -34,6 +45,36 @@ describe("BBC listening lesson definition", () => {
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
       );
     }
+  });
+
+  it("validates the screen-time episode as three distinct 13-question IELTS tests in audio order", async () => {
+    const parsed = await screenTimeLesson();
+    assert.equal(parsed.publicId, "bbc-6-minute-english-260618");
+    assert.equal(parsed.slug, "limiting-screen-time-for-children");
+    assert.equal(parsed.episodeDate, "2026-06-18");
+    assert.equal(parsed.testCount, 3);
+    assert.equal(parsed.questionCount, 39);
+    assert.deepEqual(parsed.tests.map((test) => [test.id, test.questionCount]), [
+      ["test-1", 13],
+      ["test-2", 13],
+      ["test-3", 13]
+    ]);
+    for (const test of parsed.tests) {
+      assert.deepEqual(
+        test.groups.flatMap((group) => group.questions).map((question) => question.number),
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+      );
+    }
+
+    const test1 = parsed.tests[0].groups.flatMap((group) => group.questions);
+    assert.match(test1[0].prompt, /laptops/iu);
+    assert.match(test1[1].prompt, /Australia/iu);
+    assert.match(test1[2].prompt, /University of/iu);
+    assert.match(test1[3].prompt, /intentional/iu);
+    assert.match(test1[4].prompt, /needs to be higher/iu);
+    assert.match(test1[9].prompt, /parents are very/iu);
+    assert.match(test1[11].prompt, /moving somewhere/iu);
+    assert.match(test1[12].prompt, /children aged three to four/iu);
   });
 
   it("keeps Test 1 in BBC audio order", async () => {
@@ -171,6 +212,30 @@ describe("Listening grading", () => {
     assert.equal(result.results[9].correct, false);
     assert.equal(result.results[9].correctAnswer, "sea levels");
     assert.equal(result.results[5].submittedAnswer, "B. They remain in the same area for longer.");
+  });
+
+  it("grades all thirteen answers in the new screen-time Test 1", async () => {
+    const test = (await screenTimeLesson()).tests[0];
+    const values = [
+      [1, "laptops"],
+      [2, "social media"],
+      [3, "Cambridge"],
+      [4, "intentional"],
+      [5, "bbc-260618-t1-question-5-option-b"],
+      [6, "bbc-260618-t1-question-6-option-a"],
+      [7, "bbc-260618-t1-question-7-option-b"],
+      [8, "reason"],
+      [9, "expectations"],
+      [10, "eager"],
+      [11, "little shifts"],
+      [12, "the device"],
+      [13, "one in five"]
+    ];
+    const result = gradeListeningAttempt(test, values.map(([number, value]) => ({
+      questionId: `bbc-260618-t1-question-${number}`,
+      value
+    })));
+    assert.deepEqual(result.score, { correct: 13, wrong: 0, total: 13, percentage: 100 });
   });
 
   it("keeps IELTS spelling strict while treating omitted answers as incorrect", async () => {
