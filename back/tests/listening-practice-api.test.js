@@ -130,7 +130,7 @@ function answerPayload() {
   const values = [
     [1, "day"], [2, "long term"], [3, "typhoons"], [4, "tropical"], [5, "slowly"],
     [6, "bbc-260903-question-6-option-b"], [7, "bbc-260903-question-7-option-a"],
-    [8, "bbc-260903-question-8-option-a"], [9, "heavy rain"], [10, "coast"],
+    [8, "bbc-260903-question-8-option-a"], [9, "inland"], [10, "coast"],
     [11, "10 metres"], [12, "2C"], [13, "Atlantic"]
   ];
   return {
@@ -180,7 +180,7 @@ describe("BBC listening API", () => {
       .send(answerPayload())
       .expect(200);
     assert.deepEqual(first.body.score, { correct: 10, wrong: 3, total: 13, percentage: 76.9 });
-    assert.equal(first.body.results[9].correctAnswer, "inland");
+    assert.equal(first.body.results[9].correctAnswer, "sea levels");
 
     const retry = await learner
       .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
