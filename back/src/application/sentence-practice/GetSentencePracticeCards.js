@@ -2,6 +2,7 @@ import { parseLeitnerHouse } from "../../domain/learning/LeitnerHouse.js";
 import { createSentenceMatcher } from "../../domain/sentence-practice/SentenceMatcher.js";
 
 const MAX_SENTENCES_PER_CARD = 6;
+const MAX_CANDIDATES_PER_CARD = 48;
 
 function shuffled(items, random) {
   const result = [...items];
@@ -51,7 +52,12 @@ function projectSentence(sentence, match) {
     category: sentence.category,
     text: sentence.text,
     before: match.before,
-    after: match.after
+    after: match.after,
+    audioId: sentence.audioId,
+    audioUrl: sentence.audioUrl,
+    audioContributor: sentence.audioContributor,
+    audioLicense: sentence.audioLicense,
+    audioAttributionUrl: sentence.audioAttributionUrl
   };
 }
 
@@ -66,16 +72,18 @@ export class GetSentencePracticeCards {
     const wordRows = await this.sentencePracticeRepository.findWordsForHouse(userId, house);
     if (!wordRows.length) return emptyResult(house);
 
-    const sentenceRows = await this.sentencePracticeRepository.findActiveSentences("en");
-    const randomizedSentences = shuffled(sentenceRows, this.random);
     const cards = [];
-
     for (const grouped of groupWords(wordRows)) {
       const accepted = grouped.accepted.length ? grouped.accepted : [grouped.term];
+      const sentenceRows = await this.sentencePracticeRepository.findCandidateSentences(
+        accepted,
+        "en",
+        MAX_CANDIDATES_PER_CARD
+      );
       const matchSentence = createSentenceMatcher(accepted);
       const matches = [];
 
-      for (const sentence of randomizedSentences) {
+      for (const sentence of shuffled(sentenceRows, this.random)) {
         const match = matchSentence(sentence.text);
         if (!match) continue;
         matches.push(projectSentence(sentence, match));
@@ -98,4 +106,4 @@ export class GetSentencePracticeCards {
   }
 }
 
-export { MAX_SENTENCES_PER_CARD };
+export { MAX_CANDIDATES_PER_CARD, MAX_SENTENCES_PER_CARD };
