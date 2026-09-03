@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
+import { GetListeningEpisodeAudio } from "../src/application/listening-practice/GetListeningEpisodeAudio.js";
 import { ListListeningLessons } from "../src/application/listening-practice/ListListeningLessons.js";
 import { StartListeningAttempt } from "../src/application/listening-practice/StartListeningAttempt.js";
 import { SubmitListeningAttempt } from "../src/application/listening-practice/SubmitListeningAttempt.js";
@@ -63,6 +64,10 @@ describe("Listening practice CQRS use cases", () => {
     assert.equal(started.test.id, "test-2");
     assert.equal(started.test.questionCount, 13);
     assert.equal(started.attempt.testId, "test-2");
+    assert.equal(
+      started.lesson.audioUrl,
+      "/api/listening/bbc/lessons/climate-change-extreme-weather/audio"
+    );
     assert.equal(Object.hasOwn(started.test.groups[0].questions[0], "acceptedAnswers"), false);
     assert.equal(Object.hasOwn(started.test.groups[1].questions[0], "correctOptionId"), false);
     assert.deepEqual(calls[0], ["list", "bbc_6_minute_english", "user-1"]);
@@ -73,6 +78,19 @@ describe("Listening practice CQRS use cases", () => {
       { includeAnswers: false }
     ]);
     assert.deepEqual(calls[2], ["start", "user-1", "test-2"]);
+  });
+
+  it("resolves only a safe stored mp3 filename for the episode audio query", async () => {
+    const repository = {
+      async findPublishedAudioBySlug(provider, slug) {
+        assert.equal(provider, "bbc_6_minute_english");
+        assert.equal(slug, "climate-change-extreme-weather");
+        return { audioFile: "bbc-6-minute-english-260903.mp3" };
+      }
+    };
+    const result = await new GetListeningEpisodeAudio({ listeningPracticeRepository: repository })
+      .execute("climate-change-extreme-weather");
+    assert.deepEqual(result, { fileName: "bbc-6-minute-english-260903.mp3" });
   });
 
   it("rejects an unknown test before starting an attempt", async () => {
