@@ -11,6 +11,10 @@ function storedContent(definition) {
   };
 }
 
+function audioFileName(definition) {
+  return `${definition.publicId}.mp3`;
+}
+
 async function upsertLesson(connection, definition, hash) {
   const [existingRows] = await connection.execute(
     `SELECT id, source_hash, content_version
@@ -27,12 +31,13 @@ async function upsertLesson(connection, definition, hash) {
   const version = existing ? Number(existing.content_version) + 1 : 1;
   const publishedAt = definition.publishedAt ? new Date(definition.publishedAt) : null;
   const contentJson = JSON.stringify(storedContent(definition));
+  const audioFile = audioFileName(definition);
 
   if (existing) {
     await connection.execute(
       `UPDATE listening_lessons
        SET provider = ?, slug = ?, title = ?, description = ?, episode_code = ?, episode_date = ?,
-           source_url = ?, status = ?, schema_version = ?, question_count = ?, content_version = ?,
+           source_url = ?, audio_file = ?, status = ?, schema_version = ?, question_count = ?, content_version = ?,
            source_hash = ?, content_json = ?, published_at = ?
        WHERE id = ?`,
       [
@@ -43,6 +48,7 @@ async function upsertLesson(connection, definition, hash) {
         definition.episodeCode,
         definition.episodeDate,
         definition.sourceUrl,
+        audioFile,
         definition.status,
         definition.schemaVersion,
         definition.questionCount,
@@ -58,9 +64,9 @@ async function upsertLesson(connection, definition, hash) {
 
   const [result] = await connection.execute(
     `INSERT INTO listening_lessons
-       (public_id, provider, slug, title, description, episode_code, episode_date, source_url,
+       (public_id, provider, slug, title, description, episode_code, episode_date, source_url, audio_file,
         status, schema_version, question_count, content_version, source_hash, content_json, published_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       definition.publicId,
       definition.provider,
@@ -70,6 +76,7 @@ async function upsertLesson(connection, definition, hash) {
       definition.episodeCode,
       definition.episodeDate,
       definition.sourceUrl,
+      audioFile,
       definition.status,
       definition.schemaVersion,
       definition.questionCount,
