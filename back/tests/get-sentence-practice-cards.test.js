@@ -15,8 +15,8 @@ class StubSentencePracticeRepository {
     return structuredClone(this.words);
   }
 
-  async findActiveSentences(languageCode) {
-    this.calls.push({ method: "sentences", languageCode });
+  async findCandidateSentences(acceptedForms, languageCode, limit) {
+    this.calls.push({ method: "candidates", acceptedForms: [...acceptedForms], languageCode, limit });
     return structuredClone(this.sentences);
   }
 }
@@ -32,21 +32,26 @@ const word = (overrides = {}) => ({
 
 const sentence = (overrides = {}) => ({
   id: "sentence-1",
-  sourceItemNumber: null,
-  variantNumber: null,
-  category: "Manual",
+  sourceItemNumber: 123,
+  variantNumber: 1,
+  category: "Tatoeba",
   text: "Her name is Sara.",
+  audioId: "456",
+  audioUrl: "https://tatoeba.org/audio/download/456",
+  audioContributor: "speaker",
+  audioLicense: "CC BY 4.0",
+  audioAttributionUrl: "https://example.test/speaker",
   ...overrides
 });
 
 describe("GetSentencePracticeCards", () => {
-  it("discovers independent sentences by regex instead of a stored vocabulary relation", async () => {
+  it("discovers independent audio sentences by regex without scanning the full catalog", async () => {
     const repository = new StubSentencePracticeRepository({
       words: [word(), word({ acceptedForm: "Name" })],
       sentences: [
         sentence({ id: "surname", text: "Her surname is Sara." }),
-        sentence({ id: "manual-name", text: "Her name is Sara." }),
-        sentence({ id: "seed-name", sourceItemNumber: 12, variantNumber: 1, text: "My name is Mohammad." })
+        sentence({ id: "tatoeba-name-1", sourceItemNumber: 12, text: "Her name is Sara." }),
+        sentence({ id: "tatoeba-name-2", sourceItemNumber: 13, audioId: "457", audioUrl: "https://tatoeba.org/audio/download/457", text: "My name is Mohammad." })
       ]
     });
     const query = new GetSentencePracticeCards({
@@ -58,18 +63,18 @@ describe("GetSentencePracticeCards", () => {
 
     assert.deepEqual(repository.calls, [
       { method: "words", userId: "user-1", house: 1 },
-      { method: "sentences", languageCode: "en" }
+      { method: "candidates", acceptedForms: ["name", "Name"], languageCode: "en", limit: 48 }
     ]);
     assert.deepEqual(result.practice, { mode: "sentence", house: 1, retryGap: 3 });
     assert.deepEqual(result.summary, { totalWords: 1, totalSentences: 2 });
     assert.deepEqual(result.cards[0].accepted, ["name", "Name"]);
-    assert.deepEqual(result.cards[0].sentences.map(({ id, before, after }) => ({ id, before, after })), [
-      { id: "manual-name", before: "Her ", after: " is Sara." },
-      { id: "seed-name", before: "My ", after: " is Mohammad." }
+    assert.deepEqual(result.cards[0].sentences.map(({ id, before, after, audioUrl }) => ({ id, before, after, audioUrl })), [
+      { id: "tatoeba-name-1", before: "Her ", after: " is Sara.", audioUrl: "https://tatoeba.org/audio/download/456" },
+      { id: "tatoeba-name-2", before: "My ", after: " is Mohammad.", audioUrl: "https://tatoeba.org/audio/download/457" }
     ]);
   });
 
-  it("automatically uses a newly added sentence without any linking row", async () => {
+  it("passes audio metadata through to the UI deck", async () => {
     const repository = new StubSentencePracticeRepository({
       words: [word()],
       sentences: [sentence({ id: "new-row", text: "His name appears on the ticket." })]
@@ -84,6 +89,9 @@ describe("GetSentencePracticeCards", () => {
     assert.equal(result.cards[0].sentences[0].id, "new-row");
     assert.equal(result.cards[0].sentences[0].before, "His ");
     assert.equal(result.cards[0].sentences[0].after, " appears on the ticket.");
+    assert.equal(result.cards[0].sentences[0].audioId, "456");
+    assert.equal(result.cards[0].sentences[0].audioUrl, "https://tatoeba.org/audio/download/456");
+    assert.equal(result.cards[0].sentences[0].audioLicense, "CC BY 4.0");
   });
 
   it("matches an accepted alias even when the canonical spelling is not present in the sentence", async () => {
@@ -99,18 +107,12 @@ describe("GetSentencePracticeCards", () => {
     const result = await query.execute("user-1", 1);
 
     assert.deepEqual(result.cards[0].accepted, ["colour", "color"]);
-    assert.deepEqual(result.cards[0].sentences[0], {
-      id: "color-row",
-      sourceItemNumber: null,
-      variantNumber: null,
-      category: "Manual",
-      text: "The color is easy to see.",
-      before: "The ",
-      after: " is easy to see."
-    });
+    assert.equal(result.cards[0].sentences[0].text, "The color is easy to see.");
+    assert.equal(result.cards[0].sentences[0].before, "The ");
+    assert.equal(result.cards[0].sentences[0].after, " is easy to see.");
   });
 
-  it("does not scan the sentence catalog when the selected house has no active words", async () => {
+  it("does not query sentence candidates when the selected house has no active words", async () => {
     const repository = new StubSentencePracticeRepository();
     const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository });
 
