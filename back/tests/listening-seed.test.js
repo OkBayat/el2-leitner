@@ -29,17 +29,19 @@ class FakeConnection {
     }
     if (compact.startsWith("INSERT INTO listening_lessons")) {
       this.lesson = {
-        hash: values[12],
-        version: Number(values[11]),
-        content: JSON.parse(values[13])
+        audioFile: values[8],
+        hash: values[13],
+        version: Number(values[12]),
+        content: JSON.parse(values[14])
       };
       return [{ insertId: 1 }];
     }
     if (compact.startsWith("UPDATE listening_lessons")) {
       this.lesson = {
-        hash: values[11],
-        version: Number(values[10]),
-        content: JSON.parse(values[12])
+        audioFile: values[7],
+        hash: values[12],
+        version: Number(values[11]),
+        content: JSON.parse(values[13])
       };
       return [{ affectedRows: 1 }];
     }
@@ -53,7 +55,7 @@ class FakePool {
 }
 
 describe("BBC listening seed", () => {
-  it("stores all lesson tests as one versioned JSON aggregate and seeds it idempotently", async () => {
+  it("stores the episode filename and all tests as one versioned JSON aggregate idempotently", async () => {
     const definition = parseListeningLessonDefinition(
       JSON.parse(await readFile(lessonUrl, "utf8")),
       "260903-extreme-weather.json"
@@ -70,6 +72,7 @@ describe("BBC listening seed", () => {
     assert.deepEqual(second, { changed: false, lessonCount: 1, testCount: 3, questionCount: 39 });
     assert.deepEqual(revised, { changed: true, lessonCount: 1, testCount: 3, questionCount: 39 });
     assert.equal(pool.connection.lesson.version, 2);
+    assert.equal(pool.connection.lesson.audioFile, "bbc-6-minute-english-260903.mp3");
     assert.equal(pool.connection.commits, 3);
     assert.equal(pool.connection.rollbacks, 0);
     assert.equal(pool.connection.releases, 3);
