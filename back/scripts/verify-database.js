@@ -93,19 +93,28 @@ async function verify() {
       throw new Error("Built-in duplicate-alias metadata is inconsistent.");
     }
 
+    const expectedListeningLessons = new Map([
+      ["bbc-6-minute-english-260903", "bbc-6-minute-english-260903.mp3"],
+      ["bbc-6-minute-english-260618", "bbc-6-minute-english-260618.mp3"]
+    ]);
     const [listeningRows] = await pool.execute(
-      `SELECT schema_version, question_count, audio_file, content_json
+      `SELECT public_id, schema_version, question_count, audio_file, content_json
        FROM listening_lessons
-       WHERE public_id = 'bbc-6-minute-english-260903'
-         AND provider = 'bbc_6_minute_english'
+       WHERE provider = 'bbc_6_minute_english'
          AND status = 'published'
-       LIMIT 1`
+         AND public_id IN ('bbc-6-minute-english-260903', 'bbc-6-minute-english-260618')`
     );
-    if (!listeningRows[0]) throw new Error("The built-in BBC 6 Minute English lesson is missing.");
-    if (listeningRows[0].audio_file !== "bbc-6-minute-english-260903.mp3") {
-      throw new Error(`Unexpected BBC audio filename: ${listeningRows[0].audio_file || "missing"}.`);
+    if (listeningRows.length !== expectedListeningLessons.size) {
+      throw new Error(`Expected ${expectedListeningLessons.size} built-in BBC lessons, found ${listeningRows.length}.`);
     }
-    verifyListeningContent(listeningRows[0]);
+    for (const row of listeningRows) {
+      const expectedAudioFile = expectedListeningLessons.get(String(row.public_id));
+      if (!expectedAudioFile) throw new Error(`Unexpected BBC listening lesson ${row.public_id}.`);
+      if (row.audio_file !== expectedAudioFile) {
+        throw new Error(`Unexpected BBC audio filename for ${row.public_id}: ${row.audio_file || "missing"}.`);
+      }
+      verifyListeningContent(row);
+    }
 
     const [attemptColumns] = await pool.execute(
       `SELECT COUNT(*) AS total
@@ -179,7 +188,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC lesson contains 3 JSON-backed tests, 39 graded questions, and local audio metadata; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; two BBC lessons contain 6 JSON-backed tests, 78 graded questions, and local audio metadata; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
