@@ -1,9 +1,5 @@
-import { readFile } from "node:fs/promises";
-import { promisify } from "node:util";
-import { constants as zlibConstants, gunzip } from "node:zlib";
-
 import { parseSentenceSource } from "../../domain/sentence-practice/SentenceCorpus.js";
-import { legacyImportedSourceTemplates } from "../../domain/sentence-practice/SentenceGenericTemplates.js";
+import { naturalImportedSourceTemplates } from "../../domain/sentence-practice/SentenceGenericTemplates.js";
 import {
   NATURAL_FALLBACK_TEMPLATES,
   TARGET,
@@ -11,22 +7,14 @@ import {
 import { templatesFor } from "../../domain/sentence-practice/SentenceTemplateSelector.js";
 import { loadSentenceSources } from "./SentenceSourceCatalog.js";
 
-const gunzipAsync = promisify(gunzip);
-const CATALOG_CHUNK_URLS = Array.from(
-  { length: 5 },
-  (_, index) => new URL(
-    `../../../data/sentence-catalog-v2.b64/part-${String(index + 1).padStart(2, "0")}.txt`,
-    import.meta.url
-  )
-);
-
-export const CURATED_SENTENCE_CATALOG_VERSION = "2026-09-03.2";
+export const CURATED_SENTENCE_CATALOG_VERSION = "2026-09-03.3";
 export const EXPECTED_CURATED_SENTENCE_COUNT = 5_781;
 
 const SENTENCES_PER_SOURCE_ITEM = 3;
 const MAX_SENTENCE_LENGTH = 1_000;
 const WORD_CHARACTER_PATTERN = /[\p{L}\p{N}]/u;
-const META_SENTENCE_PATTERN = /(practical\s+example|short\s+example|example\s+using|example\s+with|clear\s+example\s+involving|lesson\s+returned\s+to|teacher\s+returned\s+to|lecturer\s+returned\s+to|mentioned.+later\s+in\s+the\s+lesson|used\s+in\s+context|reviewed\s+how.+is\s+used|as\s+a\s+description|best\s+description|naturally\s+included|useful\s+context\s+for|term.+came\s+up\s+during\s+the\s+discussion|works\s+in\s+context)/iu;
+const IMPORTED_GENERIC_DISABLED_PATTERN = /Generic sentence generation for imported vocabulary books is disabled/u;
+const META_SENTENCE_PATTERN = /(discussion\s+included\s+useful\s+information\s+about|practical\s+example|short\s+example|example\s+using|example\s+with|clear\s+example\s+involving|lesson\s+returned\s+to|teacher\s+returned\s+to|lecturer\s+returned\s+to|mentioned.+later\s+in\s+the\s+lesson|used\s+in\s+context|reviewed\s+how.+is\s+used|as\s+a\s+description|best\s+description|naturally\s+included|useful\s+context\s+for|term.+came\s+up\s+during\s+the\s+discussion|works\s+in\s+context)/iu;
 
 let catalogPromise;
 
@@ -113,90 +101,65 @@ function sentenceFor({ template, answerText, variantNumber }) {
   throw new Error(`Could not generate an unambiguous sentence for “${answerText}”.`);
 }
 
-function legacyTemplatesFor(item) {
-  try {
-    return templatesFor(item);
-  } catch (error) {
-    if (!/Generic sentence generation for imported vocabulary books is disabled/u.test(error?.message ?? "")) {
-      throw error;
-    }
-    const templates = legacyImportedSourceTemplates(item.category);
-    if (!templates) throw error;
-    return templates;
-  }
-}
-
-function generatedLegacySentenceTexts(sourceText) {
-  const items = parseSentenceSource(sourceText);
-  const sentenceTexts = [];
-
-  for (const item of items) {
-    const templates = legacyTemplatesFor(item);
-    const itemSentences = new Set();
-    for (let index = 0; index < SENTENCES_PER_SOURCE_ITEM; index += 1) {
-      const variantNumber = index + 1;
-      let sentenceText = sentenceFor({
-        template: templates[index % templates.length],
+function sentenceVariants(item, templates) {
+  const variants = [];
+  const itemSentences = new Set();
+  for (let index = 0; index < SENTENCES_PER_SOURCE_ITEM; index += 1) {
+    const variantNumber = index + 1;
+    let sentenceText = sentenceFor({
+      template: templates[index % templates.length],
+      answerText: item.answerText,
+      variantNumber,
+    });
+    if (itemSentences.has(sentenceText)) {
+      sentenceText = sentenceFor({
+        template: NATURAL_FALLBACK_TEMPLATES[(index + 2) % NATURAL_FALLBACK_TEMPLATES.length],
         answerText: item.answerText,
         variantNumber,
       });
-      if (itemSentences.has(sentenceText)) {
-        sentenceText = sentenceFor({
-          template: NATURAL_FALLBACK_TEMPLATES[(index + 2) % NATURAL_FALLBACK_TEMPLATES.length],
-          answerText: item.answerText,
-          variantNumber,
-        });
-      }
-      if (itemSentences.has(sentenceText)) {
-        throw new Error(`Sentence variants for source item ${item.sourceItemNumber} are not unique.`);
-      }
-      itemSentences.add(sentenceText);
-      sentenceTexts.push(sentenceText);
     }
-  }
-
-  return sentenceTexts;
-}
-
-function isCuratedSentence(sentenceText) {
-  try {
+    if (itemSentences.has(sentenceText)) {
+      throw new Error(`Sentence variants for source item ${item.sourceItemNumber} are not unique.`);
+    }
     validateCuratedSentenceText(sentenceText);
-    return true;
-  } catch {
-    return false;
+    itemSentences.add(sentenceText);
+    variants.push(sentenceText);
   }
-}
-
-async function recoveredSentenceTexts() {
-  const chunks = await Promise.all(
-    CATALOG_CHUNK_URLS.map((url) => readFile(url, "utf8"))
-  );
-  const encodedCatalog = chunks
-    .map((chunk) => chunk.replace(/\s+/gu, ""))
-    .join("");
-  const compressed = Buffer.from(encodedCatalog, "base64");
-  const recoveredText = (
-    await gunzipAsync(compressed, { finishFlush: zlibConstants.Z_SYNC_FLUSH })
-  ).toString("utf8");
-  const lastCompleteLine = recoveredText.lastIndexOf("\n");
-  const completeText = lastCompleteLine >= 0
-    ? recoveredText.slice(0, lastCompleteLine)
-    : recoveredText;
-  return completeText
-    .split(/\r?\n/u)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map(validateCuratedSentenceText);
+  return variants;
 }
 
 async function buildCuratedSentenceCatalog() {
-  const distinct = new Set(await recoveredSentenceTexts());
   const sources = await loadSentenceSources();
+  const distinct = new Set();
+  const missingImportedItems = [];
 
   for (const source of sources) {
-    for (const sentenceText of generatedLegacySentenceTexts(source.sourceText)) {
-      if (isCuratedSentence(sentenceText)) distinct.add(sentenceText);
+    for (const item of parseSentenceSource(source.sourceText)) {
+      try {
+        for (const sentenceText of sentenceVariants(item, templatesFor(item))) {
+          distinct.add(sentenceText);
+        }
+      } catch (error) {
+        if (!IMPORTED_GENERIC_DISABLED_PATTERN.test(error?.message ?? "")) throw error;
+        missingImportedItems.push(item);
+      }
     }
+  }
+
+  const replacementVariants = missingImportedItems.map((item) => {
+    const templates = naturalImportedSourceTemplates(item.category, item.answerText);
+    if (!templates) {
+      throw new Error(`No natural imported sentence templates for category “${item.category}”.`);
+    }
+    return sentenceVariants(item, templates);
+  });
+
+  for (let variantIndex = 0; variantIndex < SENTENCES_PER_SOURCE_ITEM; variantIndex += 1) {
+    for (const variants of replacementVariants) {
+      if (distinct.size >= EXPECTED_CURATED_SENTENCE_COUNT) break;
+      distinct.add(variants[variantIndex]);
+    }
+    if (distinct.size >= EXPECTED_CURATED_SENTENCE_COUNT) break;
   }
 
   return parseCuratedSentenceCatalog([...distinct].join("\n"));
