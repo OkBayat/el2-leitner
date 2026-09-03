@@ -13,12 +13,11 @@ import mysql from "mysql2/promise";
 
 import {
   TATOEBA_AUDIO_URL,
-  TATOEBA_MINIMUM_ENGLISH_AUDIO_SENTENCES,
+  TATOEBA_MINIMUM_ENGLISH_AUDIO_RECORDINGS,
   TATOEBA_SENTENCES_URL,
   isReusableTatoebaAudio,
   parseTatoebaAudioLine,
   parseTatoebaSentenceLine,
-  pickPreferredTatoebaAudio,
   tatoebaAudioDownloadUrl,
 } from "../src/infrastructure/tatoeba/TatoebaExport.js";
 
@@ -28,6 +27,8 @@ const AUDIO_STAGE_TABLE = "tatoeba_audio_import_stage";
 const IMPORT_LOCK = "vocora:tatoeba-sentence-import";
 const AUDIO_BATCH_SIZE = 1_000;
 const SENTENCE_BATCH_SIZE = 500;
+const INSERT_BATCH_SIZE = 500;
+const MAX_VARIANTS_PER_SENTENCE = 65_535;
 
 for (const environmentFile of [
   new URL("../.env", import.meta.url),
@@ -152,7 +153,9 @@ async function stageAudioExport(connection, audioFile) {
       await insertAudioBatch(connection, batch);
       batch = [];
     }
-    if (recordings % 100_000 === 0) console.info(`Staged ${recordings.toLocaleString("en-US")} audio recordings…`);
+    if (recordings % 100_000 === 0) {
+      console.info(`Staged ${recordings.toLocaleString("en-US")} audio recordings…`);
+    }
   }
   await insertAudioBatch(connection, batch);
 
@@ -177,18 +180,41 @@ async function audioForSentenceBatch(connection, sentenceIds) {
     sentenceIds
   );
 
-  const best = new Map();
+  const grouped = new Map();
   for (const row of rows) {
-    const candidate = {
-      sentenceId: Number(row.sentence_id),
+    const sentenceId = Number(row.sentence_id);
+    let recordings = grouped.get(sentenceId);
+    if (!recordings) {
+      recordings = [];
+      grouped.set(sentenceId, recordings);
+    }
+    if (recordings.length >= MAX_VARIANTS_PER_SENTENCE) {
+      throw new Error(`Tatoeba sentence ${sentenceId} has more than ${MAX_VARIANTS_PER_SENTENCE} audio recordings.`);
+    }
+    recordings.push({
+      sentenceId,
       audioId: Number(row.audio_id),
       contributor: row.contributor === null ? null : String(row.contributor),
       license: row.audio_license === null ? null : String(row.audio_license),
       attributionUrl: row.attribution_url === null ? null : String(row.attribution_url),
-    };
-    best.set(candidate.sentenceId, pickPreferredTatoebaAudio(best.get(candidate.sentenceId), candidate));
+      variantNumber: recordings.length + 1,
+    });
   }
-  return best;
+  return grouped;
+}
+
+async function insertImportRows(connection, rows) {
+  for (let start = 0; start < rows.length; start += INSERT_BATCH_SIZE) {
+    const batch = rows.slice(start, start + INSERT_BATCH_SIZE);
+    const placeholders = batch.map(() => "(?,?,?,?,?,?,?,?,?,?,?,?)").join(",");
+    await connection.execute(
+      `INSERT INTO ${IMPORT_TABLE}
+         (language_code, source_key, source_item_number, variant_number, category, sentence_text,
+          audio_id, audio_url, audio_contributor, audio_license, audio_attribution_url, status)
+       VALUES ${placeholders}`,
+      batch.flat()
+    );
+  }
 }
 
 async function insertSentenceBatch(connection, sentenceRows) {
@@ -198,33 +224,26 @@ async function insertSentenceBatch(connection, sentenceRows) {
   const importRows = [];
 
   for (const sentence of sentenceRows) {
-    const audio = audioBySentence.get(sentence.sentenceId);
-    if (!audio) continue;
-    importRows.push([
-      "en",
-      "tatoeba",
-      sentence.sentenceId,
-      1,
-      "Tatoeba",
-      sentence.text,
-      audio.audioId,
-      tatoebaAudioDownloadUrl(audio.audioId),
-      audio.contributor,
-      audio.license,
-      audio.attributionUrl,
-      isReusableTatoebaAudio(audio) ? "active" : "restricted",
-    ]);
+    const recordings = audioBySentence.get(sentence.sentenceId) ?? [];
+    for (const audio of recordings) {
+      importRows.push([
+        "en",
+        "tatoeba",
+        sentence.sentenceId,
+        audio.variantNumber,
+        "Tatoeba",
+        sentence.text,
+        audio.audioId,
+        tatoebaAudioDownloadUrl(audio.audioId),
+        audio.contributor,
+        audio.license,
+        audio.attributionUrl,
+        isReusableTatoebaAudio(audio) ? "active" : "restricted",
+      ]);
+    }
   }
 
-  if (!importRows.length) return 0;
-  const placeholders = importRows.map(() => "(?,?,?,?,?,?,?,?,?,?,?,?)").join(",");
-  await connection.execute(
-    `INSERT INTO ${IMPORT_TABLE}
-       (language_code, source_key, source_item_number, variant_number, category, sentence_text,
-        audio_id, audio_url, audio_contributor, audio_license, audio_attribution_url, status)
-     VALUES ${placeholders}`,
-    importRows.flat()
-  );
+  await insertImportRows(connection, importRows);
   return importRows.length;
 }
 
@@ -243,7 +262,7 @@ async function importSentences(connection, sentencesFile) {
     }
     if (scanned % 250_000 === 0) {
       console.info(
-        `Scanned ${scanned.toLocaleString("en-US")} English sentences; imported ${imported.toLocaleString("en-US")} audio sentences…`
+        `Scanned ${scanned.toLocaleString("en-US")} English sentences; imported ${imported.toLocaleString("en-US")} audio recordings…`
       );
     }
   }
@@ -251,9 +270,15 @@ async function importSentences(connection, sentencesFile) {
   return { scanned, imported };
 }
 
-async function validateImport(connection, { minimumCount, expectedCount, audioSentenceCount }) {
+async function validateImport(connection, {
+  minimumCount,
+  expectedCount,
+  audioRecordingCount,
+  audioSentenceCount,
+}) {
   const [rows] = await connection.query(
     `SELECT COUNT(*) AS total,
+            COUNT(DISTINCT audio_id) AS unique_audio,
             COUNT(DISTINCT source_item_number) AS source_sentences,
             SUM(status = 'active') AS playable,
             SUM(status = 'restricted') AS restricted,
@@ -262,26 +287,36 @@ async function validateImport(connection, { minimumCount, expectedCount, audioSe
   );
   const result = {
     total: Number(rows[0].total),
+    uniqueAudio: Number(rows[0].unique_audio),
     sourceSentences: Number(rows[0].source_sentences),
     playable: Number(rows[0].playable ?? 0),
     restricted: Number(rows[0].restricted ?? 0),
     invalid: Number(rows[0].invalid ?? 0),
   };
 
-  if (result.invalid !== 0) throw new Error(`Import contains ${result.invalid} row(s) without text/audio.`);
-  if (result.total !== result.sourceSentences) throw new Error("Tatoeba import contains duplicate sentence rows.");
-  if (result.total !== audioSentenceCount) {
+  if (result.invalid !== 0) {
+    throw new Error(`Import contains ${result.invalid} row(s) without text/audio.`);
+  }
+  if (result.total !== result.uniqueAudio) {
+    throw new Error("Tatoeba import contains duplicate audio recordings.");
+  }
+  if (result.total !== audioRecordingCount) {
     throw new Error(
-      `Audio export references ${audioSentenceCount} unique English sentences, but ${result.total} sentence rows were imported.`
+      `Audio export contains ${audioRecordingCount} recordings, but ${result.total} recording rows were imported.`
+    );
+  }
+  if (result.sourceSentences !== audioSentenceCount) {
+    throw new Error(
+      `Audio export references ${audioSentenceCount} unique sentences, but ${result.sourceSentences} source sentences were imported.`
     );
   }
   if (result.total < minimumCount) {
     throw new Error(
-      `Refusing to replace the sentence catalog: expected at least ${minimumCount} English audio sentences, found ${result.total}.`
+      `Refusing to replace the sentence catalog: expected at least ${minimumCount} English audio recordings, found ${result.total}.`
     );
   }
   if (expectedCount !== null && result.total !== expectedCount) {
-    throw new Error(`Expected exactly ${expectedCount} English audio sentences, found ${result.total}.`);
+    throw new Error(`Expected exactly ${expectedCount} English audio recordings, found ${result.total}.`);
   }
   return result;
 }
@@ -289,7 +324,7 @@ async function validateImport(connection, { minimumCount, expectedCount, audioSe
 async function main() {
   const minimumCount = positiveInteger(
     option("minimum-count"),
-    TATOEBA_MINIMUM_ENGLISH_AUDIO_SENTENCES,
+    TATOEBA_MINIMUM_ENGLISH_AUDIO_RECORDINGS,
     "--minimum-count"
   );
   const expectedValue = option("expected-count");
@@ -335,6 +370,7 @@ async function main() {
     await connection.query(`DROP TABLE IF EXISTS ${PREVIOUS_TABLE}`);
     await connection.query(`DROP TEMPORARY TABLE IF EXISTS ${AUDIO_STAGE_TABLE}`);
     await connection.query(`CREATE TABLE ${IMPORT_TABLE} LIKE sentences`);
+    await connection.query(`ALTER TABLE ${IMPORT_TABLE} DROP INDEX sentences_text_fulltext`);
     await connection.query(
       `CREATE TEMPORARY TABLE ${AUDIO_STAGE_TABLE} (
          audio_id BIGINT UNSIGNED NOT NULL,
@@ -352,17 +388,25 @@ async function main() {
       `Audio export: ${audio.recordings.toLocaleString("en-US")} recordings for ${audio.sentences.toLocaleString("en-US")} unique English sentences.`
     );
     const sentenceImport = await importSentences(connection, sentencesFile);
+    console.info("Building full-text sentence index after bulk import…");
+    await connection.query(
+      `ALTER TABLE ${IMPORT_TABLE} ADD FULLTEXT KEY sentences_text_fulltext (sentence_text)`
+    );
     const validated = await validateImport(connection, {
       minimumCount,
       expectedCount,
+      audioRecordingCount: audio.recordings,
       audioSentenceCount: audio.sentences,
     });
 
     console.info(
-      `Validated ${validated.total.toLocaleString("en-US")} unique Tatoeba sentences: ` +
+      `Validated ${validated.total.toLocaleString("en-US")} Tatoeba audio recordings across ` +
+      `${validated.sourceSentences.toLocaleString("en-US")} unique sentences: ` +
       `${validated.playable.toLocaleString("en-US")} playable, ${validated.restricted.toLocaleString("en-US")} restricted by missing audio license.`
     );
-    console.info(`Scanned ${sentenceImport.scanned.toLocaleString("en-US")} English sentence rows.`);
+    console.info(
+      `Scanned ${sentenceImport.scanned.toLocaleString("en-US")} English sentence rows and imported ${sentenceImport.imported.toLocaleString("en-US")} recording rows.`
+    );
 
     await connection.query(
       `RENAME TABLE sentences TO ${PREVIOUS_TABLE}, ${IMPORT_TABLE} TO sentences`
@@ -370,7 +414,7 @@ async function main() {
     swapped = true;
     await connection.query(`DROP TABLE ${PREVIOUS_TABLE}`);
     console.info(
-      `Tatoeba import complete. The previous audio-less sentence catalog was removed; sentences now contains ${validated.total.toLocaleString("en-US")} audio-backed rows.`
+      `Tatoeba import complete. The previous audio-less sentence catalog was removed; sentences now contains ${validated.total.toLocaleString("en-US")} audio-backed recording rows.`
     );
   } finally {
     try {
