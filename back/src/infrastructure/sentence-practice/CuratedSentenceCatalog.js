@@ -3,7 +3,13 @@ import { promisify } from "node:util";
 import { gunzip } from "node:zlib";
 
 const gunzipAsync = promisify(gunzip);
-const CATALOG_URL = new URL("../../../data/sentence-catalog-v2.txt.gz", import.meta.url);
+const CATALOG_CHUNK_URLS = Array.from(
+  { length: 5 },
+  (_, index) => new URL(
+    `../../../data/sentence-catalog-v2.b64/part-${String(index + 1).padStart(2, "0")}.txt`,
+    import.meta.url
+  )
+);
 
 export const CURATED_SENTENCE_CATALOG_VERSION = "2026-09-03.2";
 export const EXPECTED_CURATED_SENTENCE_COUNT = 5_781;
@@ -46,7 +52,13 @@ export function parseCuratedSentenceCatalog(text) {
 }
 
 export async function loadCuratedSentenceCatalog() {
-  const compressed = await readFile(CATALOG_URL);
+  const chunks = await Promise.all(
+    CATALOG_CHUNK_URLS.map((url) => readFile(url, "utf8"))
+  );
+  const encodedCatalog = chunks
+    .map((chunk) => chunk.replace(/\s+/gu, ""))
+    .join("");
+  const compressed = Buffer.from(encodedCatalog, "base64");
   const text = (await gunzipAsync(compressed)).toString("utf8");
   return parseCuratedSentenceCatalog(text);
 }
