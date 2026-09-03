@@ -44,7 +44,9 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
   await expect(page.getByTestId('listening-question-8')).toContainText('landslides and mudslides');
   await expect(page.getByTestId('listening-question-9')).toContainText('swept');
   await expect(page.getByTestId('listening-question-10')).toContainText('sea');
-  await expect(page.getByTestId('submit-listening-attempt')).toBeDisabled();
+  await expect(page.getByTestId('submit-listening-attempt')).toBeEnabled();
+  await expect(page.getByText('0 / 13 answered')).toBeVisible();
+  await expect(page.getByText('Unanswered questions will be marked incorrect.')).toBeVisible();
   await expect(page.getByText('Correct answer:', { exact: false })).toHaveCount(0);
 
   const textAnswers: Record<number, string> = {
@@ -57,7 +59,6 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
     10: 'coast',
     11: '10 metres',
     12: '2C',
-    13: 'Atlantic',
   };
   for (const [number, answer] of Object.entries(textAnswers)) {
     await page.getByTestId(`listening-answer-${number}`).fill(answer);
@@ -66,7 +67,8 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
   await page.getByTestId('listening-option-7-A').getByRole('radio').check();
   await page.getByTestId('listening-option-8-A').getByRole('radio').check();
 
-  await expect(page.getByText('13 / 13 answered')).toBeVisible();
+  await expect(page.getByText('12 / 13 answered')).toBeVisible();
+  await expect(page.getByTestId('submit-listening-attempt')).toBeEnabled();
   const submitResponsePromise = page.waitForResponse((response) =>
     response.request().method() === 'POST'
     && /\/api\/listening\/bbc\/attempts\/[^/]+\/submit$/u.test(new URL(response.url()).pathname)
@@ -83,6 +85,7 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
   await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
   await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
+  await expect(page.getByTestId('listening-question-13')).toContainText('Your answer: No answer');
   await expect(page.getByTestId('listening-question-13')).toContainText('Correct answer: the Arctic');
   await expect(page.getByTestId('listening-answer-1')).not.toBeEditable();
   await expect(page.getByTestId('listening-option-6-B').getByRole('radio')).toBeDisabled();
