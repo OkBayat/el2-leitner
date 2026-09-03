@@ -6,7 +6,7 @@ Listening Practice is an independent Vocora bounded context for lesson-based, se
 
 1. Open **BBC 6 Minute English** from Home or the application menu.
 2. Choose a published lesson.
-3. Open the original BBC episode in a separate tab and listen without reading its transcript.
+3. Open the official BBC audio page in a separate tab and listen without reading its transcript.
 4. Complete every text-completion and single-choice question.
 5. Submit the whole exercise once.
 6. Review the server-calculated score and the correct/incorrect result for every question.
@@ -17,10 +17,10 @@ The first built-in lesson is episode `260903`, **How is climate change affecting
 
 ```text
 Listening Practice
-├── lesson catalog
-├── IELTS question groups
-├── questions, options and private answer keys
-└── learner attempts and answer snapshots
+├── shared lesson aggregates
+│   └── groups, questions, options and private answer keys in versioned JSON
+└── learner attempts
+    └── submitted-answer and result snapshots in JSON
 ```
 
 Listening Practice does not read or write:
@@ -31,6 +31,20 @@ Listening Practice does not read or write:
 - Sentence Practice data
 
 This keeps the feature isolated and prevents a listening score from affecting vocabulary scheduling.
+
+## Why lesson content is JSON
+
+A listening lesson is authored, validated, loaded and displayed as one aggregate. Vocora does not currently query or edit individual questions through SQL. Keeping the exercise in one versioned JSON document therefore follows KISS and YAGNI while making new IELTS task types easier to add.
+
+The JSON aggregate contains:
+
+- ordered question groups and their IELTS instructions
+- text-completion prompts
+- multiple-choice options
+- private accepted answers and correct option IDs
+- an explicit `schemaVersion`
+
+Relational columns remain only for metadata that the catalog filters or sorts by, such as provider, slug, episode date, status and question count. If future analytics need per-question SQL reporting, a derived read model can be introduced without changing the lesson source of truth.
 
 ## CQRS application layer
 
@@ -44,7 +58,7 @@ The Domain layer contains lesson validation, strict IELTS answer normalization, 
 
 ## Answer-key security
 
-Answer keys are stored in `listening_question_answers` and never returned when a lesson starts. Public question DTOs contain only prompts and choice options. A learner submits question IDs and values; the server reloads the private answer key, grades the attempt, stores answer snapshots, and then returns feedback.
+Private answer keys live inside `listening_lessons.content_json`, but the repository and application projection remove them before a lesson is returned to the browser. Public question DTOs contain only prompts and choice options. A learner submits question IDs and values; the server reloads the private aggregate, grades the attempt, stores immutable JSON snapshots, and only then returns feedback.
 
 Text matching normalizes only presentation-equivalent input:
 
@@ -64,23 +78,18 @@ Built-in lessons are version-controlled JSON files under:
 back/data/listening/<provider>/
 ```
 
-A lesson contains provider metadata, ordered question groups, public question IDs, prompts, options, and private accepted answers. Text prompts use exactly one `{{blank}}` token. `npm run db:validate:listening` validates the complete content set before tests and deployment.
+A source lesson contains provider metadata, ordered question groups, public question IDs, prompts, options, and private accepted answers. Text prompts use exactly one `{{blank}}` token. `npm run db:validate:listening` validates the complete content set before tests and deployment.
 
-`db:setup` parses each definition and seeds it transactionally. A SHA-256 source hash makes unchanged seeds no-ops. A content change increments `content_version`, replaces the lesson question tree, and forces already-open attempts to restart instead of grading against a different answer key.
+`db:setup` parses each definition and seeds it transactionally. A SHA-256 source hash makes unchanged seeds true no-ops. A content change increments `content_version` and replaces the single stored JSON aggregate. An already-open attempt is not graded against a different content version.
 
 ## Database
 
-Migration `007_listening_practice.sql` creates:
+Migration `007_listening_practice.sql` creates only two tables:
 
-- `listening_lessons`
-- `listening_question_groups`
-- `listening_questions`
-- `listening_question_options`
-- `listening_question_answers`
-- `listening_attempts`
-- `listening_attempt_answers`
+- `listening_lessons` — searchable lesson metadata plus the complete versioned `content_json` aggregate
+- `listening_attempts` — ownership, lifecycle and score columns plus `answers_json` and `result_json` snapshots
 
-Attempt-answer rows store submitted and correct answer snapshots so completed results remain stable if lesson content changes later.
+The shared lesson row must not contain learner state. Attempts remain separate because they are user-owned, mutable during their lifecycle, and retained as history. This keeps the lesson model simple without mixing public content with private progress.
 
 ## API
 
@@ -90,7 +99,7 @@ Attempt-answer rows store submitted and correct answer snapshots so completed re
 | `POST` | `/api/listening/bbc/lessons/:lessonSlug/attempts` | Start an attempt and receive questions without keys |
 | `POST` | `/api/listening/bbc/attempts/:attemptId/submit` | Grade, persist, and return the result |
 
-All endpoints require authentication and use `Cache-Control: no-store` through the existing API router policy. Submission is idempotent: retrying a completed attempt returns the stored result rather than inserting duplicate answers.
+All endpoints require authentication and use `Cache-Control: no-store` through the existing API router policy. Submission is idempotent: retrying a completed attempt returns `result_json` rather than creating duplicate answer records.
 
 ## Tests
 
@@ -99,9 +108,10 @@ Coverage includes:
 - Domain validation and strict answer normalization
 - Text and multiple-choice grading
 - 10/13 score calculation for the built-in lesson
-- JSON seed idempotency and content-version changes
+- single-aggregate JSON seed, true no-op reseeding and content-version changes
 - CQRS use-case projections and lesson-version conflicts
 - Authenticated API behavior, cross-user isolation, and answer-key non-disclosure
+- real-database verification of the two-table JSON model and the 4-group/13-question lesson
 - Angular domain, API-adapter, application-service, and page-state unit tests
 - Angular architecture contract for separate HTML/SCSS/TS files, OnPush, Material controls, and typed reactive forms
 - Production Playwright flow from Home to lesson selection, completion, submit, score, feedback, locked fields, and proof that the complete learning state is unchanged
