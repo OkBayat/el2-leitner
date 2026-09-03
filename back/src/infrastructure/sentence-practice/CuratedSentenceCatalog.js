@@ -55,6 +55,15 @@ export function parseCuratedSentenceCatalog(text) {
   return sentences;
 }
 
+function isCuratedSentence(sentenceText) {
+  try {
+    validateCuratedSentenceText(sentenceText);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function targetOccurrenceIndexes(text, needle) {
   const haystack = text.toLocaleLowerCase("en");
   const target = needle.toLocaleLowerCase("en");
@@ -101,7 +110,7 @@ function sentenceFor({ template, answerText, variantNumber }) {
   throw new Error(`Could not generate an unambiguous sentence for “${answerText}”.`);
 }
 
-function sentenceVariants(item, templates) {
+function sentenceVariants(item, templates, { validate = true } = {}) {
   const variants = [];
   const itemSentences = new Set();
   for (let index = 0; index < SENTENCES_PER_SOURCE_ITEM; index += 1) {
@@ -121,7 +130,7 @@ function sentenceVariants(item, templates) {
     if (itemSentences.has(sentenceText)) {
       throw new Error(`Sentence variants for source item ${item.sourceItemNumber} are not unique.`);
     }
-    validateCuratedSentenceText(sentenceText);
+    if (validate) validateCuratedSentenceText(sentenceText);
     itemSentences.add(sentenceText);
     variants.push(sentenceText);
   }
@@ -136,8 +145,9 @@ async function buildCuratedSentenceCatalog() {
   for (const source of sources) {
     for (const item of parseSentenceSource(source.sourceText)) {
       try {
-        for (const sentenceText of sentenceVariants(item, templatesFor(item))) {
-          distinct.add(sentenceText);
+        const variants = sentenceVariants(item, templatesFor(item), { validate: false });
+        for (const sentenceText of variants) {
+          if (isCuratedSentence(sentenceText)) distinct.add(sentenceText);
         }
       } catch (error) {
         if (!IMPORTED_GENERIC_DISABLED_PATTERN.test(error?.message ?? "")) throw error;
