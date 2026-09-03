@@ -20,6 +20,7 @@ const started: ListeningAttemptStartResponse = {
     episodeCode: '1',
     episodeDate: '2026-09-03',
     sourceUrl: 'https://example.com',
+    audioUrl: '/api/listening/bbc/lessons/lesson-1/audio',
     questionCount: 3,
     testCount: 3,
   },
@@ -73,6 +74,7 @@ describe('ListeningAttemptService', () => {
 
     expect(await service.start('lesson-1', 'test-2')).toBe(true);
     expect(service.test()?.title).toBe('Test 2');
+    expect(service.lesson()?.audioUrl).toBe('/api/listening/bbc/lessons/lesson-1/audio');
     expect(await service.submit({ q1: 'day' })).toBe(true);
 
     expect(api.startBbcAttempt).toHaveBeenCalledWith('lesson-1', 'test-2');
