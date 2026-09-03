@@ -1,6 +1,38 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const PASSWORD = 'password123';
+const ANSWER = 'name';
+
+function sentence(card: number, variant: number) {
+	const audioId = card * 10 + variant;
+	return {
+		id: `sentence-${card}-${variant}`,
+		sourceItemNumber: card * 100 + variant,
+		variantNumber: 1,
+		category: 'Tatoeba',
+		text: variant === 1 ? `My name is person ${card}.` : `Her name is person ${card}.`,
+		before: variant === 1 ? 'My ' : 'Her ',
+		after: ` is person ${card}.`,
+		audioId: String(audioId),
+		audioUrl: `https://tatoeba.org/audio/download/${audioId}`,
+		audioContributor: 'e2e-speaker',
+		audioLicense: 'CC BY 4.0',
+		audioAttributionUrl: null,
+	};
+}
+
+const deck = {
+	practice: { mode: 'sentence', house: 1, retryGap: 3 },
+	summary: { totalWords: 5, totalSentences: 10 },
+	cards: [1, 2, 3, 4, 5].map((card) => ({
+		id: `word-name-${card}`,
+		term: ANSWER,
+		accepted: [ANSWER],
+		box: 1,
+		mistakes: 0,
+		sentences: [sentence(card, 1), sentence(card, 2)],
+	})),
+};
 
 async function authenticate(page: Page): Promise<void> {
 	await page.goto('/register');
@@ -19,57 +51,48 @@ async function learningState(page: Page): Promise<unknown> {
 	});
 }
 
-async function installSpeechSpy(page: Page): Promise<void> {
+async function installAudioSpy(page: Page): Promise<void> {
 	await page.addInitScript(() => {
-		(window as any).__vocoraSpokenWords = [];
-		const speech = window.speechSynthesis;
-		Object.defineProperty(speech, 'cancel', { configurable: true, value: () => undefined });
-		Object.defineProperty(speech, 'getVoices', { configurable: true, value: () => [] });
-		Object.defineProperty(speech, 'speak', {
-			configurable: true,
-			value: (utterance: SpeechSynthesisUtterance) => {
-				(window as any).__vocoraSpokenWords.push({ text: utterance.text, rate: utterance.rate });
-			},
-		});
+		(window as any).__vocoraPlayedSentenceAudio = [];
+		class FakeAudio {
+			preload = '';
+			playbackRate = 1;
+			currentTime = 0;
+			constructor(readonly src: string) {}
+			play(): Promise<void> {
+				(window as any).__vocoraPlayedSentenceAudio.push({ src: this.src, rate: this.playbackRate });
+				return Promise.resolve();
+			}
+			pause(): void {}
+		}
+		Object.defineProperty(window, 'Audio', { configurable: true, writable: true, value: FakeAudio });
 	});
 }
 
-async function spokenWord(page: Page, index: number): Promise<string> {
-	let word = '';
-	await expect.poll(async () => {
-		word = await page.evaluate((position) => (window as any).__vocoraSpokenWords?.[position]?.text || '', index);
-		return word;
-	}, { timeout: 5_000, message: `pronunciation ${index + 1} should be played` }).not.toBe('');
-	return word;
+async function playedAudioCount(page: Page): Promise<number> {
+	return page.evaluate(() => (window as any).__vocoraPlayedSentenceAudio?.length || 0);
 }
 
 async function sentenceContext(page: Page): Promise<string[]> {
 	return page.getByTestId('sentence-cloze').locator('span').allTextContents();
 }
 
-async function answerCurrentCard(page: Page, pronunciationIndex: number): Promise<string> {
-	const word = await spokenWord(page, pronunciationIndex);
+async function answerCurrentCard(page: Page): Promise<void> {
 	const input = page.getByTestId('sentence-answer-input');
-	await input.fill(word);
+	await input.fill(ANSWER);
 	await input.press('Enter');
 	await expect(page.getByTestId('sentence-action-footer')).toHaveClass(/success/u);
-	return word;
 }
 
-test('Sentence Practice keeps Leitner state isolated and retries a failed word in a different sentence', async ({ page }) => {
-	await installSpeechSpy(page);
+test('Sentence Practice plays full sentence audio, keeps Leitner state isolated and retries in a different sentence', async ({ page }) => {
+	await installAudioSpy(page);
 	await authenticate(page);
+	await page.route('**/api/learning/sentence-practice?house=1', async (route) => {
+		await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(deck) });
+	});
 	const stateBefore = await learningState(page);
 
-	const deckResponsePromise = page.waitForResponse((response) =>
-		response.url().includes('/api/learning/sentence-practice?house=1') && response.status() === 200
-	);
 	await page.getByTestId('start-sentence-practice').click();
-	const deckResponse = await deckResponsePromise;
-	const deck = await deckResponse.json();
-	expect(deck.practice).toEqual({ mode: 'sentence', house: 1, retryGap: 3 });
-	expect(deck.cards.length).toBeGreaterThanOrEqual(4);
-
 	await expect(page).toHaveURL(/\/sentence\?house=1$/u);
 	await expect(page.locator('app-shell')).toHaveCount(0);
 	const input = page.getByTestId('sentence-answer-input');
@@ -83,7 +106,14 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 	await expect(input).toHaveCSS('border-right-width', '0px');
 	await expect(input).not.toHaveCSS('border-bottom-width', '0px');
 
-	const firstWord = await spokenWord(page, 0);
+	await expect.poll(() => playedAudioCount(page), { timeout: 5_000 }).toBeGreaterThan(0);
+	const firstPlayback = await page.evaluate(() => (window as any).__vocoraPlayedSentenceAudio[0]);
+	expect(firstPlayback.src).toMatch(/^https:\/\/tatoeba\.org\/audio\/download\/\d+$/u);
+	expect(firstPlayback.rate).toBe(1);
+	await page.getByRole('button', { name: 'Slower' }).click();
+	const slowerPlayback = await page.evaluate(() => (window as any).__vocoraPlayedSentenceAudio.at(-1));
+	expect(slowerPlayback.rate).toBe(.75);
+
 	const firstContext = await sentenceContext(page);
 	await input.fill('__wrong__');
 	await input.press('Enter');
@@ -91,20 +121,18 @@ test('Sentence Practice keeps Leitner state isolated and retries a failed word i
 	await expect(input).toHaveValue('__wrong__');
 	await expect(input).not.toBeEditable();
 	await expect(page.getByTestId('sentence-action-footer')).toHaveClass(/error/u);
-	await expect(page.getByTestId('sentence-correct-answer')).toHaveText(firstWord);
+	await expect(page.getByTestId('sentence-correct-answer')).toHaveText(ANSWER);
 	await page.getByRole('button', { name: 'Continue' }).click();
 
-	for (let index = 1; index <= 3; index += 1) {
-		await answerCurrentCard(page, index);
+	for (let index = 0; index < 3; index += 1) {
+		await answerCurrentCard(page);
 		await page.getByRole('button', { name: 'Continue' }).click();
 	}
 
-	const retryWord = await spokenWord(page, 4);
 	const retryContext = await sentenceContext(page);
-	expect(retryWord).toBe(firstWord);
 	expect(retryContext).not.toEqual(firstContext);
 	await expect(page.getByText('Try the word again in a new sentence')).toBeVisible();
-	await answerCurrentCard(page, 4);
+	await answerCurrentCard(page);
 
 	const stateAfter = await learningState(page);
 	expect(stateAfter).toEqual(stateBefore);
