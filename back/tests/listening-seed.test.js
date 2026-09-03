@@ -6,6 +6,10 @@ import { parseListeningLessonDefinition } from "../src/domain/listening-practice
 import { seedListeningLessons } from "../src/infrastructure/persistence/mysql/seedListeningLessons.js";
 
 const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const screenTimeLessonUrl = new URL(
+  "../data/listening/bbc/260618-limiting-screen-time-for-children.json",
+  import.meta.url
+);
 
 class FakeConnection {
   constructor() {
@@ -96,5 +100,21 @@ describe("BBC listening seed", () => {
     assert.equal(allSql.filter((sql) => sql.startsWith("INSERT INTO listening_lessons")).length, 1);
     assert.equal(allSql.filter((sql) => sql.startsWith("UPDATE listening_lessons")).length, 1);
     assert.equal(allSql.some((sql) => /listening_question_|listening_attempt_answers/u.test(sql)), false);
+  });
+
+  it("derives the screen-time episode MP3 filename while keeping its three tests in JSON", async () => {
+    const definition = parseListeningLessonDefinition(
+      JSON.parse(await readFile(screenTimeLessonUrl, "utf8")),
+      "260618-limiting-screen-time-for-children.json"
+    );
+    const pool = new FakePool();
+    const seeded = await seedListeningLessons({ pool, definitions: [definition] });
+
+    assert.deepEqual(seeded, { changed: true, lessonCount: 1, testCount: 3, questionCount: 39 });
+    assert.equal(pool.connection.lesson.audioFile, "bbc-6-minute-english-260618.mp3");
+    assert.equal(pool.connection.lesson.content.schemaVersion, 2);
+    assert.deepEqual(pool.connection.lesson.content.tests.map((test) => [test.id, test.questionCount]), [
+      ["test-1", 13], ["test-2", 13], ["test-3", 13]
+    ]);
   });
 });
