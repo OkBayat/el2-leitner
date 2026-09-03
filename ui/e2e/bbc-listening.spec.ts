@@ -38,6 +38,8 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
 
   await expect(page).toHaveURL(/\/bbc-6-minute-english\/climate-change-extreme-weather\/practice$/u);
   await expect(page.getByTestId('bbc-listening-practice-page')).toBeVisible();
+  await expect(page.locator('app-shell')).toHaveCount(0);
+  await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
   await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(13);
   await expect(page.getByTestId('submit-listening-attempt')).toBeDisabled();
   await expect(page.getByText('Correct answer:', { exact: false })).toHaveCount(0);

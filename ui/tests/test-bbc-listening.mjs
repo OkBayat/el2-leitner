@@ -27,11 +27,22 @@ const required = [
 for (const file of required) assert.ok(exists(file), `${file} is required for BBC listening practice.`);
 
 const routes = read('src/app/app.routes.ts');
+const shellOwner = "loadComponent: () => import('./shared/app-shell/app-shell.component')";
+const practiceRoute = "path: 'bbc-6-minute-english/:lessonSlug/practice'";
 assert.match(routes, /path: 'bbc-6-minute-english'/u, 'The BBC lesson catalog route must exist.');
+assert.equal(
+  routes.match(/path: 'bbc-6-minute-english\/:lessonSlug\/practice'/gu)?.length,
+  1,
+  'The selected BBC lesson must have exactly one practice-route owner.',
+);
 assert.match(
   routes,
-  /path: 'bbc-6-minute-english\/:lessonSlug\/practice'/u,
-  'The selected BBC lesson must have a dedicated practice route.',
+  /\{ path: 'bbc-6-minute-english\/:lessonSlug\/practice', canActivate: \[authGuard\], loadComponent:/u,
+  'The distraction-free BBC practice page must remain authenticated.',
+);
+assert.ok(
+  routes.indexOf(practiceRoute) < routes.indexOf(shellOwner),
+  'BBC practice must be routed before and outside AppShell.',
 );
 
 for (const component of [
@@ -48,6 +59,7 @@ for (const component of [
 const practice = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.ts');
 const template = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.html');
 assert.match(practice, /FormRecord<FormControl<string>>/u, 'Dynamic answers must use typed reactive forms.');
+assert.match(practice, /toSignal\(/u, 'Answer progress must react to typed form value changes under OnPush.');
 assert.match(template, /mat-radio-group/u, 'Single-choice IELTS questions must use Material radio controls.');
 assert.match(template, /data-testid="submit-listening-attempt"/u, 'The complete exercise needs one stable submit action.');
 assert.match(template, /\[readonly\]="submitted\(\)"/u, 'Text answers must be locked after submission.');
