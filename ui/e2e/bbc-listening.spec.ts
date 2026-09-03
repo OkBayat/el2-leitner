@@ -18,7 +18,7 @@ async function learningState(page: Page): Promise<any> {
   });
 }
 
-test('BBC listening keeps IELTS grading isolated until the learner adds a wrong word to House 1', async ({ page }) => {
+test('BBC listening keeps IELTS grading isolated until the learner explicitly adds a non-numeric mistake to House 1', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -55,15 +55,15 @@ test('BBC listening keeps IELTS grading isolated until the learner adds a wrong 
     3: 'typhoons',
     4: 'tropical',
     5: 'slowly',
-    9: 'coast',
-    10: 'sea levels',
+    9: 'inland',
+    10: 'coast',
     11: '10 metres',
     12: '2C',
   };
   for (const [number, answer] of Object.entries(textAnswers)) {
     await page.getByTestId(`listening-answer-${number}`).fill(answer);
   }
-  await page.getByTestId('listening-option-6-B').getByRole('radio').check();
+  await page.getByTestId('listening-option-6-A').getByRole('radio').check();
   await page.getByTestId('listening-option-7-A').getByRole('radio').check();
   await page.getByTestId('listening-option-8-A').getByRole('radio').check();
 
@@ -75,18 +75,21 @@ test('BBC listening keeps IELTS grading isolated until the learner adds a wrong 
   );
   await page.getByTestId('submit-listening-attempt').click();
   const submitPayload = await (await submitResponsePromise).json();
-  expect(submitPayload.score).toEqual({ correct: 10, wrong: 3, total: 13, percentage: 76.9 });
+  expect(submitPayload.score).toEqual({ correct: 9, wrong: 4, total: 13, percentage: 69.2 });
 
   const score = page.getByTestId('listening-score');
-  await expect(score).toContainText('10 / 13');
-  await expect(score).toContainText('76.9%');
-  await expect(page.getByTestId('listening-question-9')).toHaveClass(/incorrect/u);
-  await expect(page.getByTestId('listening-question-9')).toContainText('Correct answer: inland');
+  await expect(score).toContainText('9 / 13');
+  await expect(score).toContainText('69.2%');
+  await expect(page.getByTestId('listening-question-6')).toHaveClass(/incorrect/u);
+  await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
+  await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
   await expect(page.getByTestId('listening-question-13')).toContainText('Your answer: No answer');
-  await expect(page.getByTestId('add-listening-word-9')).toBeVisible();
+
+  await expect(page.getByTestId('add-listening-word-6')).toBeVisible();
+  await expect(page.getByTestId('add-listening-word-10')).toBeVisible();
   await expect(page.getByTestId('add-listening-word-12')).toHaveCount(0);
-  await expect(page.getByTestId('add-listening-word-13')).toHaveCount(0);
+  await expect(page.getByTestId('add-listening-word-13')).toBeVisible();
 
   const stateAfterSubmit = await learningState(page);
   expect(stateAfterSubmit).toEqual(stateBefore);
@@ -96,17 +99,17 @@ test('BBC listening keeps IELTS grading isolated until the learner adds a wrong 
     && new URL(response.url()).pathname === '/api/state'
     && response.status() === 200
   );
-  await page.getByTestId('add-listening-word-9').click();
+  await page.getByTestId('add-listening-word-10').click();
   await savePromise;
-  await expect(page.getByTestId('add-listening-word-9')).toContainText('Added to House 1');
-  await expect(page.getByTestId('add-listening-word-9')).toBeDisabled();
+  await expect(page.getByTestId('add-listening-word-10')).toContainText('Added to House 1');
+  await expect(page.getByTestId('add-listening-word-10')).toBeDisabled();
 
   const stateAfterCapture = await learningState(page);
-  const inland = stateAfterCapture.state.words.find((word: any) =>
-    String(word.term).toLowerCase() === 'inland'
-    || word.accepted?.some((accepted: string) => accepted.toLowerCase() === 'inland')
+  const seaLevels = stateAfterCapture.state.words.find((word: any) =>
+    String(word.term).toLowerCase() === 'sea levels'
+    || word.accepted?.some((accepted: string) => accepted.toLowerCase() === 'sea levels')
   );
-  expect(inland).toBeTruthy();
-  expect(inland.box).toBe(1);
-  expect(inland.addedSource).toBe('listening-mistake');
+  expect(seaLevels).toBeTruthy();
+  expect(seaLevels.box).toBe(1);
+  expect(seaLevels.addedSource).toBe('listening-mistake');
 });
