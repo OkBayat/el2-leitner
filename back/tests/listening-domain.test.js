@@ -67,7 +67,8 @@ describe("BBC listening lesson definition", () => {
     }
 
     const test1 = parsed.tests[0].groups.flatMap((group) => group.questions);
-    assert.match(test1[0].prompt, /laptops/iu);
+    assert.match(test1[0].prompt, /Screen time includes/iu);
+    assert.equal(test1[0].acceptedAnswers[0].text, "laptops");
     assert.match(test1[1].prompt, /Australia/iu);
     assert.match(test1[2].prompt, /University of/iu);
     assert.match(test1[3].prompt, /intentional/iu);
