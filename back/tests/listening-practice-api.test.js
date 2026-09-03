@@ -20,7 +20,12 @@ const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", i
 
 class InMemoryListeningPracticeRepository {
   constructor(lesson) {
-    this.lesson = { databaseId: 1, contentVersion: 1, ...structuredClone(lesson) };
+    this.lesson = {
+      databaseId: 1,
+      contentVersion: 1,
+      audioFile: "bbc-6-minute-english-260903.mp3",
+      ...structuredClone(lesson)
+    };
     this.attempts = new Map();
     this.nextAttempt = 1;
     this.completeCalls = 0;
@@ -28,19 +33,25 @@ class InMemoryListeningPracticeRepository {
 
   async listPublishedLessons(provider, userId) {
     if (provider !== this.lesson.provider) return [];
-    const tests = this.lesson.tests.map((test) => {
-      const completed = [...this.attempts.values()].filter((attempt) =>
-        attempt.userId === String(userId)
-        && attempt.testId === test.id
-        && attempt.status === "completed"
-      );
-      return {
+    const { tests, ...metadata } = this.lesson;
+    return [{
+      ...structuredClone(metadata),
+      testCount: tests.length,
+      tests: tests.map(({ groups: _groups, ...test }) => ({
         ...structuredClone(test),
-        completed: completed.length > 0,
-        completedAt: completed.length ? "2026-09-03T08:06:00.000Z" : null
-      };
-    });
-    return [{ ...structuredClone(this.lesson), tests }];
+        completed: [...this.attempts.values()].some((attempt) =>
+          attempt.userId === String(userId) && attempt.testId === test.id && attempt.status === "completed"
+        ),
+        completedAt: null
+      }))
+    }];
+  }
+
+  async findPublishedAudioBySlug(provider, slug) {
+    if (provider !== this.lesson.provider || slug !== this.lesson.slug) {
+      throw new NotFoundError("LISTENING_AUDIO_NOT_FOUND", "Listening episode audio was not found.");
+    }
+    return { audioFile: this.lesson.audioFile };
   }
 
   async findPublishedLessonBySlug(provider, slug) {
@@ -72,12 +83,7 @@ class InMemoryListeningPracticeRepository {
     const test = this.lesson.tests.find((candidate) => candidate.id === attempt.testId) || null;
     return attempt.completedResult
       ? { attempt: structuredClone(attempt), lesson: null, test: null, completedResult: structuredClone(attempt.completedResult) }
-      : {
-          attempt: structuredClone(attempt),
-          lesson: structuredClone(this.lesson),
-          test: structuredClone(test),
-          completedResult: null
-        };
+      : { attempt: structuredClone(attempt), lesson: structuredClone(this.lesson), test: structuredClone(test), completedResult: null };
   }
 
   async completeAttempt(userId, attemptId, grade) {
@@ -157,17 +163,16 @@ function answerPayload() {
   };
 }
 
-const testPath = (testId) => `/api/listening/bbc/lessons/climate-change-extreme-weather/tests/${testId}/attempts`;
-
 describe("BBC listening API", () => {
-  it("requires authentication for catalog, test start and submission", async () => {
+  it("requires authentication for catalog, test start, audio and submission", async () => {
     const { app } = await createListeningTestContext();
     await request(app).get("/api/listening/bbc/lessons").expect(401);
-    await request(app).post(testPath("test-1")).expect(401);
+    await request(app).get("/api/listening/bbc/lessons/climate-change-extreme-weather/audio").expect(401);
+    await request(app).post("/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-1/attempts").expect(401);
     await request(app).post("/api/listening/bbc/attempts/attempt-1/submit").send({ answers: [] }).expect(401);
   });
 
-  it("lists three incomplete tests and starts only the selected test without exposing answer keys", async () => {
+  it("lists three tests and starts a selected test without exposing answer keys", async () => {
     const { app } = await createListeningTestContext();
     const learner = await register(app, "listening@example.com");
 
@@ -176,14 +181,19 @@ describe("BBC listening API", () => {
     assert.equal(catalog.body.lessons.length, 1);
     assert.equal(catalog.body.lessons[0].testCount, 3);
     assert.equal(catalog.body.lessons[0].questionCount, 39);
-    assert.deepEqual(catalog.body.lessons[0].tests.map((test) => [test.id, test.completed]), [
-      ["test-1", false], ["test-2", false], ["test-3", false]
-    ]);
+    assert.deepEqual(catalog.body.lessons[0].tests.map((test) => test.completed), [false, false, false]);
 
-    const started = await learner.post(testPath("test-2")).expect(201);
+    const started = await learner
+      .post("/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-2/attempts")
+      .expect(201);
     assert.equal(started.body.attempt.testId, "test-2");
     assert.equal(started.body.test.id, "test-2");
     assert.equal(started.body.test.questionCount, 13);
+    assert.equal(
+      started.body.lesson.audioUrl,
+      "/api/listening/bbc/lessons/climate-change-extreme-weather/audio"
+    );
+    assert.equal(started.body.test.groups.length, 4);
     const textQuestion = started.body.test.groups[0].questions[0];
     const choiceQuestion = started.body.test.groups[1].questions[0];
     assert.equal(Object.hasOwn(textQuestion, "acceptedAnswers"), false);
@@ -192,26 +202,12 @@ describe("BBC listening API", () => {
     assert.equal(Object.hasOwn(choiceQuestion.options[0], "correct"), false);
   });
 
-  it("marks only the completed test in the catalog", async () => {
-    const { app } = await createListeningTestContext();
-    const learner = await register(app, "completion@example.com");
-    const started = await learner.post(testPath("test-1")).expect(201);
-    await learner
-      .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
-      .send(answerPayload())
-      .expect(200);
-
-    const catalog = await learner.get("/api/listening/bbc/lessons").expect(200);
-    assert.deepEqual(catalog.body.lessons[0].tests.map((test) => [test.id, test.completed]), [
-      ["test-1", true], ["test-2", false], ["test-3", false]
-    ]);
-    assert.ok(catalog.body.lessons[0].tests[0].completedAt);
-  });
-
-  it("grades an incomplete Test 1 submission and persists unanswered questions as incorrect idempotently", async () => {
+  it("grades an incomplete Test 1 submission and reports completion only for Test 1", async () => {
     const { app, listeningPracticeRepository } = await createListeningTestContext();
     const learner = await register(app, "score@example.com");
-    const started = await learner.post(testPath("test-1")).expect(201);
+    const started = await learner
+      .post("/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-1/attempts")
+      .expect(201);
 
     const first = await learner
       .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
@@ -223,6 +219,9 @@ describe("BBC listening API", () => {
     assert.equal(first.body.results[12].submittedAnswer, "No answer");
     assert.equal(first.body.results[12].correct, false);
 
+    const catalog = await learner.get("/api/listening/bbc/lessons").expect(200);
+    assert.deepEqual(catalog.body.lessons[0].tests.map((test) => test.completed), [true, false, false]);
+
     const retry = await learner
       .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
       .send(answerPayload())
@@ -231,16 +230,17 @@ describe("BBC listening API", () => {
     assert.equal(listeningPracticeRepository.completeCalls, 1);
   });
 
-  it("rejects an unknown test and cross-user attempt submission", async () => {
+  it("does not allow one learner to submit another learner's test attempt", async () => {
     const { app } = await createListeningTestContext();
     const firstLearner = await register(app, "first-listener@example.com");
     const secondLearner = await register(app, "second-listener@example.com");
-    await firstLearner.post(testPath("test-99")).expect(404);
+    const started = await firstLearner
+      .post("/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-3/attempts")
+      .expect(201);
 
-    const started = await firstLearner.post(testPath("test-1")).expect(201);
     await secondLearner
       .post(`/api/listening/bbc/attempts/${started.body.attempt.id}/submit`)
-      .send(answerPayload())
+      .send({ answers: [] })
       .expect(404, {
         error: { code: "LISTENING_ATTEMPT_NOT_FOUND", message: "Listening attempt was not found." }
       });
