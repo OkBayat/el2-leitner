@@ -4,7 +4,7 @@ import { NATURAL_FALLBACK_TEMPLATES, TARGET } from "./SentenceTemplateCatalog.js
 import { templatesFor } from "./SentenceTemplateSelector.js";
 
 export const SENTENCE_CORPUS_SOURCE = "ielts-listening-core-1500";
-export const SENTENCE_CORPUS_VERSION = "2026-09-02.5";
+export const SENTENCE_CORPUS_VERSION = "2026-09-03.2";
 export const SENTENCES_PER_SOURCE_ITEM = 3;
 export const EXPECTED_SENTENCE_SOURCE_ITEMS = 1_500;
 
@@ -47,9 +47,6 @@ function sentenceFor({ template, answerText, variantNumber }) {
   for (const candidate of candidates) {
     const sentenceText = instantiateTemplate(candidate, answerText);
     if (targetOccurrenceIndexes(sentenceText, answerText).length !== 1) continue;
-    if ([`“${answerText}”`, `"${answerText}"`, `'${answerText}'`].some((quoted) => sentenceText.includes(quoted))) {
-      continue;
-    }
     if (sentenceText.length > MAX_SENTENCE_LENGTH) {
       throw new ValidationError(
         "SENTENCE_TOO_LONG",
