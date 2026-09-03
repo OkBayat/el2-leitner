@@ -57,9 +57,9 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
   for (const [number, answer] of Object.entries(textAnswers)) {
     await page.getByTestId(`listening-answer-${number}`).fill(answer);
   }
-  await page.getByTestId('listening-option-6-B').click();
-  await page.getByTestId('listening-option-7-A').click();
-  await page.getByTestId('listening-option-8-A').click();
+  await page.getByTestId('listening-option-6-B').getByRole('radio').check();
+  await page.getByTestId('listening-option-7-A').getByRole('radio').check();
+  await page.getByTestId('listening-option-8-A').getByRole('radio').check();
 
   await expect(page.getByText('13 / 13 answered')).toBeVisible();
   const submitResponsePromise = page.waitForResponse((response) =>
@@ -80,7 +80,7 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise',
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
   await expect(page.getByTestId('listening-question-13')).toContainText('Correct answer: the Arctic');
   await expect(page.getByTestId('listening-answer-1')).not.toBeEditable();
-  await expect(page.getByTestId('listening-option-6-B').locator('input')).toBeDisabled();
+  await expect(page.getByTestId('listening-option-6-B').getByRole('radio')).toBeDisabled();
 
   const stateAfter = await learningState(page);
   expect(stateAfter).toEqual(stateBefore);
