@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -35,6 +37,23 @@ export class BbcListeningPracticePageComponent implements OnInit {
   readonly resultsByQuestion = computed(() => new Map(
     (this.session.result()?.results ?? []).map((result) => [result.questionId, result]),
   ));
+  readonly answerValues = toSignal(
+    this.answers.valueChanges.pipe(map(() => this.answers.getRawValue())),
+    { initialValue: this.answers.getRawValue() },
+  );
+  readonly answeredCount = computed(() => {
+    const lesson = this.session.lesson();
+    return lesson ? countAnsweredListeningQuestions(lesson, this.answerValues()) : 0;
+  });
+  readonly canSubmit = computed(() => {
+    const lesson = this.session.lesson();
+    return Boolean(
+      lesson
+      && !this.submitted()
+      && !this.session.submitting()
+      && this.answeredCount() === lesson.questionCount,
+    );
+  });
 
   private readonly route = inject(ActivatedRoute);
 
@@ -67,21 +86,6 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   resultFor(questionId: string): ListeningQuestionResult | null {
     return this.resultsByQuestion().get(questionId) ?? null;
-  }
-
-  answeredCount(): number {
-    const lesson = this.session.lesson();
-    return lesson ? countAnsweredListeningQuestions(lesson, this.answers.getRawValue()) : 0;
-  }
-
-  canSubmit(): boolean {
-    const lesson = this.session.lesson();
-    return Boolean(
-      lesson
-      && !this.submitted()
-      && !this.session.submitting()
-      && this.answeredCount() === lesson.questionCount,
-    );
   }
 
   async submit(): Promise<void> {
