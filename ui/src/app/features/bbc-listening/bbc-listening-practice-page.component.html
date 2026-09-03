@@ -23,6 +23,8 @@
         >Open BBC episode</a>
       </header>
 
+      <app-listening-audio-player [src]="lesson.audioUrl" />
+
       @if (session.result(); as result) {
         <section class="score-card" data-testid="listening-score" aria-live="polite">
           <div>
