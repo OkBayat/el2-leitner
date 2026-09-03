@@ -6,21 +6,65 @@ Listening Practice is an independent Vocora bounded context for lesson-based, se
 
 1. Open **BBC 6 Minute English** from Home or the application menu.
 2. Choose a published lesson.
-3. Open the official BBC audio page in a separate tab and listen without reading its transcript.
-4. Answer as many text-completion and single-choice questions as possible.
-5. Submit the whole exercise; unanswered questions are graded as incorrect.
-6. Review the server-calculated score and the correct/incorrect result for every question.
-7. For an incorrect answer whose correct solution contains text but no numeric characters, optionally choose **Add to House 1**.
+3. Choose one of that lesson's IELTS-style tests.
+4. Open the official BBC episode in a separate tab and listen without reading its transcript.
+5. Answer as many questions as possible and submit when ready; unanswered questions are graded as incorrect.
+6. Review the server-calculated score and per-question feedback.
+7. Return to the lesson catalog. The completed test is marked **✓ Completed** while unfinished tests remain available.
+8. For an incorrect answer whose correct solution contains text but no numeric characters, optionally choose **Add to House 1**.
 
-The first built-in lesson is episode `260903`, **How is climate change affecting extreme weather?**, with 13 IELTS-style questions in four groups.
+The first built-in lesson is episode `260903`, **How is climate change affecting extreme weather?**, with **3 independent IELTS-style tests of 13 questions each** (39 questions in total).
+
+## Lesson and test aggregate
+
+A BBC episode is one Listening lesson aggregate. A lesson contains one or more independently selectable tests:
+
+```text
+Listening lesson
+├── catalog metadata
+├── Test 1
+│   ├── question groups
+│   ├── questions/options
+│   └── private answer keys
+├── Test 2
+└── Test N
+```
+
+The number of tests is data-driven; the UI does not assume exactly three. New tests can be added to a lesson JSON without introducing new question tables or new Angular pages.
+
+Each test has:
+
+- a stable `id`
+- a display `title`
+- a sequential `position`
+- its own ordered IELTS question groups
+- its own `questionCount`
+
+Question numbers restart from 1 inside every test. Question, group, option, and test IDs remain unique inside the lesson aggregate.
+
+## Completion tracking
+
+Completion belongs to a **user + lesson + test**, not to the lesson as a whole.
+
+`listening_attempts.test_id` records which test an attempt belongs to. A test becomes completed after at least one successful submission. Retaking a completed test is still allowed and does not make the other tests completed.
+
+The lesson catalog query returns each test with:
+
+```text
+completed: boolean
+completedAt: ISO date-time | null
+```
+
+This keeps the card lightweight while making completion state persistent across devices and sessions.
 
 ## Boundaries
 
 ```text
 Listening Practice
-├── shared lesson aggregates
-│   └── groups, questions, options and private answer keys in versioned JSON
+├── shared lesson aggregate
+│   └── tests, groups, questions, options and private answer keys in versioned JSON
 └── learner attempts
+    ├── selected test id
     └── submitted-answer and result snapshots in JSON
 
 Explicit learner action only
@@ -34,83 +78,103 @@ That action reuses Vocora's existing learning-state persistence instead of givin
 
 ## Why lesson content is JSON
 
-A listening lesson is authored, validated, loaded and displayed as one aggregate. Vocora does not currently query or edit individual questions through SQL. Keeping the exercise in one versioned JSON document therefore follows KISS and YAGNI while making new IELTS task types easier to add.
+A lesson and all of its tests are authored, validated, loaded, and versioned as one aggregate. Vocora does not currently query or edit individual listening questions through SQL. Keeping the exercise tree in one versioned JSON document follows KISS/YAGNI and makes new IELTS task types and additional tests easy to add.
 
-The JSON aggregate contains ordered question groups, IELTS instructions, prompts, multiple-choice options, private accepted answers, correct option IDs, and an explicit `schemaVersion`. Relational columns remain only for metadata that the catalog filters or sorts by, such as provider, slug, episode date, status and question count.
+`listening_lessons.content_json` contains:
+
+- `schemaVersion`
+- ordered tests
+- ordered question groups and IELTS instructions
+- prompts
+- multiple-choice options
+- private accepted answers and correct option IDs
+
+Relational columns remain only for metadata used to identify, filter, sort, version, or summarize lessons.
 
 ## CQRS application layer
 
 Queries and commands are separate application use cases:
 
-- `ListListeningLessons` — catalog query
-- `StartListeningAttempt` — starts a server-owned attempt and returns a public lesson projection
-- `SubmitListeningAttempt` — grades through the Domain layer and completes the attempt atomically
+- `ListListeningLessons` — catalog query including per-test completion for the authenticated learner
+- `StartListeningAttempt` — starts the specifically selected test and returns only its public projection
+- `SubmitListeningAttempt` — reloads the attempt's private test, grades it through the Domain layer, and completes the attempt atomically
 - `ListeningMistakePracticeService` — explicit UI application service that hands a validated missed answer to the existing learning-state command path
 
-The Listening Domain contains lesson validation, strict IELTS answer normalization, grading, and the rule that only an incorrect non-numeric textual answer can become a vocabulary-capture candidate. It has no Express or MySQL dependency. MySQL access for listening attempts remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
+The Listening Domain contains lesson/test validation, strict IELTS answer normalization, and grading. It has no Express, Angular, or MySQL dependency. MySQL access for listening attempts remains behind `MySqlListeningPracticeRepository`; vocabulary capture uses the existing Learning persistence boundary.
 
 ## Answer-key security
 
-Private answer keys live inside `listening_lessons.content_json`, but the repository and application projection remove them before a lesson is returned to the browser. Public question DTOs contain only prompts and choice options. A learner submits question IDs and values; the server reloads the private aggregate, grades the attempt, stores immutable JSON snapshots, and only then returns feedback.
+Private answer keys live inside `listening_lessons.content_json`, but the repository/application projection removes them before a selected test is returned to the browser. The browser receives only prompts and visible options. The server reloads the private test on submit, grades it, stores immutable snapshots, and only then returns feedback.
 
 Text matching normalizes only presentation-equivalent input: Unicode NFKC, surrounding/repeated whitespace, English letter case, curly apostrophes, and Unicode dash variants. Spelling, singular/plural forms, and different words are not corrected or accepted automatically unless explicitly authored as alternatives.
 
-## House 1 capture policy
-
-The House 1 action is based on answer content rather than question type.
-
-Eligible examples:
-
-- `inland`
-- `sea levels`
-- `the Arctic`
-- textual correct options from multiple-choice questions
-
-For multiple choice, the display label (`A.`, `B.`, or `C.`) is removed before capture, so `B. They remain in the same area for longer.` becomes `They remain in the same area for longer.`.
-
-Ineligible examples are any answers containing a numeric character:
-
-- `1C`
-- `10`
-- `10 metres`
-- Unicode-digit equivalents
-
-This rule deliberately allows multi-word phrases and multiple-choice answer text while excluding numeric answers.
-
 ## IELTS content contract
 
-Listening content must preserve genuine IELTS Listening behavior rather than only looking IELTS-like:
+Every test must behave like IELTS Listening rather than merely look similar:
 
-- questions are authored in the same chronological order in which their answers appear in the audio
-- question `N` must be answerable before question `N+1` unless an official IELTS task type intentionally behaves differently, such as matching
-- group boundaries, instructions, word/number limits, and response types follow real IELTS Listening conventions
-- distractors are plausible and based on the audio context
-- spelling and word-form rules remain strict
+- questions follow the chronological order in which their answers occur in the audio
+- question `N` is answerable before `N+1` unless the official IELTS task type intentionally behaves differently
+- instructions, group boundaries, word/number limits, response types, and distractors follow IELTS conventions
+- distractors are plausible and grounded in the episode
+- spelling and word-form grading stays strict
+
+The first lesson's three tests are all authored against the same BBC episode but use different IELTS-style prompts and task mixes while preserving audio order.
+
+## House 1 capture policy
+
+The House 1 action is based on answer content rather than question type. Any incorrect correct-answer text containing letters and **no numeric character** is eligible, including multi-word answers and textual Multiple Choice options. For Multiple Choice, the display label (`A.`, `B.`, `C.`) is removed before capture.
+
+Eligible examples include `inland`, `sea levels`, `the Arctic`, and textual Multiple Choice answers. Ineligible examples include `1C`, `10`, `10 metres`, and Unicode-digit equivalents.
 
 ## Content lifecycle
 
-Built-in lessons are version-controlled JSON under `back/data/listening/<provider>/`. `npm run db:validate:listening` validates content before tests and deployment. `db:setup` seeds definitions transactionally. SHA-256 makes unchanged seeds true no-ops; content changes increment `content_version`; open attempts cannot be graded against a newer version.
+Built-in lessons are version-controlled JSON under `back/data/listening/<provider>/`. The current aggregate schema is `schemaVersion: 2`, where a lesson owns a `tests` array.
+
+`npm run db:validate:listening` validates content before tests and deployment. `db:setup` seeds definitions transactionally. SHA-256 makes unchanged seeds true no-ops; content changes increment `content_version`; open attempts cannot be graded against a newer lesson version.
 
 ## Database
 
-Migration `007_listening_practice.sql` creates only two Listening tables:
+Migration `007_listening_practice.sql` creates the two core Listening tables:
 
-- `listening_lessons` — searchable lesson metadata plus the complete versioned `content_json` aggregate
-- `listening_attempts` — ownership, lifecycle and score columns plus `answers_json` and `result_json` snapshots
+- `listening_lessons` — searchable lesson metadata plus complete versioned `content_json`
+- `listening_attempts` — ownership, lifecycle, score, `answers_json`, and `result_json`
 
-Vocabulary captured from a mistake uses the existing vocabulary, collection, and learning-progress tables rather than adding Listening-specific storage.
+Migration `008_listening_tests.sql` adds `test_id` to `listening_attempts`, backfills existing attempts to `test-1`, and adds indexes for per-test completion queries.
+
+No per-question relational tables are introduced.
 
 ## API
 
 | Method | Path | Purpose |
 |---|---|---|
-| `GET` | `/api/listening/bbc/lessons` | List published BBC lessons |
-| `POST` | `/api/listening/bbc/lessons/:lessonSlug/attempts` | Start an attempt and receive questions without keys |
-| `POST` | `/api/listening/bbc/attempts/:attemptId/submit` | Grade, persist, and return the result |
-| `PUT` | `/api/state` | Existing learning command reused only when the learner explicitly captures a missed answer |
+| `GET` | `/api/listening/bbc/lessons` | List lessons plus the authenticated learner's per-test completion state |
+| `POST` | `/api/listening/bbc/lessons/:lessonSlug/tests/:testId/attempts` | Start the selected test and receive its questions without answer keys |
+| `POST` | `/api/listening/bbc/attempts/:attemptId/submit` | Grade and complete that attempt |
+| `PUT` | `/api/state` | Existing Learning command reused only when the learner explicitly captures a missed answer |
 
-All endpoints require authentication and use `Cache-Control: no-store`. Submission is idempotent.
+All endpoints require authentication and use `Cache-Control: no-store`. Submission remains idempotent.
+
+## Angular
+
+The lesson card renders `lesson.tests` dynamically. Each test button routes to:
+
+```text
+/bbc-6-minute-english/:lessonSlug/tests/:testId/practice
+```
+
+The practice page remains outside `AppShell`, reads both route parameters, and renders only the selected test. Components remain standalone, `OnPush`, Material-based, and use separate `.ts`, `.html`, and `.scss` files with typed reactive forms.
 
 ## Tests
 
-Coverage includes Domain validation/grading, incomplete submissions, JSON seed versioning, CQRS use cases, authenticated API behavior, MySQL JSON persistence, single/multi-word/multiple-choice mistake capture, ASCII and Unicode numeric rejection, existing/mastered vocabulary reset, canonical vocabulary reload, Angular unit/architecture tests, and production Playwright coverage proving that `sea levels` can be added to House 1 while `1C` cannot.
+Coverage includes:
+
+- schema-v2 Domain validation for multiple ordered tests
+- 13 sequential questions per test and IELTS audio-order regression
+- JSON seed idempotency for 3 tests / 39 questions
+- selected-test CQRS and unknown-test rejection
+- per-user/per-test completion query behavior
+- authenticated API selection, completion, answer-key non-disclosure, idempotent submission, and cross-user isolation
+- MySQL test-aware persistence and database verification
+- Angular domain/API/application/page/architecture tests
+- production Playwright flow: all three tests initially show `Start`, Test 1 is completed, and the catalog then shows `✓ Completed` only for Test 1
+- existing House 1 mistake-capture coverage, including multi-word/Multiple Choice answers and numeric rejection
