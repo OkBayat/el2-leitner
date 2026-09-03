@@ -87,16 +87,10 @@ function assertTextAnswersFitGroupLimits(questions, maxWords, maxNumbers, source
     for (const [index, answer] of question.acceptedAnswers.entries()) {
       const counts = answerPartCounts(answer.text);
       if (maxWords !== null && counts.words > maxWords) {
-        fail(
-          sourceName,
-          `${groupId} ${question.id} answer ${index + 1} exceeds maxWords (${maxWords}).`
-        );
+        fail(sourceName, `${groupId} ${question.id} answer ${index + 1} exceeds maxWords (${maxWords}).`);
       }
       if (maxNumbers !== null && counts.numbers > maxNumbers) {
-        fail(
-          sourceName,
-          `${groupId} ${question.id} answer ${index + 1} exceeds maxNumbers (${maxNumbers}).`
-        );
+        fail(sourceName, `${groupId} ${question.id} answer ${index + 1} exceeds maxNumbers (${maxNumbers}).`);
       }
     }
   }
@@ -179,9 +173,23 @@ function parseGroup(raw, sourceName, ids) {
   return { id, position, heading, taskType, instruction, answerInstruction, maxWords, maxNumbers, questions };
 }
 
+function parseTest(raw, sourceName, ids) {
+  const input = object(raw, sourceName, "test");
+  const id = string(input.id, sourceName, "test id", { max: 64, pattern: ID_PATTERN });
+  if (ids.testIds.has(id)) fail(sourceName, `Test id ${id} is duplicated.`);
+  ids.testIds.add(id);
+  const title = string(input.title, sourceName, `${id} title`, { max: 255 });
+  const position = positiveInteger(input.position, sourceName, `${id} position`);
+  const groups = array(input.groups, sourceName, `${id} groups`).map((group) => parseGroup(group, sourceName, ids));
+  assertOrderedSequence(groups.map((group) => group.position), sourceName, `${id} group positions`);
+  const questions = groups.flatMap((group) => group.questions);
+  assertOrderedSequence(questions.map((question) => question.number), sourceName, `${id} question numbers`);
+  return { id, title, position, questionCount: questions.length, groups };
+}
+
 export function parseListeningLessonDefinition(raw, sourceName = "listening lesson") {
   const input = object(raw, sourceName, "lesson");
-  if (Number(input.schemaVersion) !== 1) fail(sourceName, "schemaVersion must be 1.");
+  if (Number(input.schemaVersion) !== 2) fail(sourceName, "schemaVersion must be 2.");
 
   const publicId = string(input.publicId, sourceName, "publicId", { max: 64, pattern: ID_PATTERN });
   const provider = string(input.provider, sourceName, "provider", { max: 64, pattern: PROVIDER_PATTERN });
@@ -203,14 +211,12 @@ export function parseListeningLessonDefinition(raw, sourceName = "listening less
   const publishedAt = optionalString(input.publishedAt, sourceName, "publishedAt", { max: 40 });
   if (publishedAt && Number.isNaN(Date.parse(publishedAt))) fail(sourceName, "publishedAt must be an ISO date-time.");
 
-  const ids = { groupIds: new Set(), questionIds: new Set(), optionIds: new Set() };
-  const groups = array(input.groups, sourceName, "groups").map((group) => parseGroup(group, sourceName, ids));
-  assertOrderedSequence(groups.map((group) => group.position), sourceName, "group positions");
-  const questions = groups.flatMap((group) => group.questions);
-  assertOrderedSequence(questions.map((question) => question.number), sourceName, "question numbers");
+  const ids = { testIds: new Set(), groupIds: new Set(), questionIds: new Set(), optionIds: new Set() };
+  const tests = array(input.tests, sourceName, "tests").map((test) => parseTest(test, sourceName, ids));
+  assertOrderedSequence(tests.map((test) => test.position), sourceName, "test positions");
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     publicId,
     provider,
     slug,
@@ -221,13 +227,15 @@ export function parseListeningLessonDefinition(raw, sourceName = "listening less
     sourceUrl,
     status,
     publishedAt,
-    questionCount: questions.length,
-    groups
+    testCount: tests.length,
+    questionCount: tests.reduce((total, test) => total + test.questionCount, 0),
+    tests
   };
 }
 
-export function flattenListeningQuestions(lesson) {
-  return lesson.groups.flatMap((group) => group.questions.map((question) => ({ ...question, group })));
+export function flattenListeningQuestions(test) {
+  if (!test || !Array.isArray(test.groups)) return [];
+  return test.groups.flatMap((group) => group.questions.map((question) => ({ ...question, group })));
 }
 
 export { BLANK_TOKEN };
