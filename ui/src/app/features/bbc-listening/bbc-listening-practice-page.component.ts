@@ -17,6 +17,7 @@ import {
   countAnsweredListeningQuestions,
   splitListeningBlankPrompt,
 } from '../../domain/listening-practice/listening-practice';
+import { ListeningAudioPlayerComponent } from './listening-audio-player.component';
 
 @Component({
   selector: 'app-bbc-listening-practice-page',
@@ -27,6 +28,7 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatRadioModule,
+    ListeningAudioPlayerComponent,
   ],
   templateUrl: 'bbc-listening-practice-page.component.html',
   styleUrl: 'bbc-listening-practice-page.component.scss',
