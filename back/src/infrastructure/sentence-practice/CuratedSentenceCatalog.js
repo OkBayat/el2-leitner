@@ -15,6 +15,12 @@ const MAX_SENTENCE_LENGTH = 1_000;
 const WORD_CHARACTER_PATTERN = /[\p{L}\p{N}]/u;
 const IMPORTED_GENERIC_DISABLED_PATTERN = /Generic sentence generation for imported vocabulary books is disabled/u;
 const META_SENTENCE_PATTERN = /(discussion\s+included\s+useful\s+information\s+about|practical\s+example|short\s+example|example\s+using|example\s+with|clear\s+example\s+involving|lesson\s+returned\s+to|teacher\s+returned\s+to|lecturer\s+returned\s+to|mentioned.+later\s+in\s+the\s+lesson|used\s+in\s+context|reviewed\s+how.+is\s+used|as\s+a\s+description|best\s+description|naturally\s+included|useful\s+context\s+for|term.+came\s+up\s+during\s+the\s+discussion|works\s+in\s+context)/iu;
+const REQUIRED_CURATED_SENTENCES = [
+  "Please install the software before the meeting.",
+  "It is easy to get into debt if you spend more than you earn.",
+  "Many people get into debt when they rely too much on credit cards.",
+  "Students can get into debt if they borrow more money than they can repay.",
+];
 
 let catalogPromise;
 
@@ -139,7 +145,7 @@ function sentenceVariants(item, templates, { validate = true } = {}) {
 
 async function buildCuratedSentenceCatalog() {
   const sources = await loadSentenceSources();
-  const distinct = new Set();
+  const distinct = new Set(REQUIRED_CURATED_SENTENCES.map(validateCuratedSentenceText));
   const missingImportedItems = [];
 
   for (const source of sources) {
