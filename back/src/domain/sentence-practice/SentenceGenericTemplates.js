@@ -7,19 +7,18 @@ function categoryParts(category) {
     .filter(Boolean);
 }
 
-export function genericSourceTemplates(category, { allowImportedGeneric = false } = {}) {
+function importedBookParts(category) {
   const parts = categoryParts(category);
   if (!parts.length) return null;
   const root = parts[0];
-  const leaf = parts.at(-1).toLocaleLowerCase("en");
-  const fromImportedBook = /^(unit\s+\d+|file\s+\d+)/iu.test(root);
-  if (!fromImportedBook) return null;
+  if (!/^(unit\s+\d+|file\s+\d+)/iu.test(root)) return null;
+  return { leaf: parts.at(-1).toLocaleLowerCase("en") };
+}
 
-  if (!allowImportedGeneric) {
-    throw new Error(
-      "Generic sentence generation for imported vocabulary books is disabled; use the curated sentence catalog instead."
-    );
-  }
+export function legacyImportedSourceTemplates(category) {
+  const imported = importedBookParts(category);
+  if (!imported) return null;
+  const { leaf } = imported;
 
   if (["nouns", "compound nouns"].includes(leaf)) {
     return [
@@ -66,4 +65,13 @@ export function genericSourceTemplates(category, { allowImportedGeneric = false 
     `The term “${TARGET}” came up during the discussion.`,
     `The notes included another example with “${TARGET}”.`,
   ];
+}
+
+export function genericSourceTemplates(category) {
+  if (importedBookParts(category)) {
+    throw new Error(
+      "Generic sentence generation for imported vocabulary books is disabled; use the curated sentence catalog instead."
+    );
+  }
+  return null;
 }
