@@ -35,7 +35,7 @@
           "position": 2,
           "responseType": "text",
           "prompt": "Climate deals with changes over the {{blank}}.",
-          "answers": ["long term", "long-term"]
+          "answers": ["long term"]
         },
         {
           "id": "bbc-260903-question-3",

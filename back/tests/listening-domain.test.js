@@ -132,18 +132,20 @@ describe("Listening grading", () => {
     assert.equal(result.results[5].submittedAnswer, "B. They remain in the same area for longer.");
   });
 
-  it("keeps IELTS spelling strict and treats omitted answers as incorrect", async () => {
+  it("keeps IELTS spelling and grammar strict while treating omitted answers as incorrect", async () => {
     const result = gradeListeningAttempt(await lesson(), [
-      { questionId: "bbc-260903-question-1", value: "days" }
+      { questionId: "bbc-260903-question-1", value: "days" },
+      { questionId: "bbc-260903-question-2", value: "long-term" }
     ]);
     assert.equal(result.results[0].correct, false);
-    assert.equal(result.results[1].submittedAnswer, "No answer");
+    assert.equal(result.results[1].correct, false);
+    assert.equal(result.results[2].submittedAnswer, "No answer");
     assert.equal(result.score.correct, 0);
   });
 
-  it("accepts only explicitly authored British, American and numeric variants", async () => {
+  it("accepts explicitly authored variants and presentation-equivalent input", async () => {
     const result = gradeListeningAttempt(await lesson(), [
-      { questionId: "bbc-260903-question-2", value: "long–term" },
+      { questionId: "bbc-260903-question-2", value: "  LONG   TERM  " },
       { questionId: "bbc-260903-question-11", value: "ten meters" },
       { questionId: "bbc-260903-question-12", value: "1°C" },
       { questionId: "bbc-260903-question-13", value: "Arctic" }
