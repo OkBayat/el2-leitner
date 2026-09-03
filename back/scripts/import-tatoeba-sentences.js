@@ -88,34 +88,38 @@ function findBzipCommand() {
 async function* linesFrom(filePath) {
   let input;
   let child = null;
+  let childExit = null;
+  let childStderr = "";
   if (filePath.endsWith(".bz2")) {
     const { command, args } = findBzipCommand();
     child = spawn(command, [...args, filePath], { stdio: ["ignore", "pipe", "pipe"] });
-    let stderr = "";
     child.stderr.setEncoding("utf8");
-    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.stderr.on("data", (chunk) => { childStderr += chunk; });
+    childExit = new Promise((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", resolve);
+    });
     input = child.stdout;
-    child.__stderr = () => stderr;
   } else {
     input = createReadStream(filePath);
   }
 
   const reader = createInterface({ input, crlfDelay: Infinity });
+  let completed = false;
   try {
     for await (const line of reader) {
       if (line) yield line;
     }
+    completed = true;
   } finally {
     reader.close();
+    if (!completed && child && !child.killed) child.kill();
   }
 
-  if (child) {
-    const code = await new Promise((resolve, reject) => {
-      child.once("error", reject);
-      child.once("close", resolve);
-    });
+  if (childExit) {
+    const code = await childExit;
     if (code !== 0) {
-      throw new Error(`bzip2 failed for ${filePath}: ${child.__stderr().trim() || `exit ${code}`}`);
+      throw new Error(`bzip2 failed for ${filePath}: ${childStderr.trim() || `exit ${code}`}`);
     }
   }
 }
