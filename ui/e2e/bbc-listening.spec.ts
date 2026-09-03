@@ -18,28 +18,36 @@ async function learningState(page: Page): Promise<any> {
   });
 }
 
-test('BBC lesson offers multiple tests, in-app audio controls, completion tracking, and isolated mistake capture', async ({ page }) => {
+test('BBC lessons expose three tests each, in-app audio, completion tracking, and isolated mistake capture', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
   await page.getByTestId('open-bbc-listening').click();
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
   await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
-  await expect(page.getByText('How is climate change affecting extreme weather?')).toBeVisible();
-  await expect(page.getByText('3 IELTS-style tests · 39 questions in total')).toBeVisible();
-  await expect(page.getByTestId('start-bbc-test-1')).toContainText('Test 1');
-  await expect(page.getByTestId('start-bbc-test-1')).toContainText('Start');
-  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Test 2');
-  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Start');
-  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Test 3');
-  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Start');
+
+  const weatherLesson = page.getByTestId('bbc-lesson-climate-change-extreme-weather');
+  const screenTimeLesson = page.getByTestId('bbc-lesson-limiting-screen-time-for-children');
+  await expect(weatherLesson).toContainText('How is climate change affecting extreme weather?');
+  await expect(weatherLesson).toContainText('3 IELTS-style tests · 39 questions in total');
+  await expect(screenTimeLesson).toContainText('Limiting screen time for children');
+  await expect(screenTimeLesson).toContainText('3 IELTS-style tests · 39 questions in total');
+
+  for (const lesson of [weatherLesson, screenTimeLesson]) {
+    await expect(lesson.getByTestId('start-bbc-test-1')).toContainText('Test 1');
+    await expect(lesson.getByTestId('start-bbc-test-1')).toContainText('Start');
+    await expect(lesson.getByTestId('start-bbc-test-2')).toContainText('Test 2');
+    await expect(lesson.getByTestId('start-bbc-test-2')).toContainText('Start');
+    await expect(lesson.getByTestId('start-bbc-test-3')).toContainText('Test 3');
+    await expect(lesson.getByTestId('start-bbc-test-3')).toContainText('Start');
+  }
 
   const startResponsePromise = page.waitForResponse((response) =>
     response.request().method() === 'POST'
     && response.url().includes('/api/listening/bbc/lessons/climate-change-extreme-weather/tests/test-1/attempts')
     && response.status() === 201
   );
-  await page.getByTestId('start-bbc-test-1').click();
+  await weatherLesson.getByTestId('start-bbc-test-1').click();
   await startResponsePromise;
 
   await expect(page).toHaveURL(/\/bbc-6-minute-english\/climate-change-extreme-weather\/tests\/test-1\/practice$/u);
@@ -138,7 +146,13 @@ test('BBC lesson offers multiple tests, in-app audio controls, completion tracki
   await page.getByRole('link', { name: 'Back to tests' }).click();
   await catalogResponse;
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
-  await expect(page.getByTestId('start-bbc-test-1')).toContainText('✓ Completed');
-  await expect(page.getByTestId('start-bbc-test-2')).toContainText('Start');
-  await expect(page.getByTestId('start-bbc-test-3')).toContainText('Start');
+
+  const weatherLessonAfter = page.getByTestId('bbc-lesson-climate-change-extreme-weather');
+  const screenTimeLessonAfter = page.getByTestId('bbc-lesson-limiting-screen-time-for-children');
+  await expect(weatherLessonAfter.getByTestId('start-bbc-test-1')).toContainText('✓ Completed');
+  await expect(weatherLessonAfter.getByTestId('start-bbc-test-2')).toContainText('Start');
+  await expect(weatherLessonAfter.getByTestId('start-bbc-test-3')).toContainText('Start');
+  await expect(screenTimeLessonAfter.getByTestId('start-bbc-test-1')).toContainText('Start');
+  await expect(screenTimeLessonAfter.getByTestId('start-bbc-test-2')).toContainText('Start');
+  await expect(screenTimeLessonAfter.getByTestId('start-bbc-test-3')).toContainText('Start');
 });
