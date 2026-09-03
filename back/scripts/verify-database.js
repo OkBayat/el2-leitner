@@ -16,6 +16,41 @@ function parseJson(value) {
   return typeof value === "string" ? JSON.parse(value) : value;
 }
 
+function verifyListeningContent(row) {
+  const content = parseJson(row.content_json);
+  if (Number(content.schemaVersion) !== Number(row.schema_version)) {
+    throw new Error("BBC listening schema version does not match its stored JSON aggregate.");
+  }
+  if (!Array.isArray(content.groups) || content.groups.length !== 4) {
+    throw new Error(`Expected 4 BBC question groups, found ${content.groups?.length ?? 0}.`);
+  }
+  const questions = content.groups.flatMap((group) => Array.isArray(group.questions) ? group.questions : []);
+  if (questions.length !== 13 || Number(row.question_count) !== 13) {
+    throw new Error(`Expected 13 BBC listening questions, found ${questions.length}.`);
+  }
+  const optionCount = questions.reduce(
+    (total, question) => total + (Array.isArray(question.options) ? question.options.length : 0),
+    0
+  );
+  if (optionCount !== 9) {
+    throw new Error(`Expected 9 BBC multiple-choice options, found ${optionCount}.`);
+  }
+  const missingAnswer = questions.find((question) => {
+    if (question.responseType === "text") {
+      return !Array.isArray(question.acceptedAnswers) || question.acceptedAnswers.length === 0;
+    }
+    if (question.responseType === "single_choice") {
+      return !question.correctOptionId
+        || !Array.isArray(question.options)
+        || !question.options.some((option) => option.id === question.correctOptionId);
+    }
+    return true;
+  });
+  if (missingAnswer) {
+    throw new Error(`BBC listening question ${missingAnswer.id || "unknown"} has no valid answer key.`);
+  }
+}
+
 async function verify() {
   const pool = mysql.createPool({
     host: process.env.DB_HOST || "127.0.0.1",
@@ -52,36 +87,30 @@ async function verify() {
     }
 
     const [listeningRows] = await pool.execute(
-      `SELECT l.id,
-              (SELECT COUNT(*) FROM listening_question_groups g WHERE g.lesson_id = l.id) AS groups_total,
-              (SELECT COUNT(*) FROM listening_questions q WHERE q.lesson_id = l.id) AS questions_total,
-              (SELECT COUNT(*)
-                 FROM listening_question_options o
-                 JOIN listening_questions q ON q.id = o.question_id
-                WHERE q.lesson_id = l.id) AS options_total,
-              (SELECT COUNT(*)
-                 FROM listening_questions q
-                 LEFT JOIN listening_question_answers a ON a.question_id = q.id
-                WHERE q.lesson_id = l.id AND a.id IS NULL) AS questions_without_answers
-       FROM listening_lessons l
-       WHERE l.public_id = 'bbc-6-minute-english-260903'
-         AND l.provider = 'bbc_6_minute_english'
-         AND l.status = 'published'
+      `SELECT schema_version, question_count, content_json
+       FROM listening_lessons
+       WHERE public_id = 'bbc-6-minute-english-260903'
+         AND provider = 'bbc_6_minute_english'
+         AND status = 'published'
        LIMIT 1`
     );
     if (!listeningRows[0]) throw new Error("The built-in BBC 6 Minute English lesson is missing.");
-    const listening = listeningRows[0];
-    if (Number(listening.groups_total) !== 4) {
-      throw new Error(`Expected 4 BBC question groups, found ${listening.groups_total}.`);
-    }
-    if (Number(listening.questions_total) !== 13) {
-      throw new Error(`Expected 13 BBC listening questions, found ${listening.questions_total}.`);
-    }
-    if (Number(listening.options_total) !== 9) {
-      throw new Error(`Expected 9 BBC multiple-choice options, found ${listening.options_total}.`);
-    }
-    if (Number(listening.questions_without_answers) !== 0) {
-      throw new Error("At least one BBC listening question has no answer key.");
+    verifyListeningContent(listeningRows[0]);
+
+    const [obsoleteListeningTables] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM information_schema.TABLES
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME IN (
+           'listening_question_groups',
+           'listening_questions',
+           'listening_question_options',
+           'listening_question_answers',
+           'listening_attempt_answers'
+         )`
+    );
+    if (Number(obsoleteListeningTables[0].total) !== 0) {
+      throw new Error("Listening questions and answer keys must remain inside the lesson JSON aggregate.");
     }
 
     const [legacyRows] = await pool.execute(
@@ -118,7 +147,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC listening catalog contains 1 lesson and 13 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the BBC listening catalog contains one JSON-backed lesson with 13 graded questions; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
