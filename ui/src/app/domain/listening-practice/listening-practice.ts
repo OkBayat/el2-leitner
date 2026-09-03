@@ -4,7 +4,7 @@ export type ListeningTaskType =
   | 'sentence_completion'
   | 'short_answer';
 
-export interface ListeningLessonSummary {
+export interface ListeningLessonBase {
   id: string;
   slug: string;
   title: string;
@@ -13,7 +13,23 @@ export interface ListeningLessonSummary {
   episodeDate: string | null;
   sourceUrl: string;
   questionCount: number;
+  testCount: number;
 }
+
+export interface ListeningTestSummary {
+  id: string;
+  title: string;
+  position: number;
+  questionCount: number;
+  completed: boolean;
+  completedAt: string | null;
+}
+
+export interface ListeningLessonSummary extends ListeningLessonBase {
+  tests: ListeningTestSummary[];
+}
+
+export type ListeningLesson = ListeningLessonBase;
 
 interface ListeningQuestionBase {
   id: string;
@@ -51,12 +67,17 @@ export interface ListeningQuestionGroup {
   questions: ListeningQuestion[];
 }
 
-export interface ListeningLesson extends ListeningLessonSummary {
+export interface ListeningTest {
+  id: string;
+  title: string;
+  position: number;
+  questionCount: number;
   groups: ListeningQuestionGroup[];
 }
 
 export interface ListeningAttempt {
   id: string;
+  testId: string;
   status: 'active' | 'completed';
   startedAt: string;
   submittedAt?: string | null;
@@ -71,6 +92,7 @@ export interface ListeningLessonListResponse {
 export interface ListeningAttemptStartResponse {
   attempt: ListeningAttempt;
   lesson: ListeningLesson;
+  test: ListeningTest;
 }
 
 export interface ListeningSubmittedAnswer {
@@ -105,8 +127,8 @@ export interface ListeningPromptParts {
   after: string;
 }
 
-export function allListeningQuestions(lesson: ListeningLesson): ListeningQuestion[] {
-  return lesson.groups
+export function allListeningQuestions(test: ListeningTest): ListeningQuestion[] {
+  return test.groups
     .flatMap((group) => group.questions)
     .sort((left, right) => left.number - right.number);
 }
@@ -122,17 +144,17 @@ export function isListeningChoiceQuestion(question: ListeningQuestion): question
 }
 
 export function countAnsweredListeningQuestions(
-  lesson: ListeningLesson,
+  test: ListeningTest,
   values: Record<string, string>,
 ): number {
-  return allListeningQuestions(lesson).filter((question) => String(values[question.id] ?? '').trim()).length;
+  return allListeningQuestions(test).filter((question) => String(values[question.id] ?? '').trim()).length;
 }
 
 export function buildListeningSubmission(
-  lesson: ListeningLesson,
+  test: ListeningTest,
   values: Record<string, string>,
 ): ListeningSubmittedAnswer[] {
-  return allListeningQuestions(lesson).map((question) => ({
+  return allListeningQuestions(test).map((question) => ({
     questionId: question.id,
     value: String(values[question.id] ?? ''),
   }));
