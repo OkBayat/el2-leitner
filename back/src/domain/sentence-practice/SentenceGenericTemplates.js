@@ -28,6 +28,119 @@ const DEGREE_ADVERBS = new Set([
   "very",
 ]);
 
+const COMMON_VERB_STARTERS = new Set([
+  "be",
+  "become",
+  "begin",
+  "book",
+  "break",
+  "bring",
+  "buy",
+  "call",
+  "carry",
+  "catch",
+  "change",
+  "check",
+  "choose",
+  "clean",
+  "close",
+  "come",
+  "cook",
+  "cut",
+  "do",
+  "drink",
+  "drive",
+  "eat",
+  "feel",
+  "fill",
+  "find",
+  "finish",
+  "get",
+  "give",
+  "go",
+  "grow",
+  "have",
+  "help",
+  "keep",
+  "know",
+  "learn",
+  "leave",
+  "like",
+  "live",
+  "look",
+  "lose",
+  "make",
+  "meet",
+  "move",
+  "need",
+  "open",
+  "order",
+  "pay",
+  "play",
+  "put",
+  "read",
+  "remember",
+  "rent",
+  "run",
+  "say",
+  "see",
+  "sell",
+  "send",
+  "set",
+  "show",
+  "sit",
+  "spend",
+  "start",
+  "stay",
+  "stop",
+  "study",
+  "take",
+  "talk",
+  "tell",
+  "think",
+  "travel",
+  "try",
+  "turn",
+  "use",
+  "visit",
+  "wait",
+  "walk",
+  "want",
+  "wash",
+  "watch",
+  "wear",
+  "work",
+  "write",
+]);
+
+const COMMON_ADJECTIVES = new Set([
+  "baked",
+  "bitter",
+  "boiled",
+  "busy",
+  "cheap",
+  "crowded",
+  "delicious",
+  "empty",
+  "expensive",
+  "fresh",
+  "fried",
+  "friendly",
+  "frozen",
+  "full",
+  "grilled",
+  "healthy",
+  "noisy",
+  "quiet",
+  "raw",
+  "roast",
+  "salty",
+  "sour",
+  "spicy",
+  "sweet",
+  "unhealthy",
+]);
+
 function categoryParts(category) {
   return String(category || "")
     .split(" / ")
@@ -43,11 +156,39 @@ function importedBookParts(category) {
   return { leaf: parts.at(-1).toLocaleLowerCase("en") };
 }
 
+function inferredLexicalType(answerText) {
+  const normalized = String(answerText).trim().toLocaleLowerCase("en");
+  if (!normalized) return "nouns";
+  if (FREQUENCY_ADVERBS.has(normalized) || DEGREE_ADVERBS.has(normalized) || /ly$/u.test(normalized)) {
+    return "adverbs";
+  }
+  if (COMMON_ADJECTIVES.has(normalized) || /(able|ible|al|ant|ent|ary|ful|ic|ical|ive|less|ous)$/u.test(normalized)) {
+    return "adjectives";
+  }
+  const [firstWord] = normalized.split(/\s+/u);
+  if (firstWord === "to" || COMMON_VERB_STARTERS.has(firstWord)) {
+    return "verb phrases";
+  }
+  return "nouns";
+}
+
 export function naturalImportedSourceTemplates(category, answerText = "") {
   const imported = importedBookParts(category);
   if (!imported) return null;
-  const { leaf } = imported;
   const normalizedAnswer = String(answerText).trim().toLocaleLowerCase("en");
+  const explicitLeaf = imported.leaf;
+  const leaf = [
+    "nouns",
+    "compound nouns",
+    "adjectives",
+    "verbs",
+    "verb phrases",
+    "adverbs",
+    "phrases",
+    "idioms",
+  ].includes(explicitLeaf)
+    ? explicitLeaf
+    : inferredLexicalType(answerText);
 
   if (["nouns", "compound nouns"].includes(leaf)) {
     return [
@@ -66,10 +207,11 @@ export function naturalImportedSourceTemplates(category, answerText = "") {
   }
 
   if (["verbs", "verb phrases"].includes(leaf)) {
+    const infinitivePrefix = normalizedAnswer.startsWith("to ") ? "" : "to ";
     return [
-      `They decided to ${TARGET} before the deadline.`,
-      `We may need to ${TARGET} again tomorrow.`,
-      `Everyone had a chance to ${TARGET}.`,
+      `They decided ${infinitivePrefix}${TARGET} before the deadline.`,
+      `We may need ${infinitivePrefix}${TARGET} again tomorrow.`,
+      `Everyone had a chance ${infinitivePrefix}${TARGET}.`,
     ];
   }
 
