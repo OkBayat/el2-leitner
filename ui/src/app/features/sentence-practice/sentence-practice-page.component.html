@@ -55,10 +55,10 @@
 					</div>
 
 					<div class="listen">
-						<button mat-fab extended class="play-pronunciation" type="button" (click)="session.pronounce()">
-							▶ Play pronunciation
+						<button mat-fab extended class="play-pronunciation" type="button" data-testid="play-sentence-audio" (click)="session.playSentence()">
+							▶ Play sentence
 						</button>
-						<button mat-button type="button" (click)="session.pronounce(.7)">Slower</button>
+						<button mat-button type="button" (click)="session.playSentence(.75)">Slower</button>
 					</div>
 
 					<form class="sentence-answer-form" (submit)="$event.preventDefault(); session.feedback() ? next() : submit()">
