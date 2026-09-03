@@ -38,6 +38,7 @@ function mapAttempt(row) {
     id: String(row.public_id),
     userId: String(row.user_id),
     lessonDatabaseId: Number(row.lesson_id),
+    testId: String(row.test_id),
     lessonContentVersion: Number(row.lesson_content_version),
     status: String(row.status),
     startedAt: isoDateTime(row.started_at),
@@ -76,9 +77,9 @@ function projectQuestion(question, includeAnswers) {
   return base;
 }
 
-function projectGroups(content, includeAnswers) {
-  if (!Array.isArray(content.groups)) throw new Error("Listening lesson content must contain question groups.");
-  return content.groups.map((group) => ({
+function projectGroups(groups, includeAnswers) {
+  if (!Array.isArray(groups)) throw new Error("Listening test must contain question groups.");
+  return groups.map((group) => ({
     id: String(group.id),
     position: Number(group.position),
     heading: String(group.heading),
@@ -91,13 +92,40 @@ function projectGroups(content, includeAnswers) {
   }));
 }
 
-function mapStoredLesson(row, includeAnswers) {
-  const metadata = mapLessonMetadata(row);
+function projectTests(content, includeAnswers) {
+  if (!Array.isArray(content.tests)) throw new Error("Listening lesson content must contain tests.");
+  return content.tests.map((test) => ({
+    id: String(test.id),
+    title: String(test.title),
+    position: Number(test.position),
+    questionCount: Number(test.questionCount),
+    groups: projectGroups(test.groups, includeAnswers)
+  }));
+}
+
+function parseStoredContent(row, metadata) {
   const content = parseJson(row.content_json, "Listening lesson content");
   if (Number(content.schemaVersion) !== Number(row.schema_version)) {
     throw new Error(`Listening lesson ${metadata.id} has inconsistent schema versions.`);
   }
-  return { ...metadata, groups: projectGroups(content, includeAnswers) };
+  return content;
+}
+
+function mapStoredLesson(row, includeAnswers) {
+  const metadata = mapLessonMetadata(row);
+  const content = parseStoredContent(row, metadata);
+  const tests = projectTests(content, includeAnswers);
+  return { ...metadata, testCount: tests.length, tests };
+}
+
+function mapCatalogLesson(row, completions) {
+  const metadata = mapLessonMetadata(row);
+  const content = parseStoredContent(row, metadata);
+  const tests = projectTests(content, false).map(({ groups: _groups, ...test }) => {
+    const completedAt = completions.get(`${metadata.databaseId}:${test.id}`) || null;
+    return { ...test, completed: Boolean(completedAt), completedAt };
+  });
+  return { ...metadata, testCount: tests.length, tests };
 }
 
 export class MySqlListeningPracticeRepository {
@@ -105,17 +133,32 @@ export class MySqlListeningPracticeRepository {
     this.pool = pool;
   }
 
-  async listPublishedLessons(provider) {
-    const [rows] = await this.pool.execute(
-      `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
-              DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
-              content_version, question_count
-       FROM listening_lessons
-       WHERE provider = ? AND status = 'published'
-       ORDER BY episode_date DESC, id DESC`,
-      [provider]
-    );
-    return rows.map(mapLessonMetadata);
+  async listPublishedLessons(provider, userId) {
+    const [rows, completionRows] = await Promise.all([
+      this.pool.execute(
+        `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
+                DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url,
+                schema_version, content_version, question_count, content_json
+         FROM listening_lessons
+         WHERE provider = ? AND status = 'published'
+         ORDER BY episode_date DESC, id DESC`,
+        [provider]
+      ),
+      this.pool.execute(
+        `SELECT a.lesson_id, a.test_id, MAX(a.submitted_at) AS completed_at
+         FROM listening_attempts a
+         JOIN listening_lessons l ON l.id = a.lesson_id
+         WHERE a.user_id = ? AND a.status = 'completed'
+           AND l.provider = ? AND l.status = 'published'
+         GROUP BY a.lesson_id, a.test_id`,
+        [userId, provider]
+      )
+    ]);
+    const completions = new Map(completionRows[0].map((row) => [
+      `${Number(row.lesson_id)}:${String(row.test_id)}`,
+      isoDateTime(row.completed_at)
+    ]));
+    return rows[0].map((row) => mapCatalogLesson(row, completions));
   }
 
   async findPublishedLessonBySlug(provider, slug, { includeAnswers = false } = {}) {
@@ -134,31 +177,32 @@ export class MySqlListeningPracticeRepository {
     return mapStoredLesson(rows[0], includeAnswers);
   }
 
-  async startAttempt(userId, lesson) {
+  async startAttempt(userId, lesson, test) {
     const publicId = randomUUID();
     const startedAt = new Date();
     const [result] = await this.pool.execute(
       `INSERT INTO listening_attempts
-         (public_id, user_id, lesson_id, lesson_content_version, status, started_at, total_count)
-       VALUES (?, ?, ?, ?, 'active', ?, ?)`,
-      [publicId, userId, lesson.databaseId, lesson.contentVersion, startedAt, lesson.questionCount]
+         (public_id, user_id, lesson_id, test_id, lesson_content_version, status, started_at, total_count)
+       VALUES (?, ?, ?, ?, ?, 'active', ?, ?)`,
+      [publicId, userId, lesson.databaseId, test.id, lesson.contentVersion, startedAt, test.questionCount]
     );
     return {
       databaseId: Number(result.insertId),
       id: publicId,
       userId: String(userId),
       lessonDatabaseId: lesson.databaseId,
+      testId: test.id,
       lessonContentVersion: lesson.contentVersion,
       status: "active",
       startedAt: startedAt.toISOString(),
       submittedAt: null,
-      totalQuestions: lesson.questionCount
+      totalQuestions: test.questionCount
     };
   }
 
   async getAttemptForGrading(userId, attemptId) {
     const [rows] = await this.pool.execute(
-      `SELECT a.id AS database_id, a.public_id, a.user_id, a.lesson_id, a.lesson_content_version,
+      `SELECT a.id AS database_id, a.public_id, a.user_id, a.lesson_id, a.test_id, a.lesson_content_version,
               a.status, a.started_at, a.submitted_at, a.total_count,
               l.id AS lesson_database_id, l.public_id AS lesson_public_id, l.provider, l.slug,
               l.title, l.description, l.episode_code,
@@ -176,7 +220,7 @@ export class MySqlListeningPracticeRepository {
     const row = rows[0];
     const attempt = mapAttempt(row);
     if (attempt.status === "completed") {
-      return { attempt, lesson: null, completedResult: await this.#readCompletedResult(this.pool, attempt) };
+      return { attempt, lesson: null, test: null, completedResult: await this.#readCompletedResult(this.pool, attempt) };
     }
     if (attempt.status !== "active") {
       throw new ConflictError("LISTENING_ATTEMPT_CLOSED", "This listening attempt is no longer active.");
@@ -196,7 +240,8 @@ export class MySqlListeningPracticeRepository {
       content_version: row.content_version,
       content_json: row.content_json
     }, true);
-    return { attempt, lesson, completedResult: null };
+    const test = lesson.tests.find((candidate) => candidate.id === attempt.testId) || null;
+    return { attempt, lesson, test, completedResult: null };
   }
 
   async completeAttempt(userId, attemptId, grade) {
@@ -204,7 +249,7 @@ export class MySqlListeningPracticeRepository {
     try {
       await connection.beginTransaction();
       const [rows] = await connection.execute(
-        `SELECT id AS database_id, public_id, user_id, lesson_id, lesson_content_version,
+        `SELECT id AS database_id, public_id, user_id, lesson_id, test_id, lesson_content_version,
                 status, started_at, submitted_at, total_count
          FROM listening_attempts
          WHERE public_id = ? AND user_id = ?
@@ -276,6 +321,7 @@ export class MySqlListeningPracticeRepository {
     return {
       attempt: {
         id: attempt.id,
+        testId: attempt.testId,
         status: "completed",
         startedAt: attempt.startedAt,
         submittedAt: isoDateTime(rows[0].submitted_at),
