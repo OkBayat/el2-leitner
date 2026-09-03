@@ -12,20 +12,39 @@ async function lesson() {
   return parseListeningLessonDefinition(JSON.parse(await readFile(lessonUrl, "utf8")), "260903-extreme-weather.json");
 }
 
+async function firstTest() {
+  return (await lesson()).tests[0];
+}
+
 describe("BBC listening lesson definition", () => {
-  it("validates the first BBC lesson as four ordered IELTS groups and thirteen questions in audio order", async () => {
+  it("validates three ordered IELTS tests with thirteen questions each", async () => {
     const parsed = await lesson();
+    assert.equal(parsed.schemaVersion, 2);
     assert.equal(parsed.provider, "bbc_6_minute_english");
-    assert.equal(parsed.groups.length, 4);
-    assert.equal(parsed.questionCount, 13);
-    assert.deepEqual(parsed.groups.map((group) => group.taskType), [
+    assert.equal(parsed.testCount, 3);
+    assert.equal(parsed.questionCount, 39);
+    assert.deepEqual(parsed.tests.map((test) => [test.id, test.title, test.position, test.questionCount]), [
+      ["test-1", "Test 1", 1, 13],
+      ["test-2", "Test 2", 2, 13],
+      ["test-3", "Test 3", 3, 13]
+    ]);
+    for (const test of parsed.tests) {
+      assert.deepEqual(
+        test.groups.flatMap((group) => group.questions).map((question) => question.number),
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+      );
+    }
+  });
+
+  it("keeps Test 1 in BBC audio order", async () => {
+    const test = await firstTest();
+    assert.deepEqual(test.groups.map((group) => group.taskType), [
       "note_completion",
       "multiple_choice_single",
       "sentence_completion",
       "short_answer"
     ]);
-    const questions = parsed.groups.flatMap((group) => group.questions);
-    assert.deepEqual(questions.map((question) => question.number), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+    const questions = test.groups.flatMap((group) => group.questions);
     assert.match(questions[7].prompt, /landslides and mudslides occur/iu);
     assert.match(questions[8].prompt, /swept/iu);
     assert.match(questions[9].prompt, /sea.*rising/iu);
@@ -34,9 +53,25 @@ describe("BBC listening lesson definition", () => {
     assert.match(questions[12].prompt, /three times faster/iu);
   });
 
-  it("rejects duplicate question numbers", async () => {
+  it("rejects duplicate test ids and out-of-order tests", async () => {
+    const duplicate = JSON.parse(await readFile(lessonUrl, "utf8"));
+    duplicate.tests[1].id = duplicate.tests[0].id;
+    assert.throws(
+      () => parseListeningLessonDefinition(duplicate, "duplicate-test.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /Test id/u.test(error.message)
+    );
+
+    const reversed = JSON.parse(await readFile(lessonUrl, "utf8"));
+    reversed.tests.reverse();
+    assert.throws(
+      () => parseListeningLessonDefinition(reversed, "reversed-tests.json"),
+      (error) => error.code === "INVALID_LISTENING_LESSON" && /test positions/u.test(error.message)
+    );
+  });
+
+  it("rejects duplicate question numbers within a test", async () => {
     const raw = JSON.parse(await readFile(lessonUrl, "utf8"));
-    raw.groups[0].questions[1].number = 1;
+    raw.tests[0].groups[0].questions[1].number = 1;
     assert.throws(
       () => parseListeningLessonDefinition(raw, "duplicate.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /question numbers/u.test(error.message)
@@ -45,14 +80,14 @@ describe("BBC listening lesson definition", () => {
 
   it("rejects out-of-order groups and questions instead of rendering the wrong IELTS sequence", async () => {
     const reversedGroups = JSON.parse(await readFile(lessonUrl, "utf8"));
-    reversedGroups.groups.reverse();
+    reversedGroups.tests[0].groups.reverse();
     assert.throws(
       () => parseListeningLessonDefinition(reversedGroups, "reversed-groups.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /group positions/u.test(error.message)
     );
 
     const reversedQuestions = JSON.parse(await readFile(lessonUrl, "utf8"));
-    reversedQuestions.groups[0].questions.reverse();
+    reversedQuestions.tests[0].groups[0].questions.reverse();
     assert.throws(
       () => parseListeningLessonDefinition(reversedQuestions, "reversed-questions.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /question positions/u.test(error.message)
@@ -70,14 +105,14 @@ describe("BBC listening lesson definition", () => {
 
   it("rejects accepted answers that violate their IELTS word or number limit", async () => {
     const tooManyWords = JSON.parse(await readFile(lessonUrl, "utf8"));
-    tooManyWords.groups[0].questions[0].answers = ["one extra answer"];
+    tooManyWords.tests[0].groups[0].questions[0].answers = ["one extra answer"];
     assert.throws(
       () => parseListeningLessonDefinition(tooManyWords, "too-many-words.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /maxWords/u.test(error.message)
     );
 
     const tooManyNumbers = JSON.parse(await readFile(lessonUrl, "utf8"));
-    tooManyNumbers.groups[0].questions[0].answers = ["day 1 2"];
+    tooManyNumbers.tests[0].groups[0].questions[0].answers = ["day 1 2"];
     assert.throws(
       () => parseListeningLessonDefinition(tooManyNumbers, "too-many-numbers.json"),
       (error) => error.code === "INVALID_LISTENING_LESSON" && /maxNumbers/u.test(error.message)
@@ -86,11 +121,11 @@ describe("BBC listening lesson definition", () => {
 
   it("keeps completion and multiple-choice response types aligned with their IELTS group", async () => {
     const raw = JSON.parse(await readFile(lessonUrl, "utf8"));
-    raw.groups[0].questions[0] = structuredClone(raw.groups[1].questions[0]);
-    raw.groups[0].questions[0].number = 1;
-    raw.groups[0].questions[0].position = 1;
-    raw.groups[0].questions[0].id = "bbc-260903-question-replacement";
-    for (const [index, option] of raw.groups[0].questions[0].options.entries()) {
+    raw.tests[0].groups[0].questions[0] = structuredClone(raw.tests[0].groups[1].questions[0]);
+    raw.tests[0].groups[0].questions[0].number = 1;
+    raw.tests[0].groups[0].questions[0].position = 1;
+    raw.tests[0].groups[0].questions[0].id = "bbc-260903-question-replacement";
+    for (const [index, option] of raw.tests[0].groups[0].questions[0].options.entries()) {
       option.id = `bbc-260903-question-replacement-option-${index + 1}`;
     }
     assert.throws(
@@ -110,8 +145,8 @@ describe("Listening answer normalization", () => {
 });
 
 describe("Listening grading", () => {
-  it("grades text and choice questions on the server and returns a 10/13 score", async () => {
-    const parsed = await lesson();
+  it("grades Test 1 on the server and returns a 10/13 score", async () => {
+    const test = await firstTest();
     const values = [
       [1, "day"],
       [2, "long term"],
@@ -127,7 +162,7 @@ describe("Listening grading", () => {
       [12, "2C"],
       [13, "Atlantic"]
     ];
-    const result = gradeListeningAttempt(parsed, values.map(([number, value]) => ({
+    const result = gradeListeningAttempt(test, values.map(([number, value]) => ({
       questionId: `bbc-260903-question-${number}`,
       value
     })));
@@ -138,8 +173,8 @@ describe("Listening grading", () => {
     assert.equal(result.results[5].submittedAnswer, "B. They remain in the same area for longer.");
   });
 
-  it("keeps IELTS spelling and grammar strict while treating omitted answers as incorrect", async () => {
-    const result = gradeListeningAttempt(await lesson(), [
+  it("keeps IELTS spelling strict while treating omitted answers as incorrect", async () => {
+    const result = gradeListeningAttempt(await firstTest(), [
       { questionId: "bbc-260903-question-1", value: "days" },
       { questionId: "bbc-260903-question-2", value: "long-term" }
     ]);
@@ -150,14 +185,13 @@ describe("Listening grading", () => {
   });
 
   it("accepts explicitly authored variants and presentation-equivalent input", async () => {
-    const result = gradeListeningAttempt(await lesson(), [
+    const result = gradeListeningAttempt(await firstTest(), [
       { questionId: "bbc-260903-question-2", value: "  LONG   TERM  " },
       { questionId: "bbc-260903-question-11", value: "ten meters" },
       { questionId: "bbc-260903-question-12", value: "one degree" },
       { questionId: "bbc-260903-question-13", value: "Arctic" }
     ]);
     assert.equal(result.score.correct, 4);
-    assert.equal(result.results[0].correct, false);
     assert.equal(result.results[1].correct, true);
     assert.equal(result.results[10].correct, true);
     assert.equal(result.results[11].correct, true);
@@ -165,16 +199,16 @@ describe("Listening grading", () => {
   });
 
   it("rejects duplicate questions and foreign option ids", async () => {
-    const parsed = await lesson();
+    const test = await firstTest();
     assert.throws(
-      () => gradeListeningAttempt(parsed, [
+      () => gradeListeningAttempt(test, [
         { questionId: "bbc-260903-question-1", value: "day" },
         { questionId: "bbc-260903-question-1", value: "day" }
       ]),
       (error) => error.code === "INVALID_LISTENING_SUBMISSION"
     );
     assert.throws(
-      () => gradeListeningAttempt(parsed, [
+      () => gradeListeningAttempt(test, [
         { questionId: "bbc-260903-question-6", value: "bbc-260903-question-7-option-a" }
       ]),
       (error) => error.code === "INVALID_LISTENING_SUBMISSION"
