@@ -1,5 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { NotFoundError } from "../../../domain/errors.js";
+import { NotFoundError, ValidationError } from "../../../domain/errors.js";
+
+function asDay(value) {
+  if (!value) return null;
+  if (typeof value === "string") return value.slice(0, 10);
+  if (value instanceof Date && !Number.isNaN(value.valueOf())) return value.toISOString().slice(0, 10);
+  return null;
+}
 
 function mapSession(row) {
   return {
@@ -12,6 +19,18 @@ function mapSession(row) {
     completedCount: Number(row.completed_count),
     correctCount: Number(row.correct_count),
     wrongCount: Number(row.wrong_count),
+    durationSeconds: Number(row.duration_seconds)
+  };
+}
+
+function mapDaily(row) {
+  return {
+    day: asDay(row.day),
+    attempts: Number(row.attempts),
+    correct: Number(row.correct_count),
+    wrong: Number(row.wrong_count),
+    newAdded: Number(row.new_added),
+    sessions: Number(row.session_count),
     durationSeconds: Number(row.duration_seconds)
   };
 }
@@ -30,6 +49,70 @@ export class MySqlPracticeSessionRepository {
     );
     const [rows] = await this.pool.execute("SELECT * FROM practice_sessions WHERE id = ?", [result.insertId]);
     return mapSession(rows[0]);
+  }
+
+  async recordAttempt(userId, sessionId, { day, correct }) {
+    const connection = await this.pool.getConnection();
+    try {
+      await connection.beginTransaction();
+      const [sessionRows] = await connection.execute(
+        `SELECT * FROM practice_sessions
+         WHERE public_id = ? AND user_id = ? AND status = 'active'
+         LIMIT 1 FOR UPDATE`,
+        [sessionId, userId]
+      );
+      const session = sessionRows[0];
+      if (!session) {
+        throw new NotFoundError("PRACTICE_SESSION_NOT_FOUND", "Active practice session was not found.");
+      }
+      if (!String(session.mode || "").startsWith("sentence-house-")) {
+        throw new ValidationError(
+          "INVALID_SESSION",
+          "Only sentence-practice sessions can record standalone practice attempts."
+        );
+      }
+
+      const correctIncrement = correct ? 1 : 0;
+      const wrongIncrement = correct ? 0 : 1;
+      await connection.execute(
+        `UPDATE practice_sessions
+         SET completed_count = completed_count + 1,
+             correct_count = correct_count + ?,
+             wrong_count = wrong_count + ?,
+             updated_at = CURRENT_TIMESTAMP(3)
+         WHERE id = ?`,
+        [correctIncrement, wrongIncrement, session.id]
+      );
+      await connection.execute(
+        `INSERT INTO user_daily_stats
+           (user_id, day, attempts, correct_count, wrong_count, new_added, session_count, duration_seconds)
+         VALUES (?, ?, 1, ?, ?, 0, 0, 0)
+         ON DUPLICATE KEY UPDATE
+           attempts = attempts + 1,
+           correct_count = correct_count + VALUES(correct_count),
+           wrong_count = wrong_count + VALUES(wrong_count)`,
+        [userId, day, correctIncrement, wrongIncrement]
+      );
+
+      const [updatedSessionRows] = await connection.execute(
+        "SELECT * FROM practice_sessions WHERE id = ? LIMIT 1",
+        [session.id]
+      );
+      const [dailyRows] = await connection.execute(
+        "SELECT * FROM user_daily_stats WHERE user_id = ? AND day = ? LIMIT 1",
+        [userId, day]
+      );
+      await connection.commit();
+      return {
+        session: mapSession(updatedSessionRows[0]),
+        daily: mapDaily(dailyRows[0])
+      };
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   }
 
   async complete(userId, sessionId, values) {
@@ -61,6 +144,7 @@ export class MySqlPracticeSessionRepository {
     );
     return mapSession(rows[0]);
   }
+
   async abandon(userId, sessionId, { durationSeconds }) {
     const [result] = await this.pool.execute(
       `UPDATE practice_sessions
@@ -82,5 +166,4 @@ export class MySqlPracticeSessionRepository {
     );
     return mapSession(rows[0]);
   }
-
 }

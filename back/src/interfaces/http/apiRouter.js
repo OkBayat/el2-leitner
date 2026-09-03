@@ -188,6 +188,15 @@ export function createApiRouter({
     res.status(201).json(result);
   });
 
+  router.post("/learning/sessions/:sessionId/attempts", authenticate, async (req, res) => {
+    const result = await useCases.learningSessionCommands.recordAttempt(
+      req.auth.userId,
+      req.params.sessionId,
+      req.body ?? {}
+    );
+    res.status(200).json(result);
+  });
+
   router.put("/learning/sessions/:sessionId/complete", authenticate, async (req, res) => {
     const result = await useCases.learningSessionCommands.complete(
       req.auth.userId,
@@ -232,6 +241,14 @@ export function createApiRouter({
 
   router.get("/learning/boxes/:box", authenticate, async (req, res) => {
     const result = await useCases.getLeitnerHouse.execute(req.auth.userId, req.params.box);
+    res.status(200).json(result);
+  });
+
+  router.get("/learning/sentence-practice", authenticate, async (req, res) => {
+    const result = await useCases.getSentencePracticeCards.execute(
+      req.auth.userId,
+      req.query.house ?? 1
+    );
     res.status(200).json(result);
   });
 

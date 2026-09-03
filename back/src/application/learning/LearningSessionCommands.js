@@ -8,6 +8,14 @@ function count(value, name) {
   return number;
 }
 
+function localDay(value) {
+  const day = String(value || "");
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(day)) {
+    throw new ValidationError("INVALID_SESSION", "day must use YYYY-MM-DD format.");
+  }
+  return day;
+}
+
 export class LearningSessionCommands {
   constructor({ practiceSessionRepository }) {
     this.practiceSessionRepository = practiceSessionRepository;
@@ -21,6 +29,16 @@ export class LearningSessionCommands {
     return {
       session: await this.practiceSessionRepository.start(userId, { mode, plannedCount })
     };
+  }
+
+  async recordAttempt(userId, sessionId, input = {}) {
+    if (typeof input.correct !== "boolean") {
+      throw new ValidationError("INVALID_SESSION", "correct must be a boolean.");
+    }
+    return this.practiceSessionRepository.recordAttempt(userId, sessionId, {
+      day: localDay(input.day),
+      correct: input.correct
+    });
   }
 
   async complete(userId, sessionId, input = {}) {
@@ -40,11 +58,11 @@ export class LearningSessionCommands {
       })
     };
   }
+
   async abandon(userId, sessionId, input = {}) {
     const durationSeconds = count(input.durationSeconds, "durationSeconds");
     return {
       session: await this.practiceSessionRepository.abandon(userId, sessionId, { durationSeconds })
     };
   }
-
 }
