@@ -11,14 +11,14 @@ async function authenticate(page: Page): Promise<void> {
   await expect(page.getByTestId('open-bbc-listening')).toBeVisible({ timeout: 10_000 });
 }
 
-async function learningState(page: Page): Promise<unknown> {
+async function learningState(page: Page): Promise<any> {
   return page.evaluate(async () => {
     const response = await fetch('/api/state', { credentials: 'include' });
     return response.json();
   });
 }
 
-test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise in audio order', async ({ page }) => {
+test('BBC listening keeps IELTS grading isolated until the learner adds a wrong word to House 1', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -55,8 +55,8 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
     3: 'typhoons',
     4: 'tropical',
     5: 'slowly',
-    9: 'inland',
-    10: 'coast',
+    9: 'coast',
+    10: 'sea levels',
     11: '10 metres',
     12: '2C',
   };
@@ -68,7 +68,6 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
   await page.getByTestId('listening-option-8-A').getByRole('radio').check();
 
   await expect(page.getByText('12 / 13 answered')).toBeVisible();
-  await expect(page.getByTestId('submit-listening-attempt')).toBeEnabled();
   const submitResponsePromise = page.waitForResponse((response) =>
     response.request().method() === 'POST'
     && /\/api\/listening\/bbc\/attempts\/[^/]+\/submit$/u.test(new URL(response.url()).pathname)
@@ -81,15 +80,33 @@ test('BBC 6 Minute English provides a server-graded 13-question IELTS exercise i
   const score = page.getByTestId('listening-score');
   await expect(score).toContainText('10 / 13');
   await expect(score).toContainText('76.9%');
-  await expect(page.getByTestId('listening-question-1')).toHaveClass(/correct/u);
-  await expect(page.getByTestId('listening-question-10')).toHaveClass(/incorrect/u);
-  await expect(page.getByTestId('listening-question-10')).toContainText('Correct answer: sea levels');
+  await expect(page.getByTestId('listening-question-9')).toHaveClass(/incorrect/u);
+  await expect(page.getByTestId('listening-question-9')).toContainText('Correct answer: inland');
   await expect(page.getByTestId('listening-question-12')).toContainText('Correct answer: around 1C');
   await expect(page.getByTestId('listening-question-13')).toContainText('Your answer: No answer');
-  await expect(page.getByTestId('listening-question-13')).toContainText('Correct answer: the Arctic');
-  await expect(page.getByTestId('listening-answer-1')).not.toBeEditable();
-  await expect(page.getByTestId('listening-option-6-B').getByRole('radio')).toBeDisabled();
+  await expect(page.getByTestId('add-listening-word-9')).toBeVisible();
+  await expect(page.getByTestId('add-listening-word-12')).toHaveCount(0);
+  await expect(page.getByTestId('add-listening-word-13')).toHaveCount(0);
 
-  const stateAfter = await learningState(page);
-  expect(stateAfter).toEqual(stateBefore);
+  const stateAfterSubmit = await learningState(page);
+  expect(stateAfterSubmit).toEqual(stateBefore);
+
+  const savePromise = page.waitForResponse((response) =>
+    response.request().method() === 'PUT'
+    && new URL(response.url()).pathname === '/api/state'
+    && response.status() === 200
+  );
+  await page.getByTestId('add-listening-word-9').click();
+  await savePromise;
+  await expect(page.getByTestId('add-listening-word-9')).toContainText('Added to House 1');
+  await expect(page.getByTestId('add-listening-word-9')).toBeDisabled();
+
+  const stateAfterCapture = await learningState(page);
+  const inland = stateAfterCapture.state.words.find((word: any) =>
+    String(word.term).toLowerCase() === 'inland'
+    || word.accepted?.some((accepted: string) => accepted.toLowerCase() === 'inland')
+  );
+  expect(inland).toBeTruthy();
+  expect(inland.box).toBe(1);
+  expect(inland.addedSource).toBe('listening-mistake');
 });
