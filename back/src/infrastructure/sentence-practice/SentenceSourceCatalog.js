@@ -8,7 +8,7 @@ export const SENTENCE_SOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     key: "ielts-listening-core-1500",
     label: "IELTS Listening Core 1500",
-    version: "2026-09-02.5",
+    version: "2026-09-03.2",
     expectedSourceItems: 1_500,
     url: new URL("../../../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url),
     compressed: false,
@@ -16,7 +16,7 @@ export const SENTENCE_SOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     key: "cambridge-vocabulary-for-ielts",
     label: "Cambridge Vocabulary for IELTS",
-    version: "2026-09-03.1",
+    version: "2026-09-03.2",
     expectedSourceItems: 1_177,
     url: new URL("../../../data/sentence-sources/cambridge-vocabulary-for-ielts.md.gz", import.meta.url),
     compressed: true,
@@ -24,7 +24,7 @@ export const SENTENCE_SOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     key: "american-english-file-3-core-vocabulary",
     label: "American English File 3 Core Vocabulary",
-    version: "2026-09-03.1",
+    version: "2026-09-03.2",
     expectedSourceItems: 542,
     url: new URL("../../../data/sentence-sources/american-english-file-3-core-vocabulary.md.gz", import.meta.url),
     compressed: true,
@@ -32,7 +32,7 @@ export const SENTENCE_SOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     key: "cambridge-vocabulary-for-ielts-advanced",
     label: "Cambridge Vocabulary for IELTS Advanced",
-    version: "2026-09-03.1",
+    version: "2026-09-03.2",
     expectedSourceItems: 547,
     url: new URL("../../../data/sentence-sources/cambridge-vocabulary-for-ielts-advanced.md.gz", import.meta.url),
     compressed: true,
