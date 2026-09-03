@@ -51,37 +51,61 @@ async function verify() {
       throw new Error("Built-in duplicate-alias metadata is inconsistent.");
     }
 
-    const [sentenceRows] = await pool.execute(
-      `SELECT COUNT(*) AS total,
-              COUNT(DISTINCT source_item_number) AS source_items,
-              COUNT(DISTINCT source_hash) AS source_hashes
-       FROM sentences
-       WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'`
+    const [requiredSentenceColumns] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'sentences'
+         AND COLUMN_NAME IN (
+           'sentence_text', 'audio_id', 'audio_url', 'audio_contributor',
+           'audio_license', 'audio_attribution_url'
+         )`
     );
-    const sentenceTotal = Number(sentenceRows[0]?.total ?? 0);
-    const coveredSourceItems = Number(sentenceRows[0]?.source_items ?? 0);
-    const sentenceSourceHashes = Number(sentenceRows[0]?.source_hashes ?? 0);
-    if (sentenceTotal !== sourceItemCount * 3) {
-      throw new Error(`Expected ${sourceItemCount * 3} active sentence variants, found ${sentenceTotal}.`);
-    }
-    if (coveredSourceItems !== sourceItemCount) {
-      throw new Error(`Expected seeded sentence provenance for ${sourceItemCount} source items, found ${coveredSourceItems}.`);
-    }
-    if (sentenceSourceHashes !== 1) {
-      throw new Error(`Expected one active sentence corpus version, found ${sentenceSourceHashes}.`);
+    if (Number(requiredSentenceColumns[0]?.total ?? 0) !== 6) {
+      throw new Error("Sentence catalog is missing Tatoeba audio metadata columns.");
     }
 
-    const [sentenceVariantRows] = await pool.execute(
-      `SELECT COUNT(*) AS total FROM (
-         SELECT source_item_number
-         FROM sentences
-         WHERE source_key = 'ielts-listening-core-1500' AND status = 'active'
-         GROUP BY source_item_number
-         HAVING COUNT(*) <> 3 OR COUNT(DISTINCT variant_number) <> 3
-       ) invalid_sentence_items`
+    const [fullTextRows] = await pool.execute(
+      `SELECT COUNT(DISTINCT INDEX_NAME) AS total
+       FROM information_schema.STATISTICS
+       WHERE TABLE_SCHEMA = DATABASE()
+         AND TABLE_NAME = 'sentences'
+         AND INDEX_TYPE = 'FULLTEXT'
+         AND COLUMN_NAME = 'sentence_text'`
     );
-    if (Number(sentenceVariantRows[0]?.total ?? 0) !== 0) {
-      throw new Error("At least one IELTS source item does not have exactly three seeded sentence variants.");
+    if (Number(fullTextRows[0]?.total ?? 0) < 1) {
+      throw new Error("Sentence catalog is missing its full-text lookup index.");
+    }
+
+    const [sentenceRows] = await pool.execute(
+      `SELECT COUNT(*) AS total,
+              COUNT(DISTINCT source_item_number) AS source_sentences,
+              SUM(source_key = 'tatoeba') AS tatoeba_rows,
+              SUM(audio_id IS NULL OR audio_url IS NULL OR sentence_text = '') AS invalid_audio_rows,
+              SUM(status = 'active' AND (audio_license IS NULL OR audio_license = '')) AS unlicensed_active_rows,
+              SUM(source_key = 'ielts-listening-core-1500') AS generated_legacy_rows
+       FROM sentences`
+    );
+    const sentenceTotal = Number(sentenceRows[0]?.total ?? 0);
+    const sourceSentences = Number(sentenceRows[0]?.source_sentences ?? 0);
+    const tatoebaRows = Number(sentenceRows[0]?.tatoeba_rows ?? 0);
+    const invalidAudioRows = Number(sentenceRows[0]?.invalid_audio_rows ?? 0);
+    const unlicensedActiveRows = Number(sentenceRows[0]?.unlicensed_active_rows ?? 0);
+    const generatedLegacyRows = Number(sentenceRows[0]?.generated_legacy_rows ?? 0);
+
+    // Fresh databases intentionally have an empty catalog until the explicit,
+    // network-backed Tatoeba import is run. Once populated, every row must be
+    // a unique audio-backed Tatoeba sentence.
+    if (sentenceTotal > 0) {
+      if (tatoebaRows !== sentenceTotal) throw new Error("Non-Tatoeba sentence rows remain in the catalog.");
+      if (sourceSentences !== sentenceTotal) throw new Error("Sentence catalog contains duplicate Tatoeba sentence ids.");
+      if (invalidAudioRows !== 0) throw new Error(`${invalidAudioRows} sentence row(s) are missing text or audio metadata.`);
+      if (unlicensedActiveRows !== 0) {
+        throw new Error(`${unlicensedActiveRows} unlicensed Tatoeba audio row(s) are incorrectly marked active.`);
+      }
+    }
+    if (generatedLegacyRows !== 0) {
+      throw new Error("Generated IELTS sentence rows must be removed after the Tatoeba import.");
     }
 
     const [forbiddenSentenceColumnRows] = await pool.execute(
@@ -150,7 +174,10 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} IELTS source items normalize to ${uniqueVocabularyCount} unique vocabulary entries; the independent sentence catalog contains ${sentenceTotal} seeded sentences with no vocabulary foreign keys.`
+      `Database verification passed: ${sourceItemCount} IELTS source items normalize to ${uniqueVocabularyCount} unique vocabulary entries; ` +
+      (sentenceTotal
+        ? `the sentence catalog contains ${sentenceTotal} unique audio-backed Tatoeba sentences.`
+        : "the sentence catalog is empty and ready for the explicit Tatoeba import.")
     );
   } finally {
     await pool.end();
