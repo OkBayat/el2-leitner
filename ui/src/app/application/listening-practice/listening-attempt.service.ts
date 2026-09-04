@@ -22,6 +22,7 @@ export class ListeningAttemptService {
   readonly result = signal<ListeningAttemptResult | null>(null);
   readonly loading = signal(false);
   readonly submitting = signal(false);
+  readonly restarting = signal(false);
   readonly error = signal<string | null>(null);
 
   async start(lessonSlug: string, testId: string): Promise<boolean> {
@@ -42,6 +43,37 @@ export class ListeningAttemptService {
       return false;
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async restart(): Promise<boolean> {
+    const lesson = this.lesson();
+    const test = this.test();
+    if (
+      !lesson
+      || !test
+      || !this.result()
+      || this.loading()
+      || this.submitting()
+      || this.restarting()
+    ) {
+      return false;
+    }
+
+    this.restarting.set(true);
+    this.error.set(null);
+    try {
+      const response = await this.api.startBbcAttempt(lesson.slug, test.id);
+      this.lesson.set(response.lesson);
+      this.test.set(response.test);
+      this.attempt.set(response.attempt);
+      this.result.set(null);
+      return true;
+    } catch (error) {
+      this.error.set(message(error, 'The listening test could not be restarted.'));
+      return false;
+    } finally {
+      this.restarting.set(false);
     }
   }
 
