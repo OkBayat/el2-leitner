@@ -73,7 +73,36 @@ describe('ListeningAudioPlayerComponent', () => {
     expect(fixture.componentInstance.currentTime()).toBe(18);
   });
 
-  it('collapses on downward scroll, leaves only played progress, and expands on upward scroll', () => {
+  it('uses cumulative scroll hysteresis so slow scrolling does not flicker the player', () => {
+    const fixture = createFixture();
+    const player = fixture.nativeElement.querySelector('[data-testid="listening-audio-player"]') as HTMLElement;
+
+    for (let scrollY = 1; scrollY <= 23; scrollY += 1) {
+      Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
+      fixture.componentInstance.onWindowScroll();
+      expect(fixture.componentInstance.collapsed()).toBe(false);
+    }
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 24 });
+    fixture.componentInstance.onWindowScroll();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.collapsed()).toBe(true);
+    expect(player.classList.contains('is-collapsed')).toBe(true);
+
+    for (const scrollY of [25, 26, 25, 27, 26, 28, 27, 29]) {
+      Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
+      fixture.componentInstance.onWindowScroll();
+      expect(fixture.componentInstance.collapsed()).toBe(true);
+    }
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 6 });
+    fixture.componentInstance.onWindowScroll();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.collapsed()).toBe(false);
+    expect(player.classList.contains('is-collapsed')).toBe(false);
+  });
+
+  it('keeps the compact collapsed progress accurate without changing the player layout height', () => {
     const fixture = createFixture();
     const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
     Object.defineProperty(audio, 'duration', { configurable: true, value: 100 });
@@ -83,20 +112,15 @@ describe('ListeningAudioPlayerComponent', () => {
 
     const player = fixture.nativeElement.querySelector('[data-testid="listening-audio-player"]') as HTMLElement;
     const collapsedProgress = fixture.nativeElement.querySelector('[data-testid="audio-collapsed-progress"]') as HTMLElement;
-    expect(player.classList.contains('is-collapsed')).toBe(false);
-    expect(collapsedProgress).not.toBeNull();
+    const initialHeight = player.getBoundingClientRect().height;
+
     expect(collapsedProgress.querySelector<HTMLElement>('.collapsed-progress-played')?.style.width).toBe('42%');
 
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 120 });
     fixture.componentInstance.onWindowScroll();
     fixture.detectChanges();
-    expect(fixture.componentInstance.collapsed()).toBe(true);
-    expect(player.classList.contains('is-collapsed')).toBe(true);
 
-    Object.defineProperty(window, 'scrollY', { configurable: true, value: 80 });
-    fixture.componentInstance.onWindowScroll();
-    fixture.detectChanges();
-    expect(fixture.componentInstance.collapsed()).toBe(false);
-    expect(player.classList.contains('is-collapsed')).toBe(false);
+    expect(fixture.componentInstance.collapsed()).toBe(true);
+    expect(player.getBoundingClientRect().height).toBe(initialHeight);
   });
 });
