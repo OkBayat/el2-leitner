@@ -166,7 +166,17 @@
               <strong>{{ test.title }} completed</strong>
               <span>Review the marked answers above.</span>
             </div>
-            <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
+            <div class="submit-actions">
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="session.restarting()"
+                [attr.aria-label]="'Retake ' + test.title"
+                data-testid="retake-listening-test"
+                (click)="retake()"
+              >{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</button>
+              <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
+            </div>
           }
         </footer>
       </form>
