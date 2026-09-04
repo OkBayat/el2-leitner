@@ -207,10 +207,16 @@ h1 {
   color: var(--mat-sys-on-surface);
 }
 
-.add-vocabulary-button {
+.add-vocabulary-button,
+.answer-feedback .house-one-status {
   margin-inline-start: auto;
   align-self: center;
   white-space: nowrap;
+}
+
+.answer-feedback .house-one-status {
+  color: var(--mat-sys-primary);
+  font-weight: 650;
 }
 
 .submit-panel {
@@ -306,7 +312,8 @@ h1 {
     padding-left: 8px;
   }
 
-  .add-vocabulary-button {
+  .add-vocabulary-button,
+  .answer-feedback .house-one-status {
     width: 100%;
     margin-inline-start: 0;
   }
