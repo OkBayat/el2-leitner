@@ -178,14 +178,19 @@ test('English LTR Angular app preserves the complete learner and library flow', 
 
   await page.goto('/library');
   await expect(page.getByRole('heading', { name: 'Library' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'View words' }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'View details' }).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'New collection' })).toBeVisible();
   await page.getByRole('button', { name: 'New collection' }).click();
   const collectionTitle = `Angular E2E Collection ${Date.now()}`;
   await page.getByLabel('Title').fill(collectionTitle);
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('heading', { name: collectionTitle })).toBeVisible();
-  await page.getByRole('button', { name: 'Close' }).click();
+  await expect(page.getByTestId('library-detail-page')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit collection' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Import file' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add word' })).toBeVisible();
+  await page.getByRole('button', { name: /Back to library/u }).click();
+  await expect(page).toHaveURL(/\/library$/u);
 
   await page.goto('/leitner-house/1');
   await expect(page.getByRole('heading', { name: 'House 1 words' })).toBeVisible();
