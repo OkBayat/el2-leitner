@@ -5,7 +5,16 @@
 .practice-page {
   width: min(100%, 980px);
   margin: 0 auto;
-  padding: 24px 20px 96px;
+  padding: 12px 20px 96px;
+}
+
+.sticky-audio-player-shell {
+  position: sticky;
+  z-index: 50;
+  top: 10px;
+  width: min(1440px, calc(100vw - 24px));
+  margin: 0 0 30px 50%;
+  transform: translateX(-50%);
 }
 
 .practice-header {
@@ -273,7 +282,13 @@ h1 {
 
 @media (max-width: 700px) {
   .practice-page {
-    padding: 20px 14px 110px;
+    padding: 8px 14px 110px;
+  }
+
+  .sticky-audio-player-shell {
+    top: 6px;
+    width: calc(100vw - 12px);
+    margin-bottom: 20px;
   }
 
   .practice-header,
