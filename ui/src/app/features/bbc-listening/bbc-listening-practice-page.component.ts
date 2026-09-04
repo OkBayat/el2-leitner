@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -63,7 +63,6 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly mistakePractice = inject(ListeningMistakePracticeService);
-  private readonly audioPlayer = viewChild(ListeningAudioPlayerComponent);
 
   async ngOnInit(): Promise<void> {
     const lessonSlug = this.route.snapshot.paramMap.get('lessonSlug')?.trim();
@@ -136,6 +135,5 @@ export class BbcListeningPracticePageComponent implements OnInit {
       control.reset('');
     }
     this.vocabularyError.set(null);
-    this.audioPlayer()?.stop();
   }
 }
