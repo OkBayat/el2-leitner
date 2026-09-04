@@ -74,28 +74,29 @@ describe('ListeningAudioPlayerComponent', () => {
   });
 
   it('uses cumulative scroll hysteresis so slow scrolling does not flicker the player', () => {
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 100 });
     const fixture = createFixture();
     const player = fixture.nativeElement.querySelector('[data-testid="listening-audio-player"]') as HTMLElement;
 
-    for (let scrollY = 1; scrollY <= 23; scrollY += 1) {
+    for (let scrollY = 101; scrollY <= 123; scrollY += 1) {
       Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
       fixture.componentInstance.onWindowScroll();
       expect(fixture.componentInstance.collapsed()).toBe(false);
     }
 
-    Object.defineProperty(window, 'scrollY', { configurable: true, value: 24 });
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 124 });
     fixture.componentInstance.onWindowScroll();
     fixture.detectChanges();
     expect(fixture.componentInstance.collapsed()).toBe(true);
     expect(player.classList.contains('is-collapsed')).toBe(true);
 
-    for (const scrollY of [25, 26, 25, 27, 26, 28, 27, 29]) {
+    for (const scrollY of [125, 126, 125, 127, 126, 128, 127, 129]) {
       Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
       fixture.componentInstance.onWindowScroll();
       expect(fixture.componentInstance.collapsed()).toBe(true);
     }
 
-    Object.defineProperty(window, 'scrollY', { configurable: true, value: 6 });
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 105 });
     fixture.componentInstance.onWindowScroll();
     fixture.detectChanges();
     expect(fixture.componentInstance.collapsed()).toBe(false);
