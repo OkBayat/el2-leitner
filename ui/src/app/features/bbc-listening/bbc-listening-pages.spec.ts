@@ -98,7 +98,7 @@ describe('BBC listening pages', () => {
     expect(page.error()).toBeNull();
   });
 
-  it('loads the selected test with its in-app audio, allows incomplete submission and can add mistakes to House 1', async () => {
+  it('loads the selected test, submits it, captures mistakes and resets the same page for a retake', async () => {
     const lessonSignal = signal<ListeningLesson | null>(lesson);
     const testSignal = signal<ListeningTest | null>(test);
     const attemptSignal = signal<ListeningAttempt | null>({
@@ -109,8 +109,22 @@ describe('BBC listening pages', () => {
       totalQuestions: 2,
     });
     const resultSignal = signal<ListeningAttemptResult | null>(null);
+    const restartingSignal = signal(false);
     const start = vi.fn().mockResolvedValue(true);
     const submit = vi.fn().mockResolvedValue(true);
+    const restart = vi.fn().mockImplementation(async () => {
+      restartingSignal.set(true);
+      attemptSignal.set({
+        id: 'attempt-2',
+        testId: 'test-2',
+        status: 'active',
+        startedAt: '2026-09-03T08:10:00.000Z',
+        totalQuestions: 2,
+      });
+      resultSignal.set(null);
+      restartingSignal.set(false);
+      return true;
+    });
     const addToHouseOne = vi.fn().mockResolvedValue({ id: 'db-sea-levels', term: 'sea levels', box: 1 });
     const session = {
       lesson: lessonSignal,
@@ -119,9 +133,11 @@ describe('BBC listening pages', () => {
       result: resultSignal,
       loading: signal(false),
       submitting: signal(false),
+      restarting: restartingSignal,
       error: signal<string | null>(null),
       start,
       submit,
+      restart,
     };
     TestBed.configureTestingModule({
       providers: [
@@ -179,5 +195,32 @@ describe('BBC listening pages', () => {
     await page.addVocabularyToHouseOne('sea levels');
     expect(addToHouseOne).toHaveBeenCalledWith('sea levels');
     expect(page.isVocabularyAdded('SEA LEVELS')).toBe(true);
+
+    resultSignal.set({
+      attempt: {
+        id: 'attempt-1',
+        testId: 'test-2',
+        status: 'completed',
+        startedAt: '2026-09-03T08:00:00.000Z',
+        submittedAt: '2026-09-03T08:06:00.000Z',
+        totalQuestions: 2,
+      },
+      score: { correct: 1, wrong: 1, total: 2, percentage: 50 },
+      results: [phraseMistake, choiceMistake],
+    });
+    page.answerControl('q1').setValue('coast');
+    page.answerControl('q2').setValue('q2-a');
+    expect(page.submitted()).toBe(true);
+    expect(page.canSubmit()).toBe(false);
+
+    await page.retake();
+
+    expect(restart).toHaveBeenCalledTimes(1);
+    expect(attemptSignal()?.id).toBe('attempt-2');
+    expect(page.submitted()).toBe(false);
+    expect(page.answerControl('q1').value).toBe('');
+    expect(page.answerControl('q2').value).toBe('');
+    expect(page.answeredCount()).toBe(0);
+    expect(page.canSubmit()).toBe(true);
   });
 });
