@@ -38,9 +38,6 @@ export class VocabularyFileParser {
       if (!currentEntry.definitions.length) {
         invalidLine(lineNumber, `Vocabulary item "${currentEntry.primaryForm}" needs at least one definition.`);
       }
-      if (!currentEntry.examples.length) {
-        invalidLine(lineNumber, `Vocabulary item "${currentEntry.primaryForm}" needs at least one example.`);
-      }
       entries.push(currentEntry);
       currentEntry = null;
     };
