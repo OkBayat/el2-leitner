@@ -71,8 +71,21 @@ assert.match(catalogTemplate, /test\.completed/u, 'Each test must expose its own
 assert.match(catalogTemplate, /start-bbc-/u, 'Each test needs a stable start action.');
 assert.match(catalogTemplate, /'tests', test\.id, 'practice'/u, 'Each test action must route by test id.');
 
+const listeningDomain = read('src/app/domain/listening-practice/listening-practice.ts');
+assert.match(
+  listeningDomain,
+  /buildListeningAudioProgress/u,
+  'Approximate audio-to-question mapping must remain a pure Listening Practice domain projection.',
+);
+assert.match(
+  listeningDomain,
+  /ListeningAudioProgressSegment/u,
+  'The audio timeline must expose typed question-group segments from the Listening Practice domain.',
+);
+
 const practice = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.ts');
 const template = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.html');
+const practiceStyles = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.scss');
 assert.match(practice, /FormRecord<FormControl<string>>/u, 'Dynamic answers must use typed reactive forms.');
 assert.match(practice, /toSignal\(/u, 'Answer progress must react to typed form value changes under OnPush.');
 assert.match(practice, /paramMap\.get\('testId'\)/u, 'Practice must resolve the selected test from the route.');
@@ -80,6 +93,18 @@ assert.match(practice, /ListeningMistakePracticeService/u, 'Wrong-answer capture
 assert.match(practice, /findExistingHouseOneTerms/u, 'Completed listening feedback must check current House 1 membership.');
 assert.match(practice, /ListeningAudioPlayerComponent/u, 'Episode audio must be rendered through its own component.');
 assert.match(template, /app-listening-audio-player/u, 'The selected test must contain the in-app episode player.');
+assert.match(template, /\[test\]="test"/u, 'The player must receive the selected IELTS test for question-progress mapping.');
+assert.ok(
+  template.indexOf('app-listening-audio-player') < template.indexOf('<header class="practice-header">'),
+  'The sticky player must render before the exercise heading, matching the approved top-player layout.',
+);
+assert.match(
+  template,
+  /data-testid="sticky-listening-audio-player"/u,
+  'The sticky player shell needs a stable regression selector.',
+);
+assert.match(practiceStyles, /\.sticky-audio-player-shell[\s\S]*?position:\s*sticky/u, 'The episode player must stay sticky while questions scroll.');
+assert.match(practiceStyles, /\.sticky-audio-player-shell[\s\S]*?top:/u, 'The sticky player must define its viewport offset.');
 assert.match(template, /test\.groups/u, 'The practice page must render only the selected test groups.');
 assert.match(template, /mat-radio-group/u, 'Single-choice IELTS questions must use Material radio controls.');
 assert.match(template, /data-testid="submit-listening-attempt"/u, 'The selected test needs one stable submit action.');
@@ -111,13 +136,25 @@ assert.match(template, /\[disabled\]="submitted\(\)"/u, 'Choice answers must be 
 assert.match(template, /result\.score\.correct/u, 'The server score must be rendered after submission.');
 assert.match(template, /feedback\?\.correct/u, 'Every answer must show correct or incorrect feedback.');
 
+const audioPlayerComponent = read('src/app/features/bbc-listening/listening-audio-player.component.ts');
 const audioPlayer = read('src/app/features/bbc-listening/listening-audio-player.component.html');
+const audioStyles = read('src/app/features/bbc-listening/listening-audio-player.component.scss');
 assert.match(audioPlayer, /<audio/u, 'The player must use the browser audio element.');
 assert.doesNotMatch(audioPlayer, /autoplay/u, 'Listening audio must never autoplay.');
-assert.match(audioPlayer, /audio-play/u, 'The player must expose Play.');
+assert.match(audioPlayer, /audio-play/u, 'The player must expose Play/Pause.');
 assert.match(audioPlayer, /audio-stop/u, 'The player must expose Stop.');
 assert.match(audioPlayer, /audio-back-5/u, 'The player must expose five-second rewind.');
 assert.match(audioPlayer, /audio-forward-5/u, 'The player must expose five-second forward seek.');
+assert.match(audioPlayer, /type="range"/u, 'The player must expose a draggable native audio scrubber.');
+assert.match(audioPlayer, /data-testid="audio-progress"/u, 'The audio scrubber needs a stable regression selector.');
+assert.match(audioPlayer, /data-testid="audio-question-progress"/u, 'The approximate question timeline needs a stable regression selector.');
+assert.match(audioPlayer, /Now around:/u, 'The player must explain which question range is approximately current.');
+assert.match(audioPlayer, /question-segment/u, 'Question ranges must render as visible timeline segments.');
+assert.match(audioPlayerComponent, /buildListeningAudioProgress/u, 'The player must consume the pure domain audio-progress projection.');
+assert.match(audioPlayerComponent, /seekTo\(/u, 'The player must support direct left/right scrubbing.');
+assert.match(audioPlayerComponent, /togglePlayback\(/u, 'The primary playback control must toggle Play and Pause.');
+assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
+assert.match(audioStyles, /\.question-segment\.active/u, 'The current question range must have a distinct visual state.');
 
 const mistakeDomain = read('src/app/domain/listening-practice/listening-mistake-practice.ts');
 assert.match(mistakeDomain, /HAS_NUMBER/u, 'House 1 capture must reject answers containing numbers.');
