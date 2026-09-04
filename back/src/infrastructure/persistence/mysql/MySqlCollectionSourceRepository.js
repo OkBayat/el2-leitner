@@ -265,8 +265,8 @@ export class MySqlCollectionSourceRepository {
       await connection.execute(
         `UPDATE collection_entries
          SET section_id = ?, position = ?, display_form = ?, note = NULL,
-             removed_at = NULL, removed_version = NULL,
-             introduced_version = CASE WHEN removed_at IS NULL THEN introduced_version ELSE ? END
+             introduced_version = CASE WHEN removed_at IS NULL THEN introduced_version ELSE ? END,
+             removed_at = NULL, removed_version = NULL
          WHERE id = ?`,
         [sectionId, item.position, displayForm, nextVersion, rows[0].id]
       );
