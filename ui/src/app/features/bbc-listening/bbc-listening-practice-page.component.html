@@ -116,22 +116,23 @@
                         <span>Your answer: {{ feedback.submittedAnswer }}</span>
                         <span>Correct answer: {{ feedback.correctAnswer }}</span>
                         @if (vocabularyCandidate(feedback); as vocabulary) {
-                          <button
-                            mat-stroked-button
-                            type="button"
-                            class="add-vocabulary-button"
-                            [disabled]="addingVocabulary() !== null || isVocabularyAdded(vocabulary)"
-                            [attr.data-testid]="'add-listening-word-' + question.number"
-                            (click)="addVocabularyToHouseOne(vocabulary)"
-                          >
-                            @if (isVocabularyAdded(vocabulary)) {
-                              Added to House 1
-                            } @else if (addingVocabulary() === vocabulary) {
-                              Adding…
-                            } @else {
-                              Add to House 1
-                            }
-                          </button>
+                          @if (isVocabularyInHouseOne(vocabulary)) {
+                            <span
+                              class="house-one-status"
+                              [attr.data-testid]="'listening-word-in-house-1-' + question.number"
+                            >Already in House 1</span>
+                          } @else {
+                            <button
+                              mat-stroked-button
+                              type="button"
+                              class="add-vocabulary-button"
+                              [disabled]="addingVocabulary() !== null"
+                              [attr.data-testid]="'add-listening-word-' + question.number"
+                              (click)="addVocabularyToHouseOne(vocabulary)"
+                            >
+                              {{ addingVocabulary() === vocabulary ? 'Adding…' : 'Add to House 1' }}
+                            </button>
+                          }
                         }
                       }
                     </div>
