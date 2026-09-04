@@ -46,7 +46,7 @@
         </section>
       }
 
-      <form [formGroup]="answers" (ngSubmit)="submit()" novalidate>
+      <form [formGroup]="answers" (keydown.enter)="$event.preventDefault()" novalidate>
         @for (group of test.groups; track group.id) {
           <section class="question-group" [attr.data-task-type]="group.taskType">
             <header class="group-heading">
@@ -157,9 +157,10 @@
             </div>
             <button
               mat-flat-button
-              type="submit"
+              type="button"
               [disabled]="!canSubmit()"
               data-testid="submit-listening-attempt"
+              (click)="submit()"
             >{{ session.submitting() ? 'Submitting…' : 'Submit answers' }}</button>
           } @else {
             <div>
