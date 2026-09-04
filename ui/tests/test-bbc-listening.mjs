@@ -77,6 +77,7 @@ assert.match(practice, /FormRecord<FormControl<string>>/u, 'Dynamic answers must
 assert.match(practice, /toSignal\(/u, 'Answer progress must react to typed form value changes under OnPush.');
 assert.match(practice, /paramMap\.get\('testId'\)/u, 'Practice must resolve the selected test from the route.');
 assert.match(practice, /ListeningMistakePracticeService/u, 'Wrong-answer capture must be orchestrated through an application service.');
+assert.match(practice, /findExistingHouseOneTerms/u, 'Completed listening feedback must check current House 1 membership.');
 assert.match(practice, /ListeningAudioPlayerComponent/u, 'Episode audio must be rendered through its own component.');
 assert.match(template, /app-listening-audio-player/u, 'The selected test must contain the in-app episode player.');
 assert.match(template, /test\.groups/u, 'The practice page must render only the selected test groups.');
@@ -99,6 +100,12 @@ assert.match(
 );
 assert.match(template, /add-listening-word-/u, 'Eligible incorrect answers need a stable House 1 action.');
 assert.match(template, /Add to House 1/u, 'The House 1 action must be explicit to the learner.');
+assert.match(
+  template,
+  /@if \(isVocabularyInHouseOne\(vocabulary\)\)[\s\S]*?Already in House 1[\s\S]*?@else[\s\S]*?Add to House 1/u,
+  'Vocabulary already in House 1 must show status text instead of another add button.',
+);
+assert.match(template, /listening-word-in-house-1-/u, 'Existing House 1 status needs a stable regression selector.');
 assert.match(template, /\[readonly\]="submitted\(\)"/u, 'Text answers must be locked after submission.');
 assert.match(template, /\[disabled\]="submitted\(\)"/u, 'Choice answers must be locked after submission.');
 assert.match(template, /result\.score\.correct/u, 'The server score must be rendered after submission.');
