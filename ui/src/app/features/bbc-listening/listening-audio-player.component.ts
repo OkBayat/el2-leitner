@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-const PLAYER_SCROLL_THRESHOLD = 8;
+const PLAYER_SCROLL_HYSTERESIS = 24;
 const PLAYER_TOP_SAFE_ZONE = 24;
 
 @Component({
@@ -36,10 +36,10 @@ export class ListeningAudioPlayerComponent implements OnInit {
   });
 
   private readonly audio = viewChild.required<ElementRef<HTMLAudioElement>>('audio');
-  private lastScrollY = 0;
+  private scrollAnchorY = 0;
 
   ngOnInit(): void {
-    this.lastScrollY = Math.max(0, window.scrollY);
+    this.scrollAnchorY = Math.max(0, window.scrollY);
   }
 
   @HostListener('window:scroll')
@@ -47,18 +47,32 @@ export class ListeningAudioPlayerComponent implements OnInit {
     const currentScrollY = Math.max(0, window.scrollY);
 
     if (currentScrollY <= PLAYER_TOP_SAFE_ZONE) {
-      this.collapsed.set(false);
-      this.lastScrollY = currentScrollY;
+      this.setCollapsed(false);
+      this.scrollAnchorY = currentScrollY;
       return;
     }
 
-    const delta = currentScrollY - this.lastScrollY;
-    if (delta >= PLAYER_SCROLL_THRESHOLD) {
-      this.collapsed.set(true);
-      this.lastScrollY = currentScrollY;
-    } else if (delta <= -PLAYER_SCROLL_THRESHOLD) {
-      this.collapsed.set(false);
-      this.lastScrollY = currentScrollY;
+    if (this.collapsed()) {
+      if (currentScrollY > this.scrollAnchorY) {
+        this.scrollAnchorY = currentScrollY;
+        return;
+      }
+
+      if (this.scrollAnchorY - currentScrollY >= PLAYER_SCROLL_HYSTERESIS) {
+        this.setCollapsed(false);
+        this.scrollAnchorY = currentScrollY;
+      }
+      return;
+    }
+
+    if (currentScrollY < this.scrollAnchorY) {
+      this.scrollAnchorY = currentScrollY;
+      return;
+    }
+
+    if (currentScrollY - this.scrollAnchorY >= PLAYER_SCROLL_HYSTERESIS) {
+      this.setCollapsed(true);
+      this.scrollAnchorY = currentScrollY;
     }
   }
 
@@ -125,5 +139,9 @@ export class ListeningAudioPlayerComponent implements OnInit {
     const minutes = Math.floor(safe / 60);
     const remainder = String(safe % 60).padStart(2, '0');
     return `${minutes}:${remainder}`;
+  }
+
+  private setCollapsed(value: boolean): void {
+    if (this.collapsed() !== value) this.collapsed.set(value);
   }
 }
