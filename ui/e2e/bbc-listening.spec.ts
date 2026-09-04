@@ -18,7 +18,7 @@ async function learningState(page: Page): Promise<any> {
   });
 }
 
-test('BBC lessons expose three tests each, in-app audio, completion tracking, and isolated mistake capture', async ({ page }) => {
+test('BBC lessons expose three tests each, sticky in-app audio, completion tracking, and isolated mistake capture', async ({ page }) => {
   await authenticate(page);
   const stateBefore = await learningState(page);
 
@@ -56,11 +56,20 @@ test('BBC lessons expose three tests each, in-app audio, completion tracking, an
   await expect(page.locator('app-shell')).toHaveCount(0);
   await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
 
+  const stickyPlayer = page.getByTestId('sticky-listening-audio-player');
+  await expect(stickyPlayer).toBeVisible();
   await expect(page.getByTestId('listening-audio-player')).toBeVisible();
   await expect(page.getByTestId('audio-play')).toBeVisible();
   await expect(page.getByTestId('audio-stop')).toBeVisible();
   await expect(page.getByTestId('audio-back-5')).toBeVisible();
   await expect(page.getByTestId('audio-forward-5')).toBeVisible();
+  await expect(page.getByTestId('audio-progress')).toBeVisible();
+  const questionProgress = page.getByTestId('audio-question-progress');
+  await expect(questionProgress).toBeVisible();
+  await expect(questionProgress).toContainText('Now around:');
+  await expect(questionProgress.locator('.question-segment')).toHaveCount(4);
+  expect(await stickyPlayer.evaluate((element) => getComputedStyle(element).position)).toBe('sticky');
+
   const audio = page.locator('audio');
   await expect(audio).toHaveAttribute('src', '/api/listening/bbc/lessons/climate-change-extreme-weather/audio');
   await expect(audio).not.toHaveAttribute('autoplay', /.*/u);
@@ -69,6 +78,10 @@ test('BBC lessons expose three tests each, in-app audio, completion tracking, an
   await expect(page.getByTestId('listening-question-8')).toContainText('landslides and mudslides');
   await expect(page.getByTestId('listening-question-9')).toContainText('swept');
   await expect(page.getByTestId('listening-question-10')).toContainText('sea');
+  await page.getByTestId('listening-question-13').scrollIntoViewIfNeeded();
+  const stickyBox = await stickyPlayer.boundingBox();
+  expect(stickyBox).not.toBeNull();
+  expect(stickyBox!.y).toBeLessThanOrEqual(16);
   await expect(page.getByTestId('submit-listening-attempt')).toBeEnabled();
   await expect(page.getByText('0 / 13 answered')).toBeVisible();
   await expect(page.getByText('Unanswered questions will be marked incorrect.')).toBeVisible();
