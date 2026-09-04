@@ -54,7 +54,7 @@ export async function loadCollectionSources(directory, parser) {
   for (const fileName of files) {
     const slug = collectionSlugFromFileName(fileName);
     const text = await readFile(join(root, fileName), "utf8");
-    const parsed = parser.parse(text);
+    const parsed = parser.parse(text, { requireStructured: true });
     sources.push({
       fileName,
       slug,
