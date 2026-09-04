@@ -88,6 +88,20 @@ describe("library domain", () => {
     ]);
   });
 
+  it("allows a vocabulary item without an example but still requires a definition", () => {
+    const parsed = new VocabularyFileParser().parse(`
+# Example
+## Lesson 1
+- Monday
+  - definition: The day after Sunday.
+`);
+    assert.deepEqual(parsed.entries[0].examples, []);
+    assert.throws(
+      () => new VocabularyFileParser().parse("# Example\n## Lesson 1\n- Monday\n  - example: I will call you on Monday."),
+      { code: "INVALID_COLLECTION_SOURCE", statusCode: 400 }
+    );
+  });
+
   it("rejects duplicate vocabulary identities instead of silently losing lesson content", () => {
     assert.throws(
       () => new VocabularyFileParser().parse(`
@@ -101,17 +115,6 @@ describe("library domain", () => {
   - definition: The middle part of something.
   - example: Stand in the center.
 `),
-      { code: "INVALID_COLLECTION_SOURCE", statusCode: 400 }
-    );
-  });
-
-  it("requires both a simple definition and an example for every vocabulary item", () => {
-    assert.throws(
-      () => new VocabularyFileParser().parse("# Example\n## Lesson 1\n- Monday\n  - definition: The day after Sunday."),
-      { code: "INVALID_COLLECTION_SOURCE", statusCode: 400 }
-    );
-    assert.throws(
-      () => new VocabularyFileParser().parse("# Example\n## Lesson 1\n- Monday\n  - example: I will call you on Monday."),
       { code: "INVALID_COLLECTION_SOURCE", statusCode: 400 }
     );
   });
