@@ -82,6 +82,21 @@ assert.match(template, /app-listening-audio-player/u, 'The selected test must co
 assert.match(template, /test\.groups/u, 'The practice page must render only the selected test groups.');
 assert.match(template, /mat-radio-group/u, 'Single-choice IELTS questions must use Material radio controls.');
 assert.match(template, /data-testid="submit-listening-attempt"/u, 'The selected test needs one stable submit action.');
+assert.match(
+  template,
+  /<form \[formGroup\]="answers" \(keydown\.enter\)="\$event\.preventDefault\(\)" novalidate>/u,
+  'Pressing Enter anywhere in the listening answer form must be explicitly ignored.',
+);
+assert.doesNotMatch(
+  template,
+  /\(ngSubmit\)="submit\(\)"/u,
+  'Listening answers must not be submitted through the form submit event.',
+);
+assert.match(
+  template,
+  /type="button"[\s\S]*?data-testid="submit-listening-attempt"[\s\S]*?\(click\)="submit\(\)"/u,
+  'Listening answers must be submitted only by clicking the explicit submit button.',
+);
 assert.match(template, /add-listening-word-/u, 'Eligible incorrect answers need a stable House 1 action.');
 assert.match(template, /Add to House 1/u, 'The House 1 action must be explicit to the learner.');
 assert.match(template, /\[readonly\]="submitted\(\)"/u, 'Text answers must be locked after submission.');
