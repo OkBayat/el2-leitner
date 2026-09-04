@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.audio-player.is-collapsed {
+  pointer-events: none;
+}
+
 .audio-player-reveal {
   min-height: 0;
   overflow: hidden;
