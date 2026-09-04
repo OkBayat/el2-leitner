@@ -1,9 +1,17 @@
-FROM node:22-alpine AS backend-dependencies
+FROM node:22-bookworm-slim AS npm-base
+ENV NPM_CONFIG_FETCH_RETRIES=5 \
+    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000 \
+    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000 \
+    NPM_CONFIG_FETCH_TIMEOUT=300000 \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false
+
+FROM npm-base AS backend-dependencies
 WORKDIR /app/back
 COPY back/package*.json ./
 RUN npm ci --omit=dev
 
-FROM node:22-alpine AS ui-build
+FROM npm-base AS ui-build
 WORKDIR /app/ui
 COPY ui/package*.json ./
 RUN npm ci
@@ -15,7 +23,7 @@ COPY ui/data ./data
 COPY ui/tools ./tools
 RUN npm run build:production
 
-FROM node:22-alpine AS runtime
+FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --chown=node:node back ./back
