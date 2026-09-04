@@ -1,7 +1,13 @@
+import { createHash } from "node:crypto";
+
 import { loadCuratedSentenceCatalog } from "../../sentence-practice/CuratedSentenceCatalog.js";
 
 const INSERT_BATCH_SIZE = 250;
 const CURATED_SOURCE_ITEM_COUNT = 3_766;
+
+function sentenceHash(sentenceText) {
+  return createHash("sha256").update(sentenceText, "utf8").digest("hex");
+}
 
 async function activeSentenceTexts(executor) {
   const [rows] = await executor.execute(
@@ -27,8 +33,8 @@ function uniqueSentenceTexts(sentences) {
 }
 
 function insertStatement(batch) {
-  const values = batch.map(() => "(?, 'active')").join(",\n");
-  return `INSERT INTO sentences (sentence_text, status)
+  const values = batch.map(() => "(?, ?, 'active')").join(",\n");
+  return `INSERT INTO sentences (sentence_text, sentence_hash, status)
           VALUES ${values}`;
 }
 
@@ -46,7 +52,8 @@ export async function seedSentenceCatalog({ pool, sentences }) {
     await connection.beginTransaction();
     for (let offset = 0; offset < missing.length; offset += INSERT_BATCH_SIZE) {
       const batch = missing.slice(offset, offset + INSERT_BATCH_SIZE);
-      await connection.execute(insertStatement(batch), batch);
+      const params = batch.flatMap((sentenceText) => [sentenceText, sentenceHash(sentenceText)]);
+      await connection.execute(insertStatement(batch), params);
     }
     await connection.commit();
   } catch (error) {
