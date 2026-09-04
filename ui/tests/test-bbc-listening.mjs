@@ -156,7 +156,9 @@ assert.match(audioPlayerComponent, /togglePlayback\(/u, 'The primary playback co
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
 assert.match(audioStyles, /\.collapsed-progress[\s\S]*?position:\s*absolute/u, 'Collapsed progress must float inside the stable sticky shell instead of changing layout height.');
-assert.match(audioStyles, /\.collapsed-progress[\s\S]*?width:\s*min\(/u, 'Collapsed progress must be compact instead of spanning the entire viewport edge.');
+assert.match(audioStyles, /\.collapsed-progress[\s\S]*?top:\s*-10px/u, 'Collapsed progress must align exactly with the top edge of the viewport when the sticky shell is active.');
+assert.match(audioStyles, /\.collapsed-progress[\s\S]*?width:\s*100vw/u, 'Collapsed progress must span the full viewport width.');
+assert.match(audioStyles, /\.collapsed-progress[\s\S]*?border-radius:\s*0/u, 'Full-width collapsed progress must meet the viewport edges without rounded end caps.');
 assert.doesNotMatch(audioStyles, /grid-template-rows/u, 'Collapsing the player must not animate layout height because it causes scroll feedback flicker.');
 assert.match(audioStyles, /will-change:\s*transform, opacity/u, 'The player reveal animation should stay on compositor-friendly properties.');
 assert.doesNotMatch(audioStyles, /\.question-progress|\.question-segment|\.question-timeline/u, 'Question-range CSS must be removed completely.');
