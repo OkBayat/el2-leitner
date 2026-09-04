@@ -5,6 +5,42 @@ import { createFreshState } from '../../domain/learning/learning-rules';
 import { ListeningMistakePracticeService } from './listening-mistake-practice.service';
 
 describe('ListeningMistakePracticeService', () => {
+  it('detects only requested vocabulary that is still in House 1, including accepted forms', async () => {
+    const state = createFreshState([
+      {
+        id: 'shift',
+        term: 'little shifts',
+        accepted: ['little shift'],
+        box: 1,
+        introducedOn: '2026-09-03',
+      },
+      {
+        id: 'device',
+        term: 'the device',
+        accepted: ['device'],
+        box: 2,
+        introducedOn: '2026-09-01',
+      },
+    ], new Date('2026-09-03T08:00:00Z'));
+    const store = {
+      initialize: vi.fn().mockResolvedValue(state),
+      snapshot: vi.fn().mockReturnValue(state),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        ListeningMistakePracticeService,
+        { provide: LearningStoreService, useValue: store },
+      ],
+    });
+
+    const existing = await TestBed.inject(ListeningMistakePracticeService)
+      .findExistingHouseOneTerms(['LITTLE SHIFT', 'the device', 'unknown']);
+
+    expect(existing).toEqual(new Set(['little shift']));
+    expect(store.initialize).toHaveBeenCalledTimes(1);
+    expect(store.snapshot).toHaveBeenCalledTimes(1);
+  });
+
   it('persists a multi-word House 1 capture from the latest snapshot and reloads canonical server vocabulary', async () => {
     const initial = createFreshState([{ id: 'weather', term: 'weather' }], new Date('2026-09-03T08:00:00Z'));
     const canonical = createFreshState([

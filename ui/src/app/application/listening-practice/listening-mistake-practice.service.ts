@@ -8,6 +8,21 @@ import { captureListeningMistakeInHouseOne } from '../../domain/listening-practi
 export class ListeningMistakePracticeService {
   private readonly store = inject(LearningStoreService);
 
+  async findExistingHouseOneTerms(terms: readonly string[]): Promise<ReadonlySet<string>> {
+    await this.store.initialize();
+    const requested = new Set(terms.map((term) => normalizeAnswer(term)).filter(Boolean));
+    if (!requested.size) return new Set();
+
+    const houseOneForms = new Set<string>();
+    for (const word of this.store.snapshot().words) {
+      if (word.box !== 1) continue;
+      houseOneForms.add(normalizeAnswer(word.term));
+      for (const accepted of word.accepted) houseOneForms.add(normalizeAnswer(accepted));
+    }
+
+    return new Set([...requested].filter((term) => houseOneForms.has(term)));
+  }
+
   async addToHouseOne(term: string): Promise<LearningWord> {
     await this.store.initialize();
     const capture = captureListeningMistakeInHouseOne(this.store.snapshot(), term);

@@ -54,10 +54,12 @@ export class BbcListeningPracticePageComponent implements OnInit {
     this.session.lesson()
     && this.session.test()
     && !this.submitted()
-    && !this.session.submitting(),
+    && !this.session.submitting()
+    && !this.session.restarting(),
   ));
   readonly addingVocabulary = signal<string | null>(null);
   readonly addedVocabulary = signal<ReadonlySet<string>>(new Set());
+  readonly existingHouseOneVocabulary = signal<ReadonlySet<string>>(new Set());
   readonly vocabularyError = signal<string | null>(null);
 
   private readonly route = inject(ActivatedRoute);
@@ -99,12 +101,13 @@ export class BbcListeningPracticePageComponent implements OnInit {
     return listeningVocabularyCandidate(result);
   }
 
-  isVocabularyAdded(term: string): boolean {
-    return this.addedVocabulary().has(normalizeAnswer(term));
+  isVocabularyInHouseOne(term: string): boolean {
+    const normalized = normalizeAnswer(term);
+    return this.existingHouseOneVocabulary().has(normalized) || this.addedVocabulary().has(normalized);
   }
 
   async addVocabularyToHouseOne(term: string): Promise<void> {
-    if (this.addingVocabulary() || this.isVocabularyAdded(term)) return;
+    if (this.addingVocabulary() || this.isVocabularyInHouseOne(term)) return;
     this.vocabularyError.set(null);
     this.addingVocabulary.set(term);
     try {
@@ -123,6 +126,36 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   async submit(): Promise<void> {
     if (!this.canSubmit()) return;
-    await this.session.submit(this.answers.getRawValue());
+    const submitted = await this.session.submit(this.answers.getRawValue());
+    if (submitted) await this.refreshHouseOneVocabularyStatus();
+  }
+
+  async retake(): Promise<void> {
+    const restarted = await this.session.restart();
+    if (!restarted) return;
+
+    for (const control of Object.values(this.answers.controls)) {
+      control.reset('');
+    }
+    this.addedVocabulary.set(new Set());
+    this.existingHouseOneVocabulary.set(new Set());
+    this.vocabularyError.set(null);
+  }
+
+  private async refreshHouseOneVocabularyStatus(): Promise<void> {
+    const candidates = (this.session.result()?.results ?? [])
+      .map((result) => this.vocabularyCandidate(result))
+      .filter((term): term is string => Boolean(term));
+    if (!candidates.length) {
+      this.existingHouseOneVocabulary.set(new Set());
+      return;
+    }
+
+    try {
+      this.existingHouseOneVocabulary.set(await this.mistakePractice.findExistingHouseOneTerms(candidates));
+    } catch (error) {
+      this.existingHouseOneVocabulary.set(new Set());
+      this.vocabularyError.set(error instanceof Error ? error.message : 'Could not check House 1 vocabulary status.');
+    }
   }
 }

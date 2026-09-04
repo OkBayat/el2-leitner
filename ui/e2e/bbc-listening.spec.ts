@@ -126,8 +126,8 @@ test('BBC lessons expose three tests each, in-app audio, completion tracking, an
   );
   await page.getByTestId('add-listening-word-10').click();
   await savePromise;
-  await expect(page.getByTestId('add-listening-word-10')).toContainText('Added to House 1');
-  await expect(page.getByTestId('add-listening-word-10')).toBeDisabled();
+  await expect(page.getByTestId('add-listening-word-10')).toHaveCount(0);
+  await expect(page.getByTestId('listening-word-in-house-1-10')).toContainText('Already in House 1');
 
   const stateAfterCapture = await learningState(page);
   const seaLevels = stateAfterCapture.state.words.find((word: any) =>

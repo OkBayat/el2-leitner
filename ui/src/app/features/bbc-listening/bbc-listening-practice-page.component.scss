@@ -207,10 +207,16 @@ h1 {
   color: var(--mat-sys-on-surface);
 }
 
-.add-vocabulary-button {
+.add-vocabulary-button,
+.answer-feedback .house-one-status {
   margin-inline-start: auto;
   align-self: center;
   white-space: nowrap;
+}
+
+.answer-feedback .house-one-status {
+  color: var(--mat-sys-primary);
+  font-weight: 650;
 }
 
 .submit-panel {
@@ -228,6 +234,17 @@ h1 {
 .submit-panel div {
   display: grid;
   gap: 3px;
+}
+
+.submit-panel .submit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.submit-actions > * {
+  white-space: nowrap;
 }
 
 .submit-panel strong {
@@ -295,8 +312,19 @@ h1 {
     padding-left: 8px;
   }
 
-  .add-vocabulary-button {
+  .add-vocabulary-button,
+  .answer-feedback .house-one-status {
     width: 100%;
     margin-inline-start: 0;
+  }
+
+  .submit-panel .submit-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .submit-actions > * {
+    width: 100%;
   }
 }
