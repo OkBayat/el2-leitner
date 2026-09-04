@@ -218,25 +218,22 @@ audio {
 .collapsed-progress {
   position: absolute;
   z-index: 2;
-  top: 18px;
+  top: -10px;
   left: 50%;
-  width: min(460px, calc(100% - 72px));
-  height: 3px;
+  width: 100vw;
+  height: 4px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 0;
   background: color-mix(in srgb, var(--mat-sys-outline-variant) 72%, transparent);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -6px);
-  will-change: transform, opacity;
-  transition:
-    transform 200ms cubic-bezier(0.2, 0, 0, 1),
-    opacity 130ms ease;
+  transform: translateX(-50%);
+  will-change: opacity;
+  transition: opacity 130ms ease;
 }
 
 .audio-player.is-collapsed .collapsed-progress {
-  opacity: 0.72;
-  transform: translate(-50%, 0);
+  opacity: 0.8;
 }
 
 .audio-error {
@@ -304,8 +301,7 @@ audio {
   }
 
   .collapsed-progress {
-    top: 14px;
-    width: min(360px, calc(100% - 48px));
+    top: -6px;
   }
 }
 
