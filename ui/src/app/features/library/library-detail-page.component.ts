@@ -27,45 +27,32 @@ import {
   template: `
     @if (collection(); as c) {
       <section class="detail-page" data-testid="library-detail-page">
-        <div class="back-row">
-          <button mat-button (click)="back()">← Back to library</button>
-        </div>
+        <button mat-button class="back-action" (click)="back()">← Back to library</button>
 
-        <header class="detail-header">
-          <div>
-            <h1>{{ c.title }}</h1>
-            <p>{{ c.description || 'A vocabulary collection for your learning journey.' }}</p>
-          </div>
-        </header>
+        <div class="detail-content">
+          <h1>{{ c.title }}</h1>
 
-        <mat-chip-set aria-label="Collection details">
-          <mat-chip>{{ kindLabel(c.kind) }}</mat-chip>
-          <mat-chip>{{ level(c) }}</mat-chip>
-          <mat-chip>{{ c.status }}</mat-chip>
-          <mat-chip>version {{ c.contentVersion }}</mat-chip>
-        </mat-chip-set>
+          <p class="description">{{ c.description || 'A vocabulary collection for your learning journey.' }}</p>
 
-        <div class="progress-block">
-          <div class="progress-copy">
+          <mat-chip-set aria-label="Collection details">
+            <mat-chip>{{ kindLabel(c.kind) }}</mat-chip>
+            <mat-chip>{{ level(c) }}</mat-chip>
+            <mat-chip>{{ c.status }}</mat-chip>
+            <mat-chip>version {{ c.contentVersion }}</mat-chip>
+          </mat-chip-set>
+
+          <div class="progress">
             <span>{{ progress(c).entered }} of {{ progress(c).total }} words are in Leitner</span>
-            <strong>{{ progress(c).percent }}%</strong>
+            <mat-progress-bar mode="determinate" [value]="progress(c).percent" />
           </div>
-          <mat-progress-bar mode="determinate" [value]="progress(c).percent" />
-        </div>
 
-        <div class="actions" data-testid="library-detail-actions">
-          <button mat-flat-button (click)="toggleSubscription()">{{ c.subscribed ? 'Remove from box' : 'Add to box' }}</button>
-          @if (canManage()) {
-            <button mat-stroked-button (click)="editCollection()">Edit collection</button>
-            <button mat-stroked-button (click)="importEntries()">Import file</button>
-            <button mat-stroked-button (click)="editEntry()">Add word</button>
-          }
-        </div>
-
-        <section class="words-section">
-          <div class="words-heading">
-            <h2>Words</h2>
-            <span>{{ c.entries?.length || 0 }} entries</span>
+          <div class="actions" data-testid="library-detail-actions">
+            <button mat-flat-button (click)="toggleSubscription()">{{ c.subscribed ? 'Remove from box' : 'Add to box' }}</button>
+            @if (canManage()) {
+              <button mat-stroked-button (click)="editCollection()">Edit collection</button>
+              <button mat-stroked-button (click)="importEntries()">Import file</button>
+              <button mat-stroked-button (click)="editEntry()">Add word</button>
+            }
           </div>
 
           @if (c.entries?.length) {
@@ -98,28 +85,24 @@ import {
           } @else {
             <p class="empty">No words to display.</p>
           }
-        </section>
+        </div>
       </section>
     }
   `,
   styles: [`
     :host{display:block}
-    .detail-page{display:grid;gap:20px}
-    .back-row{display:flex}
-    .detail-header h1{margin:0 0 8px;font-size:clamp(28px,4vw,42px);line-height:1.15}
-    .detail-header p{margin:0;max-width:850px;color:var(--mat-sys-on-surface-variant);line-height:1.6}
-    .progress-block{display:grid;gap:9px;max-width:900px}
-    .progress-copy{display:flex;justify-content:space-between;gap:16px;font-size:14px}
+    .detail-page{display:grid;gap:14px}
+    .back-action{justify-self:start}
+    .detail-content{display:grid;gap:16px;width:min(100%,850px)}
+    h1{margin:0;font-size:28px;line-height:1.25;font-weight:500}
+    .description{margin:0;line-height:1.55}
+    .progress{display:grid;gap:8px}
     .actions{display:flex;flex-wrap:wrap;gap:8px}
-    .words-section{display:grid;gap:12px}
-    .words-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
-    .words-heading h2{margin:0}
-    .words-heading span{color:var(--mat-sys-on-surface-variant);font-size:13px}
-    .table-wrap{overflow-x:auto;border:1px solid var(--mat-sys-outline-variant);border-radius:16px}
+    .table-wrap{overflow-x:auto}
     table{width:100%}
     .entry-actions{text-align:right;white-space:nowrap}
-    .empty{padding:32px;text-align:center;color:var(--mat-sys-on-surface-variant);border:1px dashed var(--mat-sys-outline-variant);border-radius:16px}
-    @media(max-width:640px){.progress-copy{align-items:flex-start;flex-direction:column;gap:4px}.actions>*{flex:1 1 auto}}
+    .empty{padding:30px;text-align:center;color:var(--mat-sys-on-surface-variant)}
+    @media(max-width:640px){.actions>*{flex:1 1 auto}.detail-content{width:100%}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
