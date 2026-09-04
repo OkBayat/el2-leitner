@@ -32,7 +32,8 @@ Rules:
 - Each `##` heading is a lesson.
 - Each top-level `-` line is one vocabulary identity.
 - The first form is the source's primary display form; forms after ` / ` are accepted spellings/forms of the same vocabulary identity, not synonyms.
-- Every vocabulary item requires at least one `definition:` and at least one `example:`.
+- Every vocabulary item requires at least one `definition:`.
+- `example:` is optional. When present, it is added to the global sentence corpus and linked to the vocabulary item.
 - Multiple definitions and examples are supported.
 - The same vocabulary identity may appear only once inside one collection file. This avoids silently losing lesson-specific content.
 
