@@ -1,0 +1,93 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Library</h1>
+      <p>{{ collections().length }} collections · {{ totalWords() }} words · {{ subscribedWords() }} in my collections</p>
+    </div>
+    @if (canManage()) {
+      <button mat-flat-button (click)="createCollection()">New collection</button>
+    }
+  </header>
+
+  <div class="filters" aria-label="Library filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput [formControl]="search">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select [formControl]="kind">
+        <mat-option value="all">All</mat-option>
+        <mat-option value="book">Book</mat-option>
+        <mat-option value="exam">Exam</mat-option>
+        <mat-option value="topic">Topic</mat-option>
+        <mat-option value="course">Course</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select [formControl]="status">
+        <mat-option value="all">All</mat-option>
+        <mat-option value="subscribed">Added</mat-option>
+        <mat-option value="available">Not added</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="cards" data-testid="library-card-grid">
+    @for (collection of filtered(); track collection.id) {
+      <mat-card appearance="outlined" class="collection-card" [attr.id]="collection.id">
+        <div class="collection-cover" data-testid="library-collection-cover">
+          <div class="cover-fallback" aria-hidden="true">
+            <span class="cover-monogram">{{ coverMonogram(collection.title) }}</span>
+          </div>
+
+          @if (!coverMissing(collection.slug)) {
+            <img
+              class="collection-cover-image"
+              [src]="coverUrl(collection)"
+              [alt]="collection.title + ' cover'"
+              loading="lazy"
+              decoding="async"
+              (error)="markCoverMissing(collection.slug)"
+            >
+          }
+
+          <span class="cover-badge">{{ kindLabel(collection.kind) }} · {{ level(collection) }}</span>
+
+          @if (canManage()) {
+            <button mat-icon-button class="cover-edit" (click)="edit(collection)" title="Edit collection" aria-label="Edit collection">✎</button>
+          }
+        </div>
+
+        <mat-card-content class="collection-content">
+          <div class="collection-heading">
+            <h2>{{ collection.title }}</h2>
+            @if (collection.subscribed) {
+              <span class="added-status">✓ Added</span>
+            }
+          </div>
+
+          <p class="collection-description">{{ collection.description || 'A vocabulary collection for your learning journey.' }}</p>
+
+          <div class="collection-progress-copy">
+            <span>{{ collection.wordCount }} words</span>
+            <strong>{{ progress(collection).percent }}% in Leitner</strong>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="progress(collection).percent" />
+        </mat-card-content>
+
+        <mat-card-actions class="collection-actions">
+          <button mat-stroked-button (click)="open(collection)">View words</button>
+          @if (collection.subscribed) {
+            <button mat-button class="remove-action" (click)="toggle(collection)">Remove</button>
+          } @else {
+            <button mat-flat-button (click)="toggle(collection)">Add to box</button>
+          }
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <p class="empty">No collections match these filters.</p>
+    }
+  </div>
+</section>
