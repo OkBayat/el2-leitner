@@ -4,6 +4,7 @@
     [src]="src()"
     preload="metadata"
     (loadedmetadata)="syncState()"
+    (durationchange)="syncState()"
     (timeupdate)="syncState()"
     (play)="syncState()"
     (pause)="syncState()"
@@ -11,17 +12,77 @@
     (error)="onAudioError()"
   ></audio>
 
-  <div class="audio-copy">
-    <strong>Episode audio</strong>
-    <span>{{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}</span>
+  <div class="audio-main">
+    <div class="audio-top-row">
+      <div class="audio-meta">
+        <span class="speaker-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M4 9.2v5.6h3.7L12 18.3V5.7L7.7 9.2H4Zm10.1-.9a1 1 0 0 0-1.1 1.6c.7.5 1.1 1.2 1.1 2.1s-.4 1.6-1.1 2.1a1 1 0 1 0 1.1 1.6c1.2-.9 1.9-2.2 1.9-3.7s-.7-2.8-1.9-3.7Zm2.5-3a1 1 0 0 0-1.2 1.6 6.4 6.4 0 0 1 0 10.2 1 1 0 1 0 1.2 1.6A8.4 8.4 0 0 0 20 12a8.4 8.4 0 0 0-3.4-6.7Z" />
+          </svg>
+        </span>
+        <div class="audio-copy">
+          <strong>Episode audio</strong>
+          <span class="sticky-hint">Sticky while scrolling <span aria-hidden="true">ⓘ</span></span>
+        </div>
+        <span class="audio-time" data-testid="audio-time">
+          {{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}
+        </span>
+      </div>
+
+      <div class="audio-controls" aria-label="Audio controls">
+        <button mat-stroked-button type="button" data-testid="audio-back-5" (click)="skip(-5)">−5 sec</button>
+        <button
+          mat-flat-button
+          type="button"
+          class="play-toggle"
+          data-testid="audio-play"
+          [attr.aria-label]="playing() ? 'Pause episode audio' : 'Play episode audio'"
+          (click)="togglePlayback()"
+        >
+          <span aria-hidden="true">{{ playing() ? 'Ⅱ' : '▶' }}</span>
+          <span class="sr-only">{{ playing() ? 'Pause' : 'Play' }}</span>
+        </button>
+        <button mat-stroked-button type="button" data-testid="audio-stop" (click)="stop()">Stop</button>
+        <button mat-stroked-button type="button" data-testid="audio-forward-5" (click)="skip(5)">+5 sec</button>
+      </div>
+    </div>
+
+    <div class="scrubber" [class.disabled]="duration() <= 0">
+      <div class="scrubber-track" aria-hidden="true">
+        <span class="scrubber-played" [style.width.%]="progressPercent()"></span>
+      </div>
+      <input
+        type="range"
+        min="0"
+        [max]="duration()"
+        step="0.1"
+        [value]="currentTime()"
+        [disabled]="duration() <= 0"
+        [attr.aria-valuetext]="formatTime(currentTime()) + ' of ' + formatTime(duration())"
+        aria-label="Episode position"
+        data-testid="audio-progress"
+        (input)="onSeekInput($event)"
+      >
+    </div>
   </div>
 
-  <div class="audio-controls">
-    <button mat-stroked-button type="button" data-testid="audio-back-5" (click)="skip(-5)">−5 sec</button>
-    <button mat-flat-button type="button" data-testid="audio-play" [disabled]="playing()" (click)="play()">Play</button>
-    <button mat-stroked-button type="button" data-testid="audio-stop" (click)="stop()">Stop</button>
-    <button mat-stroked-button type="button" data-testid="audio-forward-5" (click)="skip(5)">+5 sec</button>
-  </div>
+  <aside class="question-progress" data-testid="audio-question-progress" aria-label="Approximate question progress">
+    <strong>Now around: {{ progress().currentRangeLabel }}</strong>
+    <div class="question-timeline" role="list" aria-label="Question ranges in audio order">
+      @for (segment of progress().segments; track segment.id) {
+        <div
+          class="question-segment"
+          [class.active]="segment.id === progress().activeSegmentId"
+          [style.flex-grow]="segment.questionCount"
+          [attr.data-testid]="'audio-question-segment-' + segment.id"
+          role="listitem"
+        >
+          <span class="segment-line" aria-hidden="true"></span>
+          <small>{{ segment.label }}</small>
+        </div>
+      }
+    </div>
+  </aside>
 
   @if (error()) {
     <p class="audio-error" role="alert">{{ error() }}</p>
