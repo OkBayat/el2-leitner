@@ -2,16 +2,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
+  OnInit,
   computed,
   input,
   signal,
   viewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  ListeningTest,
-  buildListeningAudioProgress,
-} from '../../domain/listening-practice/listening-practice';
+
+const PLAYER_SCROLL_HYSTERESIS = 24;
+const PLAYER_TOP_SAFE_ZONE = 24;
 
 @Component({
   selector: 'app-listening-audio-player',
@@ -20,21 +21,60 @@ import {
   styleUrl: 'listening-audio-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListeningAudioPlayerComponent {
+export class ListeningAudioPlayerComponent implements OnInit {
   readonly src = input.required<string>();
-  readonly test = input.required<ListeningTest>();
   readonly playing = signal(false);
   readonly currentTime = signal(0);
   readonly duration = signal(0);
   readonly error = signal<string | null>(null);
-  readonly progress = computed(() => buildListeningAudioProgress(
-    this.test(),
-    this.currentTime(),
-    this.duration(),
-  ));
-  readonly progressPercent = computed(() => this.progress().progress * 100);
+  readonly collapsed = signal(false);
+  readonly progressPercent = computed(() => {
+    const duration = this.duration();
+    const currentTime = this.currentTime();
+    if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(currentTime)) return 0;
+    return Math.min(100, Math.max(0, (currentTime / duration) * 100));
+  });
 
   private readonly audio = viewChild.required<ElementRef<HTMLAudioElement>>('audio');
+  private scrollAnchorY = 0;
+
+  ngOnInit(): void {
+    this.scrollAnchorY = Math.max(0, window.scrollY);
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    const currentScrollY = Math.max(0, window.scrollY);
+
+    if (currentScrollY <= PLAYER_TOP_SAFE_ZONE) {
+      this.setCollapsed(false);
+      this.scrollAnchorY = currentScrollY;
+      return;
+    }
+
+    if (this.collapsed()) {
+      if (currentScrollY > this.scrollAnchorY) {
+        this.scrollAnchorY = currentScrollY;
+        return;
+      }
+
+      if (this.scrollAnchorY - currentScrollY >= PLAYER_SCROLL_HYSTERESIS) {
+        this.setCollapsed(false);
+        this.scrollAnchorY = currentScrollY;
+      }
+      return;
+    }
+
+    if (currentScrollY < this.scrollAnchorY) {
+      this.scrollAnchorY = currentScrollY;
+      return;
+    }
+
+    if (currentScrollY - this.scrollAnchorY >= PLAYER_SCROLL_HYSTERESIS) {
+      this.setCollapsed(true);
+      this.scrollAnchorY = currentScrollY;
+    }
+  }
 
   async play(): Promise<void> {
     this.error.set(null);
@@ -99,5 +139,9 @@ export class ListeningAudioPlayerComponent {
     const minutes = Math.floor(safe / 60);
     const remainder = String(safe % 60).padStart(2, '0');
     return `${minutes}:${remainder}`;
+  }
+
+  private setCollapsed(value: boolean): void {
+    if (this.collapsed() !== value) this.collapsed.set(value);
   }
 }

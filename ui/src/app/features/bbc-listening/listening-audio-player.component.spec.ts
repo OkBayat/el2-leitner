@@ -1,95 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ListeningTest } from '../../domain/listening-practice/listening-practice';
 import { ListeningAudioPlayerComponent } from './listening-audio-player.component';
-
-const test: ListeningTest = {
-  id: 'test-1',
-  title: 'Test 1',
-  position: 1,
-  questionCount: 13,
-  groups: [
-    {
-      id: 'group-1',
-      position: 1,
-      heading: 'Questions 1–4',
-      taskType: 'note_completion',
-      instruction: 'Complete the notes.',
-      answerInstruction: 'Write one word.',
-      maxWords: 1,
-      maxNumbers: 0,
-      questions: [1, 2, 3, 4].map((number) => ({
-        id: `q${number}`,
-        number,
-        position: number,
-        responseType: 'text' as const,
-        prompt: `Question ${number} {{blank}}.`,
-      })),
-    },
-    {
-      id: 'group-2',
-      position: 2,
-      heading: 'Questions 5–7',
-      taskType: 'sentence_completion',
-      instruction: 'Complete the sentences.',
-      answerInstruction: 'Write one word.',
-      maxWords: 1,
-      maxNumbers: 0,
-      questions: [5, 6, 7].map((number) => ({
-        id: `q${number}`,
-        number,
-        position: number,
-        responseType: 'text' as const,
-        prompt: `Question ${number} {{blank}}.`,
-      })),
-    },
-    {
-      id: 'group-3',
-      position: 3,
-      heading: 'Questions 8–10',
-      taskType: 'short_answer',
-      instruction: 'Answer the questions.',
-      answerInstruction: 'Write up to three words.',
-      maxWords: 3,
-      maxNumbers: 0,
-      questions: [8, 9, 10].map((number) => ({
-        id: `q${number}`,
-        number,
-        position: number,
-        responseType: 'text' as const,
-        prompt: `Question ${number} {{blank}}.`,
-      })),
-    },
-    {
-      id: 'group-4',
-      position: 4,
-      heading: 'Questions 11–13',
-      taskType: 'short_answer',
-      instruction: 'Answer the questions.',
-      answerInstruction: 'Write up to three words.',
-      maxWords: 3,
-      maxNumbers: 0,
-      questions: [11, 12, 13].map((number) => ({
-        id: `q${number}`,
-        number,
-        position: number,
-        responseType: 'text' as const,
-        prompt: `Question ${number} {{blank}}.`,
-      })),
-    },
-  ],
-};
 
 describe('ListeningAudioPlayerComponent', () => {
   beforeEach(() => {
     TestBed.resetTestingModule();
     vi.restoreAllMocks();
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
   });
 
   function createFixture() {
     const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
     fixture.componentRef.setInput('src', '/api/listening/bbc/lessons/example/audio');
-    fixture.componentRef.setInput('test', test);
     fixture.detectChanges();
     return fixture;
   }
@@ -129,7 +51,7 @@ describe('ListeningAudioPlayerComponent', () => {
     expect(audio.currentTime).toBe(0);
   });
 
-  it('renders a draggable audio scrubber and keeps the approximate question range synchronized', () => {
+  it('renders a draggable audio scrubber without question-range progress UI', () => {
     const fixture = createFixture();
     const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
     Object.defineProperty(audio, 'duration', { configurable: true, value: 30 });
@@ -141,21 +63,65 @@ describe('ListeningAudioPlayerComponent', () => {
     expect(scrubber.type).toBe('range');
     expect(scrubber.max).toBe('30');
     expect(scrubber.valueAsNumber).toBe(12);
-
-    const questionProgress = fixture.nativeElement.querySelector('[data-testid="audio-question-progress"]') as HTMLElement;
-    expect(questionProgress.textContent).toContain('Now around: Questions 5–7');
-    expect(questionProgress.textContent).toContain('Q1–4');
-    expect(questionProgress.textContent).toContain('Q5–7');
-    expect(questionProgress.textContent).toContain('Q8–10');
-    expect(questionProgress.textContent).toContain('Q11–13');
-
-    const active = fixture.nativeElement.querySelector('.question-segment.active') as HTMLElement;
-    expect(active.getAttribute('data-testid')).toBe('audio-question-segment-group-2');
+    expect(fixture.nativeElement.querySelector('[data-testid="audio-question-progress"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Now around:');
 
     scrubber.value = '18';
     scrubber.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(audio.currentTime).toBe(18);
     expect(fixture.componentInstance.currentTime()).toBe(18);
+  });
+
+  it('uses cumulative scroll hysteresis so slow scrolling does not flicker the player', () => {
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 100 });
+    const fixture = createFixture();
+    const player = fixture.nativeElement.querySelector('[data-testid="listening-audio-player"]') as HTMLElement;
+
+    for (let scrollY = 101; scrollY <= 123; scrollY += 1) {
+      Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
+      fixture.componentInstance.onWindowScroll();
+      expect(fixture.componentInstance.collapsed()).toBe(false);
+    }
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 124 });
+    fixture.componentInstance.onWindowScroll();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.collapsed()).toBe(true);
+    expect(player.classList.contains('is-collapsed')).toBe(true);
+
+    for (const scrollY of [125, 126, 125, 127, 126, 128, 127, 129]) {
+      Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
+      fixture.componentInstance.onWindowScroll();
+      expect(fixture.componentInstance.collapsed()).toBe(true);
+    }
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 105 });
+    fixture.componentInstance.onWindowScroll();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.collapsed()).toBe(false);
+    expect(player.classList.contains('is-collapsed')).toBe(false);
+  });
+
+  it('keeps the compact collapsed progress accurate without changing the player layout height', () => {
+    const fixture = createFixture();
+    const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
+    Object.defineProperty(audio, 'duration', { configurable: true, value: 100 });
+    audio.currentTime = 42;
+    fixture.componentInstance.syncState();
+    fixture.detectChanges();
+
+    const player = fixture.nativeElement.querySelector('[data-testid="listening-audio-player"]') as HTMLElement;
+    const collapsedProgress = fixture.nativeElement.querySelector('[data-testid="audio-collapsed-progress"]') as HTMLElement;
+    const initialHeight = player.getBoundingClientRect().height;
+
+    expect(collapsedProgress.querySelector<HTMLElement>('.collapsed-progress-played')?.style.width).toBe('42%');
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 120 });
+    fixture.componentInstance.onWindowScroll();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.collapsed()).toBe(true);
+    expect(player.getBoundingClientRect().height).toBe(initialHeight);
   });
 });
