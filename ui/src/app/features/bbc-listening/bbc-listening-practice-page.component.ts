@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -54,7 +54,8 @@ export class BbcListeningPracticePageComponent implements OnInit {
     this.session.lesson()
     && this.session.test()
     && !this.submitted()
-    && !this.session.submitting(),
+    && !this.session.submitting()
+    && !this.session.restarting(),
   ));
   readonly addingVocabulary = signal<string | null>(null);
   readonly addedVocabulary = signal<ReadonlySet<string>>(new Set());
@@ -62,6 +63,7 @@ export class BbcListeningPracticePageComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly mistakePractice = inject(ListeningMistakePracticeService);
+  private readonly audioPlayer = viewChild(ListeningAudioPlayerComponent);
 
   async ngOnInit(): Promise<void> {
     const lessonSlug = this.route.snapshot.paramMap.get('lessonSlug')?.trim();
@@ -124,5 +126,16 @@ export class BbcListeningPracticePageComponent implements OnInit {
   async submit(): Promise<void> {
     if (!this.canSubmit()) return;
     await this.session.submit(this.answers.getRawValue());
+  }
+
+  async retake(): Promise<void> {
+    const restarted = await this.session.restart();
+    if (!restarted) return;
+
+    for (const control of Object.values(this.answers.controls)) {
+      control.reset('');
+    }
+    this.vocabularyError.set(null);
+    this.audioPlayer()?.stop();
   }
 }
