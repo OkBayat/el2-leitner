@@ -72,15 +72,10 @@ assert.match(catalogTemplate, /start-bbc-/u, 'Each test needs a stable start act
 assert.match(catalogTemplate, /'tests', test\.id, 'practice'/u, 'Each test action must route by test id.');
 
 const listeningDomain = read('src/app/domain/listening-practice/listening-practice.ts');
-assert.match(
+assert.doesNotMatch(
   listeningDomain,
-  /buildListeningAudioProgress/u,
-  'Approximate audio-to-question mapping must remain a pure Listening Practice domain projection.',
-);
-assert.match(
-  listeningDomain,
-  /ListeningAudioProgressSegment/u,
-  'The audio timeline must expose typed question-group segments from the Listening Practice domain.',
+  /ListeningAudioProgress|buildListeningAudioProgress|currentRangeLabel/u,
+  'Question-range audio progress must be removed from the Listening Practice domain when the UI no longer exposes it.',
 );
 
 const practice = read('src/app/features/bbc-listening/bbc-listening-practice-page.component.ts');
@@ -93,10 +88,10 @@ assert.match(practice, /ListeningMistakePracticeService/u, 'Wrong-answer capture
 assert.match(practice, /findExistingHouseOneTerms/u, 'Completed listening feedback must check current House 1 membership.');
 assert.match(practice, /ListeningAudioPlayerComponent/u, 'Episode audio must be rendered through its own component.');
 assert.match(template, /app-listening-audio-player/u, 'The selected test must contain the in-app episode player.');
-assert.match(template, /\[test\]="test"/u, 'The player must receive the selected IELTS test for question-progress mapping.');
+assert.doesNotMatch(template, /\[test\]="test"/u, 'The audio player must not depend on the IELTS test after question-range progress is removed.');
 assert.ok(
   template.indexOf('app-listening-audio-player') < template.indexOf('<header class="practice-header">'),
-  'The sticky player must render before the exercise heading, matching the approved top-player layout.',
+  'The sticky player must render before the exercise heading.',
 );
 assert.match(
   template,
@@ -147,14 +142,19 @@ assert.match(audioPlayer, /audio-back-5/u, 'The player must expose five-second r
 assert.match(audioPlayer, /audio-forward-5/u, 'The player must expose five-second forward seek.');
 assert.match(audioPlayer, /type="range"/u, 'The player must expose a draggable native audio scrubber.');
 assert.match(audioPlayer, /data-testid="audio-progress"/u, 'The audio scrubber needs a stable regression selector.');
-assert.match(audioPlayer, /data-testid="audio-question-progress"/u, 'The approximate question timeline needs a stable regression selector.');
-assert.match(audioPlayer, /Now around:/u, 'The player must explain which question range is approximately current.');
-assert.match(audioPlayer, /question-segment/u, 'Question ranges must render as visible timeline segments.');
-assert.match(audioPlayerComponent, /buildListeningAudioProgress/u, 'The player must consume the pure domain audio-progress projection.');
+assert.doesNotMatch(audioPlayer, /audio-question-progress|Now around:|question-segment/u, 'Question-range UI must be removed completely from the player template.');
+assert.match(audioPlayer, /data-testid="audio-collapsed-progress"/u, 'Collapsed mode must retain one visible playback-progress indicator.');
+assert.match(audioPlayer, /\[class\.is-collapsed\]="collapsed\(\)"/u, 'The player surface must expose its scroll-collapse state to CSS.');
+assert.match(audioPlayerComponent, /@HostListener\('window:scroll'\)/u, 'Player collapse/expand must react to viewport scroll direction through Angular.');
+assert.match(audioPlayerComponent, /readonly collapsed = signal\(false\)/u, 'Scroll visibility must have one explicit signal owner.');
+assert.match(audioPlayerComponent, /onWindowScroll\(\)/u, 'Scroll direction handling must stay in one component method.');
+assert.doesNotMatch(audioPlayerComponent, /ListeningTest|buildListeningAudioProgress/u, 'Player TypeScript must contain no question-range mapping dependency.');
 assert.match(audioPlayerComponent, /seekTo\(/u, 'The player must support direct left/right scrubbing.');
 assert.match(audioPlayerComponent, /togglePlayback\(/u, 'The primary playback control must toggle Play and Pause.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
-assert.match(audioStyles, /\.question-segment\.active/u, 'The current question range must have a distinct visual state.');
+assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
+assert.match(audioStyles, /\.collapsed-progress/u, 'Collapsed mode must style the progress-only strip.');
+assert.doesNotMatch(audioStyles, /\.question-progress|\.question-segment|\.question-timeline/u, 'Question-range CSS must be removed completely.');
 
 const mistakeDomain = read('src/app/domain/listening-practice/listening-mistake-practice.ts');
 assert.match(mistakeDomain, /HAS_NUMBER/u, 'House 1 capture must reject answers containing numbers.');
