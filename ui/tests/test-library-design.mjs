@@ -33,6 +33,9 @@ assert.doesNotMatch(pageHtml, /class="stats"/u, 'The old three-card statistics s
 assert.match(pageHtml, />View details</u, 'Collection cards must navigate to a dedicated details page.');
 assert.doesNotMatch(pageHtml, /cover-edit|Edit collection/u, 'Admin editing must not live on the browsing cards.');
 assert.match(pageTs, /router\.navigate\(\['\/library', collection\.id\]\)/u, 'View details must navigate to the collection route instead of opening the legacy detail popup.');
+assert.match(pageTs, /dialogs\.open\(CollectionEditorComponent/u, 'Creating a collection must keep using the collection editor.');
+assert.match(pageTs, /api\.create\(value\)/u, 'The New collection action must still persist the new collection.');
+assert.match(pageTs, /router\.navigate\(\['\/library', result\.collection\.id\]\)/u, 'A newly created collection should open in its details page.');
 assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must own a dedicated collection details route.');
 
 assert.match(detailPage, /data-testid="library-detail-page"/u, 'Collection details need a stable page locator.');
