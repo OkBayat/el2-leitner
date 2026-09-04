@@ -8,6 +8,10 @@
     </section>
   } @else if (session.lesson(); as lesson) {
     @if (session.test(); as test) {
+      <div class="sticky-audio-player-shell" data-testid="sticky-listening-audio-player">
+        <app-listening-audio-player [src]="lesson.audioUrl" [test]="test" />
+      </div>
+
       <header class="practice-header">
         <div class="header-copy">
           <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
@@ -22,8 +26,6 @@
           rel="noopener noreferrer"
         >Open BBC episode</a>
       </header>
-
-      <app-listening-audio-player [src]="lesson.audioUrl" />
 
       @if (session.result(); as result) {
         <section class="score-card" data-testid="listening-score" aria-live="polite">
