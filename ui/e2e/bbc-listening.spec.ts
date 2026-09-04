@@ -87,6 +87,13 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   expect(stickyBox).not.toBeNull();
   expect(stickyBox!.y).toBeLessThanOrEqual(16);
 
+  const collapsedProgressBox = await collapsedProgress.boundingBox();
+  const viewportWidth = await page.evaluate(() => window.innerWidth);
+  expect(collapsedProgressBox).not.toBeNull();
+  expect(collapsedProgressBox!.x).toBeLessThanOrEqual(1);
+  expect(collapsedProgressBox!.y).toBeLessThanOrEqual(1);
+  expect(collapsedProgressBox!.width).toBeGreaterThanOrEqual(viewportWidth - 2);
+
   await page.evaluate(() => window.scrollBy(0, -500));
   await expect(audioPlayer).not.toHaveClass(/is-collapsed/u);
   await expect(page.getByTestId('audio-play')).toBeVisible();
