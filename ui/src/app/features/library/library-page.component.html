@@ -15,17 +15,17 @@
     <mat-form-field appearance="outline"><mat-label>Status</mat-label><mat-select [formControl]="status"><mat-option value="all">All</mat-option><mat-option value="subscribed">Added</mat-option><mat-option value="available">Not added</mat-option></mat-select></mat-form-field>
   </div>
 
-  <section class="collection-section"><h2>My collections</h2><div class="cards">
+  <section class="collection-section"><h2>My collections</h2><div class="cards" data-testid="library-added-card-grid">
     @for (collection of filtered(); track collection.id) { @if (collection.subscribed) { <ng-container *ngTemplateOutlet="card; context: {$implicit: collection}"></ng-container> } }
   </div></section>
 
-  <section class="collection-section"><h2>Available collections</h2><div class="cards">
+  <section class="collection-section"><h2>Available collections</h2><div class="cards" data-testid="library-available-card-grid">
     @for (collection of filtered(); track collection.id) { @if (!collection.subscribed) { <ng-container *ngTemplateOutlet="card; context: {$implicit: collection}"></ng-container> } }
   </div></section>
 
   <ng-template #card let-collection>
     <mat-card appearance="outlined" class="collection-card">
-      <div class="collection-cover">
+      <div class="collection-cover" data-testid="library-collection-cover">
         <div class="cover-fallback"></div>
         @if (!coverMissing(collection.slug)) {
           <img class="collection-cover-image" [src]="coverUrl(collection)" [alt]="collection.title + ' cover'" loading="lazy" decoding="async" (error)="markCoverMissing(collection.slug)">
