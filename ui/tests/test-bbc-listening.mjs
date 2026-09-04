@@ -147,13 +147,18 @@ assert.match(audioPlayer, /data-testid="audio-collapsed-progress"/u, 'Collapsed 
 assert.match(audioPlayer, /\[class\.is-collapsed\]="collapsed\(\)"/u, 'The player surface must expose its scroll-collapse state to CSS.');
 assert.match(audioPlayerComponent, /@HostListener\('window:scroll'\)/u, 'Player collapse/expand must react to viewport scroll direction through Angular.');
 assert.match(audioPlayerComponent, /readonly collapsed = signal\(false\)/u, 'Scroll visibility must have one explicit signal owner.');
-assert.match(audioPlayerComponent, /onWindowScroll\(\)/u, 'Scroll direction handling must stay in one component method.');
+assert.match(audioPlayerComponent, /PLAYER_SCROLL_HYSTERESIS/u, 'Slow scrolling must use cumulative hysteresis instead of reacting to tiny direction changes.');
+assert.match(audioPlayerComponent, /scrollAnchorY/u, 'Scroll direction must be anchored so micro-reversals do not flicker the player.');
+assert.doesNotMatch(audioPlayerComponent, /lastScrollY/u, 'The old per-event direction comparison must not return.');
 assert.doesNotMatch(audioPlayerComponent, /ListeningTest|buildListeningAudioProgress/u, 'Player TypeScript must contain no question-range mapping dependency.');
 assert.match(audioPlayerComponent, /seekTo\(/u, 'The player must support direct left/right scrubbing.');
 assert.match(audioPlayerComponent, /togglePlayback\(/u, 'The primary playback control must toggle Play and Pause.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
-assert.match(audioStyles, /\.collapsed-progress/u, 'Collapsed mode must style the progress-only strip.');
+assert.match(audioStyles, /\.collapsed-progress[\s\S]*?position:\s*absolute/u, 'Collapsed progress must float inside the stable sticky shell instead of changing layout height.');
+assert.match(audioStyles, /\.collapsed-progress[\s\S]*?width:\s*min\(/u, 'Collapsed progress must be compact instead of spanning the entire viewport edge.');
+assert.doesNotMatch(audioStyles, /grid-template-rows/u, 'Collapsing the player must not animate layout height because it causes scroll feedback flicker.');
+assert.match(audioStyles, /will-change:\s*transform, opacity/u, 'The player reveal animation should stay on compositor-friendly properties.');
 assert.doesNotMatch(audioStyles, /\.question-progress|\.question-segment|\.question-timeline/u, 'Question-range CSS must be removed completely.');
 
 const mistakeDomain = read('src/app/domain/listening-practice/listening-mistake-practice.ts');
