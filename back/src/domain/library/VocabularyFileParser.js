@@ -1,87 +1,169 @@
 import { ValidationError } from "../errors.js";
-import { cleanVocabularyForms, normalizeVocabularyForm } from "./VocabularyNormalizer.js";
+import { LegacyNumberedVocabularyFileParser } from "./LegacyNumberedVocabularyFileParser.js";
+import { cleanVocabularyForms } from "./VocabularyNormalizer.js";
 
 const MAX_IMPORT_BYTES = 2_000_000;
 const MAX_IMPORT_ITEMS = 20_000;
+const MAX_DEFINITION_LENGTH = 2_000;
+const MAX_EXAMPLE_LENGTH = 1_000;
+
+function invalidLine(lineNumber, message) {
+  throw new ValidationError("INVALID_COLLECTION_SOURCE", `Line ${lineNumber}: ${message}`);
+}
 
 export class VocabularyFileParser {
-  parse(text) {
+  parse(text, { requireStructured = false } = {}) {
     if (typeof text !== "string") {
-      throw new ValidationError("INVALID_IMPORT", "Vocabulary import must be plain text.");
+      throw new ValidationError("INVALID_IMPORT", "Collection import must be plain text.");
     }
     if (Buffer.byteLength(text, "utf8") > MAX_IMPORT_BYTES) {
-      throw new ValidationError("IMPORT_TOO_LARGE", "Vocabulary import is too large.");
+      throw new ValidationError("IMPORT_TOO_LARGE", "Collection import is too large.");
     }
 
-    const sectionStack = [];
-    const sectionsByPath = new Map();
+    const hasBookHeading = text.split(/\r?\n/u).some((line) => /^#(?!#)\s+\S/u.test(line));
+    if (!hasBookHeading && !requireStructured) {
+      return new LegacyNumberedVocabularyFileParser().parse(text);
+    }
+
+    let title = null;
+    let currentSection = null;
+    let currentEntry = null;
+    const sections = [];
+    const sectionTitles = new Set();
     const entries = [];
-    const seenForms = new Set();
-    let sourceItemCount = 0;
-    let duplicateCount = 0;
+    const seenVocabularyForms = new Set();
 
-    for (const rawLine of text.split(/\r?\n/u)) {
-      const line = rawLine.trim();
-      if (!line) continue;
+    const flushEntry = (lineNumber) => {
+      if (!currentEntry) return;
+      if (!currentEntry.definitions.length) {
+        invalidLine(lineNumber, `Vocabulary item "${currentEntry.primaryForm}" needs at least one definition.`);
+      }
+      entries.push(currentEntry);
+      currentEntry = null;
+    };
 
-      const heading = rawLine.match(/^\s*(#{2,6})\s+(.+?)\s*$/u);
-      if (heading) {
-        const depth = heading[1].length - 2;
-        const title = heading[2].trim();
-        if (title.length > 255) {
-          throw new ValidationError("SECTION_TITLE_TOO_LONG", "Section titles must be at most 255 characters.");
+    const lines = text.split(/\r?\n/u);
+    for (let index = 0; index < lines.length; index += 1) {
+      const rawLine = lines[index];
+      const lineNumber = index + 1;
+      if (!rawLine.trim()) continue;
+
+      const bookHeading = rawLine.match(/^#(?!#)\s+(.+?)\s*$/u);
+      if (bookHeading) {
+        flushEntry(lineNumber);
+        if (title) invalidLine(lineNumber, "A collection file can contain only one book title (# heading).");
+        if (sections.length || entries.length) invalidLine(lineNumber, "The book title must be the first content in the file.");
+        title = bookHeading[1].trim();
+        if (!title || title.length > 255) invalidLine(lineNumber, "Book title must be between 1 and 255 characters.");
+        continue;
+      }
+
+      const lessonHeading = rawLine.match(/^##(?!#)\s+(.+?)\s*$/u);
+      if (lessonHeading) {
+        flushEntry(lineNumber);
+        if (!title) invalidLine(lineNumber, "Add a # book title before lessons.");
+        const lessonTitle = lessonHeading[1].trim();
+        if (!lessonTitle || lessonTitle.length > 255) {
+          invalidLine(lineNumber, "Lesson title must be between 1 and 255 characters.");
         }
-        sectionStack.splice(depth);
-        sectionStack[depth] = title;
-        const path = sectionStack.filter(Boolean).join(" / ");
-        if (path && !sectionsByPath.has(path)) {
-          sectionsByPath.set(path, {
-            path,
-            title,
-            parentPath: depth > 0 ? sectionStack.slice(0, depth).filter(Boolean).join(" / ") || null : null,
-            position: sectionsByPath.size + 1
-          });
+        if (sectionTitles.has(lessonTitle)) {
+          invalidLine(lineNumber, `Lesson "${lessonTitle}" is repeated in the same collection.`);
+        }
+        sectionTitles.add(lessonTitle);
+        currentSection = {
+          path: lessonTitle,
+          title: lessonTitle,
+          parentPath: null,
+          position: sections.length + 1
+        };
+        sections.push(currentSection);
+        continue;
+      }
+
+      const vocabularyLine = rawLine.match(/^-\s+(.+?)\s*$/u);
+      if (vocabularyLine) {
+        flushEntry(lineNumber);
+        if (!title) invalidLine(lineNumber, "Add a # book title before vocabulary items.");
+        if (!currentSection) invalidLine(lineNumber, "Every vocabulary item must belong to a ## lesson.");
+        if (entries.length >= MAX_IMPORT_ITEMS) {
+          throw new ValidationError("TOO_MANY_IMPORT_ITEMS", `A collection can contain at most ${MAX_IMPORT_ITEMS} vocabulary items.`);
+        }
+
+        const rawForms = vocabularyLine[1]
+          .split(/\s+\/\s+/u)
+          .map((value) => value.trim())
+          .filter(Boolean);
+        const forms = cleanVocabularyForms(rawForms[0], rawForms.slice(1));
+        const normalizedForms = forms.map(({ normalized }) => normalized);
+        const duplicate = normalizedForms.find((normalized) => seenVocabularyForms.has(normalized));
+        if (duplicate) {
+          invalidLine(
+            lineNumber,
+            `Vocabulary item "${forms[0].form}" overlaps another item in this collection. Keep each vocabulary identity in one lesson only.`
+          );
+        }
+        normalizedForms.forEach((normalized) => seenVocabularyForms.add(normalized));
+
+        currentEntry = {
+          sourceNumber: entries.length + 1,
+          position: entries.length + 1,
+          primaryForm: forms[0].form,
+          acceptedForms: forms.map(({ form }) => form),
+          sectionPath: currentSection.path,
+          definitions: [],
+          examples: []
+        };
+        continue;
+      }
+
+      const propertyLine = rawLine.match(/^\s{2,}-\s+(definition|example):\s*(.+?)\s*$/iu);
+      if (propertyLine) {
+        if (!currentEntry) invalidLine(lineNumber, "Definitions and examples must be placed under a vocabulary item.");
+        const type = propertyLine[1].toLowerCase();
+        const value = propertyLine[2].trim();
+        if (!value) invalidLine(lineNumber, `${type} cannot be empty.`);
+        if (type === "definition") {
+          if (value.length > MAX_DEFINITION_LENGTH) {
+            invalidLine(lineNumber, `Definition must be at most ${MAX_DEFINITION_LENGTH} characters.`);
+          }
+          currentEntry.definitions.push(value);
+        } else {
+          if (value.length > MAX_EXAMPLE_LENGTH) {
+            invalidLine(lineNumber, `Example must be at most ${MAX_EXAMPLE_LENGTH} characters.`);
+          }
+          currentEntry.examples.push(value);
         }
         continue;
       }
 
-      const numbered = rawLine.match(/^\s*(\d+)[.)]\s+(.+?)\s*$/u);
-      if (!numbered) continue;
-      sourceItemCount += 1;
-      if (sourceItemCount > MAX_IMPORT_ITEMS) {
-        throw new ValidationError("TOO_MANY_IMPORT_ITEMS", `A collection can import at most ${MAX_IMPORT_ITEMS} items at once.`);
-      }
-
-      const rawForms = numbered[2].split(/\s+\/\s+/u).map((value) => value.trim()).filter(Boolean);
-      const forms = cleanVocabularyForms(rawForms[0], rawForms.slice(1));
-      const normalizedForms = forms.map(({ form }) => normalizeVocabularyForm(form));
-      if (normalizedForms.some((normalized) => seenForms.has(normalized))) {
-        duplicateCount += 1;
-        continue;
-      }
-      normalizedForms.forEach((normalized) => seenForms.add(normalized));
-
-      const sectionPath = sectionStack.filter(Boolean).join(" / ") || null;
-      entries.push({
-        sourceNumber: Number(numbered[1]),
-        position: entries.length + 1,
-        primaryForm: forms[0].form,
-        acceptedForms: forms.map(({ form }) => form),
-        sectionPath
-      });
+      invalidLine(lineNumber, "Unsupported syntax. Use # book, ## lesson, - vocabulary, and indented definition/example lines.");
     }
 
+    flushEntry(lines.length + 1);
+
+    if (!title) {
+      throw new ValidationError("MISSING_COLLECTION_TITLE", "Collection file needs a # book title.");
+    }
+    if (!sections.length) {
+      throw new ValidationError("EMPTY_COLLECTION_SECTIONS", "Collection file needs at least one ## lesson.");
+    }
     if (!entries.length) {
-      throw new ValidationError("EMPTY_IMPORT", "No numbered vocabulary items were found in the file.");
+      throw new ValidationError("EMPTY_IMPORT", "No vocabulary items were found in the collection file.");
     }
 
     return {
-      sections: [...sectionsByPath.values()],
+      title,
+      sections,
       entries,
-      sourceItemCount,
-      duplicateCount
+      sourceItemCount: entries.length,
+      duplicateCount: 0
     };
   }
 }
 
-export { MAX_IMPORT_BYTES, MAX_IMPORT_ITEMS };
+export {
+  MAX_IMPORT_BYTES,
+  MAX_IMPORT_ITEMS,
+  MAX_DEFINITION_LENGTH,
+  MAX_EXAMPLE_LENGTH
+};

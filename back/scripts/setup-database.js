@@ -5,8 +5,12 @@ import { fileURLToPath } from "node:url";
 import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
+import { SyncCollectionSources } from "../src/application/library/SyncCollectionSources.js";
+import { LegacyNumberedVocabularyFileParser } from "../src/domain/library/LegacyNumberedVocabularyFileParser.js";
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
+import { loadCollectionSources } from "../src/infrastructure/content/loadCollectionSources.js";
 import { loadListeningLessonDefinitions } from "../src/infrastructure/content/loadListeningLessonDefinitions.js";
+import { MySqlCollectionSourceRepository } from "../src/infrastructure/persistence/mysql/MySqlCollectionSourceRepository.js";
 import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
 import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
@@ -20,6 +24,7 @@ const DATABASE_IDENTIFIER_PATTERN = /^[A-Za-z0-9_]+$/;
 const APPLICATION_USER_HOST = "%";
 const MIGRATIONS_DIRECTORY = new URL("../database/migrations/", import.meta.url);
 const IELTS_SOURCE = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
+const COLLECTIONS_DIRECTORY = new URL("../data/collections/", import.meta.url);
 const BBC_LISTENING_DIRECTORY = new URL("../data/listening/bbc/", import.meta.url);
 
 for (const environmentFile of [
@@ -161,17 +166,35 @@ async function setupDatabase() {
   });
 
   try {
+    // Keep the existing numbered IELTS source available until it is migrated to the new file-managed format.
     const sourceText = await readFile(IELTS_SOURCE, "utf8");
     const seedResult = await seedBuiltInLibrary({
       pool: applicationPool,
       sourceText,
-      parser: new VocabularyFileParser()
+      parser: new LegacyNumberedVocabularyFileParser()
     });
     if (seedResult.changed) console.info(`Seeded ${seedResult.total} IELTS library entries.`);
 
     const sentenceSeedResult = await seedSentencePractice({ pool: applicationPool });
     if (sentenceSeedResult.changed) {
       console.info(`Seeded ${sentenceSeedResult.sentenceCount} curated independent sentences.`);
+    }
+
+    const collectionSources = await loadCollectionSources(
+      COLLECTIONS_DIRECTORY,
+      new VocabularyFileParser()
+    );
+    const collectionSourceRepository = new MySqlCollectionSourceRepository(applicationPool);
+    const collectionSyncResult = await new SyncCollectionSources({
+      collectionSourceRepository
+    }).execute(collectionSources);
+    if (collectionSyncResult.changedCount) {
+      console.info(
+        `Synchronized ${collectionSyncResult.changedCount}/${collectionSyncResult.sourceCount} file-managed collection(s).`
+      );
+    }
+    if (collectionSyncResult.archivedCount) {
+      console.info(`Archived ${collectionSyncResult.archivedCount} removed file-managed collection(s).`);
     }
 
     const listeningDefinitions = await loadListeningLessonDefinitions(BBC_LISTENING_DIRECTORY);
@@ -203,10 +226,21 @@ async function setupDatabase() {
       );
     }
 
+    // Keep historical aliases available while repair jobs run. Only after those
+    // repairs finish is it safe to remove aliases no longer owned by any active source.
+    const collectionCleanupResult = await collectionSourceRepository.finalize();
+    if (collectionCleanupResult.orphanSentenceLinksRemoved || collectionCleanupResult.orphanFormsRemoved) {
+      console.info(
+        `Cleaned ${collectionCleanupResult.orphanSentenceLinksRemoved} orphan sentence link(s) and ${collectionCleanupResult.orphanFormsRemoved} stale vocabulary form(s).`
+      );
+    }
+
     await applicationPool.query("SELECT 1 FROM users LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM collection_entry_definitions LIMIT 0");
     await applicationPool.query("SELECT 1 FROM sentences LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM sentence_vocabulary_entries LIMIT 0");
     await applicationPool.query("SELECT 1 FROM listening_lessons LIMIT 0");
   } finally {
     await applicationPool.end();
