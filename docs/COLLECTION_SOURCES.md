@@ -65,6 +65,12 @@ Removing or changing an example in a collection file does not delete the sentenc
 
 The source hash is based on parsed semantic content, not the raw file bytes, so harmless whitespace changes do not create a new collection version.
 
+## IELTS Listening Core 1500
+
+The historical source contains 1,500 numbered rows. Nine later rows explicitly repeat an existing vocabulary identity as a spelling/plural alias, so the managed collection contains 1,491 canonical entries while retaining the historical `sourceItemCount = 1500` and `duplicateAliasCount = 9` metadata used by existing verification and client code.
+
+All 44 source sections are preserved. Every canonical IELTS entry has at least one short simple-English definition and one natural example sentence. The examples are written so the target accepted form occurs exactly once, making them safe for the current sentence-practice blank matcher.
+
 ## Legacy import compatibility
 
 Legacy numbered admin import payloads remain temporarily supported by `LegacyNumberedVocabularyFileParser`. The IELTS collection itself is now file-managed through `back/data/collections/ielts-listening-core-1500.md`; after that source has been synchronized, the old special IELTS seed is automatically bypassed. Files placed in `back/data/collections/` are strict and must always use the structured format above.
