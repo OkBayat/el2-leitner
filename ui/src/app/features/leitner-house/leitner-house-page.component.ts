@@ -25,11 +25,11 @@ interface HouseModel {
   imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
   template: `
     <section class="page">
-      <header><button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">← Back</button><div><p>Leitner box</p><h1>House {{ house() }} words</h1></div></header>
+      <header><button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">← Back</button><div><p>Leitner box</p><h1>Box {{ house() }} words</h1></div></header>
       @if (error()) { <div class="error" role="alert">{{ error() }}</div> }
       @if (model(); as model) {
         <mat-card appearance="outlined" class="info">
-          <div><span class="chip">House {{ model.house.number }}</span><h2>{{ model.summary.totalWords }} words in this house</h2><p>This house has a {{ model.house.reviewIntervalDays }}-day review interval and {{ model.house.stateCount }} timing states.</p></div>
+          <div><span class="chip">Box {{ model.house.number }}</span><h2>{{ model.summary.totalWords }} words in this box</h2><p>This box has a {{ model.house.reviewIntervalDays }}-day review interval and {{ model.house.stateCount }} timing states.</p></div>
           <div class="meta"><div><span>Word count</span><strong>{{ model.summary.totalWords }}</strong></div><div><span>Due reviews</span><strong>{{ model.summary.dueWords }}</strong></div><div><span>Total mistakes</span><strong>{{ model.summary.totalMistakes }}</strong></div><div><span>Total attempts</span><strong>{{ model.summary.totalAttempts }}</strong></div></div>
         </mat-card>
         <mat-card appearance="outlined" class="list">
@@ -68,7 +68,7 @@ export class LeitnerHousePageComponent implements OnDestroy {
   private readonly subscription = this.route.paramMap.subscribe((params) => {
     const house = Number(params.get('house'));
     if (Number.isInteger(house) && house >= 1 && house <= 5) { this.house.set(house); void this.load(house); }
-    else this.error.set('Invalid house number. Only Houses 1 through 5 are available.');
+    else this.error.set('Invalid box number. Only Boxes 1 through 5 are available.');
   });
   readonly filtered = computed(() => {
     const model = this.model();
@@ -81,7 +81,7 @@ export class LeitnerHousePageComponent implements OnDestroy {
   });
 
   ngOnDestroy(): void { this.subscription.unsubscribe(); }
-  async load(house: number): Promise<void> { this.error.set(''); try { this.model.set(await this.api.getHouse<HouseModel>(house)); } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not load this house.'); } }
+  async load(house: number): Promise<void> { this.error.set(''); try { this.model.set(await this.api.getHouse<HouseModel>(house)); } catch (error) { this.error.set(error instanceof Error ? error.message : 'Could not load this box.'); } }
   formatDue(day: string | null): string { if (!day) return '—'; const today = localDay(); if (day < today) return 'Overdue'; if (day === today) return 'Today'; const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); if (day === localDay(tomorrow)) return 'Tomorrow'; return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(`${day}T12:00:00`)); }
   formatDate(value: string | null): string { if (!value) return 'Never reviewed'; const date = new Date(value); return Number.isNaN(date.valueOf()) ? '—' : new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(date); }
 }

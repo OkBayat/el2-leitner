@@ -30,7 +30,7 @@
 				</mat-card-content>
 				<mat-card-actions>
 					<button mat-flat-button (click)="start('review')">Start session</button>
-					<button mat-stroked-button (click)="start('box1')">Free practice: House 1</button>
+					<button mat-stroked-button (click)="start('box1')">Free practice: Box 1</button>
 				</mat-card-actions>
 			</mat-card>
 		</div>
@@ -68,7 +68,7 @@
 				<article class="flash">
 					<app-review-context-badge/>
 					<div class="flash-heading">
-						<span>{{ displayCategory(word.category) }} · House {{ word.box }}</span>
+						<span>{{ displayCategory(word.category) }} · Box {{ word.box }}</span>
 						<h1>{{ session.currentTask() === 'recheck' ? 'Spelling recheck' : 'Listen to the word and type its spelling' }}</h1>
 					</div>
 
