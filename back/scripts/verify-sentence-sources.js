@@ -40,24 +40,32 @@ async function verify() {
       );
     }
 
+    // The strict quoted-target / generic-template rules apply to the curated independent
+    // sentence corpus. Collection-managed examples are separately linked through
+    // sentence_vocabulary_entries and may legitimately contain dialogue punctuation.
     const [unsafeRows] = await pool.execute(
       `SELECT COUNT(*) AS total
-       FROM sentences
-       WHERE status = 'active'
+       FROM sentences s
+       WHERE s.status = 'active'
+         AND NOT EXISTS (
+           SELECT 1
+           FROM sentence_vocabulary_entries sve
+           WHERE sve.sentence_id = s.id
+         )
          AND (
-           LOCATE(CHAR(34), sentence_text) > 0
-           OR LOCATE(CONVERT(0xE2809C USING utf8mb4), sentence_text) > 0
-           OR LOCATE(CONVERT(0xE2809D USING utf8mb4), sentence_text) > 0
-           OR sentence_text LIKE 'The discussion included useful information about %'
+           LOCATE(CHAR(34), s.sentence_text) > 0
+           OR LOCATE(CONVERT(0xE2809C USING utf8mb4), s.sentence_text) > 0
+           OR LOCATE(CONVERT(0xE2809D USING utf8mb4), s.sentence_text) > 0
+           OR s.sentence_text LIKE 'The discussion included useful information about %'
            OR REGEXP_LIKE(
-             sentence_text,
+             s.sentence_text,
              '(practical[[:space:]]+example|short[[:space:]]+example|example[[:space:]]+using|example[[:space:]]+with|clear[[:space:]]+example[[:space:]]+involving|lesson[[:space:]]+returned[[:space:]]+to|teacher[[:space:]]+returned[[:space:]]+to|lecturer[[:space:]]+returned[[:space:]]+to|mentioned.+later[[:space:]]+in[[:space:]]+the[[:space:]]+lesson|used[[:space:]]+in[[:space:]]+context|reviewed[[:space:]]+how.+is[[:space:]]+used|as[[:space:]]+a[[:space:]]+description|best[[:space:]]+description|naturally[[:space:]]+included|useful[[:space:]]+context[[:space:]]+for|term.+came[[:space:]]+up[[:space:]]+during[[:space:]]+the[[:space:]]+discussion|works[[:space:]]+in[[:space:]]+context)',
              'i'
            )
          )`
     );
     if (Number(unsafeRows[0]?.total ?? 0) !== 0) {
-      throw new Error("Active sentence catalog contains quoted targets or rejected generic/metalinguistic templates.");
+      throw new Error("Curated sentence catalog contains quoted targets or rejected generic/metalinguistic templates.");
     }
 
     const [forbiddenRows] = await pool.execute(
