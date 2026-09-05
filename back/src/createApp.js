@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from "helmet";
 import { createApiRouter } from "./interfaces/http/apiRouter.js";
+import { createShadowingRouter } from "./interfaces/http/shadowingRouter.js";
 import { createErrorHandler } from "./interfaces/http/errorHandler.js";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -100,6 +101,7 @@ export function createApp({
   );
   app.use(express.json({ limit: "10mb", strict: true }));
   app.use(cookieParser());
+  app.use("/api/shadowing", createShadowingRouter(container));
 
   app.use(
     "/api",

@@ -82,6 +82,13 @@ services:
     networks:
       - app_network
 
+  speech:
+    build:
+      context: ./speech
+    restart: unless-stopped
+    networks:
+      - app_network
+
   app:
     build:
       context: .
@@ -102,6 +109,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       DB_CONNECTION_LIMIT: ${DB_CONNECTION_LIMIT:-10}
       LISTENING_EPISODES_DIRECTORY: /app/back/data/listening/episodes
+      SHADOWING_SPEECH_URL: ${SHADOWING_SPEECH_URL:-http://speech:8080}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-leitner_session}

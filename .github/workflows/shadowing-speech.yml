@@ -1,0 +1,39 @@
+name: Shadowing speech
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  speech:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test bounded speech sessions
+        run: python -m unittest discover -s speech -p 'test_server.py' -v
+      - name: Build the speech image and its pinned English model
+        run: docker build --tag vocora-speech-ci speech
+      - name: Start private speech service
+        run: |
+          docker run --detach --name vocora-speech-ci --publish 127.0.0.1:18080:8080 vocora-speech-ci
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:18080/health; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Test real streaming audio and idempotent responses
+        run: python speech/smoke_test.py
+      - name: Show diagnostics
+        if: failure()
+        run: docker logs vocora-speech-ci || true
+      - name: Remove CI-only service
+        if: always()
+        run: docker rm --force vocora-speech-ci || true
