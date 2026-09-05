@@ -82,7 +82,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 			case 'copying': return 'Copying…';
 			case 'copied': return 'Copied';
 			case 'failed': return 'Copy failed';
-			default: return 'Copy House 1';
+			default: return 'Copy Box 1';
 		}
 	});
 	readonly leitnerCoverage = computed(() => {
@@ -107,7 +107,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 		return [
 			{label: 'Due reviews', value: this.dueCount(), note: 'words'},
 			{label: 'Overall accuracy', value: overallAccuracy === null ? '—' : `${overallAccuracy}%`, note: 'all primary answers'},
-			{label: 'Mastered', value: stats.mastered, note: 'House 5'},
+			{label: 'Mastered', value: stats.mastered, note: 'Box 5'},
 		];
 	});
 	readonly hardest = computed(() => this.state() ? hardWords(this.state()!, 3) : []);
