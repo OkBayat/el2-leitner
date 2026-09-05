@@ -1,0 +1,124 @@
+name: BBC latest ten missing episodes 20260905
+on:
+  push:
+    branches: [bundle-work/latest-10-missing-20260905]
+    paths: [.github/workflows/bbc-latest-10-missing-20260905.yml]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare request and official source evidence
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/bbc-latest10/repo
+          cp AGENTS.md /tmp/bbc-latest10/repo/
+          cp -R .agents /tmp/bbc-latest10/repo/
+          mkdir -p /tmp/bbc-latest10/repo/back /tmp/bbc-latest10/repo/docs /tmp/bbc-latest10/repo/scripts
+          cp -R back/src back/scripts back/package.json back/package-lock.json /tmp/bbc-latest10/repo/back/
+          mkdir -p /tmp/bbc-latest10/repo/back/data/listening/episodes
+          cp back/data/listening/episodes/README.md /tmp/bbc-latest10/repo/back/data/listening/episodes/
+          cp docs/COLLECTION_SOURCES.md /tmp/bbc-latest10/repo/docs/
+          cp scripts/install-listening-episode.sh /tmp/bbc-latest10/repo/scripts/
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan --from-date 2026-01-01 --to-date 2026-09-05 --tests 5 --difficulty-distribution easy=1,medium=2,hard=2 --output /tmp/bbc-latest10/request-plan.json
+          python3 - <<'PY'
+          import concurrent.futures, datetime, email.utils, hashlib, html, json, re, subprocess, sys
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse
+          from urllib.request import Request, urlopen
+          import xml.etree.ElementTree as ET
+          root = Path('/tmp/bbc-latest10')
+          class Page(HTMLParser):
+              def __init__(self, text):
+                  super().__init__(); self.links=[]; self.meta={}; self.text=[]; self.hidden=0; self.feed(text)
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  if tag in ('script','style'): self.hidden += 1
+                  if tag=='a' and a.get('href'): self.links.append(a['href'])
+                  if tag=='meta': self.meta[a.get('property',a.get('name',''))]=a.get('content','')
+              def handle_endtag(self, tag):
+                  if tag in ('script','style'): self.hidden=max(0,self.hidden-1)
+              def handle_data(self, data):
+                  if not self.hidden and data.strip(): self.text.append(data.strip())
+          def download(url, path):
+              host=urlparse(url).hostname or ''
+              assert url.startswith('https://') and any(host==d or host.endswith('.'+d) for d in ('bbc.co.uk','bbc.com','bbci.co.uk'))
+              with urlopen(Request(url, headers={'User-Agent':'Vocora personal-study episode preparation/1.0'}),timeout=60) as r:
+                  body=r.read(5000000); final=r.geturl(); status=r.status
+              path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(body)
+              return body, {'url':url,'final_url':final,'status':status,'bytes':len(body),'sha256':hashlib.sha256(body).hexdigest()}
+          feed, frecord=download('https://podcasts.files.bbci.co.uk/p02pc9tn.rss',root/'feed.xml')
+          index, irecord=download('https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026',root/'series.html')
+          feed_items=[]; feed_by_code={}
+          for item in ET.fromstring(feed).findall('./channel/item'):
+              desc=item.findtext('description',''); codes=re.findall(r'/ep-(\d{6})',desc)
+              day=email.utils.parsedate_to_datetime(item.findtext('pubDate')).date().isoformat()
+              info={'date':day,'title':item.findtext('title'),'description':desc,'link':item.findtext('link')}
+              feed_items.append(info)
+              for code in codes: feed_by_code[code]=info
+          (root/'feed-items.json').write_text(json.dumps(feed_items,indent=2))
+          existing=[]; excluded={'bbc-6-minute-english-260806'}
+          for path in sorted(Path('back/data/listening').rglob('*.json')):
+              try: obj=json.loads(path.read_text())
+              except (ValueError,OSError): continue
+              if isinstance(obj,dict) and (obj.get('publicId') or obj.get('id')):
+                  record={'path':str(path),'publicId':obj.get('publicId',obj.get('id')),'episodeCode':obj.get('episodeCode'),'episodeDate':obj.get('episodeDate'),'sourceUrl':obj.get('sourceUrl'),'title':obj.get('title')}
+                  existing.append(record); excluded.add(record['publicId'])
+                  if obj.get('episodeCode'): excluded.add('bbc-6-minute-english-'+obj['episodeCode'])
+          page=Page(index.decode())
+          candidates={}
+          for link in page.links:
+              m=re.search(r'/6-minute-english_2026/ep-(\d{6})(?:$|[?#])',link)
+              if m:
+                  code=m.group(1); iso=datetime.datetime.strptime(code,'%y%m%d').date().isoformat()
+                  if iso <= '2026-09-05': candidates[code]=urljoin('https://www.bbc.co.uk',link)
+          for code, item in feed_by_code.items():
+              if not code.startswith('26') or item['date']>'2026-09-05': continue
+              for link in re.findall(r'https://[^\s\"<>]+',item['description']):
+                  if '/ep-'+code in link: candidates.setdefault(code,html.unescape(link))
+          selected=[(code,url) for code,url in sorted(candidates.items(),reverse=True) if 'bbc-6-minute-english-'+code not in excluded][:10]
+          assert len(selected)==10, f'Only {len(selected)} missing episodes discovered'
+          (root/'repository-existing.json').write_text(json.dumps(existing,indent=2))
+          results=[]
+          def prepare(pair):
+              code,url=pair
+              body,record=download(url,root/'references'/code/'page.html')
+              p=Page(body.decode()); text='\n'.join(p.text)
+              assert re.search(r'Episode\s+'+code,text), f'Episode identity mismatch: {code}'
+              title=p.meta.get('og:title','').split(' / ',1)[-1]
+              assert title and '6 Minute English' in p.meta.get('og:title','')
+              audio=[urljoin(url,x) for x in p.links if x.endswith('_download.mp3') and '/'+code+'_' in x]
+              transcript=[urljoin(url,x) for x in p.links if x.endswith('_transcript.pdf') and '/'+code+'_' in x]
+              assert audio and transcript and p.meta.get('og:image'), f'Missing official assets: {code}'
+              image=p.meta['og:image']; suffix=Path(urlparse(image).path).suffix
+              iso=datetime.datetime.strptime(code,'%y%m%d').date().isoformat()
+              pub=feed_by_code.get(code,{}).get('date',iso)
+              slug=re.sub('[^a-z0-9]+','-',title.lower()).strip('-')
+              stage=root/'episodes'/(pub+'-'+slug); stage.mkdir(parents=True,exist_ok=True)
+              minimal={'title':title,'publicId':'bbc-6-minute-english-'+code,'audioFile':'audio.mp3','imageFile':'cover'+suffix,'sources':{'audioUrl':audio[0],'imageUrl':image,'transcriptUrl':transcript[0]}}
+              (stage/'episode.json').write_text(json.dumps(minimal,indent=2))
+              subprocess.run([sys.executable,'back/scripts/manage-listening-episode.py','fetch-assets',str(stage)],check=True)
+              (root/'references'/code/'page.txt').write_text(text)
+              return {'code':code,'date':pub,'title':title,'folder':stage.name,'sourceUrl':url,'pageEvidence':record,'feedEvidence':feed_by_code.get(code),'sources':minimal['sources'],'imageFile':minimal['imageFile'],'visibleEpisodeLine':[x for x in p.text if x.startswith('Episode '+code)]}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              results=list(pool.map(prepare,selected))
+          results.sort(key=lambda x:(x['date'],x['code']))
+          report={'selection':'ten latest published episodes not in repository; also exclude previously delivered 260806','asOf':'2026-09-05','repositoryCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'existing':existing,'excludedPrevious':['bbc-6-minute-english-260806'],'sources':[frecord,irecord],'candidateCodesDescending':sorted(candidates,reverse=True),'selected':results}
+          (root/'discovery.json').write_text(json.dumps(report,indent=2))
+          command=[sys.executable,'.agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py','bind-discovery','--plan',str(root/'request-plan.json'),'--output',str(root/'bound-plan.json')]
+          for ep in results: command.extend(['--episode',ep['date']+'=bbc-6-minute-english-'+ep['code']])
+          subprocess.run(command,check=True)
+          print(json.dumps([{'date':x['date'],'title':x['title']} for x in results],indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bbc-latest10-official-sources
+          path: /tmp/bbc-latest10/
+          include-hidden-files: true
+          retention-days: 3
+          compression-level: 0
