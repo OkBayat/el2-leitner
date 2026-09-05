@@ -9,21 +9,47 @@ jobs:
   context:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm ci --prefix back --no-audit --no-fund && npm ci --prefix ui --no-audit --no-fund
-      - run: |
-          mkdir -p /tmp/vocora-runtime
-          cp "$(command -v node)" /tmp/vocora-runtime/node
-          tar -czf /tmp/vocora-dependencies.tar.gz back/node_modules ui/node_modules
+      - name: Fetch official public BBC sources
+        shell: python
+        run: |
+          import urllib.request, xml.etree.ElementTree as ET, pathlib, json, re, html
+          root = pathlib.Path('/tmp/bbc-source'); root.mkdir()
+          def get(url):
+              request = urllib.request.Request(url, headers={'User-Agent': 'Vocora episode source verification/1.0'})
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  return response.read()
+          reports = []
+          try:
+              rss = get('https://podcasts.files.bbci.co.uk/p02pc9tn.rss')
+              (root/'feed.xml').write_bytes(rss)
+              items = ET.fromstring(rss).findall('./channel/item')
+          except Exception as exc:
+              items = []; reports.append({'rssError': str(exc)})
+          for code in ['260618', '260903']:
+              folder = root / code; folder.mkdir()
+              page = 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-' + code
+              report = {'code': code, 'sourceUrl': page}
+              matches = [item for item in items if code in (item.findtext('description') or '')]
+              if len(matches) == 1:
+                  item = matches[0]; enclosure = item.find('enclosure')
+                  report['title'] = item.findtext('title'); report['date'] = item.findtext('pubDate')
+                  if enclosure is not None:
+                      report['audioUrl'] = enclosure.get('url')
+                      try: (folder/'audio.mp3').write_bytes(get(report['audioUrl']))
+                      except Exception as exc: report['audioError'] = str(exc)
+              try:
+                  page_bytes = get(page); (folder/'page.html').write_bytes(page_bytes)
+                  text = page_bytes.decode('utf-8')
+                  match = re.search(r'<meta[^>]+property=[\"\x27]og:image[\"\x27][^>]+content=[\"\x27]([^\"\x27]+)', text, re.I)
+                  if match:
+                      report['imageUrl'] = html.unescape(match.group(1))
+                      (folder/'cover.jpg').write_bytes(get(report['imageUrl']))
+              except Exception as exc: report['pageError'] = str(exc)
+              reports.append(report)
+          (root/'report.json').write_text(json.dumps(reports, indent=2))
+          print(json.dumps(reports, indent=2))
       - uses: actions/upload-artifact@v4
         with:
-          name: listening-test-dependencies
-          path: |
-            /tmp/vocora-dependencies.tar.gz
-            /tmp/vocora-runtime/node
+          name: official-bbc-episode-sources
+          path: /tmp/bbc-source
           retention-days: 1
