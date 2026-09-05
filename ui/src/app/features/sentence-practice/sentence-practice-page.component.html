@@ -63,22 +63,12 @@
 
 					<form class="sentence-answer-form" (submit)="$event.preventDefault(); session.feedback() ? next() : submit()">
 						<p class="sentence-text" data-testid="sentence-cloze">
-							<span>{{ prompt.sentence.before }}</span><input
-								#answerInput
-								class="sentence-answer-input"
-								data-testid="sentence-answer-input"
-								[style.width]="inputWidth()"
-								[formControl]="answer"
+							<span>{{ prompt.sentence.before }}</span><app-sentence-answer
+								[control]="answer" [prompt]="prompt"
 								[readOnly]="saving() || session.feedback() !== null"
-								[attr.aria-invalid]="session.feedback()?.correct === false"
-								(keydown.enter)="$event.preventDefault(); session.feedback() ? next() : submit()"
-								aria-label="Missing word"
-								enterkeyhint="go"
-								lang="en"
-								autocomplete="off"
-								autocapitalize="none"
-								autocorrect="off"
-								spellcheck="false"><span>{{ prompt.sentence.after }}</span>
+								[incorrect]="session.feedback()?.correct === false"
+								[revealed]="session.feedback() !== null"
+								(primary)="handlePrimary()"></app-sentence-answer><span>{{ prompt.sentence.after }}</span>
 						</p>
 					</form>
 				</article>
@@ -114,7 +104,7 @@
 								</div>
 							</div>
 						} @else {
-							<p class="sentence-instruction">Type the missing word, then press Enter.</p>
+							<p class="sentence-instruction">Type the missing word, then press Enter. Click the gap for its meaning.</p>
 						}
 
 						<button

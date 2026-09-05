@@ -1,0 +1,46 @@
+<span class="answer-shell" cdkOverlayOrigin #origin="cdkOverlayOrigin">
+	<span class="answer-measure" aria-hidden="true" data-testid="sentence-answer-measure">{{ missingWord }}</span>
+	<span class="answer-measure" aria-hidden="true">{{ control.value }}</span>
+	<textarea #answerInput class="sentence-answer-input" data-testid="sentence-answer-input"
+		rows="1" wrap="soft" [formControl]="control" [readOnly]="readOnly"
+		[attr.aria-invalid]="incorrect" aria-label="Missing word" aria-haspopup="dialog"
+		[attr.aria-expanded]="detailsOpen()" [attr.aria-controls]="detailsOpen() ? 'sentence-word-details' : null"
+		aria-keyshortcuts="Alt+ArrowDown" title="Click for word meaning, or press Alt + Down Arrow"
+		(click)="detailsOpen.set(true)" (keydown)="onKeydown($event)"
+		(input)="normalizeInput($event)" (compositionend)="normalizeInput($event)"
+		enterkeyhint="go" lang="en" autocomplete="off" autocapitalize="none"
+		autocorrect="off" spellcheck="false"></textarea>
+</span>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+	[cdkConnectedOverlayOpen]="detailsOpen()" [cdkConnectedOverlayPositions]="positions"
+	[cdkConnectedOverlayHasBackdrop]="false" [cdkConnectedOverlayPush]="true"
+	[cdkConnectedOverlayViewportMargin]="16" [cdkConnectedOverlayDisposeOnNavigation]="true"
+	(overlayOutsideClick)="onOutsideClick($event)" (detach)="closeDetails()">
+	<section class="word-details" id="sentence-word-details" role="dialog" aria-modal="false"
+		aria-labelledby="sentence-word-details-title" data-testid="sentence-word-details">
+		<header class="details-header">
+			<div class="details-icon" aria-hidden="true">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+					<path d="M12 5v15M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/>
+				</svg>
+			</div>
+			<div class="details-heading"><span class="details-eyebrow">Vocabulary notes</span><h2 id="sentence-word-details-title">Word meaning</h2></div>
+			<button mat-icon-button type="button" aria-label="Close word meaning" (click)="closeDetails(true)">
+				<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2"/></svg>
+			</button>
+		</header>
+		<div class="details-content">
+			<div class="sentence-context"><span class="details-eyebrow">In this sentence</span>
+				<p>{{ prompt.sentence.before }}<mark>{{ revealed ? missingWord : '…' }}</mark>{{ prompt.sentence.after }}</p>
+			</div>
+			<ol class="definition-list">
+				@for (definition of prompt.card.definitions ?? []; track definition.id) {
+					<li><p [attr.lang]="definition.languageCode" dir="auto">{{ definition.text }}</p><span class="definition-source">{{ definition.collectionTitle }}</span></li>
+				} @empty {
+					<li class="definition-empty">No definition is available in your collections yet. You can still listen and complete the sentence.</li>
+				}
+			</ol>
+		</div>
+		<footer class="details-footer">From your vocabulary collections</footer>
+	</section>
+</ng-template>

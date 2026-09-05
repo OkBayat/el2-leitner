@@ -28,10 +28,11 @@ No second write is required. The next Sentence Practice session can discover tha
 
 ## Runtime lookup
 
-At session start the backend performs two reads:
+At session start the backend performs three bounded reads (an empty house stops after the first):
 
 1. active words and accepted spellings for the requested Leitner house;
-2. active English sentences from the independent catalog.
+2. word definitions from `collection_entry_definitions`, scoped to that house and the learner's accessible, active collection subscriptions;
+3. active English sentences from the independent catalog.
 
 The Domain layer compiles accepted spellings into Unicode-aware regular expressions and finds complete terms only. For `name`:
 
@@ -55,6 +56,18 @@ No start/end positions are stored in the database.
 Accepted aliases also participate in search. If the learner's word is `colour / color`, a sentence containing either spelling is valid. Capitalized proper terms such as `May` are matched case-sensitively so the month is not confused with modal `may`.
 
 A sentence containing the target more than once is rejected because leaving a second visible occurrence would reveal the answer.
+
+## Answer field and word meaning
+
+`SentenceAnswerComponent` owns the inline textarea, glyph-based sizing, and non-modal definition popover. The page continues to own the existing answer control, submission, feedback, and focus lifecycle. No dependencies or database migrations are added.
+
+The textarea has one logical answer line, a dashed underline, and no character-count minimum or horizontal padding. Hidden, accessibility-excluded mirrors use the same typography as the answer: the exact substring omitted from the current sentence establishes its initial width, not the longest accepted alias. A longer typed answer expands the field without clipping; long phrases wrap within the available width. Pasted line breaks become spaces and IME composition never submits an answer prematurely. Submitted answers remain visible and read-only.
+
+Click or tap the gap, or press `Alt+ArrowDown`, to open word meaning. Opening never moves focus or adds a blocking backdrop, so the mobile keyboard can keep editing. Escape, the close button, outside click, a new prompt, and navigation dismiss the popover. The close button and Escape return focus to the textarea.
+
+Each additive card `definitions` item contains a public definition `id`, `text`, `languageCode`, and `collectionTitle`. Definitions are ordered by collection and definition position, deduplicated by identity, and rendered as text, not HTML. Removed entries, inactive subscriptions, archived collections, and other users' private collections are excluded. Older decks and words without definitions show an explicit empty state and remain playable.
+
+These are source-authored word definitions, not generated translations or grammatical analyses of the sentence. The context preview keeps the missing word masked until feedback is available. Loading help does not make per-card HTTP requests or change sentence matching, grading, daily practice accounting, or Leitner scheduling.
 
 ## Randomness and future indexing
 
@@ -115,4 +128,7 @@ Tests enforce:
 - duplicate-target rejection;
 - automatic discovery of a newly inserted independent sentence;
 - random sentence selection and different-context retries;
-- unchanged learning state during browser E2E practice.
+- unchanged learning state during browser E2E practice;
+- bounded, user-scoped definition reads and backward-compatible card projection;
+- textarea editing, composition, feedback, safe definition rendering, and popover dismissal;
+- glyph-sized dashed gaps and focus-preserving popovers in desktop and mobile Chromium viewports.

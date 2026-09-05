@@ -54,7 +54,7 @@ async function spokenSentence(page: Page, index: number): Promise<string> {
 }
 
 async function sentenceContext(page: Page): Promise<string[]> {
-	return page.getByTestId('sentence-cloze').locator('span').allTextContents();
+	return page.getByTestId('sentence-cloze').locator(':scope > span').allTextContents();
 }
 
 function answerFromSentence(sentence: string, context: string[]): string {
@@ -109,6 +109,8 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	await expect(input).toHaveCSS('border-left-width', '0px');
 	await expect(input).toHaveCSS('border-right-width', '0px');
 	await expect(input).not.toHaveCSS('border-bottom-width', '0px');
+	await expect(input).toHaveCSS('border-bottom-style', 'dashed');
+	expect(await input.evaluate((element) => element.tagName)).toBe('TEXTAREA');
 
 	const firstSentence = await spokenSentence(page, 0);
 	const firstContext = await sentenceContext(page);

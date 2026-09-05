@@ -8,12 +8,20 @@ export interface SentencePracticeSentence {
 	after: string;
 }
 
+export interface SentencePracticeDefinition {
+	id: string;
+	text: string;
+	languageCode: string;
+	collectionTitle: string;
+}
+
 export interface SentencePracticeCard {
 	id: string;
 	term: string;
 	accepted: string[];
 	box: number;
 	mistakes: number;
+	definitions?: SentencePracticeDefinition[];
 	sentences: SentencePracticeSentence[];
 }
 

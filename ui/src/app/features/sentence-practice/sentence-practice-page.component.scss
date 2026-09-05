@@ -35,39 +35,6 @@
 	white-space: pre-wrap;
 }
 
-.sentence-answer-input {
-	min-width: 7ch;
-	max-width: min(28ch, 78vw);
-	margin: 0 .14em;
-	padding: 0 .08em .05em;
-	border: 0;
-	border-bottom: .09em solid var(--mat-sys-primary);
-	border-radius: 0;
-	outline: 0;
-	background: transparent;
-	color: inherit;
-	font: inherit;
-	font-weight: 750;
-	line-height: 1.15;
-	text-align: center;
-	vertical-align: baseline;
-	caret-color: var(--mat-sys-primary);
-}
-
-.sentence-answer-input:focus-visible {
-	border-bottom-color: var(--mat-sys-primary);
-	box-shadow: 0 .08em 0 color-mix(in srgb, var(--mat-sys-primary) 25%, transparent);
-}
-
-.sentence-answer-input[readonly] {
-	cursor: default;
-}
-
-.sentence-answer-input[aria-invalid='true'] {
-	border-bottom-color: var(--mat-sys-error);
-	color: var(--mat-sys-error);
-}
-
 .sentence-instruction,
 .loading-state,
 .practice-note {
