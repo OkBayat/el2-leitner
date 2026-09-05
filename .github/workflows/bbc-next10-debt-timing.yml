@@ -1,0 +1,41 @@
+name: Verify debt recording passage without silence filtering
+on:
+  push:
+    branches: [bundle-work/next10-ielts-20260905]
+    paths: [.github/workflows/bbc-next10-debt-timing.yml]
+permissions:
+  contents: read
+jobs:
+  timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Install audio-location tools
+        run: |
+          python3 -m pip install --disable-pip-version-check faster-whisper==1.2.1
+      - name: Locate the omitted interview passage
+        env:
+          HF_HUB_DISABLE_XET: '1'
+        run: |
+          python3 -u - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from faster_whisper import WhisperModel
+          root=Path('/tmp/debt-timing');root.mkdir()
+          url='https://downloads.bbc.co.uk/learningenglish/features/6min/260528_6_minute_english_living_with_debt_download.mp3'
+          with urlopen(Request(url,headers={'User-Agent':'Vocora private study source review/1.0'}),timeout=60) as r: audio=r.read()
+          sha=hashlib.sha256(audio).hexdigest()
+          assert sha=='24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46'
+          path=root/'audio.mp3';path.write_bytes(audio)
+          model=WhisperModel('small.en',device='cpu',compute_type='int8',cpu_threads=4)
+          segments,info=model.transcribe(str(path),language='en',word_timestamps=True,beam_size=5,vad_filter=False,clip_timestamps='230,291',condition_on_previous_text=False)
+          rows=[{'start':s.start,'end':s.end,'text':s.text,'words':[{'start':w.start,'end':w.end,'word':w.word,'probability':w.probability} for w in s.words]} for s in segments]
+          (root/'260528-recovered.json').write_text(json.dumps({'audioSha256':sha,'durationSeconds':info.duration,'segments':rows,'method':'small.en without VAD, original audio interval 230–291 seconds'},indent=2))
+          for s in rows: print(s['start'],s['end'],s['text'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debt-passage-timing-internal
+          path: /tmp/debt-timing/260528-recovered.json
+          retention-days: 2
