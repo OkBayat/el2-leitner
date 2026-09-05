@@ -25,6 +25,10 @@ export class GetListeningEpisodeAudio {
     if (!SAFE_AUDIO_FILE.test(fileName)) {
       throw new NotFoundError("LISTENING_AUDIO_NOT_FOUND", "Listening episode audio was not found.");
     }
-    return { fileName };
+    if (audio.assetDirectory !== undefined && !/^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(audio.assetDirectory)) {
+      throw new NotFoundError("LISTENING_AUDIO_NOT_FOUND", "Listening episode audio was not found.");
+    }
+    return { fileName, ...(audio.assetDirectory ? { assetDirectory: audio.assetDirectory } : {}),
+      ...(audio.assetDirectory && SAFE_AUDIO_FILE.test(audio.legacyAudioFile || "") ? { legacyFileName: audio.legacyAudioFile } : {}) };
   }
 }

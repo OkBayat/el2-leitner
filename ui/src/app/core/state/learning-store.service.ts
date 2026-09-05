@@ -62,6 +62,17 @@ export class LearningStoreService {
     return state;
   }
 
+  /** Explicitly reconcile a server-side subscription change; normal save acknowledgements stay strict. */
+  async refreshAfterSubscriptionChange(): Promise<LearningState> {
+    if (this.writeBlockedSignal()) throw new ApiError('Reload the page before changing vocabulary.', 409, 'STATE_CONFLICT');
+    const response = await this.api.get<LearningStateResponse>('/api/state?view=bootstrap');
+    if (!response.state) throw new ApiError('Canonical vocabulary is unavailable.', 502, 'INVALID_BOOTSTRAP_STATE');
+    const state = hydrateState(response.state);
+    this.acceptRevision(response.revision, { minimum: this.revisionSignal() });
+    this.stateSignal.set(state);
+    return state;
+  }
+
   private async load(): Promise<LearningState> {
     this.loadingSignal.set(true);
     try {

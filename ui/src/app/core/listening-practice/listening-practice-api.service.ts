@@ -4,6 +4,7 @@ import {
   ListeningAttemptStartResponse,
   ListeningLessonListResponse,
   ListeningSubmittedAnswer,
+  ListeningVocabularyResponse,
 } from '../../domain/listening-practice/listening-practice';
 import { ApiClientService } from '../http/api-client.service';
 
@@ -13,6 +14,10 @@ export class ListeningPracticeApiService {
 
   listBbcLessons(): Promise<ListeningLessonListResponse> {
     return this.api.get('/api/listening/bbc/lessons');
+  }
+
+  getBbcVocabulary(lessonSlug: string): Promise<ListeningVocabularyResponse> {
+    return this.api.get(`/api/listening/bbc/lessons/${encodeURIComponent(lessonSlug)}/vocabulary`);
   }
 
   startBbcAttempt(lessonSlug: string, testId: string): Promise<ListeningAttemptStartResponse> {

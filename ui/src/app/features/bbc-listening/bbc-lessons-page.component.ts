@@ -1,3 +1,4 @@
+import { listeningDifficultyLabel, listeningLevelLabel } from '../../domain/listening-practice/listening-practice';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -13,6 +14,8 @@ import { ListeningLessonSummary } from '../../domain/listening-practice/listenin
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BbcLessonsPageComponent implements OnInit {
+  readonly levelLabel = listeningLevelLabel;
+  readonly difficultyLabel = listeningDifficultyLabel;
   private readonly api = inject(ListeningPracticeApiService);
 
   readonly lessons = signal<ListeningLessonSummary[]>([]);

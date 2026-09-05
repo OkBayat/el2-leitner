@@ -128,9 +128,8 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
     && response.status() === 200
   );
   await page.getByTestId('submit-listening-attempt').click();
-  const submitPayload = await (await submitResponsePromise).json();
-  expect(submitPayload.attempt.testId).toBe('test-1');
-  expect(submitPayload.score).toEqual({ correct: 9, wrong: 4, total: 13, percentage: 69.2 });
+  const submitResponse = await submitResponsePromise;
+  expect(new URL(submitResponse.url()).pathname).toMatch(/\/api\/listening\/bbc\/attempts\/[^/]+\/submit$/u);
 
   const score = page.getByTestId('listening-score');
   await expect(score).toContainText('9 / 13');

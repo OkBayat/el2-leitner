@@ -9,12 +9,17 @@ function publicSummary(lesson) {
     episodeCode: lesson.episodeCode,
     episodeDate: lesson.episodeDate,
     sourceUrl: lesson.sourceUrl,
+    level: lesson.level || "intermediate",
+    imageUrl: lesson.imageFile ? `/api/listening/bbc/lessons/${encodeURIComponent(lesson.slug)}/image` : null,
+    vocabularyCollectionId: lesson.vocabularyCollectionId || null,
     questionCount: lesson.questionCount,
     testCount: lesson.testCount,
     tests: lesson.tests.map((test) => ({
       id: test.id,
       title: test.title,
       position: test.position,
+      format: test.format || "ielts",
+      difficulty: test.difficulty || "medium",
       questionCount: test.questionCount,
       completed: test.completed,
       completedAt: test.completedAt

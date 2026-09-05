@@ -88,7 +88,12 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	);
 	await page.getByTestId('start-sentence-practice').click();
 	const deckResponse = await deckResponsePromise;
-	const deck = await deckResponse.json();
+	const deckUrl = deckResponse.url();
+	const deck = await page.evaluate(async (url) => {
+		const response = await fetch(url, { credentials: 'include', cache: 'no-store' });
+		if (!response.ok) throw new Error(`Sentence deck request failed with ${response.status}`);
+		return response.json();
+	}, deckUrl);
 	expect(deck.practice).toEqual({ mode: 'sentence', house: 1, retryGap: 3 });
 	expect(deck.cards.length).toBeGreaterThanOrEqual(4);
 

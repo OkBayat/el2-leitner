@@ -151,3 +151,21 @@ describe('LearningStoreService regressions', () => {
     expect(store.revision()).toBe(7);
   });
 });
+describe('Explicit subscription reconciliation', () => {
+  it('accepts a newer canonical subscription revision without relaxing normal save checks', async () => {
+    TestBed.resetTestingModule();
+    const before = createFreshState([{ id: 'old', term: 'old', box: 3 }]);
+    const after = createFreshState([{ id: 'old', term: 'old', box: 3 }, { id: 'episode', term: 'episode' }]);
+    const api = { get: vi.fn().mockResolvedValue({ state: after, revision: 8 }) };
+    const store = setup(api, {}, {}); store.replaceLocal(before, 7);
+    await store.refreshAfterSubscriptionChange();
+    expect(store.revision()).toBe(8); expect(store.snapshot().words).toHaveLength(2);
+    expect(store.snapshot().words[0].box).toBe(3);
+    api.get.mockResolvedValue({ state: before, revision: 7 });
+    await expect(store.refreshAfterSubscriptionChange()).rejects.toThrow('revision');
+    expect(store.snapshot().words).toHaveLength(2);
+    api.get.mockResolvedValue({ state: null, revision: 9 });
+    await expect(store.refreshAfterSubscriptionChange()).rejects.toThrow('unavailable');
+    expect(store.revision()).toBe(8);
+  });
+});

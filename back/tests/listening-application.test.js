@@ -8,7 +8,7 @@ import { StartListeningAttempt } from "../src/application/listening-practice/Sta
 import { SubmitListeningAttempt } from "../src/application/listening-practice/SubmitListeningAttempt.js";
 import { parseListeningLessonDefinition } from "../src/domain/listening-practice/ListeningLessonDefinition.js";
 
-const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const lessonUrl = new URL("./fixtures/listening/260903-extreme-weather.json", import.meta.url);
 
 async function fixture() {
   return {

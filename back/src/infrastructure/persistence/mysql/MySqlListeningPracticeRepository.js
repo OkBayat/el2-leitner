@@ -28,6 +28,10 @@ function mapLessonMetadata(row) {
     episodeDate: row.episode_date === null ? null : String(row.episode_date),
     sourceUrl: String(row.source_url),
     audioFile: row.audio_file === null || row.audio_file === undefined ? null : String(row.audio_file),
+    level: row.level || "intermediate",
+    imageFile: row.image_file || null,
+    assetDirectory: row.asset_directory || null,
+    vocabularyCollectionId: row.vocabulary_collection_id || null,
     contentVersion: Number(row.content_version),
     questionCount: Number(row.question_count)
   };
@@ -99,6 +103,8 @@ function projectTests(content, includeAnswers) {
     id: String(test.id),
     title: String(test.title),
     position: Number(test.position),
+    format: test.format || "ielts",
+    difficulty: test.difficulty || "medium",
     questionCount: Number(test.questionCount),
     groups: projectGroups(test.groups, includeAnswers)
   }));
@@ -139,6 +145,7 @@ export class MySqlListeningPracticeRepository {
       this.pool.execute(
         `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
                 DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url, audio_file,
+                level, image_file, asset_directory, vocabulary_collection_id,
                 schema_version, content_version, question_count, content_json
          FROM listening_lessons
          WHERE provider = ? AND status = 'published'
@@ -164,7 +171,7 @@ export class MySqlListeningPracticeRepository {
 
   async findPublishedAudioBySlug(provider, slug) {
     const [rows] = await this.pool.execute(
-      `SELECT audio_file
+      `SELECT public_id, audio_file, asset_directory
        FROM listening_lessons
        WHERE provider = ? AND slug = ? AND status = 'published'
        LIMIT 1`,
@@ -173,13 +180,25 @@ export class MySqlListeningPracticeRepository {
     if (!rows[0] || !rows[0].audio_file) {
       throw new NotFoundError("LISTENING_AUDIO_NOT_FOUND", "Listening episode audio was not found.");
     }
-    return { audioFile: String(rows[0].audio_file) };
+    return { audioFile: String(rows[0].audio_file), ...(rows[0].asset_directory ? { assetDirectory: String(rows[0].asset_directory), legacyAudioFile: `${rows[0].public_id}.mp3` } : {}) };
+  }
+
+  async findPublishedImageBySlug(provider, slug) {
+    const [rows] = await this.pool.execute(
+      "SELECT image_file, asset_directory FROM listening_lessons WHERE provider = ? AND slug = ? AND status = 'published' LIMIT 1",
+      [provider, slug]
+    );
+    if (!rows[0]?.image_file || !rows[0]?.asset_directory) {
+      throw new NotFoundError("LISTENING_IMAGE_NOT_FOUND", "Listening episode image was not found.");
+    }
+    return { imageFile: rows[0].image_file, assetDirectory: rows[0].asset_directory };
   }
 
   async findPublishedLessonBySlug(provider, slug, { includeAnswers = false } = {}) {
     const [rows] = await this.pool.execute(
       `SELECT id AS database_id, public_id, provider, slug, title, description, episode_code,
               DATE_FORMAT(episode_date, '%Y-%m-%d') AS episode_date, source_url, audio_file,
+                level, image_file, asset_directory, vocabulary_collection_id,
               schema_version, question_count, content_version, content_json
        FROM listening_lessons
        WHERE provider = ? AND slug = ? AND status = 'published'

@@ -9,13 +9,14 @@ import { SyncCollectionSources } from "../src/application/library/SyncCollection
 import { LegacyNumberedVocabularyFileParser } from "../src/domain/library/LegacyNumberedVocabularyFileParser.js";
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import { loadCollectionSources } from "../src/infrastructure/content/loadCollectionSources.js";
-import { loadListeningLessonDefinitions } from "../src/infrastructure/content/loadListeningLessonDefinitions.js";
+import { loadListeningEpisodeSources } from "../src/infrastructure/content/loadListeningEpisodeSources.js";
+import { SyncListeningEpisodeSources } from "../src/application/listening-practice/SyncListeningEpisodeSources.js";
+import { MySqlListeningEpisodeSourceRepository } from "../src/infrastructure/persistence/mysql/MySqlListeningEpisodeSourceRepository.js";
 import { MySqlCollectionSourceRepository } from "../src/infrastructure/persistence/mysql/MySqlCollectionSourceRepository.js";
 import { MySqlLearningStateRepository } from "../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
 import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js";
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
-import { seedListeningLessons } from "../src/infrastructure/persistence/mysql/seedListeningLessons.js";
 import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
 
 const DEFAULT_RETRIES = 30;
@@ -25,7 +26,6 @@ const APPLICATION_USER_HOST = "%";
 const MIGRATIONS_DIRECTORY = new URL("../database/migrations/", import.meta.url);
 const IELTS_SOURCE = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
 const COLLECTIONS_DIRECTORY = new URL("../data/collections/", import.meta.url);
-const BBC_LISTENING_DIRECTORY = new URL("../data/listening/bbc/", import.meta.url);
 
 for (const environmentFile of [
   new URL("../.env", import.meta.url),
@@ -197,12 +197,11 @@ async function setupDatabase() {
       console.info(`Archived ${collectionSyncResult.archivedCount} removed file-managed collection(s).`);
     }
 
-    const listeningDefinitions = await loadListeningLessonDefinitions(BBC_LISTENING_DIRECTORY);
-    const listeningSeedResult = await seedListeningLessons({
-      pool: applicationPool,
-      definitions: listeningDefinitions
-    });
-    if (listeningSeedResult.changed) {
+    const listeningSources = await loadListeningEpisodeSources();
+    const listeningSeedResult = await new SyncListeningEpisodeSources({
+      listeningEpisodeSourceRepository: new MySqlListeningEpisodeSourceRepository(applicationPool)
+    }).execute(listeningSources);
+    if (listeningSeedResult.changed || listeningSeedResult.changedCollections) {
       console.info(
         `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.testCount} test(s) and ${listeningSeedResult.questionCount} question(s).`
       );
@@ -239,6 +238,7 @@ async function setupDatabase() {
     await applicationPool.query("SELECT 1 FROM collections LIMIT 0");
     await applicationPool.query("SELECT 1 FROM user_vocabulary_progress LIMIT 0");
     await applicationPool.query("SELECT 1 FROM collection_entry_definitions LIMIT 0");
+    await applicationPool.query("SELECT 1 FROM collection_entry_examples LIMIT 0");
     await applicationPool.query("SELECT 1 FROM sentences LIMIT 0");
     await applicationPool.query("SELECT 1 FROM sentence_vocabulary_entries LIMIT 0");
     await applicationPool.query("SELECT 1 FROM listening_lessons LIMIT 0");

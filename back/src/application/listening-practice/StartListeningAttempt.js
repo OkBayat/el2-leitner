@@ -39,6 +39,8 @@ function publicTest(test) {
     id: test.id,
     title: test.title,
     position: test.position,
+    format: test.format || "ielts",
+    difficulty: test.difficulty || "medium",
     questionCount: test.questionCount,
     groups: test.groups.map((group) => ({
       id: group.id,
@@ -63,6 +65,9 @@ function publicLesson(lesson) {
     episodeCode: lesson.episodeCode,
     episodeDate: lesson.episodeDate,
     sourceUrl: lesson.sourceUrl,
+    level: lesson.level || "intermediate",
+    imageUrl: lesson.imageFile ? `/api/listening/bbc/lessons/${encodeURIComponent(lesson.slug)}/image` : null,
+    vocabularyCollectionId: lesson.vocabularyCollectionId || null,
     audioUrl: `/api/listening/bbc/lessons/${encodeURIComponent(lesson.slug)}/audio`,
     questionCount: lesson.questionCount,
     testCount: lesson.testCount

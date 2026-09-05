@@ -20,17 +20,18 @@ export class MySqlCollectionSourceRepository {
     this.pool = pool;
   }
 
-  async sync(source) {
-    const connection = await this.pool.getConnection();
+  async sync(source, { connection: suppliedConnection = null } = {}) {
+    const connection = suppliedConnection || await this.pool.getConnection();
+    const desiredStatus = source.status || "published";
     try {
-      await connection.beginTransaction();
+      if (!suppliedConnection) await connection.beginTransaction();
       const collection = await this.#ensureCollection(connection, source);
       if (
         collection.source_hash === source.sourceHash
-        && collection.status === "published"
-        && collection.archived_at === null
+        && collection.status === desiredStatus
+        && (desiredStatus === "archived" ? collection.archived_at !== null : collection.archived_at === null)
       ) {
-        await connection.commit();
+        if (!suppliedConnection) await connection.commit();
         return {
           changed: false,
           slug: source.slug,
@@ -98,7 +99,8 @@ export class MySqlCollectionSourceRepository {
           collectionEntryId,
           vocabulary.id,
           item.examples,
-          staleSentenceIds
+          staleSentenceIds,
+          Boolean(source.trackExamples)
         );
         examples += item.examples.length;
       }
@@ -164,10 +166,16 @@ export class MySqlCollectionSourceRepository {
         ]
       );
 
+      if (desiredStatus !== "published") {
+        await connection.execute(
+          "UPDATE collections SET status = ?, archived_at = CASE WHEN ? = 'archived' THEN CURRENT_TIMESTAMP(3) ELSE NULL END WHERE id = ?",
+          [desiredStatus, desiredStatus, collection.id]
+        );
+      }
       await this.#cleanupStaleForms(connection, staleFormIds);
       await this.#cleanupStaleSentences(connection, staleSentenceIds);
       await this.#bumpSubscriberRevisions(connection, collection.id);
-      await connection.commit();
+      if (!suppliedConnection) await connection.commit();
 
       return {
         changed: true,
@@ -180,10 +188,10 @@ export class MySqlCollectionSourceRepository {
         removed
       };
     } catch (error) {
-      await connection.rollback();
+      if (!suppliedConnection) await connection.rollback();
       throw error;
     } finally {
-      connection.release();
+      if (!suppliedConnection) connection.release();
     }
   }
 
@@ -197,6 +205,7 @@ export class MySqlCollectionSourceRepository {
          FROM collections
          WHERE archived_at IS NULL
            AND JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.sourceFile')) IS NOT NULL
+           AND JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.sourceFile')) NOT LIKE '%/%'
          FOR UPDATE`
       );
 
@@ -353,6 +362,9 @@ export class MySqlCollectionSourceRepository {
     if (rows[0]) {
       if (rows[0].kind === "personal") {
         throw new Error(`Collection source slug "${source.slug}" conflicts with a personal collection.`);
+      }
+      if (source.trackExamples && rows[0].public_id !== source.publicId) {
+        throw new Error(`Episode collection identity conflicts with existing collection: ${source.slug}`);
       }
       return rows[0];
     }
@@ -540,7 +552,8 @@ export class MySqlCollectionSourceRepository {
     collectionEntryId,
     vocabularyEntryId,
     examples,
-    staleSentenceIds
+    staleSentenceIds,
+    trackOrder = false
   ) {
     const [previousRows] = await connection.execute(
       "SELECT sentence_id FROM collection_entry_examples WHERE collection_entry_id = ?",
@@ -553,12 +566,13 @@ export class MySqlCollectionSourceRepository {
       [collectionEntryId]
     );
 
-    for (const example of examples) {
+    for (const [index, example] of examples.entries()) {
       const sentence = await this.#ensureSentenceExample(connection, example);
       await connection.execute(
-        `INSERT IGNORE INTO collection_entry_examples (collection_entry_id, sentence_id)
-         VALUES (?, ?)`,
-        [collectionEntryId, sentence.id]
+        trackOrder
+          ? "INSERT INTO collection_entry_examples (collection_entry_id, sentence_id, position) VALUES (?, ?, ?)"
+          : "INSERT IGNORE INTO collection_entry_examples (collection_entry_id, sentence_id) VALUES (?, ?)",
+        trackOrder ? [collectionEntryId, sentence.id, index + 1] : [collectionEntryId, sentence.id]
       );
       await connection.execute(
         `INSERT IGNORE INTO sentence_vocabulary_entries (sentence_id, vocabulary_entry_id)

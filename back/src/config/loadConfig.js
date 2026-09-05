@@ -84,6 +84,9 @@ export function loadConfig(env = process.env) {
       adminEmails: emailListFromEnv(env.LIBRARY_ADMIN_EMAILS)
     },
     listening: {
+      episodesDirectory: env.LISTENING_EPISODES_DIRECTORY?.trim()
+        ? path.resolve(env.LISTENING_EPISODES_DIRECTORY.trim())
+        : fileURLToPath(new URL("../../data/listening/episodes/", import.meta.url)),
       audioDirectory: env.LISTENING_AUDIO_DIRECTORY
         ? path.resolve(env.LISTENING_AUDIO_DIRECTORY)
         : DEFAULT_LISTENING_AUDIO_DIRECTORY

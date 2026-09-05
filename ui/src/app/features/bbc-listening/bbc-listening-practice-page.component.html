@@ -17,6 +17,13 @@
           <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
           <p class="eyebrow">IELTS Listening Practice · {{ test.title }}</p>
           <h1>{{ lesson.title }}</h1>
+          <div class="listening-levels">
+            <span class="level-badge" data-testid="episode-level">Episode: {{ levelLabel(lesson.level) }}</span>
+            <span class="difficulty-badge" [attr.data-difficulty]="test.difficulty || 'medium'" data-testid="test-difficulty">Test: {{ difficultyLabel(test.difficulty) }}</span>
+            @if (lesson.vocabularyCollectionId) {
+              <a mat-button [routerLink]="['/bbc-6-minute-english', lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
+            }
+          </div>
           <p>Answer as many of the {{ test.questionCount }} questions as you can, then submit when you are ready.</p>
         </div>
         <a
