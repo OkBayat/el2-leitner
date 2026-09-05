@@ -61,7 +61,7 @@ The canonical validation path must enforce the question-quality gate before pack
 ## Request semantics
 
 - An exact date means the officially published BBC episode for that date, not a made-up daily episode.
-- An inclusive range means every qualifying official episode between the two dates. Return one ZIP per episode, including distinct episodes on the same date.
+- An inclusive range means every qualifying official episode between those dates. Return one ZIP per episode, including distinct episodes on the same date.
 - A title/URL must resolve to an exact official identity and publication date.
 - A latest-N request first checks the repository catalog, excludes existing identities and any explicitly excluded prior deliveries, and selects by verified publication date. Do not claim to have checked a production database unless it was actually queried.
 - Test counts and difficulty distributions apply to EACH selected episode unless the user explicitly requests a total across episodes.
