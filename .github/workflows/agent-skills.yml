@@ -1,0 +1,33 @@
+name: Agent skills
+
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - '.agents/**'
+      - '.github/workflows/agent-skills.yml'
+  push:
+    branches:
+      - feature/agent-guides-bbc-bundle-skill
+    paths:
+      - 'AGENTS.md'
+      - '.agents/**'
+      - '.github/workflows/agent-skills.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate BBC bundle skill architecture
+        run: python3 .agents/skills/vocora-bbc-listening-bundles/scripts/validate-skill.py
+      - name: Run BBC bundle skill tests
+        run: |
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-bundle-request.py
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-validate-skill.py
