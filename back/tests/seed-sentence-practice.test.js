@@ -20,8 +20,14 @@ class FakeSentenceSeedConnection {
     if (!sql.startsWith("INSERT INTO sentences")) {
       throw new Error(`Unexpected seed connection query: ${sql}`);
     }
-    this.pending.push(...parameters);
-    return [{ affectedRows: parameters.length }];
+    for (let index = 0; index < parameters.length; index += 2) {
+      const sentence = parameters[index];
+      const hash = parameters[index + 1];
+      assert.equal(typeof sentence, "string");
+      assert.match(hash, /^[a-f0-9]{64}$/u);
+      this.pending.push(sentence);
+    }
+    return [{ affectedRows: this.pending.length }];
   }
 
   async commit() {

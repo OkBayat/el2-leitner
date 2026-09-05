@@ -48,7 +48,17 @@ describe("library API", () => {
 
     const imported = await owner
       .post("/api/library/american-english-file-3/import")
-      .send({ text: "## Unit 1\n1. crowded\n2. centre / center", mode: "replace" })
+      .send({
+        text: `# American English File 3
+## Unit 1
+- crowded
+  - definition: Full of many people.
+  - example: The bus was crowded this morning.
+- centre / center
+  - definition: The middle part of something.
+  - example: We met in the centre of town.`,
+        mode: "replace"
+      })
       .expect(200);
     assert.equal(imported.body.result.found, 2);
   });
