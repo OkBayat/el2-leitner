@@ -4,13 +4,26 @@ import { MySqlLibraryRepository } from "./MySqlLibraryRepository.js";
 export const IELTS_COLLECTION_ID = "ielts-listening-core-1500";
 export const IELTS_COLLECTION_TITLE = "1500 IELTS Listening Words";
 export const IELTS_COLLECTION_DESCRIPTION = "1,500 IELTS Listening source items normalized into unique vocabulary entries with equivalent spellings merged.";
+export const IELTS_MANAGED_SOURCE_FILE = "ielts-listening-core-1500.md";
 
 export async function seedBuiltInLibrary({ pool, sourceText, parser }) {
   const sourceHash = createHash("sha256").update(sourceText, "utf8").digest("hex");
   const [rows] = await pool.execute(
-    "SELECT id, source_hash FROM collections WHERE public_id = ? LIMIT 1",
+    `SELECT id, source_hash,
+            JSON_UNQUOTE(JSON_EXTRACT(metadata_json, '$.sourceFile')) AS source_file
+     FROM collections
+     WHERE public_id = ?
+     LIMIT 1`,
     [IELTS_COLLECTION_ID]
   );
+
+  // Once the collection has been synchronized from back/data/collections, that
+  // managed Markdown file is the source of truth. The legacy UI seed remains
+  // only as a bootstrap/compatibility path for databases created before the
+  // file-managed collection sync runs for the first time.
+  if (rows[0]?.source_file === IELTS_MANAGED_SOURCE_FILE) {
+    return { changed: false, sourceHash: rows[0].source_hash, managed: true };
+  }
 
   if (!rows[0]) {
     await pool.execute(
