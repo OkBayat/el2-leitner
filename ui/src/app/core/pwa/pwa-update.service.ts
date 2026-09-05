@@ -5,6 +5,15 @@ import {isSecurePwaContext} from './pwa-platform';
 
 const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 const CONTROLLER_CHANGE_TIMEOUT_MS = 8_000;
+const SUCCESSFUL_INSTALL_STATES = new Set<ServiceWorkerState>(['installed', 'activating', 'activated']);
+
+export function isSuccessfulWorkerInstallState(state: ServiceWorkerState): boolean {
+	return SUCCESSFUL_INSTALL_STATES.has(state);
+}
+
+export function isWorkerInstallFailure(state: ServiceWorkerState, installedSuccessfully: boolean): boolean {
+	return state === 'redundant' && !installedSuccessfully;
+}
 
 @Injectable({providedIn: 'root'})
 export class PwaUpdateService {
@@ -103,13 +112,18 @@ export class PwaUpdateService {
 		registration: ServiceWorkerRegistration,
 	): void {
 		if (!worker) return;
+		let installedSuccessfully = isSuccessfulWorkerInstallState(worker.state);
 		const handleState = () => {
-			if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-				this.waitingWorker = registration.waiting || worker;
-				this.updateReady.set(true);
+			const state = worker.state;
+			if (isSuccessfulWorkerInstallState(state)) {
+				installedSuccessfully = true;
 				this.errorMessage.set('');
 			}
-			if (worker.state === 'redundant') {
+			if (state === 'installed' && navigator.serviceWorker.controller) {
+				this.waitingWorker = registration.waiting || worker;
+				this.updateReady.set(true);
+			}
+			if (isWorkerInstallFailure(state, installedSuccessfully)) {
 				this.errorMessage.set('A Vocora update could not be installed. Keep this page open and try again online.');
 			}
 		};
