@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const testDir = path.dirname(fileURLToPath(import.meta.url));
+const uiRoot = path.resolve(testDir, '..');
+const template = fs.readFileSync(
+  path.join(uiRoot, 'src/app/features/bbc-listening/bbc-listening-practice-page.component.html'),
+  'utf8',
+);
+
+const actions = template.match(/<div class="listening-levels">([\s\S]*?)<\/div>/u)?.[1] ?? '';
+
+assert.match(
+  actions,
+  /data-testid="episode-vocabulary-link"/u,
+  'Episode vocabulary must remain in the listening header action row.',
+);
+assert.match(
+  actions,
+  /<a\s+mat-button[\s\S]*?data-testid="open-bbc-episode"[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
+  'The BBC source must be a text button inside the listening header action row.',
+);
+assert.match(actions, /target="_blank"/u, 'The BBC source must open in a new tab.');
+assert.match(actions, /rel="noopener noreferrer"/u, 'The BBC source must keep safe external-link attributes.');
+assert.match(
+  actions,
+  /<span class="external-link-icon" aria-hidden="true">↗<\/span>/u,
+  'The BBC source action must show one external-link icon.',
+);
+assert.doesNotMatch(
+  template,
+  /mat-flat-button[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
+  'The BBC source must not return as the separate filled header CTA.',
+);
