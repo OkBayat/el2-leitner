@@ -6,6 +6,7 @@ import test from "node:test";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import {
+  DEFAULT_COLLECTION_SLUG,
   EXAMPLE_COLLECTION_FILE,
   collectionSourceHash,
   loadCollectionSources
@@ -19,6 +20,14 @@ const source = (definition = "A small book used for writing notes.", example = "
   - example: ${example}
 `;
 
+const ieltsSource = `
+# IELTS Listening Core 1500
+## Test Section
+- centre / center
+  - definition: The middle point or main place of activity.
+  - example: The sports centre closes at nine.
+`;
+
 test("collection loader always ignores example-collection.md", async () => {
   const directory = await mkdtemp(join(tmpdir(), "vocora-collections-"));
   try {
@@ -29,7 +38,30 @@ test("collection loader always ignores example-collection.md", async () => {
     assert.equal(sources.length, 1);
     assert.equal(sources[0].fileName, "test-book.md");
     assert.equal(sources[0].slug, "test-book");
+    assert.equal(sources[0].publicId, "test-book");
+    assert.equal(sources[0].kind, "book");
+    assert.equal(sources[0].isDefault, false);
+    assert.equal(sources[0].sourceItemCount, 1);
+    assert.equal(sources[0].duplicateAliasCount, 0);
     assert.equal(sources[0].parsed.title, "Test Book");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("IELTS managed source keeps its stable public identity, exam kind, and legacy catalog accounting", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "vocora-collections-"));
+  try {
+    await writeFile(join(directory, `${DEFAULT_COLLECTION_SLUG}.md`), ieltsSource, "utf8");
+
+    const [sourceRecord] = await loadCollectionSources(directory, new VocabularyFileParser());
+    assert.equal(sourceRecord.slug, DEFAULT_COLLECTION_SLUG);
+    assert.equal(sourceRecord.publicId, DEFAULT_COLLECTION_SLUG);
+    assert.equal(sourceRecord.kind, "exam");
+    assert.equal(sourceRecord.isDefault, true);
+    assert.equal(sourceRecord.sourceItemCount, 1500);
+    assert.equal(sourceRecord.duplicateAliasCount, 9);
+    assert.equal(sourceRecord.parsed.entries.length, 1);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
