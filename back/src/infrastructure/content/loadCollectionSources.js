@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 export const EXAMPLE_COLLECTION_FILE = "example-collection.md";
 export const DEFAULT_COLLECTION_SLUG = "ielts-listening-core-1500";
+export const COLLECTION_SOURCE_FORMAT_VERSION = 2;
 const COLLECTION_FILE_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*\.md$/u;
 
 const COLLECTION_OVERRIDES = new Map([
@@ -34,7 +35,7 @@ export function collectionSlugFromFileName(fileName) {
 
 export function collectionSourceHash(parsed) {
   const canonical = {
-    formatVersion: 1,
+    formatVersion: COLLECTION_SOURCE_FORMAT_VERSION,
     title: parsed.title,
     sections: parsed.sections.map(({ path, title, parentPath, position }) => ({
       path,
