@@ -30,6 +30,12 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   const vocabulary = await page.evaluate(async () => (await fetch('/api/listening/bbc/lessons/limiting-screen-time-for-children/vocabulary')).json());
   expect(vocabulary.subscribed).toBe(false);
   expect(vocabulary.entries.every((entry: any) => entry.progress.state === 'new')).toBe(true);
+  const before = await page.evaluate(async () => (await fetch('/api/state')).json());
+  const wasActive = new Set(
+    before.state.words
+      .filter((word: any) => word.box > 0 || word.introducedOn)
+      .map((word: any) => word.id)
+  );
   const first = vocabulary.entries[0];
   await page.getByTestId(`pronounce-episode-word-${first.vocabularyId}`).click();
   expect(await page.evaluate(() => (window as any).__episodeSpoken)).toEqual([first.term]);
@@ -40,9 +46,13 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await expect(page.locator('[data-testid^="episode-word-status-"]')).toHaveCount(6);
   await expect(page.getByTestId('add-all-episode-vocabulary')).toBeDisabled();
   const after = await page.evaluate(async () => (await fetch('/api/state')).json());
+  const episodeIds = new Set(vocabulary.entries.map((entry: any) => entry.vocabularyId));
   const active = after.state.words.filter((word: any) => word.box > 0 || word.introducedOn);
-  expect(active.map((word: any) => word.id).sort()).toEqual(vocabulary.entries.map((entry: any) => entry.vocabularyId).sort());
-  expect(active.every((word: any) => word.box === 1 && word.attempts === 0)).toBe(true);
+  const episodeActive = active.filter((word: any) => episodeIds.has(word.id));
+  expect(episodeActive.map((word: any) => word.id).sort()).toEqual([...episodeIds].sort());
+  expect(episodeActive.every((word: any) => word.box === 1 && word.attempts === 0)).toBe(true);
+  const unrelatedNewlyActive = active.filter((word: any) => !episodeIds.has(word.id) && !wasActive.has(word.id));
+  expect(unrelatedNewlyActive).toEqual([]);
   await page.reload();
   await expect(page.locator('[data-testid^="episode-word-status-"]')).toHaveCount(6);
   await expect(page.getByTestId('add-all-episode-vocabulary')).toBeDisabled();
