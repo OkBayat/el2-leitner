@@ -54,6 +54,7 @@ export function loadConfig(env = process.env) {
     nodeEnv,
     port: numberFromEnv(env.PORT, 3000, "PORT"),
     trustProxy: booleanFromEnv(env.TRUST_PROXY),
+    shadowing: { url: env.SHADOWING_SPEECH_URL?.trim() || "" },
     database: {
       host: env.DB_HOST ?? "127.0.0.1",
       port: numberFromEnv(env.DB_PORT, 3306, "DB_PORT"),

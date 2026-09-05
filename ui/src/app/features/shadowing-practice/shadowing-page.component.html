@@ -1,0 +1,118 @@
+<section class="review-page shadowing-page" data-testid="shadowing-page">
+  @if (session.phase() === 'loading') {
+    <div class="review-center"><p class="loading-state" role="status">Preparing shadowing practice…</p></div>
+  } @else if (session.phase() === 'empty' || session.phase() === 'load-error') {
+    <div class="review-center">
+      <mat-card class="setup" appearance="outlined">
+        <mat-card-header><mat-card-title>{{ session.phase() === 'empty' ? 'No Box 1 sentences are ready' : 'Shadowing is unavailable' }}</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p role="status">{{ session.phase() === 'empty' ? 'Add words to Box 1 that have an available practice sentence, then come back here.' : session.error() }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button type="button" (click)="session.load()">Try again</button>
+          <button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  } @else if (session.phase() === 'complete') {
+    <div class="review-center">
+      <mat-card class="complete" appearance="outlined">
+        <mat-card-title>Shadowing practice complete</mat-card-title>
+        <mat-card-content>
+          <div class="breakdown">
+            <div><strong>{{ session.counts().correctCount }}</strong><span>Successful</span></div>
+            <div><strong>{{ session.counts().wrongCount }}</strong><span>Needs practice</span></div>
+            <div><strong>{{ session.accuracy() ?? 0 }}%</strong><span>Success rate</span></div>
+          </div>
+          <p class="practice-note">Your Leitner boxes and daily-review schedule have not changed.</p>
+          @if (session.error()) { <p role="alert">{{ session.error() }}</p> }
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button type="button" (click)="session.load()">Practice again</button>
+          <button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  } @else if (session.prompt(); as prompt) {
+    <div class="review-session" data-testid="shadowing-session">
+      <div class="session-bar">
+        <button class="session-close" mat-icon-button type="button" aria-label="Exit shadowing" (click)="exit()">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </button>
+        <div class="session-progress">
+          <span class="visually-hidden">Words recognized: {{ session.assessment()?.score ?? 0 }}%</span>
+          <mat-progress-bar mode="determinate" [value]="session.assessment()?.score ?? 0"/>
+        </div>
+        <span class="session-count">{{ session.counts().completedCount }} practiced · {{ session.accuracy() === null ? '—' : session.accuracy() + '%' }} success</span>
+      </div>
+      <main class="session-stage">
+        <article class="flash sentence-flash">
+          <div class="sentence-mode-badge">Shadowing · Box 1</div>
+          <div class="flash-heading">
+            <span>{{ prompt.sentence.category || 'Sentence practice' }}</span>
+            <h1>Listen and repeat the sentence</h1>
+          </div>
+          <div class="listen">
+            <button mat-fab extended class="play-pronunciation" type="button" [disabled]="session.busy()" (click)="session.listen()">
+              <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9H7L12 5V19L7 15H3Z" fill="currentColor"/><path d="M16 8Q21 12 16 16M18 4Q27 12 18 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              Play sentence
+            </button>
+            <button mat-button type="button" [disabled]="session.busy()" (click)="session.listen(.7)">Slower</button>
+          </div>
+          <p class="audio-hint">{{ session.audioNotice() || 'If audio does not start automatically, press Play sentence.' }}</p>
+          @if (session.assessment(); as assessment) {
+            <p class="sentence-text shadowing-text" data-testid="shadowing-sentence" [attr.aria-label]="prompt.sentence.text"><span aria-hidden="true">{{ assessment.leading }}</span>@for (word of assessment.words; track $index) {<span aria-hidden="true" class="shadowing-word" [class.recognized]="word.matched" [class.missed]="session.result() && !word.matched">{{ word.text }}</span><span aria-hidden="true">{{ word.after }}</span>}</p>
+          }
+          <button class="microphone-button" type="button" data-testid="shadowing-microphone"
+            [disabled]="!session.supported || session.phase() === 'requesting' || session.phase() === 'processing'"
+            [attr.aria-pressed]="session.phase() === 'recording'"
+            [attr.aria-label]="session.phase() === 'recording' ? 'Stop recording' : 'Record your voice'"
+            (click)="session.phase() === 'recording' ? session.stop() : session.record()">
+            @if (session.phase() === 'recording') {
+              <span class="waveform" aria-hidden="true">@for (height of session.levels(); track $index) {<span [style.height.px]="height"></span>}</span>
+              <span>Stop · {{ session.seconds().toFixed(1) }} / 30s</span>
+            } @else {
+              <svg width="24" height="28" viewBox="0 0 24 28" aria-hidden="true"><rect x="8" y="1" width="8" height="16" rx="4" fill="currentColor"/><path d="M4 12V14A8 8 0 0 0 20 14V12M12 22V27M7 27H17" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span>{{ session.phase() === 'requesting' ? 'Preparing microphone…' : session.phase() === 'processing' ? 'Checking your speech…' : 'Click to speak' }}</span>
+            }
+          </button>
+          <p class="microphone-hint">{{ session.phase() === 'recording' ? 'Listening… Stop when finished, or pause briefly to finish automatically.' : 'Your voice is processed by Vocora’s speech service. Audio recordings are not saved.' }}</p>
+          @if (!session.supported) { <p class="speech-error" role="alert">Microphone practice requires HTTPS or localhost and a browser with Web Audio support.</p> }
+          @if (session.error()) {
+            <div class="speech-error" role="alert"><p>{{ session.error() }}</p>
+              @if (session.errorCode() === 'SHADOWING_SESSION_EXPIRED' || session.errorCode() === 'SHADOWING_WORD_MOVED') {
+                <button mat-stroked-button type="button" (click)="session.load()">Start a new session</button>
+              }
+            </div>
+          }
+          @if (session.result(); as result) {
+            <p class="transcript"><strong>Heard:</strong> {{ result.transcript }}</p>
+            @if (session.missingWords()) { <p class="transcript"><strong>Not recognized:</strong> {{ session.missingWords() }}</p> }
+          }
+        </article>
+      </main>
+      <footer class="review-action-footer" [class.neutral]="!session.result()" [class.success]="session.result()?.passed === true" [class.error]="session.result()?.passed === false" data-testid="shadowing-feedback">
+        <div class="review-action-inner">
+          <div class="feedback-copy" role="status" aria-live="polite">
+            @if (session.result(); as result) {
+              <h2>{{ result.passed ? 'Well done!' : 'Try the sentence again' }}</h2>
+              <p>{{ result.matchedCount }} of {{ result.totalCount }} words recognized · {{ result.score }}%</p>
+            } @else {
+              <p>{{ session.phase() === 'recording' ? (session.assessment()?.matchedCount ?? 0) + ' words recognized so far' : 'Repeat at least 90% of the words to succeed.' }}</p>
+              <small>Word recognition, not a pronunciation score.</small>
+            }
+          </div>
+          <div class="shadowing-actions">
+            @if (session.phase() === 'evaluation-error') {
+              <button mat-flat-button class="review-action-primary" type="button" (click)="session.retryEvaluation()">Retry evaluation</button>
+            } @else if (session.result()) {
+              <button mat-flat-button class="review-action-primary" type="button" (click)="session.result()?.passed ? session.next() : session.record()">{{ session.result()?.passed ? 'Continue' : 'Try again' }}</button>
+            }
+            <button mat-button type="button" [disabled]="session.busy()" (click)="session.next()">Skip sentence</button>
+            @if (session.counts().completedCount) { <button mat-button type="button" [disabled]="session.busy()" (click)="session.complete()">Finish practice</button> }
+          </div>
+        </div>
+      </footer>
+    </div>
+  }
+</section>

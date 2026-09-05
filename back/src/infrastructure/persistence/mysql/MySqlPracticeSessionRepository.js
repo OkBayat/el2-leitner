@@ -51,7 +51,7 @@ export class MySqlPracticeSessionRepository {
     return mapSession(rows[0]);
   }
 
-  async recordAttempt(userId, sessionId, { day, correct }) {
+  async recordAttempt(userId, sessionId, { day, correct, shadowing = false }) {
     const connection = await this.pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -65,10 +65,10 @@ export class MySqlPracticeSessionRepository {
       if (!session) {
         throw new NotFoundError("PRACTICE_SESSION_NOT_FOUND", "Active practice session was not found.");
       }
-      if (!String(session.mode || "").startsWith("sentence-house-")) {
+      if (!String(session.mode || "").startsWith("sentence-house-") && !(shadowing === true && session.mode === "shadowing-house-1")) {
         throw new ValidationError(
           "INVALID_SESSION",
-          "Only sentence-practice sessions can record standalone practice attempts."
+          "Only sentence-practice or server-graded Box 1 shadowing sessions can record standalone practice attempts."
         );
       }
 

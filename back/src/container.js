@@ -1,3 +1,5 @@
+import { ShadowingPractice } from "./application/shadowing-practice/ShadowingPractice.js";
+import { HttpSpeechRecognizer } from "./infrastructure/speech/HttpSpeechRecognizer.js";
 import { GetListeningEpisodeImage } from "./application/listening-practice/GetListeningEpisodeImage.js";
 import { GetListeningEpisodeVocabulary } from "./application/listening-practice/GetListeningEpisodeVocabulary.js";
 import { MySqlListeningVocabularyRepository } from "./infrastructure/persistence/mysql/MySqlListeningVocabularyRepository.js";
@@ -64,6 +66,7 @@ export function createContainer({ pool, config, adapters = {} }) {
   const libraryAdminPolicy =
     adapters.libraryAdminPolicy ?? new LibraryAdminPolicy(config.library?.adminEmails || []);
   const vocabularyFileParser = adapters.vocabularyFileParser ?? new VocabularyFileParser();
+  const getSentencePracticeCards = new GetSentencePracticeCards({ sentencePracticeRepository });
 
   return {
     tokenService,
@@ -72,6 +75,17 @@ export function createContainer({ pool, config, adapters = {} }) {
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
     useCases: {
+      shadowingPractice: new ShadowingPractice({
+        getSentencePracticeCards,
+        sentencePracticeRepository,
+        // Only server-assessed speech can opt into shadowing accounting.
+        practiceSessionRepository: {
+          start: (...args) => practiceSessionRepository.start(...args),
+          recordAttempt: (userId, sessionId, input) => practiceSessionRepository.recordAttempt(userId, sessionId, { ...input, shadowing: true }),
+          complete: (...args) => practiceSessionRepository.complete(...args)
+        },
+        speech: adapters.speechRecognizer ?? new HttpSpeechRecognizer(config.shadowing)
+      }),
       registerUser: new RegisterUser({ userRepository, passwordHasher }),
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
@@ -85,7 +99,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       submitListeningAttempt: new SubmitListeningAttempt({ listeningPracticeRepository }),
       getLearningState: new GetLearningState({ learningStateRepository, learningBootstrapRepository }),
       getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
-      getSentencePracticeCards: new GetSentencePracticeCards({ sentencePracticeRepository }),
+      getSentencePracticeCards,
       saveLearningState: new SaveLearningState({ learningStateRepository }),
       updateVocabulary: new UpdateVocabulary({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),

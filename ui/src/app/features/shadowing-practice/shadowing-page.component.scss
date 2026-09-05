@@ -1,0 +1,33 @@
+:host { display: block; --shadowing-blue: #008ecc; }
+:host-context([data-theme='dark']) { --shadowing-blue: #4bc8ff; }
+.shadowing-text { margin-top: 30px; overflow-wrap: anywhere; }
+.shadowing-word { transition: color 150ms ease; }
+.shadowing-word.recognized { color: var(--shadowing-blue); }
+.shadowing-word.missed { text-decoration: underline dashed; text-decoration-color: var(--mat-sys-error); text-underline-offset: 6px; }
+.microphone-button {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px;
+  width: 100%; min-height: 72px; margin-top: 30px; padding: 14px;
+  border: 2px solid var(--mat-sys-outline-variant); border-bottom-width: 5px; border-radius: 18px;
+  background: var(--mat-sys-surface); color: var(--shadowing-blue); font: inherit; font-weight: 800;
+  cursor: pointer; touch-action: manipulation;
+}
+.microphone-button:focus-visible { outline: 3px solid var(--shadowing-blue); outline-offset: 4px; }
+.microphone-button[aria-pressed='true'] { border-color: var(--shadowing-blue); }
+.microphone-button:disabled { opacity: .55; cursor: default; }
+.waveform { display: flex; align-items: center; justify-content: center; gap: 4px; height: 34px; }
+.waveform span { display: block; width: 4px; border-radius: 4px; background: currentColor; }
+.audio-hint, .microphone-hint { margin: 12px 0 0; font-size: 12px; color: var(--mat-sys-on-surface-variant); }
+.speech-error { margin-top: 16px; padding: 12px; border: 1px solid var(--mat-sys-outline-variant); border-radius: 12px; }
+.speech-error p { margin: 0 0 8px; }
+.transcript { margin: 16px 0 0; font-size: 14px; overflow-wrap: anywhere; }
+.shadowing-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.feedback-copy small { font-size: 12px; }
+@media (max-width: 600px) {
+  .shadowing-text { margin-top: 24px; }
+  .shadowing-actions { width: 100%; justify-content: center; }
+  .shadowing-page .review-action-footer .review-action-inner { grid-template-columns: 1fr; gap: 12px; }
+  .session-stage { padding-bottom: calc(260px + env(safe-area-inset-bottom)); }
+  .review-action-footer { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .microphone-button { margin-top: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { .shadowing-word { transition: none; } }

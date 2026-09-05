@@ -25,6 +25,7 @@
 					}
 					<button mat-stroked-button type="button" (click)="startBoxOne()">Free practice: Box 1</button>
 					<button mat-stroked-button type="button" data-testid="start-sentence-practice" (click)="startSentencePractice()">Sentence practice: Box 1</button>
+					<a mat-stroked-button routerLink="/shadowing" data-testid="start-shadowing">Shadowing: Box 1</a>
 					<button mat-stroked-button type="button" (click)="addNewWords()">Add new words</button>
 					<a mat-stroked-button routerLink="/bbc-6-minute-english" data-testid="open-bbc-listening">BBC 6 Minute English</a>
 				</div>
@@ -127,12 +128,12 @@
 								class="leitner-segments"
 								[style.width.%]="houseWidths[house.box - 1]"
 								[style.--segment-count]="house.segments.length"
-							>
+								>
 								@for (count of house.segments; track $index) {
 									<span
 										class="leitner-segment"
 										[class.is-occupied]="count > 0"
-									>{{ count }}</span>
+										>{{ count }}</span>
 								}
 							</div>
 
