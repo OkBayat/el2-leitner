@@ -94,11 +94,11 @@ async function verify() {
     }
 
     const expectedListeningLessons = new Map([
-      ["bbc-6-minute-english-260903", "bbc-6-minute-english-260903.mp3"],
-      ["bbc-6-minute-english-260618", "bbc-6-minute-english-260618.mp3"]
+      ["bbc-6-minute-english-260903", "2026-09-03-climate-change-extreme-weather"],
+      ["bbc-6-minute-english-260618", "2026-06-18-limiting-screen-time-for-children"]
     ]);
     const [listeningRows] = await pool.execute(
-      `SELECT public_id, schema_version, question_count, audio_file, content_json
+      `SELECT public_id, schema_version, question_count, audio_file, asset_directory, image_file, content_json
        FROM listening_lessons
        WHERE provider = 'bbc_6_minute_english'
          AND status = 'published'
@@ -108,10 +108,16 @@ async function verify() {
       throw new Error(`Expected ${expectedListeningLessons.size} built-in BBC lessons, found ${listeningRows.length}.`);
     }
     for (const row of listeningRows) {
-      const expectedAudioFile = expectedListeningLessons.get(String(row.public_id));
-      if (!expectedAudioFile) throw new Error(`Unexpected BBC listening lesson ${row.public_id}.`);
-      if (row.audio_file !== expectedAudioFile) {
+      const expectedAssetDirectory = expectedListeningLessons.get(String(row.public_id));
+      if (!expectedAssetDirectory) throw new Error(`Unexpected BBC listening lesson ${row.public_id}.`);
+      if (row.asset_directory !== expectedAssetDirectory) {
+        throw new Error(`Unexpected BBC asset directory for ${row.public_id}: ${row.asset_directory || "missing"}.`);
+      }
+      if (row.audio_file !== "audio.mp3") {
         throw new Error(`Unexpected BBC audio filename for ${row.public_id}: ${row.audio_file || "missing"}.`);
+      }
+      if (row.image_file !== "cover.jpg") {
+        throw new Error(`Unexpected BBC image filename for ${row.public_id}: ${row.image_file || "missing"}.`);
       }
       verifyListeningContent(row);
     }
@@ -188,7 +194,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; two BBC lessons contain 6 JSON-backed tests, 78 graded questions, and local audio metadata; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; two BBC lessons contain 6 JSON-backed tests, 78 graded questions, and episode-local assets; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();
