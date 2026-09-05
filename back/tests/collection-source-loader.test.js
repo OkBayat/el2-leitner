@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -65,6 +65,17 @@ test("IELTS managed source keeps its stable public identity, exam kind, and lega
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("committed IELTS managed source parses to 1,491 canonical entries with one definition and example each", async () => {
+  const file = new URL("../data/collections/ielts-listening-core-1500.md", import.meta.url);
+  const text = await readFile(file, "utf8");
+  const parsed = new VocabularyFileParser().parse(text, { requireStructured: true });
+
+  assert.equal(parsed.sections.length, 44);
+  assert.equal(parsed.entries.length, 1491);
+  assert.equal(parsed.entries.every((entry) => entry.definitions.length >= 1), true);
+  assert.equal(parsed.entries.every((entry) => entry.examples.length >= 1), true);
 });
 
 test("collection source hash includes definitions, examples, vocabulary forms, and lessons", () => {
