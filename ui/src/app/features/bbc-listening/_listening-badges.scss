@@ -1,0 +1,19 @@
+.level-badge, .difficulty-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 650;
+  line-height: 1.5;
+  color: var(--mat-sys-on-secondary-container);
+  background: var(--mat-sys-secondary-container);
+}
+.difficulty-badge { color: var(--mat-sys-on-tertiary-container); background: var(--mat-sys-tertiary-container); }
+.difficulty-badge[data-difficulty='very_easy'], .difficulty-badge[data-difficulty='easy'] {
+  color: var(--mat-sys-on-primary-container); background: var(--mat-sys-primary-container);
+}
+.difficulty-badge[data-difficulty='hard'], .difficulty-badge[data-difficulty='very_hard'] {
+  color: var(--mat-sys-on-error-container); background: var(--mat-sys-error-container);
+}
+.listening-levels { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 12px 0; }

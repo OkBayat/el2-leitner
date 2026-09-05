@@ -5,7 +5,7 @@ import { describe, it } from "node:test";
 import { parseListeningLessonDefinition } from "../src/domain/listening-practice/ListeningLessonDefinition.js";
 import { MySqlListeningPracticeRepository } from "../src/infrastructure/persistence/mysql/MySqlListeningPracticeRepository.js";
 
-const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const lessonUrl = new URL("./fixtures/listening/260903-extreme-weather.json", import.meta.url);
 
 async function storedLessonRow() {
   const definition = parseListeningLessonDefinition(
@@ -65,7 +65,7 @@ describe("MySqlListeningPracticeRepository JSON persistence", () => {
   it("loads the published audio filename without parsing answer content", async () => {
     const pool = {
       async execute(sql) {
-        assert.match(sql, /SELECT audio_file/u);
+        assert.match(sql, /SELECT public_id, audio_file, asset_directory/u);
         return [[{ audio_file: "bbc-6-minute-english-260903.mp3" }]];
       }
     };

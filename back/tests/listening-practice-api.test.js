@@ -16,9 +16,9 @@ import {
   InMemoryUserRepository
 } from "./helpers/fakes.js";
 
-const lessonUrl = new URL("../data/listening/bbc/260903-extreme-weather.json", import.meta.url);
+const lessonUrl = new URL("./fixtures/listening/260903-extreme-weather.json", import.meta.url);
 const screenTimeLessonUrl = new URL(
-  "../data/listening/bbc/260618-limiting-screen-time-for-children.json",
+  "./fixtures/listening/260618-limiting-screen-time-for-children.json",
   import.meta.url
 );
 

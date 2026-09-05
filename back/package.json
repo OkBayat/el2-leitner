@@ -15,8 +15,9 @@
     "db:validate:listening": "node scripts/validate-listening-lessons.js",
     "db:seed:sentences": "node scripts/seed-sentence-practice.js",
     "db:validate:sentences": "node scripts/seed-sentence-practice.js --dry-run",
-    "test": "npm run db:validate:listening && npm run db:validate:sentences && node --test",
-    "test:watch": "node --test --watch"
+    "test": "npm run db:validate:listening && npm run db:validate:sentences && npm run test:episode-tools && node --test",
+    "test:watch": "node --test --watch",
+    "test:episode-tools": "python3 -m unittest discover -s tests/tooling -p 'test_*.py'"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

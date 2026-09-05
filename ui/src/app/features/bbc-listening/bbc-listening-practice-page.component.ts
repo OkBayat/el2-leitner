@@ -1,3 +1,4 @@
+import { listeningDifficultyLabel, listeningLevelLabel } from '../../domain/listening-practice/listening-practice';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
@@ -35,6 +36,8 @@ import { ListeningAudioPlayerComponent } from './listening-audio-player.componen
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BbcListeningPracticePageComponent implements OnInit {
+  readonly levelLabel = listeningLevelLabel;
+  readonly difficultyLabel = listeningDifficultyLabel;
   readonly session = inject(ListeningAttemptService);
   readonly answers = new FormRecord<FormControl<string>>({});
   readonly routeError = signal<string | null>(null);

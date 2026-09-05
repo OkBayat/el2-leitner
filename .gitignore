@@ -9,3 +9,14 @@ ui/dist/
 ui/.angular/
 ui/playwright-report/
 ui/test-results/
+
+# Episode audio is installed locally from an episode bundle, never committed or baked into images.
+**/data/listening/episodes/**/*.mp3
+
+# Local episode preparation products
+back/data/listening/episodes/**/*.tmp
+back/data/listening/episodes/**/*.zip
+
+# Local Python tooling caches
+**/__pycache__/
+*.pyc

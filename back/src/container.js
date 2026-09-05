@@ -1,3 +1,6 @@
+import { GetListeningEpisodeImage } from "./application/listening-practice/GetListeningEpisodeImage.js";
+import { GetListeningEpisodeVocabulary } from "./application/listening-practice/GetListeningEpisodeVocabulary.js";
+import { MySqlListeningVocabularyRepository } from "./infrastructure/persistence/mysql/MySqlListeningVocabularyRepository.js";
 import { GetCurrentUser } from "./application/auth/GetCurrentUser.js";
 import { LoginUser } from "./application/auth/LoginUser.js";
 import { RegisterUser } from "./application/auth/RegisterUser.js";
@@ -67,10 +70,15 @@ export function createContainer({ pool, config, adapters = {} }) {
     authCookie: config.auth.cookie,
     authRateLimit: config.auth.rateLimit,
     listeningAudioDirectory: config.listening.audioDirectory,
+    listeningEpisodesDirectory: config.listening.episodesDirectory,
     useCases: {
       registerUser: new RegisterUser({ userRepository, passwordHasher }),
       loginUser: new LoginUser({ userRepository, passwordHasher }),
       getCurrentUser: new GetCurrentUser({ userRepository }),
+      getListeningEpisodeImage: new GetListeningEpisodeImage({ listeningPracticeRepository }),
+      getListeningEpisodeVocabulary: new GetListeningEpisodeVocabulary({
+        listeningVocabularyRepository: adapters.listeningVocabularyRepository ?? new MySqlListeningVocabularyRepository(pool)
+      }),
       getListeningEpisodeAudio: new GetListeningEpisodeAudio({ listeningPracticeRepository }),
       listListeningLessons: new ListListeningLessons({ listeningPracticeRepository }),
       startListeningAttempt: new StartListeningAttempt({ listeningPracticeRepository }),

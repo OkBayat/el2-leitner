@@ -12,7 +12,7 @@ function storedContent(definition) {
 }
 
 function audioFileName(definition) {
-  return `${definition.publicId}.mp3`;
+  return definition.audioFile || `${definition.publicId}.mp3`;
 }
 
 async function upsertLesson(connection, definition, hash) {
@@ -38,7 +38,8 @@ async function upsertLesson(connection, definition, hash) {
       `UPDATE listening_lessons
        SET provider = ?, slug = ?, title = ?, description = ?, episode_code = ?, episode_date = ?,
            source_url = ?, audio_file = ?, status = ?, schema_version = ?, question_count = ?, content_version = ?,
-           source_hash = ?, content_json = ?, published_at = ?
+           source_hash = ?, content_json = ?, published_at = ?,
+           level = ?, asset_directory = ?, image_file = ?, vocabulary_collection_id = ?
        WHERE id = ?`,
       [
         definition.provider,
@@ -56,6 +57,10 @@ async function upsertLesson(connection, definition, hash) {
         hash,
         contentJson,
         publishedAt,
+        definition.level || "intermediate",
+        definition.assetDirectory || null,
+        definition.imageFile || null,
+        definition.vocabularyCollectionId || null,
         existing.id
       ]
     );
@@ -65,8 +70,9 @@ async function upsertLesson(connection, definition, hash) {
   const [result] = await connection.execute(
     `INSERT INTO listening_lessons
        (public_id, provider, slug, title, description, episode_code, episode_date, source_url, audio_file,
-        status, schema_version, question_count, content_version, source_hash, content_json, published_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        status, schema_version, question_count, content_version, source_hash, content_json, published_at,
+        level, asset_directory, image_file, vocabulary_collection_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       definition.publicId,
       definition.provider,
@@ -83,31 +89,35 @@ async function upsertLesson(connection, definition, hash) {
       version,
       hash,
       contentJson,
-      publishedAt
+      publishedAt,
+      definition.level || "intermediate",
+      definition.assetDirectory || null,
+      definition.imageFile || null,
+      definition.vocabularyCollectionId || null
     ]
   );
   return { id: Number(result.insertId), version, changed: true };
 }
 
-export async function seedListeningLessons({ pool, definitions }) {
-  const connection = await pool.getConnection();
+export async function seedListeningLessons({ pool, definitions, connection: suppliedConnection = null }) {
+  const connection = suppliedConnection || await pool.getConnection();
   let changed = false;
   let questionCount = 0;
   let testCount = 0;
   try {
-    await connection.beginTransaction();
+    if (!suppliedConnection) await connection.beginTransaction();
     for (const definition of definitions) {
       const lesson = await upsertLesson(connection, definition, sourceHash(definition));
       changed ||= lesson.changed;
       questionCount += definition.questionCount;
       testCount += definition.testCount;
     }
-    await connection.commit();
+    if (!suppliedConnection) await connection.commit();
     return { changed, lessonCount: definitions.length, testCount, questionCount };
   } catch (error) {
-    await connection.rollback();
+    if (!suppliedConnection) await connection.rollback();
     throw error;
   } finally {
-    connection.release();
+    if (!suppliedConnection) connection.release();
   }
 }

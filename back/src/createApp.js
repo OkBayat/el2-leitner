@@ -108,7 +108,8 @@ export function createApp({
       tokenService: container.tokenService,
       authCookie: container.authCookie,
       authRateLimit: container.authRateLimit,
-      listeningAudioDirectory: container.listeningAudioDirectory
+      listeningAudioDirectory: container.listeningAudioDirectory,
+      listeningEpisodesDirectory: container.listeningEpisodesDirectory
     })
   );
 

@@ -1,3 +1,20 @@
+export type ListeningEpisodeLevel = 'elementary' | 'intermediate' | 'advanced';
+export type ListeningTestDifficulty = 'very_easy' | 'easy' | 'medium' | 'hard' | 'very_hard';
+
+export const LISTENING_LEVEL_LABELS: Record<ListeningEpisodeLevel, string> = {
+  elementary: 'Elementary', intermediate: 'Intermediate', advanced: 'Advanced',
+};
+export const LISTENING_DIFFICULTY_LABELS: Record<ListeningTestDifficulty, string> = {
+  very_easy: 'Very easy', easy: 'Easy', medium: 'Medium', hard: 'Hard', very_hard: 'Very hard',
+};
+
+export function listeningLevelLabel(level?: ListeningEpisodeLevel): string {
+  return LISTENING_LEVEL_LABELS[level ?? 'intermediate'];
+}
+export function listeningDifficultyLabel(difficulty?: ListeningTestDifficulty): string {
+  return LISTENING_DIFFICULTY_LABELS[difficulty ?? 'medium'];
+}
+
 export type ListeningTaskType =
   | 'note_completion'
   | 'multiple_choice_single'
@@ -5,6 +22,9 @@ export type ListeningTaskType =
   | 'short_answer';
 
 export interface ListeningLessonBase {
+  level?: ListeningEpisodeLevel;
+  imageUrl?: string | null;
+  vocabularyCollectionId?: string | null;
   id: string;
   slug: string;
   title: string;
@@ -17,6 +37,8 @@ export interface ListeningLessonBase {
 }
 
 export interface ListeningTestSummary {
+  format?: 'ielts';
+  difficulty?: ListeningTestDifficulty;
   id: string;
   title: string;
   position: number;
@@ -70,6 +92,8 @@ export interface ListeningQuestionGroup {
 }
 
 export interface ListeningTest {
+  format?: 'ielts';
+  difficulty?: ListeningTestDifficulty;
   id: string;
   title: string;
   position: number;
@@ -160,4 +184,20 @@ export function buildListeningSubmission(
     questionId: question.id,
     value: String(values[question.id] ?? ''),
   }));
+}
+
+export interface ListeningVocabularyEntry {
+  id: string;
+  vocabularyId: string;
+  term: string;
+  definitions: string[];
+  examples: string[];
+  progress: { state: 'new' | 'learning' | 'mastered' | 'excluded'; box: number };
+}
+
+export interface ListeningVocabularyResponse {
+  episode: { id: string; slug: string; title: string; level: ListeningEpisodeLevel };
+  collectionId: string;
+  subscribed: boolean;
+  entries: ListeningVocabularyEntry[];
 }

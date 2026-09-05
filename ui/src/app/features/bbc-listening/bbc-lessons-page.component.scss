@@ -1,3 +1,5 @@
+@use './listening-badges';
+
 :host {
   display: block;
 }
@@ -169,4 +171,17 @@ h1 {
     gap: 20px;
     padding: 20px;
   }
+}
+
+.lesson-card.has-cover { grid-template-columns: 170px minmax(0, 1fr) minmax(210px, 260px); }
+.lesson-cover { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; background: var(--mat-sys-surface-container); }
+.test-button { height: auto; min-height: 58px; padding: 8px 12px; }
+.test-name-and-level { display: grid; justify-items: start; gap: 4px; }
+@media (max-width: 950px) {
+  .lesson-card.has-cover { grid-template-columns: minmax(0, 1fr) minmax(210px, 260px); }
+  .lesson-cover { grid-column: 1 / -1; height: 210px; }
+}
+@media (max-width: 700px) {
+  .lesson-card.has-cover { grid-template-columns: 1fr; }
+  .lesson-cover { height: auto; aspect-ratio: 16 / 9; }
 }
