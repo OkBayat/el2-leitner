@@ -3,590 +3,1459 @@
   "tests": [
     {
       "id": "bbc-260702-t1",
-      "title": "Recognising rude messages",
+      "title": "Work emails: examples, reactions and advice",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260702-t1-g1",
+          "id": "bbc-260702-t1-r2-g1",
           "position": 1,
-          "heading": "Recognising rude messages",
-          "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "id": "bbc-260702-t1-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "single_choice",
-              "prompt": "What opening bothers Rachel?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q1-a",
-                  "label": "A",
-                  "text": "Using a friendly \"hi\""
-                },
-                {
-                  "id": "bbc-260702-t1-q1-b",
-                  "label": "B",
-                  "text": "Using her name without a greeting"
-                },
-                {
-                  "id": "bbc-260702-t1-q1-c",
-                  "label": "C",
-                  "text": "Thanking her for her work"
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260702-t1-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What was the anonymous listener sent in reply?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q2-a",
-                  "label": "A",
-                  "text": "A long explanation"
-                },
-                {
-                  "id": "bbc-260702-t1-q2-b",
-                  "label": "B",
-                  "text": "One emoji"
-                },
-                {
-                  "id": "bbc-260702-t1-q2-c",
-                  "label": "C",
-                  "text": "A phone number"
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260702-t1-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "What does \"uncivil\" mean in the discussion?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q3-a",
-                  "label": "A",
-                  "text": "Unclear"
-                },
-                {
-                  "id": "bbc-260702-t1-q3-b",
-                  "label": "B",
-                  "text": "Unofficial"
-                },
-                {
-                  "id": "bbc-260702-t1-q3-c",
-                  "label": "C",
-                  "text": "Impolite"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260702-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What is one example of a flight response?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q4-a",
-                  "label": "A",
-                  "text": "Not replying to an email"
-                },
-                {
-                  "id": "bbc-260702-t1-q4-b",
-                  "label": "B",
-                  "text": "Writing a hostile attack"
-                },
-                {
-                  "id": "bbc-260702-t1-q4-c",
-                  "label": "C",
-                  "text": "Copying a manager to intimidate someone"
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260702-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What can make workers feel frazzled?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q5-a",
-                  "label": "A",
-                  "text": "Doing too many things"
-                },
-                {
-                  "id": "bbc-260702-t1-q5-b",
-                  "label": "B",
-                  "text": "Taking a short holiday"
-                },
-                {
-                  "id": "bbc-260702-t1-q5-c",
-                  "label": "C",
-                  "text": "Receiving a polite greeting"
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260702-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What should someone do before sending an angry email?",
-              "options": [
-                {
-                  "id": "bbc-260702-t1-q6-a",
-                  "label": "A",
-                  "text": "Add more recipients"
-                },
-                {
-                  "id": "bbc-260702-t1-q6-b",
-                  "label": "B",
-                  "text": "Send it immediately"
-                },
-                {
-                  "id": "bbc-260702-t1-q6-c",
-                  "label": "C",
-                  "text": "Pause"
-                }
-              ],
-              "answer": "C"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260702-t2",
-      "title": "Notes on email behaviour",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260702-t2-g1",
-          "position": 1,
-          "heading": "Notes on email behaviour",
+          "heading": "Questions 1–3",
           "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260702-t2-q1",
+              "id": "bbc-260702-t1-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Rachel is a listener from {{blank}}.",
-              "answers": [
-                "Manchester"
-              ]
-            },
-            {
-              "id": "bbc-260702-t2-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Starting with a name alone can put Rachel on the {{blank}}.",
-              "answers": [
-                "defensive"
-              ]
-            },
-            {
-              "id": "bbc-260702-t2-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "The noun linked to \"uncivil\" is {{blank}}.",
-              "answers": [
-                "incivility"
-              ]
-            },
-            {
-              "id": "bbc-260702-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "A fight response may involve copying {{blank}} personnel into an email.",
-              "answers": [
-                "senior"
-              ]
-            },
-            {
-              "id": "bbc-260702-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "A rushed flight response may fail to answer all the {{blank}} in a message.",
-              "answers": [
-                "points"
-              ]
-            },
-            {
-              "id": "bbc-260702-t2-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "An overworked and anxious person may be described as {{blank}}.",
-              "answers": [
-                "frazzled"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260702-t3",
-      "title": "Details from the workplace examples",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260702-t3-g1",
-          "position": 1,
-          "heading": "Details from the workplace examples",
-          "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260702-t3-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "What simple greeting does Rachel mention? {{blank}}",
+              "prompt": "A greeting missing from the emails Rachel dislikes: {{blank}}.",
+              "evidence": {
+                "startSeconds": 42.76,
+                "endSeconds": 47.62,
+                "summary": "Rachel objects to a name-only opening without a greeting such as hi.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "hi"
               ]
             },
             {
-              "id": "bbc-260702-t3-q2",
+              "id": "bbc-260702-t1-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "What type of expert is Emma Russell? {{blank}}",
+              "prompt": "Reply received after a carefully written email: a single {{blank}}.",
+              "evidence": {
+                "startSeconds": 52.14,
+                "endSeconds": 58.36,
+                "summary": "The second listener received only one emoji in reply to a considered message.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "psychologist"
+                "emoji"
               ]
             },
             {
-              "id": "bbc-260702-t3-q3",
+              "id": "bbc-260702-t1-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "In the boss's example, what is given to someone else for work you did? {{blank}}",
+              "prompt": "Number of weekly achievements requested in the government-workers example: {{blank}}.",
+              "evidence": {
+                "startSeconds": 116.32,
+                "endSeconds": 122.92,
+                "summary": "The example email requested five accomplishments from that week.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "five",
+                "5"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260702-t1-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What might someone do in a fight response?",
+              "evidence": {
+                "startSeconds": 155.96,
+                "endSeconds": 162.88,
+                "summary": "Russell associates fight with domination and belittling.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "Avoidance is described as flight, not fight.",
+                  "C": "Getting a task out of the way is part of the flight account."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t1-r2-q5-a",
+                  "label": "A",
+                  "text": "Try to dominate or belittle another person."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q5-b",
+                  "label": "B",
+                  "text": "Avoid opening the message."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q5-c",
+                  "label": "C",
+                  "text": "Give a short reply to remove a task."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t1-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why might senior staff be copied into the hostile email example?",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 175.38,
+                "summary": "Copying senior personnel is presented as a way to elevate an issue and diminish someone.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Removing the sender's name is not the example given.",
+                  "B": "The example is hostile escalation rather than recognition of good work."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t1-r2-q6-a",
+                  "label": "A",
+                  "text": "To remove the sender's name from the discussion."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q6-b",
+                  "label": "B",
+                  "text": "To thank the person who completed the work."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q6-c",
+                  "label": "C",
+                  "text": "To raise the issue and put someone in their place."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260702-t1-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which action is given as an example of flight?",
+              "evidence": {
+                "startSeconds": 175.38,
+                "endSeconds": 185.7,
+                "summary": "Flight can involve silence or a reply that does not address all points.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Escalation to senior personnel is another fight example.",
+                  "C": "Hostile language appears in the fight account."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t1-r2-q7-a",
+                  "label": "A",
+                  "text": "Copying senior staff to escalate an issue."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q7-b",
+                  "label": "B",
+                  "text": "Not replying or leaving points unanswered."
+                },
+                {
+                  "id": "bbc-260702-t1-r2-q7-c",
+                  "label": "C",
+                  "text": "Writing in a hostile tone."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t1-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The example boss gives someone else the {{blank}} for work that you did.",
+              "evidence": {
+                "startSeconds": 193.06,
+                "endSeconds": 206.28,
+                "summary": "The group-email example misattributes credit for the recipient's work.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "credit"
               ]
             },
             {
-              "id": "bbc-260702-t3-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260702-t1-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "From what do colleagues want to remove tasks when passing work on? {{blank}}",
+              "prompt": "Getting a task off your plate means removing it from your own {{blank}}.",
+              "evidence": {
+                "startSeconds": 222.6,
+                "endSeconds": 227.94,
+                "summary": "The presenter explains the idiom as transferring something from one's own workload.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "their workload",
                 "workload"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
             {
-              "id": "bbc-260702-t3-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260702-t1-r2-q11",
+              "number": 9,
+              "position": 1,
               "responseType": "text",
-              "prompt": "What time pressure is mentioned alongside stress? {{blank}}",
+              "prompt": "Besides tired, how can someone feel when doing too many things at once? {{blank}}",
+              "evidence": {
+                "startSeconds": 255.8,
+                "endSeconds": 261.14,
+                "summary": "The explanation of being frazzled includes anxiety as well as tiredness.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "a deadline",
-                "deadline"
+                "anxious"
               ]
             },
             {
-              "id": "bbc-260702-t3-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260702-t1-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Which series is recommended for learning about workplace communication? {{blank}}",
+              "prompt": "What action is recommended before pressing send when angry? {{blank}}",
+              "evidence": {
+                "startSeconds": 267.36,
+                "endSeconds": 268.7,
+                "summary": "The recommendation is to pause before sending an angry email.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "Office English"
+                "pause"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260702",
+        "audioSha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe",
+        "durationSeconds": 374.736,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "a07a461501ffa493e26d5891ed3dc882cece4c997985942cfe772e17c2322d91"
+      }
+    },
+    {
+      "id": "bbc-260702-t2",
+      "title": "Email incivility: motives and consequences",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260702-t2-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260702-t2-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Rachel dislike the name-only opening?",
+              "evidence": {
+                "startSeconds": 42.76,
+                "endSeconds": 52.14,
+                "summary": "Rachel links unnecessary formality with an immediate defensive reaction.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Her name is present; the missing element is a greeting.",
+                  "C": "Forwarding difficulty is not the reason she gives."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t2-r2-q1-a",
+                  "label": "A",
+                  "text": "Its formality makes her feel defensive."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q1-b",
+                  "label": "B",
+                  "text": "It suggests that the sender has forgotten her name."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q1-c",
+                  "label": "C",
+                  "text": "It makes the message harder to forward."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What contrast explains the second listener's complaint?",
+              "evidence": {
+                "startSeconds": 52.14,
+                "endSeconds": 58.36,
+                "summary": "The listener's effort contrasts with the minimal response of one emoji.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The complaint concerns a single emoji, not a lengthy formal response.",
+                  "B": "Escalation to senior staff appears later, not in this listener's example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t2-r2-q2-a",
+                  "label": "A",
+                  "text": "An informal greeting received a long formal reply."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q2-b",
+                  "label": "B",
+                  "text": "An unanswered message was sent to senior staff."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q2-c",
+                  "label": "C",
+                  "text": "A carefully composed message received a minimal reply."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260702-t2-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What framework is introduced to explain rude workplace messages?",
+              "evidence": {
+                "startSeconds": 142.36,
+                "endSeconds": 149.4,
+                "summary": "The psychological framework concerns responses to stress.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Internet access is not presented as the explanation.",
+                  "C": "The account concerns reactions to stress, not a message-length rule."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t2-r2-q3-a",
+                  "label": "A",
+                  "text": "A difference between home and office internet access."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q3-b",
+                  "label": "B",
+                  "text": "A stress-related fight-or-flight response."
+                },
+                {
+                  "id": "bbc-260702-t2-r2-q3-c",
+                  "label": "C",
+                  "text": "A fixed rule about the number of words in an email."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t2-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Possible aim of the fight response: to {{blank}} other people.",
+              "evidence": {
+                "startSeconds": 155.96,
+                "endSeconds": 162.88,
+                "summary": "Russell names domination as one expression of a fight response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dominate"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "People added to an email to escalate an issue: {{blank}}.",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 175.38,
+                "summary": "Senior personnel are copied into the message in the escalation example.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "senior personnel"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "A self-protective flight response may involve {{blank}} or avoiding.",
+              "evidence": {
+                "startSeconds": 175.38,
+                "endSeconds": 180.24,
+                "summary": "Russell describes withdrawal and avoidance as forms of self-protection.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "withdrawing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What is given to the wrong person in the boss's group email? {{blank}}",
+              "evidence": {
+                "startSeconds": 193.06,
+                "endSeconds": 206.28,
+                "summary": "The boss gives another person credit for work done by the recipient.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "the credit",
+                "credit"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "From what does a person remove a task when getting it off their plate? {{blank}}",
+              "evidence": {
+                "startSeconds": 222.6,
+                "endSeconds": 227.94,
+                "summary": "The explanation concerns removing a task from the sender's own workload.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "own workload",
+                "workload"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Russell describes the overloaded working environment as leaving people {{blank}}.",
+              "evidence": {
+                "startSeconds": 242.28,
+                "endSeconds": 247.36,
+                "summary": "Russell uses frazzled to characterise the state of people working in these environments.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "frazzled"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Before sending a message written in anger, the speaker recommends a {{blank}}.",
+              "evidence": {
+                "startSeconds": 267.36,
+                "endSeconds": 268.7,
+                "summary": "The proposed intervention is a pause immediately before sending.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "pause"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260702",
+        "audioSha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe",
+        "durationSeconds": 374.736,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "0901caf43d607b3cf3db5cd9c9fc90490c04cb0912c63ad41458deabf115368e"
+      }
+    },
+    {
+      "id": "bbc-260702-t3",
+      "title": "Hostility and avoidance: following the examples",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260702-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What appears on its own at the start of the emails that annoy Rachel? {{blank}}",
+              "evidence": {
+                "startSeconds": 42.76,
+                "endSeconds": 47.62,
+                "summary": "The offending opening uses the recipient's name alone without a greeting.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "your name",
+                "name"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What was the entire response to another listener's carefully worded email? {{blank}}",
+              "evidence": {
+                "startSeconds": 52.14,
+                "endSeconds": 57.66,
+                "summary": "The listener received a single emoji rather than a substantive written response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a single emoji",
+                "single emoji",
+                "an emoji",
+                "emoji"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What alternative to listing achievements was included in the employment email? {{blank}}",
+              "evidence": {
+                "startSeconds": 116.32,
+                "endSeconds": 122.92,
+                "summary": "The example required workers to list accomplishments or resign.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "resign"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In a fight response, an email may be {{blank}} in its tone and wording.",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 170.5,
+                "summary": "Russell characterises fight-response emails as hostile in tone and language.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "hostile"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A sender may copy senior {{blank}} to raise the status of a dispute.",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 175.38,
+                "summary": "The escalation example involves copying senior personnel.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "personnel"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "People may protect themselves in a flight response by {{blank}} from the exchange.",
+              "evidence": {
+                "startSeconds": 175.38,
+                "endSeconds": 180.24,
+                "summary": "Withdrawal is explicitly described as a protective flight response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "withdrawing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260702-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What is the effect intended by the boss who credits someone else for your work?",
+              "evidence": {
+                "startSeconds": 193.06,
+                "endSeconds": 209.48,
+                "summary": "The example illustrates putting a worker in their place by withholding deserved credit.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "No changed deadline is part of the boss's group email.",
+                  "C": "The example takes away recognition; it does not complete the person's tasks."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "To explain why a deadline has changed."
+                },
+                {
+                  "id": "bbc-260702-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "To lower your sense of importance."
+                },
+                {
+                  "id": "bbc-260702-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "To reduce your workload by completing the work."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260702-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What do the silence and quick, unhelpful reply have in common?",
+              "evidence": {
+                "startSeconds": 209.84,
+                "endSeconds": 228.56,
+                "summary": "Both behaviours illustrate moving work away from oneself rather than resolving it.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "Senior managers are part of the earlier escalation example.",
+                  "C": "Misassigned credit is the separate boss example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "Both can help the sender avoid dealing with a task."
+                },
+                {
+                  "id": "bbc-260702-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "Both explicitly involve senior managers."
+                },
+                {
+                  "id": "bbc-260702-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "Both give another worker public credit."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Feeling associated with overload, in addition to tiredness: {{blank}}.",
+              "evidence": {
+                "startSeconds": 255.8,
+                "endSeconds": 258.58,
+                "summary": "The explanation links feeling frazzled with tiredness or anxiety.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "anxious"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Recommended step immediately before sending: {{blank}}.",
+              "evidence": {
+                "startSeconds": 267.36,
+                "endSeconds": 268.7,
+                "summary": "The speaker advises a pause rather than immediate sending when angry.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "pause"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260702",
+        "audioSha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe",
+        "durationSeconds": 374.736,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "a4421dc52061a7cc3aee626a614afb3d526f9d9dea85e44fb85f0cdd74299a01"
+      }
     },
     {
       "id": "bbc-260702-t4",
-      "title": "Interpreting fight and flight",
+      "title": "Workplace tone: recognising intentions and causal links",
       "position": 4,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260702-t4-g1",
+          "id": "bbc-260702-t4-r2-g1",
           "position": 1,
-          "heading": "Interpreting fight and flight",
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Rachel interprets unnecessary formality as putting her on the {{blank}}.",
+              "evidence": {
+                "startSeconds": 47.62,
+                "endSeconds": 52.14,
+                "summary": "Rachel describes an immediate defensive reaction to the overly formal opening.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "defensive"
+              ]
+            },
+            {
+              "id": "bbc-260702-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The second complaint centres on a single {{blank}} replacing a substantive response.",
+              "evidence": {
+                "startSeconds": 52.14,
+                "endSeconds": 58.36,
+                "summary": "A minimal emoji response is contrasted with the effort put into the original message.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "emoji"
+              ]
+            },
+            {
+              "id": "bbc-260702-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The employment email asked workers to list what they had {{blank}} that week.",
+              "evidence": {
+                "startSeconds": 116.32,
+                "endSeconds": 122.92,
+                "summary": "The request concerned things the workers had accomplished during that week.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "accomplished"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260702-t4-q1",
-              "number": 1,
+              "id": "bbc-260702-t4-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why is the emoji example considered rude in context?",
+              "prompt": "What purpose makes the fight response more than a simple failure to answer?",
+              "evidence": {
+                "startSeconds": 155.96,
+                "endSeconds": 162.88,
+                "summary": "The fight response involves active domination or belittling rather than withdrawal.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Reducing one's workload through incomplete engagement belongs to flight.",
+                  "C": "Avoidance and silence are described as flight responses."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260702-t4-q1-a",
+                  "id": "bbc-260702-t4-r2-q4-a",
                   "label": "A",
-                  "text": "It follows a message to which the sender had given considerable thought."
+                  "text": "An attempt to remove tasks without addressing all their details."
                 },
                 {
-                  "id": "bbc-260702-t4-q1-b",
+                  "id": "bbc-260702-t4-r2-q4-b",
                   "label": "B",
-                  "text": "Every emoji necessarily contains an insult."
+                  "text": "An attempt to assert dominance or reduce another person's standing."
                 },
                 {
-                  "id": "bbc-260702-t4-q1-c",
+                  "id": "bbc-260702-t4-r2-q4-c",
                   "label": "C",
-                  "text": "The recipient had explicitly requested a one-symbol answer."
+                  "text": "An attempt to avoid the issue by leaving it unanswered."
                 }
               ],
-              "answer": "A"
+              "answer": "B"
             },
             {
-              "id": "bbc-260702-t4-q2",
-              "number": 2,
+              "id": "bbc-260702-t4-r2-q5",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What distinguishes the fight response described by Emma?",
-              "options": [
-                {
-                  "id": "bbc-260702-t4-q2-a",
-                  "label": "A",
-                  "text": "Quietly avoiding the whole exchange"
-                },
-                {
-                  "id": "bbc-260702-t4-q2-b",
-                  "label": "B",
-                  "text": "Carefully addressing every question"
-                },
-                {
-                  "id": "bbc-260702-t4-q2-c",
-                  "label": "C",
-                  "text": "Trying to assert power over another person"
+              "prompt": "In Russell's particular example, why is copying management hostile?",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 175.38,
+                "summary": "The hostile meaning comes from the stated purpose of the copying, not merely the use of email.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Work avoidance is the flight example, not the purpose of this escalation.",
+                  "C": "Recognition is the opposite of putting someone in their place here."
                 }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260702-t4-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "Why might a sender copy senior colleagues into a hostile exchange?",
+              },
               "options": [
                 {
-                  "id": "bbc-260702-t4-q3-a",
+                  "id": "bbc-260702-t4-r2-q5-a",
                   "label": "A",
-                  "text": "To avoid involving anyone with authority"
+                  "text": "It is used to escalate the dispute and diminish the recipient."
                 },
                 {
-                  "id": "bbc-260702-t4-q3-b",
+                  "id": "bbc-260702-t4-r2-q5-b",
                   "label": "B",
-                  "text": "To escalate the matter and diminish the recipient's position"
+                  "text": "It is used to pass the sender's tasks away without discussing them."
                 },
                 {
-                  "id": "bbc-260702-t4-q3-c",
+                  "id": "bbc-260702-t4-r2-q5-c",
                   "label": "C",
-                  "text": "To show that the issue has already been resolved."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260702-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What can an incomplete reply suggest in Emma's account?",
-              "options": [
-                {
-                  "id": "bbc-260702-t4-q4-a",
-                  "label": "A",
-                  "text": "The sender has necessarily answered all important points."
-                },
-                {
-                  "id": "bbc-260702-t4-q4-b",
-                  "label": "B",
-                  "text": "The sender wants to avoid responsibility rather than engage fully."
-                },
-                {
-                  "id": "bbc-260702-t4-q4-c",
-                  "label": "C",
-                  "text": "The sender is always trying to dominate the recipient."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260702-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "How is heavy workload connected with rude emails?",
-              "options": [
-                {
-                  "id": "bbc-260702-t4-q5-a",
-                  "label": "A",
-                  "text": "It increases the risk of discourteous communication."
-                },
-                {
-                  "id": "bbc-260702-t4-q5-b",
-                  "label": "B",
-                  "text": "It makes every worker deliberately hostile."
-                },
-                {
-                  "id": "bbc-260702-t4-q5-c",
-                  "label": "C",
-                  "text": "It guarantees that messages will be shorter but kinder."
+                  "text": "It is used to acknowledge the recipient's completed work."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260702-t4-q6",
+              "id": "bbc-260702-t4-r2-q6",
               "number": 6,
-              "position": 6,
+              "position": 3,
               "responseType": "single_choice",
-              "prompt": "Why does Phil recommend delaying an angry response?",
+              "prompt": "What explains the incomplete reply in the flight account?",
+              "evidence": {
+                "startSeconds": 175.38,
+                "endSeconds": 185.7,
+                "summary": "Failure to address all points serves a withdrawal strategy that removes the matter from the sender's plate.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Escalation and authority are part of the fight account.",
+                  "B": "Public recognition is not the motive assigned to the incomplete reply."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260702-t4-q6-a",
+                  "id": "bbc-260702-t4-r2-q6-a",
                   "label": "A",
-                  "text": "It ensures that the recipient will forget the issue."
+                  "text": "The sender is escalating the matter to establish authority."
                 },
                 {
-                  "id": "bbc-260702-t4-q6-b",
+                  "id": "bbc-260702-t4-r2-q6-b",
                   "label": "B",
-                  "text": "It transfers the task to another colleague automatically."
+                  "text": "The sender is trying to provide public recognition for a colleague."
                 },
                 {
-                  "id": "bbc-260702-t4-q6-c",
+                  "id": "bbc-260702-t4-r2-q6-c",
                   "label": "C",
-                  "text": "A brief pause may prevent damage to a relationship or a job."
+                  "text": "The sender is seeking protection through avoidance, not full resolution."
                 }
               ],
               "answer": "C"
             }
           ]
+        },
+        {
+          "id": "bbc-260702-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What an avoidant sender wants to reduce: their own {{blank}}.",
+              "evidence": {
+                "startSeconds": 222.6,
+                "endSeconds": 227.94,
+                "summary": "The explanation identifies the sender's workload as what is being reduced through transfer.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "workload"
+              ]
+            },
+            {
+              "id": "bbc-260702-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Time pressure cited as an obstacle to consistently polite writing: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 229.06,
+                "endSeconds": 235.3,
+                "summary": "The speaker identifies deadline pressure alongside stress.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "deadline"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which emotional state accompanies tiredness in the explanation of overload? {{blank}}",
+              "evidence": {
+                "startSeconds": 255.8,
+                "endSeconds": 258.58,
+                "summary": "Anxiety is paired with tiredness in the explanation of feeling frazzled.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "anxious"
+              ]
+            },
+            {
+              "id": "bbc-260702-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What interruption to the sending process does the advice recommend? {{blank}}",
+              "evidence": {
+                "startSeconds": 267.36,
+                "endSeconds": 268.7,
+                "summary": "The recommended safeguard is a pause before sending an angry message.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a pause",
+                "pause"
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260702",
+        "audioSha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe",
+        "durationSeconds": 374.736,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "ea79a16836191e9b95fa8988204423912f3ac16bbeeb6ca9d36be31e880410cd"
+      }
     },
     {
       "id": "bbc-260702-t5",
-      "title": "Precise expressions in context",
+      "title": "Email behaviour: separating avoidance from confrontation",
       "position": 5,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260702-t5-g1",
+          "id": "bbc-260702-t5-r2-g1",
           "position": 1,
-          "heading": "Precise expressions in context",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260702-t5-q1",
+              "id": "bbc-260702-t5-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Rachel describes the formality of a name-only opening as {{blank}}.",
+              "prompt": "Feature Rachel finds needlessly distancing: {{blank}}.",
+              "evidence": {
+                "startSeconds": 47.62,
+                "endSeconds": 52.14,
+                "summary": "Rachel specifically identifies unnecessary formality as the source of discomfort.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "unnecessary"
+                "formality"
               ]
             },
             {
-              "id": "bbc-260702-t5-q2",
+              "id": "bbc-260702-t5-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "Making another person seem inferior is to {{blank}} them.",
+              "prompt": "Minimal reply contrasted with a carefully composed message: a single {{blank}}.",
+              "evidence": {
+                "startSeconds": 52.14,
+                "endSeconds": 58.36,
+                "summary": "The mismatch in the second listener's account is between considered writing and one emoji.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "belittle"
+                "emoji"
               ]
             },
             {
-              "id": "bbc-260702-t5-q3",
+              "id": "bbc-260702-t5-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "The idiom for asserting another person's lower importance ends \"in your {{blank}}\".",
+              "prompt": "State associated with the psychological response discussed: being {{blank}}.",
+              "evidence": {
+                "startSeconds": 142.36,
+                "endSeconds": 149.4,
+                "summary": "The explanatory framework concerns how people react when stressed.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "place"
+                "stressed"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
             {
-              "id": "bbc-260702-t5-q4",
+              "id": "bbc-260702-t5-r2-q4",
               "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "An unhelpful reply may be an attempt to get work off someone's {{blank}}.",
-              "answers": [
-                "plate"
-              ]
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which behaviour belongs to confrontation rather than withdrawal in Russell's account?",
+              "evidence": {
+                "startSeconds": 155.96,
+                "endSeconds": 162.88,
+                "summary": "The contrast places domination in fight and disengagement in flight.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "An unanswered email is used as an example of avoiding engagement.",
+                  "C": "A reply that omits points is another form of avoidance."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t5-r2-q4-a",
+                  "label": "A",
+                  "text": "Trying to dominate the other person."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q4-b",
+                  "label": "B",
+                  "text": "Leaving the email unanswered."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q4-c",
+                  "label": "C",
+                  "text": "Answering only selected points."
+                }
+              ],
+              "answer": "A"
             },
             {
-              "id": "bbc-260702-t5-q5",
+              "id": "bbc-260702-t5-r2-q5",
               "number": 5,
-              "position": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the intended function of adding senior personnel in the example?",
+              "evidence": {
+                "startSeconds": 162.88,
+                "endSeconds": 175.38,
+                "summary": "The copied managers are used to elevate the issue and assert a status difference.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Task avoidance is the following flight explanation, not the stated purpose of the copying.",
+                  "B": "The opening-greeting complaint is separate from the deliberate escalation example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t5-r2-q5-a",
+                  "label": "A",
+                  "text": "To give the sender time to reduce the number of tasks on their plate."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q5-b",
+                  "label": "B",
+                  "text": "To correct a neutral greeting that sounded too formal."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q5-c",
+                  "label": "C",
+                  "text": "To increase the stakes of the issue and put the recipient in their place."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260702-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What common purpose links withdrawal and avoidance in the flight response?",
+              "evidence": {
+                "startSeconds": 175.38,
+                "endSeconds": 180.24,
+                "summary": "Russell describes withdrawal and avoidance as ways people protect themselves.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Informing management is not the purpose stated for withdrawing.",
+                  "C": "Belittling another person is attached to fight, not flight."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260702-t5-r2-q6-a",
+                  "label": "A",
+                  "text": "Giving a manager better information."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q6-b",
+                  "label": "B",
+                  "text": "Self-protection."
+                },
+                {
+                  "id": "bbc-260702-t5-r2-q6-c",
+                  "label": "C",
+                  "text": "Publicly diminishing another worker."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t5-r2-q8",
+              "number": 7,
+              "position": 1,
               "responseType": "text",
-              "prompt": "Emma says stressed workers are at greater risk of engaging in {{blank}}.",
+              "prompt": "What does the boss allocate to another person in the status-lowering example? {{blank}}",
+              "evidence": {
+                "startSeconds": 193.06,
+                "endSeconds": 206.28,
+                "summary": "The boss attributes the recipient's work to someone else through a group email.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "incivility"
+                "credit",
+                "the credit"
               ]
             },
             {
-              "id": "bbc-260702-t5-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260702-t5-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Phil suggests a moment of reflection before pressing {{blank}}.",
+              "prompt": "What does an avoidant colleague try to take the task out of? {{blank}}",
+              "evidence": {
+                "startSeconds": 222.6,
+                "endSeconds": 227.94,
+                "summary": "The idiom is explained as moving tasks out of one's own workload.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "send"
+                "own workload",
+                "workload"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260702-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260702-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Russell uses {{blank}} to describe the overloaded state associated with greater incivility.",
+              "evidence": {
+                "startSeconds": 242.28,
+                "endSeconds": 247.36,
+                "summary": "The state of being frazzled is linked to increased risk, not certainty, of incivility.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "frazzled"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A sender who is angry is advised to {{blank}} rather than dispatch the message immediately.",
+              "evidence": {
+                "startSeconds": 267.36,
+                "endSeconds": 268.7,
+                "summary": "The advice introduces a pause before the send action.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "pause"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260702",
+        "audioSha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe",
+        "durationSeconds": 374.736,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "8ecf89d807d6aea74ca2e75d309a6902f2a6bb80adf96d7154050940acf3ce0d"
+      }
     }
   ]
 }

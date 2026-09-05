@@ -3,593 +3,1442 @@
   "tests": [
     {
       "id": "bbc-260716-t1",
-      "title": "Players and researchers",
+      "title": "Football and the brain: research and training",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260716-t1-g1",
+          "id": "bbc-260716-t1-r2-g1",
           "position": 1,
-          "heading": "Players and researchers",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t1-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A mental demand of modern football: making quick {{blank}}.",
+              "evidence": {
+                "startSeconds": 32.53,
+                "endSeconds": 38.93,
+                "summary": "The introduction says that speed must be accompanied by very quick decisions.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "bbc-260716-t1-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The decisions described by Cooke are made under high {{blank}}.",
+              "evidence": {
+                "startSeconds": 52.95,
+                "endSeconds": 63.09,
+                "summary": "Cooke emphasises the high pressures and intensities in which players decide.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "pressures",
+                "pressure"
+              ]
+            },
+            {
+              "id": "bbc-260716-t1-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Year of the Japanese study discussed: {{blank}}.",
+              "evidence": {
+                "startSeconds": 121.95,
+                "endSeconds": 126.93,
+                "summary": "The study of Neymar is introduced as taking place in twenty fourteen.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "2014"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260716-t1-q1",
-              "number": 1,
+              "id": "bbc-260716-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Which part of performance are clubs studying beyond the body?",
+              "prompt": "How does Bridge explain Neymar's lower brain activity during the movement?",
+              "evidence": {
+                "startSeconds": 142.43,
+                "endSeconds": 152.37,
+                "summary": "Bridge interprets the reduced activity as expertise expressed with little conscious effort.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "Bridge describes expertise, not a new and unfamiliar movement.",
+                  "C": "The activity being discussed is movement of the feet, not avoiding it."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t1-q1-a",
+                  "id": "bbc-260716-t1-r2-q5-a",
                   "label": "A",
-                  "text": "The stadium"
+                  "text": "He is highly skilled and needs little conscious effort."
                 },
                 {
-                  "id": "bbc-260716-t1-q1-b",
+                  "id": "bbc-260716-t1-r2-q5-b",
                   "label": "B",
-                  "text": "The football kit"
+                  "text": "He is learning the movement for the first time."
                 },
                 {
-                  "id": "bbc-260716-t1-q1-c",
+                  "id": "bbc-260716-t1-r2-q5-c",
                   "label": "C",
-                  "text": "The brain"
+                  "text": "He is trying to avoid using his feet."
                 }
               ],
-              "answer": "C"
+              "answer": "A"
             },
             {
-              "id": "bbc-260716-t1-q2",
-              "number": 2,
+              "id": "bbc-260716-t1-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "Which club employs Tom Cooke in the programme?",
-              "options": [
-                {
-                  "id": "bbc-260716-t1-q2-a",
-                  "label": "A",
-                  "text": "Liverpool"
-                },
-                {
-                  "id": "bbc-260716-t1-q2-b",
-                  "label": "B",
-                  "text": "Nottingham Forest"
-                },
-                {
-                  "id": "bbc-260716-t1-q2-c",
-                  "label": "C",
-                  "text": "Arsenal"
+              "prompt": "What difficulty might Cooke's training sessions target?",
+              "evidence": {
+                "startSeconds": 195.29,
+                "endSeconds": 203.79,
+                "summary": "Cooke gives difficulty storing lots of information as a possible training target.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The example concerns information capacity rather than club names.",
+                  "B": "Competition entry is not the skill being practised."
                 }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260716-t1-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "Which Brazilian player was studied?",
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t1-q3-a",
+                  "id": "bbc-260716-t1-r2-q6-a",
                   "label": "A",
-                  "text": "Pelé"
+                  "text": "Remembering the names of football clubs."
                 },
                 {
-                  "id": "bbc-260716-t1-q3-b",
+                  "id": "bbc-260716-t1-r2-q6-b",
                   "label": "B",
-                  "text": "Ronaldo"
+                  "text": "Choosing which competitions to enter."
                 },
                 {
-                  "id": "bbc-260716-t1-q3-c",
+                  "id": "bbc-260716-t1-r2-q6-c",
                   "label": "C",
-                  "text": "Neymar"
+                  "text": "Storing a lot of information."
                 }
               ],
               "answer": "C"
             },
             {
-              "id": "bbc-260716-t1-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260716-t1-r2-q7",
+              "number": 6,
+              "position": 3,
               "responseType": "single_choice",
-              "prompt": "What movement did the player make during that study?",
+              "prompt": "Where does Cooke want players to experience the extra mental demand?",
+              "evidence": {
+                "startSeconds": 199.83,
+                "endSeconds": 203.79,
+                "summary": "The controlled environment for deliberately challenging players is training.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Interviews are not given as a training setting.",
+                  "C": "Games are the later intended application, not the safe practice setting."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t1-q4-a",
+                  "id": "bbc-260716-t1-r2-q7-a",
                   "label": "A",
-                  "text": "He lifted his left arm."
+                  "text": "While they are being interviewed."
                 },
                 {
-                  "id": "bbc-260716-t1-q4-b",
+                  "id": "bbc-260716-t1-r2-q7-b",
                   "label": "B",
-                  "text": "He rotated his right ankle."
+                  "text": "In the safe environment of training."
                 },
                 {
-                  "id": "bbc-260716-t1-q4-c",
+                  "id": "bbc-260716-t1-r2-q7-c",
                   "label": "C",
-                  "text": "He turned his head."
+                  "text": "Only during an important cup match."
                 }
               ],
               "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t1-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Bridge says a player can learn to {{blank}} their emotional state.",
+              "evidence": {
+                "startSeconds": 224.53,
+                "endSeconds": 227.05,
+                "summary": "Emotional state is described as something a person can learn to control.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "control"
+              ]
             },
             {
-              "id": "bbc-260716-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Where are Tom's demanding exercises designed to take place?",
-              "options": [
-                {
-                  "id": "bbc-260716-t1-q5-a",
-                  "label": "A",
-                  "text": "In training"
-                },
-                {
-                  "id": "bbc-260716-t1-q5-b",
-                  "label": "B",
-                  "text": "During medical surgery"
-                },
-                {
-                  "id": "bbc-260716-t1-q5-c",
-                  "label": "C",
-                  "text": "Only during a final match"
-                }
-              ],
-              "answer": "A"
+              "id": "bbc-260716-t1-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Too many emotions can reduce precision and {{blank}}.",
+              "evidence": {
+                "startSeconds": 236.33,
+                "endSeconds": 240.59,
+                "summary": "The presenter links excessive emotion with a lack of precision and focus.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "focus"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Häusler measure before important kicks? {{blank}}",
+              "evidence": {
+                "startSeconds": 255.03,
+                "endSeconds": 260.35,
+                "summary": "The programme says Häusler measures players' brainwaves before these kicks.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "brainwaves",
+                "brain waves"
+              ]
             },
             {
-              "id": "bbc-260716-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What does Niklas measure before important kicks?",
-              "options": [
-                {
-                  "id": "bbc-260716-t1-q6-a",
-                  "label": "A",
-                  "text": "Brainwaves"
-                },
-                {
-                  "id": "bbc-260716-t1-q6-b",
-                  "label": "B",
-                  "text": "Shoe size"
-                },
-                {
-                  "id": "bbc-260716-t1-q6-c",
-                  "label": "C",
-                  "text": "Body temperature"
-                }
-              ],
-              "answer": "A"
+              "id": "bbc-260716-t1-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which type of kick does Häusler mention when discussing accuracy? {{blank}}",
+              "evidence": {
+                "startSeconds": 265.63,
+                "endSeconds": 269.27,
+                "summary": "His example of reduced accuracy is a corner kick.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "a corner",
+                "corner"
+              ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+        "audioSha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b",
+        "durationSeconds": 370.44,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "d0b507d2ba01146f3d8c401ea980b82eab36badab00739044aa7cf8c10a855e7"
+      }
     },
     {
       "id": "bbc-260716-t2",
-      "title": "Notes on the research",
+      "title": "Cognitive performance: following the evidence",
       "position": 2,
       "format": "ielts",
       "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260716-t2-g1",
+          "id": "bbc-260716-t2-r2-g1",
           "position": 1,
-          "heading": "Notes on the research",
-          "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260716-t2-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "The study involving Neymar is dated {{blank}}.",
-              "answers": [
-                "2014"
-              ]
-            },
-            {
-              "id": "bbc-260716-t2-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "The researchers in that study were {{blank}}.",
-              "answers": [
-                "Japanese"
-              ]
-            },
-            {
-              "id": "bbc-260716-t2-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Neymar showed less brain {{blank}} than the comparison players.",
-              "answers": [
-                "activity"
-              ]
-            },
-            {
-              "id": "bbc-260716-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "His skilled movements required little {{blank}} effort.",
-              "answers": [
-                "conscious"
-              ]
-            },
-            {
-              "id": "bbc-260716-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Training tasks may overload players who struggle to store {{blank}}.",
-              "answers": [
-                "information"
-              ]
-            },
-            {
-              "id": "bbc-260716-t2-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "Holly says performance is influenced by a player's emotional {{blank}}.",
-              "answers": [
-                "state"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260716-t3",
-      "title": "Listening for exact details",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260716-t3-g1",
-          "position": 1,
-          "heading": "Listening for exact details",
-          "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260716-t3-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "What kind of psychologist is Tom Cooke at Nottingham Forest? {{blank}}",
-              "answers": [
-                "Academy",
-                "Academy Psychologist"
-              ]
-            },
-            {
-              "id": "bbc-260716-t3-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Which university is Holly Bridge associated with? {{blank}}",
-              "answers": [
-                "Oxford",
-                "University of Oxford"
-              ]
-            },
-            {
-              "id": "bbc-260716-t3-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Which brain region is named when Holly describes the reduction in Neymar's activity? {{blank}}",
-              "answers": [
-                "cortex"
-              ]
-            },
-            {
-              "id": "bbc-260716-t3-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "In addition to games, which competitions does Tom hope training will affect? {{blank}}",
-              "answers": [
-                "cup competitions"
-              ]
-            },
-            {
-              "id": "bbc-260716-t3-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "What is the name of Niklas Häusler's organisation? {{blank}}",
-              "answers": [
-                "Neuro 11",
-                "Neuro11"
-              ]
-            },
-            {
-              "id": "bbc-260716-t3-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "What brain structure is identified in the final answer as associated with fear? {{blank}}",
-              "answers": [
-                "amygdala",
-                "the amygdala"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260716-t4",
-      "title": "From brain data to performance",
-      "position": 4,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
-        {
-          "id": "bbc-260716-t4-g1",
-          "position": 1,
-          "heading": "From brain data to performance",
+          "heading": "Questions 1–3",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260716-t4-q1",
+              "id": "bbc-260716-t2-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why does Tom think the brain deserves attention in football?",
+              "prompt": "What change in some clubs' approach is described?",
+              "evidence": {
+                "startSeconds": 39.39,
+                "endSeconds": 50.83,
+                "summary": "Some clubs are looking beyond physical characteristics towards brain-related performance.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The account adds a brain focus rather than describing a total replacement of training.",
+                  "C": "The change is explicitly beyond the body, not only another physical speed measure."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t4-q1-a",
+                  "id": "bbc-260716-t2-r2-q1-a",
                   "label": "A",
-                  "text": "Players make rapid decisions under intense pressure."
+                  "text": "They are considering the brain as well as the body."
                 },
                 {
-                  "id": "bbc-260716-t4-q1-b",
+                  "id": "bbc-260716-t2-r2-q1-b",
                   "label": "B",
-                  "text": "Physical movement has become irrelevant."
+                  "text": "They are replacing all physical training with interviews."
                 },
                 {
-                  "id": "bbc-260716-t4-q1-c",
+                  "id": "bbc-260716-t2-r2-q1-c",
                   "label": "C",
-                  "text": "All football decisions can be made before the match."
+                  "text": "They are measuring only the speed of players' feet."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260716-t4-q2",
+              "id": "bbc-260716-t2-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "How does Holly interpret Neymar's lower brain activity?",
+              "prompt": "What observation makes a cognitive investigation seem useful to Cooke?",
+              "evidence": {
+                "startSeconds": 52.95,
+                "endSeconds": 64.09,
+                "summary": "Cooke sees a reason to investigate cognition in the conditions of rapid sporting decisions.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Rapid decisions under pressure are central to his observation.",
+                  "B": "The observation concerns athletes competing at high intensity, not interviews."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t4-q2-a",
+                  "id": "bbc-260716-t2-r2-q2-a",
                   "label": "A",
-                  "text": "It demonstrates that he was unable to move his ankle."
+                  "text": "Players avoid making decisions during competitions."
                 },
                 {
-                  "id": "bbc-260716-t4-q2-b",
+                  "id": "bbc-260716-t2-r2-q2-b",
                   "label": "B",
-                  "text": "It reflects highly developed skill rather than poorer ability."
+                  "text": "Players show their best skills only in quiet interviews."
                 },
                 {
-                  "id": "bbc-260716-t4-q2-c",
+                  "id": "bbc-260716-t2-r2-q2-c",
                   "label": "C",
-                  "text": "It proves that effort is unnecessary for all players."
+                  "text": "Players make rapid decisions under intense pressure."
                 }
               ],
-              "answer": "B"
+              "answer": "C"
             },
             {
-              "id": "bbc-260716-t4-q3",
+              "id": "bbc-260716-t2-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Why does Tom deliberately challenge information processing in practice?",
-              "options": [
-                {
-                  "id": "bbc-260716-t4-q3-a",
-                  "label": "A",
-                  "text": "A safe overload may help players improve before facing competition."
-                },
-                {
-                  "id": "bbc-260716-t4-q3-b",
-                  "label": "B",
-                  "text": "He wants players to avoid receiving information during matches."
-                },
-                {
-                  "id": "bbc-260716-t4-q3-c",
-                  "label": "C",
-                  "text": "He believes pressure is useful only after a match ends."
+              "prompt": "What did the study find when Neymar performed the ankle movement?",
+              "evidence": {
+                "startSeconds": 126.93,
+                "endSeconds": 133.99,
+                "summary": "The reported comparison concerns lower activity during right-ankle rotation.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The account does not describe the peers avoiding the movement.",
+                  "C": "The comparison reports less activity and specifies the right ankle."
                 }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260716-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What implication follows from Holly's account of emotional state?",
+              },
               "options": [
                 {
-                  "id": "bbc-260716-t4-q4-a",
+                  "id": "bbc-260716-t2-r2-q3-a",
                   "label": "A",
-                  "text": "Emotions influence only spectators, not players."
+                  "text": "His peers completed the movement without moving their feet."
                 },
                 {
-                  "id": "bbc-260716-t4-q4-b",
+                  "id": "bbc-260716-t2-r2-q3-b",
                   "label": "B",
-                  "text": "A player's emotional control cannot change with practice."
+                  "text": "His brain was less active than those of his peers."
                 },
                 {
-                  "id": "bbc-260716-t4-q4-c",
+                  "id": "bbc-260716-t2-r2-q3-c",
                   "label": "C",
-                  "text": "Managing emotion is something players can learn."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260716-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Why are set pieces useful moments for the work Niklas describes?",
-              "options": [
-                {
-                  "id": "bbc-260716-t4-q5-a",
-                  "label": "A",
-                  "text": "They allow players to stop concentrating without consequence."
-                },
-                {
-                  "id": "bbc-260716-t4-q5-b",
-                  "label": "B",
-                  "text": "They provide brief periods of stillness before a precise action."
-                },
-                {
-                  "id": "bbc-260716-t4-q5-c",
-                  "label": "C",
-                  "text": "They remove the need for accurate movement."
+                  "text": "His brain was more active because he used both ankles."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260716-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What is meant by the small margins that can decide a match?",
-              "options": [
-                {
-                  "id": "bbc-260716-t4-q6-a",
-                  "label": "A",
-                  "text": "Only a large physical advantage can affect the result."
-                },
-                {
-                  "id": "bbc-260716-t4-q6-b",
-                  "label": "B",
-                  "text": "Brain training always guarantees a comfortable win."
-                },
-                {
-                  "id": "bbc-260716-t4-q6-c",
-                  "label": "C",
-                  "text": "Minor differences in focus and execution may change the result."
-                }
-              ],
-              "answer": "C"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260716-t5",
-      "title": "Precision under pressure",
-      "position": 5,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
+        },
         {
-          "id": "bbc-260716-t5-g1",
-          "position": 1,
-          "heading": "Precision under pressure",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "id": "bbc-260716-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260716-t5-q1",
-              "number": 1,
+              "id": "bbc-260716-t2-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "text",
-              "prompt": "Tom says there is something {{blank}} in the brain during rapid decision-making.",
-              "answers": [
-                "going on"
-              ]
-            },
-            {
-              "id": "bbc-260716-t5-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "The term for Neymar's highly developed skill is {{blank}}.",
+              "prompt": "Bridge's explanation for the reduced activity: exceptional {{blank}}.",
+              "evidence": {
+                "startSeconds": 142.43,
+                "endSeconds": 148.17,
+                "summary": "Bridge interprets the result as evidence of very high expertise in foot movement.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "expertise"
               ]
             },
             {
-              "id": "bbc-260716-t5-q3",
-              "number": 3,
-              "position": 3,
+              "id": "bbc-260716-t2-r2-q5",
+              "number": 5,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Tom wants cognition or neuroscience at the {{blank}} of training sessions.",
+              "prompt": "Effort needed for the well-practised movement: very little {{blank}} effort.",
+              "evidence": {
+                "startSeconds": 148.17,
+                "endSeconds": 152.37,
+                "summary": "The movement is described as requiring little deliberate awareness.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "centre",
-                "center"
+                "conscious"
               ]
             },
             {
-              "id": "bbc-260716-t5-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260716-t2-r2-q6",
+              "number": 6,
+              "position": 3,
               "responseType": "text",
-              "prompt": "Too much emotion may reduce precision and {{blank}}.",
+              "prompt": "Disciplines placed at the centre of the sessions: cognition or {{blank}}.",
+              "evidence": {
+                "startSeconds": 190.51,
+                "endSeconds": 199.83,
+                "summary": "Cooke identifies cognition and neuroscience as the organising focus of the sessions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "neuroscience"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What influence on performance does Bridge say can be brought under control? {{blank}}",
+              "evidence": {
+                "startSeconds": 218.95,
+                "endSeconds": 227.05,
+                "summary": "Bridge identifies emotional state as both influential and potentially controllable.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "emotional state",
+                "your emotional state"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What can be lost through excessive emotion, besides precision? {{blank}}",
+              "evidence": {
+                "startSeconds": 236.33,
+                "endSeconds": 240.59,
+                "summary": "The second affected quality named is focus.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "focus"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
             {
-              "id": "bbc-260716-t5-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260716-t2-r2-q11",
+              "number": 9,
+              "position": 1,
               "responseType": "text",
-              "prompt": "Niklas teaches players to remain {{blank}} before important kicks.",
+              "prompt": "Häusler uses measurements of players' {{blank}} before significant kicks.",
+              "evidence": {
+                "startSeconds": 255.03,
+                "endSeconds": 260.35,
+                "summary": "Brainwave measurement is the monitoring method mentioned for important kicks.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "relaxed"
+                "brainwaves",
+                "brain waves"
               ]
             },
             {
-              "id": "bbc-260716-t5-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260716-t2-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "A player whose mind is disorganised is described as all over the {{blank}}.",
+              "prompt": "The players are taught how to remain {{blank}} at those moments.",
+              "evidence": {
+                "startSeconds": 255.03,
+                "endSeconds": 260.35,
+                "summary": "The training goal accompanying measurement is staying relaxed.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "place"
+                "relaxed"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+        "audioSha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b",
+        "durationSeconds": 370.44,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "c89c90ab661bd52e93251454a9fc07498e4f759a02373492fb4969ac36d94882"
+      }
+    },
+    {
+      "id": "bbc-260716-t3",
+      "title": "Training the football mind: detail and interpretation",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260716-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What must footballers make quickly, in addition to moving fast? {{blank}}",
+              "evidence": {
+                "startSeconds": 32.53,
+                "endSeconds": 38.93,
+                "summary": "The introduction distinguishes quick decisions from physical speed.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What nationality were the scientists who conducted the study mentioned? {{blank}}",
+              "evidence": {
+                "startSeconds": 121.95,
+                "endSeconds": 126.93,
+                "summary": "The researchers in the twenty-fourteen study are described as Japanese.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Japanese"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which part of Neymar's body was moved during the reported comparison? {{blank}}",
+              "evidence": {
+                "startSeconds": 126.93,
+                "endSeconds": 133.99,
+                "summary": "The movement used in the comparison was rotation of the right ankle.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "right ankle",
+                "his right ankle"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Bridge says reduced cortical activity reflects Neymar's {{blank}} in moving his feet.",
+              "evidence": {
+                "startSeconds": 142.43,
+                "endSeconds": 148.17,
+                "summary": "The reduced activity is attributed to expertise rather than poor performance.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "expertise"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The movement is performed with very little {{blank}} effort.",
+              "evidence": {
+                "startSeconds": 148.17,
+                "endSeconds": 152.37,
+                "summary": "The degree of conscious effort is reported as very low.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conscious"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Cooke may challenge players who find it difficult to store large amounts of {{blank}}.",
+              "evidence": {
+                "startSeconds": 195.29,
+                "endSeconds": 203.79,
+                "summary": "Information storage is the explicit example of a cognitive difficulty targeted in training.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "information"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260716-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Bridge suggest about emotional influences on performance?",
+              "evidence": {
+                "startSeconds": 218.95,
+                "endSeconds": 227.05,
+                "summary": "Emotional state is described as influential but something that can be controlled through learning.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The whole explanation concerns sporting performance and pressure.",
+                  "C": "She explicitly says performance is driven partly by emotional state."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "They matter only when a player is not in a match."
+                },
+                {
+                  "id": "bbc-260716-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "Players can learn to manage them."
+                },
+                {
+                  "id": "bbc-260716-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "They have no effect once a player is experienced."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why are penalties, corners and free kicks grouped together here?",
+              "evidence": {
+                "startSeconds": 241.33,
+                "endSeconds": 247.87,
+                "summary": "The shared feature is a high-pressure moment in which play briefly becomes still.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The following discussion emphasises precision and focus.",
+                  "C": "The ankle-rotation study is an earlier, different research example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "They combine pressure with brief stillness."
+                },
+                {
+                  "id": "bbc-260716-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "They remove the need for accurate decisions."
+                },
+                {
+                  "id": "bbc-260716-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "They are used only to study ankle rotation."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Kick used to illustrate the cost of poor mental focus: an accurate {{blank}}.",
+              "evidence": {
+                "startSeconds": 265.63,
+                "endSeconds": 269.27,
+                "summary": "Häusler uses difficulty taking an accurate corner to illustrate the cost of distraction.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "corner"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What the small margins may change: a player's performance or a match's {{blank}}.",
+              "evidence": {
+                "startSeconds": 289.07,
+                "endSeconds": 297.39,
+                "summary": "Small differences are linked to performance and the outcome of a match.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+        "audioSha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b",
+        "durationSeconds": 370.44,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "0f3f2b090292a7803425755d4d087b3dc38b519fd6c336c3985eb69736c050f4"
+      }
+    },
+    {
+      "id": "bbc-260716-t4",
+      "title": "Elite performance: interpreting mechanisms and limitations",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260716-t4-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Area investigated beyond purely physical performance: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 39.39,
+                "endSeconds": 50.83,
+                "summary": "The clubs' expanded focus moves beyond the body to the brain.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "brain"
+              ]
+            },
+            {
+              "id": "bbc-260716-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Date of the study used as the research example: {{blank}}.",
+              "evidence": {
+                "startSeconds": 121.95,
+                "endSeconds": 126.93,
+                "summary": "The programme identifies twenty fourteen as the year of the Japanese study.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "2014"
+              ]
+            },
+            {
+              "id": "bbc-260716-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Movement tested: rotation of the right {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.93,
+                "endSeconds": 133.99,
+                "summary": "Right-ankle rotation is the action during which the comparison was made.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ankle"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t4-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Bridge identify as the reason for the unusually low activity? {{blank}}",
+              "evidence": {
+                "startSeconds": 142.43,
+                "endSeconds": 148.17,
+                "summary": "Bridge explains the reduced activity through Neymar's exceptional expertise in moving his feet.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "expertise",
+                "absolute expertise"
+              ]
+            },
+            {
+              "id": "bbc-260716-t4-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What might players struggle to store in large quantities? {{blank}}",
+              "evidence": {
+                "startSeconds": 195.29,
+                "endSeconds": 203.79,
+                "summary": "The example of a trainable limitation concerns storing a lot of information.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "information"
+              ]
+            },
+            {
+              "id": "bbc-260716-t4-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which environment allows the deliberate challenge to remain safe? {{blank}}",
+              "evidence": {
+                "startSeconds": 199.83,
+                "endSeconds": 203.79,
+                "summary": "Cooke contrasts the safe training environment with the later competitive setting.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "training"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260716-t4-r2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which interpretation preserves both parts of Bridge's claim about emotion?",
+              "evidence": {
+                "startSeconds": 218.95,
+                "endSeconds": 227.05,
+                "summary": "The claim combines an important emotional influence with the possibility of learning control.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "She says performance is substantially driven by emotional state, not that its effect is negligible.",
+                  "C": "Bridge does not restrict the effect to unskilled players."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t4-r2-q7-a",
+                  "label": "A",
+                  "text": "Emotion is controllable because it has little influence on performance."
+                },
+                {
+                  "id": "bbc-260716-t4-r2-q7-b",
+                  "label": "B",
+                  "text": "Emotion affects performance, but its influence is not beyond learned control."
+                },
+                {
+                  "id": "bbc-260716-t4-r2-q7-c",
+                  "label": "C",
+                  "text": "Emotion matters only when technical expertise is absent."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t4-r2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What risk is attributed to an excessive emotional response?",
+              "evidence": {
+                "startSeconds": 236.33,
+                "endSeconds": 240.59,
+                "summary": "The presenter identifies loss of precision and focus as the performance risk.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The ankle result is explained by expertise, not excessive emotion.",
+                  "C": "Controlled overload is a training example rather than the stated consequence of excess emotion."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t4-r2-q8-a",
+                  "label": "A",
+                  "text": "Reduced precision and concentration."
+                },
+                {
+                  "id": "bbc-260716-t4-r2-q8-b",
+                  "label": "B",
+                  "text": "Greater ankle movement with lower cortical activity."
+                },
+                {
+                  "id": "bbc-260716-t4-r2-q8-c",
+                  "label": "C",
+                  "text": "Improved information storage through overload."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t4-r2-q10",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The intervention described monitors players' {{blank}} before the critical action.",
+              "evidence": {
+                "startSeconds": 255.03,
+                "endSeconds": 260.35,
+                "summary": "The measured signal is the player's brainwaves before an important kick.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "brainwaves",
+                "brain waves"
+              ]
+            },
+            {
+              "id": "bbc-260716-t4-r2-q11",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Mental disarray can make an accurate {{blank}} harder to produce.",
+              "evidence": {
+                "startSeconds": 261.51,
+                "endSeconds": 269.27,
+                "summary": "Häusler identifies an accurate corner as an action made harder by poor focus.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "corner"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+        "audioSha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b",
+        "durationSeconds": 370.44,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "bdc1dbd5d95a6ba286774764b16e419e78a1af9297eee504253893272754117b"
+      }
+    },
+    {
+      "id": "bbc-260716-t5",
+      "title": "Football cognition: separating observation, method and aim",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260716-t5-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Physical speed is not enough; football also demands rapid {{blank}}.",
+              "evidence": {
+                "startSeconds": 32.53,
+                "endSeconds": 38.93,
+                "summary": "The opening explicitly adds decision speed to physical speed.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "decisions"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Cooke is interested in choices made at high intensity and under great {{blank}}.",
+              "evidence": {
+                "startSeconds": 52.95,
+                "endSeconds": 63.09,
+                "summary": "The conditions of decision-making include high pressures as well as intensity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "pressures",
+                "pressure"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The research example involving Neymar dates from {{blank}}.",
+              "evidence": {
+                "startSeconds": 121.95,
+                "endSeconds": 126.93,
+                "summary": "The date supplied for the study is twenty fourteen.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "2014"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260716-t5-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why should the reduced activity not simply be read as poorer ability?",
+              "evidence": {
+                "startSeconds": 142.43,
+                "endSeconds": 152.37,
+                "summary": "Lower activity is interpreted in the context of expertise and reduced conscious effort.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Unfamiliarity is the opposite of the expertise she identifies.",
+                  "B": "The reported result comes from performing the movement, not refusing it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t5-r2-q5-a",
+                  "label": "A",
+                  "text": "Bridge says the movement was too unfamiliar to activate the brain."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q5-b",
+                  "label": "B",
+                  "text": "Bridge says Neymar was deliberately refusing to perform the movement."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q5-c",
+                  "label": "C",
+                  "text": "Bridge interprets it as a sign of highly practised, less effortful movement."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260716-t5-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the purpose of deliberately increasing information demands in training?",
+              "evidence": {
+                "startSeconds": 190.51,
+                "endSeconds": 209.67,
+                "summary": "The safe challenge is intended to produce improvement that may transfer into games.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The sessions actively challenge cognition rather than measure resting activity alone.",
+                  "C": "Cooke hopes for improved competitive performance, not permanent withholding of information."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t5-r2-q6-a",
+                  "label": "A",
+                  "text": "To measure only how players' brains behave while resting."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q6-b",
+                  "label": "B",
+                  "text": "To develop coping capacity safely before competitive use."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q6-c",
+                  "label": "C",
+                  "text": "To keep match information permanently hidden from players."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t5-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What possibility does Bridge's statement about emotion leave open?",
+              "evidence": {
+                "startSeconds": 218.95,
+                "endSeconds": 227.05,
+                "summary": "Bridge identifies emotional control as something learnable and relevant to performance.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "She explicitly says emotional state drives performance, without exempting experts.",
+                  "C": "The emotional account is additional to the movement study rather than replaced by it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260716-t5-r2-q7-a",
+                  "label": "A",
+                  "text": "Improving performance through learning emotional control."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q7-b",
+                  "label": "B",
+                  "text": "Treating physical expertise as proof that emotion no longer matters."
+                },
+                {
+                  "id": "bbc-260716-t5-r2-q7-c",
+                  "label": "C",
+                  "text": "Using the ankle study to replace all attention to emotional state."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t5-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Feature of these pressured situations that permits a brief pause: {{blank}}.",
+              "evidence": {
+                "startSeconds": 241.33,
+                "endSeconds": 247.87,
+                "summary": "The three set plays share rare moments of stillness within the game.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stillness"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Signal monitored before the action: players' {{blank}}.",
+              "evidence": {
+                "startSeconds": 255.03,
+                "endSeconds": 260.35,
+                "summary": "The account says Häusler measures brainwaves before important kicks.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "brainwaves",
+                "brain waves"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260716-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260716-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which specific set piece is used to demonstrate the cost of mental disorganisation? {{blank}}",
+              "evidence": {
+                "startSeconds": 265.63,
+                "endSeconds": 269.27,
+                "summary": "The example of an action made less accurate is a corner.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a corner",
+                "corner"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What may affect the result despite appearing minor? {{blank}}",
+              "evidence": {
+                "startSeconds": 292.43,
+                "endSeconds": 297.39,
+                "summary": "The speaker's explanation of margins concerns small details that can affect outcomes.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "small details",
+                "details"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+        "audioSha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b",
+        "durationSeconds": 370.44,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "7f0087800880886248658945d6cec03c5f5c4717d46ce2a321f78942212b7aa3"
+      }
     }
   ]
 }

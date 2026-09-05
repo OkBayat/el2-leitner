@@ -6,7 +6,7 @@ Read the repository root `AGENTS.md` first. It is the repository-wide source of 
 
 Use the smallest applicable existing skill.
 
-- `vocora-bbc-listening-bundles`: use when the user asks to find, prepare, validate, or return one or more BBC 6 Minute English episode ZIP bundles by exact date, inclusive date range, title, or official episode URL. It owns multi-episode discovery orchestration, exact requested test counts/difficulty distribution, episode assets, episode vocabulary, source-reference/full-transcript handling, canonical packaging, and one-ZIP-per-episode delivery.
+- `vocora-bbc-listening-bundles`: use when the user asks to find, prepare, validate, or return one or more BBC 6 Minute English episode ZIP bundles by exact date, inclusive date range, title, or official episode URL. Also use it to review or redesign existing BBC listening questions and their quality rules; read its IELTS design reference before authoring. It owns multi-episode discovery orchestration, exact requested test counts/difficulty distribution, episode assets, episode vocabulary, source-reference/full-transcript handling, canonical packaging, and one-ZIP-per-episode delivery.
 
 Do not use the BBC bundle skill for normal listening UI implementation, database migrations, generic vocabulary collection editing, or deployment unless the request also asks to prepare episode bundles.
 

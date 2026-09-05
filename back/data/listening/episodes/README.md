@@ -21,7 +21,7 @@ back/data/listening/episodes/
 
 Exactly one **flat** `YYYY-MM-DD-lowercase-slug` folder per episode; no year/provider subdirectories. Its date must equal `episodeDate`. Names may contain ASCII lowercase letters, numbers and hyphens, with a maximum of 160 characters. The folder name is an asset location, **not** the database identity. Do not use symbolic links. All six content files must be nonempty; `audio.mp3` is the sole permitted missing file in a Git checkout. Audio is required for a deliverable bundle. Text files are UTF-8 and at most 2 MB; cover files at most 10 MB; MP3 files at most 100 MB. A missing/empty catalog fails deployment instead of silently importing nothing.
 
-The two pre-existing BBC lessons have been migrated without changing public episode IDs, test/question/option IDs, answers, or the three tests per episode. Completed attempts retain their snapshots. They are not deleted and recreated.
+The original migration preserved the two pre-existing BBC lessons. Later editorial revisions preserve public episode IDs, test routes and test counts while changing question content and child IDs as necessary. Completed attempts retain their original snapshots; they are not deleted, recreated or regraded.
 
 ## `episode.json` — schema version 1
 
@@ -65,7 +65,7 @@ These are Vocora editorial labels, **not official BBC levels or IELTS band estim
 
 Its only top-level fields are `schemaVersion: 2` and a nonempty `tests` array. Each test requires `id`, `title`, sequential `position` starting at 1, `format: "ielts"`, a valid `difficulty`, and nonempty `groups`. There is no fixed three-test limit: author exactly the count requested by the user. IDs must be unique within the episode for tests, groups, questions and options; use a test prefix in every child ID, e.g. `bbc-260618-t2-question-3`. IDs match `[a-z0-9][a-z0-9-]{2,63}`.
 
-The following is a **synthetic schema illustration**, not a BBC exercise to publish unchanged:
+The following is a **synthetic schema fragment**, NOT publishable content: it lacks ten questions, all four currently supported task types and source-review evidence. It illustrates the legacy-compatible domain shape only:
 
 ```json
 {
@@ -82,7 +82,7 @@ The following is a **synthetic schema illustration**, not a BBC exercise to publ
       "heading": "Questions 1–2",
       "taskType": "note_completion",
       "instruction": "Complete the notes below.",
-      "answerInstruction": "Write ONE WORD for each answer.",
+      "answerInstruction": "Write ONE WORD ONLY for each answer.",
       "maxWords": 1,
       "maxNumbers": 0,
       "questions": [{
@@ -107,15 +107,48 @@ The following is a **synthetic schema illustration**, not a BBC exercise to publ
 
 Supported task types are `note_completion`, `sentence_completion`, `short_answer` (all `responseType: "text"`), and `multiple_choice_single` (`responseType: "single_choice"`). Text prompts contain **exactly one** `{{blank}}`; even short-answer prompts include an answer blank. `answers` is a nonempty array of accepted strings; the first is the displayed model answer. Do not duplicate answers that normalize to the same value. Every answer must obey `maxWords` and `maxNumbers` and the written instruction. Word/number limits may be `null` where appropriate.
 
-Multiple-choice prompts contain no blank. Provide 2–6 `options`, each with a unique `id`, unique `label` (normally A/B/C) and `text`; `answer` is the correct **label**, e.g. `"B"`, not the option ID. A choice group uses `maxWords: null` and `maxNumbers: null`. The server maps the label to the option identity. Do not send the answer field to the browser.
+Multiple-choice prompts contain no blank. The legacy-compatible domain parser accepts 2–6 `options`, each with a unique `id`, unique `label` (normally A/B/C) and `text`; `answer` is the correct **label**, e.g. `"B"`, not the option ID. A choice group uses `maxWords: null` and `maxNumbers: null`. The server maps the label to the option identity. New/revised BBC content MUST instead have exactly three A/B/C options under the stricter authoring gate. Do not send the answer field to the browser.
 
 Test/group/question positions start at 1 and are contiguous. Question `number` runs consecutively across all groups in a test; question `position` restarts within each group. `questionCount` and `testCount` are computed by the parser, not authored fields.
 
 ### IELTS-style content quality
 
-Write original questions grounded in the actual recording and your authorized reference transcript. Keep questions in audio order; make one answer clearly correct; use plausible distractors without requiring outside knowledge; check spelling, accepted variants and answer limits. Do not use True/False/Not Given as an IELTS Listening task. These short episode tests are practice activities, not a full 40-question IELTS paper, official IELTS content, or a calibrated band score. Avoid copying BBC quiz text, worksheets or explanations. Vocabulary definitions and example sentences should also be independently worded.
+BEFORE authoring, read [the mandatory IELTS question-design policy](../../../../../.agents/skills/vocora-bbc-listening-bundles/references/ielts-question-design.md), including its primary-source links. Real IELTS Listening has four parts with **exactly ten questions each**, forty overall, and questions follow recording order. Vocora mirrors that count: **exactly ten scored questions in EACH practice test**. Vocora additionally requires all four currently supported task types in each practice test for variety; that diversity requirement is product policy, not an IELTS rule. These exercises are not official papers or calibrated band scores.
 
-The validation authority is `back/src/domain/listening-practice/ListeningLessonDefinition.js` plus `loadListeningEpisodeSources.js`, not an imagined API schema. The existing screen-time `listening.json` demonstrates all supported task types.
+Write original questions grounded in the recording. Follow answer locations chronologically across the ENTIRE test, including group transitions. Do not regroup early and late facts by task type. Each answer must be unambiguous, fit the stated limit and complete its sentence/note grammatically. Use meaningful details rather than greetings, advertisements or filler. Wrong choices must be plausible but demonstrably contradicted, misattributed or otherwise unsupported in context. Do not use True/False/Not Given as a Listening task or invent currently unsupported matching/map/table renderers.
+
+Easy tests mainly select explicit local detail; medium tests require meaningful paraphrase and selection; hard tests require substantial synonym/paraphrase recognition and evidenced distinctions of qualification, attitude, contrast or cause/effect. Difficulty NEVER reduces the count/diversity requirement or permits ambiguity. The design reference defines the editorial thresholds; these are not official IELTS grading rules. Preserve the words actually spoken in completion answers while paraphrasing the surrounding prompt.
+
+The domain schema authority remains `ListeningLessonDefinition.js` plus `loadListeningEpisodeSources.js`. The additional file-authoring authority is `validateListeningQuestionQuality.js`, invoked by `back/scripts/validate-listening-lessons.js` and consequently by the canonical Python packager/verifier. Historical persisted lessons and completed attempts are NOT retroactively subjected to this new authoring gate.
+
+### File-only review metadata
+
+The only top-level fields remain `schemaVersion` and `tests`. Each authored test adds a private nested `sourceReview` object:
+
+| Field | Meaning |
+| --- | --- |
+| `policyVersion` | Integer `1`. |
+| `sourceUrl` | Exact official episode `sourceUrl`. |
+| `audioSha256` | SHA-256 of the ACTUAL direct lesson MP3 whose intervals were reviewed. |
+| `durationSeconds` | Positive measured duration of that recording. |
+| `checkedAt` | Review date in `YYYY-MM-DD` format. |
+| `method` | Honest account of source review and any audio-location assistance. |
+| `contentSha256` | Canonical digest of the raw test, excluding this digest field itself. |
+
+Each raw question adds private `evidence`: finite `startSeconds` and `endSeconds` within the recording, an ORIGINAL concise factual `summary`, a boolean `paraphrase`, and `skill` from `detail`, `paraphrase`, `contrast`, `cause_effect`, `attitude`. A single-choice question also has `distractors`, mapping each incorrect option letter to its source-specific rejection rationale. Start and end intervals cannot move backwards, including across task groups. A late confirmed answer must not be located at the earlier quiz introduction.
+
+These fields are an auditable author declaration, **not proof of semantic correctness**. They are filtered out by the existing domain normalization, are not synchronized into the database or public API, and never provide learner-facing answer hints. The complete raw test is hash-bound so edits cannot silently retain an old review. Do not commit full reference transcripts or ASR output; concise independently worded evidence is sufficient.
+
+After reviewing all questions and evidence, use the deterministic owner rather than manually writing hashes:
+
+```bash
+node back/scripts/record-listening-question-review.js \
+  --episode /path/to/YYYY-MM-DD-slug --confirm-reviewed --require-audio
+node back/scripts/validate-listening-lessons.js \
+  --episode /path/to/YYYY-MM-DD-slug --require-audio
+```
+
+The confirmation command validates before atomically writing. It does not invent evidence, choose an audio hash or certify pedagogy. Without local audio, omitting `--require-audio` permits repository-only structural review and explicitly reports `audioChecked: false`; packaging and delivery still require real audio. Every accepted answer and representative rejected/over-limit responses must also be tested with the actual scorer.
 
 ## `vocabulary.md` — same model as PR #63
 
@@ -157,9 +190,9 @@ This tool does not claim that arbitrary supplied text is complete or licensed; t
 
 1. Resolve the requested BBC 6 Minute English title/date/code against the **actual official episode page**. The public feed `https://podcasts.files.bbci.co.uk/p02pc9tn.rss` can aid discovery but must not be assumed to contain the entire historical archive. Do not invent a JSON API or infer unverified assets from a date-based filename.
 2. Inspect the official page's episode-specific hero/OpenGraph image (not the generic show cover), **Download Audio** link, transcript link and vocabulary section. Record the observed HTTPS URLs in `episode.json.sources`. Prefer the direct lesson audio over podcast-feed editions that may have different timing. Record the source's publication date and preserve provider credits.
-3. Create one new date/slug folder. For an existing episode, retain `publicId`, URL slug and existing test IDs; append new uniquely identified tests rather than resetting completion history. Choose the episode language level separately from the difficulty of each test. Do not silently downgrade an existing published lesson to draft.
+3. Create one new date/slug folder. For an existing episode, retain `publicId`, URL slug and existing test IDs; append new tests only when requested. When redesigning existing tests, preserve their test IDs/counts and replace question content without resetting completion history. Choose the episode language level separately from the difficulty of each test. Do not silently downgrade an existing published lesson to draft.
 4. Download the verified media, or accept user-supplied media they are authorized to use. The helper below only fetches the manifest's official BBC image/audio URLs; it validates the host (including redirects), file sizes and media signatures and writes atomically. It does **not** manufacture URLs or fetch a full transcript. BBC availability/network restrictions can still cause download failure; do not replace missing bytes with HTML or a fake MP3.
-5. Use your authorized transcript/audio reference to write exactly N original IELTS-style tests, with supported task types and distinct question IDs. Verify every answer against the recording, in order, and run a second content-quality review. Do not merely duplicate a test or relabel its difficulty.
+5. Read the mandatory design reference, then write exactly N original IELTS-style tests with exactly ten scored questions and all four currently implemented task types in EACH. Record source evidence, verify answers/chronology/limits, review distinctness and difficulty, and run a second semantic review. Record that review through the canonical command before validation; do not simply duplicate a test or relabel its difficulty.
 6. Prepare `vocabulary.md` using the actual introduced words/collocations, original simple definitions and one or more meaningful examples per entry. Import your authorized full `transcript.md`, or explicitly disclose a source-reference-only package.
 7. Run validation, unit tests and the packager. Inspect ZIP paths, `BUNDLE.json`, test count, transcript status and file hashes before delivery. Include cover, actual MP3 bytes, metadata, tests, vocabulary and transcript/reference file, with no unrelated files. Never commit the MP3, a ZIP containing MP3s, or temporary downloaded pages to Git.
 
@@ -256,6 +289,7 @@ Existing test-start/submission APIs, retake behavior, sticky player, compact pro
 
 ```bash
 npm --prefix back run db:validate:listening
+node --test back/tests/listening-question-quality.test.js back/tests/listening-catalog-quality.test.js back/tests/listening-review-command.test.js
 npm --prefix back test                     # Includes Python ZIP/tool tests; Python 3 required for development/CI
 npm --prefix ui test                       # Architecture, 117+ UI unit cases, production build, PWA and CSP checks
 npm --prefix ui run e2e                    # App must be running; includes episode vocabulary browser flow

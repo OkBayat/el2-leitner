@@ -1,6 +1,6 @@
 # BBC Episode Authoring Workflow
 
-Load this reference only after the request plan is valid and at least one official BBC episode has been resolved.
+For new bundles, load this reference after valid planning and official discovery binding. For an existing-content revision, load it after auditing the current catalog. In BOTH workflows, read `ielts-question-design.md` BEFORE authoring questions; its per-test rules are mandatory.
 
 The authoritative application contract remains `back/data/listening/episodes/README.md`. This reference explains agent execution order and quality checks; it does not replace the application schema.
 
@@ -82,43 +82,35 @@ This is an editorial Vocora level unless the source explicitly states otherwise.
 
 ## Test authoring sequence
 
-Read/listen through the full episode before writing questions. Build a compact private fact timeline first; do not persist copied transcript passages in the repository or output package.
+Read the full official reference and check the actual lesson recording before writing questions. Build a private answer timeline first. Do not persist copied transcript passages or ASR output in Git or the output package.
 
 For each requested test:
 
-1. Assign the exact canonical difficulty from the validated request plan.
-2. Choose supported task types from the current application contract.
-3. Select a coherent span of the recording and keep questions in audio order.
-4. Write original prompts and distractors.
-5. Verify every answer against the official audio/transcript reference.
-6. Check accepted spelling/number variants against the answer-limit instruction.
-7. Ensure IDs are unique across the entire episode.
-8. Ensure the test is materially distinct from the other tests.
+1. Preserve its existing route/identity and requested difficulty, or assign a unique new identity for a genuinely new test.
+2. Select exactly TEN worthwhile, non-duplicate information targets. Do not count headings, options or accepted-answer variants as questions.
+3. Arrange them in forward audio order through the whole test, including group transitions. Use all FOUR implemented task types in coherent groups, normally 4 + 3 + 3 + 3 questions.
+4. Write original notes, sentences, short-answer prompts and A/B/C options. Check naturalness, relevance, grammatical completions, clear answer limits and fair distractors.
+5. Verify every answer against the official reference and its actual audio interval. Record private `sourceReview`/`evidence` metadata as described in the application README. These are file-only review data, not learner hints or database fields.
+6. Apply the full difficulty rubric in `ielts-question-design.md`: easy is mostly explicit detail; medium has meaningful paraphrase; hard has substantial paraphrase plus evidenced distinctions. All levels keep the same count, diversity and correctness standards.
+7. Compare variants: they must differ in listening targets or operations, not merely wording, order or a difficulty badge. Avoid duplicate prompts and answer sequences, and avoid repeating one source fact within a test.
+8. Test accepted spellings/number forms and rejected/over-limit responses with the actual scorer. Review the whole test semantically, not only as JSON.
+9. After that review, record its digest with the canonical command and validate:
 
-A difficulty badge alone does not make a test easier or harder.
+```bash
+node back/scripts/record-listening-question-review.js \
+  --episode <episode-dir> --confirm-reviewed --require-audio
+node back/scripts/validate-listening-lessons.js --episode <episode-dir> --require-audio
+```
+
+The confirmation command does not invent evidence, certify language quality or change the supplied audio identity. It rejects invalid evidence before writing and binds the reviewed content with a deterministic hash. Without local media, a repository-only review may omit `--require-audio`; that does NOT verify the actual audio bytes. Packaging and final delivery must check actual media.
 
 ### Difficulty guidance
 
-- `very_easy`: direct wording, strong lexical overlap, obvious location in the recording.
-- `easy`: mostly explicit facts with limited paraphrasing.
-- `medium`: moderate paraphrase and information selection.
-- `hard`: denser detail, plausible nearby distractors, or greater paraphrase.
-- `very_hard`: subtle distinctions and demanding selection while remaining objectively answerable.
+Follow `ielts-question-design.md` for the detailed task-specific rubric, source links and required editorial thresholds. IELTS has ten questions per part; Vocora now mirrors that exact count for each BBC practice test. Synonyms/paraphrase normally belong in the prompt/options; completion answers must remain words heard in the recording.
 
-Do not introduce ambiguity merely to increase difficulty.
+### Test coverage and uniqueness
 
-## Test coverage and uniqueness
-
-Across multiple tests for the same episode:
-
-- vary task types when the source supports it;
-- vary which episode segments are emphasized;
-- avoid repeated prompts with cosmetic changes;
-- avoid using the exact same answer sequence in multiple tests;
-- keep all questions grounded in the recording, not general knowledge;
-- preserve the requested difficulty counts exactly.
-
-If the recording cannot support the requested number of distinct high-quality tests, stop and report that limitation instead of duplicating weak tests.
+Every test needs exactly ten questions, all four currently supported types, substantive beginning/middle/later coverage and strictly forward answer locations. Distinct tests may reuse source facts only for materially different listening operations. Do not pad missing questions with greetings, presenter names, advertisements or disconnected dictionary exercises. If the recording cannot support the requested high-quality variants, resolve that limitation rather than duplicate weak tests or lower the minimum.
 
 ## Vocabulary authoring
 
@@ -179,7 +171,9 @@ Before packaging each episode, check:
 - episode language level is set;
 - test count equals the request;
 - difficulty counts equal the request;
-- every test is IELTS-style and uses supported task types;
+- every test has exactly ten scored questions and all four currently supported task types;
+- consecutive numbering, answer limits and private source-evidence chronology pass the quality gate;
+- source review is current and tied to the actual lesson audio hash;
 - all answers were verified;
 - vocabulary is episode-specific and has definitions/examples;
 - cover and MP3 are real validated media;

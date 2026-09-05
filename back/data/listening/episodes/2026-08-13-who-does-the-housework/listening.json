@@ -3,594 +3,1440 @@
   "tests": [
     {
       "id": "bbc-260813-t1",
-      "title": "Elementary: Understand the household discussion",
+      "title": "Sharing housework: the problem and two projects",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260813-t1-g1",
+          "id": "bbc-260813-t1-r2-g1",
           "position": 1,
-          "heading": "Elementary: Understand the household discussion",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260813-t1-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Room the first listener says she cleans: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 29.48,
+                "endSeconds": 37.06,
+                "summary": "The first listener ends her account of tasks by mentioning cleaning the bathroom.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "bathroom"
+              ]
+            },
+            {
+              "id": "bbc-260813-t1-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil says his wife's paid work is {{blank}}.",
+              "evidence": {
+                "startSeconds": 51.44,
+                "endSeconds": 59.04,
+                "summary": "Neil contrasts his wife's part-time work with his own full-time work.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "part time",
+                "part-time"
+              ]
+            },
+            {
+              "id": "bbc-260813-t1-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Extra time women spend on unpaid work each day in the quoted figures: {{blank}} hours.",
+              "evidence": {
+                "startSeconds": 82.62,
+                "endSeconds": 87.64,
+                "summary": "The quoted UN Women figure is three additional hours per day compared with men.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "three",
+                "3"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260813-t1-q1",
-              "number": 1,
+              "id": "bbc-260813-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What do the two listeners say about chores in their homes?",
+              "prompt": "Why do household tasks on Rote take a long time?",
+              "evidence": {
+                "startSeconds": 148.4,
+                "endSeconds": 153.68,
+                "summary": "Limited washing equipment and the absence of running water make the work time-consuming.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The programme attributes the time needed to limited facilities, not a repeated-washing rule.",
+                  "C": "A shortage is described, not a ban on using machines."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260813-t1-q1-a",
+                  "id": "bbc-260813-t1-r2-q5-a",
                   "label": "A",
-                  "text": "Their husbands do every household job."
+                  "text": "There are few washing machines and no running water."
                 },
                 {
-                  "id": "bbc-260813-t1-q1-b",
+                  "id": "bbc-260813-t1-r2-q5-b",
                   "label": "B",
-                  "text": "Nobody needs to do regular chores."
+                  "text": "The project asks families to wash everything twice."
                 },
                 {
-                  "id": "bbc-260813-t1-q1-c",
+                  "id": "bbc-260813-t1-r2-q5-c",
                   "label": "C",
-                  "text": "They do most or all of the household work."
+                  "text": "The island's workers are forbidden to use machines."
                 }
               ],
-              "answer": "C"
+              "answer": "A"
             },
             {
-              "id": "bbc-260813-t1-q2",
-              "number": 2,
+              "id": "bbc-260813-t1-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What are the two projects in the programme trying to achieve?",
+              "prompt": "What does the NGO project try to change?",
+              "evidence": {
+                "startSeconds": 154.04,
+                "endSeconds": 159.84,
+                "summary": "The project is explicitly concerned with attitudes towards women's roles.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Rice farming is background context, not the project's stated target.",
+                  "B": "The project is not described as setting children's leaving age."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260813-t1-q2-a",
+                  "id": "bbc-260813-t1-r2-q6-a",
                   "label": "A",
-                  "text": "More expensive household appliances."
+                  "text": "The crops grown by the island's rice farmers."
                 },
                 {
-                  "id": "bbc-260813-t1-q2-b",
+                  "id": "bbc-260813-t1-r2-q6-b",
                   "label": "B",
-                  "text": "A complete end to paid employment."
+                  "text": "The age at which children leave the family home."
                 },
                 {
-                  "id": "bbc-260813-t1-q2-c",
+                  "id": "bbc-260813-t1-r2-q6-c",
                   "label": "C",
-                  "text": "A fairer sharing of housework."
+                  "text": "Attitudes towards the role of the island's women."
                 }
               ],
               "answer": "C"
             },
             {
-              "id": "bbc-260813-t1-q3",
-              "number": 3,
+              "id": "bbc-260813-t1-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Where is the first project based?",
+              "prompt": "What extra work does Shilpa say women do?",
+              "evidence": {
+                "startSeconds": 184.4,
+                "endSeconds": 193.18,
+                "summary": "Women's field work challenges the idea that the household division is already fair.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "No condition that men must be away is attached to this statement.",
+                  "C": "The report describes work in fields alongside domestic work, not only office work."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260813-t1-q3-a",
+                  "id": "bbc-260813-t1-r2-q7-a",
                   "label": "A",
-                  "text": "In a large Canadian city."
+                  "text": "They only work when the men are away fishing."
                 },
                 {
-                  "id": "bbc-260813-t1-q3-b",
+                  "id": "bbc-260813-t1-r2-q7-b",
                   "label": "B",
-                  "text": "On an Indonesian island."
+                  "text": "They help in the fields as well as at home."
                 },
                 {
-                  "id": "bbc-260813-t1-q3-c",
+                  "id": "bbc-260813-t1-r2-q7-c",
                   "label": "C",
-                  "text": "In a British farming village."
+                  "text": "They only do paid office work."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260813-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What makes domestic chores especially time-consuming on Rote?",
-              "options": [
-                {
-                  "id": "bbc-260813-t1-q4-a",
-                  "label": "A",
-                  "text": "Too many paid cleaners in each household."
-                },
-                {
-                  "id": "bbc-260813-t1-q4-b",
-                  "label": "B",
-                  "text": "Few washing machines and no running water."
-                },
-                {
-                  "id": "bbc-260813-t1-q4-c",
-                  "label": "C",
-                  "text": "A rule that all cooking must happen outside."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260813-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Who is encouraged to participate in the Superdads workshops?",
-              "options": [
-                {
-                  "id": "bbc-260813-t1-q5-a",
-                  "label": "A",
-                  "text": "Fathers and sons."
-                },
-                {
-                  "id": "bbc-260813-t1-q5-b",
-                  "label": "B",
-                  "text": "Only professional cleaners."
-                },
-                {
-                  "id": "bbc-260813-t1-q5-c",
-                  "label": "C",
-                  "text": "Only mothers and daughters."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260813-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What can mothers gain when men do more household work?",
-              "options": [
-                {
-                  "id": "bbc-260813-t1-q6-a",
-                  "label": "A",
-                  "text": "More time for work interests, hobbies or rest."
-                },
-                {
-                  "id": "bbc-260813-t1-q6-b",
-                  "label": "B",
-                  "text": "A requirement to do all the outdoor work."
-                },
-                {
-                  "id": "bbc-260813-t1-q6-c",
-                  "label": "C",
-                  "text": "Less opportunity to make their own plans."
-                }
-              ],
-              "answer": "A"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260813-t2",
-      "title": "Intermediate: Complete project notes",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
+        },
         {
-          "id": "bbc-260813-t2-g1",
-          "position": 1,
-          "heading": "Intermediate: Complete project notes",
-          "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "id": "bbc-260813-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260813-t2-q1",
-              "number": 1,
+              "id": "bbc-260813-t1-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "Organisation whose figures on unpaid care are quoted: {{blank}}.",
-              "answers": [
-                "UN Women"
-              ]
-            },
-            {
-              "id": "bbc-260813-t2-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Extra time women spend on unpaid care and domestic work each day, according to the quoted figures: {{blank}}.",
-              "answers": [
-                "three hours",
-                "3 hours"
-              ]
-            },
-            {
-              "id": "bbc-260813-t2-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Name of the Indonesian island featured: {{blank}}.",
-              "answers": [
-                "Rote"
-              ]
-            },
-            {
-              "id": "bbc-260813-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "NGO trying to change attitudes on the island: {{blank}}.",
-              "answers": [
-                "ARUNGI"
-              ]
-            },
-            {
-              "id": "bbc-260813-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Country where the Superdads project operates: {{blank}}.",
+              "prompt": "The Superdads project is based in {{blank}}.",
+              "evidence": {
+                "startSeconds": 228.46,
+                "endSeconds": 234.24,
+                "summary": "The second example is the Superdads project in Croatia.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "Croatia"
               ]
             },
             {
-              "id": "bbc-260813-t2-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260813-t1-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Name of the NGO running Superdads: {{blank}}.",
+              "prompt": "The workshops encourage dads and {{blank}} to reduce pressure on mothers.",
+              "evidence": {
+                "startSeconds": 234.8,
+                "endSeconds": 241.92,
+                "summary": "Sons are invited alongside fathers in the description of the workshops.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "Status M"
+                "sons"
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260813-t3",
-      "title": "Intermediate: Find the specific details",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
+        },
         {
-          "id": "bbc-260813-t3-g1",
-          "position": 1,
-          "heading": "Intermediate: Find the specific details",
+          "id": "bbc-260813-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
           "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
           "maxWords": 3,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260813-t3-q1",
-              "number": 1,
+              "id": "bbc-260813-t1-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "Does Neil describe his wife's paid work as full time or part time? {{blank}}",
+              "prompt": "What kind of homes do both projects say result from men doing more housework? {{blank}}",
+              "evidence": {
+                "startSeconds": 288.28,
+                "endSeconds": 294.36,
+                "summary": "The projects share the view that greater male participation leads to happier homes.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "part time"
+                "happier homes"
               ]
             },
             {
-              "id": "bbc-260813-t3-q2",
-              "number": 2,
+              "id": "bbc-260813-t1-r2-q12",
+              "number": 10,
               "position": 2,
               "responseType": "text",
-              "prompt": "Before the answer is revealed, which appliance does Pippa say she hates deep cleaning? {{blank}}",
+              "prompt": "Which chore is identified as the survey's most disliked task? {{blank}}",
+              "evidence": {
+                "startSeconds": 308.82,
+                "endSeconds": 312.46,
+                "summary": "The confirmed answer is cleaning the windows, rather than the oven suggested earlier.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "the oven",
-                "oven"
+                "cleaning the windows"
               ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260813",
+        "audioSha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500",
+        "durationSeconds": 373.872,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "200840e4315075214b3acd40a0cf170b1c755e9f78761964b5ce771462cb1558"
+      }
+    },
+    {
+      "id": "bbc-260813-t2",
+      "title": "Domestic work: noticing unequal demands",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260813-t2-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260813-t2-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does the second listener describe the arrangement with her husband?",
+              "evidence": {
+                "startSeconds": 38.12,
+                "endSeconds": 45.38,
+                "summary": "The second listener reports an unequal division in which she does most chores.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "She explicitly denies that the chores are shared equally.",
+                  "C": "Her statement concerns chores, not a comparison of paid working hours."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t2-r2-q1-a",
+                  "label": "A",
+                  "text": "She carries out most of the household tasks."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q1-b",
+                  "label": "B",
+                  "text": "She considers their shares equal but dislikes the tasks."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q1-c",
+                  "label": "C",
+                  "text": "She describes equal time spent on paid work."
+                }
+              ],
+              "answer": "A"
             },
             {
-              "id": "bbc-260813-t3-q3",
+              "id": "bbc-260813-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Neil use to explain his household's arrangement?",
+              "evidence": {
+                "startSeconds": 51.44,
+                "endSeconds": 61.94,
+                "summary": "Neil relates task-sharing to the different paid-work schedules of the two partners.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "He distinguishes part-time from full-time work rather than identical hours.",
+                  "B": "He explains availability around work, not a preference-only allocation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t2-r2-q2-a",
+                  "label": "A",
+                  "text": "Both partners have identical paid working hours."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q2-b",
+                  "label": "B",
+                  "text": "Their tasks are divided solely according to preference."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q2-c",
+                  "label": "C",
+                  "text": "Each partner does tasks when not occupied by paid work."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260813-t2-r2-q3",
               "number": 3,
               "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does the UN Women figure compare?",
+              "evidence": {
+                "startSeconds": 77.04,
+                "endSeconds": 87.64,
+                "summary": "The three-hour figure is a daily difference between women's and men's unpaid work.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The statistic concerns time on unpaid care and domestic work, not equipment ownership.",
+                  "C": "The time unit is each day, not an entire working lifetime."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t2-r2-q3-a",
+                  "label": "A",
+                  "text": "The number of women and men who own washing machines."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q3-b",
+                  "label": "B",
+                  "text": "Women's daily unpaid work time with men's."
+                },
+                {
+                  "id": "bbc-260813-t2-r2-q3-c",
+                  "label": "C",
+                  "text": "Women's total working lifetime with men's."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t2-r2-q4",
+              "number": 4,
+              "position": 1,
               "responseType": "text",
-              "prompt": "Besides rice farming, what traditional occupation for men on Rote is mentioned? {{blank}}",
+              "prompt": "One traditional male occupation besides rice farming: {{blank}}.",
+              "evidence": {
+                "startSeconds": 139.9,
+                "endSeconds": 145.58,
+                "summary": "Fishing is the other traditional male occupation named alongside rice farming.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "fishermen"
               ]
             },
             {
-              "id": "bbc-260813-t3-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260813-t2-r2-q5",
+              "number": 5,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Which community leader explains the expectations placed on mothers? {{blank}}",
+              "prompt": "People cared for in addition to children: {{blank}}.",
+              "evidence": {
+                "startSeconds": 145.9,
+                "endSeconds": 147.68,
+                "summary": "The account includes older people among those cared for by women.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Mama Shilpa",
-                "Shilpa"
+                "older people"
               ]
             },
             {
-              "id": "bbc-260813-t3-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260813-t2-r2-q6",
+              "number": 6,
+              "position": 3,
               "responseType": "text",
-              "prompt": "Where do women also work, undermining the suggestion that their workload is fairly divided? {{blank}}",
+              "prompt": "Domestic equipment available only in small numbers: {{blank}}.",
+              "evidence": {
+                "startSeconds": 148.4,
+                "endSeconds": 153.68,
+                "summary": "The programme describes few washing machines on the island.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "washing machines"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Who does the NGO work with locally? {{blank}}",
+              "evidence": {
+                "startSeconds": 160.18,
+                "endSeconds": 163.34,
+                "summary": "Community leaders are identified as the NGO's partners on the island.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "community leaders"
+              ]
+            },
+            {
+              "id": "bbc-260813-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Where do women also help, despite being expected to do the household tasks? {{blank}}",
+              "evidence": {
+                "startSeconds": 184.4,
+                "endSeconds": 193.18,
+                "summary": "Women's additional work in the fields is the information that qualifies the apparent division of labour.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "the fields",
                 "fields"
               ]
-            },
-            {
-              "id": "bbc-260813-t3-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "What percentage of survey respondents chose cleaning windows as their most hated chore? {{blank}}",
-              "answers": [
-                "23%",
-                "23 percent",
-                "twenty-three percent"
-              ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260813-t4",
-      "title": "Advanced: Assess assumptions about shared work",
-      "position": 4,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
+        },
         {
-          "id": "bbc-260813-t4-g1",
-          "position": 1,
-          "heading": "Advanced: Assess assumptions about shared work",
-          "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "id": "bbc-260813-t4-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "single_choice",
-              "prompt": "What does the programme suggest by moving from everyday chores to the UN Women figures?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q1-a",
-                  "label": "A",
-                  "text": "All couples divide chores in exactly the same way."
-                },
-                {
-                  "id": "bbc-260813-t4-q1-b",
-                  "label": "B",
-                  "text": "Only people without paid employment do domestic work."
-                },
-                {
-                  "id": "bbc-260813-t4-q1-c",
-                  "label": "C",
-                  "text": "An ordinary household issue reflects a wider inequality in unpaid work."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260813-t4-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What is the primary focus of the ARUNGI project as described?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q2-a",
-                  "label": "A",
-                  "text": "Replacing every washing machine on the island."
-                },
-                {
-                  "id": "bbc-260813-t4-q2-b",
-                  "label": "B",
-                  "text": "Encouraging women to leave all outdoor work to men."
-                },
-                {
-                  "id": "bbc-260813-t4-q2-c",
-                  "label": "C",
-                  "text": "Changing attitudes about women's roles through work with community leaders."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260813-t4-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "Why does the reporter challenge the idea that men's field work makes the division fair?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q3-a",
-                  "label": "A",
-                  "text": "Women also help in the fields while doing the household tasks."
-                },
-                {
-                  "id": "bbc-260813-t4-q3-b",
-                  "label": "B",
-                  "text": "Men are no longer involved in any paid work."
-                },
-                {
-                  "id": "bbc-260813-t4-q3-c",
-                  "label": "C",
-                  "text": "Cooking and childcare are no longer needed on the island."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260813-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "Why is the example from Croatia introduced after the Indonesian project?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q4-a",
-                  "label": "A",
-                  "text": "To show that wealthy countries have already solved the problem."
-                },
-                {
-                  "id": "bbc-260813-t4-q4-b",
-                  "label": "B",
-                  "text": "To show that unequal unpaid work is not limited to traditional societies."
-                },
-                {
-                  "id": "bbc-260813-t4-q4-c",
-                  "label": "C",
-                  "text": "To argue that the two countries have identical household equipment."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260813-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What is the broader value of giving mothers time to take a breather?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q5-a",
-                  "label": "A",
-                  "text": "Rest is presented as a substitute for all future employment."
-                },
-                {
-                  "id": "bbc-260813-t4-q5-b",
-                  "label": "B",
-                  "text": "Sharing chores creates room for their careers, interests and recovery from work."
-                },
-                {
-                  "id": "bbc-260813-t4-q5-c",
-                  "label": "C",
-                  "text": "The project expects mothers to stop making household decisions."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260813-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What common outcome do the two projects associate with men contributing more?",
-              "options": [
-                {
-                  "id": "bbc-260813-t4-q6-a",
-                  "label": "A",
-                  "text": "Happier households."
-                },
-                {
-                  "id": "bbc-260813-t4-q6-b",
-                  "label": "B",
-                  "text": "An end to every disagreement between partners."
-                },
-                {
-                  "id": "bbc-260813-t4-q6-c",
-                  "label": "C",
-                  "text": "The disappearance of all unpleasant chores."
-                }
-              ],
-              "answer": "A"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260813-t5",
-      "title": "Advanced: Complete the argument in paraphrase",
-      "position": 5,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
-        {
-          "id": "bbc-260813-t5-g1",
-          "position": 1,
-          "heading": "Advanced: Complete the argument in paraphrase",
+          "id": "bbc-260813-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
           "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260813-t5-q1",
-              "number": 1,
+              "id": "bbc-260813-t2-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "The international comparison concerns {{blank}} care and domestic work, rather than paid jobs.",
-              "answers": [
-                "unpaid"
-              ]
-            },
-            {
-              "id": "bbc-260813-t5-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Alongside household tasks, women on Rote assist with both farming and {{blank}}.",
-              "answers": [
-                "fishing"
-              ]
-            },
-            {
-              "id": "bbc-260813-t5-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "The Superdads workshops encourage fathers and sons to take some of the {{blank}} off mothers.",
+              "prompt": "The Croatian workshops aim to take some of the {{blank}} off mothers.",
+              "evidence": {
+                "startSeconds": 234.8,
+                "endSeconds": 241.92,
+                "summary": "Reducing pressure on mothers is the stated purpose of involving fathers and sons.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "pressure"
               ]
             },
             {
-              "id": "bbc-260813-t5-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260813-t2-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "In the discussion, stopping briefly to rest is described as taking a {{blank}}.",
+              "prompt": "The project can leave mothers more space for their careers and {{blank}}.",
+              "evidence": {
+                "startSeconds": 246.14,
+                "endSeconds": 255.44,
+                "summary": "The project worker includes hobbies alongside careers and rest as uses for the freed time.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "breather"
-              ]
-            },
-            {
-              "id": "bbc-260813-t5-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "The expression for contributing as much effort as other people is to {{blank}}.",
-              "answers": [
-                "pull your weight"
-              ]
-            },
-            {
-              "id": "bbc-260813-t5-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "The term for allocating different tasks to different groups is the {{blank}}.",
-              "answers": [
-                "division of labour"
+                "hobbies"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260813",
+        "audioSha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500",
+        "durationSeconds": 373.872,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "078f662e1434276e600b5a5fe4ae61e204d4e0444dac83f225bb45b2e9602c1a"
+      }
+    },
+    {
+      "id": "bbc-260813-t3",
+      "title": "Household responsibilities: evidence and benefits",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260813-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260813-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What shopping task does the first listener say she undertakes? {{blank}}",
+              "evidence": {
+                "startSeconds": 29.48,
+                "endSeconds": 35.28,
+                "summary": "The first listener includes food shopping among the tasks she does.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "food shopping"
+              ]
+            },
+            {
+              "id": "bbc-260813-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What term describes Neil's own paid-work schedule? {{blank}}",
+              "evidence": {
+                "startSeconds": 51.44,
+                "endSeconds": 59.04,
+                "summary": "Neil describes himself as working full time, in contrast with his wife's schedule.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "full time",
+                "full-time"
+              ]
+            },
+            {
+              "id": "bbc-260813-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "How much longer do women spend on unpaid work each day in the cited figures? {{blank}}",
+              "evidence": {
+                "startSeconds": 82.62,
+                "endSeconds": 87.64,
+                "summary": "The statistic describes an additional three hours per day rather than a total of three hours.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "three hours",
+                "3 hours"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The traditional farming occupation named for men is {{blank}} farming.",
+              "evidence": {
+                "startSeconds": 139.9,
+                "endSeconds": 145.58,
+                "summary": "Rice is the crop named in the account of traditional male work.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rice"
+              ]
+            },
+            {
+              "id": "bbc-260813-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Household work is slow partly because there is no {{blank}}.",
+              "evidence": {
+                "startSeconds": 148.4,
+                "endSeconds": 153.68,
+                "summary": "The absence of running water is one reason given for time-consuming chores.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "running water"
+              ]
+            },
+            {
+              "id": "bbc-260813-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The NGO's aim is to change {{blank}} about women's roles.",
+              "evidence": {
+                "startSeconds": 154.04,
+                "endSeconds": 159.84,
+                "summary": "The stated intervention targets attitudes rather than merely equipment supplies.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "attitudes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260813-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why is the apparent fairness of the island's division questioned?",
+              "evidence": {
+                "startSeconds": 184.4,
+                "endSeconds": 216.82,
+                "summary": "The account challenges a simple home-versus-fields division because women contribute to both.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The lack of equipment and water makes domestic work especially time-consuming.",
+                  "C": "The report says men work in the fields and women help there too."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "Domestic work is said to require no time."
+                },
+                {
+                  "id": "bbc-260813-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "Women also contribute to the work outside the home."
+                },
+                {
+                  "id": "bbc-260813-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "Men do no work in the fields."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260813-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the function of the reference to wealthy countries?",
+              "evidence": {
+                "startSeconds": 217.38,
+                "endSeconds": 227.68,
+                "summary": "The comparison extends the issue beyond the traditional-society setting.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The programme reports inequality in wealthy countries rather than making that guarantee.",
+                  "C": "It specifically says women there still spend more time on unpaid care."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "To show that the imbalance is not confined to traditional societies."
+                },
+                {
+                  "id": "bbc-260813-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "To show that running water guarantees equal housework."
+                },
+                {
+                  "id": "bbc-260813-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "To show that unpaid care work disappears as countries become wealthier."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A further benefit beyond careers and hobbies: time to {{blank}}.",
+              "evidence": {
+                "startSeconds": 246.14,
+                "endSeconds": 255.44,
+                "summary": "The worker includes simple rest among the uses of additional time.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rest"
+              ]
+            },
+            {
+              "id": "bbc-260813-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Shared view of the projects: more help produces {{blank}} homes.",
+              "evidence": {
+                "startSeconds": 288.28,
+                "endSeconds": 294.36,
+                "summary": "Both projects associate increased participation with happier households.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "happier"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260813",
+        "audioSha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500",
+        "durationSeconds": 373.872,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "8e39c6fdd7d47d8575487326baf3c37ff7d739c6789d73858cd79e7f0f59ee17"
+      }
+    },
+    {
+      "id": "bbc-260813-t4",
+      "title": "Fair sharing: separating assumptions from evidence",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260813-t4-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260813-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Final example in the first listener's list: cleaning the {{blank}}.",
+              "evidence": {
+                "startSeconds": 29.48,
+                "endSeconds": 37.06,
+                "summary": "Her list ends with bathroom cleaning after shopping and cooking.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "bathroom"
+              ]
+            },
+            {
+              "id": "bbc-260813-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Paid-work pattern Neil attributes to his wife: {{blank}}.",
+              "evidence": {
+                "startSeconds": 51.44,
+                "endSeconds": 59.04,
+                "summary": "Neil identifies his wife's work as part time, distinguishing it from his own schedule.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "part time",
+                "part-time"
+              ]
+            },
+            {
+              "id": "bbc-260813-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Reported daily difference in unpaid work: {{blank}} hours.",
+              "evidence": {
+                "startSeconds": 77.04,
+                "endSeconds": 87.64,
+                "summary": "The figure is an excess of three hours relative to men, not the total amount of women's unpaid work.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "three",
+                "3"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260813-t4-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which connection does the report make between resources and workload?",
+              "evidence": {
+                "startSeconds": 139.9,
+                "endSeconds": 153.68,
+                "summary": "The practical resource limitations are presented as a reason chores take a long time.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "No link between fishing and workshop numbers is made.",
+                  "C": "Household care remains part of the workload despite agricultural work."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t4-r2-q4-a",
+                  "label": "A",
+                  "text": "The presence of fishermen determines how many workshops take place."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q4-b",
+                  "label": "B",
+                  "text": "Scarce washing equipment and absent piped water lengthen domestic tasks."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q4-c",
+                  "label": "C",
+                  "text": "Working in rice fields removes the need for household care."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260813-t4-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which description stays closest to the first project's stated approach?",
+              "evidence": {
+                "startSeconds": 154.04,
+                "endSeconds": 166.94,
+                "summary": "The approach combines local community partners with an attempt to change role expectations.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The NGO works alongside the leaders rather than replacing them.",
+                  "C": "The stated aim is attitude change, not a new fishing-employment scheme."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t4-r2-q5-a",
+                  "label": "A",
+                  "text": "Working with local leaders to change perceptions of women's roles."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q5-b",
+                  "label": "B",
+                  "text": "Replacing local leaders with visiting household workers."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q5-c",
+                  "label": "C",
+                  "text": "Providing new fishing jobs as the main way to reduce women's workload."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260813-t4-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which fact undermines the suggestion that the division is already equitable?",
+              "evidence": {
+                "startSeconds": 166.94,
+                "endSeconds": 193.18,
+                "summary": "Women's participation in both domains weakens the simple claim of an already fair division.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Men's outside work is the basis of the initial suggestion, not the fact that qualifies it.",
+                  "B": "The care responsibilities describe the domestic load but do not alone reveal women's additional field work."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t4-r2-q6-a",
+                  "label": "A",
+                  "text": "Men traditionally work in rice farming or fishing."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q6-b",
+                  "label": "B",
+                  "text": "Children and older people are among those requiring care."
+                },
+                {
+                  "id": "bbc-260813-t4-r2-q6-c",
+                  "label": "C",
+                  "text": "Women contribute in the fields as well as being expected to handle the home."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The workshops involve fathers and {{blank}}, rather than mothers alone.",
+              "evidence": {
+                "startSeconds": 234.8,
+                "endSeconds": 241.92,
+                "summary": "The project explicitly involves the next generation of men alongside fathers.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sons"
+              ]
+            },
+            {
+              "id": "bbc-260813-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Mothers may gain room for interests outside paid work, such as {{blank}}.",
+              "evidence": {
+                "startSeconds": 246.14,
+                "endSeconds": 255.44,
+                "summary": "Hobbies are identified as a benefit distinct from career time and rest.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "hobbies"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Whose increased contribution is said to be appreciated by women in the later explanation? {{blank}}",
+              "evidence": {
+                "startSeconds": 276.2,
+                "endSeconds": 280.62,
+                "summary": "The presenter says women appreciate their husbands pulling their weight.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "husbands",
+                "their husbands"
+              ]
+            },
+            {
+              "id": "bbc-260813-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What household outcome do both projects associate with greater male participation? {{blank}}",
+              "evidence": {
+                "startSeconds": 288.28,
+                "endSeconds": 294.36,
+                "summary": "The shared claim concerns household happiness from men doing more.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "happier homes"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260813",
+        "audioSha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500",
+        "durationSeconds": 373.872,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "d33b58fa439ba138595627ddfa46023ae82bf89f4759637208df40ddf5c0bfda"
+      }
+    },
+    {
+      "id": "bbc-260813-t5",
+      "title": "Domestic inequality: scope, intent and careful attribution",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260813-t5-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260813-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The second listener says that she does {{blank}} of the chores.",
+              "evidence": {
+                "startSeconds": 38.12,
+                "endSeconds": 45.38,
+                "summary": "Her statement describes a majority share rather than an equal split.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "most"
+              ]
+            },
+            {
+              "id": "bbc-260813-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil distinguishes his own {{blank}} work from his wife's part-time work.",
+              "evidence": {
+                "startSeconds": 51.44,
+                "endSeconds": 59.04,
+                "summary": "His paid-work schedule is full time in the comparison he uses to explain availability.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "full time",
+                "full-time"
+              ]
+            },
+            {
+              "id": "bbc-260813-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "In the worldwide estimate, women's extra unpaid work amounts to {{blank}} hours daily.",
+              "evidence": {
+                "startSeconds": 82.62,
+                "endSeconds": 87.64,
+                "summary": "The three hours are an additional daily burden in the comparison with men.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "three",
+                "3"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t5-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which labour-saving household appliances are scarce on Rote? {{blank}}",
+              "evidence": {
+                "startSeconds": 148.4,
+                "endSeconds": 153.68,
+                "summary": "Few washing machines are available in the setting described.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "washing machines"
+              ]
+            },
+            {
+              "id": "bbc-260813-t5-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What household supply is entirely missing in that description? {{blank}}",
+              "evidence": {
+                "startSeconds": 148.4,
+                "endSeconds": 153.68,
+                "summary": "The programme describes no running water, contrasting absence with merely scarce machines.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "running water"
+              ]
+            },
+            {
+              "id": "bbc-260813-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What does the first project seek to alter about women's roles? {{blank}}",
+              "evidence": {
+                "startSeconds": 154.04,
+                "endSeconds": 159.84,
+                "summary": "The intervention is explicitly framed as changing attitudes about women's roles.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "attitudes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260813-t5-r2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Place where women's additional contribution qualifies the apparent division: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 189.74,
+                "endSeconds": 193.18,
+                "summary": "Women also work in the fields, so their workload is not confined to the household.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "fields"
+              ]
+            },
+            {
+              "id": "bbc-260813-t5-r2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Other national settings in which the imbalance is reported: {{blank}} countries.",
+              "evidence": {
+                "startSeconds": 220.28,
+                "endSeconds": 227.68,
+                "summary": "The comparison shows that substantial unpaid-work differences also occur in wealthy countries.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "wealthy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260813-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260813-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How should the comment about women nagging less be reported?",
+              "evidence": {
+                "startSeconds": 256.2,
+                "endSeconds": 269.48,
+                "summary": "The explicit joking qualification limits how the remark should be interpreted and attributed.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The speaker reports a joke and uses a tendency, not universal proof.",
+                  "B": "No numerical evaluation measure or universal workshop criterion is provided."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t5-r2-q11-a",
+                  "label": "A",
+                  "text": "As proof that every participating family has eliminated disagreements."
+                },
+                {
+                  "id": "bbc-260813-t5-r2-q11-b",
+                  "label": "B",
+                  "text": "As the measured outcome by which all workshops are judged."
+                },
+                {
+                  "id": "bbc-260813-t5-r2-q11-c",
+                  "label": "C",
+                  "text": "As a joking remark in the account, not a quantified result about all women."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260813-t5-r2-q13",
+              "number": 10,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What common conclusion links the two projects despite their different settings?",
+              "evidence": {
+                "startSeconds": 288.28,
+                "endSeconds": 294.36,
+                "summary": "The common conclusion links more domestic help from men with happier households.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The projects aim to change imbalances rather than reproduce a single traditional arrangement.",
+                  "C": "Resource limits feature in one setting, but identical equipment is not their shared conclusion."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260813-t5-r2-q13-a",
+                  "label": "A",
+                  "text": "Greater male participation in domestic tasks is associated with happier homes."
+                },
+                {
+                  "id": "bbc-260813-t5-r2-q13-b",
+                  "label": "B",
+                  "text": "Household happiness depends on reproducing the same traditional roles everywhere."
+                },
+                {
+                  "id": "bbc-260813-t5-r2-q13-c",
+                  "label": "C",
+                  "text": "Equal sharing requires every household to use the same appliances."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260813",
+        "audioSha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500",
+        "durationSeconds": 373.872,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "b78e9db23bdf137dc9913ffc1c8bc56b4ab638be1a1281e8e0cb0e329ea7236f"
+      }
     }
   ]
 }

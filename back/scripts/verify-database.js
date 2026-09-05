@@ -34,13 +34,13 @@ function verifyListeningContent(row) {
       throw new Error(`Expected 4 question groups in ${test.id}, found ${test.groups?.length ?? 0}.`);
     }
     const testQuestions = test.groups.flatMap((group) => Array.isArray(group.questions) ? group.questions : []);
-    if (testQuestions.length !== 13 || Number(test.questionCount) !== 13) {
-      throw new Error(`Expected 13 questions in ${test.id}, found ${testQuestions.length}.`);
+    if (testQuestions.length !== 10 || Number(test.questionCount) !== 10) {
+      throw new Error(`Expected 10 questions in ${test.id}, found ${testQuestions.length}.`);
     }
     questions.push(...testQuestions);
   }
-  if (questions.length !== 39 || Number(row.question_count) !== 39) {
-    throw new Error(`Expected 39 BBC listening questions in total, found ${questions.length}.`);
+  if (questions.length !== 30 || Number(row.question_count) !== 30) {
+    throw new Error(`Expected 30 BBC listening questions in total, found ${questions.length}.`);
   }
   const missingAnswer = questions.find((question) => {
     if (question.responseType === "text") {
@@ -194,7 +194,7 @@ async function verify() {
     }
 
     console.info(
-      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; two BBC lessons contain 6 JSON-backed tests, 78 graded questions, and episode-local assets; migration, alias reconciliation, and active membership invariants are valid.`
+      `Database verification passed: ${sourceItemCount} source IELTS items normalize to ${uniqueVocabularyCount} unique vocabulary entries; two BBC lessons contain 6 JSON-backed tests, 60 graded questions, and episode-local assets; migration, alias reconciliation, and active membership invariants are valid.`
     );
   } finally {
     await pool.end();

@@ -1,4 +1,4 @@
 interface:
   display_name: "Vocora BBC Listening Bundles"
-  short_description: "Prepare verified BBC 6 Minute English episode ZIPs for Vocora."
-  default_prompt: "Use $vocora-bbc-listening-bundles to resolve the requested BBC 6 Minute English episode date or date range, create the exact requested number and difficulty mix of original IELTS-style tests for each episode, fetch verified official assets, prepare episode vocabulary and transcript/reference files, validate every bundle, and return one ZIP per episode."
+  short_description: "Author and validate source-grounded BBC IELTS-style practice."
+  default_prompt: "Use $vocora-bbc-listening-bundles. Read its IELTS question-design rules before authoring. Prepare or revise the requested episode tests with exactly 10 scored questions, all four implemented task types, verified forward-only audio evidence and genuine difficulty distinctions in every test. Preserve existing identities and learner history. Run semantic review and canonical quality validation, then return separate verified bundles or the explicitly requested PR. Disclose reference-only transcripts and do not call these official IELTS papers."

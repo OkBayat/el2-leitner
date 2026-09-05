@@ -3,13 +3,15 @@
   "tests": [
     {
       "id": "test-1",
-      "title": "Test 1",
+      "title": "Screen use: decisions, design and home routines",
       "position": 1,
+      "format": "ielts",
+      "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260618-t1-group-1",
+          "id": "bbc-260618-t1-r2-g1",
           "position": 1,
-          "heading": "Questions 1–4",
+          "heading": "Questions 1–3",
           "taskType": "note_completion",
           "instruction": "Complete the notes below.",
           "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
@@ -17,41 +19,52 @@
           "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260618-t1-question-1",
+              "id": "bbc-260618-t1-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Screen time includes time spent using smartphones, tablets and {{blank}}.",
+              "prompt": "Devices counted as screen use include phones, tablets and {{blank}}.",
+              "evidence": {
+                "startSeconds": 42.12,
+                "endSeconds": 47.88,
+                "summary": "The opening definition includes laptops alongside smartphones and tablets.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "laptops"
               ]
             },
             {
-              "id": "bbc-260618-t1-question-2",
+              "id": "bbc-260618-t1-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "Australia banned access to {{blank}} apps for people under 16.",
+              "prompt": "Australian restriction for younger users: access to {{blank}} apps.",
+              "evidence": {
+                "startSeconds": 53.92,
+                "endSeconds": 64.22,
+                "summary": "The Australian measure concerns access to social media apps rather than every digital device.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "social media"
               ]
             },
             {
-              "id": "bbc-260618-t1-question-3",
+              "id": "bbc-260618-t1-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "Dr Emily Goodacre is a research associate at the University of {{blank}}.",
-              "answers": [
-                "Cambridge"
-              ]
-            },
-            {
-              "id": "bbc-260618-t1-question-4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Goodacre says adults should be more {{blank}} about how technology is used with children.",
+              "prompt": "Goodacre's preferred approach: be more {{blank}} about technology use.",
+              "evidence": {
+                "startSeconds": 126.18,
+                "endSeconds": 139.18,
+                "summary": "Goodacre prioritises intentional use instead of simply separating children from technology.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "intentional"
               ]
@@ -59,9 +72,9 @@
           ]
         },
         {
-          "id": "bbc-260618-t1-group-2",
+          "id": "bbc-260618-t1-r2-g2",
           "position": 2,
-          "heading": "Questions 5–7",
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
           "instruction": "Choose the correct answer, A, B or C.",
           "answerInstruction": "Choose ONE letter for each answer.",
@@ -69,76 +82,109 @@
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260618-t1-question-5",
-              "number": 5,
+              "id": "bbc-260618-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What does Goodacre say needs to be higher?",
-              "options": [
-                {
-                  "id": "bbc-260618-t1-question-5-option-a",
-                  "label": "A",
-                  "text": "The amount of screen time."
-                },
-                {
-                  "id": "bbc-260618-t1-question-5-option-b",
-                  "label": "B",
-                  "text": "The bar for standards and expectations."
-                },
-                {
-                  "id": "bbc-260618-t1-question-5-option-c",
-                  "label": "C",
-                  "text": "The age children first use technology."
+              "prompt": "Why should a designer consider how children learn at different ages?",
+              "evidence": {
+                "startSeconds": 147.64,
+                "endSeconds": 159.5,
+                "summary": "The design proposal starts from development and then considers technology as a possible support.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Considering stages implies attention to differences, not ignoring them.",
+                  "C": "Goodacre speaks about enabling development, not replacing all other learning."
                 }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260618-t1-question-6",
-              "number": 6,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What should product designers think about first?",
+              },
               "options": [
                 {
-                  "id": "bbc-260618-t1-question-6-option-a",
+                  "id": "bbc-260618-t1-r2-q5-a",
                   "label": "A",
-                  "text": "Childhood."
+                  "text": "To explore whether technology can support that development."
                 },
                 {
-                  "id": "bbc-260618-t1-question-6-option-b",
+                  "id": "bbc-260618-t1-r2-q5-b",
                   "label": "B",
-                  "text": "Advertising."
+                  "text": "To make the same product suitable for every age without changes."
                 },
                 {
-                  "id": "bbc-260618-t1-question-6-option-c",
+                  "id": "bbc-260618-t1-r2-q5-c",
                   "label": "C",
-                  "text": "Adult entertainment."
+                  "text": "To remove all non-digital ways of learning."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260618-t1-question-7",
-              "number": 7,
-              "position": 3,
+              "id": "bbc-260618-t1-r2-q6",
+              "number": 5,
+              "position": 2,
               "responseType": "single_choice",
-              "prompt": "According to Goodacre, what can well-designed technology do?",
+              "prompt": "What change in parents' approach is linked to raising the bar?",
+              "evidence": {
+                "startSeconds": 185.02,
+                "endSeconds": 202.4,
+                "summary": "The presenter connects the higher bar with more considered parental expectations.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Raising the bar refers to expectations rather than increasing time.",
+                  "B": "The explanation explicitly gives parents a role in setting expectations."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260618-t1-question-7-option-a",
+                  "id": "bbc-260618-t1-r2-q6-a",
                   "label": "A",
-                  "text": "Replace children's normal development."
+                  "text": "A fixed increase in the time allowed on devices."
                 },
                 {
-                  "id": "bbc-260618-t1-question-7-option-b",
+                  "id": "bbc-260618-t1-r2-q6-b",
                   "label": "B",
-                  "text": "Enable children to learn and develop."
+                  "text": "Allowing children to set every standard without adult input."
                 },
                 {
-                  "id": "bbc-260618-t1-question-7-option-c",
+                  "id": "bbc-260618-t1-r2-q6-c",
                   "label": "C",
-                  "text": "Remove the need for parents."
+                  "text": "More careful consideration and higher expectations."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260618-t1-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What is the intended result of a more intentional approach?",
+              "evidence": {
+                "startSeconds": 202.94,
+                "endSeconds": 214.28,
+                "summary": "The summary presents technology and development as potentially compatible.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The proposal supports learning and development rather than removing the need to learn.",
+                  "C": "Development alongside technology is stated, not conditional on complete removal."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260618-t1-r2-q7-a",
+                  "label": "A",
+                  "text": "Children no longer need to learn how to manage technology."
+                },
+                {
+                  "id": "bbc-260618-t1-r2-q7-b",
+                  "label": "B",
+                  "text": "Children can develop while also using technology."
+                },
+                {
+                  "id": "bbc-260618-t1-r2-q7-c",
+                  "label": "C",
+                  "text": "Children learn only after every device is removed."
                 }
               ],
               "answer": "B"
@@ -146,9 +192,9 @@
           ]
         },
         {
-          "id": "bbc-260618-t1-group-3",
+          "id": "bbc-260618-t1-r2-g3",
           "position": 3,
-          "heading": "Questions 8–10",
+          "heading": "Questions 7–8",
           "taskType": "sentence_completion",
           "instruction": "Complete the sentences below.",
           "answerInstruction": "Write ONE WORD ONLY for each answer.",
@@ -156,41 +202,45 @@
           "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260618-t1-question-8",
-              "number": 8,
+              "id": "bbc-260618-t1-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "Being intentional means acting with a plan or {{blank}} in mind.",
-              "answers": [
-                "reason"
-              ]
-            },
-            {
-              "id": "bbc-260618-t1-question-9",
-              "number": 9,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Setting the bar higher means making your {{blank}} higher.",
-              "answers": [
-                "expectations"
-              ]
-            },
-            {
-              "id": "bbc-260618-t1-question-10",
-              "number": 10,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Dr Becky Kennedy says many parents are very {{blank}} to understand technology use in children.",
+              "prompt": "Kennedy describes parents as {{blank}} to understand the relationship between children and technology.",
+              "evidence": {
+                "startSeconds": 227.36,
+                "endSeconds": 233.64,
+                "summary": "Kennedy says parents strongly want to understand what is happening with technology and children.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "eager"
+              ]
+            },
+            {
+              "id": "bbc-260618-t1-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Parents want realistic actions that they can take in their {{blank}}.",
+              "evidence": {
+                "startSeconds": 234.54,
+                "endSeconds": 246.52,
+                "summary": "Kennedy locates the desired practical actions in the home.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "home"
               ]
             }
           ]
         },
         {
-          "id": "bbc-260618-t1-group-4",
+          "id": "bbc-260618-t1-r2-g4",
           "position": 4,
-          "heading": "Questions 11–13",
+          "heading": "Questions 9–10",
           "taskType": "short_answer",
           "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
@@ -198,363 +248,64 @@
           "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260618-t1-question-11",
-              "number": 11,
+              "id": "bbc-260618-t1-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "What does Kennedy call the small changes parents can make? {{blank}}",
-              "answers": [
-                "little shifts",
-                "shifts"
-              ]
-            },
-            {
-              "id": "bbc-260618-t1-question-12",
-              "number": 12,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "What does Kennedy suggest moving somewhere it cannot be seen? {{blank}}",
+              "prompt": "What object does Kennedy suggest putting somewhere out of sight? {{blank}}",
+              "evidence": {
+                "startSeconds": 265.88,
+                "endSeconds": 271.22,
+                "summary": "The concrete intervention is moving the device to a place where it cannot be seen.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "the device",
                 "device"
               ]
             },
             {
-              "id": "bbc-260618-t1-question-13",
-              "number": 13,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "What proportion of children aged three to four have a smartphone? {{blank}}",
-              "answers": [
-                "one in five"
-              ]
-            }
-          ]
-        }
-      ],
-      "format": "ielts",
-      "difficulty": "medium"
-    },
-    {
-      "id": "test-2",
-      "title": "Test 2",
-      "position": 2,
-      "groups": [
-        {
-          "id": "bbc-260618-t2-group-1",
-          "position": 1,
-          "heading": "Questions 1–4",
-          "taskType": "multiple_choice_single",
-          "instruction": "Choose the correct answer, A, B or C.",
-          "answerInstruction": "Choose ONE letter for each answer.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "id": "bbc-260618-t2-question-1",
-              "number": 1,
-              "position": 1,
-              "responseType": "single_choice",
-              "prompt": "How does Neil describe the amount of time he spends looking at his phone?",
-              "options": [
-                {
-                  "id": "bbc-260618-t2-question-1-option-a",
-                  "label": "A",
-                  "text": "Far too much."
-                },
-                {
-                  "id": "bbc-260618-t2-question-1-option-b",
-                  "label": "B",
-                  "text": "Only at work."
-                },
-                {
-                  "id": "bbc-260618-t2-question-1-option-c",
-                  "label": "C",
-                  "text": "Almost none."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260618-t2-question-2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What is a particular worry for many parents?",
-              "options": [
-                {
-                  "id": "bbc-260618-t2-question-2-option-a",
-                  "label": "A",
-                  "text": "Children do not own enough devices."
-                },
-                {
-                  "id": "bbc-260618-t2-question-2-option-b",
-                  "label": "B",
-                  "text": "Children spend too much time on devices."
-                },
-                {
-                  "id": "bbc-260618-t2-question-2-option-c",
-                  "label": "C",
-                  "text": "Children only use laptops."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260618-t2-question-3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "What restriction did Australia introduce?",
-              "options": [
-                {
-                  "id": "bbc-260618-t2-question-3-option-a",
-                  "label": "A",
-                  "text": "A ban on smartphones for all adults."
-                },
-                {
-                  "id": "bbc-260618-t2-question-3-option-b",
-                  "label": "B",
-                  "text": "A ban on social media access for under-16s."
-                },
-                {
-                  "id": "bbc-260618-t2-question-3-option-c",
-                  "label": "C",
-                  "text": "A ban on laptops in schools."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260618-t2-question-4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What answer does Neil initially guess in the smartphone quiz?",
-              "options": [
-                {
-                  "id": "bbc-260618-t2-question-4-option-a",
-                  "label": "A",
-                  "text": "One in twenty."
-                },
-                {
-                  "id": "bbc-260618-t2-question-4-option-b",
-                  "label": "B",
-                  "text": "One in ten."
-                },
-                {
-                  "id": "bbc-260618-t2-question-4-option-c",
-                  "label": "C",
-                  "text": "One in five."
-                }
-              ],
-              "answer": "A"
-            }
-          ]
-        },
-        {
-          "id": "bbc-260618-t2-group-2",
-          "position": 2,
-          "heading": "Questions 5–8",
-          "taskType": "note_completion",
-          "instruction": "Complete the notes below.",
-          "answerInstruction": "Write ONE WORD ONLY for each answer.",
-          "maxWords": 1,
-          "maxNumbers": 0,
-          "questions": [
-            {
-              "id": "bbc-260618-t2-question-5",
-              "number": 5,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Goodacre says the aim is not to get children away from {{blank}}.",
-              "answers": [
-                "technology"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-6",
-              "number": 6,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Adults should be intentional about how technology is used with {{blank}}.",
-              "answers": [
-                "children"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-7",
-              "number": 7,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Goodacre says the bar needs to be {{blank}}.",
-              "answers": [
-                "higher"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-8",
-              "number": 8,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Product design should think about {{blank}} first.",
-              "answers": [
-                "childhood"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "bbc-260618-t2-group-3",
-          "position": 3,
-          "heading": "Questions 9–11",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the sentences below.",
-          "answerInstruction": "Write ONE WORD ONLY for each answer.",
-          "maxWords": 1,
-          "maxNumbers": 0,
-          "questions": [
-            {
-              "id": "bbc-260618-t2-question-9",
-              "number": 9,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Technology can {{blank}} children to learn and develop.",
-              "answers": [
-                "enable"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-10",
+              "id": "bbc-260618-t1-r2-q12",
               "number": 10,
               "position": 2,
               "responseType": "text",
-              "prompt": "Parents want practical, realistic things they can do in their {{blank}}.",
-              "answers": [
-                "home"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-11",
-              "number": 11,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "A shift is a small {{blank}}.",
-              "answers": [
-                "change"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "bbc-260618-t2-group-4",
-          "position": 4,
-          "heading": "Questions 12–13",
-          "taskType": "short_answer",
-          "instruction": "Answer the questions below.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 0,
-          "questions": [
-            {
-              "id": "bbc-260618-t2-question-12",
-              "number": 12,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "What was Kennedy not setting the child up for when the screen remained visible? {{blank}}",
+              "prompt": "What outcome does Kennedy say the previous arrangement had not prepared the child for? {{blank}}",
+              "evidence": {
+                "startSeconds": 277.14,
+                "endSeconds": 288.36,
+                "summary": "Kennedy acknowledges that leaving the screen visible was not setting the child up for success.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "success"
-              ]
-            },
-            {
-              "id": "bbc-260618-t2-question-13",
-              "number": 13,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "What is the correct answer to the smartphone quiz? {{blank}}",
-              "answers": [
-                "one in five"
               ]
             }
           ]
         }
       ],
-      "format": "ielts",
-      "difficulty": "medium"
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260618",
+        "audioSha256": "d09e1678d1fde6eecae9d7c14bacad4e8ca86fdc5a0b5083b51c21bddeee3e1a",
+        "durationSeconds": 384.744,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "28c760d979e7c9fc8aa40aad279988f3ed28e14dd63ea4c19f03168d5ff8cdcd"
+      }
     },
     {
-      "id": "test-3",
-      "title": "Test 3",
-      "position": 3,
+      "id": "test-2",
+      "title": "Digital childhood: understanding the advice",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260618-t3-group-1",
+          "id": "bbc-260618-t2-r2-g1",
           "position": 1,
-          "heading": "Questions 1–5",
-          "taskType": "note_completion",
-          "instruction": "Complete the notes below.",
-          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 2,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260618-t3-question-1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Neil and Becca both say they spend too much time looking at their {{blank}}.",
-              "answers": [
-                "phone",
-                "phones"
-              ]
-            },
-            {
-              "id": "bbc-260618-t3-question-2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Screen time can involve smartphones, tablets and {{blank}}.",
-              "answers": [
-                "laptops"
-              ]
-            },
-            {
-              "id": "bbc-260618-t3-question-3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Australia banned social media access for people under the age of {{blank}}.",
-              "answers": [
-                "16",
-                "sixteen"
-              ]
-            },
-            {
-              "id": "bbc-260618-t3-question-4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Goodacre is a research {{blank}} at the University of Cambridge.",
-              "answers": [
-                "associate"
-              ]
-            },
-            {
-              "id": "bbc-260618-t3-question-5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "She says technology use with children should be {{blank}}.",
-              "answers": [
-                "intentional"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "bbc-260618-t3-group-2",
-          "position": 2,
-          "heading": "Questions 6–8",
+          "heading": "Questions 1–3",
           "taskType": "multiple_choice_single",
           "instruction": "Choose the correct answer, A, B or C.",
           "answerInstruction": "Choose ONE letter for each answer.",
@@ -562,160 +313,555 @@
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260618-t3-question-6",
-              "number": 6,
+              "id": "bbc-260618-t2-r2-q1",
+              "number": 1,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What does the expression 'the bar needs to be higher' mean here?",
+              "prompt": "How do the presenters describe their own phone use?",
+              "evidence": {
+                "startSeconds": 18.08,
+                "endSeconds": 34.46,
+                "summary": "The opening exchange acknowledges that excessive phone use is not limited to children.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "B": "Both explicitly describe excessive use, rather than successful control.",
+                  "C": "The second presenter agrees with the first about personal overuse."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260618-t3-question-6-option-a",
+                  "id": "bbc-260618-t2-r2-q1-a",
                   "label": "A",
-                  "text": "Parents should make their expectations higher."
+                  "text": "Both feel they spend too much time on their phones."
                 },
                 {
-                  "id": "bbc-260618-t3-question-6-option-b",
+                  "id": "bbc-260618-t2-r2-q1-b",
                   "label": "B",
-                  "text": "Children should use taller desks."
+                  "text": "Both believe their phone use is already well controlled."
                 },
                 {
-                  "id": "bbc-260618-t3-question-6-option-c",
+                  "id": "bbc-260618-t2-r2-q1-c",
                   "label": "C",
-                  "text": "Technology should cost more."
+                  "text": "Only one believes that adults can overuse phones."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260618-t3-question-7",
-              "number": 7,
+              "id": "bbc-260618-t2-r2-q2",
+              "number": 2,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What does 'enable' mean in the discussion?",
+              "prompt": "How is the UK's position distinguished from Australia's?",
+              "evidence": {
+                "startSeconds": 53.92,
+                "endSeconds": 64.22,
+                "summary": "Australia's existing restriction is contrasted with measures under consideration elsewhere.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The UK is described as considering measures, not banning all devices.",
+                  "B": "The difference between an existing restriction and a proposal is explicit."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260618-t3-question-7-option-a",
+                  "id": "bbc-260618-t2-r2-q2-a",
                   "label": "A",
-                  "text": "To prevent an activity completely."
+                  "text": "The UK has banned every digital device, while Australia has not acted."
                 },
                 {
-                  "id": "bbc-260618-t3-question-7-option-b",
+                  "id": "bbc-260618-t2-r2-q2-b",
                   "label": "B",
-                  "text": "To make something possible or encourage someone's ability."
+                  "text": "Both countries have already introduced exactly the same rule."
                 },
                 {
-                  "id": "bbc-260618-t3-question-7-option-c",
+                  "id": "bbc-260618-t2-r2-q2-c",
                   "label": "C",
-                  "text": "To measure how long an activity takes."
+                  "text": "The UK is considering similar measures, while Australia has acted."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260618-t2-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which response best represents Goodacre's position?",
+              "evidence": {
+                "startSeconds": 126.18,
+                "endSeconds": 139.18,
+                "summary": "Goodacre favours deliberate use over a blanket removal approach.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Her call for intentional use and higher standards is a call for change now.",
+                  "C": "She explicitly shifts attention away from simply getting children away from technology."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260618-t2-r2-q3-a",
+                  "label": "A",
+                  "text": "Leave technology use unchanged until children are adults."
+                },
+                {
+                  "id": "bbc-260618-t2-r2-q3-b",
+                  "label": "B",
+                  "text": "Make children's technology use more purposeful."
+                },
+                {
+                  "id": "bbc-260618-t2-r2-q3-c",
+                  "label": "C",
+                  "text": "Treat complete separation from technology as the main goal."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260618-t3-question-8",
-              "number": 8,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "What does Kennedy say parents are eager to do?",
-              "options": [
-                {
-                  "id": "bbc-260618-t3-question-8-option-a",
-                  "label": "A",
-                  "text": "Understand what is happening around technology and find realistic actions."
-                },
-                {
-                  "id": "bbc-260618-t3-question-8-option-b",
-                  "label": "B",
-                  "text": "Remove every piece of technology immediately."
-                },
-                {
-                  "id": "bbc-260618-t3-question-8-option-c",
-                  "label": "C",
-                  "text": "Buy more screens for the home."
-                }
-              ],
-              "answer": "A"
             }
           ]
         },
         {
-          "id": "bbc-260618-t3-group-3",
-          "position": 3,
-          "heading": "Questions 9–11",
+          "id": "bbc-260618-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "sentence_completion",
           "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260618-t2-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "For Goodacre, a product should be designed with {{blank}} as its first concern.",
+              "evidence": {
+                "startSeconds": 139.62,
+                "endSeconds": 147.64,
+                "summary": "The design priority is childhood rather than the appeal of technology itself.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "childhood"
+              ]
+            },
+            {
+              "id": "bbc-260618-t2-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Designers need to consider how children learn at different {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.64,
+                "endSeconds": 153.56,
+                "summary": "Goodacre calls attention to developmental differences between stages of childhood.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stages"
+              ]
+            },
+            {
+              "id": "bbc-260618-t2-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The next question is whether technology can {{blank}} that learning and development.",
+              "evidence": {
+                "startSeconds": 153.56,
+                "endSeconds": 159.5,
+                "summary": "Technology is presented as a possible means of enabling development already identified as important.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "enable"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260618-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
           "maxWords": 2,
           "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260618-t3-question-9",
-              "number": 9,
+              "id": "bbc-260618-t2-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "Parents want practical changes they can make in their {{blank}}.",
+              "prompt": "What subject do parents particularly want to understand in relation to their children? {{blank}}",
+              "evidence": {
+                "startSeconds": 227.36,
+                "endSeconds": 241.3,
+                "summary": "Kennedy reports a strong parental wish to understand technology and children.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "home"
+                "technology"
               ]
             },
             {
-              "id": "bbc-260618-t3-question-10",
-              "number": 10,
+              "id": "bbc-260618-t2-r2-q9",
+              "number": 8,
               "position": 2,
               "responseType": "text",
-              "prompt": "The word 'shift' means a small {{blank}}.",
+              "prompt": "What phrase does Kennedy use for manageable adjustments at home? {{blank}}",
+              "evidence": {
+                "startSeconds": 241.3,
+                "endSeconds": 246.52,
+                "summary": "Kennedy describes the desired home adjustments as little shifts rather than a complete transformation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "change"
-              ]
-            },
-            {
-              "id": "bbc-260618-t3-question-11",
-              "number": 11,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Moving a device where it cannot be seen can help reduce children's {{blank}}.",
-              "answers": [
-                "screen time"
+                "little shifts"
               ]
             }
           ]
         },
         {
-          "id": "bbc-260618-t3-group-4",
+          "id": "bbc-260618-t2-r2-g4",
           "position": 4,
-          "heading": "Questions 12–13",
-          "taskType": "short_answer",
-          "instruction": "Answer the questions below.",
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
           "maxWords": 3,
           "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260618-t3-question-12",
-              "number": 12,
+              "id": "bbc-260618-t2-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "What does 'set someone up for something' mean? {{blank}}",
+              "prompt": "Environmental cue that creates temptation: a visible {{blank}}.",
+              "evidence": {
+                "startSeconds": 277.14,
+                "endSeconds": 282.9,
+                "summary": "Kennedy explains that seeing a screen makes wanting to use it a predictable response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "prepare them",
-                "prepare someone"
+                "screen"
               ]
             },
             {
-              "id": "bbc-260618-t3-question-13",
-              "number": 13,
+              "id": "bbc-260618-t2-r2-q12",
+              "number": 10,
               "position": 2,
               "responseType": "text",
-              "prompt": "What proportion of three- to four-year-olds have a smartphone? {{blank}}",
+              "prompt": "What the earlier arrangement failed to prepare the child for: {{blank}}.",
+              "evidence": {
+                "startSeconds": 282.9,
+                "endSeconds": 288.36,
+                "summary": "The parent acknowledges a failure to create conditions for success.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "one in five"
+                "success"
               ]
             }
           ]
         }
       ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260618",
+        "audioSha256": "d09e1678d1fde6eecae9d7c14bacad4e8ca86fdc5a0b5083b51c21bddeee3e1a",
+        "durationSeconds": 384.744,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "c203cdd97a3efbe6c11ea0e6284b4a5cbd7a1ebf96b1f1b3b8956c608868a7c4"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Standards and small changes: listening for meaning",
+      "position": 3,
       "format": "ielts",
-      "difficulty": "medium"
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260618-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260618-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which portable computers are included in the explanation of screen time? {{blank}}",
+              "evidence": {
+                "startSeconds": 42.12,
+                "endSeconds": 47.88,
+                "summary": "The definition includes laptop use as one form of screen time.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "laptops"
+              ]
+            },
+            {
+              "id": "bbc-260618-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which type of apps is the Australian restriction aimed at? {{blank}}",
+              "evidence": {
+                "startSeconds": 53.92,
+                "endSeconds": 60.26,
+                "summary": "The restriction targets a category of apps, namely social media.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "social media"
+              ]
+            },
+            {
+              "id": "bbc-260618-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Below what age does the Australian restriction apply? {{blank}}",
+              "evidence": {
+                "startSeconds": 60.26,
+                "endSeconds": 64.22,
+                "summary": "The age boundary given for the social media restriction is under sixteen.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "16",
+                "sixteen"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260618-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260618-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Quality needed in decisions about children's technology use: being {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.18,
+                "endSeconds": 139.18,
+                "summary": "Goodacre asks adults to make deliberate decisions about technology use.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "intentional"
+              ]
+            },
+            {
+              "id": "bbc-260618-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Perspective that should come first in a product: {{blank}}.",
+              "evidence": {
+                "startSeconds": 139.62,
+                "endSeconds": 147.64,
+                "summary": "The product should be considered from the standpoint of childhood first.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "childhood"
+              ]
+            },
+            {
+              "id": "bbc-260618-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Developmental issue to allow for: children being at different {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.64,
+                "endSeconds": 153.56,
+                "summary": "Goodacre says the design process must consider different learning and developmental stages.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stages"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260618-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260618-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What makes an action intentional in the explanation given?",
+              "evidence": {
+                "startSeconds": 159.5,
+                "endSeconds": 178.66,
+                "summary": "Intentional behaviour is purposeful and may lead to more careful action.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Intentional use is explicitly distinguished from simply stopping use.",
+                  "C": "The explanation requires a plan or reason, not an automatic habit."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260618-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "It always involves keeping a child away from technology."
+                },
+                {
+                  "id": "bbc-260618-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "It is guided by a purpose that can make the person act more carefully."
+                },
+                {
+                  "id": "bbc-260618-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "It happens regularly without any need for a reason."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260618-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What should listeners understand from the demand for a higher bar?",
+              "evidence": {
+                "startSeconds": 185.02,
+                "endSeconds": 202.4,
+                "summary": "The phrase refers to standards and expectations rather than a physical position or fixed duration.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The bar is used figuratively for standards, not screen height.",
+                  "C": "The speaker calls for careful decisions, not a universal benefit from longer sessions."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260618-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "Adults should examine their expectations and decisions more carefully."
+                },
+                {
+                  "id": "bbc-260618-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "Adults should choose physically higher places for all screens."
+                },
+                {
+                  "id": "bbc-260618-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "Adults should assume that a longer session always means better learning."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260618-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260618-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "One proposed change is to put the device somewhere it cannot be {{blank}}.",
+              "evidence": {
+                "startSeconds": 265.88,
+                "endSeconds": 271.22,
+                "summary": "The suggested change removes the device from the child's view.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "seen"
+              ]
+            },
+            {
+              "id": "bbc-260618-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Kennedy says leaving the screen visible had not set the child up for {{blank}}.",
+              "evidence": {
+                "startSeconds": 277.14,
+                "endSeconds": 288.36,
+                "summary": "The example recognises that the arrangement, not merely willpower, affects success.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "success"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260618",
+        "audioSha256": "d09e1678d1fde6eecae9d7c14bacad4e8ca86fdc5a0b5083b51c21bddeee3e1a",
+        "durationSeconds": 384.744,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "1cdb1f33accda91489425e00fb4cb2d4b1bd0a5630e22fee5ef0c66c720219b9"
+      }
     }
   ]
 }

@@ -2,676 +2,1438 @@
   "schemaVersion": 2,
   "tests": [
     {
-      "title": "Elementary - Follow the main ideas",
+      "id": "bbc-260806-t1",
+      "title": "Climate models: measurements and possible futures",
+      "position": 1,
+      "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "taskType": "multiple_choice_single",
-          "heading": "Questions 1-6: Key information",
-          "instruction": "Choose the correct answer for each question as you listen to the recording.",
-          "answerInstruction": "Choose ONE letter, A, B or C, for each answer.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "responseType": "single_choice",
-              "prompt": "Which region does Phil mention when describing this summer's heatwaves?",
-              "answer": "B",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "South America",
-                  "id": "bbc-260806-t1-q1-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Europe",
-                  "id": "bbc-260806-t1-q1-b"
-                },
-                {
-                  "label": "C",
-                  "text": "East Asia",
-                  "id": "bbc-260806-t1-q1-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q1",
-              "number": 1,
-              "position": 1
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "What warming limit was agreed at the summit mentioned near the beginning?",
-              "answer": "A",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "1.5 degrees Celsius",
-                  "id": "bbc-260806-t1-q2-a"
-                },
-                {
-                  "label": "B",
-                  "text": "2.5 degrees Celsius",
-                  "id": "bbc-260806-t1-q2-b"
-                },
-                {
-                  "label": "C",
-                  "text": "3.5 degrees Celsius",
-                  "id": "bbc-260806-t1-q2-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q2",
-              "number": 2,
-              "position": 2
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "What processes the large amounts of data used in climate models?",
-              "answer": "C",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Weather balloons",
-                  "id": "bbc-260806-t1-q3-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Laboratory microscopes",
-                  "id": "bbc-260806-t1-q3-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Supercomputers",
-                  "id": "bbc-260806-t1-q3-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q3",
-              "number": 3,
-              "position": 3
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "Which human contribution to climate change does Phil particularly mention?",
-              "answer": "B",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Building more roads",
-                  "id": "bbc-260806-t1-q4-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Releasing greenhouse gases",
-                  "id": "bbc-260806-t1-q4-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Changing farming seasons",
-                  "id": "bbc-260806-t1-q4-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q4",
-              "number": 4,
-              "position": 4
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "According to Kate, clouds can cool the planet by blocking what?",
-              "answer": "A",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Sunlight",
-                  "id": "bbc-260806-t1-q5-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Ocean currents",
-                  "id": "bbc-260806-t1-q5-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Strong winds",
-                  "id": "bbc-260806-t1-q5-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q5",
-              "number": 5,
-              "position": 5
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "What does Kate say she strongly supports?",
-              "answer": "C",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Ending climate measurements",
-                  "id": "bbc-260806-t1-q6-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Avoiding further discussion",
-                  "id": "bbc-260806-t1-q6-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Doing scientific research",
-                  "id": "bbc-260806-t1-q6-c"
-                }
-              ],
-              "id": "bbc-260806-t1-q6",
-              "number": 6,
-              "position": 6
-            }
-          ],
-          "id": "bbc-260806-t1-g1",
-          "position": 1
-        }
-      ],
-      "id": "bbc-260806-t1",
-      "position": 1,
-      "format": "ielts"
-    },
-    {
-      "title": "Intermediate 1 - Inside the climate models",
-      "difficulty": "medium",
-      "groups": [
-        {
+          "id": "bbc-260806-t1-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
           "taskType": "note_completion",
-          "heading": "Questions 1-6: Model inputs and changing conditions",
-          "instruction": "Complete the notes about the modelling process and the role of clouds. Use words from the recording.",
-          "answerInstruction": "Write ONE WORD for each answer.",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
           "maxWords": 1,
-          "maxNumbers": 0,
-          "questions": [
-            {
-              "responseType": "text",
-              "prompt": "Information fed into the computers: physical data and {{blank}} data.",
-              "answers": [
-                "chemical"
-              ],
-              "id": "bbc-260806-t2-q1",
-              "number": 1,
-              "position": 1
-            },
-            {
-              "responseType": "text",
-              "prompt": "Organisation where the featured climate scientist Kate Marvel works: {{blank}}.",
-              "answers": [
-                "NASA"
-              ],
-              "id": "bbc-260806-t2-q2",
-              "number": 2,
-              "position": 2
-            },
-            {
-              "responseType": "text",
-              "prompt": "The term Kate uses for the possible futures produced by climate models: {{blank}}.",
-              "answers": [
-                "projections"
-              ],
-              "id": "bbc-260806-t2-q3",
-              "number": 3,
-              "position": 3
-            },
-            {
-              "responseType": "text",
-              "prompt": "The adjective used for outcomes that depend on other factors: {{blank}}.",
-              "answers": [
-                "conditional"
-              ],
-              "id": "bbc-260806-t2-q4",
-              "number": 4,
-              "position": 4
-            },
-            {
-              "responseType": "text",
-              "prompt": "Besides blocking incoming sunlight, clouds retain {{blank}}.",
-              "answers": [
-                "heat"
-              ],
-              "id": "bbc-260806-t2-q5",
-              "number": 5,
-              "position": 5
-            },
-            {
-              "responseType": "text",
-              "prompt": "Phil's monitoring concern: clouds keep moving and {{blank}}.",
-              "answers": [
-                "changing"
-              ],
-              "id": "bbc-260806-t2-q6",
-              "number": 6,
-              "position": 6
-            }
-          ],
-          "id": "bbc-260806-t2-g1",
-          "position": 1
-        }
-      ],
-      "id": "bbc-260806-t2",
-      "position": 2,
-      "format": "ielts"
-    },
-    {
-      "title": "Intermediate 2 - Energy, expressions and adaptation",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "taskType": "short_answer",
-          "heading": "Questions 1-3: The opening explanation",
-          "instruction": "Answer the questions using words and numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
           "maxNumbers": 1,
           "questions": [
             {
-              "responseType": "text",
-              "prompt": "Which summit is named as the meeting that agreed a warming limit? {{blank}}",
-              "answers": [
-                "COP21",
-                "COP 21"
-              ],
-              "id": "bbc-260806-t3-q1",
+              "id": "bbc-260806-t1-r2-q1",
               "number": 1,
-              "position": 1
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Month for which the UK record is reported: {{blank}}.",
+              "evidence": {
+                "startSeconds": 19.9,
+                "endSeconds": 28.88,
+                "summary": "The introduction specifically describes a record for the highest June temperature in the UK.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "June"
+              ]
             },
             {
-              "responseType": "text",
-              "prompt": "What kind of energy enters the atmosphere in the explanation of Earth's energy balance? {{blank}}",
-              "answers": [
-                "solar energy"
-              ],
-              "id": "bbc-260806-t3-q2",
+              "id": "bbc-260806-t1-r2-q2",
               "number": 2,
-              "position": 2
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Reported record temperature: {{blank}} degrees Celsius.",
+              "evidence": {
+                "startSeconds": 19.9,
+                "endSeconds": 28.88,
+                "summary": "The stated temperature is thirty-seven point seven degrees Celsius.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "37.7"
+              ]
             },
             {
-              "responseType": "text",
-              "prompt": "What is described as going back out into space? {{blank}}",
-              "answers": [
-                "radiation"
-              ],
-              "id": "bbc-260806-t3-q3",
+              "id": "bbc-260806-t1-r2-q3",
               "number": 3,
-              "position": 3
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Year of the COP21 agreement: {{blank}}.",
+              "evidence": {
+                "startSeconds": 34.3,
+                "endSeconds": 40.88,
+                "summary": "The programme dates the COP21 agreement to twenty fifteen.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "2015"
+              ]
             }
-          ],
-          "id": "bbc-260806-t3-g1",
-          "position": 1
+          ]
         },
         {
+          "id": "bbc-260806-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "heading": "Questions 4-5: Understanding the explanation",
-          "instruction": "Choose the correct answer for each question as you listen to the recording.",
-          "answerInstruction": "Choose ONE letter, A, B or C, for each answer.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
+              "id": "bbc-260806-t1-r2-q5",
+              "number": 4,
+              "position": 1,
               "responseType": "single_choice",
-              "prompt": "What does Kate do with the expression \"the thing about clouds\"?",
-              "answer": "A",
+              "prompt": "What is fed into the supercomputers?",
+              "evidence": {
+                "startSeconds": 109.64,
+                "endSeconds": 117.34,
+                "summary": "Supercomputers use large amounts of physical and chemical data to represent possible futures.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The description refers to huge amounts of two kinds of data, not just summer temperatures.",
+                  "C": "The input is described as physical and chemical data, not personal forecasts alone."
+                }
+              },
               "options": [
                 {
+                  "id": "bbc-260806-t1-r2-q5-a",
                   "label": "A",
-                  "text": "Introduce a feature that matters to her explanation",
-                  "id": "bbc-260806-t3-q4-a"
+                  "text": "Physical and chemical data."
                 },
                 {
+                  "id": "bbc-260806-t1-r2-q5-b",
                   "label": "B",
-                  "text": "Reject all earlier measurements of clouds",
-                  "id": "bbc-260806-t3-q4-b"
+                  "text": "Only records of summer temperatures."
                 },
                 {
+                  "id": "bbc-260806-t1-r2-q5-c",
                   "label": "C",
-                  "text": "Replace scientific evidence with a personal preference",
-                  "id": "bbc-260806-t3-q4-c"
+                  "text": "Only forecasts made by individual scientists."
                 }
               ],
-              "id": "bbc-260806-t3-q4",
-              "number": 4,
-              "position": 1
+              "answer": "A"
             },
             {
+              "id": "bbc-260806-t1-r2-q6",
+              "number": 5,
+              "position": 2,
               "responseType": "single_choice",
-              "prompt": "What does \"out of whack\" refer to in Kate's discussion?",
-              "answer": "B",
+              "prompt": "What does Marvel say a projection depends on?",
+              "evidence": {
+                "startSeconds": 125.68,
+                "endSeconds": 138.34,
+                "summary": "Marvel explains projections through an if-this-then-that relationship.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Her example is about future consequences rather than an event already completed.",
+                  "B": "She distinguishes a conditional projection from an unconditional statement of what will happen."
+                }
+              },
               "options": [
                 {
+                  "id": "bbc-260806-t1-r2-q6-a",
                   "label": "A",
-                  "text": "A computer that can no longer run a model",
-                  "id": "bbc-260806-t3-q5-a"
+                  "text": "Whether the future has already happened."
                 },
                 {
+                  "id": "bbc-260806-t1-r2-q6-b",
                   "label": "B",
-                  "text": "An imbalance in the planet's energy",
-                  "id": "bbc-260806-t3-q5-b"
+                  "text": "Whether a prediction sounds likely."
                 },
                 {
+                  "id": "bbc-260806-t1-r2-q6-c",
                   "label": "C",
-                  "text": "The direction in which one cloud is moving",
-                  "id": "bbc-260806-t3-q5-c"
+                  "text": "What action is taken."
                 }
               ],
-              "id": "bbc-260806-t3-q5",
-              "number": 5,
-              "position": 2
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260806-t1-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What is identified as the main factor in climate change?",
+              "evidence": {
+                "startSeconds": 157.46,
+                "endSeconds": 162.94,
+                "summary": "Human activity and its greenhouse gas emissions are identified as the main factor.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Supercomputers are tools for modelling, not the main driver named.",
+                  "C": "The naming of models is not identified as a driver of climate change."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t1-r2-q7-a",
+                  "label": "A",
+                  "text": "The number of available supercomputers."
+                },
+                {
+                  "id": "bbc-260806-t1-r2-q7-b",
+                  "label": "B",
+                  "text": "Human activity, especially greenhouse gas emissions."
+                },
+                {
+                  "id": "bbc-260806-t1-r2-q7-c",
+                  "label": "C",
+                  "text": "The names scientists give their models."
+                }
+              ],
+              "answer": "B"
             }
-          ],
-          "id": "bbc-260806-t3-g2",
-          "position": 2
+          ]
         },
         {
+          "id": "bbc-260806-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t1-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Clouds can cool the planet by blocking {{blank}}.",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 186.62,
+                "summary": "Marvel explains the cooling effect through clouds blocking sunlight.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "sunlight"
+              ]
+            },
+            {
+              "id": "bbc-260806-t1-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Clouds can also warm the planet through their own {{blank}}.",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 188.3,
+                "summary": "The warming effect is explained as a greenhouse effect of the clouds themselves.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "greenhouse effect"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
           "taskType": "short_answer",
-          "heading": "Question 6: Looking ahead",
-          "instruction": "Answer the question using a word from the recording.",
-          "answerInstruction": "Write ONE WORD for your answer.",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Phil say is constantly moving and changing? {{blank}}",
+              "evidence": {
+                "startSeconds": 233.92,
+                "endSeconds": 239.56,
+                "summary": "Phil identifies the movement and change of clouds as a monitoring difficulty.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "clouds"
+              ]
+            },
+            {
+              "id": "bbc-260806-t1-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Why does Jackson say we need to know the direction we are heading in? {{blank}}",
+              "evidence": {
+                "startSeconds": 254.34,
+                "endSeconds": 259.7,
+                "summary": "Jackson links knowing the trajectory with the ability to adapt.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "to adapt",
+                "adapt"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806",
+        "audioSha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e",
+        "durationSeconds": 375.408,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "b34378168e17cd762386724886fa96ca55a6be60438467a3e13184e629f5f84b"
+      }
+    },
+    {
+      "id": "bbc-260806-t2",
+      "title": "From energy imbalance to adaptation",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260806-t2-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t2-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What kind of energy enters the atmosphere in the explanation of the imbalance? {{blank}}",
+              "evidence": {
+                "startSeconds": 71.3,
+                "endSeconds": 77.28,
+                "summary": "The incoming side of the comparison is energy from the Sun.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "solar energy"
+              ]
+            },
+            {
+              "id": "bbc-260806-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Where does outgoing radiation go? {{blank}}",
+              "evidence": {
+                "startSeconds": 71.3,
+                "endSeconds": 77.28,
+                "summary": "The other side of the comparison is radiation leaving for space.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "space",
+                "into space"
+              ]
+            },
+            {
+              "id": "bbc-260806-t2-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What do scientists use to calculate possible effects of climate change? {{blank}}",
+              "evidence": {
+                "startSeconds": 107.38,
+                "endSeconds": 108.9,
+                "summary": "The programme identifies models as the means of calculating climate-change effects.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "models"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260806-t2-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which example follows Marvel's distinction between projection and prediction?",
+              "evidence": {
+                "startSeconds": 125.68,
+                "endSeconds": 138.34,
+                "summary": "A projection describes a conditional outcome rather than one inevitable future.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The condition is essential in Marvel's explanation of a projection.",
+                  "B": "She explicitly warns against treating model output as certainty."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t2-r2-q5-a",
+                  "label": "A",
+                  "text": "One outcome will happen regardless of the choices made."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q5-b",
+                  "label": "B",
+                  "text": "A possible outcome becomes certain because a computer produces it."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q5-c",
+                  "label": "C",
+                  "text": "If a particular action is taken, a particular outcome follows."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260806-t2-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which influence is singled out as especially important?",
+              "evidence": {
+                "startSeconds": 157.46,
+                "endSeconds": 162.94,
+                "summary": "The discussion singles out human activity, especially greenhouse gas emissions.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The number of named scenarios is not the causal factor given.",
+                  "C": "Reading speed is not identified as the main climate influence."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t2-r2-q6-a",
+                  "label": "A",
+                  "text": "The number of modelled futures given a name."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q6-b",
+                  "label": "B",
+                  "text": "Emissions caused by human activity."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q6-c",
+                  "label": "C",
+                  "text": "The speed at which researchers read their results."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260806-t2-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why is it inaccurate to describe clouds as having only a cooling effect?",
+              "evidence": {
+                "startSeconds": 177.26,
+                "endSeconds": 188.3,
+                "summary": "Clouds both block incoming sunlight and contribute a greenhouse warming effect.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The explanation does not restrict the cooling effect to summer.",
+                  "C": "Cloud effects are an additional modelling influence, not a replacement for greenhouse-gas modelling."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t2-r2-q7-a",
+                  "label": "A",
+                  "text": "They also have a warming greenhouse effect."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q7-b",
+                  "label": "B",
+                  "text": "They stop sunlight only in summer."
+                },
+                {
+                  "id": "bbc-260806-t2-r2-q7-c",
+                  "label": "C",
+                  "text": "They remove the need to model greenhouse gases."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Area used in the energy-imbalance unit: one {{blank}}.",
+              "evidence": {
+                "startSeconds": 194.3,
+                "endSeconds": 199.06,
+                "summary": "The unit combines watts with a square metre of area.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "square metre",
+                "square meter"
+              ]
+            },
+            {
+              "id": "bbc-260806-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How the warming effect is restated: clouds trap {{blank}}.",
+              "evidence": {
+                "startSeconds": 211.16,
+                "endSeconds": 218.68,
+                "summary": "The presenter restates the warming side as trapping heat.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "heat"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
           "maxWords": 1,
           "maxNumbers": 0,
           "questions": [
             {
+              "id": "bbc-260806-t2-r2-q11",
+              "number": 9,
+              "position": 1,
               "responseType": "text",
-              "prompt": "What does Graihagh say knowing the direction of future change will help people do? {{blank}}",
+              "prompt": "Understanding the direction of change is needed in order to {{blank}}.",
+              "evidence": {
+                "startSeconds": 254.34,
+                "endSeconds": 259.7,
+                "summary": "Jackson gives adaptation as the purpose of understanding the future trajectory.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "adapt"
-              ],
-              "id": "bbc-260806-t3-q6",
-              "number": 6,
-              "position": 1
+              ]
+            },
+            {
+              "id": "bbc-260806-t2-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The programme says that avoiding climate change altogether is not an {{blank}}.",
+              "evidence": {
+                "startSeconds": 277.2,
+                "endSeconds": 288.52,
+                "summary": "The presenter explains that no climate change at all is not an available option.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "option"
+              ]
             }
-          ],
-          "id": "bbc-260806-t3-g3",
-          "position": 3
+          ]
         }
       ],
-      "id": "bbc-260806-t3",
-      "position": 3,
-      "format": "ielts"
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806",
+        "audioSha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e",
+        "durationSeconds": 375.408,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "0a0d7b8675e28907dd6b412f766498a2d155208ea9adaed34260671c6d85930d"
+      }
     },
     {
-      "title": "Advanced 1 - Interpret the scientific argument",
-      "difficulty": "hard",
+      "id": "bbc-260806-t3",
+      "title": "Climate information: causes, uncertainty and choices",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
       "groups": [
         {
-          "taskType": "multiple_choice_single",
-          "heading": "Questions 1-6: Contrasts, implications and purpose",
-          "instruction": "Choose the correct answer for each question as you listen to the recording.",
-          "answerInstruction": "Choose ONE letter, A, B, C or D, for each answer.",
-          "maxWords": null,
-          "maxNumbers": null,
+          "id": "bbc-260806-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
           "questions": [
             {
-              "responseType": "single_choice",
-              "prompt": "What contrast does Phil establish between the summit agreement and subsequent research?",
-              "answer": "C",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "The summit predicted when all warming would end, but researchers changed that date.",
-                  "id": "bbc-260806-t4-q1-a"
-                },
-                {
-                  "label": "B",
-                  "text": "The summit set a target for June weather, while researchers considered only winter.",
-                  "id": "bbc-260806-t4-q1-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Later findings indicate warming beyond the limit the summit had agreed to pursue.",
-                  "id": "bbc-260806-t4-q1-c"
-                },
-                {
-                  "label": "D",
-                  "text": "Researchers found that the summit's warming limit had never been reached.",
-                  "id": "bbc-260806-t4-q1-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q1",
+              "id": "bbc-260806-t3-r2-q1",
               "number": 1,
-              "position": 1
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The temperature figure used to illustrate the UK record is {{blank}} degrees Celsius.",
+              "evidence": {
+                "startSeconds": 19.9,
+                "endSeconds": 28.88,
+                "summary": "The opening illustration uses a June record of thirty-seven point seven degrees Celsius.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "37.7"
+              ]
             },
             {
-              "responseType": "single_choice",
-              "prompt": "Which interpretation best reflects Kate's distinction between predictions and projections?",
-              "answer": "A",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "A projection describes an outcome that depends on specified conditions or actions.",
-                  "id": "bbc-260806-t4-q2-a"
-                },
-                {
-                  "label": "B",
-                  "text": "A projection establishes in advance which decisions people will make.",
-                  "id": "bbc-260806-t4-q2-b"
-                },
-                {
-                  "label": "C",
-                  "text": "A prediction is necessarily more reliable than any computer-based projection.",
-                  "id": "bbc-260806-t4-q2-c"
-                },
-                {
-                  "label": "D",
-                  "text": "A projection is restricted to explaining changes that have already happened.",
-                  "id": "bbc-260806-t4-q2-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q2",
+              "id": "bbc-260806-t3-r2-q2",
               "number": 2,
-              "position": 2
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Research is said to show temperatures exceeding the agreed limit of {{blank}} degrees Celsius.",
+              "evidence": {
+                "startSeconds": 34.3,
+                "endSeconds": 50.4,
+                "summary": "The introduction compares subsequent research with the one-point-five-degree target.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "1.5"
+              ]
             },
             {
-              "responseType": "single_choice",
-              "prompt": "Why would it be misleading to summarise Kate's explanation as \"clouds only cool the Earth\"?",
-              "answer": "D",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "She argues that clouds cannot prevent any solar energy from reaching the planet.",
-                  "id": "bbc-260806-t4-q3-a"
-                },
-                {
-                  "label": "B",
-                  "text": "She says clouds influence computer speed rather than the planet's temperature.",
-                  "id": "bbc-260806-t4-q3-b"
-                },
-                {
-                  "label": "C",
-                  "text": "She describes cooling as an effect of clouds, but says warming comes only from clear skies.",
-                  "id": "bbc-260806-t4-q3-c"
-                },
-                {
-                  "label": "D",
-                  "text": "She describes both reduced incoming sunlight and an additional heat-retaining effect.",
-                  "id": "bbc-260806-t4-q3-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q3",
+              "id": "bbc-260806-t3-r2-q3",
               "number": 3,
-              "position": 3
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "What shared difficulty is raised by Phil's question about clouds and Pippa's question about worldwide information?",
-              "answer": "B",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Climate models use data from only one location by design.",
-                  "id": "bbc-260806-t4-q4-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Modelling requires extensive information about a changing physical system.",
-                  "id": "bbc-260806-t4-q4-b"
-                },
-                {
-                  "label": "C",
-                  "text": "No method exists for measuring anything that moves.",
-                  "id": "bbc-260806-t4-q4-c"
-                },
-                {
-                  "label": "D",
-                  "text": "The presenters believe computer models should replace observations entirely.",
-                  "id": "bbc-260806-t4-q4-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q4",
-              "number": 4,
-              "position": 4
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "Why does Kate connect support for science with saying that no climate change is \"not on the table\"?",
-              "answer": "C",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "She believes every possible future is already identical, so further evidence is unnecessary.",
-                  "id": "bbc-260806-t4-q5-a"
-                },
-                {
-                  "label": "B",
-                  "text": "She is arguing that scientists should stop discussing the possibility of adaptation.",
-                  "id": "bbc-260806-t4-q5-b"
-                },
-                {
-                  "label": "C",
-                  "text": "She considers scientific work necessary because a future with no climate change is not available.",
-                  "id": "bbc-260806-t4-q5-c"
-                },
-                {
-                  "label": "D",
-                  "text": "She expects research to prove that humans have never affected the climate.",
-                  "id": "bbc-260806-t4-q5-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q5",
-              "number": 5,
-              "position": 5
-            },
-            {
-              "responseType": "single_choice",
-              "prompt": "What is the basis of the hopeful conclusion attributed to Kate?",
-              "answer": "A",
-              "options": [
-                {
-                  "label": "A",
-                  "text": "Human responsibility for the problem also points to a role for human solutions.",
-                  "id": "bbc-260806-t4-q6-a"
-                },
-                {
-                  "label": "B",
-                  "text": "Clouds will automatically cancel every effect of greenhouse gases.",
-                  "id": "bbc-260806-t4-q6-b"
-                },
-                {
-                  "label": "C",
-                  "text": "Supercomputers can now identify one unavoidable future with complete certainty.",
-                  "id": "bbc-260806-t4-q6-c"
-                },
-                {
-                  "label": "D",
-                  "text": "The warming limit has already been permanently restored.",
-                  "id": "bbc-260806-t4-q6-d"
-                }
-              ],
-              "id": "bbc-260806-t4-q6",
-              "number": 6,
-              "position": 6
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The imbalance compares incoming solar energy with outgoing {{blank}}.",
+              "evidence": {
+                "startSeconds": 71.3,
+                "endSeconds": 77.28,
+                "summary": "Outgoing radiation is the other quantity in the definition of the Earth's energy imbalance.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "radiation"
+              ]
             }
-          ],
-          "id": "bbc-260806-t4-g1",
-          "position": 1
-        }
-      ],
-      "id": "bbc-260806-t4",
-      "position": 4,
-      "format": "ielts"
-    },
-    {
-      "title": "Advanced 2 - Reconstruct the key details",
-      "difficulty": "hard",
-      "groups": [
+          ]
+        },
         {
-          "taskType": "sentence_completion",
-          "heading": "Questions 1-6: Precise details across the discussion",
-          "instruction": "Complete the paraphrased sentences. Select the precise words used in the recording, not words from outside the discussion.",
+          "id": "bbc-260806-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Two categories of input: physical and {{blank}} data.",
+              "evidence": {
+                "startSeconds": 109.64,
+                "endSeconds": 115.16,
+                "summary": "Chemical data are named alongside physical data as inputs to the models.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "chemical"
+              ]
+            },
+            {
+              "id": "bbc-260806-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Marvel's preferred term for model outputs: {{blank}}.",
+              "evidence": {
+                "startSeconds": 125.68,
+                "endSeconds": 128.38,
+                "summary": "Marvel distinguishes model projections from predictions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "projections"
+              ]
+            },
+            {
+              "id": "bbc-260806-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Key feature of such outputs: they are {{blank}}.",
+              "evidence": {
+                "startSeconds": 132.88,
+                "endSeconds": 138.34,
+                "summary": "Marvel makes dependence on specified conditions central to a projection.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conditional"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
           "maxWords": 3,
           "maxNumbers": 0,
           "questions": [
             {
+              "id": "bbc-260806-t3-r2-q8",
+              "number": 7,
+              "position": 1,
               "responseType": "text",
-              "prompt": "The opening warning concerns catastrophic damage to Earth's {{blank}}.",
+              "prompt": "What do clouds block to produce cooling? {{blank}}",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 186.62,
+                "summary": "The cooling mechanism involves intercepting sunlight.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "life support systems",
-                "life-support systems"
-              ],
-              "id": "bbc-260806-t5-q1",
-              "number": 1,
-              "position": 1
+                "sunlight"
+              ]
             },
             {
+              "id": "bbc-260806-t3-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "The discussion contrasts conditional projections with {{blank}}, which state what will happen.",
+              "prompt": "What effect accounts for clouds also producing warming? {{blank}}",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 188.3,
+                "summary": "Marvel attributes the warming side to the clouds' own greenhouse effect.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "predictions"
-              ],
-              "id": "bbc-260806-t5-q2",
-              "number": 2,
-              "position": 2
-            },
-            {
-              "responseType": "text",
-              "prompt": "Human activity affects modelled outcomes, with {{blank}} singled out as especially significant.",
-              "answers": [
-                "greenhouse gas emissions"
-              ],
-              "id": "bbc-260806-t5-q3",
-              "number": 3,
-              "position": 3
-            },
-            {
-              "responseType": "text",
-              "prompt": "Kate makes the unit of power familiar by linking it to a {{blank}}.",
-              "answers": [
-                "light bulb",
-                "lightbulb"
-              ],
-              "id": "bbc-260806-t5-q4",
-              "number": 4,
-              "position": 4
-            },
-            {
-              "responseType": "text",
-              "prompt": "Pippa questions how much {{blank}} the computers would need from the whole world.",
-              "answers": [
-                "information"
-              ],
-              "id": "bbc-260806-t5-q5",
-              "number": 5,
-              "position": 5
-            },
-            {
-              "responseType": "text",
-              "prompt": "The closing argument identifies {{blank}} as responsible for warming and therefore capable of addressing it.",
-              "answers": [
-                "humans"
-              ],
-              "id": "bbc-260806-t5-q6",
-              "number": 6,
-              "position": 6
+                "greenhouse effect",
+                "their greenhouse effect"
+              ]
             }
-          ],
-          "id": "bbc-260806-t5-g1",
-          "position": 1
+          ]
+        },
+        {
+          "id": "bbc-260806-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260806-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What do the presenters' questions emphasise about accurate modelling?",
+              "evidence": {
+                "startSeconds": 233.92,
+                "endSeconds": 246.06,
+                "summary": "The two questions focus on tracking changing clouds and obtaining sufficient worldwide information.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Pippa explicitly asks about information from around the world.",
+                  "C": "Movement is presented as a complication, not a way of reducing data needs."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t3-r2-q11-a",
+                  "label": "A",
+                  "text": "Global information is irrelevant when a model uses a supercomputer."
+                },
+                {
+                  "id": "bbc-260806-t3-r2-q11-b",
+                  "label": "B",
+                  "text": "Both a changing subject and a large information requirement make it demanding."
+                },
+                {
+                  "id": "bbc-260806-t3-r2-q11-c",
+                  "label": "C",
+                  "text": "The models need fewer data once clouds start moving."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260806-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why does Marvel still support scientific modelling despite the difficulty?",
+              "evidence": {
+                "startSeconds": 254.34,
+                "endSeconds": 288.52,
+                "summary": "Modelling is defended as necessary to understand and adapt to a changing climate.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The discussion explicitly excludes no climate change as an option.",
+                  "C": "Conditional projections preserve the importance of human choices."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t3-r2-q12-a",
+                  "label": "A",
+                  "text": "Understanding the direction of unavoidable change is needed for adaptation."
+                },
+                {
+                  "id": "bbc-260806-t3-r2-q12-b",
+                  "label": "B",
+                  "text": "A model can promise that no climate change will occur."
+                },
+                {
+                  "id": "bbc-260806-t3-r2-q12-c",
+                  "label": "C",
+                  "text": "A model removes the need to make choices about emissions."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
         }
       ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806",
+        "audioSha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e",
+        "durationSeconds": 375.408,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "1ae4ba7c582151e69c8b0617adf8016638532a9ec02fadadc691008be0dcbec2"
+      }
+    },
+    {
+      "id": "bbc-260806-t4",
+      "title": "Projections and decisions: interpreting conditional evidence",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260806-t4-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260806-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Reported UK June record used in the introduction: {{blank}} degrees Celsius.",
+              "evidence": {
+                "startSeconds": 19.9,
+                "endSeconds": 28.88,
+                "summary": "The temperature figure is a June record, not the global warming limit discussed next.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "37.7"
+              ]
+            },
+            {
+              "id": "bbc-260806-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Year in which the warming-limit agreement was reached: {{blank}}.",
+              "evidence": {
+                "startSeconds": 34.3,
+                "endSeconds": 40.88,
+                "summary": "The introduction dates the target-setting COP21 agreement to twenty fifteen.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "2015"
+              ]
+            },
+            {
+              "id": "bbc-260806-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Incoming component of the energy comparison: {{blank}}.",
+              "evidence": {
+                "startSeconds": 71.3,
+                "endSeconds": 77.28,
+                "summary": "The imbalance compares incoming solar energy with outgoing radiation, rather than comparing two surface temperatures.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "solar energy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260806-t4-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which conclusion mistakes a model's projection for an unconditional prediction?",
+              "evidence": {
+                "startSeconds": 109.64,
+                "endSeconds": 138.34,
+                "summary": "The warning is against treating a conditional projection as an inevitable outcome independent of action.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The data-based representation of possible futures is stated in the introduction to models.",
+                  "C": "Conditional outcomes are exactly the distinction Marvel makes."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t4-r2-q4-a",
+                  "label": "A",
+                  "text": "The output can represent several possible futures informed by data."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q4-b",
+                  "label": "B",
+                  "text": "The computer output identifies one future that must occur whatever people do."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q4-c",
+                  "label": "C",
+                  "text": "The output can describe an outcome under specified actions."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260806-t4-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why is human activity relevant to the conditional nature of the models?",
+              "evidence": {
+                "startSeconds": 144.02,
+                "endSeconds": 162.94,
+                "summary": "The models' dependence on other factors includes the human activities that drive emissions.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Human activity is explicitly included as a main influence, not omitted to create conditionality.",
+                  "C": "The measurement unit is explained separately from the causal influences."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t4-r2-q5-a",
+                  "label": "A",
+                  "text": "Different actions and emissions are among the factors on which the projected future depends."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q5-b",
+                  "label": "B",
+                  "text": "A projection becomes conditional only when human emissions are left out."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q5-c",
+                  "label": "C",
+                  "text": "Human activity determines the unit in which energy imbalance is expressed."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260806-t4-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which assumption is challenged by the explanation of clouds?",
+              "evidence": {
+                "startSeconds": 163.58,
+                "endSeconds": 188.3,
+                "summary": "The dual effect means blocking incoming sunlight and contributing warming can coexist.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Multiple effects are the explanation, not the assumption being challenged.",
+                  "B": "The cloud greenhouse effect supports, rather than challenges, considering greenhouse mechanisms."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t4-r2-q6-a",
+                  "label": "A",
+                  "text": "That clouds can influence the climate in more than one way."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q6-b",
+                  "label": "B",
+                  "text": "That greenhouse effects need to be considered in climate models."
+                },
+                {
+                  "id": "bbc-260806-t4-r2-q6-c",
+                  "label": "C",
+                  "text": "That a feature which blocks sunlight cannot also contribute to warming."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The presenter explains the warming side of cloud behaviour as trapping {{blank}}.",
+              "evidence": {
+                "startSeconds": 211.16,
+                "endSeconds": 218.68,
+                "summary": "Trapping heat is the presenter’s restatement of the warming mechanism.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "heat"
+              ]
+            },
+            {
+              "id": "bbc-260806-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "In the imbalance discussion, out of whack is explained as out of {{blank}}.",
+              "evidence": {
+                "startSeconds": 219.06,
+                "endSeconds": 229.3,
+                "summary": "The phrase characterises a system that is not in balance or functioning properly.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "balance"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What response to change makes knowledge of the trajectory necessary? {{blank}}",
+              "evidence": {
+                "startSeconds": 254.34,
+                "endSeconds": 259.7,
+                "summary": "Jackson identifies adaptation as the reason to understand the direction of change.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "adapt",
+                "to adapt"
+              ]
+            },
+            {
+              "id": "bbc-260806-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What noun describes an available course of action that no climate change is said not to be? {{blank}}",
+              "evidence": {
+                "startSeconds": 277.2,
+                "endSeconds": 288.52,
+                "summary": "The presenter says that no climate change at all is not an option, rather than saying all responses are unavailable.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "option",
+                "an option"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806",
+        "audioSha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e",
+        "durationSeconds": 375.408,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "6f25d6d6197724c4d8baf9d2058ad5a79a038b981689b3d2b2a43f313bee0f19"
+      }
+    },
+    {
       "id": "bbc-260806-t5",
+      "title": "Climate reasoning: distinguishing uncertainty from inaction",
       "position": 5,
-      "format": "ielts"
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260806-t5-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What outgoing quantity is compared with energy arriving from the Sun? {{blank}}",
+              "evidence": {
+                "startSeconds": 71.3,
+                "endSeconds": 77.28,
+                "summary": "The definition compares incoming solar energy with radiation leaving the Earth system.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "radiation"
+              ]
+            },
+            {
+              "id": "bbc-260806-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What kind of data is mentioned in addition to physical data? {{blank}}",
+              "evidence": {
+                "startSeconds": 109.64,
+                "endSeconds": 115.16,
+                "summary": "The modelling inputs include chemical data as well as physical data.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "chemical data",
+                "chemical"
+              ]
+            },
+            {
+              "id": "bbc-260806-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What equipment turns these large data inputs into representations of possible futures? {{blank}}",
+              "evidence": {
+                "startSeconds": 109.64,
+                "endSeconds": 117.34,
+                "summary": "The recording describes supercomputers processing large datasets to depict possible futures.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "supercomputers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t5-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Marvel says models produce {{blank}}, rather than predictions.",
+              "evidence": {
+                "startSeconds": 125.68,
+                "endSeconds": 128.38,
+                "summary": "Her distinction names the outputs projections because they depend on conditions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "projections"
+              ]
+            },
+            {
+              "id": "bbc-260806-t5-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A future outcome specified with an if-clause is {{blank}} in Marvel's explanation.",
+              "evidence": {
+                "startSeconds": 132.88,
+                "endSeconds": 138.34,
+                "summary": "She illustrates conditionality with an if-action-then-outcome formulation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conditional"
+              ]
+            },
+            {
+              "id": "bbc-260806-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Within human activity, the main influence singled out is greenhouse gas {{blank}}.",
+              "evidence": {
+                "startSeconds": 157.46,
+                "endSeconds": 162.94,
+                "summary": "The description specifically highlights greenhouse gas emissions as a human influence.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "emissions"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260806-t5-r2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Incoming energy blocked in the cooling mechanism: {{blank}}.",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 186.62,
+                "summary": "The account attributes the cooling side to blocked sunlight rather than the trapping of outgoing heat.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sunlight"
+              ]
+            },
+            {
+              "id": "bbc-260806-t5-r2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Mechanism responsible for the opposite effect: the clouds' own {{blank}}.",
+              "evidence": {
+                "startSeconds": 181.54,
+                "endSeconds": 188.3,
+                "summary": "The warming side is attributed to a greenhouse effect of clouds.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "greenhouse effect"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260806-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260806-t5-r2-q10",
+              "number": 9,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What do the presenters' concerns establish about the models?",
+              "evidence": {
+                "startSeconds": 233.92,
+                "endSeconds": 246.06,
+                "summary": "Their concerns identify practical demands without overturning the stated conditional nature of models.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The questions describe difficulties, not proof of uselessness.",
+                  "C": "Earlier reasoning explicitly distinguishes projections from guarantees."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t5-r2-q10-a",
+                  "label": "A",
+                  "text": "Accurate projections require tracking changing conditions and sufficient information."
+                },
+                {
+                  "id": "bbc-260806-t5-r2-q10-b",
+                  "label": "B",
+                  "text": "The existence of moving clouds proves that conditional models cannot be useful."
+                },
+                {
+                  "id": "bbc-260806-t5-r2-q10-c",
+                  "label": "C",
+                  "text": "The amount of global information turns projections into guaranteed predictions."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260806-t5-r2-q11",
+              "number": 10,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How does Jackson's point connect to Marvel's answer?",
+              "evidence": {
+                "startSeconds": 254.34,
+                "endSeconds": 269.82,
+                "summary": "The exchange links the practical need to adapt with Marvel's support for scientific work.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Marvel explicitly supports doing science because some change is unavoidable in this account.",
+                  "B": "The discussion defends models despite their conditional nature, not only after a guaranteed prediction exists."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260806-t5-r2-q11-a",
+                  "label": "A",
+                  "text": "Science is unnecessary because adaptation means avoiding any climate change."
+                },
+                {
+                  "id": "bbc-260806-t5-r2-q11-b",
+                  "label": "B",
+                  "text": "A definite prediction is required before conditional projections can have any role."
+                },
+                {
+                  "id": "bbc-260806-t5-r2-q11-c",
+                  "label": "C",
+                  "text": "Knowing the trajectory helps adaptation, so the lack of a no-change option supports doing science."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806",
+        "audioSha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e",
+        "durationSeconds": 375.408,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "13b0eb55603df5a8b2cb791c753a295b7686ece162a6d845aaafb70b1b3183eb"
+      }
     }
   ]
 }

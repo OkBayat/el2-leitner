@@ -30,6 +30,12 @@ def validate() -> dict:
     reference = require_text(SKILL_DIR / "references" / "authoring-workflow.md")
     planner = require_text(SKILL_DIR / "scripts" / "bundle-request.py")
     planner_tests = require_text(SKILL_DIR / "scripts" / "test-bundle-request.py")
+    design = require_text(SKILL_DIR / "references" / "ielts-question-design.md")
+    quality = require_text(REPO_ROOT / "back/src/infrastructure/content/validateListeningQuestionQuality.js")
+    canonical_validator = require_text(REPO_ROOT / "back/scripts/validate-listening-lessons.js")
+    review_owner = require_text(REPO_ROOT / "back/scripts/record-listening-question-review.js")
+    for name in ("listening-question-quality.test.js", "listening-catalog-quality.test.js", "listening-review-command.test.js"):
+        require_text(REPO_ROOT / "back/tests" / name)
 
     if not skill.startswith("---\n") or f"name: {SKILL_NAME}\n" not in skill.split("---", 2)[1]:
         raise ValueError("SKILL.md must have canonical frontmatter and skill name.")
@@ -46,6 +52,16 @@ def validate() -> dict:
     for section in required_skill_sections:
         if section not in skill:
             raise ValueError(f"SKILL.md is missing required section: {section}")
+
+    if "references/ielts-question-design.md" not in skill:
+        raise ValueError("SKILL.md must route the mandatory question-design reference before authoring.")
+    for token in ("exactly TEN", "TEN questions", "Audio chronology", "Difficulty rubric", "ielts.org", "britishcouncil.org"):
+        if token not in design:
+            raise ValueError(f"Question-design rules are missing required content: {token}")
+    if "REQUIRED_LISTENING_QUESTIONS = 10" not in quality or "validateListeningQuestionQuality" not in canonical_validator:
+        raise ValueError("The canonical episode validator must enforce the question-quality gate.")
+    if "--confirm-reviewed" not in review_owner or "listeningReviewDigest" not in review_owner:
+        raise ValueError("The review owner must require explicit confirmation and bind the review digest.")
 
     if "references/authoring-workflow.md" not in skill:
         raise ValueError("SKILL.md must lazy-route the authoring reference explicitly.")
@@ -89,7 +105,7 @@ def validate() -> dict:
         "schema_version": SCHEMA_VERSION,
         "status": "valid",
         "skill": SKILL_NAME,
-        "files_checked": 9,
+        "files_checked": 16,
     }
 
 
