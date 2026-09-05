@@ -9,23 +9,13 @@ jobs:
   context:
     runs-on: ubuntu-latest
     steps:
-      - name: Download direct lesson audio, without podcast-feed insertions
-        shell: python
-        run: |
-          import urllib.request, pathlib, json, hashlib, subprocess
-          root = pathlib.Path('/tmp/bbc-direct-audio'); root.mkdir()
-          report = []
-          for code, name in [('260618', 'limiting_screen_time_for_children'), ('260903', 'storms_and_climate_change')]:
-              url = f'https://downloads.bbc.co.uk/learningenglish/features/6min/{code}_6_minute_english_{name}_download.mp3'
-              request = urllib.request.Request(url, headers={'User-Agent': 'Vocora personal-study asset verification/1.0'})
-              with urllib.request.urlopen(request, timeout=45) as response:
-                  content = response.read()
-              assert content[:3] == b'ID3' or (content[0] == 255 and content[1] & 224 == 224)
-              folder = root/code; folder.mkdir(); audio = folder/'audio.mp3'; audio.write_bytes(content)
-              report.append({'code': code, 'audioUrl': url, 'bytes': len(content), 'sha256': hashlib.sha256(content).hexdigest()})
-          (root/'report.json').write_text(json.dumps(report, indent=2)); print(json.dumps(report, indent=2))
+      - uses: actions/checkout@v4
+        with:
+          ref: 87dba519be0a87e5864d0cf7205cd1dda5a6c357
+          persist-credentials: false
+      - run: git archive --format=tar.gz HEAD > /tmp/vocora-pr63-current.tar.gz
       - uses: actions/upload-artifact@v4
         with:
-          name: bbc-direct-lesson-audio
-          path: /tmp/bbc-direct-audio
+          name: vocora-pr63-current
+          path: /tmp/vocora-pr63-current.tar.gz
           retention-days: 1
