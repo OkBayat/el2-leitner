@@ -13,14 +13,15 @@ description: >-
 
 Prepare complete, independently validated Vocora episode bundles and return one ZIP per resolved BBC 6 Minute English episode.
 
-`SKILL.md` is the only mandatory skill-local initial instruction file. Load `references/authoring-workflow.md` only after the request plan has been validated and at least one official episode has been resolved.
+`SKILL.md` is the only mandatory skill-local initial instruction file. Load `references/authoring-workflow.md` only after the request plan has been validated and official discovery has been bound to exact episode identities.
 
 ## Canonical owners
 
-Use the skill planner/verifier for request and delivery invariants:
+Use the skill planner/verifier for request, discovery-binding, and final delivery invariants:
 
 ```bash
 python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan ...
+python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py bind-discovery ...
 python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py verify-delivery ...
 ```
 
@@ -43,7 +44,7 @@ Use it when the user asks for any of the following:
 - every episode in an inclusive date range, returned as separate ZIP files;
 - a specified number of listening tests for each requested episode;
 - a requested test difficulty mix such as one easy, two medium, and two hard tests;
-- user wording such as one elementary, two intermediate, and two advanced tests, which is normalized to the application's test-difficulty contract as described below;
+- user wording such as one elementary, two intermediate, and two advanced tests, normalized to the application difficulty contract below;
 - a re-packaged episode bundle that must conform to Vocora's listening episode folder contract.
 
 Do not use it for general podcast recommendations, normal UI implementation, production deployment, or unrelated vocabulary work.
@@ -56,12 +57,14 @@ Do not use it for general podcast recommendations, normal UI implementation, pro
 - A date range is inclusive and means every official BBC 6 Minute English episode whose publication date falls inside the range.
 - Do not create a ZIP for calendar dates with no episode.
 - If more than one qualifying episode exists on the same date, package each episode separately.
-- A title or official URL must resolve to the exact official episode and its actual publication date before authoring begins.
+- A title or official URL must resolve to the exact official episode and actual publication date before planning can be finalized.
 - Resolve relative or partial dates from the current conversation when unambiguous. If the year/month still cannot be determined safely, stop and ask for the missing date component rather than guessing.
 
 ### Test count
 
 The requested test count applies to **each resolved episode** unless the user explicitly says the count is a total across the whole range.
+
+If the user gives no test count, create one `medium` test per episode because a published episode must contain at least one listening test.
 
 If the user asks for `N` tests and gives no difficulty distribution, create all `N` as `medium`.
 
@@ -83,13 +86,13 @@ When the user clearly uses language-course levels to describe **test difficulty*
 - intermediate test -> `medium`
 - advanced test -> `hard`
 
-This normalization does not change the episode language level. Each episode independently has exactly one language level: `elementary`, `intermediate`, or `advanced`.
+This normalization does not change episode language level. Each episode independently has one language level: `elementary`, `intermediate`, or `advanced`.
 
 Example user request:
 
 > Prepare every episode from June 1 through June 30 with five tests each: one elementary, two intermediate, and two advanced.
 
-Canonical per-episode test distribution:
+Canonical per-episode distribution:
 
 ```text
 easy=1,medium=2,hard=2
@@ -97,13 +100,15 @@ easy=1,medium=2,hard=2
 
 ## Workflow classification
 
-This is a phased workflow because source discovery, semantic authoring, asset acquisition, validation, and multi-artifact delivery have different capabilities and failure modes.
+This is a phased workflow because discovery, semantic authoring, asset acquisition, validation, and multi-artifact delivery have different capabilities and failure modes.
 
 ```text
-REQUEST_PLAN -> DISCOVERY -> AUTHORING -> ASSETS -> PACKAGE -> DELIVERY_VERIFY -> DONE
+REQUEST_PLAN -> DISCOVERY -> DISCOVERY_BIND -> AUTHORING -> ASSETS -> PACKAGE -> DELIVERY_VERIFY -> DONE
 ```
 
-Each episode follows the same episode-local AUTHORING -> ASSETS -> PACKAGE path. Range requests may process independent episodes in parallel only when the environment can do so safely without mixing directories or output paths.
+Each episode follows the same episode-local AUTHORING -> ASSETS -> PACKAGE path. Independent episodes may be processed in parallel only when staging/output directories remain isolated.
+
+For a title/URL request without a date, perform only the minimum official lookup needed to obtain its verified publication date before `REQUEST_PLAN`, then continue through the normal phases.
 
 ## Phase 1: REQUEST_PLAN
 
@@ -137,19 +142,35 @@ Do not continue if planning fails. Do not manually reinterpret a rejected date r
 Resolve qualifying episodes from official BBC sources.
 
 1. Use the official BBC 6 Minute English feed as discovery assistance when useful.
-2. Confirm each selected episode against its official BBC Learning English episode page.
+2. Confirm every selected episode against its official BBC Learning English episode page.
 3. Verify title, episode date/code, canonical page URL, episode-specific image URL, direct lesson audio URL, transcript source, and introduced vocabulary before persisting metadata.
-4. Never invent a URL from a date pattern and never trust a third-party podcast directory as the final authority when an official BBC source is available.
-5. For a range, sort resolved episodes by publication date ascending before authoring and delivery.
+4. Never invent a URL from a date pattern and never trust a third-party podcast directory as final authority when an official BBC source is available.
+5. For a range, sort resolved episodes by publication date ascending.
 
 If no official episode exists for an exact date, return that fact and do not fabricate a bundle.
 If no official episodes exist in a range, return an empty-result explanation and do not fabricate calendar-date bundles.
 
-After at least one episode is resolved, load `references/authoring-workflow.md`.
+## Phase 3: DISCOVERY_BIND
 
-## Phase 3: AUTHORING
+Bind the verified discovery set into the plan before any episode content is authored. This makes range completeness machine-verifiable at delivery time.
 
-Create a task-owned staging directory outside the repository for each episode. Its folder name must follow the application contract:
+Example for two discovered episodes:
+
+```bash
+python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py bind-discovery \
+  --plan /tmp/vocora-bbc-plan.json \
+  --episode 2026-06-18=bbc-6-minute-english-260618 \
+  --episode 2026-06-25=bbc-6-minute-english-260625 \
+  --output /tmp/vocora-bbc-bound-plan.json
+```
+
+Bind every and only officially resolved episode. Do not omit an episode from the range to reduce work and do not bind an unverified identity.
+
+After binding succeeds, load `references/authoring-workflow.md`.
+
+## Phase 4: AUTHORING
+
+Create one task-owned staging directory outside the repository per episode using:
 
 ```text
 YYYY-MM-DD-lowercase-slug
@@ -168,61 +189,58 @@ Follow `back/data/listening/episodes/README.md` as the authoritative application
 
 ### Episode metadata
 
-- Preserve a stable `publicId`, BBC episode code/date, official source URL, and source provenance.
-- Select one episode language level independently from test difficulty.
-- Use the source's explicit level when reliable; otherwise make a conservative editorial judgment from language density, vocabulary, speech speed, and assumed learner independence.
-- Do not describe Vocora's editorial level as an official IELTS band or BBC certification unless the source explicitly provides that classification.
+- Preserve stable `publicId`, BBC episode code/date, official source URL, and source provenance.
+- Select episode language level independently from test difficulty.
+- Use a reliable source level when explicitly provided; otherwise make a conservative editorial judgment from language density, vocabulary, speech speed, and learner independence.
+- Do not present Vocora's editorial level as an official IELTS band or BBC certification unless the source explicitly says so.
 
 ### Listening tests
 
-- Create exactly the requested test count **for every episode**.
-- Match the exact canonical difficulty distribution from the plan.
-- Keep each test materially different. Do not duplicate questions and merely change the badge.
-- Use only task types supported by the current listening episode contract.
-- Keep questions in recording order where the task type permits.
-- Verify every answer against the official transcript/audio reference.
-- Use original IELTS-style practice questions; do not copy BBC exercises or official IELTS questions.
+- Create exactly the requested test count for **every bound episode**.
+- Match the bound plan's exact canonical difficulty distribution.
+- Keep tests materially different; never duplicate questions and merely change difficulty labels.
+- Use only task types supported by the current listening contract.
+- Keep questions in recording order where the task permits.
+- Verify every answer against official transcript/audio reference material.
+- Write original IELTS-style practice questions; do not copy BBC exercises or official IELTS questions.
 - Make distractors plausible but unambiguous.
-- Keep all prompts, instructions, options, accepted answers, headings, and test titles in English.
+- Keep prompts, instructions, options, accepted answers, headings, and test titles in English.
 - Keep IDs unique and stable inside the episode package.
 
 ### Vocabulary
 
-- Use the small set of words/collocations actually introduced by the episode.
-- Follow the same vocabulary identity/definition/example model used by file-managed collections.
+- Use the small set of words/collocations actually introduced in the episode.
+- Follow the same identity/definition/example model used by file-managed collections.
 - Write concise original English definitions and natural original English examples.
-- Each listed episode vocabulary item must have at least one definition and one example.
-- Do not copy BBC definitions verbatim when an independently worded explanation is practical.
+- Every listed item needs at least one definition and one example.
 
 ### Transcript handling
 
-The transcript file is required but is never synchronized to the database.
+`transcript.md` is required but never synchronized to the database.
 
 - The official BBC transcript may be used as an authoring reference.
-- Do not reproduce a full copyrighted transcript into the deliverable unless the user supplied an authorized local copy or the task has a clearly valid right to redistribute it.
-- Without an authorized full transcript, create the repository-standard `TRANSCRIPT_SOURCE_ONLY` reference file containing the official transcript source URL and disclose that the bundle is source-reference-only.
-- When the user supplies an authorized transcript file, import it with the canonical application tool rather than hand-copying it.
+- Do not reproduce a full copyrighted transcript into the deliverable unless the user supplied an authorized local copy or there is a clearly valid redistribution right.
+- Without an authorized full transcript, create the repository-standard `TRANSCRIPT_SOURCE_ONLY` reference file with the official transcript URL and disclose source-reference-only status.
+- When the user supplies an authorized transcript, import it with the canonical application tool rather than hand-copying it.
 
-## Phase 4: ASSETS
+## Phase 5: ASSETS
 
-Record only verified official BBC media URLs in `episode.json.sources`, then use:
+Record only verified official BBC media URLs in `episode.json.sources`, then run:
 
 ```bash
 python3 back/scripts/manage-listening-episode.py fetch-assets <episode-dir>
 ```
 
-This must download the episode-specific cover and direct lesson MP3 into the staging directory.
+This must fetch the episode-specific cover and direct lesson MP3 into staging.
 
 - Do not substitute a generic show cover when an episode-specific image exists.
-- Do not substitute podcast-feed audio with materially different timing when a direct lesson MP3 is available.
+- Do not substitute materially different podcast-feed audio when direct lesson audio is available.
 - Preserve source provenance.
 - Never commit MP3 or generated ZIP files to Git.
 
-If source fetching fails, fix the verified source metadata or report the blocker. Do not create fake audio/image bytes or bypass media validation.
+If fetching fails, fix verified source metadata or report the blocker. Do not create fake media bytes or bypass media validation.
 
-## Phase 5: PACKAGE
-
-Run the application validator before packaging.
+## Phase 6: PACKAGE
 
 For an authorized full transcript:
 
@@ -239,37 +257,35 @@ python3 back/scripts/manage-listening-episode.py package <episode-dir> \
   --output <output-dir>/<episode-folder>.zip
 ```
 
-Create exactly one ZIP per episode. Do not create one combined archive unless the user explicitly asks for an additional aggregate archive.
+Create exactly one ZIP per episode. Do not create a combined archive unless the user explicitly requests an additional aggregate archive.
 
 Use an output directory outside the repository. Never add generated ZIPs or MP3s to Git.
 
-## Phase 6: DELIVERY_VERIFY
+## Phase 7: DELIVERY_VERIFY
 
-After all episode ZIPs exist, verify the complete delivery against the original plan in one command:
+Verify all ZIPs against the **bound** plan in one command:
 
 ```bash
 python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py verify-delivery \
-  --plan /tmp/vocora-bbc-plan.json \
+  --plan /tmp/vocora-bbc-bound-plan.json \
   <episode-1.zip> <episode-2.zip> ...
 ```
 
-This verification must pass before files are handed to the user. It checks the canonical application bundle verifier plus date bounds, unique episode identities, exact per-episode test count, and exact difficulty distribution.
+This must pass before delivery. It runs the canonical application bundle verifier and checks that the delivered set exactly matches the bound official episode identities, every episode lies inside the requested date scope, every episode has the exact requested test count, and every test difficulty count matches the plan.
 
-If final verification fails, fix the affected episode and repackage it. Do not hand-wave the mismatch or manually declare the delivery valid.
+If verification fails, fix/repackage the affected episode. Do not manually declare the delivery valid.
 
 ## Delivery response
 
-Return each ZIP as a separate downloadable artifact/link and summarize, for each episode:
+Return each ZIP as a separate downloadable artifact/link and summarize per episode:
 
 - publication date;
 - title;
 - episode language level;
 - test count and difficulty distribution;
-- transcript status (`full/provided` versus `source reference only`).
+- transcript status (`provided/full` versus `source reference only`).
 
-For a date range, preserve chronological order in the response.
-
-Do not say that the task is complete until every returned ZIP passed final delivery verification.
+For a range, preserve chronological order. Do not say the task is complete until every returned ZIP passed `verify-delivery`.
 
 ## Stop conditions
 
@@ -278,9 +294,9 @@ Stop with a clear blocker instead of inventing data when:
 - the requested date cannot be resolved unambiguously;
 - an official episode cannot be confirmed;
 - required media URLs cannot be verified or fetched;
-- requested test counts/difficulty distribution are inconsistent;
-- the official reference is insufficient to verify answers;
-- the canonical episode validator rejects authored content;
+- requested test count/difficulty distribution is inconsistent;
+- official reference material is insufficient to verify answers;
+- canonical episode validation rejects authored content;
 - packaging or final delivery verification fails.
 
 ## Determinism Boundary
@@ -290,8 +306,10 @@ Stop with a clear blocker instead of inventing data when:
 - Validate exact-date/range inputs and date ordering.
 - Validate requested per-episode test count and canonical difficulty distribution.
 - Persist the canonical request plan.
+- Bind the verified discovery set to exact episode dates/public IDs.
 - Run the application bundle verifier for each delivered ZIP.
-- Inspect delivered episode metadata/tests and verify date bounds, unique identities, exact test count, and exact difficulty counts.
+- Verify the delivered episode set exactly matches the discovery binding.
+- Verify date scope, unique identities, exact test count, and exact difficulty counts.
 - Produce stable machine-readable planning and final-delivery reports.
 
 ### Agent-owned
@@ -301,12 +319,12 @@ Stop with a clear blocker instead of inventing data when:
 - Decide episode language level when the source does not provide an authoritative level.
 - Author original IELTS-style questions, answers, distractors, vocabulary definitions, and examples.
 - Judge whether source evidence is sufficient to verify each answer.
-- Decide whether an authorized full transcript is available or a source-reference-only bundle must be disclosed.
-- Present the verified ZIP files to the user.
+- Decide whether an authorized full transcript is available or source-reference-only status must be disclosed.
+- Present verified ZIP files to the user.
 
 ### No manual fallback
 
-- Do not bypass a planner failure by manually constructing a different request plan.
+- Do not bypass planner or discovery-binding failures by hand-authoring plan state.
 - Do not bypass `manage-listening-episode.py` validation, packaging, or ZIP verification.
-- Do not bypass `verify-delivery` by manually counting tests or asserting a date range is correct.
+- Do not bypass `verify-delivery` by manually counting tests, asserting range completeness, or ignoring a missing bound episode.
 - Do not invent BBC metadata, URLs, transcript text, answers, media, or missing episodes when a required source cannot be verified.
