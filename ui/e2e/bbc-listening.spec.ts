@@ -32,14 +32,12 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   await expect(weatherLesson).toContainText('3 IELTS-style tests · 30 questions in total');
   await expect(screenTimeLesson).toContainText('Limiting screen time for children');
   await expect(screenTimeLesson).toContainText('3 IELTS-style tests · 30 questions in total');
+  await expect(weatherLesson.getByTestId('start-bbc-test-1')).toContainText('Extreme weather: changing storms and their impacts');
 
   for (const lesson of [weatherLesson, screenTimeLesson]) {
-    await expect(lesson.getByTestId('start-bbc-test-1')).toContainText('Test 1');
-    await expect(lesson.getByTestId('start-bbc-test-1')).toContainText('Start');
-    await expect(lesson.getByTestId('start-bbc-test-2')).toContainText('Test 2');
-    await expect(lesson.getByTestId('start-bbc-test-2')).toContainText('Start');
-    await expect(lesson.getByTestId('start-bbc-test-3')).toContainText('Test 3');
-    await expect(lesson.getByTestId('start-bbc-test-3')).toContainText('Start');
+    for (const testId of ['test-1', 'test-2', 'test-3']) {
+      await expect(lesson.getByTestId(`start-bbc-${testId}`)).toContainText('Start');
+    }
   }
 
   const startResponsePromise = page.waitForResponse((response) =>
@@ -52,7 +50,7 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
 
   await expect(page).toHaveURL(/\/bbc-6-minute-english\/climate-change-extreme-weather\/tests\/test-1\/practice$/u);
   await expect(page.getByTestId('bbc-listening-practice-page')).toBeVisible();
-  await expect(page.getByText('IELTS Listening Practice · Test 1')).toBeVisible();
+  await expect(page.getByText('IELTS Listening Practice · Extreme weather: changing storms and their impacts')).toBeVisible();
   await expect(page.locator('app-shell')).toHaveCount(0);
   await expect(page.locator('.topbar, .product-tabs, .mobile-nav')).toHaveCount(0);
 
