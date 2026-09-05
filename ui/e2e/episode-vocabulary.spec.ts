@@ -30,11 +30,13 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   const vocabulary = await page.evaluate(async () => (await fetch('/api/listening/bbc/lessons/limiting-screen-time-for-children/vocabulary')).json());
   expect(vocabulary.subscribed).toBe(false);
   expect(vocabulary.entries.every((entry: any) => entry.progress.state === 'new')).toBe(true);
+  const episodeIds = new Set<string>(vocabulary.entries.map((entry: any) => String(entry.vocabularyId)));
   const before = await page.evaluate(async () => (await fetch('/api/state')).json());
+  const beforeById = new Map<string, any>(before.state.words.map((word: any) => [String(word.id), word]));
   const wasActive = new Set(
     before.state.words
-      .filter((word: any) => word.box > 0 || word.introducedOn)
-      .map((word: any) => word.id)
+      .filter((word: any) => Number(word.box) > 0 || word.introducedOn)
+      .map((word: any) => String(word.id))
   );
   const first = vocabulary.entries[0];
   await page.getByTestId(`pronounce-episode-word-${first.vocabularyId}`).click();
@@ -46,12 +48,34 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await expect(page.locator('[data-testid^="episode-word-status-"]')).toHaveCount(6);
   await expect(page.getByTestId('add-all-episode-vocabulary')).toBeDisabled();
   const after = await page.evaluate(async () => (await fetch('/api/state')).json());
-  const episodeIds = new Set(vocabulary.entries.map((entry: any) => entry.vocabularyId));
-  const active = after.state.words.filter((word: any) => word.box > 0 || word.introducedOn);
-  const episodeActive = active.filter((word: any) => episodeIds.has(word.id));
-  expect(episodeActive.map((word: any) => word.id).sort()).toEqual([...episodeIds].sort());
-  expect(episodeActive.every((word: any) => word.box === 1 && word.attempts === 0)).toBe(true);
-  const unrelatedNewlyActive = active.filter((word: any) => !episodeIds.has(word.id) && !wasActive.has(word.id));
+  const active = after.state.words.filter((word: any) => Number(word.box) > 0 || word.introducedOn);
+  const episodeActive = active.filter((word: any) => episodeIds.has(String(word.id)));
+  expect(episodeActive.map((word: any) => String(word.id)).sort()).toEqual([...episodeIds].sort());
+  for (const word of episodeActive) {
+    const id = String(word.id);
+    const previous = beforeById.get(id);
+    if (previous && (Number(previous.box) > 0 || previous.introducedOn)) {
+      expect({
+        box: Number(word.box),
+        introducedOn: word.introducedOn,
+        attempts: Number(word.attempts),
+        correct: Number(word.correct),
+        mistakes: Number(word.mistakes),
+        masteredAt: word.masteredAt,
+      }).toEqual({
+        box: Number(previous.box),
+        introducedOn: previous.introducedOn,
+        attempts: Number(previous.attempts),
+        correct: Number(previous.correct),
+        mistakes: Number(previous.mistakes),
+        masteredAt: previous.masteredAt,
+      });
+    } else {
+      expect(Number(word.box)).toBe(1);
+      expect(word.introducedOn).toBeTruthy();
+    }
+  }
+  const unrelatedNewlyActive = active.filter((word: any) => !episodeIds.has(String(word.id)) && !wasActive.has(String(word.id)));
   expect(unrelatedNewlyActive).toEqual([]);
   await page.reload();
   await expect(page.locator('[data-testid^="episode-word-status-"]')).toHaveCount(6);
