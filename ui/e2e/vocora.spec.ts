@@ -193,7 +193,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page).toHaveURL(/\/library$/u);
 
   await page.goto('/leitner-house/1');
-  await expect(page.getByRole('heading', { name: 'House 1 words' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Box 1 words' })).toBeVisible();
   await expect(page.getByLabel('Search words')).toBeVisible();
 
   await page.goto('/settings');
