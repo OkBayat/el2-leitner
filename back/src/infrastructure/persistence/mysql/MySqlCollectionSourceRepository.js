@@ -99,24 +99,31 @@ export class MySqlCollectionSourceRepository {
       await this.#removeUnusedSections(connection, collection.id, usedSectionIds);
       await connection.execute(
         `UPDATE collections
-         SET title = ?, kind = 'book', visibility = 'public', status = 'published',
-             source_hash = ?, content_version = ?, archived_at = NULL,
+         SET title = ?, description = ?, kind = ?, visibility = 'public', status = 'published',
+             source_hash = ?, content_version = ?, is_default = ?, archived_at = NULL,
              published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3)),
              metadata_json = JSON_SET(
                COALESCE(metadata_json, JSON_OBJECT()),
                '$.sourceFile', ?,
                '$.sourceFormatVersion', CAST(1 AS UNSIGNED),
                '$.sourceItemCount', CAST(? AS UNSIGNED),
+               '$.uniqueVocabularyCount', CAST(? AS UNSIGNED),
+               '$.duplicateAliasCount', CAST(? AS UNSIGNED),
                '$.definitionCount', CAST(? AS UNSIGNED),
                '$.exampleReferenceCount', CAST(? AS UNSIGNED)
              )
          WHERE id = ?`,
         [
           source.parsed.title,
+          source.description,
+          source.kind,
           source.sourceHash,
           nextVersion,
+          source.isDefault ? 1 : 0,
           source.fileName,
+          source.sourceItemCount,
           source.parsed.entries.length,
+          source.duplicateAliasCount,
           definitions,
           examples,
           collection.id
@@ -159,10 +166,18 @@ export class MySqlCollectionSourceRepository {
       `INSERT INTO collections
          (public_id, slug, title, description, kind, visibility, status, owner_user_id,
           content_version, source_hash, is_default, published_at, metadata_json)
-       VALUES (?, ?, ?, NULL, 'book', 'public', 'published', NULL,
-               0, NULL, FALSE, CURRENT_TIMESTAMP(3),
+       VALUES (?, ?, ?, ?, ?, 'public', 'published', NULL,
+               0, NULL, ?, CURRENT_TIMESTAMP(3),
                JSON_OBJECT('sourceFile', ?, 'sourceFormatVersion', 1))`,
-      [randomUUID(), source.slug, source.parsed.title, source.fileName]
+      [
+        source.publicId,
+        source.slug,
+        source.parsed.title,
+        source.description,
+        source.kind,
+        source.isDefault ? 1 : 0,
+        source.fileName
+      ]
     );
     const [createdRows] = await connection.execute(
       "SELECT * FROM collections WHERE id = ? LIMIT 1 FOR UPDATE",
