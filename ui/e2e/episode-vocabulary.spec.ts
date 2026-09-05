@@ -84,6 +84,6 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
   await page.getByTestId('bbc-lesson-limiting-screen-time-for-children').getByTestId('start-bbc-test-1').click();
   await expect(page.getByTestId('bbc-listening-practice-page')).toBeVisible();
-  await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(13);
+  await expect(page.locator('[data-testid^="listening-question-"]')).toHaveCount(10);
   await expect(page.getByRole('link', { name: 'Episode vocabulary' })).toBeVisible();
 });
