@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260521",
+  "provider": "bbc_6_minute_english",
+  "slug": "making-cities-feel-quieter",
+  "title": "Making cities feel quieter",
+  "description": "Investigate how sound affects urban experience and how carefully chosen recordings can make a public space feel calmer.",
+  "episodeCode": "260521",
+  "episodeDate": "2026-05-21",
+  "publishedAt": "2026-05-21T09:10:00+00:00",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+  "status": "published",
+  "level": "intermediate",
+  "audioFile": "audio.mp3",
+  "imageFile": "cover.jpg",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260521_6_minute_english_making_cities_feel_quieter_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0nl83jf.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260521_6_minute_english_making_cities_feel_quieter_transcript.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+    "attribution": "BBC Learning English, 6 Minute English. BBC media retains its original copyright. Original supplementary questions and vocabulary examples prepared for Vocora.",
+    "retrievedAt": "2026-09-05T19:05:54Z"
+  }
+}

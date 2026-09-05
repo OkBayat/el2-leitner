@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260528",
+  "folder": "2026-05-28-living-with-debt",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6990752,
+      "sha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46"
+    },
+    "cover.jpg": {
+      "bytes": 116231,
+      "sha256": "44a4cf14c663d142478861ce0f45a27de783136a9fe67285a0a13c68c8d8e2c9"
+    },
+    "episode.json": {
+      "bytes": 1336,
+      "sha256": "bf18d80bad407b22664e0526999ca990a1b0a92a52df8cb279af6bca1ba80f69"
+    },
+    "listening.json": {
+      "bytes": 58262,
+      "sha256": "9fc3300e69b32f4a6c5d81dff9cbc8d47c059797f9d41e4e5c833e5edfa0ec23"
+    },
+    "transcript.md": {
+      "bytes": 400,
+      "sha256": "506c28e81ce5a058f08c80526bb164ca88603d0fa619c800aa083ee2b5804101"
+    },
+    "vocabulary.md": {
+      "bytes": 946,
+      "sha256": "555586258c5d3bededc5c270b6d4498c92d1f39ccd320762245e4db557dbf23c"
+    }
+  }
+}

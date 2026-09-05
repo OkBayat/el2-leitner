@@ -1,0 +1,1480 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Urban noise and a quieter-feeling park",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260521-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Noise in cities",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Number of people described as living in cities: {{blank}} billion.",
+              "evidence": {
+                "startSeconds": 47.32,
+                "endSeconds": 50.16,
+                "summary": "The introduction gives four billion as the number of people living in cities.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "4",
+                "four"
+              ]
+            },
+            {
+              "id": "bbc-260521-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Year of the World Health Organisation hearing-loss projection: {{blank}}.",
+              "evidence": {
+                "startSeconds": 63.76,
+                "endSeconds": 68.34,
+                "summary": "The hearing-loss projection is presented for the year 2050.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "2050"
+              ]
+            },
+            {
+              "id": "bbc-260521-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Regular daytime noise level reported for Mumbai: {{blank}} decibels.",
+              "evidence": {
+                "startSeconds": 118.6,
+                "endSeconds": 123.66,
+                "summary": "Mumbai’s daytime noise is reported as regularly reaching eighty decibels.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "80",
+                "eighty"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: A resident’s experience and an approach",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260521-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does Chhavi describe everyday life in India?",
+              "evidence": {
+                "startSeconds": 143.52,
+                "endSeconds": 147.28,
+                "summary": "Chhavi describes loudness across multiple aspects of life.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Dress is one example alongside talking, celebration and films.",
+                  "C": "She explicitly includes loud celebration as well as talking."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t1-q4-a",
+                  "label": "A",
+                  "text": "Loudness is described only as a feature of clothing."
+                },
+                {
+                  "id": "bbc-260521-t1-q4-b",
+                  "label": "B",
+                  "text": "Loudness is part of several activities, including talking and celebrating."
+                },
+                {
+                  "id": "bbc-260521-t1-q4-c",
+                  "label": "C",
+                  "text": "People speak loudly but never celebrate loudly."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why did Chhavi find the noise harder to handle after returning?",
+              "evidence": {
+                "startSeconds": 156.1,
+                "endSeconds": 159.82,
+                "summary": "Chhavi connects her changed tolerance with becoming accustomed to quieter surroundings.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Her difficulty is explained through adjustment to quiet, not forgetting her home.",
+                  "C": "She says she had become used to lower levels, not higher ones."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t1-q5-a",
+                  "label": "A",
+                  "text": "She had forgotten which city she came from."
+                },
+                {
+                  "id": "bbc-260521-t1-q5-b",
+                  "label": "B",
+                  "text": "She had become used to lower noise levels abroad."
+                },
+                {
+                  "id": "bbc-260521-t1-q5-c",
+                  "label": "C",
+                  "text": "She had spent her time abroad in even louder surroundings."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does soundscaping add to busy public spaces?",
+              "evidence": {
+                "startSeconds": 189.62,
+                "endSeconds": 194.78,
+                "summary": "Soundscaping adds selected sounds to improve the feeling of a public space.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The approach adds selected relaxing sounds, not more traffic.",
+                  "B": "The explanation concerns changing sounds within public spaces, not banning their use."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t1-q6-a",
+                  "label": "A",
+                  "text": "More traffic to make them feel busier."
+                },
+                {
+                  "id": "bbc-260521-t1-q6-b",
+                  "label": "B",
+                  "text": "A rule that nobody may use the space."
+                },
+                {
+                  "id": "bbc-260521-t1-q6-c",
+                  "label": "C",
+                  "text": "Sounds intended to make them feel more relaxing."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: The park installation",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Charles’s park project is in Montreal, {{blank}}.",
+              "evidence": {
+                "startSeconds": 199.66,
+                "endSeconds": 202.06,
+                "summary": "The project is located in the Canadian city of Montreal.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Canada"
+              ]
+            },
+            {
+              "id": "bbc-260521-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The team places speakers in flower {{blank}}.",
+              "evidence": {
+                "startSeconds": 239.38,
+                "endSeconds": 241.24,
+                "summary": "The speakers are installed in the park’s flower beds.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "beds"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Other cities and a quiet voice",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which city is mentioned alongside Barcelona as using similar soundscapes? {{blank}}",
+              "evidence": {
+                "startSeconds": 295.12,
+                "endSeconds": 298.14,
+                "summary": "Tokyo and Barcelona are named as other cities with similar soundscapes.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Tokyo"
+              ]
+            },
+            {
+              "id": "bbc-260521-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How many decibels is a whisper in the confirmed answer? {{blank}}",
+              "evidence": {
+                "startSeconds": 316.98,
+                "endSeconds": 319,
+                "summary": "The final answer gives thirty decibels rather than the earlier thirteen guess.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "30",
+                "thirty"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+        "audioSha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2",
+        "durationSeconds": 375.6,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "494001c8ea97dd643ee1763c1a7051e94626267f96cf1adada909b4438388c1c"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Personal responses and the design of a soundscape",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260521-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–2: The opening experience and a city sound",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How did the first clip make Neil feel? {{blank}}",
+              "evidence": {
+                "startSeconds": 32.42,
+                "endSeconds": 39.68,
+                "summary": "Neil describes relaxation in response to the first rather than the second clip.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "relaxed"
+              ]
+            },
+            {
+              "id": "bbc-260521-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What source of noise is described as roaring overhead? {{blank}}",
+              "evidence": {
+                "startSeconds": 51.62,
+                "endSeconds": 56.2,
+                "summary": "The overhead noise example is aircraft, distinguished from cars and trains.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "aeroplanes",
+                "airplanes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t2-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The scale of noise exposure",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t2-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Projected number experiencing hearing loss by 2050: approximately {{blank}} billion.",
+              "evidence": {
+                "startSeconds": 63.76,
+                "endSeconds": 68.34,
+                "summary": "The report’s projection is approximately two point five billion people.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "2.5"
+              ]
+            },
+            {
+              "id": "bbc-260521-t2-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Mumbai’s reported daytime level: {{blank}} decibels.",
+              "evidence": {
+                "startSeconds": 118.6,
+                "endSeconds": 123.66,
+                "summary": "The stated regular daytime noise level in Mumbai is eighty decibels.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "80",
+                "eighty"
+              ]
+            },
+            {
+              "id": "bbc-260521-t2-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Length of Chhavi’s time living in the US and Europe: {{blank}} years.",
+              "evidence": {
+                "startSeconds": 152,
+                "endSeconds": 154.52,
+                "summary": "Chhavi describes twelve years living in the US and Europe.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "12",
+                "twelve"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Adaptation and inspiration",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260521-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Chhavi’s return illustrate?",
+              "evidence": {
+                "startSeconds": 156.1,
+                "endSeconds": 159.82,
+                "summary": "The explanation connects altered tolerance with adaptation to quieter surroundings.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "She explicitly relates her changed reaction to becoming used to lower levels.",
+                  "C": "She describes difficulty coping with noise on returning."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t2-q6-a",
+                  "label": "A",
+                  "text": "Time abroad had no effect on her reaction to noise."
+                },
+                {
+                  "id": "bbc-260521-t2-q6-b",
+                  "label": "B",
+                  "text": "Her experience of quieter places changed what noise she could comfortably tolerate."
+                },
+                {
+                  "id": "bbc-260521-t2-q6-c",
+                  "label": "C",
+                  "text": "She says Mumbai had become completely silent during her absence."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What inspired Charles’s park soundscape?",
+              "evidence": {
+                "startSeconds": 203.62,
+                "endSeconds": 207.48,
+                "summary": "Charles draws inspiration from ocean sounds on holiday in the Magdalen Islands.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The project’s inspiration predates and is distinct from the programme’s opening experiment.",
+                  "C": "The inspiration described is the Magdalen Islands, not road recordings."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t2-q7-a",
+                  "label": "A",
+                  "text": "The two example clips played by the presenters at the start."
+                },
+                {
+                  "id": "bbc-260521-t2-q7-b",
+                  "label": "B",
+                  "text": "Ocean sounds he heard during an island holiday."
+                },
+                {
+                  "id": "bbc-260521-t2-q7-c",
+                  "label": "C",
+                  "text": "A collection of traffic sounds recorded on the surrounding roads."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What makes the island sand unusual in the description?",
+              "evidence": {
+                "startSeconds": 223.56,
+                "endSeconds": 228.1,
+                "summary": "The sand’s sound is connected to firm footsteps rather than an electronic source.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The sand itself is described as making squeaky sounds when walked on.",
+                  "B": "The account describes squeaking under footsteps, not traffic sounds in wind."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t2-q8-a",
+                  "label": "A",
+                  "text": "It remains silent unless placed in a speaker."
+                },
+                {
+                  "id": "bbc-260521-t2-q8-b",
+                  "label": "B",
+                  "text": "It produces the sound of car horns when blown by wind."
+                },
+                {
+                  "id": "bbc-260521-t2-q8-c",
+                  "label": "C",
+                  "text": "It makes a high-pitched sound when stepped into firmly."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Installation and intended effect",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "To deliver the sound, speakers are planted in {{blank}}.",
+              "evidence": {
+                "startSeconds": 239.38,
+                "endSeconds": 241.24,
+                "summary": "The team integrates the speakers into the flower beds.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "flower beds"
+              ]
+            },
+            {
+              "id": "bbc-260521-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Charles aims to make the park quieter by adding {{blank}} sounds.",
+              "evidence": {
+                "startSeconds": 251.86,
+                "endSeconds": 257.78,
+                "summary": "The intended quieter feeling comes from adding calmer sounds.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "calmer"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+        "audioSha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2",
+        "durationSeconds": 375.6,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "a5c4d354d9b6a6b95b823027754d855ffca59b7fae4f95f6acf2c7c609234938"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Following the idea from noise exposure to installation",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260521-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Different experiences of noise",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260521-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What contrast does the opening sound experiment produce for Neil?",
+              "evidence": {
+                "startSeconds": 32.42,
+                "endSeconds": 39.68,
+                "summary": "The two clips produce contrasting emotional reactions for Neil.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "This reverses his reported reactions.",
+                  "C": "Neil explicitly describes the second as horrible and stressful."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t3-q1-a",
+                  "label": "A",
+                  "text": "Stress after the first clip and relaxation after the second."
+                },
+                {
+                  "id": "bbc-260521-t3-q1-b",
+                  "label": "B",
+                  "text": "Relaxation after the first clip and stress after the second."
+                },
+                {
+                  "id": "bbc-260521-t3-q1-c",
+                  "label": "C",
+                  "text": "The same relaxed response to both clips."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which effect is mentioned in addition to hearing loss?",
+              "evidence": {
+                "startSeconds": 69.12,
+                "endSeconds": 72.6,
+                "summary": "The discussion includes emotional effects as well as hearing-related concerns.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The report describes a projection and a link, not immediate deafness in every listener.",
+                  "B": "The programme explicitly links exposure with stress and anxiety."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t3-q2-a",
+                  "label": "A",
+                  "text": "A guarantee that every listener immediately becomes deaf."
+                },
+                {
+                  "id": "bbc-260521-t3-q2-b",
+                  "label": "B",
+                  "text": "An assurance that city noise has no effect on feelings."
+                },
+                {
+                  "id": "bbc-260521-t3-q2-c",
+                  "label": "C",
+                  "text": "A link between loud-noise exposure and stress or anxiety."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260521-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Mumbai’s reported level compare with the WHO recommendation?",
+              "evidence": {
+                "startSeconds": 124.42,
+                "endSeconds": 128.62,
+                "summary": "The comparison describes an excess of over twenty decibels.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The programme reports a substantial excess rather than equality.",
+                  "C": "The comparison explicitly places the level above the recommendation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t3-q3-a",
+                  "label": "A",
+                  "text": "It is exactly the recommended level."
+                },
+                {
+                  "id": "bbc-260521-t3-q3-b",
+                  "label": "B",
+                  "text": "It is more than twenty decibels higher."
+                },
+                {
+                  "id": "bbc-260521-t3-q3-c",
+                  "label": "C",
+                  "text": "It is more than twenty decibels lower."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Adjustment and a possible response",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Chhavi had become used to {{blank}} levels of noise while abroad.",
+              "evidence": {
+                "startSeconds": 156.1,
+                "endSeconds": 159.82,
+                "summary": "Lower overseas noise levels explain the change in her tolerance.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "lower"
+              ]
+            },
+            {
+              "id": "bbc-260521-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Soundscaping adds selected sounds so public spaces feel more {{blank}}.",
+              "evidence": {
+                "startSeconds": 189.62,
+                "endSeconds": 194.78,
+                "summary": "The approach is described in terms of the listener’s relaxing experience.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "relaxing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Charles’s project",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In which city is the park used for Charles’s installation? {{blank}}",
+              "evidence": {
+                "startSeconds": 199.66,
+                "endSeconds": 202.06,
+                "summary": "The installation’s park is located in Montreal.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Montreal"
+              ]
+            },
+            {
+              "id": "bbc-260521-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which islands supplied the holiday sounds that inspired the project? {{blank}}",
+              "evidence": {
+                "startSeconds": 203.62,
+                "endSeconds": 207.48,
+                "summary": "The inspiration comes from the Magdalen Islands rather than the park’s traffic.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Magdalen Islands"
+              ]
+            },
+            {
+              "id": "bbc-260521-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Where in the park were the speakers positioned? {{blank}}",
+              "evidence": {
+                "startSeconds": 239.38,
+                "endSeconds": 241.24,
+                "summary": "The speakers were planted in flower beds rather than placed on the surrounding roads.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "flower beds"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: What listeners hear and the final answer",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Recorded natural sounds include sand and ocean {{blank}}.",
+              "evidence": {
+                "startSeconds": 265.54,
+                "endSeconds": 271.3,
+                "summary": "The recordings played in the park include ocean waves and the unusual sand sound.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "waves"
+              ]
+            },
+            {
+              "id": "bbc-260521-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Corrected whisper level: {{blank}} decibels.",
+              "evidence": {
+                "startSeconds": 316.98,
+                "endSeconds": 319,
+                "summary": "The final exchange confirms thirty rather than thirteen decibels.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "30",
+                "thirty"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+        "audioSha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2",
+        "durationSeconds": 375.6,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "e031334b9e10e5bffee367fd0752fae3e7f5a61d9ed5263f4316c0a27f4fa03e"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Actual sound levels versus a quieter experience",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260521-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Two different consequences of noise",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Hearing-loss figure projected for 2050: {{blank}} billion people.",
+              "evidence": {
+                "startSeconds": 63.76,
+                "endSeconds": 68.34,
+                "summary": "The stated figure is a future hearing-loss projection rather than the current city population.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "2.5"
+              ]
+            },
+            {
+              "id": "bbc-260521-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Psychological effect named alongside stress: {{blank}}.",
+              "evidence": {
+                "startSeconds": 69.12,
+                "endSeconds": 72.6,
+                "summary": "Anxiety is mentioned as an emotional effect linked with exposure to loud noise.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "anxiety"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Place and adaptation",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What daytime sound level is reported for Mumbai, in decibels? {{blank}}",
+              "evidence": {
+                "startSeconds": 118.6,
+                "endSeconds": 123.66,
+                "summary": "The reported daytime value is eighty decibels, not the amount above the guideline.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "80",
+                "eighty"
+              ]
+            },
+            {
+              "id": "bbc-260521-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How many years overseas preceded Chhavi’s difficulty readjusting to the noise? {{blank}}",
+              "evidence": {
+                "startSeconds": 152,
+                "endSeconds": 154.52,
+                "summary": "Chhavi’s overseas stay lasted twelve years before her reported readjustment problem.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "12",
+                "twelve"
+              ]
+            },
+            {
+              "id": "bbc-260521-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which city hosts the park intervention rather than the resident’s noise complaint? {{blank}}",
+              "evidence": {
+                "startSeconds": 199.66,
+                "endSeconds": 202.06,
+                "summary": "Montreal hosts the installation, while the earlier personal account concerns Mumbai.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "Montreal"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–7: A sound source and its delivery",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The unusual island sound occurs when someone walks into the sand {{blank}}.",
+              "evidence": {
+                "startSeconds": 223.56,
+                "endSeconds": 228.1,
+                "summary": "The sand’s squeak is connected with the manner of stepping on it.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "firmly"
+              ]
+            },
+            {
+              "id": "bbc-260521-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The electronic delivery system is integrated into the park’s flower {{blank}}.",
+              "evidence": {
+                "startSeconds": 239.38,
+                "endSeconds": 241.24,
+                "summary": "The description locates the installation speakers within flower beds.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "beds"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t4-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Interpreting the intervention",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260521-t4-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why is the proposed approach described as counterintuitive?",
+              "evidence": {
+                "startSeconds": 251.86,
+                "endSeconds": 257.78,
+                "summary": "The apparent paradox concerns adding calm sounds to reduce the perceived disturbance.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The account concerns selected natural sounds rather than arbitrary additional noise.",
+                  "C": "The intervention changes the sound experience by adding selected sounds; it does not remove the traffic source."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t4-q8-a",
+                  "label": "A",
+                  "text": "The same calming effect is expected from increasing the volume of any background noise."
+                },
+                {
+                  "id": "bbc-260521-t4-q8-b",
+                  "label": "B",
+                  "text": "An added sound can produce a quieter-feeling experience rather than simply more disturbance."
+                },
+                {
+                  "id": "bbc-260521-t4-q8-c",
+                  "label": "C",
+                  "text": "Replacing the sound recording is intended to remove the original traffic noise itself."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t4-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is actually reproduced through the park speakers?",
+              "evidence": {
+                "startSeconds": 265.54,
+                "endSeconds": 271.3,
+                "summary": "The installation reproduces recordings of natural sounds rather than a live island feed or road recording.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The named recordings include sand and ocean waves rather than reduced-volume traffic.",
+                  "C": "The account says recordings are played; it does not describe a live transmission."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t4-q9-a",
+                  "label": "A",
+                  "text": "Recordings of natural sounds collected away from the park."
+                },
+                {
+                  "id": "bbc-260521-t4-q9-b",
+                  "label": "B",
+                  "text": "Recordings of the nearby road traffic played at a lower volume."
+                },
+                {
+                  "id": "bbc-260521-t4-q9-c",
+                  "label": "C",
+                  "text": "Live sound continuously transmitted from the island to the park."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260521-t4-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What do the references to Tokyo and Barcelona establish?",
+              "evidence": {
+                "startSeconds": 295.12,
+                "endSeconds": 298.14,
+                "summary": "The additional cities illustrate wider use without proving uniform worldwide adoption.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Montreal’s intervention uses the natural-sound recordings; the cities are later examples of other approaches.",
+                  "C": "The cities illustrate related approaches; the programme does not assign them the same recorded material."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t4-q10-a",
+                  "label": "A",
+                  "text": "The cities are presented as the sources from which Montreal’s traffic recordings were taken."
+                },
+                {
+                  "id": "bbc-260521-t4-q10-b",
+                  "label": "B",
+                  "text": "Related soundscaping approaches are being used beyond the Montreal example."
+                },
+                {
+                  "id": "bbc-260521-t4-q10-c",
+                  "label": "C",
+                  "text": "The other cities use recordings gathered during Charles’s same island holiday."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+        "audioSha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2",
+        "durationSeconds": 375.6,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "802d785d64425f3f3dacc173c016b639ed8eb8bc37647aa2d51ce7cf9253c4e6"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "How context changes the experience of sound",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260521-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Emotional response, scale and adaptation",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260521-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does the opening comparison suggest about noise and feelings?",
+              "evidence": {
+                "startSeconds": 32.42,
+                "endSeconds": 39.68,
+                "summary": "The contrast illustrates sensitivity to the sound environment rather than a uniform response.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Neil contrasts feelings of relaxation and stress, without making a prior visit the explanation.",
+                  "C": "He explicitly describes the second sound environment as stressful rather than similarly relaxing."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t5-q1-a",
+                  "label": "A",
+                  "text": "His preference is explained by having visited the location in the first clip."
+                },
+                {
+                  "id": "bbc-260521-t5-q1-b",
+                  "label": "B",
+                  "text": "Different sound environments can produce different emotional reactions."
+                },
+                {
+                  "id": "bbc-260521-t5-q1-c",
+                  "label": "C",
+                  "text": "Both clips leave him similarly relaxed despite their different soundscapes."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260521-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How should the hearing-loss statistic be distinguished from the city-population figure?",
+              "evidence": {
+                "startSeconds": 63.76,
+                "endSeconds": 68.34,
+                "summary": "The report’s time frame and subject differ from the earlier urban-population figure.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The statistic concerns projected hearing loss; the preceding four-billion figure concerns current urban residents.",
+                  "C": "The figure is attached to a future year, 2050, rather than only current cases."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t5-q2-a",
+                  "label": "A",
+                  "text": "It is a projection for a future year, not a count of all current urban residents."
+                },
+                {
+                  "id": "bbc-260521-t5-q2-b",
+                  "label": "B",
+                  "text": "It counts people currently living in cities rather than people with a hearing condition."
+                },
+                {
+                  "id": "bbc-260521-t5-q2-c",
+                  "label": "C",
+                  "text": "It describes only the group already experiencing hearing loss at the time of recording."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260521-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What is the causal explanation in Chhavi’s account of returning home?",
+              "evidence": {
+                "startSeconds": 156.1,
+                "endSeconds": 159.82,
+                "summary": "Chhavi explains the changed response through adjustment to quieter surroundings.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Chhavi explains her changed response through adjusting to quieter life abroad, not measuring a new local increase.",
+                  "C": "This reverses the account: becoming used to quieter environments made returning harder."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260521-t5-q3-a",
+                  "label": "A",
+                  "text": "Habituation to quieter places made the old noise environment harder to tolerate."
+                },
+                {
+                  "id": "bbc-260521-t5-q3-b",
+                  "label": "B",
+                  "text": "She links the difficulty chiefly to a newly measured increase in Mumbai’s noise."
+                },
+                {
+                  "id": "bbc-260521-t5-q3-c",
+                  "label": "C",
+                  "text": "Her time abroad made her more accustomed to Mumbai’s previous noise level."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–5: A design setting and a source of inspiration",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What Canadian city is the setting for Charles’s sound-art project? {{blank}}",
+              "evidence": {
+                "startSeconds": 199.66,
+                "endSeconds": 202.06,
+                "summary": "The sound-art project is located in Montreal rather than the island holiday location.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Montreal"
+              ]
+            },
+            {
+              "id": "bbc-260521-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What island group supplied the experience Charles wanted to recreate? {{blank}}",
+              "evidence": {
+                "startSeconds": 203.62,
+                "endSeconds": 207.48,
+                "summary": "The Magdalen Islands supplied the remembered ocean sounds.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Magdalen Islands"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–7: The source sound and the equipment",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260521-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Material producing the unusual squeak underfoot: {{blank}}.",
+              "evidence": {
+                "startSeconds": 223.56,
+                "endSeconds": 228.1,
+                "summary": "The sound originates in the island sand when it is stepped on.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sand"
+              ]
+            },
+            {
+              "id": "bbc-260521-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Equipment embedded in the flower beds: {{blank}}.",
+              "evidence": {
+                "startSeconds": 239.38,
+                "endSeconds": 241.24,
+                "summary": "Speakers placed in flower beds deliver the installation’s sound.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "speakers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260521-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: The principle and its wider use",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260521-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The intended reduction in perceived disturbance comes from adding {{blank}} sounds.",
+              "evidence": {
+                "startSeconds": 251.86,
+                "endSeconds": 257.78,
+                "summary": "Charles describes adding calmer sounds to change the park’s noisy experience.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "calmer"
+              ]
+            },
+            {
+              "id": "bbc-260521-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Besides Tokyo, {{blank}} is named as another city using similar soundscapes.",
+              "evidence": {
+                "startSeconds": 295.12,
+                "endSeconds": 298.14,
+                "summary": "Barcelona is the other named example of wider soundscaping use.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Barcelona"
+              ]
+            },
+            {
+              "id": "bbc-260521-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The final whisper measurement is {{blank}} decibels, correcting the earlier guess.",
+              "evidence": {
+                "startSeconds": 316.98,
+                "endSeconds": 319,
+                "summary": "Thirty decibels is the answer confirmed after rejecting the thirteen-decibel guess.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "30",
+                "thirty"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260521",
+        "audioSha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2",
+        "durationSeconds": 375.6,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "c52faa8a1f50b79970df1849e9ba01ae3311b97095300e02aa81ea1a0868f0ad"
+      }
+    }
+  ]
+}

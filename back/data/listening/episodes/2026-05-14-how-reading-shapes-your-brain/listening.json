@@ -1,0 +1,1471 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Reading habits and the changing brain",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260514-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Habits and early brain functions",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Becca’s reason for not reading often: lack of {{blank}}.",
+              "evidence": {
+                "startSeconds": 27.32,
+                "endSeconds": 28.94,
+                "summary": "Becca says she feels she does not have time to read often.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "time"
+              ]
+            },
+            {
+              "id": "bbc-260514-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Georgie usually reads before {{blank}}.",
+              "evidence": {
+                "startSeconds": 35.12,
+                "endSeconds": 39.7,
+                "summary": "Georgie places most of her reading before bedtime.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "bed"
+              ]
+            },
+            {
+              "id": "bbc-260514-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "At birth, some brain networks already allow the {{blank}} to see.",
+              "evidence": {
+                "startSeconds": 119.86,
+                "endSeconds": 125.76,
+                "summary": "The presenter describes existing networks for the eyes to see at birth.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "eyes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Learning to read",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260514-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What do the presenters say is not already present at birth?",
+              "evidence": {
+                "startSeconds": 126.24,
+                "endSeconds": 128.66,
+                "summary": "The missing pathways in the comparison are those required for reading.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The presenter includes sound production among existing networks.",
+                  "C": "Those visual networks are specifically described as present."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t1-q4-a",
+                  "label": "A",
+                  "text": "The pathways needed for reading."
+                },
+                {
+                  "id": "bbc-260514-t1-q4-b",
+                  "label": "B",
+                  "text": "The ability of the vocal cords to produce sounds."
+                },
+                {
+                  "id": "bbc-260514-t1-q4-c",
+                  "label": "C",
+                  "text": "The networks that allow the eyes to see."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260514-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why has a dedicated reading brain not developed, according to Rebecca?",
+              "evidence": {
+                "startSeconds": 137.22,
+                "endSeconds": 141.98,
+                "summary": "Rebecca gives insufficient evolutionary time as the explanation.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "She describes insufficient time for one to develop, not the loss of an earlier network.",
+                  "B": "Rebecca says there has not been enough time to develop a dedicated reading brain."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t1-q5-a",
+                  "label": "A",
+                  "text": "An earlier dedicated reading network was lost during evolution."
+                },
+                {
+                  "id": "bbc-260514-t1-q5-b",
+                  "label": "B",
+                  "text": "A separate reading network has always been fully present at birth."
+                },
+                {
+                  "id": "bbc-260514-t1-q5-c",
+                  "label": "C",
+                  "text": "There has not been enough evolutionary time."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260514-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What happens when a reading network is built?",
+              "evidence": {
+                "startSeconds": 144.7,
+                "endSeconds": 153.14,
+                "summary": "Learning to read draws on brain parts already involved in other functions.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Vision and language are among the functions co-opted for reading.",
+                  "C": "Rebecca describes using existing parts with other functions."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t1-q6-a",
+                  "label": "A",
+                  "text": "The brain stops using vision and language."
+                },
+                {
+                  "id": "bbc-260514-t1-q6-b",
+                  "label": "B",
+                  "text": "Parts used for other brain functions are brought into it."
+                },
+                {
+                  "id": "bbc-260514-t1-q6-c",
+                  "label": "C",
+                  "text": "Only a completely unused part of the brain is involved."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: The areas involved and a case example",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Reading involves all four lobes of the {{blank}}.",
+              "evidence": {
+                "startSeconds": 157.6,
+                "endSeconds": 161.66,
+                "summary": "Rebecca identifies all four lobes of the cortex as involved.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "cortex"
+              ]
+            },
+            {
+              "id": "bbc-260514-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A stroke affected a bilingual man’s ability to read {{blank}}.",
+              "evidence": {
+                "startSeconds": 238.14,
+                "endSeconds": 243.86,
+                "summary": "The case example describes a loss of ability to read Chinese after a stroke.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Chinese"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Writing systems and a long book",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Besides visual processing, what kind of memory does Maryanne mention for Chinese? {{blank}}",
+              "evidence": {
+                "startSeconds": 263.88,
+                "endSeconds": 267.84,
+                "summary": "Maryanne names visual memory alongside visual processing.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "visual memory"
+              ]
+            },
+            {
+              "id": "bbc-260514-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How many million words are confirmed for the Proust novel? {{blank}}",
+              "evidence": {
+                "startSeconds": 310.06,
+                "endSeconds": 313.72,
+                "summary": "The closing exchange confirms a total of one point three million words.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "1.3"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+        "audioSha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d",
+        "durationSeconds": 373.128,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "1c36913a389779bff59ea24c597ca445435a3416cc6f8436127157795c0658e8"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "From ordinary reading to different writing systems",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260514-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–2: The presenters’ reading habits",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Becca feel she lacks for frequent reading? {{blank}}",
+              "evidence": {
+                "startSeconds": 27.32,
+                "endSeconds": 28.94,
+                "summary": "Becca attributes her limited reading to insufficient time.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "time"
+              ]
+            },
+            {
+              "id": "bbc-260514-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What does reading before bed help Georgie do, besides relax? {{blank}}",
+              "evidence": {
+                "startSeconds": 35.12,
+                "endSeconds": 39.7,
+                "summary": "Georgie links bedtime reading with relaxation and going to sleep.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sleep"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t2-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Rethinking the reading brain",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260514-t2-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What assumption does Maryanne reject?",
+              "evidence": {
+                "startSeconds": 108.84,
+                "endSeconds": 113.64,
+                "summary": "Maryanne challenges the inference from language to naturally present reading ability.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "She accepts that reading is written language but rejects the conclusion that it must be natural.",
+                  "C": "Her argument supports the need to develop reading pathways, not rejecting training."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t2-q3-a",
+                  "label": "A",
+                  "text": "That the activity involves written language at all."
+                },
+                {
+                  "id": "bbc-260514-t2-q3-b",
+                  "label": "B",
+                  "text": "That reading must be natural simply because it is written language."
+                },
+                {
+                  "id": "bbc-260514-t2-q3-c",
+                  "label": "C",
+                  "text": "That people need any training to develop reading."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260514-t2-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Rebecca’s reference to four lobes illustrate?",
+              "evidence": {
+                "startSeconds": 157.6,
+                "endSeconds": 161.66,
+                "summary": "All four lobes support Rebecca’s description of reading as a whole-brain process.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The example explicitly describes activation of the cortex.",
+                  "C": "She says reading activates all four lobes, not one exclusive lobe per language."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t2-q4-a",
+                  "label": "A",
+                  "text": "Reading involves a broad brain network rather than one isolated location."
+                },
+                {
+                  "id": "bbc-260514-t2-q4-b",
+                  "label": "B",
+                  "text": "The cortex is inactive while people read."
+                },
+                {
+                  "id": "bbc-260514-t2-q4-c",
+                  "label": "C",
+                  "text": "Each written language is restricted to one separate lobe."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260514-t2-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Rebecca say about deep reading beyond immediate activity?",
+              "evidence": {
+                "startSeconds": 177.58,
+                "endSeconds": 182.04,
+                "summary": "Rebecca extends the effect of deep reading from brain changes to personal change.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "She explicitly connects deep reading with changing who we are.",
+                  "C": "Her statement concerns changes to readers and their brains."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t2-q5-a",
+                  "label": "A",
+                  "text": "It can change both the brain and who the reader is."
+                },
+                {
+                  "id": "bbc-260514-t2-q5-b",
+                  "label": "B",
+                  "text": "It leaves the reader unchanged once the book is closed."
+                },
+                {
+                  "id": "bbc-260514-t2-q5-c",
+                  "label": "C",
+                  "text": "It changes only the words printed on the page."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–7: A different writing system and preserved ability",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Chinese writing uses {{blank}} rather than alphabet letters.",
+              "evidence": {
+                "startSeconds": 218.02,
+                "endSeconds": 222.4,
+                "summary": "The presenter contrasts Chinese symbols with letters in an alphabet.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "symbols"
+              ]
+            },
+            {
+              "id": "bbc-260514-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Language the bilingual man could still read after the stroke: {{blank}}.",
+              "evidence": {
+                "startSeconds": 245.82,
+                "endSeconds": 247.86,
+                "summary": "English reading was preserved despite the loss described for Chinese.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "English"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t2-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Visual demands and a literary example",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t2-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Maryanne links Chinese reading with greater visual memory and visual {{blank}}.",
+              "evidence": {
+                "startSeconds": 263.88,
+                "endSeconds": 267.84,
+                "summary": "Maryanne identifies increased visual processing as part of the writing system’s demands.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "processing"
+              ]
+            },
+            {
+              "id": "bbc-260514-t2-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The novel’s confirmed total is {{blank}} million words.",
+              "evidence": {
+                "startSeconds": 310.06,
+                "endSeconds": 313.72,
+                "summary": "The presenters confirm one point three million as the total number of words.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "1.3"
+              ]
+            },
+            {
+              "id": "bbc-260514-t2-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "One sentence in the same book contains over {{blank}} words.",
+              "evidence": {
+                "startSeconds": 318.2,
+                "endSeconds": 321.04,
+                "summary": "The presenter adds that one sentence exceeds nine hundred words.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "900"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+        "audioSha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d",
+        "durationSeconds": 373.128,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "87e6c638b0b794f22066cc6fd4d4207d5cf9e08e2c018d3e1099a3de65cecdb2"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "How reading recruits and reshapes existing systems",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260514-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: A habit and a biological distinction",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260514-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Georgie choose to read before sleeping?",
+              "evidence": {
+                "startSeconds": 35.12,
+                "endSeconds": 39.7,
+                "summary": "Georgie associates her bedtime habit with relaxation and sleep.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "She says it helps her go to sleep, not replace sleep.",
+                  "B": "Relaxation is the benefit she explicitly identifies."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t3-q1-a",
+                  "label": "A",
+                  "text": "She believes reading prevents any need for sleep."
+                },
+                {
+                  "id": "bbc-260514-t3-q1-b",
+                  "label": "B",
+                  "text": "She reads then because she dislikes feeling relaxed."
+                },
+                {
+                  "id": "bbc-260514-t3-q1-c",
+                  "label": "C",
+                  "text": "She finds that it helps her unwind and get to sleep."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260514-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What contrast is made about the brain at birth?",
+              "evidence": {
+                "startSeconds": 119.86,
+                "endSeconds": 128.66,
+                "summary": "The birth comparison distinguishes pre-existing sensory networks from reading pathways.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The presenter explicitly distinguishes reading from seeing and sound production.",
+                  "C": "The description has existing vision networks and absent reading pathways, not the reverse."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t3-q2-a",
+                  "label": "A",
+                  "text": "The same statement is made about all three abilities being fully ready."
+                },
+                {
+                  "id": "bbc-260514-t3-q2-b",
+                  "label": "B",
+                  "text": "Networks for seeing and producing sounds exist, but reading pathways must develop."
+                },
+                {
+                  "id": "bbc-260514-t3-q2-c",
+                  "label": "C",
+                  "text": "Reading pathways exist, but all networks for vision must be created by books."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260514-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What explains the use of brain systems originally involved in other activities?",
+              "evidence": {
+                "startSeconds": 137.22,
+                "endSeconds": 141.98,
+                "summary": "The lack of a dedicated reading brain motivates recruitment of existing systems.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Rebecca subsequently describes changes in connectivity.",
+                  "C": "The later list explicitly includes vision and language."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t3-q3-a",
+                  "label": "A",
+                  "text": "Learning to read cannot change connections in the brain."
+                },
+                {
+                  "id": "bbc-260514-t3-q3-b",
+                  "label": "B",
+                  "text": "Evolution has not supplied a dedicated reading brain."
+                },
+                {
+                  "id": "bbc-260514-t3-q3-c",
+                  "label": "C",
+                  "text": "Reading uses no visual or language information."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Breadth and change",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How many lobes of the cortex are activated in the account? {{blank}}",
+              "evidence": {
+                "startSeconds": 157.6,
+                "endSeconds": 161.66,
+                "summary": "Rebecca says the reading process involves all four cortical lobes.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "four",
+                "4"
+              ]
+            },
+            {
+              "id": "bbc-260514-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Besides activity and structure, what feature of the brain does Rebecca say changes? {{blank}}",
+              "evidence": {
+                "startSeconds": 164.28,
+                "endSeconds": 172.36,
+                "summary": "Connectivity is the third named aspect altered when a reading brain develops.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "connectivity"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Writing systems and a neurological case",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Instead of alphabet letters, the Chinese example uses {{blank}} to represent words and ideas.",
+              "evidence": {
+                "startSeconds": 218.02,
+                "endSeconds": 222.4,
+                "summary": "Chinese symbols are contrasted with alphabetic representation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "symbols"
+              ]
+            },
+            {
+              "id": "bbc-260514-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The bilingual man’s change in reading ability followed a {{blank}}.",
+              "evidence": {
+                "startSeconds": 238.14,
+                "endSeconds": 243.86,
+                "summary": "The reported event before the selective reading impairment was a stroke.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "stroke"
+              ]
+            },
+            {
+              "id": "bbc-260514-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Despite that event, his ability to read {{blank}} remained.",
+              "evidence": {
+                "startSeconds": 245.82,
+                "endSeconds": 247.86,
+                "summary": "The account emphasizes retained English reading despite impaired Chinese reading.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "English"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Visual demands and detail",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Memory demand particularly highlighted for Chinese: {{blank}} memory.",
+              "evidence": {
+                "startSeconds": 263.88,
+                "endSeconds": 267.84,
+                "summary": "Maryanne specifically highlights visual memory in the Chinese-reading explanation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "visual"
+              ]
+            },
+            {
+              "id": "bbc-260514-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Number exceeded by the word count of one Proust sentence: {{blank}}.",
+              "evidence": {
+                "startSeconds": 318.2,
+                "endSeconds": 321.04,
+                "summary": "The literary example states that one sentence contains over nine hundred words.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "900"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+        "audioSha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d",
+        "durationSeconds": 373.128,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "19511faa0e41132918976f42db744b509f183328d8de44813fedd49cbfed0427"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "What the brain evidence does and does not imply",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260514-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: An assumption and a missing pathway",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Spoken activity with which reading is initially compared: {{blank}}.",
+              "evidence": {
+                "startSeconds": 87.34,
+                "endSeconds": 89.88,
+                "summary": "The opening biological comparison initially treats reading like speaking.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "speaking"
+              ]
+            },
+            {
+              "id": "bbc-260514-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Activity requiring pathways not already present at birth: learning to {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.24,
+                "endSeconds": 128.66,
+                "summary": "The presenter contrasts existing sensory networks with the pathways needed to read.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "read"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Building and altering a network",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Rebecca says evolution has not had enough time to develop a {{blank}} reading brain.",
+              "evidence": {
+                "startSeconds": 137.22,
+                "endSeconds": 141.98,
+                "summary": "The evolutionary explanation concerns the lack of a network dedicated specifically to reading.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dedicated"
+              ]
+            },
+            {
+              "id": "bbc-260514-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Reading is described as distributed across all four lobes of the {{blank}}.",
+              "evidence": {
+                "startSeconds": 157.6,
+                "endSeconds": 161.66,
+                "summary": "The four-lobe description supports a distributed rather than single-site process.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "cortex"
+              ]
+            },
+            {
+              "id": "bbc-260514-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The changes Rebecca lists extend beyond activity and structure to brain {{blank}}.",
+              "evidence": {
+                "startSeconds": 164.28,
+                "endSeconds": 172.36,
+                "summary": "Connectivity is included among the broad changes associated with learning to read.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "connectivity"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Interpreting different writing demands",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260514-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why is Chinese introduced in the discussion of reading?",
+              "evidence": {
+                "startSeconds": 218.02,
+                "endSeconds": 229.88,
+                "summary": "Chinese illustrates how the form of writing influences the brain areas used.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Chinese is introduced through its symbols and the brain areas involved, not the length of a book.",
+                  "B": "The bilingual example that follows illustrates a continuing difference, not its disappearance."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t4-q6-a",
+                  "label": "A",
+                  "text": "The difference is attributed to how long a text is rather than to its writing system."
+                },
+                {
+                  "id": "bbc-260514-t4-q6-b",
+                  "label": "B",
+                  "text": "Differences in writing disappear once the reader has learned a second language."
+                },
+                {
+                  "id": "bbc-260514-t4-q6-c",
+                  "label": "C",
+                  "text": "Different writing systems can place different demands on brain areas."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260514-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the significance of the bilingual man’s case?",
+              "evidence": {
+                "startSeconds": 238.14,
+                "endSeconds": 247.86,
+                "summary": "The case demonstrates a contrast in reading outcomes within one bilingual person.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The account says he could still read English, not that both were lost and one recovered.",
+                  "C": "The reported comparison specifically concerns reading Chinese and reading English."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t4-q7-a",
+                  "label": "A",
+                  "text": "One reading ability was impaired while the other remained available."
+                },
+                {
+                  "id": "bbc-260514-t4-q7-b",
+                  "label": "B",
+                  "text": "Both reading abilities were lost, although one was recovered more quickly."
+                },
+                {
+                  "id": "bbc-260514-t4-q7-c",
+                  "label": "C",
+                  "text": "The case demonstrates a loss of speaking rather than a difference in reading."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260514-t4-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Maryanne explain the greater visual demand associated with Chinese?",
+              "evidence": {
+                "startSeconds": 263.88,
+                "endSeconds": 272.26,
+                "summary": "The visual complexity of the characters is connected to demands on memory and processing.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Maryanne emphasizes intricate symbols and visual memory and processing, not pronunciation.",
+                  "C": "The explanation concerns the characters’ complexity rather than the length of Chinese books."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t4-q8-a",
+                  "label": "A",
+                  "text": "Its detailed symbols require more visual memory and processing."
+                },
+                {
+                  "id": "bbc-260514-t4-q8-b",
+                  "label": "B",
+                  "text": "The additional demand comes mainly from how the characters are pronounced aloud."
+                },
+                {
+                  "id": "bbc-260514-t4-q8-c",
+                  "label": "C",
+                  "text": "The visual difference is explained by the longer books usually written in Chinese."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Two distinct measures of length",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What total, in millions of words, is confirmed for the whole Proust novel? {{blank}}",
+              "evidence": {
+                "startSeconds": 310.06,
+                "endSeconds": 313.72,
+                "summary": "One point three million refers to the entire book rather than a single sentence.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "1.3"
+              ]
+            },
+            {
+              "id": "bbc-260514-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What word count does the example of a single sentence exceed? {{blank}}",
+              "evidence": {
+                "startSeconds": 318.2,
+                "endSeconds": 321.04,
+                "summary": "The figure over nine hundred concerns a single sentence and is separate from the book total.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "900"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+        "audioSha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d",
+        "durationSeconds": 373.128,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "cdc10cd782cd2be1681d2c040e6941df7bf1dac41948d0c47cfb1c941d510b67"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "From learned circuitry to selective reading difficulties",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260514-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Everyday reading and a birth comparison",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What outcome besides relaxation does Georgie associate with her bedtime reading? {{blank}}",
+              "evidence": {
+                "startSeconds": 35.12,
+                "endSeconds": 39.7,
+                "summary": "Georgie values reading partly because it helps her go to sleep.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sleep"
+              ]
+            },
+            {
+              "id": "bbc-260514-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word structures are mentioned as already able to produce sounds through existing brain networks? {{blank}}",
+              "evidence": {
+                "startSeconds": 119.86,
+                "endSeconds": 125.76,
+                "summary": "The birth comparison includes vocal-cord sound production among supported functions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "vocal cords"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t5-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The account of acquiring literacy",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260514-t5-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does Rebecca connect the evolutionary explanation with learning to read?",
+              "evidence": {
+                "startSeconds": 137.22,
+                "endSeconds": 153.14,
+                "summary": "The causal link runs from lacking a dedicated network to drawing on existing systems.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The mechanism described uses existing networks rather than developing independently of them.",
+                  "C": "Rebecca says a dedicated reading brain did not evolve and existing networks have to be recruited."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t5-q3-a",
+                  "label": "A",
+                  "text": "The absence of a dedicated system means existing functional networks are recruited."
+                },
+                {
+                  "id": "bbc-260514-t5-q3-b",
+                  "label": "B",
+                  "text": "Learning first creates a reading system independently of established sensory networks."
+                },
+                {
+                  "id": "bbc-260514-t5-q3-c",
+                  "label": "C",
+                  "text": "An inherited specialist reading circuit is activated without using other networks."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260514-t5-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which interpretation captures the range of changes Rebecca describes?",
+              "evidence": {
+                "startSeconds": 164.28,
+                "endSeconds": 172.36,
+                "summary": "The expert describes several dimensions of brain change rather than activity alone.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The passage attributes changes in activity, structure and connectivity to learning to read.",
+                  "C": "Rebecca explicitly includes physical structure and connectivity in the changes."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t5-q4-a",
+                  "label": "A",
+                  "text": "Learning affects brain activity, physical structure and connectivity."
+                },
+                {
+                  "id": "bbc-260514-t5-q4-b",
+                  "label": "B",
+                  "text": "Physical differences are described as fixed features that precede learning."
+                },
+                {
+                  "id": "bbc-260514-t5-q4-c",
+                  "label": "C",
+                  "text": "Only the pattern of activity changes, with structure and connections staying the same."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260514-t5-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What comparison supports the claim that learning matters to brain structure?",
+              "evidence": {
+                "startSeconds": 210.38,
+                "endSeconds": 214.5,
+                "summary": "The presenter uses literacy acquisition as the basis for the structural comparison.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The later language comparison is separate from this learned-versus-not-learned structural comparison.",
+                  "C": "The contrast is between learning and not learning to read, rather than the length of material read."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260514-t5-q5-a",
+                  "label": "A",
+                  "text": "Readers of Chinese and English are compared without reference to learning status."
+                },
+                {
+                  "id": "bbc-260514-t5-q5-b",
+                  "label": "B",
+                  "text": "Someone who has learned to read is compared with someone who has not."
+                },
+                {
+                  "id": "bbc-260514-t5-q5-c",
+                  "label": "C",
+                  "text": "A fluent reader of a long novel is compared with a fluent reader of a short text."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–7: The bilingual case",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260514-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Event preceding the selective reading impairment: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 238.14,
+                "endSeconds": 243.86,
+                "summary": "The impairment reported in the bilingual case follows a stroke.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stroke"
+              ]
+            },
+            {
+              "id": "bbc-260514-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Reading ability that remained after the event: {{blank}}.",
+              "evidence": {
+                "startSeconds": 245.82,
+                "endSeconds": 247.86,
+                "summary": "The account contrasts lost Chinese reading with retained English reading.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "English"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260514-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Explaining the demands and the closing example",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260514-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Maryanne connects the Chinese writing system with greater visual {{blank}}, as well as visual processing.",
+              "evidence": {
+                "startSeconds": 263.88,
+                "endSeconds": 267.84,
+                "summary": "Visual memory is presented as one of the demands of the Chinese characters.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "memory"
+              ]
+            },
+            {
+              "id": "bbc-260514-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Maryanne’s description of the characters as beautifully {{blank}} emphasizes their detailed form.",
+              "evidence": {
+                "startSeconds": 268.34,
+                "endSeconds": 272.26,
+                "summary": "The word intricate is attached to the detailed symbolic forms of Chinese writing.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "intricate"
+              ]
+            },
+            {
+              "id": "bbc-260514-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The closing verification gives the complete novel a total of {{blank}} million words.",
+              "evidence": {
+                "startSeconds": 310.06,
+                "endSeconds": 313.72,
+                "summary": "The final verified total for the novel is one point three million words.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "1.3"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+        "audioSha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d",
+        "durationSeconds": 373.128,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "183b5c37a9cfe0eb35d6cbf246417c7240f930923b528ebbb7325c4e12c92646"
+      }
+    }
+  ]
+}

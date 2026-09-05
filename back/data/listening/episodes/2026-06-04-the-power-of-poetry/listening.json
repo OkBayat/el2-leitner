@@ -1,0 +1,1473 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Poetry, personal feelings and explaining science",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260604-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Sharing poetry in public",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Place where anyone may stand to perform at an open mic night: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 38.6,
+                "endSeconds": 47.32,
+                "summary": "The event allows anyone to stand on stage and perform.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "stage"
+              ]
+            },
+            {
+              "id": "bbc-260604-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Health event experienced by the friend in Maria’s poem: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 50.4,
+                "endSeconds": 53.4,
+                "summary": "Maria’s poem is introduced as being about a friend who suffered a stroke.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "stroke"
+              ]
+            },
+            {
+              "id": "bbc-260604-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Maria says a poetry evening can improve life after a bad {{blank}}.",
+              "evidence": {
+                "startSeconds": 83.4,
+                "endSeconds": 87.58,
+                "summary": "Maria describes feeling better after an open mic night even following a bad day.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "day"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Hot Poets and their work",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260604-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Hot Poets help people understand?",
+              "evidence": {
+                "startSeconds": 153.28,
+                "endSeconds": 159.18,
+                "summary": "Hot Poets is introduced through its role in communicating science.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The purpose is understanding scientific issues, not preserving reports word for word.",
+                  "C": "The group is introduced as communicating global scientific issues, not school poetry technique."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t1-q4-a",
+                  "label": "A",
+                  "text": "How to preserve the original wording of scientific reports in public performances."
+                },
+                {
+                  "id": "bbc-260604-t1-q4-b",
+                  "label": "B",
+                  "text": "The science behind global issues such as climate change."
+                },
+                {
+                  "id": "bbc-260604-t1-q4-c",
+                  "label": "C",
+                  "text": "How to improve the formal structure of poems used in school lessons."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260604-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What do the poets listen to at meetings?",
+              "evidence": {
+                "startSeconds": 159.88,
+                "endSeconds": 164.54,
+                "summary": "The poets attend presentations of scientific papers.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The description concerns research presentations, not a vote on rhymes.",
+                  "C": "The source material named is scientific papers at meetings."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t1-q5-a",
+                  "label": "A",
+                  "text": "Scientific papers being presented."
+                },
+                {
+                  "id": "bbc-260604-t1-q5-b",
+                  "label": "B",
+                  "text": "Only the audience’s choice of favourite rhymes."
+                },
+                {
+                  "id": "bbc-260604-t1-q5-c",
+                  "label": "C",
+                  "text": "Only recordings of earlier poetry competitions."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260604-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What do the poets do after writing about the material?",
+              "evidence": {
+                "startSeconds": 164.98,
+                "endSeconds": 169.04,
+                "summary": "The poems are performed back to the audience after being written.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The described next step is performing it to the audience.",
+                  "B": "The process uses scientific presentations rather than stopping them."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t1-q6-a",
+                  "label": "A",
+                  "text": "Keep the poem private and never share it."
+                },
+                {
+                  "id": "bbc-260604-t1-q6-b",
+                  "label": "B",
+                  "text": "Ask the scientists to stop presenting their research."
+                },
+                {
+                  "id": "bbc-260604-t1-q6-c",
+                  "label": "C",
+                  "text": "Perform the poem back to the audience."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Research and everyday language",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The research behind Liv’s poem concerns {{blank}}.",
+              "evidence": {
+                "startSeconds": 191.77,
+                "endSeconds": 194.73,
+                "summary": "The presenter identifies biodiversity as the topic of the study behind Liv’s poem.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            },
+            {
+              "id": "bbc-260604-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The everyday word used to illustrate precipitation is {{blank}}.",
+              "evidence": {
+                "startSeconds": 229.19,
+                "endSeconds": 234.87,
+                "summary": "Rain is contrasted with the technical word precipitation.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rain"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: The scientist’s response and a final term",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Kat say she still gets when she hears the poem? {{blank}}",
+              "evidence": {
+                "startSeconds": 271.71,
+                "endSeconds": 274.41,
+                "summary": "Kat describes continuing emotional impact by saying she still gets goosebumps.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "goosebumps",
+                "goose bumps"
+              ]
+            },
+            {
+              "id": "bbc-260604-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which name for repeated initial sounds is confirmed in the closing answer? {{blank}}",
+              "evidence": {
+                "startSeconds": 307.69,
+                "endSeconds": 312.07,
+                "summary": "The final exchange confirms alliteration as the named sound pattern.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "alliteration"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260604",
+        "audioSha256": "beed416a7eb0cdd56467415fc53098c7305758d5f6983c3acd5f6358270209a8",
+        "durationSeconds": 373.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "06d96745588fee4e32eb997c0bdf7c63600d1e607f177c7c36cb3bc6c4227e93"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Turning research into an accessible experience",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260604-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–2: The personal poetry example",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What three-word event name is used for a place where anyone can perform? {{blank}}",
+              "evidence": {
+                "startSeconds": 38.6,
+                "endSeconds": 47.32,
+                "summary": "The programme names an open mic night as a live event open to performers.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "open mic night"
+              ]
+            },
+            {
+              "id": "bbc-260604-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What had happened to the friend who inspired Maria’s poem? {{blank}}",
+              "evidence": {
+                "startSeconds": 50.4,
+                "endSeconds": 53.4,
+                "summary": "Maria’s friend is described as having suffered a stroke.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "stroke"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t2-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Scientific material for poetry",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t2-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Example of a global issue addressed by Hot Poets: {{blank}}.",
+              "evidence": {
+                "startSeconds": 153.28,
+                "endSeconds": 159.18,
+                "summary": "Climate change is the example given of the global issues the group helps explain.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "climate change"
+              ]
+            },
+            {
+              "id": "bbc-260604-t2-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Material the poets listen to at meetings: scientific {{blank}}.",
+              "evidence": {
+                "startSeconds": 159.88,
+                "endSeconds": 164.54,
+                "summary": "Scientific papers provide the presented material the poets listen to.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "papers"
+              ]
+            },
+            {
+              "id": "bbc-260604-t2-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Subject of the study used for Liv’s poem: {{blank}}.",
+              "evidence": {
+                "startSeconds": 191.77,
+                "endSeconds": 194.73,
+                "summary": "Liv’s particular poem is based on a biodiversity study.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: The communication problem and the response",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260604-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What difficulty does Liv identify for ordinary audiences?",
+              "evidence": {
+                "startSeconds": 213.53,
+                "endSeconds": 216.35,
+                "summary": "Liv locates a communication difficulty in specialist vocabulary.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Liv says a lot of the jargon is hard to understand.",
+                  "C": "The discussion explicitly identifies jargon as a barrier."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t2-q6-a",
+                  "label": "A",
+                  "text": "Specialist language can make the science hard to understand."
+                },
+                {
+                  "id": "bbc-260604-t2-q6-b",
+                  "label": "B",
+                  "text": "The audience already understands every specialist expression."
+                },
+                {
+                  "id": "bbc-260604-t2-q6-c",
+                  "label": "C",
+                  "text": "The science contains no language specific to its subject."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260604-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why can difficult scientific language be a turn-off?",
+              "evidence": {
+                "startSeconds": 217.17,
+                "endSeconds": 220.85,
+                "summary": "Liv connects lack of understanding with reduced audience interest.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Liv describes difficult science as an immediate turn-off, not a guaranteed attraction.",
+                  "C": "The issue concerns audience response, not a rule stopping research."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t2-q7-a",
+                  "label": "A",
+                  "text": "Every listener becomes more interested precisely because it is impossible to follow."
+                },
+                {
+                  "id": "bbc-260604-t2-q7-b",
+                  "label": "B",
+                  "text": "People may lose interest when they cannot understand it."
+                },
+                {
+                  "id": "bbc-260604-t2-q7-c",
+                  "label": "C",
+                  "text": "Scientists are required to stop studying the topic once it is difficult."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260604-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How should Kat’s goosebumps be understood in this context?",
+              "evidence": {
+                "startSeconds": 271.71,
+                "endSeconds": 274.41,
+                "summary": "Kat’s reaction is emotional and continues on repeated hearing.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The surrounding account explains that she is emotionally affected by the poem.",
+                  "C": "Kat says it still affects her when she hears it now."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t2-q8-a",
+                  "label": "A",
+                  "text": "They show she is discussing the weather in the room."
+                },
+                {
+                  "id": "bbc-260604-t2-q8-b",
+                  "label": "B",
+                  "text": "They express a strong emotional response to the poem."
+                },
+                {
+                  "id": "bbc-260604-t2-q8-c",
+                  "label": "C",
+                  "text": "They show she has never heard the poem before."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Expression and the final language point",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Kat feels Liv has put into {{blank}} what she herself wished she could say.",
+              "evidence": {
+                "startSeconds": 276.19,
+                "endSeconds": 281.09,
+                "summary": "Kat says the poem expresses what she wanted to put into words herself.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "words"
+              ]
+            },
+            {
+              "id": "bbc-260604-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The final answer identifies the initial-sound technique as {{blank}}.",
+              "evidence": {
+                "startSeconds": 307.69,
+                "endSeconds": 312.07,
+                "summary": "The repeated initial-sound feature is confirmed as alliteration.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "alliteration"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260604",
+        "audioSha256": "beed416a7eb0cdd56467415fc53098c7305758d5f6983c3acd5f6358270209a8",
+        "durationSeconds": 373.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "2c75ce036308aab74a0298c7f8ccd1dd348f80dcab87feba6f13b91d787709b7"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "From an open stage to scientific communication",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260604-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Why poetry might matter",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260604-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What makes poetry difficult for Neil?",
+              "evidence": {
+                "startSeconds": 30.94,
+                "endSeconds": 38.14,
+                "summary": "Neil distinguishes wanting to read poetry from finding it accessible.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "He says he would love to read more but finds it difficult to understand.",
+                  "B": "He mentions writing poetry at school before describing his current difficulty."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t3-q1-a",
+                  "label": "A",
+                  "text": "He understands every poem but has no interest in reading any."
+                },
+                {
+                  "id": "bbc-260604-t3-q1-b",
+                  "label": "B",
+                  "text": "He says he has never encountered poetry, including at school."
+                },
+                {
+                  "id": "bbc-260604-t3-q1-c",
+                  "label": "C",
+                  "text": "He often does not understand it, despite wanting to read more."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260604-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What makes the open mic event accessible to performers?",
+              "evidence": {
+                "startSeconds": 38.6,
+                "endSeconds": 47.32,
+                "summary": "Open participation, rather than professional status, defines the event described.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The explanation does not restrict participation to the reporter.",
+                  "C": "The event is introduced as open to anyone, before the later science example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t3-q2-a",
+                  "label": "A",
+                  "text": "Only the reporter may perform while everyone else must remain silent."
+                },
+                {
+                  "id": "bbc-260604-t3-q2-b",
+                  "label": "B",
+                  "text": "Anyone is allowed to go on stage and perform."
+                },
+                {
+                  "id": "bbc-260604-t3-q2-c",
+                  "label": "C",
+                  "text": "Only the scientists whose papers are discussed may perform."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260604-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What benefit does Maria describe from attending a poetry evening?",
+              "evidence": {
+                "startSeconds": 83.4,
+                "endSeconds": 87.58,
+                "summary": "Maria connects poetry with an improvement in emotional experience.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Her example concerns sharing a poem arising from sadness rather than banning it.",
+                  "B": "Maria describes improved feelings, not a universal solution to practical problems."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t3-q3-a",
+                  "label": "A",
+                  "text": "It prevents anyone from expressing sadness in a poem."
+                },
+                {
+                  "id": "bbc-260604-t3-q3-b",
+                  "label": "B",
+                  "text": "It guarantees that every practical problem has been solved."
+                },
+                {
+                  "id": "bbc-260604-t3-q3-c",
+                  "label": "C",
+                  "text": "It can improve how someone feels after a difficult day."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Hot Poets’ purpose and process",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Global issue used to illustrate the group’s work: {{blank}}.",
+              "evidence": {
+                "startSeconds": 153.28,
+                "endSeconds": 159.18,
+                "summary": "The group’s scientific communication work is illustrated with climate change.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "climate change"
+              ]
+            },
+            {
+              "id": "bbc-260604-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "People to whom the finished poem is performed: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 164.98,
+                "endSeconds": 169.04,
+                "summary": "The poets perform their response back to the audience at the meeting.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "audience"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Making complex material understandable",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Liv’s performance draws on a study of {{blank}}.",
+              "evidence": {
+                "startSeconds": 191.77,
+                "endSeconds": 194.73,
+                "summary": "The described source of Liv’s performance is a biodiversity study.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            },
+            {
+              "id": "bbc-260604-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil contrasts the scientific word precipitation with the everyday word {{blank}}.",
+              "evidence": {
+                "startSeconds": 229.19,
+                "endSeconds": 234.87,
+                "summary": "Neil uses rain to illustrate a more familiar way to express a scientific term.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rain"
+              ]
+            },
+            {
+              "id": "bbc-260604-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The group tries to make complex environmental ideas easy to {{blank}} through poetry.",
+              "evidence": {
+                "startSeconds": 250.13,
+                "endSeconds": 254.45,
+                "summary": "The stated aim is to make the ideas comprehensible through poetry.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "understand"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Response and the closing confirmation",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What physical reaction does Kat use to describe the poem’s emotional effect? {{blank}}",
+              "evidence": {
+                "startSeconds": 271.71,
+                "endSeconds": 274.41,
+                "summary": "Goosebumps are Kat’s description of the strong effect of hearing the poem.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "goosebumps",
+                "goose bumps"
+              ]
+            },
+            {
+              "id": "bbc-260604-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which poetic device is verified after the earlier guess? {{blank}}",
+              "evidence": {
+                "startSeconds": 307.69,
+                "endSeconds": 312.07,
+                "summary": "Alliteration is verified in the final answer exchange.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "alliteration"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260604",
+        "audioSha256": "beed416a7eb0cdd56467415fc53098c7305758d5f6983c3acd5f6358270209a8",
+        "durationSeconds": 373.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "2095e1156880366164fb7a85f291c06a09e941bc37c846037c51945db388f185"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Poetry as interpretation rather than a replacement for science",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260604-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Access to poetry",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil’s obstacle despite his interest: poetry is difficult to {{blank}}.",
+              "evidence": {
+                "startSeconds": 30.94,
+                "endSeconds": 38.14,
+                "summary": "Neil’s problem concerns understanding rather than a lack of interest in reading poetry.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "understand"
+              ]
+            },
+            {
+              "id": "bbc-260604-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The event allows anyone to perform on {{blank}}.",
+              "evidence": {
+                "startSeconds": 38.6,
+                "endSeconds": 47.32,
+                "summary": "The open mic description emphasizes access to the stage rather than a qualification requirement.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stage"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: From personal experience to scientific material",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Maria’s personal example concerns a friend who had suffered a {{blank}}.",
+              "evidence": {
+                "startSeconds": 50.4,
+                "endSeconds": 53.4,
+                "summary": "The poem’s personal starting point is the friend’s stroke, not a scientific report.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stroke"
+              ]
+            },
+            {
+              "id": "bbc-260604-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Hot Poets broadens the discussion to issues such as {{blank}}.",
+              "evidence": {
+                "startSeconds": 153.28,
+                "endSeconds": 159.18,
+                "summary": "The discussion moves from personal emotions to the global issue of climate change.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "climate change"
+              ]
+            },
+            {
+              "id": "bbc-260604-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "At the meetings they attend, the poets first listen to scientific {{blank}}.",
+              "evidence": {
+                "startSeconds": 159.88,
+                "endSeconds": 164.54,
+                "summary": "Listening to scientific papers precedes the poets’ creative response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "papers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–7: Research content and the language barrier",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What field of study provides the source material for Liv’s particular poem? {{blank}}",
+              "evidence": {
+                "startSeconds": 191.77,
+                "endSeconds": 194.73,
+                "summary": "The source research concerns biodiversity rather than poetry as an academic subject.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            },
+            {
+              "id": "bbc-260604-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What everyday equivalent illustrates how precipitation can be expressed more accessibly? {{blank}}",
+              "evidence": {
+                "startSeconds": 229.19,
+                "endSeconds": 234.87,
+                "summary": "Rain illustrates the distinction between specialist and everyday vocabulary.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "rain"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t4-g4",
+          "position": 4,
+          "heading": "Questions 8–10: What the response actually establishes",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260604-t4-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which aim is attributed to Hot Poets?",
+              "evidence": {
+                "startSeconds": 250.13,
+                "endSeconds": 254.45,
+                "summary": "The intervention changes communication of research rather than replacing the research itself.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The poems communicate research already presented rather than supplying replacement measurements.",
+                  "C": "The stated aim is accessible communication, not making mastery of jargon a prerequisite."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t4-q8-a",
+                  "label": "A",
+                  "text": "Providing new scientific measurements instead of interpreting existing research."
+                },
+                {
+                  "id": "bbc-260604-t4-q8-b",
+                  "label": "B",
+                  "text": "Making difficult environmental ideas more understandable through a creative form."
+                },
+                {
+                  "id": "bbc-260604-t4-q8-c",
+                  "label": "C",
+                  "text": "Helping audiences learn the specialist terminology before they hear the poems."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260604-t4-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why is Kat’s response more than a general statement that she likes poetry?",
+              "evidence": {
+                "startSeconds": 257.03,
+                "endSeconds": 281.09,
+                "summary": "Kat connects her emotional response with recognition and articulation of her own experience.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "Her own study underlies the poem, and she recognizes ideas she wanted to articulate herself.",
+                  "B": "Kat emphasizes emotion and expressing what she wanted to say, not reproducing technical wording."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t4-q9-a",
+                  "label": "A",
+                  "text": "She presents it as a discovery about a research topic previously unfamiliar to her."
+                },
+                {
+                  "id": "bbc-260604-t4-q9-b",
+                  "label": "B",
+                  "text": "She evaluates the poem primarily by whether it repeats her paper’s technical wording."
+                },
+                {
+                  "id": "bbc-260604-t4-q9-c",
+                  "label": "C",
+                  "text": "She feels the poem expresses ideas and experience she wanted to articulate herself."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260604-t4-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How is the final positive judgement qualified?",
+              "evidence": {
+                "startSeconds": 293.69,
+                "endSeconds": 297.79,
+                "summary": "The closing judgement balances limits with a particular positive effect.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The closing line explicitly preserves the limitation that poetry may not fix everything.",
+                  "B": "The comment retains a positive effect for Kat despite acknowledging the limitation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t4-q10-a",
+                  "label": "A",
+                  "text": "The positive effect on Kat is taken as evidence that poetry can resolve the underlying issues."
+                },
+                {
+                  "id": "bbc-260604-t4-q10-b",
+                  "label": "B",
+                  "text": "The lack of a complete solution cancels the value of Kat’s personal response."
+                },
+                {
+                  "id": "bbc-260604-t4-q10-c",
+                  "label": "C",
+                  "text": "Poetry may not fix everything, but it has made a positive difference for Kat."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260604",
+        "audioSha256": "beed416a7eb0cdd56467415fc53098c7305758d5f6983c3acd5f6358270209a8",
+        "durationSeconds": 373.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "48572942dd9f962fc92805cd1465fd6a25a7963efcb83b47bcee5bcf0acc7fc0"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Different kinds of access and the limits of a creative response",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260604-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Poetry in people’s lives",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260604-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What contrast frames the programme’s introduction?",
+              "evidence": {
+                "startSeconds": 16.94,
+                "endSeconds": 23.56,
+                "summary": "The opening contrasts a temporary school association with continuing personal importance.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The contrast concerns poetry’s place in life, not later exam preparation.",
+                  "C": "It includes continued personal importance for some people, rather than simply school writing versus avoidance."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t5-q1-a",
+                  "label": "A",
+                  "text": "Poetry fades after school for some people but remains important to others."
+                },
+                {
+                  "id": "bbc-260604-t5-q1-b",
+                  "label": "B",
+                  "text": "The programme assumes adults return to poetry mainly to improve examination results."
+                },
+                {
+                  "id": "bbc-260604-t5-q1-c",
+                  "label": "C",
+                  "text": "The opening compares writing poetry at school with avoiding poetry outside lessons."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260604-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the tension in Neil’s account?",
+              "evidence": {
+                "startSeconds": 30.94,
+                "endSeconds": 38.14,
+                "summary": "Neil’s stated interest coexists with a barrier to understanding.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "He says he would like to read more and struggles to understand; regular reading is not his account.",
+                  "B": "Neil expresses interest while saying the poetry is difficult for him to understand."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t5-q2-a",
+                  "label": "A",
+                  "text": "He describes reading regularly but being unable to write poems himself."
+                },
+                {
+                  "id": "bbc-260604-t5-q2-b",
+                  "label": "B",
+                  "text": "His main obstacle is lack of interest despite finding the language straightforward."
+                },
+                {
+                  "id": "bbc-260604-t5-q2-c",
+                  "label": "C",
+                  "text": "He would welcome more poetry reading but struggles with comprehension."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260604-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What kind of change does Maria’s account support?",
+              "evidence": {
+                "startSeconds": 83.4,
+                "endSeconds": 87.58,
+                "summary": "The supported effect is emotional change rather than reversal of the underlying events.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Her statement supports emotional improvement, not solving the underlying practical problem.",
+                  "C": "Maria describes how hearing poetry can change feelings, without making writing instruction the condition."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260604-t5-q3-a",
+                  "label": "A",
+                  "text": "The event resolves the practical cause of the bad day rather than altering feelings about it."
+                },
+                {
+                  "id": "bbc-260604-t5-q3-b",
+                  "label": "B",
+                  "text": "A poetry event can change someone’s emotional experience of a bad day."
+                },
+                {
+                  "id": "bbc-260604-t5-q3-c",
+                  "label": "C",
+                  "text": "The benefit depends mainly on the audience learning how to write their own poems."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–5: The wider purpose and its material",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What two-word global issue exemplifies the group’s science-communication purpose? {{blank}}",
+              "evidence": {
+                "startSeconds": 153.28,
+                "endSeconds": 159.18,
+                "summary": "Climate change exemplifies the scientific global issues the group seeks to communicate.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "climate change"
+              ]
+            },
+            {
+              "id": "bbc-260604-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word material do the poets hear presented before creating their response? {{blank}}",
+              "evidence": {
+                "startSeconds": 159.88,
+                "endSeconds": 164.54,
+                "summary": "Presented scientific papers provide the material for the creative response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "scientific papers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–8: The specific research and language problem",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Subject underlying Liv’s environmental poem: {{blank}}.",
+              "evidence": {
+                "startSeconds": 191.77,
+                "endSeconds": 194.73,
+                "summary": "The particular research underlying Liv’s poem is about biodiversity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            },
+            {
+              "id": "bbc-260604-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Specialist language identified by Liv as an obstacle: {{blank}}.",
+              "evidence": {
+                "startSeconds": 213.53,
+                "endSeconds": 216.35,
+                "summary": "Liv points to jargon as a source of difficulty for ordinary audiences.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "jargon"
+              ]
+            },
+            {
+              "id": "bbc-260604-t5-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Familiar expression used instead of precipitation in Neil’s example: {{blank}}.",
+              "evidence": {
+                "startSeconds": 229.19,
+                "endSeconds": 234.87,
+                "summary": "Neil’s example substitutes an everyday word for a technical term.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rain"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260604-t5-g4",
+          "position": 4,
+          "heading": "Questions 9–10: A continuing response and the closing distinction",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260604-t5-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Kat says hearing the poem still gives her {{blank}}, indicating a continuing emotional effect.",
+              "evidence": {
+                "startSeconds": 271.71,
+                "endSeconds": 274.41,
+                "summary": "Kat’s use of still connects the reaction with repeated hearing rather than a first exposure.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "goosebumps",
+                "goose bumps"
+              ]
+            },
+            {
+              "id": "bbc-260604-t5-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The repeated-initial-sound pattern is finally confirmed as {{blank}}.",
+              "evidence": {
+                "startSeconds": 307.69,
+                "endSeconds": 312.07,
+                "summary": "The final confirmation identifies alliteration rather than the other initially offered devices.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "alliteration"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260604",
+        "audioSha256": "beed416a7eb0cdd56467415fc53098c7305758d5f6983c3acd5f6358270209a8",
+        "durationSeconds": 373.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "33a1d482cb01223caa97dbfd10bb362cf8000679fd9b3c8e740aba4e6504041b"
+      }
+    }
+  ]
+}

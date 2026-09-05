@@ -1,0 +1,1473 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Food supplies and everyday choices",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260409-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Shopping and supply",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260409-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Pippa’s guide to seasonal produce: a kitchen-wall {{blank}}.",
+              "evidence": {
+                "startSeconds": 39.9,
+                "endSeconds": 46.3,
+                "summary": "Pippa keeps a calendar showing the growing seasons for fruit and vegetables.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "calendar"
+              ]
+            },
+            {
+              "id": "bbc-260409-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Share of UK food imported: around {{blank}} percent.",
+              "evidence": {
+                "startSeconds": 51.34,
+                "endSeconds": 54.36,
+                "summary": "Neil gives the imported share of UK food as around forty percent.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "40",
+                "forty"
+              ]
+            },
+            {
+              "id": "bbc-260409-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "A secure food supply must be affordable and {{blank}}.",
+              "evidence": {
+                "startSeconds": 71.24,
+                "endSeconds": 75.88,
+                "summary": "Neil describes food security as reliable access to affordable healthy food.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "healthy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: The report and agricultural emissions",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260409-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does the government report draw on?",
+              "evidence": {
+                "startSeconds": 148.14,
+                "endSeconds": 154,
+                "summary": "Mark identifies scientific research as the foundation of the report.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Mark identifies scientific research rather than only shoppers’ opinions.",
+                  "B": "The calendars are personal examples, not the basis of the government report."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t1-q4-a",
+                  "label": "A",
+                  "text": "A survey of supermarket shoppers only."
+                },
+                {
+                  "id": "bbc-260409-t1-q4-b",
+                  "label": "B",
+                  "text": "The presenters’ own food calendars."
+                },
+                {
+                  "id": "bbc-260409-t1-q4-c",
+                  "label": "C",
+                  "text": "Scientific research."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260409-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What happens in the worst-case situation described?",
+              "evidence": {
+                "startSeconds": 170.7,
+                "endSeconds": 174.72,
+                "summary": "Pippa explains that the report considers Britain running out of food.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The worst case described is a food shortage, not merely a change in products.",
+                  "C": "This reverses the food shortage described in the explanation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t1-q5-a",
+                  "label": "A",
+                  "text": "Britain runs out of food."
+                },
+                {
+                  "id": "bbc-260409-t1-q5-b",
+                  "label": "B",
+                  "text": "Britain stops selling imported vegetables but has enough other food."
+                },
+                {
+                  "id": "bbc-260409-t1-q5-c",
+                  "label": "C",
+                  "text": "Britain produces more food than its population needs."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260409-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Approximately how much of all greenhouse gas emissions comes from food production?",
+              "evidence": {
+                "startSeconds": 192.56,
+                "endSeconds": 197.76,
+                "summary": "The food-production share is described as approximately a third of greenhouse gases.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "Half is not the proportion given for food-production emissions.",
+                  "C": "The recording gives around one third, not two thirds."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t1-q6-a",
+                  "label": "A",
+                  "text": "One third."
+                },
+                {
+                  "id": "bbc-260409-t1-q6-b",
+                  "label": "B",
+                  "text": "One half."
+                },
+                {
+                  "id": "bbc-260409-t1-q6-c",
+                  "label": "C",
+                  "text": "Two thirds."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Animals and alternatives",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Cows and sheep produce a gas called {{blank}}.",
+              "evidence": {
+                "startSeconds": 201.96,
+                "endSeconds": 203.84,
+                "summary": "Methane is named as a gas emitted by cows and sheep.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "methane"
+              ]
+            },
+            {
+              "id": "bbc-260409-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Two non-animal protein examples are beans and {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.92,
+                "endSeconds": 251.12,
+                "summary": "The presenters recommend beans and lentils as examples of non-animal protein.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "lentils"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: The final import figures",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which country is confirmed as Britain’s largest food supplier in Europe? {{blank}}",
+              "evidence": {
+                "startSeconds": 302.56,
+                "endSeconds": 305.62,
+                "summary": "The Netherlands is confirmed as the answer at the end of the discussion.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "the Netherlands",
+                "Netherlands"
+              ]
+            },
+            {
+              "id": "bbc-260409-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Alongside vegetables, which product category is particularly mentioned among those imports? {{blank}}",
+              "evidence": {
+                "startSeconds": 307,
+                "endSeconds": 312.64,
+                "summary": "The closing explanation particularly mentions vegetables and dairy imports.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "dairy"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260409",
+        "audioSha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09",
+        "durationSeconds": 375.456,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "0cbc0689ef2831dc2c6105e1509b446d926bca0163a10fbb2e425aafdb58ff5c"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Food security: risks, emissions and land use",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260409-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Personal choices and national dependence",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What sort of produce does Neil try to buy? {{blank}}",
+              "evidence": {
+                "startSeconds": 30.04,
+                "endSeconds": 37.42,
+                "summary": "Neil says he tries to choose locally produced food, although he does not always check.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "locally produced"
+              ]
+            },
+            {
+              "id": "bbc-260409-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What object helps Pippa identify the season for different crops? {{blank}}",
+              "evidence": {
+                "startSeconds": 39.9,
+                "endSeconds": 46.3,
+                "summary": "Pippa’s kitchen calendar connects particular fruit and vegetables with the time of year.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "calendar"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t2-g2",
+          "position": 2,
+          "heading": "Questions 3–5: What could undermine supply",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t2-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The supply chain is increasingly vulnerable to {{blank}}, as well as wars and shortages.",
+              "evidence": {
+                "startSeconds": 54.84,
+                "endSeconds": 61.2,
+                "summary": "Neil identifies climate change as an increasingly important source of disruption.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "climate change"
+              ]
+            },
+            {
+              "id": "bbc-260409-t2-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The report’s risks include droughts and shortages of {{blank}}.",
+              "evidence": {
+                "startSeconds": 132.86,
+                "endSeconds": 137.8,
+                "summary": "The report lists drought and water shortages among threats to Britain’s supply.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "water"
+              ]
+            },
+            {
+              "id": "bbc-260409-t2-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The report links global ecosystem decline with a threat to national {{blank}}.",
+              "evidence": {
+                "startSeconds": 162.94,
+                "endSeconds": 169.2,
+                "summary": "Mark quotes the report as connecting ecosystem degradation with national security.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "security"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Interpreting the proposed response",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260409-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which agricultural activity does Emma identify as the largest emissions component?",
+              "evidence": {
+                "startSeconds": 213.34,
+                "endSeconds": 218.22,
+                "summary": "Emma distinguishes livestock from the other sources listed earlier.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Tractor diesel is mentioned earlier, but Emma singles out livestock as the biggest component.",
+                  "C": "Fertilisers are an example of emissions, not Emma’s largest identified component."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t2-q6-a",
+                  "label": "A",
+                  "text": "Keeping farm animals on the land."
+                },
+                {
+                  "id": "bbc-260409-t2-q6-b",
+                  "label": "B",
+                  "text": "Using tractors to move crops."
+                },
+                {
+                  "id": "bbc-260409-t2-q6-c",
+                  "label": "C",
+                  "text": "Applying fertilisers to vegetables."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260409-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Emma propose when a cow or sheep is removed from farmland?",
+              "evidence": {
+                "startSeconds": 224.32,
+                "endSeconds": 228.2,
+                "summary": "Emma describes a change of land use rather than abandonment or simple relocation.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Emma says something else is put on the land, not that it must remain unused.",
+                  "B": "Her proposal describes taking animals off and replacing their use of the land."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t2-q7-a",
+                  "label": "A",
+                  "text": "Leaving that land permanently unused."
+                },
+                {
+                  "id": "bbc-260409-t2-q7-b",
+                  "label": "B",
+                  "text": "Keeping the animal count unchanged and moving the same animals elsewhere."
+                },
+                {
+                  "id": "bbc-260409-t2-q7-c",
+                  "label": "C",
+                  "text": "Replacing it with something else on the land."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260409-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Emma frame the role of farmers and landowners?",
+              "evidence": {
+                "startSeconds": 229.8,
+                "endSeconds": 234,
+                "summary": "Emma presents farmers as active participants in solving the climate problem.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "B": "She explicitly describes farmers and landowners as part of the solution.",
+                  "C": "Her argument gives their land-use choices a role in reducing the problem."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t2-q8-a",
+                  "label": "A",
+                  "text": "They can help address climate change through changed land use."
+                },
+                {
+                  "id": "bbc-260409-t2-q8-b",
+                  "label": "B",
+                  "text": "They must be excluded from decisions about farmland."
+                },
+                {
+                  "id": "bbc-260409-t2-q8-c",
+                  "label": "C",
+                  "text": "They are unable to influence agricultural emissions."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Examples of practical changes",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Animal-based products to reduce: meat and {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.92,
+                "endSeconds": 251.12,
+                "summary": "The proposed dietary change concerns reducing both meat and dairy.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dairy"
+              ]
+            },
+            {
+              "id": "bbc-260409-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Possible replacement on farmland: a fruit tree or vegetable {{blank}}.",
+              "evidence": {
+                "startSeconds": 273.44,
+                "endSeconds": 277.38,
+                "summary": "Neil names a vegetable crop alongside a fruit tree as an alternative land use.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "crop"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260409",
+        "audioSha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09",
+        "durationSeconds": 375.456,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "c6643eacd05612ce79e4371b506a2e6b743a8f98886a68b86c6eb131208cdecc"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Tracing the links between food and climate",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260409-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Shopping habits and resilience",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260409-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What do the opening supermarket examples illustrate?",
+              "evidence": {
+                "startSeconds": 21.82,
+                "endSeconds": 26.88,
+                "summary": "The opening examples emphasize the international origins of ordinary groceries.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Fruit and tomatoes are also introduced through international examples.",
+                  "C": "The examples include South America, Spain and Asia."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t3-q1-a",
+                  "label": "A",
+                  "text": "Only rice travels internationally before reaching a supermarket."
+                },
+                {
+                  "id": "bbc-260409-t3-q1-b",
+                  "label": "B",
+                  "text": "Food on sale can come from widely separated parts of the world."
+                },
+                {
+                  "id": "bbc-260409-t3-q1-c",
+                  "label": "C",
+                  "text": "Most supermarket food is grown in the customer’s own town."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260409-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How consistently does Neil check where his food is produced?",
+              "evidence": {
+                "startSeconds": 30.04,
+                "endSeconds": 37.42,
+                "summary": "Neil qualifies his intention to buy local with an admission that he sometimes does not check.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "He says he tries to buy locally produced food.",
+                  "B": "He explicitly admits that sometimes he does not look."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t3-q2-a",
+                  "label": "A",
+                  "text": "He deliberately avoids locally produced food."
+                },
+                {
+                  "id": "bbc-260409-t3-q2-b",
+                  "label": "B",
+                  "text": "He checks every item without exception."
+                },
+                {
+                  "id": "bbc-260409-t3-q2-c",
+                  "label": "C",
+                  "text": "He tries to check but sometimes does not."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260409-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which situation best matches the programme’s idea of food security?",
+              "evidence": {
+                "startSeconds": 71.24,
+                "endSeconds": 75.88,
+                "summary": "Food security combines reliability, affordability, health and sufficient supply.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The definition requires a reliable and affordable supply.",
+                  "B": "The explanation concerns feeding everyone reliably, not banning imports."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t3-q3-a",
+                  "label": "A",
+                  "text": "Food is available occasionally, regardless of price."
+                },
+                {
+                  "id": "bbc-260409-t3-q3-b",
+                  "label": "B",
+                  "text": "A country imports no food, regardless of how much people can eat."
+                },
+                {
+                  "id": "bbc-260409-t3-q3-c",
+                  "label": "C",
+                  "text": "Everyone can reliably obtain healthy food they can afford."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–5: The report’s basis and warning",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Evidence base for the report: scientific {{blank}}.",
+              "evidence": {
+                "startSeconds": 148.14,
+                "endSeconds": 154,
+                "summary": "Mark says the scenario is informed by scientific research.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "research"
+              ]
+            },
+            {
+              "id": "bbc-260409-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Report wording for the threatened natural systems: global {{blank}} degradation and collapse.",
+              "evidence": {
+                "startSeconds": 162.94,
+                "endSeconds": 169.2,
+                "summary": "The report uses the singular attributive word ecosystem in describing degradation and collapse.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ecosystem"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Emissions and replacement proteins",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which gas from farm animals is specifically identified? {{blank}}",
+              "evidence": {
+                "startSeconds": 201.96,
+                "endSeconds": 203.84,
+                "summary": "Methane is the animal-related gas named in the emissions examples.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "methane"
+              ]
+            },
+            {
+              "id": "bbc-260409-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What word does Emma use for the farm animals contributing the largest emissions share? {{blank}}",
+              "evidence": {
+                "startSeconds": 213.34,
+                "endSeconds": 218.22,
+                "summary": "Emma identifies livestock as the largest agricultural emissions component.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "livestock"
+              ]
+            },
+            {
+              "id": "bbc-260409-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What alternative to lentils is named as a non-animal source of protein? {{blank}}",
+              "evidence": {
+                "startSeconds": 244.92,
+                "endSeconds": 251.12,
+                "summary": "Beans are the other named example in the dietary substitution discussion.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "beans"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Land use and trade",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260409-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "One suggested use for former livestock land is a {{blank}} tree.",
+              "evidence": {
+                "startSeconds": 273.44,
+                "endSeconds": 277.38,
+                "summary": "A fruit tree is proposed as a replacement use of the land.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "fruit"
+              ]
+            },
+            {
+              "id": "bbc-260409-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The final explanation puts the value of the imports at {{blank}} billion pounds.",
+              "evidence": {
+                "startSeconds": 307,
+                "endSeconds": 312.64,
+                "summary": "The concluding import figure is seven point six billion pounds.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "7.6"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260409",
+        "audioSha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09",
+        "durationSeconds": 375.456,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "dbaf7fbfd2eca381bb498f480dbab48bf5dcae9f484066e0fca52b78908c4ce1"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Distinguishing risk scenarios from forecasts",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260409-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Two ways of thinking about food choices",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil’s intended purchasing criterion: food that is {{blank}}.",
+              "evidence": {
+                "startSeconds": 30.04,
+                "endSeconds": 37.42,
+                "summary": "Neil refers to geographical origin when describing the food he aims to buy.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "locally produced"
+              ]
+            },
+            {
+              "id": "bbc-260409-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Pippa’s planning aid links produce with times of {{blank}}.",
+              "evidence": {
+                "startSeconds": 39.9,
+                "endSeconds": 46.3,
+                "summary": "Pippa’s calendar offers seasonal rather than simply geographical guidance.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "year"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Interpreting the national-security report",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260409-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does imported-food dependence matter in the discussion?",
+              "evidence": {
+                "startSeconds": 54.84,
+                "endSeconds": 75.88,
+                "summary": "The programme links vulnerable supply chains with the practical requirements of food security.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The proportion measures imported food, while security describes reliable access for everyone.",
+                  "C": "Reliable supply is central to the definition of food security in this passage."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t4-q3-a",
+                  "label": "A",
+                  "text": "The import proportion shows how many people are currently unable to buy healthy food."
+                },
+                {
+                  "id": "bbc-260409-t4-q3-b",
+                  "label": "B",
+                  "text": "Disruption can endanger the reliable supply needed to feed people affordably."
+                },
+                {
+                  "id": "bbc-260409-t4-q3-c",
+                  "label": "C",
+                  "text": "Supply reliability is treated as less important than where the food was produced."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260409-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How is the report’s severe scenario presented by Mark?",
+              "evidence": {
+                "startSeconds": 148.14,
+                "endSeconds": 154,
+                "summary": "The scenario is evidence-informed but framed as a worst case rather than a certainty.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Mark calls it a reasonable worst-case scenario, not a dated prediction of the most likely outcome.",
+                  "C": "Mark explicitly grounds the scenario in a review of scientific research."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t4-q4-a",
+                  "label": "A",
+                  "text": "As a research-informed reasonable worst case."
+                },
+                {
+                  "id": "bbc-260409-t4-q4-b",
+                  "label": "B",
+                  "text": "As the most likely outcome with a firmly established timetable."
+                },
+                {
+                  "id": "bbc-260409-t4-q4-c",
+                  "label": "C",
+                  "text": "As an extreme case proposed without consulting scientific findings."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260409-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What broadens the report’s warning beyond farming alone?",
+              "evidence": {
+                "startSeconds": 162.94,
+                "endSeconds": 169.2,
+                "summary": "Mark’s quotation connects ecological degradation with a wider security threat.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The threat is attributed to ecosystem degradation and collapse, not to the proposed solutions.",
+                  "B": "The report explicitly extends the consequences to national security."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t4-q5-a",
+                  "label": "A",
+                  "text": "It attributes the security threat to the dietary changes proposed later."
+                },
+                {
+                  "id": "bbc-260409-t4-q5-b",
+                  "label": "B",
+                  "text": "It confines the consequences to the availability of products in shops."
+                },
+                {
+                  "id": "bbc-260409-t4-q5-c",
+                  "label": "C",
+                  "text": "It connects ecosystem damage to national security."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Sources and proposed substitutions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Food production accounts for approximately a {{blank}} of total greenhouse gases.",
+              "evidence": {
+                "startSeconds": 192.56,
+                "endSeconds": 197.76,
+                "summary": "The programme gives food production’s share across all greenhouse gases.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "third"
+              ]
+            },
+            {
+              "id": "bbc-260409-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Within agriculture itself, Emma identifies {{blank}} as the greatest emissions component.",
+              "evidence": {
+                "startSeconds": 213.34,
+                "endSeconds": 218.22,
+                "summary": "Emma’s comparison is within agriculture and singles out livestock.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "livestock"
+              ]
+            },
+            {
+              "id": "bbc-260409-t4-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The proposed dietary shift replaces some animal products with protein from beans and {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.92,
+                "endSeconds": 251.12,
+                "summary": "Lentils illustrate the non-animal protein replacement rather than an extra meat product.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "lentils"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: What the land-use change addresses",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Alongside climate change, what other two-word issue is the change intended to help address? {{blank}}",
+              "evidence": {
+                "startSeconds": 262.26,
+                "endSeconds": 266,
+                "summary": "The presenters describe food security and climate change as the twin problems.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "food security"
+              ]
+            },
+            {
+              "id": "bbc-260409-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word crop example is offered as a substitute use of farmland? {{blank}}",
+              "evidence": {
+                "startSeconds": 273.44,
+                "endSeconds": 277.38,
+                "summary": "Neil proposes a vegetable crop as an alternative use for land previously occupied by livestock.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "vegetable crop"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260409",
+        "audioSha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09",
+        "durationSeconds": 375.456,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "d9a14d10a96dff5df5d1beafc6ee78de04a34cc12b57286a9c44f142f1b7c16e"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Evaluating the proposed food-system changes",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260409-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–2: A fragile food supply",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260409-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Roughly {{blank}} percent of UK food comes from other producers, according to the discussion.",
+              "evidence": {
+                "startSeconds": 51.34,
+                "endSeconds": 54.36,
+                "summary": "The imported share places the subsequent supply-chain risks in context.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "40",
+                "forty"
+              ]
+            },
+            {
+              "id": "bbc-260409-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Reliability alone is insufficient in the explanation: the food must also be affordable and {{blank}}.",
+              "evidence": {
+                "startSeconds": 71.24,
+                "endSeconds": 75.88,
+                "summary": "The definition includes food quality as well as reliable affordable availability.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "healthy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t5-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The warning and its language",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t5-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What loss caused by climate change appears alongside drought and water shortages in the list of risks? {{blank}}",
+              "evidence": {
+                "startSeconds": 132.86,
+                "endSeconds": 137.8,
+                "summary": "The report’s list includes loss of biodiversity caused by climate change.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "biodiversity"
+              ]
+            },
+            {
+              "id": "bbc-260409-t5-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What evidence source underpins the reasonable worst-case scenario? {{blank}}",
+              "evidence": {
+                "startSeconds": 148.14,
+                "endSeconds": 154,
+                "summary": "Scientific research underpins Mark’s description of the severe scenario.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "scientific research"
+              ]
+            },
+            {
+              "id": "bbc-260409-t5-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What two-word concern does the quoted report say is threatened by ecosystem collapse? {{blank}}",
+              "evidence": {
+                "startSeconds": 162.94,
+                "endSeconds": 169.2,
+                "summary": "The report’s opening warning names national security as the threatened concern.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "national security"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–7: Agricultural emissions and dietary options",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260409-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Animal-related greenhouse gas, distinct from tractor diesel use: {{blank}}.",
+              "evidence": {
+                "startSeconds": 201.96,
+                "endSeconds": 203.84,
+                "summary": "Methane is linked to cows and sheep rather than tractor fuel.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "methane"
+              ]
+            },
+            {
+              "id": "bbc-260409-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Two animal-product categories whose consumption is discussed: meat and {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.92,
+                "endSeconds": 251.12,
+                "summary": "The dietary argument encompasses dairy as well as meat consumption.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dairy"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260409-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Interpreting the solution and the trade data",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260409-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why is moving away from meat described as a piece of the puzzle?",
+              "evidence": {
+                "startSeconds": 262.26,
+                "endSeconds": 266,
+                "summary": "The metaphor qualifies the change as one contribution to interconnected problems.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The proposed change is introduced as relevant to both environmental and food-security problems.",
+                  "C": "The discussion connects the same change with both problems rather than separating them."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t5-q8-a",
+                  "label": "A",
+                  "text": "It contributes to addressing two connected problems rather than solving everything alone."
+                },
+                {
+                  "id": "bbc-260409-t5-q8-b",
+                  "label": "B",
+                  "text": "It addresses supply reliability without affecting environmental pressures."
+                },
+                {
+                  "id": "bbc-260409-t5-q8-c",
+                  "label": "C",
+                  "text": "It reduces environmental pressure but is separate from future food security."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260409-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which reading of the farmland proposal is supported?",
+              "evidence": {
+                "startSeconds": 273.44,
+                "endSeconds": 277.38,
+                "summary": "The examples show substitution of land use rather than abandoning production.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "This reverses the proposed direction of replacing animals with crop-based uses.",
+                  "C": "The proposal replaces animal use with productive alternatives rather than abandoning the land."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t5-q9-a",
+                  "label": "A",
+                  "text": "Productive land use changes as animal use is replaced with alternatives."
+                },
+                {
+                  "id": "bbc-260409-t5-q9-b",
+                  "label": "B",
+                  "text": "Existing crops are removed so that more animals can use the land."
+                },
+                {
+                  "id": "bbc-260409-t5-q9-c",
+                  "label": "C",
+                  "text": "The land is taken out of productive use after the animals are removed."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260409-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which statement correctly combines the closing import details?",
+              "evidence": {
+                "startSeconds": 302.56,
+                "endSeconds": 312.64,
+                "summary": "The closing answer and accompanying product detail must be selected together.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "France is an early option, but the Netherlands is the confirmed supplier.",
+                  "C": "The closing explanation highlights vegetables and dairy, not only meat."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260409-t5-q10-a",
+                  "label": "A",
+                  "text": "France is confirmed, with vegetables and dairy especially mentioned."
+                },
+                {
+                  "id": "bbc-260409-t5-q10-b",
+                  "label": "B",
+                  "text": "The Netherlands is confirmed, with vegetables and dairy especially mentioned."
+                },
+                {
+                  "id": "bbc-260409-t5-q10-c",
+                  "label": "C",
+                  "text": "The Netherlands is confirmed, with only meat imports mentioned."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260409",
+        "audioSha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09",
+        "durationSeconds": 375.456,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "bf9c6b1d13bc4b337b8344c56e17ce2ec2a79c7fa109d70214fe86290ef75b11"
+      }
+    }
+  ]
+}

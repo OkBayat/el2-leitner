@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260423",
+  "folder": "2026-04-23-why-are-we-all-so-stressed",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6528504,
+      "sha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda"
+    },
+    "cover.jpg": {
+      "bytes": 103039,
+      "sha256": "23a5135cbd988b342b79be55f671c6735f7343574a444507a5ccc2043c4fd0e8"
+    },
+    "episode.json": {
+      "bytes": 1385,
+      "sha256": "3aae54433e08ede0111f3647da284f81db16f26eb71750ea4231ef86e04f73de"
+    },
+    "listening.json": {
+      "bytes": 57522,
+      "sha256": "decbbee77c2481e4125c89863eab5b2c98fcf5f9785eb91660aaa69adb83e242"
+    },
+    "transcript.md": {
+      "bytes": 421,
+      "sha256": "53ac586904c1fd95f71c6eb26718f5ec243772964f34ee40feccc122cbc5f79a"
+    },
+    "vocabulary.md": {
+      "bytes": 1028,
+      "sha256": "6a12fb1297bfa798bd280b4f693b5f0e6b3cab44770d481fcb941e65522b6e65"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260409",
+  "folder": "2026-04-09-the-future-of-food",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6602339,
+      "sha256": "a0f30a66ec18297c557f254fbf61b6a1994e8dd89af288a3df2ae8cf1786aa09"
+    },
+    "cover.jpg": {
+      "bytes": 109499,
+      "sha256": "5e530d3d06768371eef97bae52afc64c017108bea2182c34420c3ca6a93af79c"
+    },
+    "episode.json": {
+      "bytes": 1290,
+      "sha256": "d0f92f58c1746976c904e36340a05cdfa4ce1ef39da41f6e6fd52c735f785427"
+    },
+    "listening.json": {
+      "bytes": 57814,
+      "sha256": "81144af5301a2b69ce9c02b273373bbc3d305fb4f445788e7d79c3e73358dade"
+    },
+    "transcript.md": {
+      "bytes": 404,
+      "sha256": "4e15e44061fa15f47db72165d6e962b4f1c7fd91695e861f44dec47ed3a8241a"
+    },
+    "vocabulary.md": {
+      "bytes": 1046,
+      "sha256": "e3f47beedb800d657909d9a5a518eaa3e9f4a92e5a54ec5dba895985d7f9c2ff"
+    }
+  }
+}

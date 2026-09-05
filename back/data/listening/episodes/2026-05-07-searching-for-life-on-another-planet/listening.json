@@ -1,0 +1,1472 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "A distant planet and the conditions for life",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260507-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Introducing the investigation",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260507-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Becca think about life beyond Earth?",
+              "evidence": {
+                "startSeconds": 32.21,
+                "endSeconds": 38.77,
+                "summary": "Becca distinguishes possible real life elsewhere from its portrayal in films.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "She explicitly says it may not be as seen in those movies.",
+                  "C": "She agrees that life may exist beyond our planet."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t1-q1-a",
+                  "label": "A",
+                  "text": "It may exist without looking like life in alien films."
+                },
+                {
+                  "id": "bbc-260507-t1-q1-b",
+                  "label": "B",
+                  "text": "It must look exactly like the creatures in alien films."
+                },
+                {
+                  "id": "bbc-260507-t1-q1-c",
+                  "label": "C",
+                  "text": "It cannot exist anywhere outside Earth."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260507-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How far away is the planet discussed?",
+              "evidence": {
+                "startSeconds": 46.27,
+                "endSeconds": 48.99,
+                "summary": "The introduction places the planet forty light years away.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Four hundred is not the distance given.",
+                  "C": "The programme gives forty, not four, light years."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t1-q2-a",
+                  "label": "A",
+                  "text": "Four hundred light years."
+                },
+                {
+                  "id": "bbc-260507-t1-q2-b",
+                  "label": "B",
+                  "text": "Forty light years."
+                },
+                {
+                  "id": "bbc-260507-t1-q2-c",
+                  "label": "C",
+                  "text": "Four light years."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260507-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Where is the planet in relation to our solar system?",
+              "evidence": {
+                "startSeconds": 106.03,
+                "endSeconds": 109.33,
+                "summary": "Caroline describes the object as a planet in a different solar system.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The description places it in another solar system, not around Earth.",
+                  "C": "Caroline explicitly says it is in a solar system that is not our own."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t1-q3-a",
+                  "label": "A",
+                  "text": "In another solar system."
+                },
+                {
+                  "id": "bbc-260507-t1-q3-b",
+                  "label": "B",
+                  "text": "In orbit around Earth."
+                },
+                {
+                  "id": "bbc-260507-t1-q3-c",
+                  "label": "C",
+                  "text": "Inside our own solar system."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Basic features",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The planet is {{blank}}, like Earth.",
+              "evidence": {
+                "startSeconds": 111.89,
+                "endSeconds": 115.83,
+                "summary": "Caroline describes the planet as rocky rather than as a gas planet.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rocky"
+              ]
+            },
+            {
+              "id": "bbc-260507-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Its position around its star: the {{blank}} zone.",
+              "evidence": {
+                "startSeconds": 116.43,
+                "endSeconds": 120.61,
+                "summary": "The described position is the habitable zone around its star.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "habitable"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t1-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Investigating the atmosphere",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t1-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Scientists have ruled out an atmosphere really full of hydrogen or {{blank}}.",
+              "evidence": {
+                "startSeconds": 160.43,
+                "endSeconds": 163.53,
+                "summary": "The excluded possibility is an atmosphere very full of hydrogen or carbon dioxide.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "carbon dioxide"
+              ]
+            },
+            {
+              "id": "bbc-260507-t1-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Small clues suggest that the atmosphere might be dominated by {{blank}}.",
+              "evidence": {
+                "startSeconds": 169.11,
+                "endSeconds": 174.47,
+                "summary": "Caroline qualifies nitrogen dominance as a possibility suggested by small clues.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "nitrogen"
+              ]
+            },
+            {
+              "id": "bbc-260507-t1-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Caroline expects researchers to use {{blank}} to work out how warm the planet could be.",
+              "evidence": {
+                "startSeconds": 261.99,
+                "endSeconds": 265.53,
+                "summary": "Models are proposed as the tool for estimating the planet’s warmth.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "models"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Temperature and the closing comparison",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Besides being too hot, what temperature problem might prevent the planet supporting life? {{blank}}",
+              "evidence": {
+                "startSeconds": 265.73,
+                "endSeconds": 270.55,
+                "summary": "Caroline says the temperature might be too hot or too cold.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "cold"
+              ]
+            },
+            {
+              "id": "bbc-260507-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What number of years is confirmed for the imagined car journey to the Sun? {{blank}}",
+              "evidence": {
+                "startSeconds": 312.97,
+                "endSeconds": 315.87,
+                "summary": "The closing answer confirms a journey of one hundred and seventy years.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "170"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260507",
+        "audioSha256": "0dbad1aadbd2efea218a210b2fada110a23a7a1d4cdf8e325f1986409165b03b",
+        "durationSeconds": 373.272,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "f833317cccc89a4ba9088a6e90ef2e646d618638a6f97da92040b427f2b3cd1c"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Reading the clues without claiming a discovery",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260507-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–3: The planet in context",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Distance from Earth: {{blank}} light years.",
+              "evidence": {
+                "startSeconds": 46.27,
+                "endSeconds": 48.99,
+                "summary": "The planet’s distance is given as forty light years.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "40",
+                "forty"
+              ]
+            },
+            {
+              "id": "bbc-260507-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Planet used for the comparison of size: {{blank}}.",
+              "evidence": {
+                "startSeconds": 111.89,
+                "endSeconds": 115.83,
+                "summary": "Caroline says the exoplanet is similar in size to Earth.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Earth"
+              ]
+            },
+            {
+              "id": "bbc-260507-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Name of the star it orbits: {{blank}}.",
+              "evidence": {
+                "startSeconds": 121.11,
+                "endSeconds": 123.17,
+                "summary": "Caroline names the star TRAPPIST-1, distinct from the planet’s name.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "TRAPPIST-1",
+                "TRAPPIST 1"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t2-g2",
+          "position": 2,
+          "heading": "Questions 4–6: What the atmospheric evidence means",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260507-t2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What have researchers ruled out in Caroline’s account?",
+              "evidence": {
+                "startSeconds": 160.43,
+                "endSeconds": 163.53,
+                "summary": "Caroline’s exclusion concerns a strongly gas-filled atmosphere rather than every trace or all atmosphere.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Her wording concerns being really full of those gases, not the absence of every trace.",
+                  "B": "She discusses its possible composition, not ruling out all atmosphere."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t2-q4-a",
+                  "label": "A",
+                  "text": "The presence of even a trace of either gas."
+                },
+                {
+                  "id": "bbc-260507-t2-q4-b",
+                  "label": "B",
+                  "text": "The possibility that the planet has any atmosphere at all."
+                },
+                {
+                  "id": "bbc-260507-t2-q4-c",
+                  "label": "C",
+                  "text": "An atmosphere very full of hydrogen or carbon dioxide."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260507-t2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why is ruling out those gas-rich conditions described positively?",
+              "evidence": {
+                "startSeconds": 164.75,
+                "endSeconds": 168.13,
+                "summary": "The positive reaction is tied to avoiding strong greenhouse warming.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The explanation concerns warming of the planet, not stopping heat from its star.",
+                  "C": "Caroline gives a temperature-related reason, not proof of organisms."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t2-q5-a",
+                  "label": "A",
+                  "text": "Those gases are said to make the star stop producing heat."
+                },
+                {
+                  "id": "bbc-260507-t2-q5-b",
+                  "label": "B",
+                  "text": "Those greenhouse gases could make the planet very hot."
+                },
+                {
+                  "id": "bbc-260507-t2-q5-c",
+                  "label": "C",
+                  "text": "Their absence would by itself prove that living organisms are present."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260507-t2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How certain is Caroline about nitrogen dominance?",
+              "evidence": {
+                "startSeconds": 169.11,
+                "endSeconds": 178.17,
+                "summary": "Caroline’s wording expresses tentative evidence rather than a settled discovery.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "She uses might and small clues rather than announcing life or a definitive composition.",
+                  "C": "Nitrogen is presented as a promising possibility, not a rejected one."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t2-q6-a",
+                  "label": "A",
+                  "text": "She says it has been fully established by a direct observation of life."
+                },
+                {
+                  "id": "bbc-260507-t2-q6-b",
+                  "label": "B",
+                  "text": "She describes small clues pointing to a possibility."
+                },
+                {
+                  "id": "bbc-260507-t2-q6-c",
+                  "label": "C",
+                  "text": "She says the possibility has already been completely rejected."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t2-g3",
+          "position": 3,
+          "heading": "Questions 7–8: The proposed next investigations",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What else does Caroline expect scientists to identify in the atmosphere? {{blank}}",
+              "evidence": {
+                "startSeconds": 259.31,
+                "endSeconds": 261.63,
+                "summary": "Caroline expects further work on the other gases present.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "other gases"
+              ]
+            },
+            {
+              "id": "bbc-260507-t2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What tools are proposed for estimating the planet’s warmth? {{blank}}",
+              "evidence": {
+                "startSeconds": 261.99,
+                "endSeconds": 265.53,
+                "summary": "Caroline proposes using models to infer the likely temperature.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "models"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Hope and distance",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Caroline hopes the planet has {{blank}}, rather than saying its presence is certain.",
+              "evidence": {
+                "startSeconds": 270.75,
+                "endSeconds": 271.87,
+                "summary": "Caroline’s fingers-crossed comment expresses hope for nitrogen.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "nitrogen"
+              ]
+            },
+            {
+              "id": "bbc-260507-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The confirmed journey time is {{blank}} years, not the larger figure initially guessed.",
+              "evidence": {
+                "startSeconds": 312.97,
+                "endSeconds": 315.87,
+                "summary": "The closing answer corrects the initial 1700-year guess to 170 years.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "170"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260507",
+        "audioSha256": "0dbad1aadbd2efea218a210b2fada110a23a7a1d4cdf8e325f1986409165b03b",
+        "durationSeconds": 373.272,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "5382391907ca28c11d9614cef4446fc3a59fa9a96d15433071229603e9955a44"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "What researchers know and what remains to be tested",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260507-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Distance and location",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In what units is the planet’s distance from Earth expressed? {{blank}}",
+              "evidence": {
+                "startSeconds": 46.27,
+                "endSeconds": 48.99,
+                "summary": "The introductory distance is expressed in light years.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "light years"
+              ]
+            },
+            {
+              "id": "bbc-260507-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "In which two-word area around its star does Caroline place the planet? {{blank}}",
+              "evidence": {
+                "startSeconds": 116.43,
+                "endSeconds": 120.61,
+                "summary": "Caroline places the planet within the star’s habitable zone.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "habitable zone"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t3-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The atmospheric findings",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t3-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "An atmosphere very full of {{blank}} or carbon dioxide has been ruled out.",
+              "evidence": {
+                "startSeconds": 160.43,
+                "endSeconds": 163.53,
+                "summary": "Hydrogen is the other gas in the excluded strongly gas-filled atmosphere.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "hydrogen"
+              ]
+            },
+            {
+              "id": "bbc-260507-t3-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The gases mentioned could create a planet that is really {{blank}}.",
+              "evidence": {
+                "startSeconds": 164.75,
+                "endSeconds": 168.13,
+                "summary": "The concern about those greenhouse gases is strong heating.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "hot"
+              ]
+            },
+            {
+              "id": "bbc-260507-t3-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The tentative atmospheric clue concerns dominance by {{blank}}.",
+              "evidence": {
+                "startSeconds": 169.11,
+                "endSeconds": 174.47,
+                "summary": "Nitrogen dominance is suggested only tentatively by the small clues.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "nitrogen"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: From a clue to further research",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260507-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What question are the researchers ultimately trying to answer about the atmosphere?",
+              "evidence": {
+                "startSeconds": 185.07,
+                "endSeconds": 190.29,
+                "summary": "The proposed research concerns suitability for life rather than the label attached to the planet.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The discussion repeatedly describes future investigation.",
+                  "C": "The investigation concerns the atmosphere’s suitability, not a naming change."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t3-q6-a",
+                  "label": "A",
+                  "text": "Whether it could support life."
+                },
+                {
+                  "id": "bbc-260507-t3-q6-b",
+                  "label": "B",
+                  "text": "Whether a clue alone eliminates the need for further study."
+                },
+                {
+                  "id": "bbc-260507-t3-q6-c",
+                  "label": "C",
+                  "text": "Whether its name should be changed to Earth."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260507-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What role is suggested for data that could become available later?",
+              "evidence": {
+                "startSeconds": 207.19,
+                "endSeconds": 212.47,
+                "summary": "The potential-data example concerns a possible future contribution to research.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The programme discusses further research rather than a completed investigation.",
+                  "C": "The presenter refers to possible future help, not a completed inventory of life."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t3-q7-a",
+                  "label": "A",
+                  "text": "It could help future research."
+                },
+                {
+                  "id": "bbc-260507-t3-q7-b",
+                  "label": "B",
+                  "text": "It would have to be ignored because the investigation is already finished."
+                },
+                {
+                  "id": "bbc-260507-t3-q7-c",
+                  "label": "C",
+                  "text": "It has already supplied a completed record of all living things there."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260507-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How do the proposed observations and models relate?",
+              "evidence": {
+                "startSeconds": 259.31,
+                "endSeconds": 265.53,
+                "summary": "Identifying other gases and modelling their implications are complementary next steps.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Caroline proposes both identifying gases and modelling warmth.",
+                  "B": "The size comparison is earlier; the proposed investigation explicitly considers atmospheric gases."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t3-q8-a",
+                  "label": "A",
+                  "text": "The models would replace the need to consider what gases are there."
+                },
+                {
+                  "id": "bbc-260507-t3-q8-b",
+                  "label": "B",
+                  "text": "Researchers would estimate temperature from size alone without considering the gases."
+                },
+                {
+                  "id": "bbc-260507-t3-q8-c",
+                  "label": "C",
+                  "text": "Further atmospheric information would help researchers estimate temperature."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Hope and the final calculation",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Caroline’s two-word expression for a hoped-for result: {{blank}}.",
+              "evidence": {
+                "startSeconds": 270.75,
+                "endSeconds": 271.87,
+                "summary": "Caroline’s phrase fingers crossed conveys a hoped-for result rather than certainty.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "fingers crossed"
+              ]
+            },
+            {
+              "id": "bbc-260507-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Confirmed duration of the hypothetical drive: {{blank}} years.",
+              "evidence": {
+                "startSeconds": 312.97,
+                "endSeconds": 315.87,
+                "summary": "The hypothetical travel time is confirmed as 170 years at the end.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "170"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260507",
+        "audioSha256": "0dbad1aadbd2efea218a210b2fada110a23a7a1d4cdf8e325f1986409165b03b",
+        "durationSeconds": 373.272,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "c3d0df37b7beaea5c1d26b3bd2371f56a9bd2d7e4925fef0d3c92f9c96d1d1a3"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Avoiding overstatement in the search for life",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260507-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Initial framing",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Becca separates possible life elsewhere from how it appears in alien {{blank}}.",
+              "evidence": {
+                "startSeconds": 32.21,
+                "endSeconds": 38.77,
+                "summary": "Becca’s qualification rejects treating film portrayals as a necessary form of extraterrestrial life.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "movies"
+              ]
+            },
+            {
+              "id": "bbc-260507-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The exoplanet is comparable in size to {{blank}}, but that comparison alone does not describe organisms.",
+              "evidence": {
+                "startSeconds": 111.89,
+                "endSeconds": 115.83,
+                "summary": "Caroline uses Earth as a size comparison rather than claiming that Earth-like organisms were found.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "Earth"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Location and the atmospheric exclusion",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Region around the star relevant to possible life: the {{blank}} zone.",
+              "evidence": {
+                "startSeconds": 116.43,
+                "endSeconds": 120.61,
+                "summary": "The described orbital region is presented as relevant to possible habitability.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "habitable"
+              ]
+            },
+            {
+              "id": "bbc-260507-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "One excluded gas-rich case, alongside hydrogen: an atmosphere full of {{blank}}.",
+              "evidence": {
+                "startSeconds": 160.43,
+                "endSeconds": 163.53,
+                "summary": "Carbon dioxide is paired with hydrogen in the scenario scientists have ruled out.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "carbon dioxide"
+              ]
+            },
+            {
+              "id": "bbc-260507-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Gas implicated by the small, provisional clues: {{blank}}.",
+              "evidence": {
+                "startSeconds": 169.11,
+                "endSeconds": 174.47,
+                "summary": "The evidence is described as small clues that nitrogen may dominate.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "nitrogen"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–8: The next stage and its limits",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260507-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What combination describes Caroline’s suggested research strategy?",
+              "evidence": {
+                "startSeconds": 259.31,
+                "endSeconds": 265.53,
+                "summary": "The proposed strategy combines composition research with temperature modelling.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Her proposed work investigates the atmosphere and uses models, not size alone.",
+                  "C": "Caroline describes gas identification and modelling together rather than one replacing the other."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t4-q6-a",
+                  "label": "A",
+                  "text": "Infer the atmospheric gases entirely from the planet’s Earth-like size."
+                },
+                {
+                  "id": "bbc-260507-t4-q6-b",
+                  "label": "B",
+                  "text": "Identify additional atmospheric gases and model the warmth they could imply."
+                },
+                {
+                  "id": "bbc-260507-t4-q6-c",
+                  "label": "C",
+                  "text": "Use temperature modelling instead of identifying any more atmospheric gases."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260507-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why does Caroline consider both excessive heat and excessive cold?",
+              "evidence": {
+                "startSeconds": 265.73,
+                "endSeconds": 270.55,
+                "summary": "The temperature assessment tests suitability against both possible extremes.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Caroline explicitly considers temperatures that could be too hot or too cold to support life.",
+                  "C": "The passage concerns conditions suitable for life, not warmth serving as detection of organisms."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t4-q7-a",
+                  "label": "A",
+                  "text": "Either extreme could make the conditions unsuitable for life."
+                },
+                {
+                  "id": "bbc-260507-t4-q7-b",
+                  "label": "B",
+                  "text": "The same temperature result would be suitable regardless of how hot or cold it is."
+                },
+                {
+                  "id": "bbc-260507-t4-q7-c",
+                  "label": "C",
+                  "text": "The remaining uncertainty is whether warmer conditions necessarily indicate living organisms."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260507-t4-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does the phrase one step closer qualify the anticipated result?",
+              "evidence": {
+                "startSeconds": 272.71,
+                "endSeconds": 277.99,
+                "summary": "Caroline frames the hoped-for conditions as progress rather than final confirmation.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The phrase describes progress towards the search for life rather than completing a detection.",
+                  "C": "Caroline explicitly links the hoped-for conditions with moving one step closer."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t4-q8-a",
+                  "label": "A",
+                  "text": "It would advance the investigation without completing the search for life."
+                },
+                {
+                  "id": "bbc-260507-t4-q8-b",
+                  "label": "B",
+                  "text": "It would turn a promising atmosphere into a confirmed detection of organisms."
+                },
+                {
+                  "id": "bbc-260507-t4-q8-c",
+                  "label": "C",
+                  "text": "It would settle the atmospheric question without bringing the search for life any nearer."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Hope and the corrected comparison",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What two-word expression does Becca then explain as conveying hope rather than certainty? {{blank}}",
+              "evidence": {
+                "startSeconds": 283.85,
+                "endSeconds": 288.31,
+                "summary": "Caroline uses fingers crossed to express a hoped-for positive outcome.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "fingers crossed"
+              ]
+            },
+            {
+              "id": "bbc-260507-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What is the corrected travel time in years, excluding the initial larger guess? {{blank}}",
+              "evidence": {
+                "startSeconds": 312.97,
+                "endSeconds": 315.87,
+                "summary": "The final explanation confirms 170 years rather than the initially suggested 1700.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "170"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260507",
+        "audioSha256": "0dbad1aadbd2efea218a210b2fada110a23a7a1d4cdf8e325f1986409165b03b",
+        "durationSeconds": 373.272,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "4e14de0f02d3949a900a2f5c56ee5f3359da6e99ee102c76c0026e57d98f5464"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Conditions, confidence and the meaning of progress",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260507-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: The introduction and planetary comparison",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260507-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which position does Becca express about extraterrestrial life?",
+              "evidence": {
+                "startSeconds": 32.21,
+                "endSeconds": 38.77,
+                "summary": "Becca distinguishes openness to a possibility from accepting fictional representations.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "She does not make the possibility depend on that familiar fictional form.",
+                  "C": "She qualifies the movie-style picture while leaving open the broader possibility of life."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t5-q1-a",
+                  "label": "A",
+                  "text": "She doubts life is possible because it would have to resemble the film portrayals."
+                },
+                {
+                  "id": "bbc-260507-t5-q1-b",
+                  "label": "B",
+                  "text": "She accepts the possibility while qualifying the familiar fictional picture."
+                },
+                {
+                  "id": "bbc-260507-t5-q1-c",
+                  "label": "C",
+                  "text": "She treats familiar film portrayals as reliable evidence of life elsewhere."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260507-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What makes the object Earth-like in Caroline’s initial description?",
+              "evidence": {
+                "startSeconds": 106.03,
+                "endSeconds": 115.83,
+                "summary": "The comparison specifies physical similarities without establishing identical conditions or life.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The initial description calls it an exoplanet in another solar system and emphasizes rockiness and size.",
+                  "C": "Caroline identifies similarity in rockiness and size, not closeness or a confirmed identical atmosphere."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t5-q2-a",
+                  "label": "A",
+                  "text": "It has a similar orbital period to Earth and belongs to the same solar system."
+                },
+                {
+                  "id": "bbc-260507-t5-q2-b",
+                  "label": "B",
+                  "text": "It is rocky and of similar size, although it belongs to another solar system."
+                },
+                {
+                  "id": "bbc-260507-t5-q2-c",
+                  "label": "C",
+                  "text": "It is close to Earth in distance and has an atmosphere already confirmed to match ours."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260507-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does the planet’s position in the habitable zone suggest in the programme?",
+              "evidence": {
+                "startSeconds": 116.43,
+                "endSeconds": 120.61,
+                "summary": "The orbital location motivates further investigation rather than concluding it.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The programme includes rocky structure as part of the description; position does not discard the other evidence.",
+                  "B": "Atmospheric composition remains a subject of investigation despite the planet’s position."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260507-t5-q3-a",
+                  "label": "A",
+                  "text": "It makes the planet’s rocky structure irrelevant to understanding its environment."
+                },
+                {
+                  "id": "bbc-260507-t5-q3-b",
+                  "label": "B",
+                  "text": "It provides a confirmed atmospheric composition without further observations."
+                },
+                {
+                  "id": "bbc-260507-t5-q3-c",
+                  "label": "C",
+                  "text": "Its location is relevant to investigating whether life could be supported."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Atmospheric composition and a possible effect",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The rejected description is an atmosphere really full of hydrogen or {{blank}}, not necessarily the absence of every trace.",
+              "evidence": {
+                "startSeconds": 160.43,
+                "endSeconds": 163.53,
+                "summary": "The scope of the exclusion concerns a very high presence rather than all traces of carbon dioxide.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "carbon dioxide"
+              ]
+            },
+            {
+              "id": "bbc-260507-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The greenhouse-gas concern is that those gases could make the planet very {{blank}}.",
+              "evidence": {
+                "startSeconds": 164.75,
+                "endSeconds": 168.13,
+                "summary": "Caroline links the excluded gas-rich case with strong planetary warming.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "hot"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Tentative evidence and further tools",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260507-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which gas is tentatively suggested as the dominant atmospheric component? {{blank}}",
+              "evidence": {
+                "startSeconds": 169.11,
+                "endSeconds": 174.47,
+                "summary": "Nitrogen is the tentatively suggested dominant component, not a confirmed discovery.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "nitrogen"
+              ]
+            },
+            {
+              "id": "bbc-260507-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What does Caroline propose looking for besides the gas already discussed? {{blank}}",
+              "evidence": {
+                "startSeconds": 259.31,
+                "endSeconds": 261.63,
+                "summary": "Caroline expects further research to identify the other gases in the atmosphere.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "other gases"
+              ]
+            },
+            {
+              "id": "bbc-260507-t5-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What does Caroline propose using to infer how warm the planet might be? {{blank}}",
+              "evidence": {
+                "startSeconds": 261.99,
+                "endSeconds": 265.53,
+                "summary": "Models are proposed for estimating rather than directly asserting the planetary temperature.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "models"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260507-t5-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Criteria and the final numerical correction",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260507-t5-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A possible unfavourable result, as well as excessive heat: too {{blank}}.",
+              "evidence": {
+                "startSeconds": 265.73,
+                "endSeconds": 270.55,
+                "summary": "The investigation must consider excessive cold as well as excessive heat.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "cold"
+              ]
+            },
+            {
+              "id": "bbc-260507-t5-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Final verified journey length: {{blank}} years.",
+              "evidence": {
+                "startSeconds": 312.97,
+                "endSeconds": 315.87,
+                "summary": "The final numerical answer is 170 years, superseding the earlier guess.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "170"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260507",
+        "audioSha256": "0dbad1aadbd2efea218a210b2fada110a23a7a1d4cdf8e325f1986409165b03b",
+        "durationSeconds": 373.272,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "f61546f290bf9be1a89f2171d0958e57f2b958d36232f0b1fc27c9ed0059f5ab"
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260514",
+  "folder": "2026-05-14-how-reading-shapes-your-brain",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 5798565,
+      "sha256": "5fd984fed74f4280d3fad53362f9259cf6a13d2ac6beffda6dfd6890ac8efe2d"
+    },
+    "cover.jpg": {
+      "bytes": 105834,
+      "sha256": "856895e4b5e714ead152a2825a5c8f0505efd581d8f8f198822fd601c332aeb8"
+    },
+    "episode.json": {
+      "bytes": 1393,
+      "sha256": "b1d8e127c56251bf31553e290a611473794b658021f0c776f1dc6d95bb4fe66a"
+    },
+    "listening.json": {
+      "bytes": 58160,
+      "sha256": "65fc560b4329a5c37e68e340af8da0beaf96d5ff6dd69ea0de7f9a34ed9740c0"
+    },
+    "transcript.md": {
+      "bytes": 427,
+      "sha256": "ae93a8aa948300f92bbc4720e2009af1c14f915b78ce3fb469ec50e4ad42250f"
+    },
+    "vocabulary.md": {
+      "bytes": 1009,
+      "sha256": "83b992eb02defeb436da388fbe9976142afbe2915074b9deee8f622f1301892c"
+    }
+  }
+}

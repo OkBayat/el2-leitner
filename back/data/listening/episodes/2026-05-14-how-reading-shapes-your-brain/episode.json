@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260514",
+  "provider": "bbc_6_minute_english",
+  "slug": "how-reading-shapes-your-brain",
+  "title": "How reading shapes your brain",
+  "description": "Explore how literacy recruits existing brain systems and how different writing systems can place different demands on reading networks.",
+  "episodeCode": "260514",
+  "episodeDate": "2026-05-14",
+  "publishedAt": "2026-05-14T09:32:00+00:00",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+  "status": "published",
+  "level": "intermediate",
+  "audioFile": "audio.mp3",
+  "imageFile": "cover.jpg",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260514_6_minute_english_how_reading_shapes_your_brain_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0nkvdqr.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260514_6_minute_english_how_reading_shapes_your_brain_transcript_.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260514",
+    "attribution": "BBC Learning English, 6 Minute English. BBC media retains its original copyright. Original supplementary questions and vocabulary examples prepared for Vocora.",
+    "retrievedAt": "2026-09-05T19:05:54Z"
+  }
+}

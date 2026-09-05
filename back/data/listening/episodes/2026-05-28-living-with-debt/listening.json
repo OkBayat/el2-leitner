@@ -1,0 +1,1480 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Living costs, borrowing and everyday consequences",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260528-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Saving and asking for help",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil’s main reason for saving: his {{blank}}.",
+              "evidence": {
+                "startSeconds": 23.55,
+                "endSeconds": 27.07,
+                "summary": "Neil says having children is the main reason he tries to save.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "children"
+              ]
+            },
+            {
+              "id": "bbc-260528-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Pippa tries to save for the {{blank}}.",
+              "evidence": {
+                "startSeconds": 30.23,
+                "endSeconds": 33.63,
+                "summary": "Pippa describes saving for the future as one of her aims.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "future"
+              ]
+            },
+            {
+              "id": "bbc-260528-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "People contacting Citizens Advice each day in 2025: over {{blank}}.",
+              "evidence": {
+                "startSeconds": 63.27,
+                "endSeconds": 69.97,
+                "summary": "The programme reports more than one thousand daily contacts for help with debt.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "1000",
+                "1,000",
+                "one thousand"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Jason and the research",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260528-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Jason say he sometimes needs to borrow money?",
+              "evidence": {
+                "startSeconds": 82.77,
+                "endSeconds": 85.13,
+                "summary": "Jason links borrowing with inadequate earnings for family needs.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Jason describes the earnings as insufficient to provide for a family.",
+                  "C": "Winning the lottery is a hoped-for escape, not something that has happened."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t1-q4-a",
+                  "label": "A",
+                  "text": "He says his earnings cover every family expense comfortably."
+                },
+                {
+                  "id": "bbc-260528-t1-q4-b",
+                  "label": "B",
+                  "text": "Available jobs do not provide enough for a family."
+                },
+                {
+                  "id": "bbc-260528-t1-q4-c",
+                  "label": "C",
+                  "text": "He says he borrows only because he has already won the lottery."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260528-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Jason mention as a possible way out of debt?",
+              "evidence": {
+                "startSeconds": 89.91,
+                "endSeconds": 91.75,
+                "summary": "Jason describes a lottery win as the escape he can imagine.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Employer cancellation is not the way out he names.",
+                  "C": "No confirmed pay rise is mentioned; the example is a lottery win."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t1-q5-a",
+                  "label": "A",
+                  "text": "Having every loan cancelled by his employer."
+                },
+                {
+                  "id": "bbc-260528-t1-q5-b",
+                  "label": "B",
+                  "text": "Winning the lottery."
+                },
+                {
+                  "id": "bbc-260528-t1-q5-c",
+                  "label": "C",
+                  "text": "Receiving a confirmed pay rise the next day."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260528-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How did Ryan learn about residents’ lives?",
+              "evidence": {
+                "startSeconds": 179.07,
+                "endSeconds": 184.65,
+                "summary": "Ryan uses both interviews and informal daily conversations in his research.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Ryan specifically describes interviews and everyday conversations.",
+                  "B": "Lottery winning belongs to Jason’s account, not Ryan’s research method."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t1-q6-a",
+                  "label": "A",
+                  "text": "Only through the totals in bank statements."
+                },
+                {
+                  "id": "bbc-260528-t1-q6-b",
+                  "label": "B",
+                  "text": "Only through a list of lottery winners."
+                },
+                {
+                  "id": "bbc-260528-t1-q6-c",
+                  "label": "C",
+                  "text": "Through interviews and everyday conversations."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Payments and an immediate consequence",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Some residents were behind with {{blank}} payment commitments.",
+              "evidence": {
+                "startSeconds": 193.47,
+                "endSeconds": 198.13,
+                "summary": "Ryan describes arrears in relation to monthly payment commitments.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "monthly"
+              ]
+            },
+            {
+              "id": "bbc-260528-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "After missed bills, Jason and his partner’s {{blank}} was disconnected.",
+              "evidence": {
+                "startSeconds": 258.48,
+                "endSeconds": 261.94,
+                "summary": "The practical consequence reported is disconnection of internet service.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "internet"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Instalments and the final figure",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What size of regular payments is described in the explanation of the never-never? {{blank}}",
+              "evidence": {
+                "startSeconds": 266.58,
+                "endSeconds": 271.2,
+                "summary": "The explanation describes small payments made regularly over a long time.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "small"
+              ]
+            },
+            {
+              "id": "bbc-260528-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What exact debt amount in pounds is stated at the end, rather than the rounded quiz options? {{blank}}",
+              "evidence": {
+                "startSeconds": 308.37,
+                "endSeconds": 311.31,
+                "summary": "The final statement gives the exact amount as four thousand two hundred and thirty-two pounds.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "4232",
+                "4,232"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260528",
+        "audioSha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46",
+        "durationSeconds": 375.264,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "bd149d9d9b47194a43f948018bc015c00645d8b5561b0efc06a8658d0936076a"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Borrowing and the researcher’s account of daily life",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260528-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Jason’s account",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Jason say he has taken out several times? {{blank}}",
+              "evidence": {
+                "startSeconds": 85.51,
+                "endSeconds": 87.79,
+                "summary": "Jason says he has taken out loans a few times.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "loans"
+              ]
+            },
+            {
+              "id": "bbc-260528-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What possible repayment period does Jason mention, in years? {{blank}}",
+              "evidence": {
+                "startSeconds": 95.17,
+                "endSeconds": 97.27,
+                "summary": "Jason hopes to clear his debts even if repayment takes five years.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "five",
+                "5"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t2-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The research setting and method",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t2-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Type of housing estate where Ryan lived: {{blank}}.",
+              "evidence": {
+                "startSeconds": 158.93,
+                "endSeconds": 162.29,
+                "summary": "Ryan spent months living on a low-income housing estate.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "low-income",
+                "low income"
+              ]
+            },
+            {
+              "id": "bbc-260528-t2-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Source of information alongside formal interviews: everyday {{blank}}.",
+              "evidence": {
+                "startSeconds": 179.07,
+                "endSeconds": 184.65,
+                "summary": "Ryan also paid attention to references to debt in everyday conversations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conversations"
+              ]
+            },
+            {
+              "id": "bbc-260528-t2-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Ryan’s description of debt in residents’ daily lives: an {{blank}} feature.",
+              "evidence": {
+                "startSeconds": 187.25,
+                "endSeconds": 191.49,
+                "summary": "Debt is described as ordinary rather than exceptional in the residents’ lives.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "ordinary"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Difficulty and conflicting attitudes",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260528-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What distinction does the presenter make about managing debt?",
+              "evidence": {
+                "startSeconds": 221.65,
+                "endSeconds": 230.05,
+                "summary": "Income stability is linked to a difference in the experience of debt.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The presenter explicitly contrasts income situations.",
+                  "B": "The point concerns managing debt with regular income, not eliminating all borrowing."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t2-q6-a",
+                  "label": "A",
+                  "text": "Any debt is equally easy to manage regardless of income."
+                },
+                {
+                  "id": "bbc-260528-t2-q6-b",
+                  "label": "B",
+                  "text": "Having an income is said to prevent anyone from owing money."
+                },
+                {
+                  "id": "bbc-260528-t2-q6-c",
+                  "label": "C",
+                  "text": "Regular income can make it manageable, while low or absent income can make it distressing."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260528-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How does Ryan describe Jason’s attitude to repayment?",
+              "evidence": {
+                "startSeconds": 237.34,
+                "endSeconds": 251.52,
+                "summary": "Ryan reports a changing attitude with both a wish to repay and doubts about obligation.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "Ryan explicitly includes a wish to clear all the debts.",
+                  "C": "Ryan describes fluctuation and questioning the moral obligation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t2-q7-a",
+                  "label": "A",
+                  "text": "He consistently refuses to think about repayment at all."
+                },
+                {
+                  "id": "bbc-260528-t2-q7-b",
+                  "label": "B",
+                  "text": "He moves between wanting to clear the debts and questioning the duty to pay."
+                },
+                {
+                  "id": "bbc-260528-t2-q7-c",
+                  "label": "C",
+                  "text": "He consistently regards repayment as both easy and unquestionable."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260528-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What happened during the months Ryan knew Jason?",
+              "evidence": {
+                "startSeconds": 252.14,
+                "endSeconds": 261.94,
+                "summary": "The worsening pressure is followed by a concrete service loss after bills were missed.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The account connects disconnection with missed bills, not the research schedule.",
+                  "C": "Ryan says the strain increased and some bills were missed."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t2-q8-a",
+                  "label": "A",
+                  "text": "Financial pressure increased and missed bills led to lost internet service."
+                },
+                {
+                  "id": "bbc-260528-t2-q8-b",
+                  "label": "B",
+                  "text": "Internet service was disconnected because Ryan ended his interviews."
+                },
+                {
+                  "id": "bbc-260528-t2-q8-c",
+                  "label": "C",
+                  "text": "All financial pressure ended before any bill was missed."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Long repayment and available help",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Buying on the never-never involves regular small payments over a long {{blank}}.",
+              "evidence": {
+                "startSeconds": 266.58,
+                "endSeconds": 271.2,
+                "summary": "The payment arrangement spreads small regular payments across a long time.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "time"
+              ]
+            },
+            {
+              "id": "bbc-260528-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The presenter points out that support {{blank}} can help people with debt.",
+              "evidence": {
+                "startSeconds": 288.47,
+                "endSeconds": 289.99,
+                "summary": "Support groups are identified as a source of help near the close of the discussion.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "groups"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260528",
+        "audioSha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46",
+        "durationSeconds": 375.264,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "273e99634674035805355423c942ab576865966029df6522dbee4fd351d74405"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Distinguishing debt, arrears and financial pressure",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260528-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Saving and the need to borrow",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260528-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Pippa’s comment about pennies reveal?",
+              "evidence": {
+                "startSeconds": 30.23,
+                "endSeconds": 41.69,
+                "summary": "Pippa qualifies her saving intention by describing a less absolute spending approach.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "She has just said she tries to save for the future.",
+                  "C": "She explicitly says she also spends and does not save every penny."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t3-q1-a",
+                  "label": "A",
+                  "text": "She tries to save but does not monitor or save every penny."
+                },
+                {
+                  "id": "bbc-260528-t3-q1-b",
+                  "label": "B",
+                  "text": "She refuses to consider her future when managing money."
+                },
+                {
+                  "id": "bbc-260528-t3-q1-c",
+                  "label": "C",
+                  "text": "She keeps every penny she earns and never spends anything."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260528-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How does Jason connect family needs with borrowing?",
+              "evidence": {
+                "startSeconds": 82.77,
+                "endSeconds": 87.79,
+                "summary": "Borrowing is presented as a response to an income shortfall.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "He describes continuing difficulty with repayment, not the disappearance of needs.",
+                  "C": "His account begins with insufficient earnings to provide for a family."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t3-q2-a",
+                  "label": "A",
+                  "text": "He sees loans as sometimes necessary when job income is insufficient."
+                },
+                {
+                  "id": "bbc-260528-t3-q2-b",
+                  "label": "B",
+                  "text": "He says family needs disappear as soon as a loan is taken out."
+                },
+                {
+                  "id": "bbc-260528-t3-q2-c",
+                  "label": "C",
+                  "text": "He says borrowing always follows having surplus income."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260528-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Jason’s reference to five years express?",
+              "evidence": {
+                "startSeconds": 95.17,
+                "endSeconds": 97.27,
+                "summary": "The period belongs to a personal hope for eventual repayment.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The five-year period is Jason’s personal example, not a universal contract.",
+                  "B": "He describes a future hope, not a completed repayment in the past."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t3-q3-a",
+                  "label": "A",
+                  "text": "A guaranteed contract requiring every resident to repay in five years."
+                },
+                {
+                  "id": "bbc-260528-t3-q3-b",
+                  "label": "B",
+                  "text": "A report that every debt was already cleared five years earlier."
+                },
+                {
+                  "id": "bbc-260528-t3-q3-c",
+                  "label": "C",
+                  "text": "A willingness to imagine a long repayment effort if it could clear the debts."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–5: The field research",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How long did Ryan spend living on the housing estate: days, weeks or what? {{blank}}",
+              "evidence": {
+                "startSeconds": 158.93,
+                "endSeconds": 162.29,
+                "summary": "The presenter states that Ryan lived on the estate for months.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "months"
+              ]
+            },
+            {
+              "id": "bbc-260528-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What did Ryan conduct with residents besides listening to informal conversations? {{blank}}",
+              "evidence": {
+                "startSeconds": 179.07,
+                "endSeconds": 184.65,
+                "summary": "Interviews were one of Ryan’s two described ways of learning from residents.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "interviews"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Everyday commitments and growing pressure",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Residents in arrears were {{blank}} with payment commitments.",
+              "evidence": {
+                "startSeconds": 193.47,
+                "endSeconds": 198.13,
+                "summary": "Ryan explains arrears as being behind with monthly payments.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "behind"
+              ]
+            },
+            {
+              "id": "bbc-260528-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Basic living expenses mentioned include food, bills and {{blank}}.",
+              "evidence": {
+                "startSeconds": 205.53,
+                "endSeconds": 208.83,
+                "summary": "Rent is named among the ordinary expenses residents needed to meet.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rent"
+              ]
+            },
+            {
+              "id": "bbc-260528-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Over the months of Ryan’s research, financial strain on Jason and his partner {{blank}}.",
+              "evidence": {
+                "startSeconds": 252.14,
+                "endSeconds": 258.06,
+                "summary": "Ryan reports increasing rather than declining pressure on the couple.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "increased"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Consequences and the final answer",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Service lost after missed bills: {{blank}}.",
+              "evidence": {
+                "startSeconds": 258.48,
+                "endSeconds": 261.94,
+                "summary": "Internet service was disconnected after the couple missed bills.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "internet"
+              ]
+            },
+            {
+              "id": "bbc-260528-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Exact average amount stated in the final correction: £{{blank}}.",
+              "evidence": {
+                "startSeconds": 308.37,
+                "endSeconds": 311.31,
+                "summary": "The final correction specifies the exact figure of 4232 pounds.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "4232",
+                "4,232"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260528",
+        "audioSha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46",
+        "durationSeconds": 375.264,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "93b53d10cb5409e3c00f883f298b95f4ea1be2c9b2891e98c0211c649da8c485"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Material constraints and conflicted attitudes to repayment",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260528-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Scale and the personal account",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Daily contacts for help in the year cited: more than {{blank}} people.",
+              "evidence": {
+                "startSeconds": 63.27,
+                "endSeconds": 69.97,
+                "summary": "The opening statistic concerns daily requests for debt help during 2025.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "1000",
+                "1,000",
+                "one thousand"
+              ]
+            },
+            {
+              "id": "bbc-260528-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Need Jason says available jobs do not adequately provide for: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 82.77,
+                "endSeconds": 85.13,
+                "summary": "Jason’s explanation focuses on inadequate provision for family needs.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "family"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Hope and observation",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The exceptional escape Jason imagines is winning the {{blank}}.",
+              "evidence": {
+                "startSeconds": 89.91,
+                "endSeconds": 91.75,
+                "summary": "The lottery is a hoped-for escape rather than an event he says has occurred.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "lottery"
+              ]
+            },
+            {
+              "id": "bbc-260528-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Ryan immersed himself in a {{blank}} housing estate for months.",
+              "evidence": {
+                "startSeconds": 158.93,
+                "endSeconds": 162.29,
+                "summary": "The research involved living for months in a low-income housing setting.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "low-income",
+                "low income"
+              ]
+            },
+            {
+              "id": "bbc-260528-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Ryan’s evidence included informal everyday {{blank}}, not interviews alone.",
+              "evidence": {
+                "startSeconds": 179.07,
+                "endSeconds": 184.65,
+                "summary": "The method combines interview material with debt arising in ordinary conversation.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "conversations"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Interpreting arrears and Jason’s response",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260528-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What makes arrears more specific than simply having a debt?",
+              "evidence": {
+                "startSeconds": 193.47,
+                "endSeconds": 198.13,
+                "summary": "Arrears concerns lateness on existing commitments rather than borrowing alone.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Arrears identifies missed or overdue commitments, not future instalments still on schedule.",
+                  "C": "The relevant distinction is being behind on payments rather than the full outstanding balance."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t4-q6-a",
+                  "label": "A",
+                  "text": "Some payment commitments are already overdue."
+                },
+                {
+                  "id": "bbc-260528-t4-q6-b",
+                  "label": "B",
+                  "text": "They are instalments scheduled for future months that are still being paid on time."
+                },
+                {
+                  "id": "bbc-260528-t4-q6-c",
+                  "label": "C",
+                  "text": "They refer to the entire loan balance regardless of whether a payment has been missed."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260528-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why is the comparison between regular income and low income important?",
+              "evidence": {
+                "startSeconds": 221.65,
+                "endSeconds": 230.05,
+                "summary": "The comparison links financial circumstances with manageability and distress.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The comparison concerns distress and the ability to manage ordinary debts, not a quoted interest-rate comparison.",
+                  "C": "Ryan describes debt as a fact of everyday life; the difference is how distressing it becomes with little income."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t4-q7-a",
+                  "label": "A",
+                  "text": "It compares the interest rates charged to the two groups rather than their experience of debt."
+                },
+                {
+                  "id": "bbc-260528-t4-q7-b",
+                  "label": "B",
+                  "text": "It shows that the same general condition of owing money can be experienced differently."
+                },
+                {
+                  "id": "bbc-260528-t4-q7-c",
+                  "label": "C",
+                  "text": "It implies that ordinary debt is unusual among people earning a regular income."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260528-t4-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which interpretation avoids oversimplifying Jason’s attitude?",
+              "evidence": {
+                "startSeconds": 237.34,
+                "endSeconds": 251.52,
+                "summary": "Ryan’s account preserves the tension between desire for repayment and questioning its obligation.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "The account specifically includes questioning whether that moral obligation is right.",
+                  "C": "Ryan describes Jason’s position as fluctuating rather than a permanent decision to refuse repayment."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t4-q8-a",
+                  "label": "A",
+                  "text": "He questions how to repay but consistently accepts the moral obligation without doubt."
+                },
+                {
+                  "id": "bbc-260528-t4-q8-b",
+                  "label": "B",
+                  "text": "He has both a wish to repay and doubts about the supposed moral duty."
+                },
+                {
+                  "id": "bbc-260528-t4-q8-c",
+                  "label": "C",
+                  "text": "He has permanently replaced his wish to repay with a settled refusal."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: A concrete consequence and possible support",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which household service was withdrawn after bills went unpaid? {{blank}}",
+              "evidence": {
+                "startSeconds": 258.48,
+                "endSeconds": 261.94,
+                "summary": "The reported concrete consequence of missed bills is loss of internet service.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "internet"
+              ]
+            },
+            {
+              "id": "bbc-260528-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word source of help is mentioned near the end? {{blank}}",
+              "evidence": {
+                "startSeconds": 288.47,
+                "endSeconds": 289.99,
+                "summary": "The presenter identifies support groups as a possible source of help.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "support groups"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260528",
+        "audioSha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46",
+        "durationSeconds": 375.264,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "105bac43a80f644debd5f030b2285eee4a8a3bc84806eaa94b69c553cfe0abba"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Reading the evidence of everyday debt carefully",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260528-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Saving, statistical scale and the imagined escape",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260528-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What common feature appears in the presenters’ opening accounts?",
+              "evidence": {
+                "startSeconds": 23.55,
+                "endSeconds": 33.63,
+                "summary": "Both accounts combine present spending and saving motivations rather than an absolute either-or choice.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The presenters name children and the future as saving reasons; overdue loans belong to the later debt discussion.",
+                  "B": "Neil refers to children, while Pippa refers to the future and says she does not watch or save every penny."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t5-q1-a",
+                  "label": "A",
+                  "text": "Both describe saving primarily to pay off loans that are already overdue."
+                },
+                {
+                  "id": "bbc-260528-t5-q1-b",
+                  "label": "B",
+                  "text": "They give the same specific reason for saving and both account for every penny."
+                },
+                {
+                  "id": "bbc-260528-t5-q1-c",
+                  "label": "C",
+                  "text": "They combine spending with reasons to put money aside."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260528-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What exactly does the opening figure of over a thousand measure?",
+              "evidence": {
+                "startSeconds": 63.27,
+                "endSeconds": 69.97,
+                "summary": "The statistic concerns requests for help with a specified frequency and year.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The statistic measures contacts for help, not the whole indebted population.",
+                  "C": "The statistic belongs to Citizens Advice contacts, not Ryan’s later fieldwork."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t5-q2-a",
+                  "label": "A",
+                  "text": "People contacting a debt-help organisation each day in 2025."
+                },
+                {
+                  "id": "bbc-260528-t5-q2-b",
+                  "label": "B",
+                  "text": "All people in Britain who had any debt at that moment."
+                },
+                {
+                  "id": "bbc-260528-t5-q2-c",
+                  "label": "C",
+                  "text": "The number of households Ryan interviewed on the estate."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260528-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What tension appears in Jason’s first description of repayment?",
+              "evidence": {
+                "startSeconds": 89.91,
+                "endSeconds": 97.27,
+                "summary": "Jason’s difficult outlook coexists with an expressed hope of eventual repayment.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "B": "Winning the lottery is imagined as a possible escape, not reported as having happened.",
+                  "C": "Five years is expressed as a hope rather than a confirmed repayment arrangement."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260528-t5-q3-a",
+                  "label": "A",
+                  "text": "He struggles to imagine an escape yet still hopes to clear the debts over time."
+                },
+                {
+                  "id": "bbc-260528-t5-q3-b",
+                  "label": "B",
+                  "text": "He describes a lottery win already achieved as the practical basis of his plan."
+                },
+                {
+                  "id": "bbc-260528-t5-q3-c",
+                  "label": "C",
+                  "text": "He gives a confirmed five-year repayment arrangement agreed with his creditors."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Observing daily life",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What informal source supplements Ryan’s interviews? {{blank}}",
+              "evidence": {
+                "startSeconds": 179.07,
+                "endSeconds": 184.65,
+                "summary": "Ryan supplements formal interviews by attending to everyday conversations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "everyday conversations"
+              ]
+            },
+            {
+              "id": "bbc-260528-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which housing expense is named alongside food and bills? {{blank}}",
+              "evidence": {
+                "startSeconds": 205.53,
+                "endSeconds": 208.83,
+                "summary": "Rent completes the set of basic expenses named in the explanation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rent"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Changing attitudes and increasing pressure",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260528-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Type of repayment obligation Jason is described as questioning: {{blank}}.",
+              "evidence": {
+                "startSeconds": 247.64,
+                "endSeconds": 251.52,
+                "summary": "The doubts reported by Ryan concern the supposed moral obligation to repay.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "moral"
+              ]
+            },
+            {
+              "id": "bbc-260528-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Two-word description of the increasing pressure on the couple: {{blank}}.",
+              "evidence": {
+                "startSeconds": 252.14,
+                "endSeconds": 258.06,
+                "summary": "Ryan describes the increasing pressure as financial strain.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "financial strain"
+              ]
+            },
+            {
+              "id": "bbc-260528-t5-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Practical result of missed bills: disconnection of the {{blank}}.",
+              "evidence": {
+                "startSeconds": 258.48,
+                "endSeconds": 261.94,
+                "summary": "The missed bills have a specific service-related consequence.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "internet"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260528-t5-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Repayment terms and the numerical correction",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260528-t5-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The explanation describes the never-never as regular {{blank}} payments over an extended time.",
+              "evidence": {
+                "startSeconds": 266.58,
+                "endSeconds": 271.2,
+                "summary": "Small regular payments spread over time distinguish the arrangement described.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "small"
+              ]
+            },
+            {
+              "id": "bbc-260528-t5-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The precise final amount is £{{blank}}, rather than the earlier rounded answer choices.",
+              "evidence": {
+                "startSeconds": 308.37,
+                "endSeconds": 311.31,
+                "summary": "The closing answer provides 4232 pounds as the exact amount, not a rounded option.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "4232",
+                "4,232"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260528",
+        "audioSha256": "24bd6dca5d75c1e4f22df160e0a3e6a2759fc1e788bf0c4f7545e4ba81a3af46",
+        "durationSeconds": 375.264,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "3d30d9657f9024b1b838f23fff6f8d0e2a1b92a9c4a756e71e1d20c6d1d0423b"
+      }
+    }
+  ]
+}

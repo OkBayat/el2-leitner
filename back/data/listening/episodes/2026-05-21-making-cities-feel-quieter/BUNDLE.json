@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260521",
+  "folder": "2026-05-21-making-cities-feel-quieter",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6475146,
+      "sha256": "12b65c18a54e95d9b1f938b40ba4fc30870ab31b7ee3a1c1eaafd405e6bb67a2"
+    },
+    "cover.jpg": {
+      "bytes": 152326,
+      "sha256": "3000b7f0f8f06d1d00d264a208b229cc67c79ea830ccb99605fd06a4846c037d"
+    },
+    "episode.json": {
+      "bytes": 1364,
+      "sha256": "323d2dc59a4d1375575b7beef416ac3af2290e8cdb771747736efdbecf03976e"
+    },
+    "listening.json": {
+      "bytes": 58099,
+      "sha256": "d228d16b1eecf317ef814702104d7c24f43f2be1b648b95b916b0bfa83d8a3ba"
+    },
+    "transcript.md": {
+      "bytes": 420,
+      "sha256": "0ed8a17bc70153ca5bede590291bf414f8873a9b96cc84429ba38bfba67a1709"
+    },
+    "vocabulary.md": {
+      "bytes": 960,
+      "sha256": "8907dcf0d016844a81be4ae8739bebb4e333246c42c9a64017513643d43f9688"
+    }
+  }
+}

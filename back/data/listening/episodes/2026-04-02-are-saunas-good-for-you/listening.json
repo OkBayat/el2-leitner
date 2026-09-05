@@ -1,0 +1,1492 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Sauna visits: the room, the experience and the evidence",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260402-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: The sauna and the visit",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260402-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Typical sauna: a small {{blank}} room.",
+              "evidence": {
+                "startSeconds": 48.42,
+                "endSeconds": 50.88,
+                "summary": "The room is described using the material adjective wooden.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "wooden"
+              ]
+            },
+            {
+              "id": "bbc-260402-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Temperature inside: around {{blank}} degrees Celsius.",
+              "evidence": {
+                "startSeconds": 50.88,
+                "endSeconds": 53.06,
+                "summary": "The room description gives an approximate temperature of eighty degrees.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "80",
+                "eighty"
+              ]
+            },
+            {
+              "id": "bbc-260402-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Location of the beach sauna visited by the reporter: {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.2,
+                "endSeconds": 127.8,
+                "summary": "The visit takes place at a beach sauna in South Wales.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "South Wales"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Visitors describe the experience",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260402-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does the first visitor feel in the sauna?",
+              "evidence": {
+                "startSeconds": 142.06,
+                "endSeconds": 146.54,
+                "summary": "The first visitor directly describes feeling relaxed and at ease.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The uncertainty is not expressed by this visitor; she describes relaxation.",
+                  "C": "The first visitor says the room makes her feel at ease, not eager to leave."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t1-q4-a",
+                  "label": "A",
+                  "text": "Comfortable and relaxed."
+                },
+                {
+                  "id": "bbc-260402-t1-q4-b",
+                  "label": "B",
+                  "text": "Unsure whether she likes the heat."
+                },
+                {
+                  "id": "bbc-260402-t1-q4-c",
+                  "label": "C",
+                  "text": "Eager to leave the room."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does the second visitor say a sauna helps to relax?",
+              "evidence": {
+                "startSeconds": 147.28,
+                "endSeconds": 149.64,
+                "summary": "The second visitor connects the sauna with relaxation of tense muscles.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The second visitor mentions muscle relaxation, not a change in breathing.",
+                  "C": "The reported benefit concerns tense muscles rather than digestion."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t1-q5-a",
+                  "label": "A",
+                  "text": "The muscles."
+                },
+                {
+                  "id": "bbc-260402-t1-q5-b",
+                  "label": "B",
+                  "text": "The breathing."
+                },
+                {
+                  "id": "bbc-260402-t1-q5-c",
+                  "label": "C",
+                  "text": "The stomach."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What changes for the third visitor during her visit?",
+              "evidence": {
+                "startSeconds": 152.7,
+                "endSeconds": 159.26,
+                "summary": "The third visitor contrasts her stress on arrival with how she feels afterwards.",
+                "paraphrase": false,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "This reverses the visitor’s account of arriving stressed and finishing reset.",
+                  "C": "She reports a clear change by the time she finishes."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t1-q6-a",
+                  "label": "A",
+                  "text": "She feels relaxed at first but stressed at the end."
+                },
+                {
+                  "id": "bbc-260402-t1-q6-b",
+                  "label": "B",
+                  "text": "She arrives stressed and leaves feeling reset."
+                },
+                {
+                  "id": "bbc-260402-t1-q6-c",
+                  "label": "C",
+                  "text": "She feels the same before and after the visit."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Figures from Finland",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260402-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "According to Damian, {{blank}} percent of people in Finland use saunas.",
+              "evidence": {
+                "startSeconds": 222.74,
+                "endSeconds": 226.24,
+                "summary": "Damian reports that ninety percent of the Finnish population use saunas.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "90",
+                "ninety"
+              ]
+            },
+            {
+              "id": "bbc-260402-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The reported reduction in deaths from all causes among sauna-goers is {{blank}} percent.",
+              "evidence": {
+                "startSeconds": 229.94,
+                "endSeconds": 234.92,
+                "summary": "The association reported for sauna-goers is a forty percent mortality reduction.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "40",
+                "forty"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Research and a final language detail",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How many sauna-goers does Damian say the observational data is based on? {{blank}}",
+              "evidence": {
+                "startSeconds": 236.14,
+                "endSeconds": 241.36,
+                "summary": "Damian emphasizes that the observations involve thousands of sauna users.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "thousands"
+              ]
+            },
+            {
+              "id": "bbc-260402-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which English word is confirmed as the meaning of the Finnish word sauna? {{blank}}",
+              "evidence": {
+                "startSeconds": 307.46,
+                "endSeconds": 311.6,
+                "summary": "The answer confirmed at the end identifies bathhouse as the translation.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "bathhouse"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260402",
+        "audioSha256": "def31d152a5edef740391dcc70b3f0d4fed21308431a33d135177d4c5fcd9783",
+        "durationSeconds": 371.76,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "89733c9c795f61014c49c010cf22d956eb4cfc277f3dd471ba632b9c2def8781"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Sauna enthusiasm, personal benefits and research needs",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260402-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Different views of saunas",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260402-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does Neil compare sauna use in Britain with Nordic countries?",
+              "evidence": {
+                "startSeconds": 25.14,
+                "endSeconds": 32.2,
+                "summary": "Neil contrasts a longstanding Nordic custom with its recent spread in Britain.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Neil describes saunas appearing in Britain rather than declining in both places.",
+                  "C": "Neil assigns the long tradition to Sweden and Finland, not Britain."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t2-q1-a",
+                  "label": "A",
+                  "text": "Saunas are becoming less common in both regions."
+                },
+                {
+                  "id": "bbc-260402-t2-q1-b",
+                  "label": "B",
+                  "text": "Britain is seeing growth in a practice with a long Nordic history."
+                },
+                {
+                  "id": "bbc-260402-t2-q1-c",
+                  "label": "C",
+                  "text": "Britain has a longer sauna tradition than the Nordic countries."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260402-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What explains the presenters’ different reactions to saunas?",
+              "evidence": {
+                "startSeconds": 38.32,
+                "endSeconds": 46.1,
+                "summary": "Georgie focuses on discomfort during the heat, whereas Neil mentions subsequent refreshment.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Their opinions differ, and neither describes a shared dislike of sweating afterwards.",
+                  "C": "Georgie reports discomfort from heat; Neil does not complain about room size."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t2-q2-a",
+                  "label": "A",
+                  "text": "Both enjoy the heat but dislike sweating afterwards."
+                },
+                {
+                  "id": "bbc-260402-t2-q2-b",
+                  "label": "B",
+                  "text": "Georgie dislikes the heat, while Neil values how he feels afterwards."
+                },
+                {
+                  "id": "bbc-260402-t2-q2-c",
+                  "label": "C",
+                  "text": "Georgie likes the heat, while Neil dislikes the room’s size."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260402-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What is James Gallagher investigating?",
+              "evidence": {
+                "startSeconds": 69.08,
+                "endSeconds": 75.14,
+                "summary": "James questions the strength of the claims made for sauna temperatures.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The language question belongs to the presenters; James investigates health and well-being.",
+                  "C": "His question concerns health claims rather than a temperature competition."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t2-q3-a",
+                  "label": "A",
+                  "text": "Whether claimed benefits from high temperatures are justified."
+                },
+                {
+                  "id": "bbc-260402-t2-q3-b",
+                  "label": "B",
+                  "text": "Why the Finnish word has become common in Britain."
+                },
+                {
+                  "id": "bbc-260402-t2-q3-c",
+                  "label": "C",
+                  "text": "Which sauna produces the highest possible temperature."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t2-g2",
+          "position": 2,
+          "heading": "Questions 4–5: What individual visitors notice",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Physical effect mentioned by the second visitor: relaxation of {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.28,
+                "endSeconds": 149.64,
+                "summary": "The second visitor names muscles as the physical target of relaxation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "muscles"
+              ]
+            },
+            {
+              "id": "bbc-260402-t2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The third visitor’s description of feeling renewed: completely {{blank}}.",
+              "evidence": {
+                "startSeconds": 152.7,
+                "endSeconds": 159.26,
+                "summary": "The third visitor uses reset to describe renewal after arriving stressed.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "reset"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: The Finnish research",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260402-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which proportion of the Finnish population does Damian describe as sauna users? {{blank}}",
+              "evidence": {
+                "startSeconds": 222.74,
+                "endSeconds": 226.24,
+                "summary": "Damian gives a participation rate of ninety percent in Finland.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "90 percent",
+                "ninety percent",
+                "90%",
+                "90 per cent",
+                "ninety per cent"
+              ]
+            },
+            {
+              "id": "bbc-260402-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What percentage reduction in all-cause mortality does Damian report? {{blank}}",
+              "evidence": {
+                "startSeconds": 229.94,
+                "endSeconds": 234.92,
+                "summary": "The finding reported by Damian concerns a forty percent reduction in all-cause mortality.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "40 percent",
+                "forty percent",
+                "40%",
+                "40 per cent",
+                "forty per cent"
+              ]
+            },
+            {
+              "id": "bbc-260402-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What type of trials does Damian say is still needed? {{blank}}",
+              "evidence": {
+                "startSeconds": 243.4,
+                "endSeconds": 246.76,
+                "summary": "Damian calls for randomized controlled trials beyond the existing observations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "randomised controlled trials",
+                "randomized controlled trials"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Interpreting the evidence",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Georgie stresses that the Finnish observations extend over many {{blank}}.",
+              "evidence": {
+                "startSeconds": 281.7,
+                "endSeconds": 284.6,
+                "summary": "Georgie supports the value of the observations by stressing their long duration.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "years"
+              ]
+            },
+            {
+              "id": "bbc-260402-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "After hearing the discussion, Georgie wants to give saunas another {{blank}}.",
+              "evidence": {
+                "startSeconds": 294.28,
+                "endSeconds": 295.98,
+                "summary": "The discussion changes Georgie’s willingness to experience a sauna again.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "try"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260402",
+        "audioSha256": "def31d152a5edef740391dcc70b3f0d4fed21308431a33d135177d4c5fcd9783",
+        "durationSeconds": 371.76,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "0a79f2086a16239a2383de8c93681e78bce59c491d09c836db828ff9f68dd742"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "From the heated room to the limits of the findings",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260402-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–2: How a typical sauna works",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which Nordic country is mentioned alongside Sweden as having a long sauna tradition? {{blank}}",
+              "evidence": {
+                "startSeconds": 25.14,
+                "endSeconds": 32.2,
+                "summary": "Neil names Finland alongside Sweden when describing the longstanding sauna tradition.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Finland"
+              ]
+            },
+            {
+              "id": "bbc-260402-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What is used to heat the room? {{blank}}",
+              "evidence": {
+                "startSeconds": 50.88,
+                "endSeconds": 53.06,
+                "summary": "Steam is identified as the means of heating the typical sauna room.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "steam"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t3-g2",
+          "position": 2,
+          "heading": "Questions 3–5: The reported visit",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t3-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The people interviewed were using a sauna beside a {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.2,
+                "endSeconds": 127.8,
+                "summary": "The location is described as a beach sauna rather than an inland venue.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "beach"
+              ]
+            },
+            {
+              "id": "bbc-260402-t3-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The second visitor particularly values the sauna when she feels {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.28,
+                "endSeconds": 149.64,
+                "summary": "The second visitor links the benefit with a state of tension.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "tense"
+              ]
+            },
+            {
+              "id": "bbc-260402-t3-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "A visitor compares her recovery from stress to having {{blank}}.",
+              "evidence": {
+                "startSeconds": 152.7,
+                "endSeconds": 159.26,
+                "summary": "The third visitor describes her improved state as having completely reset.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "reset"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: What the researcher does and does not claim",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260402-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What attitude does Damian initially express towards the research?",
+              "evidence": {
+                "startSeconds": 214.22,
+                "endSeconds": 219.48,
+                "summary": "Damian introduces the research with fascination and strong enthusiasm.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "B": "Although he mentions culture, he expresses enthusiasm about the evidence.",
+                  "C": "He describes huge benefits and fascination, not disappointment."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t3-q6-a",
+                  "label": "A",
+                  "text": "Strong interest in apparently substantial benefits."
+                },
+                {
+                  "id": "bbc-260402-t3-q6-b",
+                  "label": "B",
+                  "text": "Indifference because sauna use is only a cultural habit."
+                },
+                {
+                  "id": "bbc-260402-t3-q6-c",
+                  "label": "C",
+                  "text": "Disappointment that no benefits have been reported."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What feature makes the observational findings noteworthy to Damian?",
+              "evidence": {
+                "startSeconds": 236.14,
+                "endSeconds": 241.36,
+                "summary": "Damian points to the substantial observational sample, not experimental assignment.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Damian refers to thousands of sauna-goers, not the small set of visitors.",
+                  "C": "The data is observational rather than an assigned experimental schedule."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t3-q7-a",
+                  "label": "A",
+                  "text": "The large number of people on whom they are based."
+                },
+                {
+                  "id": "bbc-260402-t3-q7-b",
+                  "label": "B",
+                  "text": "The sample consisted only of the three visitors just interviewed."
+                },
+                {
+                  "id": "bbc-260402-t3-q7-c",
+                  "label": "C",
+                  "text": "Every participant was assigned a sauna schedule by researchers."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why does Damian want randomized controlled trials?",
+              "evidence": {
+                "startSeconds": 243.4,
+                "endSeconds": 250.2,
+                "summary": "The proposed trials address experimental control missing from observational data.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "He asks for randomized controlled trials, a different research approach from the existing observations.",
+                  "B": "Thousands of observational records are already described before he asks for controlled trials."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t3-q8-a",
+                  "label": "A",
+                  "text": "To confirm the meaning of the percentage using the same uncontrolled observations."
+                },
+                {
+                  "id": "bbc-260402-t3-q8-b",
+                  "label": "B",
+                  "text": "To collect the first observations of what sauna visitors experience."
+                },
+                {
+                  "id": "bbc-260402-t3-q8-c",
+                  "label": "C",
+                  "text": "To investigate the benefits under controlled conditions."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Cautions and strengths",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What researchers watched: people’s natural {{blank}}.",
+              "evidence": {
+                "startSeconds": 273.3,
+                "endSeconds": 277.66,
+                "summary": "Neil says the evidence comes from observing natural behaviour rather than controlled trials.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "behaviour",
+                "behavior"
+              ]
+            },
+            {
+              "id": "bbc-260402-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Length of the observational record: many {{blank}}.",
+              "evidence": {
+                "startSeconds": 281.7,
+                "endSeconds": 284.6,
+                "summary": "Georgie notes that the observations cover many years.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "years"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260402",
+        "audioSha256": "def31d152a5edef740391dcc70b3f0d4fed21308431a33d135177d4c5fcd9783",
+        "durationSeconds": 371.76,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "7f6dc4823289c6d23599890a917893150b1fe3c65de651bafd5cf4b8e0111fa4"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Separating experience, association and stronger evidence",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260402-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Framing the investigation",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Georgie’s reservation concerns being excessively {{blank}}, rather than a claimed long-term risk.",
+              "evidence": {
+                "startSeconds": 38.32,
+                "endSeconds": 40.68,
+                "summary": "Georgie attributes her dislike to immediate discomfort from heat, not a medical risk.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "hot"
+              ]
+            },
+            {
+              "id": "bbc-260402-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil’s favourable view rests on feeling {{blank}} after a visit.",
+              "evidence": {
+                "startSeconds": 42.86,
+                "endSeconds": 46.1,
+                "summary": "Neil supports his preference with his own post-sauna feeling.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "refreshed"
+              ]
+            },
+            {
+              "id": "bbc-260402-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "James examines claims that high temperatures improve health and {{blank}}.",
+              "evidence": {
+                "startSeconds": 69.08,
+                "endSeconds": 75.14,
+                "summary": "The investigation concerns claims about both health and well-being.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "well-being",
+                "well being",
+                "wellbeing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t4-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Two dimensions of perceived benefit",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t4-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Second visitor — bodily relief: less tension in the {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.28,
+                "endSeconds": 149.64,
+                "summary": "The second account emphasizes muscular rather than general emotional relief.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "muscles"
+              ]
+            },
+            {
+              "id": "bbc-260402-t4-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Third visitor — recovery from stress: feeling completely {{blank}}.",
+              "evidence": {
+                "startSeconds": 152.7,
+                "endSeconds": 159.26,
+                "summary": "The third account presents a change in emotional state across the visit.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "reset"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–7: The scale of the reported association",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260402-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What percentage illustrates how widespread sauna use is in the Finnish population? {{blank}}",
+              "evidence": {
+                "startSeconds": 222.74,
+                "endSeconds": 226.24,
+                "summary": "The ninety-percent figure describes participation, not the reduction in mortality.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "90 percent",
+                "ninety percent",
+                "90%",
+                "90 per cent"
+              ]
+            },
+            {
+              "id": "bbc-260402-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What reduction is reported for deaths from all causes, rather than for sauna participation? {{blank}}",
+              "evidence": {
+                "startSeconds": 229.94,
+                "endSeconds": 234.92,
+                "summary": "The forty-percent figure is attached to all-cause mortality among sauna-goers.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "40 percent",
+                "forty percent",
+                "40%",
+                "40 per cent"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t4-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Weighing the conclusions",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260402-t4-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which gap would the further research Damian proposes address?",
+              "evidence": {
+                "startSeconds": 243.4,
+                "endSeconds": 250.2,
+                "summary": "The call for controlled trials qualifies the strength of the observational association.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Damian already describes thousands of observations and specifically asks for controlled trials.",
+                  "C": "A long observation period is discussed later; the requested improvement is randomized control."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t4-q8-a",
+                  "label": "A",
+                  "text": "The lack of controlled experimental evidence behind the current association."
+                },
+                {
+                  "id": "bbc-260402-t4-q8-b",
+                  "label": "B",
+                  "text": "Whether a similar association appears in a larger observational sample."
+                },
+                {
+                  "id": "bbc-260402-t4-q8-c",
+                  "label": "C",
+                  "text": "Whether the existing observations cover a sufficiently long period."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t4-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which position best represents the discussion of existing data?",
+              "evidence": {
+                "startSeconds": 250.62,
+                "endSeconds": 277.66,
+                "summary": "Damian values current observations while Neil stresses that they are not controlled medical trials.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "Damian says not to dismiss the existing data despite the need for better trials.",
+                  "B": "Neil explicitly says the observations are not controlled medical trials."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t4-q9-a",
+                  "label": "A",
+                  "text": "The limitations leave the observations with little value for further investigation."
+                },
+                {
+                  "id": "bbc-260402-t4-q9-b",
+                  "label": "B",
+                  "text": "The mortality reduction can be treated as an effect established by controlled research."
+                },
+                {
+                  "id": "bbc-260402-t4-q9-c",
+                  "label": "C",
+                  "text": "It should be taken seriously without treating it as controlled-trial proof."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260402-t4-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Georgie’s final reaction establish?",
+              "evidence": {
+                "startSeconds": 294.28,
+                "endSeconds": 295.98,
+                "summary": "Georgie expresses a change of personal intention, not a scientific conclusion.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Her stated decision to give saunas another try contradicts continuing personal refusal.",
+                  "C": "Georgie expresses willingness to try again, not certainty about how the heat will feel."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t4-q10-a",
+                  "label": "A",
+                  "text": "She accepts the discussion but remains personally unwilling to return."
+                },
+                {
+                  "id": "bbc-260402-t4-q10-b",
+                  "label": "B",
+                  "text": "The discussion has made her more open to trying saunas herself."
+                },
+                {
+                  "id": "bbc-260402-t4-q10-c",
+                  "label": "C",
+                  "text": "She is now certain that she will enjoy the heat during her next visit."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260402",
+        "audioSha256": "def31d152a5edef740391dcc70b3f0d4fed21308431a33d135177d4c5fcd9783",
+        "durationSeconds": 371.76,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "781f6765357e753401c18415f1ab10bb08322f25b84ce3c2a13ac43e9d90d44a"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Sauna claims: context, testimony and scientific caution",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260402-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Context of the practice",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Two Nordic examples with an established sauna tradition: Sweden and {{blank}}.",
+              "evidence": {
+                "startSeconds": 25.14,
+                "endSeconds": 32.2,
+                "summary": "Finland is named alongside Sweden as a country with a longstanding sauna tradition.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Finland"
+              ]
+            },
+            {
+              "id": "bbc-260402-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Heating medium in the described room: {{blank}}.",
+              "evidence": {
+                "startSeconds": 50.88,
+                "endSeconds": 53.06,
+                "summary": "The introductory description identifies steam as the heating medium.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "steam"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t5-g2",
+          "position": 2,
+          "heading": "Questions 3–4: The visitors’ setting and condition",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260402-t5-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In which part of Wales did the reporter collect the visitors’ comments? {{blank}}",
+              "evidence": {
+                "startSeconds": 126.2,
+                "endSeconds": 127.8,
+                "summary": "The visitor testimony was collected at a beach venue in South Wales.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "South Wales"
+              ]
+            },
+            {
+              "id": "bbc-260402-t5-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which adjective identifies the condition for which the second visitor finds a sauna helpful? {{blank}}",
+              "evidence": {
+                "startSeconds": 147.28,
+                "endSeconds": 149.64,
+                "summary": "The second visitor relates muscular relaxation to feeling tense.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "tense"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t5-g3",
+          "position": 3,
+          "heading": "Questions 5–7: Reported changes and scale",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260402-t5-q5",
+              "number": 5,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The stressed visitor judges the effect at the end of the session by saying she has completely {{blank}}.",
+              "evidence": {
+                "startSeconds": 152.7,
+                "endSeconds": 159.26,
+                "summary": "The visitor’s conclusion comes after the session and contrasts with her earlier stress.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "reset"
+              ]
+            },
+            {
+              "id": "bbc-260402-t5-q6",
+              "number": 6,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The participation figure of {{blank}} percent concerns sauna use, not mortality.",
+              "evidence": {
+                "startSeconds": 222.74,
+                "endSeconds": 226.24,
+                "summary": "Ninety percent refers to uptake in Finland, distinguishing it from the health statistic.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "90",
+                "ninety"
+              ]
+            },
+            {
+              "id": "bbc-260402-t5-q7",
+              "number": 7,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The observational findings draw on {{blank}} of sauna-goers rather than a small group of interviewees.",
+              "evidence": {
+                "startSeconds": 236.14,
+                "endSeconds": 241.36,
+                "summary": "Damian describes an extensive sample distinct from the earlier visitor interviews.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "thousands"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260402-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Interpreting the final qualifications",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260402-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How should the request for randomized trials affect interpretation of the health claim?",
+              "evidence": {
+                "startSeconds": 243.4,
+                "endSeconds": 246.76,
+                "summary": "Damian’s proposed next step distinguishes current associations from experimental confirmation.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Damian has already reported observational data and a mortality figure.",
+                  "C": "The available findings are observational; controlled trials are the proposed next step."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t5-q8-a",
+                  "label": "A",
+                  "text": "It signals that the existing evidence still needs stronger experimental testing."
+                },
+                {
+                  "id": "bbc-260402-t5-q8-b",
+                  "label": "B",
+                  "text": "It indicates that a first estimate of the association still has to be collected."
+                },
+                {
+                  "id": "bbc-260402-t5-q8-c",
+                  "label": "C",
+                  "text": "It aims to repeat a result already established by controlled experiments."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Damian’s refusal to dismiss the current findings imply?",
+              "evidence": {
+                "startSeconds": 250.62,
+                "endSeconds": 254.5,
+                "summary": "Damian balances methodological caution with a positive valuation of current observations.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "B": "He grounds his respect in observational data, not simply the cultural popularity of saunas.",
+                  "C": "He respects the large observational evidence while still calling for randomized trials."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t5-q9-a",
+                  "label": "A",
+                  "text": "The limitations do not make the existing observations worthless."
+                },
+                {
+                  "id": "bbc-260402-t5-q9-b",
+                  "label": "B",
+                  "text": "The popularity of the practice is the main reason to accept the mortality finding."
+                },
+                {
+                  "id": "bbc-260402-t5-q9-c",
+                  "label": "C",
+                  "text": "The sample size makes the findings equivalent to controlled experimental proof."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260402-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does the closing exchange combine research discussion with personal response?",
+              "evidence": {
+                "startSeconds": 281.7,
+                "endSeconds": 295.98,
+                "summary": "The closing passage moves from the duration of the evidence to Georgie’s revised intention.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Her decision comes after Neil explains the observational limitation and she notes the long record.",
+                  "B": "Georgie values the long record without retracting the preceding call for controlled research."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260402-t5-q10-a",
+                  "label": "A",
+                  "text": "Georgie decides to return before any research limitations are discussed."
+                },
+                {
+                  "id": "bbc-260402-t5-q10-b",
+                  "label": "B",
+                  "text": "The length of observation is treated as a replacement for the requested randomized trials."
+                },
+                {
+                  "id": "bbc-260402-t5-q10-c",
+                  "label": "C",
+                  "text": "It notes the long observational record before Georgie becomes willing to retry a sauna."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260402",
+        "audioSha256": "def31d152a5edef740391dcc70b3f0d4fed21308431a33d135177d4c5fcd9783",
+        "durationSeconds": 371.76,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "3e0a04377d56a495ffc42637f098e4e4e03b283639e09183f84628145d571f47"
+      }
+    }
+  ]
+}

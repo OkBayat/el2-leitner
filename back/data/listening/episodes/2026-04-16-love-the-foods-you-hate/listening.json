@@ -1,0 +1,1472 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Changing tastes and trying unfamiliar foods",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260416-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Examples of changing tastes",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Origin of the food Neil learned to enjoy: {{blank}}.",
+              "evidence": {
+                "startSeconds": 21.33,
+                "endSeconds": 26.45,
+                "summary": "Neil describes the food he learned to like as Japanese.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Japanese"
+              ]
+            },
+            {
+              "id": "bbc-260416-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Food Becca now enjoys: {{blank}}.",
+              "evidence": {
+                "startSeconds": 33.81,
+                "endSeconds": 38.91,
+                "summary": "Becca says she has grown to love olives as she has grown older.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "olives"
+              ]
+            },
+            {
+              "id": "bbc-260416-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Herb people may taste or smell differently because of genetics: {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.27,
+                "endSeconds": 113.51,
+                "summary": "Dana uses coriander as the example of genetically influenced sensory differences.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "coriander"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Trying a disliked food",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260416-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Claire do when using masking?",
+              "evidence": {
+                "startSeconds": 171.93,
+                "endSeconds": 179.39,
+                "summary": "Masking introduces a disliked food together with a familiar liked food.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Claire describes dipping it into a liked food rather than serving it alone.",
+                  "C": "The disliked food remains present under the coating."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t1-q4-a",
+                  "label": "A",
+                  "text": "She asks the person to eat only the disliked food."
+                },
+                {
+                  "id": "bbc-260416-t1-q4-b",
+                  "label": "B",
+                  "text": "She combines a disliked food with something the person likes."
+                },
+                {
+                  "id": "bbc-260416-t1-q4-c",
+                  "label": "C",
+                  "text": "She replaces the disliked food completely without offering it."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260416-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What unusual food does Claire offer some parents?",
+              "evidence": {
+                "startSeconds": 182.97,
+                "endSeconds": 188.79,
+                "summary": "Claire uses chocolate-covered insects with parents who say they like everything.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Prawns occur later in a different example about illness, not this tasting exercise.",
+                  "B": "Olives are Becca’s example, not Claire’s chocolate-covered food."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t1-q5-a",
+                  "label": "A",
+                  "text": "Chocolate-covered prawns."
+                },
+                {
+                  "id": "bbc-260416-t1-q5-b",
+                  "label": "B",
+                  "text": "Chocolate-covered olives."
+                },
+                {
+                  "id": "bbc-260416-t1-q5-c",
+                  "label": "C",
+                  "text": "Chocolate-covered insects."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260416-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How do people usually find the insects once they taste them?",
+              "evidence": {
+                "startSeconds": 196.65,
+                "endSeconds": 204.25,
+                "summary": "The tasting experience is described as similar to eating crunchy chocolate.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The comparison made here is with crunchy chocolate, not prawns.",
+                  "C": "Coriander is a genetics example, not Claire’s description of the taste."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t1-q6-a",
+                  "label": "A",
+                  "text": "Rather like the prawn in Claire’s later example."
+                },
+                {
+                  "id": "bbc-260416-t1-q6-b",
+                  "label": "B",
+                  "text": "Rather like crunchy chocolate."
+                },
+                {
+                  "id": "bbc-260416-t1-q6-c",
+                  "label": "C",
+                  "text": "Rather like the coriander Dana described."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: A bad experience with food",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In Claire’s example, someone becomes unwell after eating {{blank}}.",
+              "evidence": {
+                "startSeconds": 243.31,
+                "endSeconds": 249.47,
+                "summary": "The later example begins with becoming ill after eating prawns.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "prawns"
+              ]
+            },
+            {
+              "id": "bbc-260416-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The person then expects the food to make them {{blank}} again.",
+              "evidence": {
+                "startSeconds": 258.83,
+                "endSeconds": 263.13,
+                "summary": "The person’s expectation of another illness explains their avoidance.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "unwell"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Unsafe food and unfamiliar food",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Besides being old or left out, what condition may make food dodgy? {{blank}}",
+              "evidence": {
+                "startSeconds": 280.79,
+                "endSeconds": 286.29,
+                "summary": "Neil names undercooked food alongside old food and food left out.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "undercooked"
+              ]
+            },
+            {
+              "id": "bbc-260416-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which term is confirmed at the end for fear of new things? {{blank}}",
+              "evidence": {
+                "startSeconds": 303.75,
+                "endSeconds": 309.57,
+                "summary": "Neil confirms neophobia near the end rather than at its initial introduction.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "neophobia"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260416",
+        "audioSha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988",
+        "durationSeconds": 370.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "19441685c0ea2e117f1d2db21d407cbbde6253e735d93bc64a5a76ad050bbb15"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "How learning and experience influence food preferences",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260416-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Changes and individual differences",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260416-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Neil’s experience of umeboshi demonstrate?",
+              "evidence": {
+                "startSeconds": 21.33,
+                "endSeconds": 30.33,
+                "summary": "Neil describes a change from dislike to enjoyment through becoming used to the food.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "He says he got used to it over time.",
+                  "C": "Neil says he first disliked the food and later loved it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t2-q1-a",
+                  "label": "A",
+                  "text": "An initially disliked food can become enjoyable after familiarity grows."
+                },
+                {
+                  "id": "bbc-260416-t2-q1-b",
+                  "label": "B",
+                  "text": "He stopped trying the food immediately and never ate it again."
+                },
+                {
+                  "id": "bbc-260416-t2-q1-c",
+                  "label": "C",
+                  "text": "His initial positive opinion stayed unchanged."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260416-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Does Dana attribute food dislikes exclusively to inheritance or experience?",
+              "evidence": {
+                "startSeconds": 96.17,
+                "endSeconds": 106.91,
+                "summary": "Dana rejects an either-or choice between genetic and learned causes.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Dana gives a genetic explanation as well as a learned one.",
+                  "C": "Dana explicitly adds a strong learning component."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t2-q2-a",
+                  "label": "A",
+                  "text": "Yes; only learning matters."
+                },
+                {
+                  "id": "bbc-260416-t2-q2-b",
+                  "label": "B",
+                  "text": "No; she says both can contribute."
+                },
+                {
+                  "id": "bbc-260416-t2-q2-c",
+                  "label": "C",
+                  "text": "Yes; only genetic differences matter."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260416-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why does Dana mention coriander?",
+              "evidence": {
+                "startSeconds": 109.27,
+                "endSeconds": 113.51,
+                "summary": "Coriander illustrates genetic differences in taste and smell rather than the later examples.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The illness example concerns prawns, not coriander.",
+                  "C": "Claire’s masking example uses chocolate-covered insects."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t2-q3-a",
+                  "label": "A",
+                  "text": "To identify the food that made someone ill."
+                },
+                {
+                  "id": "bbc-260416-t2-q3-b",
+                  "label": "B",
+                  "text": "To illustrate inherited differences in how a food is perceived."
+                },
+                {
+                  "id": "bbc-260416-t2-q3-c",
+                  "label": "C",
+                  "text": "To identify the food used for masking in Claire’s clinic."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t2-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Claire’s tasting technique",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Name of the method used to hide a disliked food with a liked one: {{blank}}.",
+              "evidence": {
+                "startSeconds": 171.93,
+                "endSeconds": 179.39,
+                "summary": "Claire names masking as the method of combining disliked and liked foods.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "masking"
+              ]
+            },
+            {
+              "id": "bbc-260416-t2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Coating used on the insects offered to parents: {{blank}}.",
+              "evidence": {
+                "startSeconds": 182.97,
+                "endSeconds": 188.79,
+                "summary": "The insects are covered with chocolate in the practical demonstration.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "chocolate"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Expectation and actual experience",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Claire call the idea that the food is an insect? {{blank}}",
+              "evidence": {
+                "startSeconds": 192.33,
+                "endSeconds": 194.51,
+                "summary": "Claire says the concept of eating an insect can be the barrier.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "concept"
+              ]
+            },
+            {
+              "id": "bbc-260416-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What texture word appears in Claire’s comparison with chocolate? {{blank}}",
+              "evidence": {
+                "startSeconds": 200.95,
+                "endSeconds": 204.25,
+                "summary": "Claire describes the tasting experience with the texture word crunchy.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "crunchy"
+              ]
+            },
+            {
+              "id": "bbc-260416-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which seafood illustrates a negative experience that can change future choices? {{blank}}",
+              "evidence": {
+                "startSeconds": 243.31,
+                "endSeconds": 249.47,
+                "summary": "Prawns are used to illustrate how an earlier illness can affect later food choices.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "prawns",
+                "prawn"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Why the food may be rejected later",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Claire calls keeping away from the food for this reason fear-based {{blank}}.",
+              "evidence": {
+                "startSeconds": 258.83,
+                "endSeconds": 263.13,
+                "summary": "The response is identified as fear-based avoidance following an unpleasant experience.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "avoidance"
+              ]
+            },
+            {
+              "id": "bbc-260416-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Food may cause illness if it has been left {{blank}}.",
+              "evidence": {
+                "startSeconds": 280.79,
+                "endSeconds": 286.29,
+                "summary": "Neil includes food that has been left out among explanations of unsafe food.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "out"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260416",
+        "audioSha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988",
+        "durationSeconds": 370.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "49326ccaf861a6503e1478b3da2d8fba0f9df5ffe1b3f83f839edd6b24f732e2"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Sensory differences and the role of expectations",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260416-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Personal change",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What sort of food does Neil describe in his example of a changing preference? {{blank}}",
+              "evidence": {
+                "startSeconds": 21.33,
+                "endSeconds": 26.45,
+                "summary": "Neil describes his example of a changing preference as Japanese food.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Japanese food"
+              ]
+            },
+            {
+              "id": "bbc-260416-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What food did Becca dislike earlier in life? {{blank}}",
+              "evidence": {
+                "startSeconds": 33.81,
+                "endSeconds": 38.91,
+                "summary": "Becca contrasts her earlier dislike of olives with her current enjoyment.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "olives"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t3-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Different routes to food dislike",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t3-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Dana says that differences in the smell or taste of coriander can arise via {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.27,
+                "endSeconds": 113.51,
+                "summary": "Dana attributes some differences in the perception of coriander to genetics.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "genetics"
+              ]
+            },
+            {
+              "id": "bbc-260416-t3-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Dana also emphasizes a strong {{blank}} component in food preferences.",
+              "evidence": {
+                "startSeconds": 114.73,
+                "endSeconds": 117.89,
+                "summary": "Dana supplements the genetic explanation with an important learning component.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "learning"
+              ]
+            },
+            {
+              "id": "bbc-260416-t3-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "For masking, the disliked food is dipped into something the person does {{blank}}.",
+              "evidence": {
+                "startSeconds": 171.93,
+                "endSeconds": 179.39,
+                "summary": "The coating is a food the person likes rather than another disliked food.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "like"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: The insect example and food fears",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260416-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What distinction does Claire draw in the insect exercise?",
+              "evidence": {
+                "startSeconds": 192.33,
+                "endSeconds": 200.71,
+                "summary": "Claire separates the psychological reaction to an idea from the tasting experience.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Claire says people usually find nothing inherently unpleasant after tasting.",
+                  "B": "The barrier described is the concept of an insect, not discovering chocolate."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t3-q6-a",
+                  "label": "A",
+                  "text": "The taste is always worse than people expect from the idea."
+                },
+                {
+                  "id": "bbc-260416-t3-q6-b",
+                  "label": "B",
+                  "text": "People dislike the taste only after learning it is chocolate."
+                },
+                {
+                  "id": "bbc-260416-t3-q6-c",
+                  "label": "C",
+                  "text": "The idea can be off-putting even when the taste is not inherently unpleasant."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260416-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does the presenter add about why eating insects can seem strange?",
+              "evidence": {
+                "startSeconds": 231.75,
+                "endSeconds": 235.09,
+                "summary": "The presenter relates the strangeness of insect eating to culture.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The example emphasizes cultural familiarity rather than excluding learning.",
+                  "B": "Neil explicitly distinguishes perceived cultural strangeness from inherent unpleasantness."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t3-q7-a",
+                  "label": "A",
+                  "text": "The reaction has no connection with what people have learned."
+                },
+                {
+                  "id": "bbc-260416-t3-q7-b",
+                  "label": "B",
+                  "text": "The reaction proves insects are naturally unpleasant for everybody."
+                },
+                {
+                  "id": "bbc-260416-t3-q7-c",
+                  "label": "C",
+                  "text": "Cultural expectations can influence the reaction."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260416-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why might someone refuse prawns after one bad experience?",
+              "evidence": {
+                "startSeconds": 254.51,
+                "endSeconds": 263.13,
+                "summary": "The expectation of becoming ill again follows the remembered association.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The refusal is linked to remembering illness, not a coating preference.",
+                  "C": "The example describes an association and fear, not proof about all prawns."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t3-q8-a",
+                  "label": "A",
+                  "text": "They connect the food with illness and expect it to happen again."
+                },
+                {
+                  "id": "bbc-260416-t3-q8-b",
+                  "label": "B",
+                  "text": "They have forgotten the earlier illness and simply dislike the coating."
+                },
+                {
+                  "id": "bbc-260416-t3-q8-c",
+                  "label": "C",
+                  "text": "They have established that every prawn will make them ill."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: The closing explanations",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Two possible food problems, besides being left out: undercooked or {{blank}}.",
+              "evidence": {
+                "startSeconds": 280.79,
+                "endSeconds": 286.29,
+                "summary": "Neil lists old food as another possible reason for the bad experience.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "old"
+              ]
+            },
+            {
+              "id": "bbc-260416-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Confirmed name of the fear discussed in the opening question: {{blank}}.",
+              "evidence": {
+                "startSeconds": 303.75,
+                "endSeconds": 309.57,
+                "summary": "The closing answer confirms the term neophobia.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "neophobia"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260416",
+        "audioSha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988",
+        "durationSeconds": 370.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "f06599c80fb6fa17ecfdcfba15fd161a617d38c20c71f3c0bebd433267abe737"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Inherited perception versus learned rejection",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260416-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: A changing preference and a research example",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Example of a preference that changed as Becca matured: {{blank}}.",
+              "evidence": {
+                "startSeconds": 33.81,
+                "endSeconds": 38.91,
+                "summary": "Becca relates her changed preference for olives to growing older.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "olives"
+              ]
+            },
+            {
+              "id": "bbc-260416-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Example used to illustrate inherited sensory variation: {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.27,
+                "endSeconds": 113.51,
+                "summary": "Dana selects coriander to demonstrate genetically influenced differences in perception.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "coriander"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Testing explanations for dislike",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260416-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What qualification prevents Dana’s account from being purely biological?",
+              "evidence": {
+                "startSeconds": 114.73,
+                "endSeconds": 117.89,
+                "summary": "Dana’s reference to learning qualifies an exclusively genetic explanation.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Dana includes both influences rather than making one conditional on excluding the other.",
+                  "C": "Dana distinguishes genetic differences from the separately identified learning component."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t4-q3-a",
+                  "label": "A",
+                  "text": "Learning is considered only after genetic influence has been ruled out."
+                },
+                {
+                  "id": "bbc-260416-t4-q3-b",
+                  "label": "B",
+                  "text": "She also identifies a substantial learned component."
+                },
+                {
+                  "id": "bbc-260416-t4-q3-c",
+                  "label": "C",
+                  "text": "Inherited sensory differences are presented as the result of repeated exposure."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260416-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the mechanism of Claire’s suggested exercise?",
+              "evidence": {
+                "startSeconds": 171.93,
+                "endSeconds": 179.39,
+                "summary": "Masking uses an existing preference to help a person approach an unfamiliar or disliked item.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The disliked food is still eaten underneath or together with the familiar flavour.",
+                  "C": "Claire describes combining flavours, and the later insect example retains a crunchy texture."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t4-q4-a",
+                  "label": "A",
+                  "text": "Use the familiar coating instead of asking the person to taste the unfamiliar food."
+                },
+                {
+                  "id": "bbc-260416-t4-q4-b",
+                  "label": "B",
+                  "text": "Use something already liked to make trying the disliked food easier."
+                },
+                {
+                  "id": "bbc-260416-t4-q4-c",
+                  "label": "C",
+                  "text": "Change the food’s texture before offering it without any familiar flavour."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260416-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which conclusion is justified by Claire’s account of the insect tasting?",
+              "evidence": {
+                "startSeconds": 192.33,
+                "endSeconds": 200.71,
+                "summary": "The reported experience distinguishes expectation from sensation without establishing a universal claim.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Claire reports that the actual taste is often not inherently unpleasant despite the initial idea.",
+                  "B": "The passage separates anticipated dislike from taste; the subsequent explanation still recognizes culture."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t4-q5-a",
+                  "label": "A",
+                  "text": "Initial reluctance accurately predicts how unpleasant the food will taste."
+                },
+                {
+                  "id": "bbc-260416-t4-q5-b",
+                  "label": "B",
+                  "text": "A pleasant tasting experience rules out cultural expectations as a source of dislike."
+                },
+                {
+                  "id": "bbc-260416-t4-q5-c",
+                  "label": "C",
+                  "text": "Anticipated disgust and actual taste can differ."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Interpreting unfamiliarity and later fear",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil suggests that eating insects may seem strange {{blank}}, rather than being naturally unpleasant.",
+              "evidence": {
+                "startSeconds": 231.75,
+                "endSeconds": 235.09,
+                "summary": "Neil contrasts culturally learned strangeness with inherent unpleasantness.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "culturally"
+              ]
+            },
+            {
+              "id": "bbc-260416-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The later example begins with becoming {{blank}} after eating seafood.",
+              "evidence": {
+                "startSeconds": 243.31,
+                "endSeconds": 249.47,
+                "summary": "Illness following prawns is the experience that initiates the later fear.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "unwell"
+              ]
+            },
+            {
+              "id": "bbc-260416-t4-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Expecting a repeat of the illness leads to fear-based {{blank}}.",
+              "evidence": {
+                "startSeconds": 258.83,
+                "endSeconds": 263.13,
+                "summary": "The anticipated consequence explains why the person stays away from the food.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "avoidance"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Specific explanations and the final term",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What cooking-related adjective is offered as one explanation for the unsafe food? {{blank}}",
+              "evidence": {
+                "startSeconds": 280.79,
+                "endSeconds": 286.29,
+                "summary": "Undercooked identifies insufficient cooking rather than age or storage.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "undercooked"
+              ]
+            },
+            {
+              "id": "bbc-260416-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which name for fear of unfamiliar things is ultimately verified rather than merely guessed? {{blank}}",
+              "evidence": {
+                "startSeconds": 303.75,
+                "endSeconds": 309.57,
+                "summary": "The verification of neophobia occurs in the final answer exchange.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "neophobia"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260416",
+        "audioSha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988",
+        "durationSeconds": 370.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "b01d48f5b14aaabf777a0f821fc7e3907824982e8fa918db4775ec2dc82439e7"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Why willingness to taste may change",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260416-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Familiarity and differing perceptions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil’s eventual enjoyment followed becoming {{blank}} to the Japanese food.",
+              "evidence": {
+                "startSeconds": 26.85,
+                "endSeconds": 30.33,
+                "summary": "Neil says repeated familiarity preceded his change in preference.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "used"
+              ]
+            },
+            {
+              "id": "bbc-260416-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Coriander is the example of a food that people may perceive differently through {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.27,
+                "endSeconds": 113.51,
+                "summary": "The coriander example illustrates an inherited source of sensory differences.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "genetics"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t5-g2",
+          "position": 2,
+          "heading": "Questions 3–5: What the clinic exercise involves",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t5-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What is the name of the method that combines an unliked food with a liked one? {{blank}}",
+              "evidence": {
+                "startSeconds": 171.93,
+                "endSeconds": 179.39,
+                "summary": "Claire’s named technique uses a liked food to cover the disliked item.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "masking"
+              ]
+            },
+            {
+              "id": "bbc-260416-t5-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which food is concealed under chocolate in Claire’s demonstration? {{blank}}",
+              "evidence": {
+                "startSeconds": 182.97,
+                "endSeconds": 188.79,
+                "summary": "The chocolate covers insects rather than replacing them.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "insects"
+              ]
+            },
+            {
+              "id": "bbc-260416-t5-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What word identifies the mental idea, rather than the actual flavour, that can put participants off? {{blank}}",
+              "evidence": {
+                "startSeconds": 192.33,
+                "endSeconds": 194.51,
+                "summary": "Claire points to the concept of eating an insect as the initial obstacle.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "concept"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–7: Tasting and a negative experience",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260416-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How the tasting is compared with chocolate: {{blank}} chocolate.",
+              "evidence": {
+                "startSeconds": 200.95,
+                "endSeconds": 204.25,
+                "summary": "Claire emphasizes crunchy chocolate when comparing the actual tasting experience.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "crunchy"
+              ]
+            },
+            {
+              "id": "bbc-260416-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Seafood linked to the remembered illness in the later example: {{blank}}.",
+              "evidence": {
+                "startSeconds": 243.31,
+                "endSeconds": 249.47,
+                "summary": "The later case involves prawns associated with an earlier illness.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "prawn",
+                "prawns"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260416-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Learning from an unpleasant encounter",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260416-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What changes after the unpleasant prawn experience?",
+              "evidence": {
+                "startSeconds": 254.51,
+                "endSeconds": 258.83,
+                "summary": "An earlier adverse experience creates a learned association with the food.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The account describes a general association between the food and illness, not checking each new serving.",
+                  "C": "The prawn example concerns a learned association following illness, not the earlier genetic mechanism."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t5-q8-a",
+                  "label": "A",
+                  "text": "The person bases future choices on checking how each new serving is prepared."
+                },
+                {
+                  "id": "bbc-260416-t5-q8-b",
+                  "label": "B",
+                  "text": "The person links the food with a harmful outcome."
+                },
+                {
+                  "id": "bbc-260416-t5-q8-c",
+                  "label": "C",
+                  "text": "The person identifies an inherited sensory difference as the reason for becoming ill."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260416-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which distinction is essential to Claire’s avoidance example?",
+              "evidence": {
+                "startSeconds": 258.83,
+                "endSeconds": 263.13,
+                "summary": "The refusal follows an expectation based on experience, not verification of a new serving.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The avoidance described is driven by expecting illness from a remembered experience.",
+                  "C": "Claire describes expecting to feel unwell, not simply disliking the flavour."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t5-q9-a",
+                  "label": "A",
+                  "text": "Fear of becoming ill again is not the same as proof that the next serving is unsafe."
+                },
+                {
+                  "id": "bbc-260416-t5-q9-b",
+                  "label": "B",
+                  "text": "The decision follows inspection of a particular new serving’s condition."
+                },
+                {
+                  "id": "bbc-260416-t5-q9-c",
+                  "label": "C",
+                  "text": "The refusal reflects dislike of the flavour rather than an expectation of illness."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260416-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What do the explanations of dodgy food add to the account?",
+              "evidence": {
+                "startSeconds": 280.79,
+                "endSeconds": 286.29,
+                "summary": "The condition of the original food offers specific possible causes of illness.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Old, undercooked or improperly stored food describes its condition, not every member of a food category.",
+                  "C": "Several possible problems are named; no single cause is verified for the example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260416-t5-q10-a",
+                  "label": "A",
+                  "text": "Several preparation or storage problems could explain the original illness."
+                },
+                {
+                  "id": "bbc-260416-t5-q10-b",
+                  "label": "B",
+                  "text": "They identify a general property of prawns rather than a problem with the original serving."
+                },
+                {
+                  "id": "bbc-260416-t5-q10-c",
+                  "label": "C",
+                  "text": "They establish which single preparation mistake definitely caused the illness."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260416",
+        "audioSha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988",
+        "durationSeconds": 370.296,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "1677d35a7048df508ab8ff5ecadc06464c427a9a0620f77aca9b56d1ac9f93cf"
+      }
+    }
+  ]
+}

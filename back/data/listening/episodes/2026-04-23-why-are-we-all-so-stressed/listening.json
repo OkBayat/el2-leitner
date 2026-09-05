@@ -1,0 +1,1474 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Recognising stress and everyday coping",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260423-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: The presenters’ experiences",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Neil’s main difficulty: not having enough {{blank}}.",
+              "evidence": {
+                "startSeconds": 25.99,
+                "endSeconds": 30.65,
+                "summary": "Neil identifies insufficient time as a situation that makes him stressed.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "time"
+              ]
+            },
+            {
+              "id": "bbc-260423-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "One action Neil takes: pause and take a {{blank}}.",
+              "evidence": {
+                "startSeconds": 46.57,
+                "endSeconds": 51.03,
+                "summary": "Neil includes taking a breath among his immediate coping actions.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "breath"
+              ]
+            },
+            {
+              "id": "bbc-260423-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Becca tells herself she needs to {{blank}} more.",
+              "evidence": {
+                "startSeconds": 60.83,
+                "endSeconds": 64.47,
+                "summary": "Becca reassures herself that further practice will improve her ability.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "practise",
+                "practice"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Longer-lasting stress and exams",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260423-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does Claudia hope about feeling unable to cope?",
+              "evidence": {
+                "startSeconds": 87.43,
+                "endSeconds": 90.93,
+                "summary": "Claudia hopes the inability to cope is a temporary state.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "She hopes it is temporary and identifies longer-lasting stress as a concern.",
+                  "C": "She does not describe overwhelm as necessary for every task."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t1-q4-a",
+                  "label": "A",
+                  "text": "That the feeling will be temporary."
+                },
+                {
+                  "id": "bbc-260423-t1-q4-b",
+                  "label": "B",
+                  "text": "That the feeling will continue for a long time."
+                },
+                {
+                  "id": "bbc-260423-t1-q4-c",
+                  "label": "C",
+                  "text": "That the feeling is necessary for every task."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260423-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What can chronic stress eventually lead to?",
+              "evidence": {
+                "startSeconds": 93.13,
+                "endSeconds": 98.25,
+                "summary": "Claudia identifies burnout as a possible consequence of prolonged stress.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The stated possible consequence is burnout, not immediate relief.",
+                  "C": "Claudia describes a risk of exhaustion rather than a permanent improvement."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t1-q5-a",
+                  "label": "A",
+                  "text": "An immediate end to all worries."
+                },
+                {
+                  "id": "bbc-260423-t1-q5-b",
+                  "label": "B",
+                  "text": "Burnout."
+                },
+                {
+                  "id": "bbc-260423-t1-q5-c",
+                  "label": "C",
+                  "text": "A permanently improved ability to work."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Claudia say about stress during an exam?",
+              "evidence": {
+                "startSeconds": 179.51,
+                "endSeconds": 182.17,
+                "summary": "Claudia describes a possible benefit of some stress during an exam.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "She says nerves can sharpen thinking, so stress is not always harmful.",
+                  "C": "She says someone may perform better, not that a result is guaranteed."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t1-q6-a",
+                  "label": "A",
+                  "text": "It may help someone perform better."
+                },
+                {
+                  "id": "bbc-260423-t1-q6-b",
+                  "label": "B",
+                  "text": "It always prevents someone from thinking."
+                },
+                {
+                  "id": "bbc-260423-t1-q6-c",
+                  "label": "C",
+                  "text": "It guarantees the highest possible result."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Adjusting expectations",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "One suggestion is to accept being good enough instead of always aiming for {{blank}}.",
+              "evidence": {
+                "startSeconds": 219.17,
+                "endSeconds": 225.61,
+                "summary": "The presenter contrasts being good enough with always seeking perfection.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "perfection"
+              ]
+            },
+            {
+              "id": "bbc-260423-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Claudia says your to-do list is never going to {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.11,
+                "endSeconds": 247.79,
+                "summary": "Claudia advises accepting that a to-do list will not permanently end.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "end"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Continuing tasks and rest",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "When will something else appear on the list if you finish it today? {{blank}}",
+              "evidence": {
+                "startSeconds": 249.85,
+                "endSeconds": 253.29,
+                "summary": "Claudia explains that another task will appear tomorrow.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "tomorrow"
+              ]
+            },
+            {
+              "id": "bbc-260423-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which activity is confirmed as the most restful in the research mentioned? {{blank}}",
+              "evidence": {
+                "startSeconds": 306.89,
+                "endSeconds": 309.77,
+                "summary": "The final answer identifies reading rather than Neil’s walking guess.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "reading"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260423",
+        "audioSha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda",
+        "durationSeconds": 374.136,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "bb4392b8fa46a5b305eb32896d69b39a3cde94c04a9043e6e38c58efcd48bfd7"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "When stress helps and when it becomes harmful",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260423-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Initial reactions and coping",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260423-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How do the presenters’ main examples of stress differ?",
+              "evidence": {
+                "startSeconds": 25.99,
+                "endSeconds": 38.01,
+                "summary": "The opening exchange distinguishes time pressure from unfamiliarity with a task.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "This reverses the examples the presenters give.",
+                  "C": "Both describe difficulty with demands, not a lack of tasks."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t2-q1-a",
+                  "label": "A",
+                  "text": "Neil mentions a new task; Becca mentions having too little time."
+                },
+                {
+                  "id": "bbc-260423-t2-q1-b",
+                  "label": "B",
+                  "text": "Neil mentions time pressure; Becca mentions struggling with a new task."
+                },
+                {
+                  "id": "bbc-260423-t2-q1-c",
+                  "label": "C",
+                  "text": "Both say their main problem is having no tasks to do."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What thought does Neil use to reassure himself?",
+              "evidence": {
+                "startSeconds": 52.41,
+                "endSeconds": 56.05,
+                "summary": "Neil uses the expectation of later improvement as reassurance.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "He talks about slowing down and reassurance, not finishing all future tasks.",
+                  "C": "Neil reassures himself that things will be okay again."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t2-q2-a",
+                  "label": "A",
+                  "text": "The only way forward is to complete every future task today."
+                },
+                {
+                  "id": "bbc-260423-t2-q2-b",
+                  "label": "B",
+                  "text": "The difficult situation is likely to feel better later."
+                },
+                {
+                  "id": "bbc-260423-t2-q2-c",
+                  "label": "C",
+                  "text": "The situation will remain equally difficult indefinitely."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What belief underlies Becca’s response to difficulty?",
+              "evidence": {
+                "startSeconds": 60.83,
+                "endSeconds": 64.47,
+                "summary": "Becca counters initial difficulty with a belief in improvement through practice.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "She says she will get better by practising more.",
+                  "C": "Her response is to practise rather than abandon the activity."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t2-q3-a",
+                  "label": "A",
+                  "text": "Her ability can improve through further practice."
+                },
+                {
+                  "id": "bbc-260423-t2-q3-b",
+                  "label": "B",
+                  "text": "A lack of immediate skill means improvement is impossible."
+                },
+                {
+                  "id": "bbc-260423-t2-q3-c",
+                  "label": "C",
+                  "text": "Being unfamiliar with something means she should never attempt it again."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t2-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Overwhelm and longer-term effects",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Type of state Claudia uses to describe overwhelm: {{blank}}.",
+              "evidence": {
+                "startSeconds": 81.39,
+                "endSeconds": 85.73,
+                "summary": "Claudia describes overwhelm as an emotional state of struggling with the current situation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "emotional"
+              ]
+            },
+            {
+              "id": "bbc-260423-t2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Possible eventual outcome if the stress becomes chronic: {{blank}}.",
+              "evidence": {
+                "startSeconds": 93.13,
+                "endSeconds": 98.25,
+                "summary": "Claudia distinguishes a temporary state from stress that may end in burnout.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "burnout"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t2-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Performance and expectations",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t2-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What stressful situation affecting young people introduces Claudia’s performance advice? {{blank}}",
+              "evidence": {
+                "startSeconds": 163.37,
+                "endSeconds": 166.97,
+                "summary": "The discussion turns specifically to exams before Claudia’s performance advice.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "exams"
+              ]
+            },
+            {
+              "id": "bbc-260423-t2-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What does Claudia say nerves sharpen? {{blank}}",
+              "evidence": {
+                "startSeconds": 186.45,
+                "endSeconds": 189.27,
+                "summary": "Claudia connects nerves with sharper thinking during a demanding situation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "thinking"
+              ]
+            },
+            {
+              "id": "bbc-260423-t2-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What ideal does the presenter suggest people should stop constantly striving for? {{blank}}",
+              "evidence": {
+                "startSeconds": 219.17,
+                "endSeconds": 225.61,
+                "summary": "The suggested adjustment is to accept good enough instead of constant perfection.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "perfection"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Understanding the continuing workload",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Finishing today’s tasks does not prevent something new appearing {{blank}}.",
+              "evidence": {
+                "startSeconds": 249.85,
+                "endSeconds": 253.29,
+                "summary": "Claudia explains why completing today’s list does not permanently remove future work.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "tomorrow"
+              ]
+            },
+            {
+              "id": "bbc-260423-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Claudia describes a continuing list as a sign of a {{blank}} life.",
+              "evidence": {
+                "startSeconds": 253.43,
+                "endSeconds": 256.15,
+                "summary": "She interprets the ongoing list as ordinary evidence of a busy life.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "busy"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260423",
+        "audioSha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda",
+        "durationSeconds": 374.136,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "dc0c7ededb056d76eb9e056ff871f87ebf6cef14167bbd85d86b9d4a627202b9"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Practical responses to feeling overwhelmed",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260423-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Immediate coping",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Neil take after slowing down and pausing? {{blank}}",
+              "evidence": {
+                "startSeconds": 46.57,
+                "endSeconds": 51.03,
+                "summary": "Taking a breath follows Neil’s description of slowing down and pausing.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "breath"
+              ]
+            },
+            {
+              "id": "bbc-260423-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What does Becca say she needs to do more to become better at a task? {{blank}}",
+              "evidence": {
+                "startSeconds": 60.83,
+                "endSeconds": 64.47,
+                "summary": "Becca connects becoming better at the task with practising more.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "practice",
+                "practise"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t3-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Recognising the different effects of stress",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t3-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Claudia hopes an inability to cope will be {{blank}} rather than long-lasting.",
+              "evidence": {
+                "startSeconds": 87.43,
+                "endSeconds": 90.93,
+                "summary": "The desired temporary state is contrasted with prolonged stress.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "temporary"
+              ]
+            },
+            {
+              "id": "bbc-260423-t3-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Burnout can involve mental or physical {{blank}}.",
+              "evidence": {
+                "startSeconds": 107.87,
+                "endSeconds": 111.43,
+                "summary": "The presenter explains burnout in terms of mental or physical exhaustion.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "exhaustion"
+              ]
+            },
+            {
+              "id": "bbc-260423-t3-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "According to Claudia, exam nerves may sharpen your {{blank}}.",
+              "evidence": {
+                "startSeconds": 186.45,
+                "endSeconds": 189.27,
+                "summary": "The proposed performance benefit involves clearer thinking.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "thinking"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t3-g3",
+          "position": 3,
+          "heading": "Questions 6–8: Advice and its scope",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260423-t3-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why are actors and athletes mentioned?",
+              "evidence": {
+                "startSeconds": 209.23,
+                "endSeconds": 214.35,
+                "summary": "Actors and athletes illustrate the same possible focusing effect described for exams.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The example extends an argument already made about exams.",
+                  "C": "The comparison explicitly involves nerves before a big performance."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t3-q6-a",
+                  "label": "A",
+                  "text": "They are presented as the only people who can benefit from stress."
+                },
+                {
+                  "id": "bbc-260423-t3-q6-b",
+                  "label": "B",
+                  "text": "Their pre-performance nerves provide a comparison with exam nerves."
+                },
+                {
+                  "id": "bbc-260423-t3-q6-c",
+                  "label": "C",
+                  "text": "They are said never to experience nerves before performing."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t3-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What limitation is placed on general stress-management advice?",
+              "evidence": {
+                "startSeconds": 232.81,
+                "endSeconds": 235.89,
+                "summary": "The discussion rejects a universal solution without rejecting useful advice.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The speakers still provide practical suggestions despite individual differences.",
+                  "B": "The discussion explicitly rejects a one-size-fits-all solution."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t3-q7-a",
+                  "label": "A",
+                  "text": "Because people differ, no possible advice is offered."
+                },
+                {
+                  "id": "bbc-260423-t3-q7-b",
+                  "label": "B",
+                  "text": "Every person should follow an identical solution."
+                },
+                {
+                  "id": "bbc-260423-t3-q7-c",
+                  "label": "C",
+                  "text": "The same approach will not suit every situation."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260423-t3-q8",
+              "number": 8,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why does Claudia advise accepting an unfinished to-do list?",
+              "evidence": {
+                "startSeconds": 244.11,
+                "endSeconds": 253.29,
+                "summary": "The ongoing arrival of tasks explains why permanent completion is unrealistic.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Her explanation states the opposite: something else will appear tomorrow.",
+                  "B": "She describes continuing tasks as part of life, not a failure."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t3-q8-a",
+                  "label": "A",
+                  "text": "Finishing the list today guarantees there will be no work tomorrow."
+                },
+                {
+                  "id": "bbc-260423-t3-q8-b",
+                  "label": "B",
+                  "text": "Completing a task necessarily creates a personal failure."
+                },
+                {
+                  "id": "bbc-260423-t3-q8-c",
+                  "label": "C",
+                  "text": "New tasks will continue to arrive even after the current tasks are completed."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: The final perspective",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A recurring workload can indicate a {{blank}} life.",
+              "evidence": {
+                "startSeconds": 253.43,
+                "endSeconds": 256.15,
+                "summary": "Claudia interprets the list as a sign of being busy rather than as defeat.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "busy"
+              ]
+            },
+            {
+              "id": "bbc-260423-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Restful activity named in the confirmed answer: {{blank}}.",
+              "evidence": {
+                "startSeconds": 306.89,
+                "endSeconds": 309.77,
+                "summary": "The answer given near the end is reading rather than walking in nature.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "reading"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260423",
+        "audioSha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda",
+        "durationSeconds": 374.136,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "2eef2dcf79b0c8e90b7b2f489dcd09173ac2276844061991e15101e3193e321b"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Distinguishing useful pressure from chronic stress",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260423-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–2: Responses to immediate difficulty",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Becca becomes stressed when an activity is new and she is not yet very {{blank}} at it.",
+              "evidence": {
+                "startSeconds": 33.45,
+                "endSeconds": 38.01,
+                "summary": "Becca’s example concerns current competence with an unfamiliar activity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "good"
+              ]
+            },
+            {
+              "id": "bbc-260423-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil’s reassurance is that things may be okay again later {{blank}}.",
+              "evidence": {
+                "startSeconds": 52.41,
+                "endSeconds": 56.05,
+                "summary": "Neil places the anticipated improvement in the near future, probably later that day.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "today"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t4-g2",
+          "position": 2,
+          "heading": "Questions 3–5: Interpreting the psychologist’s qualifications",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260423-t4-q3",
+              "number": 3,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which progression does Claudia describe as a risk, rather than an inevitable result?",
+              "evidence": {
+                "startSeconds": 87.43,
+                "endSeconds": 98.25,
+                "summary": "Claudia describes a conditional longer-term progression, not equivalence or certainty.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The account distinguishes temporary overwhelm from chronic stress and later exhaustion.",
+                  "C": "This reverses the risk progression described from overwhelm towards chronic stress and burnout."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t4-q3-a",
+                  "label": "A",
+                  "text": "A short-lived sense of overwhelm is itself the definition of burnout."
+                },
+                {
+                  "id": "bbc-260423-t4-q3-b",
+                  "label": "B",
+                  "text": "Temporary overwhelm may become chronic stress and eventually lead to burnout."
+                },
+                {
+                  "id": "bbc-260423-t4-q3-c",
+                  "label": "C",
+                  "text": "Burnout must occur before temporary overwhelm can become chronic."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t4-q4",
+              "number": 4,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the most accurate scope of Claudia’s claim about exam stress?",
+              "evidence": {
+                "startSeconds": 179.51,
+                "endSeconds": 182.17,
+                "summary": "The performance claim is qualified and specific rather than universal.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "She explicitly locates the possible benefit in the exam itself.",
+                  "C": "Claudia says someone may perform better while stressed during the exam itself."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t4-q4-a",
+                  "label": "A",
+                  "text": "Stress can sometimes support performance during the exam."
+                },
+                {
+                  "id": "bbc-260423-t4-q4-b",
+                  "label": "B",
+                  "text": "Stress may assist preparation but cannot help during the actual exam."
+                },
+                {
+                  "id": "bbc-260423-t4-q4-c",
+                  "label": "C",
+                  "text": "Improvement depends on removing nervousness before the exam begins."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260423-t4-q5",
+              "number": 5,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What links exam candidates with the performers used as examples?",
+              "evidence": {
+                "startSeconds": 186.45,
+                "endSeconds": 214.35,
+                "summary": "The comparison rests on the potential focusing effect of nerves across contexts.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "The comparison concerns nerves helping performance, not preparation eliminating them.",
+                  "C": "This reverses the suggested relationship: nerves can sharpen thinking."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t4-q5-a",
+                  "label": "A",
+                  "text": "Nervousness can sharpen thinking before or during a demanding performance."
+                },
+                {
+                  "id": "bbc-260423-t4-q5-b",
+                  "label": "B",
+                  "text": "Effective preparation is expected to remove their performance nerves."
+                },
+                {
+                  "id": "bbc-260423-t4-q5-c",
+                  "label": "C",
+                  "text": "Sharper thinking is presented as the reason they become nervous."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t4-g3",
+          "position": 3,
+          "heading": "Questions 6–7: Adjusting demands",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t4-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Standard to reconsider when good enough is sufficient: {{blank}}.",
+              "evidence": {
+                "startSeconds": 219.17,
+                "endSeconds": 225.61,
+                "summary": "The presenter suggests relaxing the demand for perfection while retaining adequate performance.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "perfection"
+              ]
+            },
+            {
+              "id": "bbc-260423-t4-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Rejected universal approach: {{blank}}.",
+              "evidence": {
+                "startSeconds": 232.81,
+                "endSeconds": 235.89,
+                "summary": "The discussion rejects applying an identical solution to every stress problem.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "one-size-fits-all"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t4-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Accepting an ongoing workload",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t4-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What list does Claudia advise accepting will never permanently end? {{blank}}",
+              "evidence": {
+                "startSeconds": 244.11,
+                "endSeconds": 247.79,
+                "summary": "The continuing list is the person’s list of tasks to complete.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "to-do list",
+                "to do list"
+              ]
+            },
+            {
+              "id": "bbc-260423-t4-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What day illustrates why completing today’s list does not finish the workload for good? {{blank}}",
+              "evidence": {
+                "startSeconds": 249.85,
+                "endSeconds": 253.29,
+                "summary": "Tomorrow provides the example of further tasks arriving after today’s completion.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "tomorrow"
+              ]
+            },
+            {
+              "id": "bbc-260423-t4-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which activity corrects Neil’s earlier suggestion about the most restful option? {{blank}}",
+              "evidence": {
+                "startSeconds": 306.89,
+                "endSeconds": 309.77,
+                "summary": "The final verified answer replaces the earlier walking-in-nature guess with reading.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "reading"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260423",
+        "audioSha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda",
+        "durationSeconds": 374.136,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "1e933b437f820da398641e14e36f49123bce374738e321d5801cc8000406a7e6"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Applying the limits of stress-management advice",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260423-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: The presenters’ own approaches",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Pressure highlighted by Neil: insufficient {{blank}}.",
+              "evidence": {
+                "startSeconds": 25.99,
+                "endSeconds": 30.65,
+                "summary": "Neil’s stressor is a perceived lack of time rather than unfamiliarity alone.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "time"
+              ]
+            },
+            {
+              "id": "bbc-260423-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Immediate physical action within Neil’s response: taking a {{blank}}.",
+              "evidence": {
+                "startSeconds": 46.57,
+                "endSeconds": 51.03,
+                "summary": "Neil pairs slowing down and pausing with taking a breath.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "breath"
+              ]
+            },
+            {
+              "id": "bbc-260423-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Action Becca associates with future improvement: {{blank}} more.",
+              "evidence": {
+                "startSeconds": 60.83,
+                "endSeconds": 64.47,
+                "summary": "Becca’s reassurance depends on repeated practice leading to improvement.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "practice",
+                "practise"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–5: Long-term risk and a contrasting benefit",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What outcome is associated with overwhelm that develops into prolonged stress? {{blank}}",
+              "evidence": {
+                "startSeconds": 93.13,
+                "endSeconds": 98.25,
+                "summary": "Burnout is presented as a possible outcome of chronic rather than necessarily brief stress.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "burnout"
+              ]
+            },
+            {
+              "id": "bbc-260423-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What mental process may become sharper through nerves in the performance example? {{blank}}",
+              "evidence": {
+                "startSeconds": 186.45,
+                "endSeconds": 189.27,
+                "summary": "The positive effect of nerves is described in terms of sharper thinking.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "thinking"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t5-g3",
+          "position": 3,
+          "heading": "Questions 6–7: Moderating expectations",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260423-t5-q6",
+              "number": 6,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Claudia’s advice allows being good enough without continuously seeking {{blank}}.",
+              "evidence": {
+                "startSeconds": 219.17,
+                "endSeconds": 225.61,
+                "summary": "The advice challenges constant perfectionism rather than asking people to avoid effort.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "perfection"
+              ]
+            },
+            {
+              "id": "bbc-260423-t5-q7",
+              "number": 7,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Her later suggestion is to accept that the to-do list will never {{blank}}.",
+              "evidence": {
+                "startSeconds": 244.11,
+                "endSeconds": 247.79,
+                "summary": "The recommended acceptance concerns an ongoing list rather than permanent completion.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "end"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260423-t5-g4",
+          "position": 4,
+          "heading": "Questions 8–10: Understanding the final advice and correction",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260423-t5-q8",
+              "number": 8,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Claudia bring up tomorrow even when today’s list is complete?",
+              "evidence": {
+                "startSeconds": 249.85,
+                "endSeconds": 253.29,
+                "summary": "The tomorrow example challenges the expectation of finishing all work permanently.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The point concerns continuing demands, not advice to delay today’s work.",
+                  "C": "Claudia explains that a completed list is followed by more tasks tomorrow."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t5-q8-a",
+                  "label": "A",
+                  "text": "To recommend postponing present tasks until tomorrow’s list is available."
+                },
+                {
+                  "id": "bbc-260423-t5-q8-b",
+                  "label": "B",
+                  "text": "To show that complete relief from future tasks is an unrealistic goal."
+                },
+                {
+                  "id": "bbc-260423-t5-q8-c",
+                  "label": "C",
+                  "text": "To suggest that completing today’s work normally prevents future demands."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260423-t5-q9",
+              "number": 9,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How does Claudia reframe the continuing list?",
+              "evidence": {
+                "startSeconds": 253.43,
+                "endSeconds": 256.15,
+                "summary": "Claudia counters an apparently defeatist interpretation with an ordinary-life explanation.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "Claudia presents the continuing list as part of a busy life, not a diagnosis of poor organization.",
+                  "B": "The preceding example allows today’s list to be complete even though tomorrow brings more tasks."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t5-q9-a",
+                  "label": "A",
+                  "text": "As a problem caused chiefly by poor organization rather than continuing demands."
+                },
+                {
+                  "id": "bbc-260423-t5-q9-b",
+                  "label": "B",
+                  "text": "As a sign that the person has failed to finish any work today."
+                },
+                {
+                  "id": "bbc-260423-t5-q9-c",
+                  "label": "C",
+                  "text": "As a normal feature of a busy life rather than necessarily defeat."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260423-t5-q10",
+              "number": 10,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which distinction matters when recalling the final research answer?",
+              "evidence": {
+                "startSeconds": 306.89,
+                "endSeconds": 309.77,
+                "summary": "The closing exchange distinguishes a personal guess and preference from the stated research answer.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The final answer explicitly identifies reading and corrects the walking guess.",
+                  "C": "Neil’s enjoyment of music is a comment, not the confirmed research answer."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260423-t5-q10-a",
+                  "label": "A",
+                  "text": "Walking in nature is confirmed; reading was rejected by the research."
+                },
+                {
+                  "id": "bbc-260423-t5-q10-b",
+                  "label": "B",
+                  "text": "Reading is confirmed; walking in nature was Neil’s guess."
+                },
+                {
+                  "id": "bbc-260423-t5-q10-c",
+                  "label": "C",
+                  "text": "Music is confirmed because Becca knows Neil likes it."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260423",
+        "audioSha256": "95534917bcfc9b96398bfc1be6c29664e0cf570641ce1609213ebe91da9d6fda",
+        "durationSeconds": 374.136,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC page transcript reviewed for meaning; corresponding spoken passages in the direct lesson MP3 cross-checked with small.en word-timed speech recognition. ASR locates passages and is not the sole factual source. No independent human-listening certification is claimed.",
+        "contentSha256": "af97d16e5dd5472918c930e3f6ca102b28281fae4d223b578a3100bf23c6c58e"
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260416",
+  "folder": "2026-04-16-love-the-foods-you-hate",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6504432,
+      "sha256": "f12034309bb03eed6679be71ee70c12925feb41d87ef60b0a18094e0ad77f988"
+    },
+    "cover.jpg": {
+      "bytes": 98065,
+      "sha256": "034550a4ca894de337a35d61d4caf931c69d56a1285e1937d20e2cffd34eafde"
+    },
+    "episode.json": {
+      "bytes": 1317,
+      "sha256": "0c46e750bec28c43c40ea24017dd2ea328590d82870b6aec932a3c00cec478a7"
+    },
+    "listening.json": {
+      "bytes": 57825,
+      "sha256": "55398ea71f25714e9f039c3197557960671c890bfbc17672688d63e6492b4d6e"
+    },
+    "transcript.md": {
+      "bytes": 398,
+      "sha256": "986c3b22aaa45bbf5aca5469b9143687691e8fb4af74dc5aa777b2c21ab2785d"
+    },
+    "vocabulary.md": {
+      "bytes": 955,
+      "sha256": "0be12a4b70e6444acf9489614dffe17878aa36bcb85013081baed0db806232bd"
+    }
+  }
+}
