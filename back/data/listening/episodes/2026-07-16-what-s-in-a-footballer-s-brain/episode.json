@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260716",
+  "provider": "bbc_6_minute_english",
+  "slug": "what-s-in-a-footballer-s-brain",
+  "title": "What's in a footballer's brain?",
+  "description": "Explore how football researchers discuss expertise, information processing, emotional control and precision. Five original practice tests are based on the research examples described in this episode.",
+  "episodeCode": "260716",
+  "episodeDate": "2026-07-16",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+  "status": "published",
+  "publishedAt": null,
+  "level": "intermediate",
+  "imageFile": "cover.jpg",
+  "audioFile": "audio.mp3",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260716_6_minute_english_what's_in_a_footballer's_brain_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0ny1vpc.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260716_6_minute_english_what's_in_a_footballer's_brain_transcript.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260716",
+    "attribution": "BBC Learning English. Original lesson audio and episode artwork retain BBC/source rights. Practice questions, definitions and examples are independently authored.",
+    "retrievedAt": "2026-09-05"
+  }
+}

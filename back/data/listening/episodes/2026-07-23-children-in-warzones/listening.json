@@ -1,0 +1,596 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260723-t1",
+      "title": "Elementary: Understand the main discussion",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260723-t1-g1",
+          "position": 1,
+          "heading": "Elementary: Understand the main discussion",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260723-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What warning do the presenters give before the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q1-a",
+                  "label": "A",
+                  "text": "It contains detailed instructions for treating an injury."
+                },
+                {
+                  "id": "bbc-260723-t1-q1-b",
+                  "label": "B",
+                  "text": "It is mainly about violent films."
+                },
+                {
+                  "id": "bbc-260723-t1-q1-c",
+                  "label": "C",
+                  "text": "It includes references to death and trauma."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is Fergal Keane best known for reporting on?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q2-a",
+                  "label": "A",
+                  "text": "Medical discoveries in laboratories."
+                },
+                {
+                  "id": "bbc-260723-t1-q2-b",
+                  "label": "B",
+                  "text": "Wars in different parts of the world."
+                },
+                {
+                  "id": "bbc-260723-t1-q2-c",
+                  "label": "C",
+                  "text": "School competitions in Britain."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260723-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Fergal describe his alertness as a child?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q3-a",
+                  "label": "A",
+                  "text": "He rarely noticed his surroundings."
+                },
+                {
+                  "id": "bbc-260723-t1-q3-b",
+                  "label": "B",
+                  "text": "He constantly watched for possible danger."
+                },
+                {
+                  "id": "bbc-260723-t1-q3-c",
+                  "label": "C",
+                  "text": "He worried only when travelling abroad."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260723-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "What do the researchers agree makes recovery impossible?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q4-a",
+                  "label": "A",
+                  "text": "Having different opinions about research."
+                },
+                {
+                  "id": "bbc-260723-t1-q4-b",
+                  "label": "B",
+                  "text": "Talking to a familiar adult."
+                },
+                {
+                  "id": "bbc-260723-t1-q4-c",
+                  "label": "C",
+                  "text": "Continuing to experience trauma."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "Which ordinary activity is used to illustrate a difficult step in recovery?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q5-a",
+                  "label": "A",
+                  "text": "Learning to sleep without a parent."
+                },
+                {
+                  "id": "bbc-260723-t1-q5-b",
+                  "label": "B",
+                  "text": "Preparing a meal for the whole family."
+                },
+                {
+                  "id": "bbc-260723-t1-q5-c",
+                  "label": "C",
+                  "text": "Travelling alone to another country."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260723-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What does Fergal emphasise towards the end of the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260723-t1-q6-a",
+                  "label": "A",
+                  "text": "Children can recover remarkably when given a chance."
+                },
+                {
+                  "id": "bbc-260723-t1-q6-b",
+                  "label": "B",
+                  "text": "Every child recovers immediately without support."
+                },
+                {
+                  "id": "bbc-260723-t1-q6-c",
+                  "label": "C",
+                  "text": "Childhood experiences never affect adult life."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260723-t2",
+      "title": "Intermediate: Complete the programme notes",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260723-t2-g1",
+          "position": 1,
+          "heading": "Intermediate: Complete the programme notes",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260723-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Year of the global figure quoted at the start: {{blank}}.",
+              "answers": [
+                "2024"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Number of children living in conflict zones in that figure: {{blank}}.",
+              "answers": [
+                "520 million",
+                "520,000,000"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "BBC programme from which the Fergal Keane clips are taken: The {{blank}}.",
+              "answers": [
+                "Global Story"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "The interviewer who asks Fergal about his childhood: {{blank}}.",
+              "answers": [
+                "Asma Khalid"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Hypervigilance involves extreme alertness and sensitivity to {{blank}}.",
+              "answers": [
+                "surroundings"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "One early step discussed is learning to {{blank}}.",
+              "answers": [
+                "sleep alone"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260723-t3",
+      "title": "Intermediate: Listen for specific answers",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260723-t3-g1",
+          "position": 1,
+          "heading": "Intermediate: Listen for specific answers",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260723-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Approximately one child in how many worldwide lives in a conflict zone, according to the opening figure? {{blank}}",
+              "answers": [
+                "five",
+                "5"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which member of Fergal's family is described as having an alcohol problem? {{blank}}",
+              "answers": [
+                "father",
+                "his father"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which prefix is explained as expressing a lot or too much of something? {{blank}}",
+              "answers": [
+                "hyper"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "In the example from wartime, who did frightened children sleep with? {{blank}}",
+              "answers": [
+                "a parent",
+                "parent"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "What kind of frightening dream is used in the comparison about bedtime? {{blank}}",
+              "answers": [
+                "a nightmare",
+                "nightmare"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Which adjective describes the ability to recover from a difficult experience? {{blank}}",
+              "answers": [
+                "resilient"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260723-t4",
+      "title": "Advanced: Distinguish qualifications and implications",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260723-t4-g1",
+          "position": 1,
+          "heading": "Advanced: Distinguish qualifications and implications",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260723-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What connection does Asma ask Fergal to consider?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q1-a",
+                  "label": "A",
+                  "text": "Whether all journalists had the same childhood as him."
+                },
+                {
+                  "id": "bbc-260723-t4-q1-b",
+                  "label": "B",
+                  "text": "Why reporting had prevented him from remembering his childhood."
+                },
+                {
+                  "id": "bbc-260723-t4-q1-c",
+                  "label": "C",
+                  "text": "How his childhood experiences influenced his reporting on children."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What distinction is made between vigilance and hypervigilance?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q2-a",
+                  "label": "A",
+                  "text": "The latter can involve an excessive level of alertness and anxiety."
+                },
+                {
+                  "id": "bbc-260723-t4-q2-b",
+                  "label": "B",
+                  "text": "The latter means paying less attention to danger."
+                },
+                {
+                  "id": "bbc-260723-t4-q2-c",
+                  "label": "C",
+                  "text": "The two words refer to different physical locations."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260723-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does the researchers' agreement establish in the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q3-a",
+                  "label": "A",
+                  "text": "Agreement that every aspect of their research is settled."
+                },
+                {
+                  "id": "bbc-260723-t4-q3-b",
+                  "label": "B",
+                  "text": "Agreement on one condition for recovery despite disagreements on other matters."
+                },
+                {
+                  "id": "bbc-260723-t4-q3-c",
+                  "label": "C",
+                  "text": "Agreement that recovery is independent of a child's current circumstances."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260723-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "Which interpretation of the proposed approach does Fergal explicitly rule out?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q4-a",
+                  "label": "A",
+                  "text": "Approaching ordinary activities gradually."
+                },
+                {
+                  "id": "bbc-260723-t4-q4-b",
+                  "label": "B",
+                  "text": "Making children face death and massacre again."
+                },
+                {
+                  "id": "bbc-260723-t4-q4-c",
+                  "label": "C",
+                  "text": "Recognising that sleeping alone may be difficult."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260723-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "Why does Fergal compare the situation with an ordinary childhood nightmare?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q5-a",
+                  "label": "A",
+                  "text": "To show that an apparently simple bedtime task can still be very difficult."
+                },
+                {
+                  "id": "bbc-260723-t4-q5-b",
+                  "label": "B",
+                  "text": "To claim that every nightmare is a result of war."
+                },
+                {
+                  "id": "bbc-260723-t4-q5-c",
+                  "label": "C",
+                  "text": "To suggest that war trauma is no more serious than a dream."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260723-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "Why is the expression \"given a chance\" important to Fergal's final observation?",
+              "options": [
+                {
+                  "id": "bbc-260723-t4-q6-a",
+                  "label": "A",
+                  "text": "It means resilience can be measured by counting dreams."
+                },
+                {
+                  "id": "bbc-260723-t4-q6-b",
+                  "label": "B",
+                  "text": "It removes the need to address continuing danger."
+                },
+                {
+                  "id": "bbc-260723-t4-q6-c",
+                  "label": "C",
+                  "text": "It qualifies his optimism by recognising that recovery needs an opportunity."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260723-t5",
+      "title": "Advanced: Complete precise paraphrases",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260723-t5-g1",
+          "position": 1,
+          "heading": "Advanced: Complete precise paraphrases",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260723-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Fergal's childhood alertness centred on whether he was under {{blank}}.",
+              "answers": [
+                "threat"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Researchers agree that recovery cannot occur while there is {{blank}}.",
+              "answers": [
+                "continuing trauma"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The everyday tasks in the proposed approach should be attempted {{blank}}.",
+              "answers": [
+                "slowly and carefully"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Fergal notes that putting an untraumatised child to bed after a bad dream can still be {{blank}}.",
+              "answers": [
+                "very difficult",
+                "difficult"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "In Fergal's description of children's resilience, the adverb conveying an extraordinary degree is {{blank}}.",
+              "answers": [
+                "phenomenally"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "The prefix discussed at the end can indicate something happening {{blank}} an event, rather than before it.",
+              "answers": [
+                "after"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260813",
+  "folder": "2026-08-13-who-does-the-housework",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6798593,
+      "sha256": "4e96ba44d77ea28aff76199bdbb73b4f25f54ab6cde078de754ad9f41eba8500"
+    },
+    "cover.jpg": {
+      "bytes": 102111,
+      "sha256": "03715be3f9190a05afdbca42bc23a36c2184c54f2208f35ee7608168fe47783d"
+    },
+    "episode.json": {
+      "bytes": 1327,
+      "sha256": "f12d6aa845c4b7446fa8ab6456c0ab0ffe3170490136901b4a2b621d21c8d2f2"
+    },
+    "listening.json": {
+      "bytes": 20638,
+      "sha256": "d1d7a2361c598c37f48a43cf138a23df707d294addc97069fb23cf43e0e610cd"
+    },
+    "transcript.md": {
+      "bytes": 445,
+      "sha256": "08c5e53388ed468f605bf7381e39b078328a0cc7861fc5f1d1109c40bf9ef66b"
+    },
+    "vocabulary.md": {
+      "bytes": 1101,
+      "sha256": "648b94e7b8921ac3197d9424da3dfbde2a3428db772496e1ac709e833843e293"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260827",
+  "provider": "bbc_6_minute_english",
+  "slug": "how-do-we-describe-smells",
+  "title": "How do we describe smells?",
+  "description": "Listening practice on why English descriptions of smells are often subjective, with contrasts between smell, taste, sight and hearing.",
+  "episodeCode": "260827",
+  "episodeDate": "2026-08-27",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+  "status": "published",
+  "publishedAt": null,
+  "level": "intermediate",
+  "imageFile": "cover.jpg",
+  "audioFile": "audio.mp3",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260827_6_minute_english_smells_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0p6hxjv.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260827_6_minute_english_smells_transcript_.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+    "attribution": "BBC Learning English. Original lesson audio and episode artwork retain BBC/source rights. Practice questions, definitions and examples are independently authored.",
+    "retrievedAt": "2026-09-05"
+  }
+}

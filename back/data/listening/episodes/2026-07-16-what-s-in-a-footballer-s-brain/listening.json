@@ -1,0 +1,595 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260716-t1",
+      "title": "Players and researchers",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260716-t1-g1",
+          "position": 1,
+          "heading": "Players and researchers",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260716-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which part of performance are clubs studying beyond the body?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q1-a",
+                  "label": "A",
+                  "text": "The stadium"
+                },
+                {
+                  "id": "bbc-260716-t1-q1-b",
+                  "label": "B",
+                  "text": "The football kit"
+                },
+                {
+                  "id": "bbc-260716-t1-q1-c",
+                  "label": "C",
+                  "text": "The brain"
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260716-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which club employs Tom Cooke in the programme?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q2-a",
+                  "label": "A",
+                  "text": "Liverpool"
+                },
+                {
+                  "id": "bbc-260716-t1-q2-b",
+                  "label": "B",
+                  "text": "Nottingham Forest"
+                },
+                {
+                  "id": "bbc-260716-t1-q2-c",
+                  "label": "C",
+                  "text": "Arsenal"
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which Brazilian player was studied?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q3-a",
+                  "label": "A",
+                  "text": "Pelé"
+                },
+                {
+                  "id": "bbc-260716-t1-q3-b",
+                  "label": "B",
+                  "text": "Ronaldo"
+                },
+                {
+                  "id": "bbc-260716-t1-q3-c",
+                  "label": "C",
+                  "text": "Neymar"
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260716-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "What movement did the player make during that study?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q4-a",
+                  "label": "A",
+                  "text": "He lifted his left arm."
+                },
+                {
+                  "id": "bbc-260716-t1-q4-b",
+                  "label": "B",
+                  "text": "He rotated his right ankle."
+                },
+                {
+                  "id": "bbc-260716-t1-q4-c",
+                  "label": "C",
+                  "text": "He turned his head."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "Where are Tom's demanding exercises designed to take place?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q5-a",
+                  "label": "A",
+                  "text": "In training"
+                },
+                {
+                  "id": "bbc-260716-t1-q5-b",
+                  "label": "B",
+                  "text": "During medical surgery"
+                },
+                {
+                  "id": "bbc-260716-t1-q5-c",
+                  "label": "C",
+                  "text": "Only during a final match"
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260716-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What does Niklas measure before important kicks?",
+              "options": [
+                {
+                  "id": "bbc-260716-t1-q6-a",
+                  "label": "A",
+                  "text": "Brainwaves"
+                },
+                {
+                  "id": "bbc-260716-t1-q6-b",
+                  "label": "B",
+                  "text": "Shoe size"
+                },
+                {
+                  "id": "bbc-260716-t1-q6-c",
+                  "label": "C",
+                  "text": "Body temperature"
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260716-t2",
+      "title": "Notes on the research",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260716-t2-g1",
+          "position": 1,
+          "heading": "Notes on the research",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The study involving Neymar is dated {{blank}}.",
+              "answers": [
+                "2014"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The researchers in that study were {{blank}}.",
+              "answers": [
+                "Japanese"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Neymar showed less brain {{blank}} than the comparison players.",
+              "answers": [
+                "activity"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "His skilled movements required little {{blank}} effort.",
+              "answers": [
+                "conscious"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Training tasks may overload players who struggle to store {{blank}}.",
+              "answers": [
+                "information"
+              ]
+            },
+            {
+              "id": "bbc-260716-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Holly says performance is influenced by a player's emotional {{blank}}.",
+              "answers": [
+                "state"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260716-t3",
+      "title": "Listening for exact details",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260716-t3-g1",
+          "position": 1,
+          "heading": "Listening for exact details",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What kind of psychologist is Tom Cooke at Nottingham Forest? {{blank}}",
+              "answers": [
+                "Academy",
+                "Academy Psychologist"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which university is Holly Bridge associated with? {{blank}}",
+              "answers": [
+                "Oxford",
+                "University of Oxford"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which brain region is named when Holly describes the reduction in Neymar's activity? {{blank}}",
+              "answers": [
+                "cortex"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "In addition to games, which competitions does Tom hope training will affect? {{blank}}",
+              "answers": [
+                "cup competitions"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "What is the name of Niklas Häusler's organisation? {{blank}}",
+              "answers": [
+                "Neuro 11",
+                "Neuro11"
+              ]
+            },
+            {
+              "id": "bbc-260716-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "What brain structure is identified in the final answer as associated with fear? {{blank}}",
+              "answers": [
+                "amygdala",
+                "the amygdala"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260716-t4",
+      "title": "From brain data to performance",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260716-t4-g1",
+          "position": 1,
+          "heading": "From brain data to performance",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260716-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Tom think the brain deserves attention in football?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q1-a",
+                  "label": "A",
+                  "text": "Players make rapid decisions under intense pressure."
+                },
+                {
+                  "id": "bbc-260716-t4-q1-b",
+                  "label": "B",
+                  "text": "Physical movement has become irrelevant."
+                },
+                {
+                  "id": "bbc-260716-t4-q1-c",
+                  "label": "C",
+                  "text": "All football decisions can be made before the match."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260716-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How does Holly interpret Neymar's lower brain activity?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q2-a",
+                  "label": "A",
+                  "text": "It demonstrates that he was unable to move his ankle."
+                },
+                {
+                  "id": "bbc-260716-t4-q2-b",
+                  "label": "B",
+                  "text": "It reflects highly developed skill rather than poorer ability."
+                },
+                {
+                  "id": "bbc-260716-t4-q2-c",
+                  "label": "C",
+                  "text": "It proves that effort is unnecessary for all players."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why does Tom deliberately challenge information processing in practice?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q3-a",
+                  "label": "A",
+                  "text": "A safe overload may help players improve before facing competition."
+                },
+                {
+                  "id": "bbc-260716-t4-q3-b",
+                  "label": "B",
+                  "text": "He wants players to avoid receiving information during matches."
+                },
+                {
+                  "id": "bbc-260716-t4-q3-c",
+                  "label": "C",
+                  "text": "He believes pressure is useful only after a match ends."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260716-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "What implication follows from Holly's account of emotional state?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q4-a",
+                  "label": "A",
+                  "text": "Emotions influence only spectators, not players."
+                },
+                {
+                  "id": "bbc-260716-t4-q4-b",
+                  "label": "B",
+                  "text": "A player's emotional control cannot change with practice."
+                },
+                {
+                  "id": "bbc-260716-t4-q4-c",
+                  "label": "C",
+                  "text": "Managing emotion is something players can learn."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260716-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "Why are set pieces useful moments for the work Niklas describes?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q5-a",
+                  "label": "A",
+                  "text": "They allow players to stop concentrating without consequence."
+                },
+                {
+                  "id": "bbc-260716-t4-q5-b",
+                  "label": "B",
+                  "text": "They provide brief periods of stillness before a precise action."
+                },
+                {
+                  "id": "bbc-260716-t4-q5-c",
+                  "label": "C",
+                  "text": "They remove the need for accurate movement."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260716-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What is meant by the small margins that can decide a match?",
+              "options": [
+                {
+                  "id": "bbc-260716-t4-q6-a",
+                  "label": "A",
+                  "text": "Only a large physical advantage can affect the result."
+                },
+                {
+                  "id": "bbc-260716-t4-q6-b",
+                  "label": "B",
+                  "text": "Brain training always guarantees a comfortable win."
+                },
+                {
+                  "id": "bbc-260716-t4-q6-c",
+                  "label": "C",
+                  "text": "Minor differences in focus and execution may change the result."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260716-t5",
+      "title": "Precision under pressure",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260716-t5-g1",
+          "position": 1,
+          "heading": "Precision under pressure",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260716-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Tom says there is something {{blank}} in the brain during rapid decision-making.",
+              "answers": [
+                "going on"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The term for Neymar's highly developed skill is {{blank}}.",
+              "answers": [
+                "expertise"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Tom wants cognition or neuroscience at the {{blank}} of training sessions.",
+              "answers": [
+                "centre",
+                "center"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Too much emotion may reduce precision and {{blank}}.",
+              "answers": [
+                "focus"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Niklas teaches players to remain {{blank}} before important kicks.",
+              "answers": [
+                "relaxed"
+              ]
+            },
+            {
+              "id": "bbc-260716-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "A player whose mind is disorganised is described as all over the {{blank}}.",
+              "answers": [
+                "place"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

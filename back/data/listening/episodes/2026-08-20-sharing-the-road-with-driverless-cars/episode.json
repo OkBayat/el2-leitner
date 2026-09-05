@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260820",
+  "provider": "bbc_6_minute_english",
+  "slug": "sharing-the-road-with-driverless-cars",
+  "title": "Sharing the road with driverless cars",
+  "description": "Original listening exercises about how autonomous vehicles signal their intentions to pedestrians, runners and cyclists, and why local road behaviour matters.",
+  "episodeCode": "260820",
+  "episodeDate": "2026-08-20",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260820",
+  "status": "published",
+  "publishedAt": null,
+  "level": "intermediate",
+  "imageFile": "cover.jpg",
+  "audioFile": "audio.mp3",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260820_6_minute_english_sharing_the_road_with_driverless_cars_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0p5993t.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260820_6_minute_english_sharing_the_road_with_driverless_cars_transcript.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260820",
+    "attribution": "BBC Learning English. Original lesson audio and episode artwork retain BBC/source rights. Practice questions, definitions and examples are independently authored.",
+    "retrievedAt": "2026-09-05"
+  }
+}

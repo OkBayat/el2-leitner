@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "publicId": "bbc-6-minute-english-260611",
+  "provider": "bbc_6_minute_english",
+  "slug": "how-advertisers-make-us-spend-money",
+  "title": "How advertisers make us spend money",
+  "description": "Explore how recommendations, ordering screens and television stories can influence choices. Five original listening tests cover the examples, evidence and reasoning in the discussion.",
+  "episodeCode": "260611",
+  "episodeDate": "2026-06-11",
+  "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+  "status": "published",
+  "publishedAt": null,
+  "level": "intermediate",
+  "imageFile": "cover.jpg",
+  "audioFile": "audio.mp3",
+  "sources": {
+    "audioUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260611_6_minute_english_how_advertisers_make_us_spend_money_download.mp3",
+    "imageUrl": "https://ichef.bbci.co.uk/images/ic/1200xn/p0nr4td0.jpg",
+    "transcriptUrl": "https://downloads.bbc.co.uk/learningenglish/features/6min/260611_6_minute_english_how_advertisers_make_us_spend_money_transcript.pdf",
+    "vocabularyUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+    "attribution": "BBC Learning English. Original lesson audio and episode artwork retain BBC/source rights. Practice questions, definitions and examples are independently authored.",
+    "retrievedAt": "2026-09-05"
+  }
+}

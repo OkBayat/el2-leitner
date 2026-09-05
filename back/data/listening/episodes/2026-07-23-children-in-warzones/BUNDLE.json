@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260723",
+  "folder": "2026-07-23-children-in-warzones",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6624240,
+      "sha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6"
+    },
+    "cover.jpg": {
+      "bytes": 72770,
+      "sha256": "1e39618a6e371a9092e5e3dcae99434e360a1113abced6994d0a25a17d0d0425"
+    },
+    "episode.json": {
+      "bytes": 1374,
+      "sha256": "4a6e72647c0e9a9b9f7e090d85b5e560a2c3edb0333cc12117ae3c90e04112d6"
+    },
+    "listening.json": {
+      "bytes": 20787,
+      "sha256": "d2152aee4224ea26b57ae6fc9da9bcd4422a94488c056403f82ea696bddcc6cd"
+    },
+    "transcript.md": {
+      "bytes": 440,
+      "sha256": "249d32be73d71712507242747d8003453dcf7da3b30abcc50a89bb8c84713ac6"
+    },
+    "vocabulary.md": {
+      "bytes": 1012,
+      "sha256": "8475ca8ea368f1b253b4b55a4d967eb0f8f8a124a309fccc0eece1e8c7241122"
+    }
+  }
+}

@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260730-t1",
+      "title": "Elementary: Follow the debate",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260730-t1-g1",
+          "position": 1,
+          "heading": "Elementary: Follow the debate",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260730-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does doping refer to in the opening discussion?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q1-a",
+                  "label": "A",
+                  "text": "Using banned substances to improve sporting performance."
+                },
+                {
+                  "id": "bbc-260730-t1-q1-b",
+                  "label": "B",
+                  "text": "Training for a competition without a coach."
+                },
+                {
+                  "id": "bbc-260730-t1-q1-c",
+                  "label": "C",
+                  "text": "Changing teams during a sporting season."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260730-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Where does the report place the first Enhanced Games?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q2-a",
+                  "label": "A",
+                  "text": "London in England."
+                },
+                {
+                  "id": "bbc-260730-t1-q2-b",
+                  "label": "B",
+                  "text": "Paris in France."
+                },
+                {
+                  "id": "bbc-260730-t1-q2-c",
+                  "label": "C",
+                  "text": "Las Vegas in Nevada."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260730-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What is the competitors' stated aim in the event?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q3-a",
+                  "label": "A",
+                  "text": "To break world records."
+                },
+                {
+                  "id": "bbc-260730-t1-q3-b",
+                  "label": "B",
+                  "text": "To teach complete beginners."
+                },
+                {
+                  "id": "bbc-260730-t1-q3-c",
+                  "label": "C",
+                  "text": "To replace all professional sporting leagues."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260730-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "How does Neil initially respond to watching athletes who have taken drugs?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q4-a",
+                  "label": "A",
+                  "text": "He supports it because rules do not matter to him."
+                },
+                {
+                  "id": "bbc-260730-t1-q4-b",
+                  "label": "B",
+                  "text": "He says that he never watches any sport."
+                },
+                {
+                  "id": "bbc-260730-t1-q4-c",
+                  "label": "C",
+                  "text": "He would not enjoy it because he considers it unfair."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260730-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What does the adjective \"divisive\" tell us about the Games?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q5-a",
+                  "label": "A",
+                  "text": "They are divided equally between two cities."
+                },
+                {
+                  "id": "bbc-260730-t1-q5-b",
+                  "label": "B",
+                  "text": "They cause strong disagreement."
+                },
+                {
+                  "id": "bbc-260730-t1-q5-c",
+                  "label": "C",
+                  "text": "They have no effect on sporting traditions."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260730-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "Has Neil changed his opinion by the end of the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260730-t1-q6-a",
+                  "label": "A",
+                  "text": "Yes; he now fully supports the Games."
+                },
+                {
+                  "id": "bbc-260730-t1-q6-b",
+                  "label": "B",
+                  "text": "No; fairness remains his main concern."
+                },
+                {
+                  "id": "bbc-260730-t1-q6-c",
+                  "label": "C",
+                  "text": "Yes; he decides that winning is more important than fairness."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260730-t2",
+      "title": "Intermediate: Record event details",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260730-t2-g1",
+          "position": 1,
+          "heading": "Intermediate: Record event details",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260730-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Cycling figure used as an example of a doping scandal: {{blank}}.",
+              "answers": [
+                "Lance Armstrong"
+              ]
+            },
+            {
+              "id": "bbc-260730-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The competition takes place in Las Vegas, in the state of {{blank}}.",
+              "answers": [
+                "Nevada"
+              ]
+            },
+            {
+              "id": "bbc-260730-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The three sports mentioned are swimming, sprinting and {{blank}}.",
+              "answers": [
+                "weightlifting"
+              ]
+            },
+            {
+              "id": "bbc-260730-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Some competitors have previously been {{blank}}.",
+              "answers": [
+                "Olympians"
+              ]
+            },
+            {
+              "id": "bbc-260730-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "BBC sports editor who comments on the controversy: {{blank}}.",
+              "answers": [
+                "Dan Roan"
+              ]
+            },
+            {
+              "id": "bbc-260730-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "The permitted substances are described as being taken under {{blank}}.",
+              "answers": [
+                "medical supervision"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260730-t3",
+      "title": "Intermediate: Identify specific information",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260730-t3-g1",
+          "position": 1,
+          "heading": "Intermediate: Identify specific information",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260730-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What transport payment does Pippa mention in her examples of everyday cheating? {{blank}}",
+              "answers": [
+                "bus fare",
+                "the bus fare"
+              ]
+            },
+            {
+              "id": "bbc-260730-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What nickname for the event links it to a much larger sporting competition? The {{blank}}.",
+              "answers": [
+                "Doping Olympics"
+              ]
+            },
+            {
+              "id": "bbc-260730-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which group of substances is listed between steroids and stimulants? {{blank}}",
+              "answers": [
+                "growth hormones"
+              ]
+            },
+            {
+              "id": "bbc-260730-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Who does Neil think should start from the same level? {{blank}}",
+              "answers": [
+                "all the athletes",
+                "the athletes",
+                "athletes"
+              ]
+            },
+            {
+              "id": "bbc-260730-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "How long have organisations such as the World Anti-Doping Agency been fighting drug use, according to Pippa? {{blank}}",
+              "answers": [
+                "decades"
+              ]
+            },
+            {
+              "id": "bbc-260730-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Critics fear that the Games could harm the integrity of what? {{blank}}",
+              "answers": [
+                "sport"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260730-t4",
+      "title": "Advanced: Evaluate contrasting positions",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260730-t4-g1",
+          "position": 1,
+          "heading": "Advanced: Evaluate contrasting positions",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260730-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What is Neil's central objection before the detailed debate?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q1-a",
+                  "label": "A",
+                  "text": "Competitors should take part on a fair and comparable basis."
+                },
+                {
+                  "id": "bbc-260730-t4-q1-b",
+                  "label": "B",
+                  "text": "Swimming should not be included in a multi-sport event."
+                },
+                {
+                  "id": "bbc-260730-t4-q1-c",
+                  "label": "C",
+                  "text": "Former medallists should never compete for money."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260730-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Dan Roan achieve by introducing his view with \"it's fair to say\"?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q2-a",
+                  "label": "A",
+                  "text": "He claims that every listener supports the Games."
+                },
+                {
+                  "id": "bbc-260730-t4-q2-b",
+                  "label": "B",
+                  "text": "He presents the observation as a reasonable assessment."
+                },
+                {
+                  "id": "bbc-260730-t4-q2-c",
+                  "label": "C",
+                  "text": "He announces that the debate has been legally settled."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260730-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What comparison underlies the organisers' safety argument as reported by Pippa?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q3-a",
+                  "label": "A",
+                  "text": "Professional athletes versus people who never exercise."
+                },
+                {
+                  "id": "bbc-260730-t4-q3-b",
+                  "label": "B",
+                  "text": "Swimming races versus cycling races."
+                },
+                {
+                  "id": "bbc-260730-t4-q3-c",
+                  "label": "C",
+                  "text": "Open, medically supervised use versus secret use elsewhere."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260730-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "Which concern goes beyond the immediate health of participants?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q4-a",
+                  "label": "A",
+                  "text": "That the example could make doping more socially acceptable."
+                },
+                {
+                  "id": "bbc-260730-t4-q4-b",
+                  "label": "B",
+                  "text": "That the event contains too many different sports."
+                },
+                {
+                  "id": "bbc-260730-t4-q4-c",
+                  "label": "C",
+                  "text": "That former Olympians are unfamiliar with competition."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260730-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What does \"crosses an ethical line\" express in the critics' argument?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q5-a",
+                  "label": "A",
+                  "text": "A claim that competitors have crossed the wrong finish line."
+                },
+                {
+                  "id": "bbc-260730-t4-q5-b",
+                  "label": "B",
+                  "text": "A complaint about the physical layout of the venue."
+                },
+                {
+                  "id": "bbc-260730-t4-q5-c",
+                  "label": "C",
+                  "text": "A judgement that the event goes beyond acceptable behaviour."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260730-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "How is the overall state of the debate presented?",
+              "options": [
+                {
+                  "id": "bbc-260730-t4-q6-a",
+                  "label": "A",
+                  "text": "Both sides have accepted one final shared position."
+                },
+                {
+                  "id": "bbc-260730-t4-q6-b",
+                  "label": "B",
+                  "text": "Both sides hold strong views and the dispute remains unresolved."
+                },
+                {
+                  "id": "bbc-260730-t4-q6-c",
+                  "label": "C",
+                  "text": "Only the organisers are allowed to express an opinion."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260730-t5",
+      "title": "Advanced: Recover precise expressions",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260730-t5-g1",
+          "position": 1,
+          "heading": "Advanced: Recover precise expressions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260730-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The report describes some medallists as competing for money and {{blank}}.",
+              "answers": [
+                "glory"
+              ]
+            },
+            {
+              "id": "bbc-260730-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil's fairness concern is that athletes should start and compete from the {{blank}}.",
+              "answers": [
+                "same level"
+              ]
+            },
+            {
+              "id": "bbc-260730-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Dan Roan calls the event controversial and also {{blank}}, emphasising its capacity to cause disagreement.",
+              "answers": [
+                "divisive"
+              ]
+            },
+            {
+              "id": "bbc-260730-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "In the organisers' comparison, the alternative to openly supervised drug use is taking substances {{blank}} at other competitions.",
+              "answers": [
+                "secretly"
+              ]
+            },
+            {
+              "id": "bbc-260730-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Dan reports critics describing the influence on others as setting a {{blank}}.",
+              "answers": [
+                "dreadful example"
+              ]
+            },
+            {
+              "id": "bbc-260730-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "The verb for treating previously unacceptable behaviour as ordinary is {{blank}}.",
+              "answers": [
+                "normalise",
+                "normalize"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

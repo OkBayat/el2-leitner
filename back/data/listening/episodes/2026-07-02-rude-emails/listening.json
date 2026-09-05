@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260702-t1",
+      "title": "Recognising rude messages",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260702-t1-g1",
+          "position": 1,
+          "heading": "Recognising rude messages",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260702-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What opening bothers Rachel?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q1-a",
+                  "label": "A",
+                  "text": "Using a friendly \"hi\""
+                },
+                {
+                  "id": "bbc-260702-t1-q1-b",
+                  "label": "B",
+                  "text": "Using her name without a greeting"
+                },
+                {
+                  "id": "bbc-260702-t1-q1-c",
+                  "label": "C",
+                  "text": "Thanking her for her work"
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260702-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What was the anonymous listener sent in reply?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q2-a",
+                  "label": "A",
+                  "text": "A long explanation"
+                },
+                {
+                  "id": "bbc-260702-t1-q2-b",
+                  "label": "B",
+                  "text": "One emoji"
+                },
+                {
+                  "id": "bbc-260702-t1-q2-c",
+                  "label": "C",
+                  "text": "A phone number"
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260702-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does \"uncivil\" mean in the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q3-a",
+                  "label": "A",
+                  "text": "Unclear"
+                },
+                {
+                  "id": "bbc-260702-t1-q3-b",
+                  "label": "B",
+                  "text": "Unofficial"
+                },
+                {
+                  "id": "bbc-260702-t1-q3-c",
+                  "label": "C",
+                  "text": "Impolite"
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260702-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "What is one example of a flight response?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q4-a",
+                  "label": "A",
+                  "text": "Not replying to an email"
+                },
+                {
+                  "id": "bbc-260702-t1-q4-b",
+                  "label": "B",
+                  "text": "Writing a hostile attack"
+                },
+                {
+                  "id": "bbc-260702-t1-q4-c",
+                  "label": "C",
+                  "text": "Copying a manager to intimidate someone"
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What can make workers feel frazzled?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q5-a",
+                  "label": "A",
+                  "text": "Doing too many things"
+                },
+                {
+                  "id": "bbc-260702-t1-q5-b",
+                  "label": "B",
+                  "text": "Taking a short holiday"
+                },
+                {
+                  "id": "bbc-260702-t1-q5-c",
+                  "label": "C",
+                  "text": "Receiving a polite greeting"
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What should someone do before sending an angry email?",
+              "options": [
+                {
+                  "id": "bbc-260702-t1-q6-a",
+                  "label": "A",
+                  "text": "Add more recipients"
+                },
+                {
+                  "id": "bbc-260702-t1-q6-b",
+                  "label": "B",
+                  "text": "Send it immediately"
+                },
+                {
+                  "id": "bbc-260702-t1-q6-c",
+                  "label": "C",
+                  "text": "Pause"
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260702-t2",
+      "title": "Notes on email behaviour",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260702-t2-g1",
+          "position": 1,
+          "heading": "Notes on email behaviour",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260702-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Rachel is a listener from {{blank}}.",
+              "answers": [
+                "Manchester"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Starting with a name alone can put Rachel on the {{blank}}.",
+              "answers": [
+                "defensive"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The noun linked to \"uncivil\" is {{blank}}.",
+              "answers": [
+                "incivility"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "A fight response may involve copying {{blank}} personnel into an email.",
+              "answers": [
+                "senior"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "A rushed flight response may fail to answer all the {{blank}} in a message.",
+              "answers": [
+                "points"
+              ]
+            },
+            {
+              "id": "bbc-260702-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "An overworked and anxious person may be described as {{blank}}.",
+              "answers": [
+                "frazzled"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260702-t3",
+      "title": "Details from the workplace examples",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260702-t3-g1",
+          "position": 1,
+          "heading": "Details from the workplace examples",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260702-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What simple greeting does Rachel mention? {{blank}}",
+              "answers": [
+                "hi"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What type of expert is Emma Russell? {{blank}}",
+              "answers": [
+                "psychologist"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "In the boss's example, what is given to someone else for work you did? {{blank}}",
+              "answers": [
+                "credit"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "From what do colleagues want to remove tasks when passing work on? {{blank}}",
+              "answers": [
+                "their workload",
+                "workload"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "What time pressure is mentioned alongside stress? {{blank}}",
+              "answers": [
+                "a deadline",
+                "deadline"
+              ]
+            },
+            {
+              "id": "bbc-260702-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Which series is recommended for learning about workplace communication? {{blank}}",
+              "answers": [
+                "Office English"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260702-t4",
+      "title": "Interpreting fight and flight",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260702-t4-g1",
+          "position": 1,
+          "heading": "Interpreting fight and flight",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260702-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why is the emoji example considered rude in context?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q1-a",
+                  "label": "A",
+                  "text": "It follows a message to which the sender had given considerable thought."
+                },
+                {
+                  "id": "bbc-260702-t4-q1-b",
+                  "label": "B",
+                  "text": "Every emoji necessarily contains an insult."
+                },
+                {
+                  "id": "bbc-260702-t4-q1-c",
+                  "label": "C",
+                  "text": "The recipient had explicitly requested a one-symbol answer."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What distinguishes the fight response described by Emma?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q2-a",
+                  "label": "A",
+                  "text": "Quietly avoiding the whole exchange"
+                },
+                {
+                  "id": "bbc-260702-t4-q2-b",
+                  "label": "B",
+                  "text": "Carefully addressing every question"
+                },
+                {
+                  "id": "bbc-260702-t4-q2-c",
+                  "label": "C",
+                  "text": "Trying to assert power over another person"
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260702-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why might a sender copy senior colleagues into a hostile exchange?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q3-a",
+                  "label": "A",
+                  "text": "To avoid involving anyone with authority"
+                },
+                {
+                  "id": "bbc-260702-t4-q3-b",
+                  "label": "B",
+                  "text": "To escalate the matter and diminish the recipient's position"
+                },
+                {
+                  "id": "bbc-260702-t4-q3-c",
+                  "label": "C",
+                  "text": "To show that the issue has already been resolved."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260702-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "What can an incomplete reply suggest in Emma's account?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q4-a",
+                  "label": "A",
+                  "text": "The sender has necessarily answered all important points."
+                },
+                {
+                  "id": "bbc-260702-t4-q4-b",
+                  "label": "B",
+                  "text": "The sender wants to avoid responsibility rather than engage fully."
+                },
+                {
+                  "id": "bbc-260702-t4-q4-c",
+                  "label": "C",
+                  "text": "The sender is always trying to dominate the recipient."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260702-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "How is heavy workload connected with rude emails?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q5-a",
+                  "label": "A",
+                  "text": "It increases the risk of discourteous communication."
+                },
+                {
+                  "id": "bbc-260702-t4-q5-b",
+                  "label": "B",
+                  "text": "It makes every worker deliberately hostile."
+                },
+                {
+                  "id": "bbc-260702-t4-q5-c",
+                  "label": "C",
+                  "text": "It guarantees that messages will be shorter but kinder."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260702-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "Why does Phil recommend delaying an angry response?",
+              "options": [
+                {
+                  "id": "bbc-260702-t4-q6-a",
+                  "label": "A",
+                  "text": "It ensures that the recipient will forget the issue."
+                },
+                {
+                  "id": "bbc-260702-t4-q6-b",
+                  "label": "B",
+                  "text": "It transfers the task to another colleague automatically."
+                },
+                {
+                  "id": "bbc-260702-t4-q6-c",
+                  "label": "C",
+                  "text": "A brief pause may prevent damage to a relationship or a job."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260702-t5",
+      "title": "Precise expressions in context",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260702-t5-g1",
+          "position": 1,
+          "heading": "Precise expressions in context",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260702-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Rachel describes the formality of a name-only opening as {{blank}}.",
+              "answers": [
+                "unnecessary"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Making another person seem inferior is to {{blank}} them.",
+              "answers": [
+                "belittle"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The idiom for asserting another person's lower importance ends \"in your {{blank}}\".",
+              "answers": [
+                "place"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "An unhelpful reply may be an attempt to get work off someone's {{blank}}.",
+              "answers": [
+                "plate"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Emma says stressed workers are at greater risk of engaging in {{blank}}.",
+              "answers": [
+                "incivility"
+              ]
+            },
+            {
+              "id": "bbc-260702-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Phil suggests a moment of reflection before pressing {{blank}}.",
+              "answers": [
+                "send"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

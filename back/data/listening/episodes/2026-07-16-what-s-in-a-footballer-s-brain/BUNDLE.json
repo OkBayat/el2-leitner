@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260716",
+  "folder": "2026-07-16-what-s-in-a-footballer-s-brain",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 4794974,
+      "sha256": "4aba00b7ac67b2736abba70c48b9dfbe38e8c7d9a625edafc7ee41213dd4260b"
+    },
+    "cover.jpg": {
+      "bytes": 105439,
+      "sha256": "f3a0fd2faff6cb6bfbd33cb84afce0aa99575da6fb3f90c0b9f8cce5e9e9689a"
+    },
+    "episode.json": {
+      "bytes": 1431,
+      "sha256": "57d31de4e3d43ce33d30a3011682ae797ff89a56fe3d6aa0c217807f7ef264ae"
+    },
+    "listening.json": {
+      "bytes": 19717,
+      "sha256": "865c14de6b480e8b26d030fc815c8918e2ec02f74e44dde6650bb8ec73b67f88"
+    },
+    "transcript.md": {
+      "bytes": 461,
+      "sha256": "91853058d9697da845f3b51c4cdf9875b62c339e2d4cab2186c928736d0a1c19"
+    },
+    "vocabulary.md": {
+      "bytes": 1007,
+      "sha256": "58b930f867e1cffe9c2499bb7a1bea3b74b021f4f66c14aa2f53b797e2fde943"
+    }
+  }
+}

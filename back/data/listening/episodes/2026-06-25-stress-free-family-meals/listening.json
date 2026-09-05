@@ -1,0 +1,596 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260625-t1",
+      "title": "People and food",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260625-t1-g1",
+          "position": 1,
+          "heading": "People and food",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260625-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does Georgie feel about avocados now?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q1-a",
+                  "label": "A",
+                  "text": "She still hates them."
+                },
+                {
+                  "id": "bbc-260625-t1-q1-b",
+                  "label": "B",
+                  "text": "She loves them."
+                },
+                {
+                  "id": "bbc-260625-t1-q1-c",
+                  "label": "C",
+                  "text": "She has never tried them."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260625-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Neil say about his childhood eating habits?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q2-a",
+                  "label": "A",
+                  "text": "He liked most foods."
+                },
+                {
+                  "id": "bbc-260625-t1-q2-b",
+                  "label": "B",
+                  "text": "He refused all vegetables."
+                },
+                {
+                  "id": "bbc-260625-t1-q2-c",
+                  "label": "C",
+                  "text": "He only liked nuts."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260625-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Does Charlotte say her children always eat everything?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q3-a",
+                  "label": "A",
+                  "text": "Yes, they always finish."
+                },
+                {
+                  "id": "bbc-260625-t1-q3-b",
+                  "label": "B",
+                  "text": "No, their appetite changes."
+                },
+                {
+                  "id": "bbc-260625-t1-q3-c",
+                  "label": "C",
+                  "text": "Only when they eat alone."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260625-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "In which country does the Family Dinner Project promote healthy eating?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q4-a",
+                  "label": "A",
+                  "text": "Singapore"
+                },
+                {
+                  "id": "bbc-260625-t1-q4-b",
+                  "label": "B",
+                  "text": "Australia"
+                },
+                {
+                  "id": "bbc-260625-t1-q4-c",
+                  "label": "C",
+                  "text": "The United States"
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260625-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What does Sharon Wee do?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q5-a",
+                  "label": "A",
+                  "text": "She is a food writer."
+                },
+                {
+                  "id": "bbc-260625-t1-q5-b",
+                  "label": "B",
+                  "text": "She is a television presenter."
+                },
+                {
+                  "id": "bbc-260625-t1-q5-c",
+                  "label": "C",
+                  "text": "She is a restaurant inspector."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260625-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "Which two foods did Sharon find suitable for her daughter?",
+              "options": [
+                {
+                  "id": "bbc-260625-t1-q6-a",
+                  "label": "A",
+                  "text": "Nuts and avocados"
+                },
+                {
+                  "id": "bbc-260625-t1-q6-b",
+                  "label": "B",
+                  "text": "Broccoli and mushrooms"
+                },
+                {
+                  "id": "bbc-260625-t1-q6-c",
+                  "label": "C",
+                  "text": "Rice and beans"
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260625-t2",
+      "title": "Notes on family mealtimes",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260625-t2-g1",
+          "position": 1,
+          "heading": "Notes on family mealtimes",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260625-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "As a child, Georgie disliked avocados and {{blank}}.",
+              "answers": [
+                "nuts"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Charlotte describes changes in appetite as ups and {{blank}}.",
+              "answers": [
+                "downs"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "One factor affecting appetite is a child's {{blank}}.",
+              "answers": [
+                "mood"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Anne helped establish the Family {{blank}} Project.",
+              "answers": [
+                "Dinner"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Small children value having some {{blank}} over their eating.",
+              "answers": [
+                "control"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Before a meal, children can be offered healthy snacks and {{blank}}.",
+              "answers": [
+                "dips"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260625-t3",
+      "title": "Listening for specific details",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260625-t3-g1",
+          "position": 1,
+          "heading": "Listening for specific details",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260625-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How many children does Charlotte have? {{blank}}",
+              "answers": [
+                "two",
+                "2"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Besides daily activities and mood, what external condition does Charlotte mention? {{blank}}",
+              "answers": [
+                "weather"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Who can decide whether to eat the food that is served? {{blank}}",
+              "answers": [
+                "kids",
+                "children"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "Which country is Sharon Wee from? {{blank}}",
+              "answers": [
+                "Singapore"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "For approximately how many years did Sharon's daughter grow up eating rice and beans? {{blank}}",
+              "answers": [
+                "five",
+                "5",
+                "five years",
+                "5 years"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "What should parents give children, according to the closing recommendations? {{blank}}",
+              "answers": [
+                "a choice",
+                "choice"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260625-t4",
+      "title": "Understanding the explanations",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260625-t4-g1",
+          "position": 1,
+          "heading": "Understanding the explanations",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260625-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Georgie's opening story challenge fixed ideas about children's tastes?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q1-a",
+                  "label": "A",
+                  "text": "She learned that every disliked food causes an allergy."
+                },
+                {
+                  "id": "bbc-260625-t4-q1-b",
+                  "label": "B",
+                  "text": "Her preferences changed substantially as she grew older."
+                },
+                {
+                  "id": "bbc-260625-t4-q1-c",
+                  "label": "C",
+                  "text": "She stopped eating the foods she had always enjoyed."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260625-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Charlotte's experience demonstrate?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q2-a",
+                  "label": "A",
+                  "text": "An expert's children can still have an uneven appetite."
+                },
+                {
+                  "id": "bbc-260625-t4-q2-b",
+                  "label": "B",
+                  "text": "Nutrition knowledge prevents every difficult mealtime."
+                },
+                {
+                  "id": "bbc-260625-t4-q2-c",
+                  "label": "C",
+                  "text": "A low appetite necessarily stays low permanently."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260625-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Anne distinguish parents' control from children's control?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q3-a",
+                  "label": "A",
+                  "text": "Parents arrange the meal, but children choose whether to eat it."
+                },
+                {
+                  "id": "bbc-260625-t4-q3-b",
+                  "label": "B",
+                  "text": "Children choose the cooking time, but parents choose who eats."
+                },
+                {
+                  "id": "bbc-260625-t4-q3-c",
+                  "label": "C",
+                  "text": "Parents and children have no influence over mealtimes."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260625-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "Why does the programme call control over eating a \"big deal\" for children?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q4-a",
+                  "label": "A",
+                  "text": "They are being asked to plan every family meal."
+                },
+                {
+                  "id": "bbc-260625-t4-q4-b",
+                  "label": "B",
+                  "text": "They want to become professional cooks."
+                },
+                {
+                  "id": "bbc-260625-t4-q4-c",
+                  "label": "C",
+                  "text": "They have relatively few other areas in which they can make decisions."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260625-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What distinguishes Sharon's problem from an ordinary dislike of food?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q5-a",
+                  "label": "A",
+                  "text": "Her daughter disliked every flavour from Singapore."
+                },
+                {
+                  "id": "bbc-260625-t4-q5-b",
+                  "label": "B",
+                  "text": "Her daughter's allergies restricted what she could safely eat."
+                },
+                {
+                  "id": "bbc-260625-t4-q5-c",
+                  "label": "C",
+                  "text": "Her family refused to eat meals together."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260625-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What is the emphasis of the final advice?",
+              "options": [
+                {
+                  "id": "bbc-260625-t4-q6-a",
+                  "label": "A",
+                  "text": "Insist that every plate is empty before anyone leaves."
+                },
+                {
+                  "id": "bbc-260625-t4-q6-b",
+                  "label": "B",
+                  "text": "Make each meal introduce as many unfamiliar flavours as possible."
+                },
+                {
+                  "id": "bbc-260625-t4-q6-c",
+                  "label": "C",
+                  "text": "Reduce pressure while allowing children some choice."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260625-t5",
+      "title": "Paraphrase and precise expressions",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260625-t5-g1",
+          "position": 1,
+          "heading": "Paraphrase and precise expressions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260625-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Dinnertime can help a family {{blank}} after spending the day apart.",
+              "answers": [
+                "reconnect"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "When eating turns into repeated conflict, the meal can become a {{blank}}.",
+              "answers": [
+                "battleground"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Anne says having control is, for a young child, {{blank}}.",
+              "answers": [
+                "a big deal"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "The medical condition complicating some children's meals is a {{blank}}.",
+              "answers": [
+                "food allergy"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Sharon describes the approach that worked as her {{blank}}.",
+              "answers": [
+                "winning formula"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "The experts discourage pressure to finish everything on a child's {{blank}}.",
+              "answers": [
+                "plate"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

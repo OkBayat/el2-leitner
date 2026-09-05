@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260820",
+  "folder": "2026-08-20-sharing-the-road-with-driverless-cars",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6613975,
+      "sha256": "8ee60a14dfbd638ea3bace3efdd5c98fc4deaed2ecb0b45250696328087d5482"
+    },
+    "cover.jpg": {
+      "bytes": 124757,
+      "sha256": "12ac4f0361ff96724c96a513d99fe1bfcfb1fe007baf0ca76b93b2b091e63759"
+    },
+    "episode.json": {
+      "bytes": 1417,
+      "sha256": "040405e72edb85252a050af39efb80f1702f5d74e7582d9b93275a171ad0a66b"
+    },
+    "listening.json": {
+      "bytes": 20557,
+      "sha256": "ef7c7bb0e2914369baf0c5f55415be2d2240eca203129236db68251f9ec73312"
+    },
+    "transcript.md": {
+      "bytes": 474,
+      "sha256": "50bcabb732077adddca24cd181e2c21ac46d61a71238182cf5eba01537df52d9"
+    },
+    "vocabulary.md": {
+      "bytes": 978,
+      "sha256": "eb3a2fefd15507cf535471e7eadfcf45016b55c0a25902f15e8b2ecf7b7328e9"
+    }
+  }
+}

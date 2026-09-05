@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260806",
+  "folder": "2026-08-06-how-do-climate-scientists-make-predictions",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6264324,
+      "sha256": "76f76238c4503516ece2d4f1669516bca3dbc878d030ce2449a815c12c213d6e"
+    },
+    "cover.jpg": {
+      "bytes": 99032,
+      "sha256": "be5320950bd61dd1476d9f63efc036a4ac360688f6d88417a95ad6f082bb4feb"
+    },
+    "episode.json": {
+      "bytes": 1647,
+      "sha256": "524b182ab0c5390cf25c9a7c9e392f7834d2ac11464b7f374a282c69c3b5702e"
+    },
+    "listening.json": {
+      "bytes": 24110,
+      "sha256": "9319e09b4a5e66ce4afa606ce57324e4f60af4be6d908cc98e8ec2ff6492fdf8"
+    },
+    "transcript.md": {
+      "bytes": 661,
+      "sha256": "4e731de96af5279615a8ce7b0bd0f079353bd178d45f1025d33e62a3e9be9762"
+    },
+    "vocabulary.md": {
+      "bytes": 1074,
+      "sha256": "445833542968b285ceafc46a7a223e28e093ea07404d5ff8f2c7ce86a90fd0c7"
+    }
+  }
+}

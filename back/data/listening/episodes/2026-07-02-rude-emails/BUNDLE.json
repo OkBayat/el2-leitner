@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260702",
+  "folder": "2026-07-02-rude-emails",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 5921979,
+      "sha256": "f07b73102111a665d634d251dd9901bf473a1d2eee99584cdfeed899eb4508fe"
+    },
+    "cover.jpg": {
+      "bytes": 99816,
+      "sha256": "44977e4a23eb438d0cf8282159225b83071b852e91f79f8c8fc1fb397fae23dd"
+    },
+    "episode.json": {
+      "bytes": 1341,
+      "sha256": "25e3d8584b33fb846b79d1480033ce825707032cc781d107ad1eb81db417b511"
+    },
+    "listening.json": {
+      "bytes": 19550,
+      "sha256": "ff2c839209345c0a5361c8e9b3e3abbe2ad5c97131d4428d0dbc9bdaf62aa0dc"
+    },
+    "transcript.md": {
+      "bytes": 422,
+      "sha256": "68a0813fa956b6c2b03baa3106c97c30d54d1ee618b5bd68acb9829a0f2cbe21"
+    },
+    "vocabulary.md": {
+      "bytes": 1080,
+      "sha256": "1718160538438fb5212ad7d7a1165b4d354a180f1b4eb95a7997270fc0eeec9e"
+    }
+  }
+}

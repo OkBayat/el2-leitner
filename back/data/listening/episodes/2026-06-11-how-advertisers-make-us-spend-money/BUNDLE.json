@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260611",
+  "folder": "2026-06-11-how-advertisers-make-us-spend-money",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6480531,
+      "sha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278"
+    },
+    "cover.jpg": {
+      "bytes": 121121,
+      "sha256": "db76642467069d164d8e3104ba86e228de27e71d87a0d5c536bb9517af48b0da"
+    },
+    "episode.json": {
+      "bytes": 1434,
+      "sha256": "565aab5c6e34eb5b56a8a0b7d776aeea3854fe438e6d4f9038f81c5bc724f5c3"
+    },
+    "listening.json": {
+      "bytes": 19466,
+      "sha256": "0a65afe6c9419af3ee02d5cfad91627bafac3a71b875f5ddd78f3a2ef47b1dc5"
+    },
+    "transcript.md": {
+      "bytes": 470,
+      "sha256": "417784d3c8db02247bf841bf59a39d6aa4c90013e60bf9bbaa0eb9f6b406b9c8"
+    },
+    "vocabulary.md": {
+      "bytes": 1048,
+      "sha256": "5c010e66f8e62c2bac0323d077d923d1f5f62a49bc981e8d8335997c9760b2a1"
+    }
+  }
+}

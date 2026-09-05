@@ -1,0 +1,591 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "bbc-260820-t1",
+      "title": "Elementary: Follow the road-safety discussion",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260820-t1-g1",
+          "position": 1,
+          "heading": "Elementary: Follow the road-safety discussion",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260820-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What feature gives driverless cars their name?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q1-a",
+                  "label": "A",
+                  "text": "They are designed without any passenger seats."
+                },
+                {
+                  "id": "bbc-260820-t1-q1-b",
+                  "label": "B",
+                  "text": "They can only travel on railway tracks."
+                },
+                {
+                  "id": "bbc-260820-t1-q1-c",
+                  "label": "C",
+                  "text": "They do not need a person in the driving seat."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260820-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does a human driver usually do when Phil crosses on his walk to work?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q2-a",
+                  "label": "A",
+                  "text": "Makes eye contact and waves him across."
+                },
+                {
+                  "id": "bbc-260820-t1-q2-b",
+                  "label": "B",
+                  "text": "Asks Phil to get into the car."
+                },
+                {
+                  "id": "bbc-260820-t1-q2-c",
+                  "label": "C",
+                  "text": "Stops to explain the whole traffic system."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260820-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How might Phil react to crossing in front of a robotaxi?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q3-a",
+                  "label": "A",
+                  "text": "Assume it has already seen him and run immediately."
+                },
+                {
+                  "id": "bbc-260820-t1-q3-b",
+                  "label": "B",
+                  "text": "Wait for it to pass and cross behind it."
+                },
+                {
+                  "id": "bbc-260820-t1-q3-c",
+                  "label": "C",
+                  "text": "Ask its driver for directions."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260820-t1-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "Which group responds well to the tested animations?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q4-a",
+                  "label": "A",
+                  "text": "Pedestrians."
+                },
+                {
+                  "id": "bbc-260820-t1-q4-b",
+                  "label": "B",
+                  "text": "Only airline pilots."
+                },
+                {
+                  "id": "bbc-260820-t1-q4-c",
+                  "label": "C",
+                  "text": "Only people inside a train."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260820-t1-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "Why are the animations less useful for runners and cyclists?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q5-a",
+                  "label": "A",
+                  "text": "They are not allowed to look at vehicles."
+                },
+                {
+                  "id": "bbc-260820-t1-q5-b",
+                  "label": "B",
+                  "text": "They always stop for several minutes before crossing."
+                },
+                {
+                  "id": "bbc-260820-t1-q5-c",
+                  "label": "C",
+                  "text": "They have too little time to see the movement."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260820-t1-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What other issue can change how a road signal is understood?",
+              "options": [
+                {
+                  "id": "bbc-260820-t1-q6-a",
+                  "label": "A",
+                  "text": "The price of the vehicle's tyres."
+                },
+                {
+                  "id": "bbc-260820-t1-q6-b",
+                  "label": "B",
+                  "text": "Cultural differences."
+                },
+                {
+                  "id": "bbc-260820-t1-q6-c",
+                  "label": "C",
+                  "text": "The number of passengers on a bus."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260820-t2",
+      "title": "Intermediate: Complete the research notes",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260820-t2-g1",
+          "position": 1,
+          "heading": "Intermediate: Complete the research notes",
+          "taskType": "note_completion",
+          "instruction": "Listen and complete the notes using information from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260820-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Another name used for autonomous cars: {{blank}}.",
+              "answers": [
+                "robotaxis"
+              ]
+            },
+            {
+              "id": "bbc-260820-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Researcher working on interaction with other road users: Professor {{blank}}.",
+              "answers": [
+                "Stephen Brewster"
+              ]
+            },
+            {
+              "id": "bbc-260820-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "His university is in {{blank}}.",
+              "answers": [
+                "Glasgow"
+              ]
+            },
+            {
+              "id": "bbc-260820-t2-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "BBC Tech Life presenter who asks about the signals: {{blank}}.",
+              "answers": [
+                "Chris Vallance"
+              ]
+            },
+            {
+              "id": "bbc-260820-t2-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Alongside animations, the team tests fixed, coloured {{blank}}.",
+              "answers": [
+                "light rings"
+              ]
+            },
+            {
+              "id": "bbc-260820-t2-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "Those rings are compared with {{blank}}.",
+              "answers": [
+                "traffic lights"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260820-t3",
+      "title": "Intermediate: Listen for concrete details",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260820-t3-g1",
+          "position": 1,
+          "heading": "Intermediate: Listen for concrete details",
+          "taskType": "short_answer",
+          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260820-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What kind of contact involves looking directly into a person's eyes? {{blank}}",
+              "answers": [
+                "eye contact"
+              ]
+            },
+            {
+              "id": "bbc-260820-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which colour is the walking-man animation in the example? {{blank}}",
+              "answers": [
+                "green"
+              ]
+            },
+            {
+              "id": "bbc-260820-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What word describes the quick look that runners and cyclists may have time for? {{blank}}",
+              "answers": [
+                "a glance",
+                "glance"
+              ]
+            },
+            {
+              "id": "bbc-260820-t3-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "In one culture a wave may mean \"please proceed\"; what might it mean in another? {{blank}}",
+              "answers": [
+                "thank you"
+              ]
+            },
+            {
+              "id": "bbc-260820-t3-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "Which country is contrasted with the UK in the discussion of jaywalking? {{blank}}",
+              "answers": [
+                "South Korea"
+              ]
+            },
+            {
+              "id": "bbc-260820-t3-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "In which year did the example from Phoenix begin operating without a human safety driver? {{blank}}",
+              "answers": [
+                "2017"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260820-t4",
+      "title": "Advanced: Connect design choices to road behaviour",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260820-t4-g1",
+          "position": 1,
+          "heading": "Advanced: Connect design choices to road behaviour",
+          "taskType": "multiple_choice_single",
+          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
+          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260820-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What communication problem does Professor Brewster identify?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q1-a",
+                  "label": "A",
+                  "text": "A passenger must always give pedestrians spoken instructions."
+                },
+                {
+                  "id": "bbc-260820-t4-q1-b",
+                  "label": "B",
+                  "text": "Eye contact is only useful when everybody remains inside a vehicle."
+                },
+                {
+                  "id": "bbc-260820-t4-q1-c",
+                  "label": "C",
+                  "text": "Without a visible human driver, other users cannot negotiate priority in the usual way."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260820-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Pippa suggest may change as people become familiar with autonomous vehicles?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q2-a",
+                  "label": "A",
+                  "text": "They may become more accustomed to deciding how to interact with them."
+                },
+                {
+                  "id": "bbc-260820-t4-q2-b",
+                  "label": "B",
+                  "text": "Every possible danger will automatically disappear."
+                },
+                {
+                  "id": "bbc-260820-t4-q2-c",
+                  "label": "C",
+                  "text": "Road users will no longer need to judge when to cross."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260820-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What lesson follows from the different results for pedestrians and faster road users?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q3-a",
+                  "label": "A",
+                  "text": "A signal must suit the amount of viewing and decision time available."
+                },
+                {
+                  "id": "bbc-260820-t4-q3-b",
+                  "label": "B",
+                  "text": "One moving display is equally effective for every road user."
+                },
+                {
+                  "id": "bbc-260820-t4-q3-c",
+                  "label": "C",
+                  "text": "Faster movement gives a person more time to study an animation."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260820-t4-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "single_choice",
+              "prompt": "Why are fixed coloured rings a useful alternative in the example?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q4-a",
+                  "label": "A",
+                  "text": "They require viewers to watch a long sequence of changing images."
+                },
+                {
+                  "id": "bbc-260820-t4-q4-b",
+                  "label": "B",
+                  "text": "They depend on speaking the same language as a human driver."
+                },
+                {
+                  "id": "bbc-260820-t4-q4-c",
+                  "label": "C",
+                  "text": "They provide a signal that can be recognised in a brief look."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260820-t4-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "single_choice",
+              "prompt": "What does the hand-waving example illustrate?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q5-a",
+                  "label": "A",
+                  "text": "Every culture uses exactly the same road gestures."
+                },
+                {
+                  "id": "bbc-260820-t4-q5-b",
+                  "label": "B",
+                  "text": "A familiar gesture may convey different messages across cultures."
+                },
+                {
+                  "id": "bbc-260820-t4-q5-c",
+                  "label": "C",
+                  "text": "Waving has no communicative purpose in any culture."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260820-t4-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "single_choice",
+              "prompt": "What does the comparison involving South Korea add to the discussion?",
+              "options": [
+                {
+                  "id": "bbc-260820-t4-q6-a",
+                  "label": "A",
+                  "text": "Robotic vehicles make local road rules irrelevant."
+                },
+                {
+                  "id": "bbc-260820-t4-q6-b",
+                  "label": "B",
+                  "text": "Safety also depends on local human behaviour, not just vehicle technology."
+                },
+                {
+                  "id": "bbc-260820-t4-q6-c",
+                  "label": "C",
+                  "text": "A country's culture determines the colour of every vehicle."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbc-260820-t5",
+      "title": "Advanced: Supply precise terms in paraphrases",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260820-t5-g1",
+          "position": 1,
+          "heading": "Advanced: Supply precise terms in paraphrases",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260820-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The professor frames the interaction problem as having to {{blank}} who is going to move first.",
+              "answers": [
+                "negotiate"
+              ]
+            },
+            {
+              "id": "bbc-260820-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The research aims to make driverless vehicles more {{blank}}, because unseen dangers can cause accidents.",
+              "answers": [
+                "visible"
+              ]
+            },
+            {
+              "id": "bbc-260820-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The interviewer asks about communicating the {{blank}} of the vehicle to road users.",
+              "answers": [
+                "intentions"
+              ]
+            },
+            {
+              "id": "bbc-260820-t5-q4",
+              "number": 4,
+              "position": 4,
+              "responseType": "text",
+              "prompt": "A brief look may be insufficient to take in the vehicle's {{blank}}.",
+              "answers": [
+                "animation"
+              ]
+            },
+            {
+              "id": "bbc-260820-t5-q5",
+              "number": 5,
+              "position": 5,
+              "responseType": "text",
+              "prompt": "The alternative signal for faster road users consists of coloured {{blank}}.",
+              "answers": [
+                "light rings"
+              ]
+            },
+            {
+              "id": "bbc-260820-t5-q6",
+              "number": 6,
+              "position": 6,
+              "responseType": "text",
+              "prompt": "The early service in Phoenix is distinguished by operating without a human {{blank}}.",
+              "answers": [
+                "safety driver"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

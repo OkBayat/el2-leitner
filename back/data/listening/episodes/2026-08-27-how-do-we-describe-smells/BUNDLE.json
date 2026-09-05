@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260827",
+  "folder": "2026-08-27-how-do-we-describe-smells",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6473495,
+      "sha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374"
+    },
+    "cover.jpg": {
+      "bytes": 116977,
+      "sha256": "c53fd13b55dc54b6b3666678102761809595756939a78412933251c9698d6920"
+    },
+    "episode.json": {
+      "bytes": 1309,
+      "sha256": "31f4a6179ce93e5496f4bbf62f8fcfa25c42061f219986fc4fdee7cec0a4f780"
+    },
+    "listening.json": {
+      "bytes": 20464,
+      "sha256": "7381002847ea1dce91a2cd2eddae12cf7d57f774d8b3541c283a0fc6d9379e6c"
+    },
+    "transcript.md": {
+      "bytes": 433,
+      "sha256": "3176c8ffbc1ff9d2f1638521235238e9dd3dcfe856398f2ddfe877e271743f3e"
+    },
+    "vocabulary.md": {
+      "bytes": 974,
+      "sha256": "e4e24015f2a1930ee625a5cf0ca375ddc50f0674df234302c06ead679c115a71"
+    }
+  }
+}

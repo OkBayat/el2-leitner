@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260709",
+  "folder": "2026-07-09-should-we-cycle-more",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6566175,
+      "sha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038"
+    },
+    "cover.jpg": {
+      "bytes": 137973,
+      "sha256": "e92da9a3c935e5c963bbe36e46bb8d65351fd3665ab86d7f51590f321c08012d"
+    },
+    "episode.json": {
+      "bytes": 1397,
+      "sha256": "e30342dfb6b69dddaa13f5825d034439a2ec49bf74eccae46908eb1eaefff1fa"
+    },
+    "listening.json": {
+      "bytes": 19908,
+      "sha256": "52381c282f009516ab1370bc9cac11d0369ec525cca1fd03ea40769be4e81a23"
+    },
+    "transcript.md": {
+      "bytes": 441,
+      "sha256": "1cb6d6d14cabce69909388d6e2a795972e533090df02b7186c80dab9db89155f"
+    },
+    "vocabulary.md": {
+      "bytes": 994,
+      "sha256": "b4da6fd3e1a969232e6686b1439e9f5fb62344520cd572dffb7270a2e2ee3371"
+    }
+  }
+}
