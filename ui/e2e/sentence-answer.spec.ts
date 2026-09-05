@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 const deck = {
 	practice: { mode: 'sentence', house: 1, retryGap: 3 },
@@ -10,7 +10,18 @@ const deck = {
 	}],
 };
 
-for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 }]) {
+async function expectSafeBounds(panel: Locator, viewport: { width: number; height: number }): Promise<void> {
+	// Leave a pixel of tolerance for fractional device-pixel rounding.
+	await expect.poll(async () => {
+		const bounds = await panel.boundingBox();
+		return bounds ? Math.min(bounds.x, bounds.y,
+			viewport.width - bounds.x - bounds.width, viewport.height - bounds.y - bounds.height) : -1;
+	}, { message: 'Word meaning must keep a 16px safety gutter on every viewport edge' }).toBeGreaterThanOrEqual(15);
+	const bounds = (await panel.boundingBox())!;
+	expect(Math.abs(bounds.width - Math.min(380, viewport.width - 32))).toBeLessThan(2);
+}
+
+for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
 	test.describe(`Sentence answer at ${viewport.width}px`, () => {
 		const mobile = viewport.width < 600;
 		test.use({ viewport, isMobile: mobile, hasTouch: mobile });
@@ -50,11 +61,20 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
 			await expect(panel).toContainText('Materials for writing, such as paper and pens.');
 			await expect(panel).toContainText('Campus vocabulary');
 			await expect(panel.locator('mark')).toHaveText('…');
-			const bounds = (await panel.boundingBox())!;
-			expect(bounds.x).toBeGreaterThanOrEqual(8);
-			expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width - 8);
-			expect(bounds.y).toBeGreaterThanOrEqual(8);
-			expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height - 8);
+			await expectSafeBounds(panel, viewport);
+			if (mobile) {
+				const resized = { width: viewport.width === 390 ? 320 : 390, height: viewport.height };
+				await page.setViewportSize(resized);
+				await expectSafeBounds(panel, resized);
+				await page.setViewportSize(viewport);
+				await expectSafeBounds(panel, viewport);
+			}
+			await panel.locator('.definition-list p').click();
+			await expect(panel).toBeVisible();
+			await page.getByTestId('sentence-word-details-frame').click({ position: { x: 4, y: 4 } });
+			await expect(panel).toHaveCount(0);
+			await field.click();
+			await expect(panel).toBeVisible();
 
 			await field.press('Escape');
 			await expect(panel).toHaveCount(0);

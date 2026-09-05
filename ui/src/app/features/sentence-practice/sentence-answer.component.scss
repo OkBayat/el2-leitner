@@ -60,8 +60,18 @@
 	color: var(--mat-sys-error);
 }
 
+// Keep the safety gutter inside CDK's measured box, including when it is pushed on-screen.
+.word-details-frame {
+	box-sizing: border-box;
+	width: min(412px, 100vw);
+	max-width: 100%;
+	min-width: 0;
+	padding: 16px;
+}
+
 .word-details {
-	width: min(380px, calc(100vw - 32px));
+	box-sizing: border-box;
+	width: 100%;
 	max-height: min(460px, 50dvh);
 	display: flex;
 	flex-direction: column;

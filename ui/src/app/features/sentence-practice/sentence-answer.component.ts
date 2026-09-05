@@ -25,8 +25,8 @@ export class SentenceAnswerComponent implements OnChanges {
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 	readonly detailsOpen = signal(false);
 	readonly positions: ConnectedPosition[] = [
-		{ originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 10 },
-		{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -10 },
+		{ originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top' },
+		{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' },
 	];
 
 	get missingWord(): string {

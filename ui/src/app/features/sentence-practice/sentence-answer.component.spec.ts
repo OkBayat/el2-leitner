@@ -126,6 +126,19 @@ describe('SentenceAnswerComponent', () => {
 		expect(fixture.componentInstance.detailsOpen()).toBe(false);
 	});
 
+	it('treats the safety gutter as outside without dismissing clicks on definition content', async () => {
+		const panel = await open();
+		(panel.querySelector('.definition-list p') as HTMLElement).click();
+		fixture.detectChanges();
+		expect(fixture.componentInstance.detailsOpen()).toBe(true);
+		const frame = overlay.querySelector('[data-testid="sentence-word-details-frame"]') as HTMLElement;
+		expect(frame).not.toBeNull();
+		frame.click();
+		fixture.detectChanges();
+		expect(fixture.componentInstance.detailsOpen()).toBe(false);
+		expect(control.value).toBe('');
+	});
+
 	it('closes stale details on the next prompt and renders definition text safely', async () => {
 		const next = prompt();
 		next.card.definitions![0].text = '<img src=x onerror=alert(1)>';
