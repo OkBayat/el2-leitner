@@ -23,15 +23,19 @@
             @if (lesson.vocabularyCollectionId) {
               <a mat-button [routerLink]="['/bbc-6-minute-english', lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
             }
+            <a
+              mat-button
+              data-testid="open-bbc-episode"
+              [href]="lesson.sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open BBC episode
+              <span class="external-link-icon" aria-hidden="true">↗</span>
+            </a>
           </div>
           <p>Answer as many of the {{ test.questionCount }} questions as you can, then submit when you are ready.</p>
         </div>
-        <a
-          mat-flat-button
-          [href]="lesson.sourceUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >Open BBC episode</a>
       </header>
 
       @if (session.result(); as result) {
