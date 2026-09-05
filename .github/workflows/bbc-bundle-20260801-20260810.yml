@@ -1,0 +1,109 @@
+name: BBC bundle 2026-08-01 through 2026-08-10
+
+on:
+  push:
+    branches: [bundle-work/20260801-20260810-20260905]
+    paths:
+      - .github/workflows/bbc-bundle-20260801-20260810.yml
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate the exact requested plan
+        run: |
+          mkdir -p "$RUNNER_TEMP/vocora-discovery"
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan \
+            --from-date 2026-08-01 --to-date 2026-08-10 --tests 5 \
+            --difficulty-distribution easy=1,medium=2,hard=2 \
+            --output "$RUNNER_TEMP/vocora-discovery/request-plan.json"
+      - name: Retrieve official discovery evidence and canonical tooling
+        run: |
+          python3 - <<'PY'
+          from concurrent.futures import ThreadPoolExecutor
+          from datetime import date
+          from email.utils import parsedate_to_datetime
+          from html.parser import HTMLParser
+          import json
+          import os
+          from pathlib import Path
+          import shutil
+          import urllib.request
+          import xml.etree.ElementTree as ET
+
+          root = Path(os.environ['RUNNER_TEMP']) / 'vocora-discovery'
+          urls = {
+              'feed.xml': 'https://podcasts.files.bbci.co.uk/p02pc9tn.rss',
+              'episode-co-uk.html': 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260806',
+              'episode-com.html': 'https://www.bbc.com/learningenglish/english/features/6-minute-english_2026/ep-260806',
+              'worksheet.pdf': 'https://downloads.bbc.co.uk/learningenglish/features/6min/260806_6_minute_english_how_do_climate_scientists_make_predictions_worksheet.pdf',
+          }
+          def download(item):
+              name, url = item
+              try:
+                  request = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (compatible; Vocora personal-study preparation/1.0)'})
+                  with urllib.request.urlopen(request, timeout=45) as response:
+                      content = response.read(8_000_001)
+                      if len(content) > 8_000_000:
+                          raise ValueError('Discovery source exceeds the size limit')
+                      (root / name).write_bytes(content)
+                      result = {'file': name, 'requested_url': url, 'final_url': response.geturl(), 'status': response.status, 'bytes': len(content)}
+              except Exception as error:
+                  result = {'file': name, 'requested_url': url, 'error': str(error)}
+              print(json.dumps(result))
+              return result
+          with ThreadPoolExecutor(max_workers=4) as executor:
+              results = list(executor.map(download, urls.items()))
+          (root / 'retrieval.json').write_text(json.dumps(results, indent=2) + '\n')
+
+          feed = root / 'feed.xml'
+          if feed.exists():
+              entries = []
+              for item in ET.fromstring(feed.read_bytes()).findall('./channel/item'):
+                  published = parsedate_to_datetime(item.findtext('pubDate')).date().isoformat()
+                  if '2026-07-25' <= published <= '2026-08-15':
+                      entries.append({'title': item.findtext('title'), 'date': published, 'link': item.findtext('link'), 'description': item.findtext('description'), 'enclosure': item.find('enclosure').attrib if item.find('enclosure') is not None else None})
+              print('OFFICIAL_FEED_EPISODES=' + json.dumps(entries))
+              (root / 'feed-episodes.json').write_text(json.dumps(entries, indent=2) + '\n')
+
+          class Assets(HTMLParser):
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == 'meta' and attrs.get('property', '').startswith('og:'):
+                      print('PAGE_META=' + json.dumps(attrs))
+                  for key in ('href', 'src', 'data-src'):
+                      value = attrs.get(key, '')
+                      if value and any(token in value.lower() for token in ('.pdf', '.mp3', '.jpg', '.png', '.webp', '260806')):
+                          print('PAGE_ASSET=' + json.dumps({'tag': tag, 'attribute': key, 'url': value}))
+          for name in ('episode-co-uk.html', 'episode-com.html'):
+              path = root / name
+              if path.exists():
+                  print('PAGE=' + name)
+                  Assets().feed(path.read_text(errors='replace'))
+
+          repository = Path.cwd()
+          target = root / 'repo'
+          for directory in ('.agents', 'back/scripts', 'back/src'):
+              shutil.copytree(repository / directory, target / directory)
+          for filename in ('AGENTS.md', 'back/package.json', 'back/package-lock.json', 'back/data/listening/episodes/README.md', 'docs/COLLECTION_SOURCES.md', 'scripts/install-listening-episode.sh'):
+              source = repository / filename
+              if source.exists():
+                  destination = target / filename
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(source, destination)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vocora-bbc-discovery-20260801-20260810
+          path: ${{ runner.temp }}/vocora-discovery
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
