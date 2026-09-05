@@ -184,13 +184,17 @@ async function setupDatabase() {
       COLLECTIONS_DIRECTORY,
       new VocabularyFileParser()
     );
+    const collectionSourceRepository = new MySqlCollectionSourceRepository(applicationPool);
     const collectionSyncResult = await new SyncCollectionSources({
-      collectionSourceRepository: new MySqlCollectionSourceRepository(applicationPool)
+      collectionSourceRepository
     }).execute(collectionSources);
     if (collectionSyncResult.changedCount) {
       console.info(
         `Synchronized ${collectionSyncResult.changedCount}/${collectionSyncResult.sourceCount} file-managed collection(s).`
       );
+    }
+    if (collectionSyncResult.archivedCount) {
+      console.info(`Archived ${collectionSyncResult.archivedCount} removed file-managed collection(s).`);
     }
 
     const listeningSources = await loadListeningEpisodeSources();
@@ -218,6 +222,15 @@ async function setupDatabase() {
     if (boxFiveRepair.repairedUsers) {
       console.info(
         `Repaired box-five mastery for ${boxFiveRepair.mastered} mastered card(s) and ${boxFiveRepair.pendingCorrected} pending card(s) across ${boxFiveRepair.repairedUsers} learner(s).`
+      );
+    }
+
+    // Keep historical aliases available while repair jobs run. Only after those
+    // repairs finish is it safe to remove aliases no longer owned by any active source.
+    const collectionCleanupResult = await collectionSourceRepository.finalize();
+    if (collectionCleanupResult.orphanSentenceLinksRemoved || collectionCleanupResult.orphanFormsRemoved) {
+      console.info(
+        `Cleaned ${collectionCleanupResult.orphanSentenceLinksRemoved} orphan sentence link(s) and ${collectionCleanupResult.orphanFormsRemoved} stale vocabulary form(s).`
       );
     }
 

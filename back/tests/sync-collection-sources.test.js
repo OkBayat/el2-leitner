@@ -7,7 +7,6 @@ class RecordingCollectionSourceRepository {
   constructor() {
     this.sources = [];
     this.archivedWith = null;
-    this.finalized = false;
   }
 
   async sync(source) {
@@ -26,17 +25,9 @@ class RecordingCollectionSourceRepository {
       archivedSlugs: ["removed-book"]
     };
   }
-
-  async finalize() {
-    this.finalized = true;
-    return {
-      orphanSentenceLinksRemoved: 2,
-      orphanFormsRemoved: 3
-    };
-  }
 }
 
-test("collection source sync processes files, archives missing sources, and finalizes provenance", async () => {
+test("collection source sync processes files and archives missing sources", async () => {
   const repository = new RecordingCollectionSourceRepository();
   const useCase = new SyncCollectionSources({ collectionSourceRepository: repository });
   const sources = [
@@ -48,14 +39,9 @@ test("collection source sync processes files, archives missing sources, and fina
 
   assert.deepEqual(repository.sources, sources);
   assert.deepEqual(repository.archivedWith, ["unchanged-book", "changed-book"]);
-  assert.equal(repository.finalized, true);
   assert.equal(result.sourceCount, 2);
   assert.equal(result.changedCount, 1);
   assert.equal(result.archivedCount, 1);
   assert.deepEqual(result.archivedSlugs, ["removed-book"]);
-  assert.deepEqual(result.cleanup, {
-    orphanSentenceLinksRemoved: 2,
-    orphanFormsRemoved: 3
-  });
   assert.deepEqual(result.results.map((entry) => entry.slug), ["unchanged-book", "changed-book"]);
 });
