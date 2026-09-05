@@ -32,8 +32,21 @@
           [attr.data-testid]="'bbc-lesson-' + lesson.slug"
         >
           @if (lesson.imageUrl) {
-            <img class="lesson-cover" [src]="lesson.imageUrl" [alt]="lesson.title" width="800" height="450" loading="lazy" decoding="async" data-testid="bbc-episode-cover" />
+            <div class="lesson-cover-panel">
+              <img
+                class="lesson-cover"
+                [src]="lesson.imageUrl"
+                [alt]="lesson.title"
+                width="800"
+                height="450"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                data-testid="bbc-episode-cover"
+              />
+            </div>
           }
+
           <div class="lesson-copy">
             <div class="lesson-meta">
               <span>BBC 6 Minute English</span>
@@ -51,9 +64,22 @@
             <span class="question-count">
               {{ lesson.testCount }} IELTS-style tests · {{ lesson.questionCount }} questions in total
             </span>
+
+            <div class="lesson-secondary-actions">
+              @if (lesson.vocabularyCollectionId) {
+                <a mat-stroked-button [routerLink]="[lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
+              }
+              <a
+                mat-button
+                class="episode-link"
+                [href]="lesson.sourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Open BBC episode</a>
+            </div>
           </div>
 
-          <div class="lesson-actions">
+          <div class="lesson-tests">
             <div class="test-picker" aria-label="Choose a test">
               @for (test of lesson.tests; track test.id) {
                 <a
@@ -61,13 +87,11 @@
                   class="test-button"
                   [class.completed]="test.completed"
                   [routerLink]="[lesson.slug, 'tests', test.id, 'practice']"
+                  [attr.aria-label]="test.title + ' — ' + difficultyLabel(test.difficulty) + ' — ' + (test.completed ? 'Completed' : 'Start')"
                   [attr.data-testid]="'start-bbc-' + test.id"
                 >
                   <span class="test-button-content">
-                    <span class="test-name-and-level">
-                      <span class="test-title">{{ test.title }}</span>
-                      <span class="difficulty-badge" [attr.data-difficulty]="test.difficulty || 'medium'">{{ difficultyLabel(test.difficulty) }}</span>
-                    </span>
+                    <span class="difficulty-badge" [attr.data-difficulty]="test.difficulty || 'medium'">{{ difficultyLabel(test.difficulty) }}</span>
                     <span class="test-status">
                       {{ test.completed ? '✓ Completed' : 'Start' }}
                     </span>
@@ -75,16 +99,6 @@
                 </a>
               }
             </div>
-            @if (lesson.vocabularyCollectionId) {
-              <a mat-stroked-button [routerLink]="[lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
-            }
-            <a
-              mat-button
-              class="episode-link"
-              [href]="lesson.sourceUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >Open BBC episode</a>
           </div>
         </article>
       }

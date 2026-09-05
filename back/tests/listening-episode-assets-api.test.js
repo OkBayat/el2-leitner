@@ -59,7 +59,8 @@ test("episode image and vocabulary require authentication and expose no source f
   const c = await context(t);
   for (const suffix of ["image", "audio", "vocabulary"]) await request(c.app).get(`${base}/${suffix}`).expect(401);
   const image = await c.get(`${base}/image`).expect(200).expect("Content-Type", /image\/jpeg/u);
-  assert.equal(image.headers["cache-control"], "no-store");
+  assert.equal(image.headers["cache-control"], "private, max-age=604800");
+  assert.ok(image.headers["last-modified"], "Episode covers should support browser revalidation after their cache lifetime.");
   for (const filename of ["listening.json", "episode.json", "transcript.md", "vocabulary.md"]) {
     await c.get(`${base}/${filename}`).expect(404);
     await c.get(`/data/listening/episodes/${folder}/${filename}`).expect(404);

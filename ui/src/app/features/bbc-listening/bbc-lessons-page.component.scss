@@ -64,13 +64,44 @@ h1 {
 
 .lesson-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
-  gap: 28px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 210px);
+  gap: 24px;
+  align-items: start;
   padding: 24px;
+  overflow: hidden;
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 18px;
   background: var(--mat-sys-surface-container-lowest);
+}
+
+.lesson-card.has-cover {
+  grid-template-columns: minmax(280px, 40%) minmax(0, 1fr) minmax(170px, 190px);
+  gap: 0;
+  align-items: stretch;
+  padding: 0;
+}
+
+.lesson-cover-panel {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container);
+}
+
+.lesson-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.lesson-copy {
+  min-width: 0;
+}
+
+.lesson-card.has-cover .lesson-copy {
+  padding: 24px;
 }
 
 .lesson-meta {
@@ -99,9 +130,21 @@ h1 {
   font-size: 0.88rem;
 }
 
-.lesson-actions {
+.lesson-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.lesson-tests {
   display: grid;
-  gap: 10px;
+  align-content: start;
+}
+
+.lesson-card.has-cover .lesson-tests {
+  padding: 24px 24px 24px 0;
 }
 
 .test-picker {
@@ -111,13 +154,16 @@ h1 {
 
 .test-button {
   width: 100%;
+  min-height: 44px;
+  height: auto;
+  padding: 6px 10px;
 }
 
 .test-button-content {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -126,19 +172,15 @@ h1 {
   background: color-mix(in srgb, var(--mat-sys-primary) 7%, transparent);
 }
 
-.test-title {
-  color: var(--mat-sys-on-surface);
-  font-weight: 700;
-}
-
 .test-status {
   color: var(--mat-sys-primary);
   font-size: 0.82rem;
   font-weight: 650;
+  white-space: nowrap;
 }
 
 .episode-link {
-  justify-self: stretch;
+  min-width: auto;
 }
 
 .status {
@@ -157,13 +199,34 @@ h1 {
   margin: 0 0 12px;
 }
 
+@media (max-width: 900px) {
+  .lesson-card.has-cover {
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 210px);
+  }
+
+  .lesson-cover-panel {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+    max-height: 280px;
+  }
+
+  .lesson-card.has-cover .lesson-copy {
+    padding: 20px;
+  }
+
+  .lesson-card.has-cover .lesson-tests {
+    padding: 20px 20px 20px 0;
+  }
+}
+
 @media (max-width: 700px) {
   .bbc-lessons-page {
     padding: 22px 16px 96px;
   }
 
   .practice-note,
-  .lesson-card {
+  .lesson-card,
+  .lesson-card.has-cover {
     grid-template-columns: 1fr;
   }
 
@@ -171,17 +234,22 @@ h1 {
     gap: 20px;
     padding: 20px;
   }
-}
 
-.lesson-card.has-cover { grid-template-columns: 170px minmax(0, 1fr) minmax(210px, 260px); }
-.lesson-cover { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; background: var(--mat-sys-surface-container); }
-.test-button { height: auto; min-height: 58px; padding: 8px 12px; }
-.test-name-and-level { display: grid; justify-items: start; gap: 4px; }
-@media (max-width: 950px) {
-  .lesson-card.has-cover { grid-template-columns: minmax(0, 1fr) minmax(210px, 260px); }
-  .lesson-cover { grid-column: 1 / -1; height: 210px; }
-}
-@media (max-width: 700px) {
-  .lesson-card.has-cover { grid-template-columns: 1fr; }
-  .lesson-cover { height: auto; aspect-ratio: 16 / 9; }
+  .lesson-card.has-cover {
+    gap: 0;
+    padding: 0;
+  }
+
+  .lesson-card.has-cover .lesson-copy,
+  .lesson-card.has-cover .lesson-tests {
+    padding: 20px;
+  }
+
+  .lesson-card.has-cover .lesson-tests {
+    padding-top: 0;
+  }
+
+  .lesson-cover-panel {
+    max-height: none;
+  }
 }

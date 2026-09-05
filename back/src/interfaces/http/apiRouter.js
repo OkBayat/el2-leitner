@@ -3,6 +3,8 @@ import { Router } from "express";
 import { rateLimit } from "express-rate-limit";
 import { createAuthMiddleware } from "./authMiddleware.js";
 
+const LISTENING_IMAGE_CACHE_CONTROL = "private, max-age=604800";
+
 function cookieClearOptions(options) {
   const { maxAge: _maxAge, expires: _expires, ...clearOptions } = options;
   return clearOptions;
@@ -100,7 +102,8 @@ export function createApiRouter({
   router.get("/listening/bbc/lessons/:lessonSlug/image", authenticate, async (req, res, next) => {
     const { fileName, assetDirectory } = await useCases.getListeningEpisodeImage.execute(req.params.lessonSlug);
     const absolutePath = await resolveListeningAsset(listeningEpisodesDirectory, [assetDirectory, fileName], "IMAGE");
-    res.sendFile(absolutePath, { cacheControl: false, lastModified: false }, (error) => {
+    res.set("Cache-Control", LISTENING_IMAGE_CACHE_CONTROL);
+    res.sendFile(absolutePath, { cacheControl: false, lastModified: true }, (error) => {
       if (error && !res.headersSent) next(error);
     });
   });
