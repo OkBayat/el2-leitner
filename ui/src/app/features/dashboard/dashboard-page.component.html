@@ -23,8 +23,8 @@
 					@if (dueCount()) {
 						<button mat-flat-button type="button" (click)="goReview()">Start today's review</button>
 					}
-					<button mat-stroked-button type="button" (click)="startBoxOne()">Free practice: House 1</button>
-					<button mat-stroked-button type="button" data-testid="start-sentence-practice" (click)="startSentencePractice()">Sentence practice: House 1</button>
+					<button mat-stroked-button type="button" (click)="startBoxOne()">Free practice: Box 1</button>
+					<button mat-stroked-button type="button" data-testid="start-sentence-practice" (click)="startSentencePractice()">Sentence practice: Box 1</button>
 					<button mat-stroked-button type="button" (click)="addNewWords()">Add new words</button>
 					<a mat-stroked-button routerLink="/bbc-6-minute-english" data-testid="open-bbc-listening">BBC 6 Minute English</a>
 				</div>
@@ -87,7 +87,7 @@
 			<section class="panel leitner-status-card" data-testid="house-status" aria-labelledby="house-status-title">
 				<header class="panel-heading leitner-heading">
 					<div>
-						<h2 id="house-status-title">House status</h2>
+						<h2 id="house-status-title">Box status</h2>
 						<p>Leitner waiting states</p>
 					</div>
 					<div class="leitner-heading-actions">
@@ -99,7 +99,7 @@
 							[class.is-copied]="houseOneCopyStatus() === 'copied'"
 							[class.is-failed]="houseOneCopyStatus() === 'failed'"
 							[disabled]="houseOneExportCount() === 0 || houseOneCopyStatus() === 'copying'"
-							[attr.aria-label]="houseOneExportCount() ? 'Copy all House 1 words with mistake counts' : 'House 1 has no words to copy'"
+							[attr.aria-label]="houseOneExportCount() ? 'Copy all Box 1 words with mistake counts' : 'Box 1 has no words to copy'"
 							(click)="copyHouseOne()"
 						>
 							<svg viewBox="0 0 24 24" aria-hidden="true">
@@ -117,11 +117,11 @@
 						<a
 							class="leitner-row"
 							[routerLink]="['/leitner-house', house.box]"
-							[attr.aria-label]="'View all words in House ' + house.box"
+							[attr.aria-label]="'View all words in Box ' + house.box"
 							[attr.data-house]="house.box"
 							[attr.data-state-count]="house.segments.length"
 						>
-							<strong class="leitner-house-name">House {{ house.box }}</strong>
+							<strong class="leitner-house-name">Box {{ house.box }}</strong>
 
 							<div
 								class="leitner-segments"
