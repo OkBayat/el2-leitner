@@ -6,7 +6,8 @@ import { seedSentenceCatalog } from "../src/infrastructure/persistence/mysql/see
 class FakeSentenceSeedConnection {
   constructor(pool) {
     this.pool = pool;
-    this.pending = [];
+    this.pendingInserts = [];
+    this.pendingRefreshes = [];
     this.committed = false;
     this.rolledBack = false;
     this.released = false;
@@ -17,22 +18,34 @@ class FakeSentenceSeedConnection {
   }
 
   async execute(sql, parameters) {
-    if (!sql.startsWith("INSERT INTO sentences")) {
-      throw new Error(`Unexpected seed connection query: ${sql}`);
+    if (sql.startsWith("INSERT INTO sentences")) {
+      for (let index = 0; index < parameters.length; index += 2) {
+        const sentence = parameters[index];
+        const hash = parameters[index + 1];
+        assert.equal(typeof sentence, "string");
+        assert.match(hash, /^[a-f0-9]{64}$/u);
+        this.pendingInserts.push(sentence);
+      }
+      return [{ affectedRows: this.pendingInserts.length }];
     }
-    for (let index = 0; index < parameters.length; index += 2) {
-      const sentence = parameters[index];
-      const hash = parameters[index + 1];
-      assert.equal(typeof sentence, "string");
-      assert.match(hash, /^[a-f0-9]{64}$/u);
-      this.pending.push(sentence);
+
+    if (sql.startsWith("UPDATE sentences")) {
+      this.pendingRefreshes.push(...parameters);
+      return [{ affectedRows: parameters.length }];
     }
-    return [{ affectedRows: this.pending.length }];
+
+    throw new Error(`Unexpected seed connection query: ${sql}`);
   }
 
   async commit() {
     this.committed = true;
-    for (const sentence of this.pending) this.pool.rows.add(sentence);
+    for (const sentence of this.pendingInserts) {
+      this.pool.rows.set(sentence, { is_curated: 1, status: "active" });
+    }
+    for (const sentence of this.pendingRefreshes) {
+      const current = this.pool.rows.get(sentence);
+      if (current) this.pool.rows.set(sentence, { is_curated: 1, status: "active" });
+    }
   }
 
   async rollback() {
@@ -46,7 +59,7 @@ class FakeSentenceSeedConnection {
 
 class FakeSentenceSeedPool {
   constructor() {
-    this.rows = new Set();
+    this.rows = new Map();
     this.connections = [];
     this.beginCalls = 0;
     this.readQueries = [];
@@ -55,7 +68,10 @@ class FakeSentenceSeedPool {
   async execute(sql) {
     this.readQueries.push(sql);
     if (sql.includes("FROM sentences")) {
-      return [[...this.rows].map((sentence_text) => ({ sentence_text }))];
+      return [[...this.rows.entries()].map(([sentence_text, row]) => ({
+        sentence_text,
+        ...row
+      }))];
     }
     throw new Error(`Unexpected seed pool query: ${sql}`);
   }
@@ -88,5 +104,16 @@ describe("curated sentence database seed", () => {
     const second = await seedSentenceCatalog({ pool, sentences });
     assert.deepEqual(second, { changed: false, sentenceCount: 2, insertedCount: 0 });
     assert.equal(pool.connections.length, 1, "an unchanged rerun must not open a write transaction");
+  });
+
+  it("marks pre-existing curated rows so collection cleanup never deactivates shared catalog sentences", async () => {
+    const pool = new FakeSentenceSeedPool();
+    const sentence = "The bus was crowded this morning.";
+    pool.rows.set(sentence, { is_curated: 0, status: "active" });
+
+    const result = await seedSentenceCatalog({ pool, sentences: [sentence] });
+
+    assert.deepEqual(result, { changed: true, sentenceCount: 1, insertedCount: 0 });
+    assert.deepEqual(pool.rows.get(sentence), { is_curated: 1, status: "active" });
   });
 });
