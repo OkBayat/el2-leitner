@@ -75,6 +75,145 @@ class EpisodeToolsTests(unittest.TestCase):
                 self.assertEqual(info["sha256"], tools.hashlib.sha256(content).hexdigest())
             self.assertNotIn("unrelated-private.txt", " ".join(archive.namelist()))
 
+    def bundle(self):
+        output = self.root / "bundle.zip"
+        tools.package_episode(self.episode, output, allow_source_transcript=True)
+        return output
+
+    def rewrite_bundle(self, source, change):
+        with zipfile.ZipFile(source) as archive:
+            files = {info.filename: archive.read(info) for info in archive.infolist()}
+        change(files)
+        output = self.root / "modified.zip"
+        with zipfile.ZipFile(output, "w") as archive:
+            for name, content in files.items():
+                archive.writestr(name, content)
+        return output
+
+    def test_verify_checks_all_hashes_and_reports_transcript_status(self):
+        report, files = tools.verify_bundle(self.bundle())
+        self.assertEqual(report["testCount"], 3)
+        self.assertEqual(report["transcriptStatus"], "source_reference_only")
+        self.assertEqual(set(files), {"episode.json", "listening.json", "cover.jpg", "audio.mp3", "transcript.md", "vocabulary.md"})
+
+    def test_tampered_or_unexpected_bundle_members_are_rejected_before_install(self):
+        bundle = self.bundle()
+        for suffix, content in (("audio.mp3", b"ID3-changed"), ("../outside.txt", b"unsafe"), ("extra.txt", b"unexpected")):
+            with self.subTest(suffix=suffix):
+                modified = self.rewrite_bundle(bundle, lambda files: files.update({self.episode.name + "/" + suffix: content}))
+                with self.assertRaises(ValueError):
+                    tools.install_bundle(modified, self.root / "destination", allow_source_transcript=True)
+                self.assertFalse((self.root / "destination").exists())
+                modified.unlink()
+
+    def test_bundle_manifest_must_match_validated_episode_and_transcript(self):
+        bundle = self.bundle()
+        for key, value in (("episodeId", "wrong-episode"), ("testCount", 999), ("transcriptStatus", "provided_unverified")):
+            with self.subTest(key=key):
+                def change(files):
+                    name = self.episode.name + "/BUNDLE.json"
+                    data = json.loads(files[name]); data[key] = value
+                    files[name] = json.dumps(data).encode()
+                modified = self.rewrite_bundle(bundle, change)
+                with self.assertRaises(ValueError):
+                    tools.verify_bundle(modified)
+                modified.unlink()
+
+    def test_new_bundle_install_is_validated_and_never_overwrites_a_directory(self):
+        bundle = self.bundle()
+        target = self.root / "catalog"
+        target.mkdir()
+        with self.assertRaisesRegex(ValueError, "source-reference"):
+            tools.install_bundle(bundle, target)
+        self.assertFalse((target / self.episode.name).exists())
+        report = tools.install_bundle(bundle, target, allow_source_transcript=True)
+        self.assertEqual(report["action"], "installed")
+        self.assertEqual((target / self.episode.name / "audio.mp3").read_bytes(), (self.episode / "audio.mp3").read_bytes())
+        tools.validate_for_bundle(target / self.episode.name)
+        with self.assertRaisesRegex(ValueError, "already exists"):
+            tools.install_bundle(bundle, target, allow_source_transcript=True)
+
+    def test_audio_only_install_preserves_edited_json_and_transcript_and_is_idempotent(self):
+        bundle = self.bundle()
+        (self.episode / "audio.mp3").unlink()
+        edited = (self.episode / "listening.json").read_bytes() + b"\n"
+        (self.episode / "listening.json").write_bytes(edited)
+        (self.episode / "transcript.md").write_text("My locally supplied transcript.")
+        report = tools.install_bundle(bundle, self.root, audio_only=True)
+        self.assertEqual(report["action"], "audio_installed")
+        self.assertEqual((self.episode / "listening.json").read_bytes(), edited)
+        self.assertEqual((self.episode / "transcript.md").read_text(), "My locally supplied transcript.")
+        self.assertEqual(tools.install_bundle(bundle, self.root, audio_only=True)["action"], "unchanged")
+        (self.episode / "audio.mp3").write_bytes(b"ID3-local-edition")
+        with self.assertRaisesRegex(ValueError, "different audio"):
+            tools.install_bundle(bundle, self.root, audio_only=True)
+        self.assertEqual((self.episode / "audio.mp3").read_bytes(), b"ID3-local-edition")
+
+    def test_audio_only_rejects_missing_or_wrong_episode_and_symlink_target(self):
+        bundle = self.bundle()
+        empty = self.root / "empty"; empty.mkdir()
+        with self.assertRaisesRegex(ValueError, "existing episode"):
+            tools.install_bundle(bundle, empty, audio_only=True)
+        data = json.loads((self.episode / "episode.json").read_text())
+        data["publicId"] = "wrong-episode"
+        (self.episode / "episode.json").write_text(json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "identity"):
+            tools.install_bundle(bundle, self.root, audio_only=True)
+        linked = self.root / "linked"; linked.symlink_to(empty)
+        with self.assertRaisesRegex(ValueError, "symbolic"):
+            tools.install_bundle(bundle, linked, allow_source_transcript=True)
+
+    def test_duplicate_zip_members_and_symlink_members_are_rejected(self):
+        bundle = self.bundle()
+        for duplicate in (True, False):
+            output = self.root / ("duplicate.zip" if duplicate else "symlink.zip")
+            with zipfile.ZipFile(bundle) as source, zipfile.ZipFile(output, "w") as destination:
+                for info in source.infolist():
+                    if not duplicate and info.filename.endswith("audio.mp3"):
+                        info.external_attr = 0o120777 << 16
+                    destination.writestr(info, source.read(info))
+                if duplicate:
+                    import warnings
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", UserWarning)
+                        destination.writestr(self.episode.name + "/audio.mp3", b"ID3")
+            with self.assertRaises(ValueError):
+                tools.verify_bundle(output)
+
+    def test_rehashed_invalid_test_content_still_fails_application_validation(self):
+        bundle = self.bundle()
+        def change(files):
+            prefix = self.episode.name + "/"
+            data = json.loads(files[prefix + "listening.json"])
+            data["tests"][0]["difficulty"] = "not-a-difficulty"
+            content = json.dumps(data).encode()
+            files[prefix + "listening.json"] = content
+            report = json.loads(files[prefix + "BUNDLE.json"])
+            report["files"]["listening.json"] = {"bytes": len(content), "sha256": tools.hashlib.sha256(content).hexdigest()}
+            files[prefix + "BUNDLE.json"] = json.dumps(report).encode()
+        modified = self.rewrite_bundle(bundle, change)
+        target = self.root / "catalog"; target.mkdir()
+        with self.assertRaises(tools.subprocess.CalledProcessError):
+            tools.install_bundle(modified, target, allow_source_transcript=True)
+        self.assertEqual(list(target.iterdir()), [])
+
+    def test_non_object_manifests_and_invalid_cover_types_are_rejected_cleanly(self):
+        bundle = self.bundle()
+        for value in ([], {"imageFile": []}):
+            with self.subTest(value=value):
+                modified = self.rewrite_bundle(bundle, lambda files: files.update({self.episode.name + "/episode.json": json.dumps(value).encode()}))
+                with self.assertRaises(ValueError):
+                    tools.verify_bundle(modified)
+                modified.unlink()
+
+    def test_verify_and_audio_only_install_are_available_through_the_cli(self):
+        bundle = self.bundle()
+        script = ROOT / "scripts/manage-listening-episode.py"
+        for args in (["verify", str(bundle)], ["install", str(bundle), "--into", str(self.root), "--audio-only"]):
+            result = tools.subprocess.run([tools.sys.executable, str(script), *args], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('"testCount": 3', result.stdout)
+
     def test_packaging_does_not_overwrite_an_existing_zip(self):
         destination = self.root / "keep.zip"
         destination.write_bytes(b"keep")

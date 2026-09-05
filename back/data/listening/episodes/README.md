@@ -194,6 +194,32 @@ git check-ignore back/data/listening/episodes/*/audio.mp3
 bash scripts/deploy.sh
 ```
 
+### Validated bundle installation (recommended)
+
+The preparation helper also verifies and installs bundles. It checks all seven ZIP members, rejects duplicate names, traversal paths, links, oversized files and unexpected content, verifies every SHA-256/byte count and runs the actual Node episode validator before writing anything. Checksums detect corruption; they are **not digital signatures or proof of authorship**. Only install bundles from a trusted author.
+
+```bash
+BUNDLE=/path/to/vocora-bbc-260618-source-reference.zip
+CATALOG=back/data/listening/episodes
+python3 back/scripts/manage-listening-episode.py verify "$BUNDLE"
+
+# The sample episode is already tracked in this PR: install ONLY its missing MP3.
+# JSON, cover, vocabulary and any locally supplied full transcript remain untouched.
+python3 back/scripts/manage-listening-episode.py install "$BUNDLE" \
+  --into "$CATALOG" --audio-only
+
+# For a NEW episode folder, install the complete validated bundle instead.
+python3 back/scripts/manage-listening-episode.py install /path/to/new-episode.zip \
+  --into "$CATALOG"
+# A disclosed source-reference-only bundle additionally requires --allow-source-transcript.
+
+bash scripts/deploy.sh
+```
+
+The destination catalog must already exist. Full installation refuses an existing episode directory, stages outside the watched catalog and moves the new directory into place only after validation. `--audio-only` requires the existing episode identity to match; identical audio is a no-op, and a different existing MP3 is never overwritten. To change a recording deliberately, back up the current MP3 and remove it explicitly first. Both modes reject symlinked destination paths. They do not execute SQL, edit Git tracking or deploy the application themselves.
+
+The first sample remains **source-reference-only for the full transcript**, regardless of successful schema/integrity checks. A `provided_unverified` transcript is supplied content, not an automatic assertion of completeness or redistribution permission. The audio-only path preserves a full transcript you have already installed locally.
+
 The deploy script builds the app/setup image, waits for MySQL, runs a **fresh** `db-setup` container, and restarts the app only after setup succeeds. Do not rely on a previously completed one-shot `db-setup` container to rerun when only a bind-mounted JSON file changed. Existing first-time `docker compose up --build` remains supported; `scripts/deploy.sh` is the repeatable update command. This script does not call `git pull`, delete files, or remove database volumes.
 
 Both setup and app mount `./back/data/listening/episodes` read-only at `/app/back/data/listening/episodes`. The Node runtime can instead use `LISTENING_EPISODES_DIRECTORY=/absolute/path/to/episodes`; both the setup command and server must receive the same setting. Do not mount an empty directory over the catalog. The legacy `back/data/listening/audio/<episode-publicId>.mp3` location remains a safe fallback while existing installations move their files. A missing MP3 does not block Git-only CI or database synchronization; playback returns a controlled 404 until a local file is installed. Images must be present.
