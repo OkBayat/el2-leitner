@@ -1,0 +1,20 @@
+name: Listening development context
+on:
+  push:
+    branches: [feature/file-managed-listening-episodes]
+    paths: [.github/workflows/listening-development-context.yml]
+permissions:
+  contents: read
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: git archive --format=tar.gz HEAD > /tmp/vocora-context.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: listening-development-context
+          path: /tmp/vocora-context.tar.gz
+          retention-days: 1
