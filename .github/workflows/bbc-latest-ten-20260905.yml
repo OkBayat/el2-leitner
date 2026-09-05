@@ -1,0 +1,148 @@
+name: Retrieve ten latest non-duplicate BBC episodes
+on:
+  push:
+    branches: [bundle-work/latest-ten-20260905]
+    paths: [.github/workflows/bbc-latest-ten-20260905.yml]
+permissions:
+  contents: read
+jobs:
+  retrieve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Resolve official episodes and fetch canonical lesson assets
+        run: |
+          python3 - <<'PY'
+          import concurrent.futures
+          import datetime as dt
+          from email.utils import parsedate_to_datetime
+          from html import unescape
+          from html.parser import HTMLParser
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import shutil
+          import subprocess
+          import sys
+          import urllib.request
+          import xml.etree.ElementTree as ET
+
+          root = Path(os.environ['RUNNER_TEMP']) / 'vocora-latest-ten'
+          root.mkdir()
+          refs = root / 'references'
+          refs.mkdir()
+          def save_json(path, value):
+              path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          def fetch(url):
+              request = urllib.request.Request(url, headers={'User-Agent': 'Vocora personal-study preparation/1.0'})
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  if response.status != 200:
+                      raise ValueError('Unexpected response: ' + url)
+                  content = response.read(5_000_001)
+                  if len(content) > 5_000_000:
+                      raise ValueError('Reference exceeded size limit')
+                  return content, response.geturl()
+          class Page(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.meta = {}
+                  self.links = []
+                  self.text = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == 'meta':
+                      self.meta[attrs.get('property', attrs.get('name', ''))] = attrs.get('content', '')
+                  if tag == 'a' and attrs.get('href'):
+                      self.links.append(attrs['href'])
+              def handle_data(self, data):
+                  self.text.append(data)
+          def normalize(value):
+              return re.sub(r'[^a-z0-9]', '', unescape(value).lower())
+
+          previous = {'bbc-6-minute-english-260806'}
+          existing = []
+          for path in sorted(Path('back/data/listening/episodes').glob('*/episode.json')):
+              entry = json.loads(path.read_text())
+              existing.append({'publicId': entry['publicId'], 'title': entry['title'], 'episodeDate': entry['episodeDate'], 'path': str(path)})
+          excluded = previous | {entry['publicId'] for entry in existing}
+          feed_url = 'https://podcasts.files.bbci.co.uk/p02pc9tn.rss'
+          raw, final_url = fetch(feed_url)
+          (refs / 'feed.xml').write_bytes(raw)
+          all_episodes = []
+          for item in ET.fromstring(raw).findall('./channel/item'):
+              published = parsedate_to_datetime(item.findtext('pubDate'))
+              description = item.findtext('description', '')
+              urls = re.findall(r'https://www\.bbc\.(?:co\.uk|com)/learningenglish/english/features/6-minute-english_\d{4}/ep-(\d{6})', description)
+              if not urls or published.date().isoformat() > '2026-09-05':
+                  continue
+              code = urls[0]
+              url = re.search(r'https://www\.bbc\.(?:co\.uk|com)/learningenglish/english/features/6-minute-english_\d{4}/ep-' + code, description).group(0)
+              date = published.date().isoformat()
+              if code != published.strftime('%y%m%d'):
+                  raise ValueError('Feed date/code mismatch: ' + url)
+              all_episodes.append({'title': item.findtext('title'), 'episodeDate': date, 'episodeCode': code, 'publicId': 'bbc-6-minute-english-' + code, 'sourceUrl': url, 'publishedAt': published.astimezone(dt.timezone.utc).isoformat().replace('+00:00', 'Z')})
+          all_episodes.sort(key=lambda item: (item['episodeDate'], item['publicId']), reverse=True)
+          seen = set()
+          unique = []
+          for entry in all_episodes:
+              if entry['publicId'] not in seen:
+                  seen.add(entry['publicId'])
+                  unique.append(entry)
+          selected = [entry for entry in unique if entry['publicId'] not in excluded][:10]
+          if len(selected) != 10:
+              raise ValueError('Could not find exactly ten eligible episodes')
+          planner = '.agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py'
+          tool = 'back/scripts/manage-listening-episode.py'
+          dates = [entry['episodeDate'] for entry in selected]
+          subprocess.run([sys.executable, planner, 'plan', '--from-date', min(dates), '--to-date', max(dates), '--tests', '5', '--difficulty-distribution', 'easy=1,medium=2,hard=2', '--output', str(root / 'request-plan.json')], check=True)
+
+          def resolve(entry):
+              page_raw, page_final = fetch(entry['sourceUrl'])
+              parser = Page()
+              parser.feed(page_raw.decode('utf-8'))
+              if normalize(entry['title']) not in normalize(parser.meta.get('og:title', '')):
+                  raise ValueError('Official title mismatch: ' + entry['sourceUrl'])
+              text = '\n'.join(parser.text)
+              if entry['episodeCode'] not in text or 'TRANSCRIPT' not in text:
+                  raise ValueError('Missing official transcript/code: ' + entry['sourceUrl'])
+              audio = sorted(set(link for link in parser.links if link.startswith('https://downloads.bbc.co.uk/') and link.endswith('.mp3') and entry['episodeCode'] in link))
+              transcript = sorted(set(link for link in parser.links if link.startswith('https://downloads.bbc.co.uk/') and link.endswith('_transcript.pdf') and entry['episodeCode'] in link))
+              image = parser.meta.get('og:image', '')
+              if len(audio) != 1 or len(transcript) != 1 or not image.startswith('https://ichef.bbci.co.uk/'):
+                  raise ValueError('Ambiguous official assets: ' + entry['sourceUrl'])
+              (refs / (entry['episodeCode'] + '.html')).write_bytes(page_raw)
+              slug = re.sub(r'[^a-z0-9]+', '-', entry['title'].lower()).strip('-')
+              entry.update({'slug': slug, 'folder': entry['episodeDate'] + '-' + slug, 'audioUrl': audio[0], 'transcriptUrl': transcript[0], 'imageUrl': image, 'sourcePageFinalUrl': page_final, 'officialDescription': parser.meta.get('og:description', ''), 'sourceLevelEvidence': 'Intermediate level' if 'Intermediate level' in text else None})
+              return entry
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              selected = list(pool.map(resolve, selected))
+          bind = [sys.executable, planner, 'bind-discovery', '--plan', str(root / 'request-plan.json'), '--output', str(root / 'bound-plan.json')]
+          for entry in selected:
+              bind += ['--episode', entry['episodeDate'] + '=' + entry['publicId']]
+          subprocess.run(bind, check=True)
+          save_json(root / 'selection-audit.json', {'asOfDate': '2026-09-05', 'feedUrl': feed_url, 'feedFinalUrl': final_url, 'repositoryCommit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(), 'requestedCount': 10, 'excludedPreviouslyDelivered': sorted(previous), 'excludedRepositoryEpisodes': existing, 'recentFeedCandidates': unique[:20], 'selected': selected, 'note': 'The date scope bounds an explicitly selected latest-ten set; user exclusions are intentional, not missing range episodes.'})
+          def fetch_media(entry):
+              directory = root / 'episodes' / entry['folder']
+              directory.mkdir(parents=True)
+              save_json(directory / 'episode.json', {'schemaVersion': 1, 'publicId': entry['publicId'], 'provider': 'bbc_6_minute_english', 'slug': entry['slug'], 'title': entry['title'], 'description': entry['officialDescription'], 'episodeCode': entry['episodeCode'], 'episodeDate': entry['episodeDate'], 'publishedAt': entry['publishedAt'], 'sourceUrl': entry['sourceUrl'], 'status': 'published', 'level': 'intermediate', 'audioFile': 'audio.mp3', 'imageFile': 'cover.jpg', 'sources': {'audioUrl': entry['audioUrl'], 'imageUrl': entry['imageUrl'], 'transcriptUrl': entry['transcriptUrl'], 'vocabularyUrl': entry['sourceUrl'], 'attribution': 'BBC Learning English, 6 Minute English. BBC audio and episode artwork retain their original copyright. Independently authored Vocora practice will be added after source review.', 'retrievedAt': dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}})
+              subprocess.run([sys.executable, tool, 'fetch-assets', str(directory)], check=True)
+          with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+              list(pool.map(fetch_media, selected))
+          for path in subprocess.check_output(['git', 'ls-files'], text=True).splitlines():
+              if path == 'AGENTS.md' or path.startswith(('.agents/', 'back/src/', 'back/scripts/', 'back/test/', 'back/tests/')) or path in ('back/package.json', 'back/package-lock.json', 'back/data/listening/episodes/README.md', 'scripts/install-listening-episode.sh', 'docs/COLLECTION_SOURCES.md'):
+                  destination = root / 'repo' / path
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copyfile(path, destination)
+          print(json.dumps([{'date': entry['episodeDate'], 'title': entry['title']} for entry in selected], indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vocora-latest-ten-sources-and-media-20260905
+          path: ${{ runner.temp }}/vocora-latest-ten
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
