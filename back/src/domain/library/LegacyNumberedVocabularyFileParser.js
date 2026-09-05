@@ -1,4 +1,5 @@
 import { ValidationError } from "../errors.js";
+import { stripExclamationMarks } from "./PracticeContentSanitizer.js";
 import { cleanVocabularyForms, normalizeVocabularyForm } from "./VocabularyNormalizer.js";
 
 const MAX_IMPORT_BYTES = 2_000_000;
@@ -15,6 +16,7 @@ export class LegacyNumberedVocabularyFileParser {
       throw new ValidationError("IMPORT_TOO_LARGE", "Vocabulary import is too large.");
     }
 
+    const sanitizedText = stripExclamationMarks(text);
     const sectionStack = [];
     const sectionsByPath = new Map();
     const entries = [];
@@ -22,7 +24,7 @@ export class LegacyNumberedVocabularyFileParser {
     let sourceItemCount = 0;
     let duplicateCount = 0;
 
-    for (const rawLine of text.split(/\r?\n/u)) {
+    for (const rawLine of sanitizedText.split(/\r?\n/u)) {
       const line = rawLine.trim();
       if (!line) continue;
 

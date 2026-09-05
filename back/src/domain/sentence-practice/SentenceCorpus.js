@@ -1,10 +1,11 @@
 import { ValidationError } from "../errors.js";
+import { stripExclamationMarks } from "../library/PracticeContentSanitizer.js";
 import { cleanVocabularyForms, normalizeVocabularyForm } from "../library/VocabularyNormalizer.js";
 import { NATURAL_FALLBACK_TEMPLATES, TARGET } from "./SentenceTemplateCatalog.js";
 import { templatesFor } from "./SentenceTemplateSelector.js";
 
 export const SENTENCE_CORPUS_SOURCE = "ielts-listening-core-1500";
-export const SENTENCE_CORPUS_VERSION = "2026-09-03.2";
+export const SENTENCE_CORPUS_VERSION = "2026-09-05.1";
 export const SENTENCES_PER_SOURCE_ITEM = 3;
 export const EXPECTED_SENTENCE_SOURCE_ITEMS = 1_500;
 
@@ -63,10 +64,11 @@ export function parseSentenceSource(sourceText) {
     throw new ValidationError("INVALID_SENTENCE_SOURCE", "Sentence source must be plain text.");
   }
 
+  const sanitizedSourceText = stripExclamationMarks(sourceText);
   const sectionStack = [];
   const items = [];
 
-  for (const rawLine of sourceText.split(/\r?\n/u)) {
+  for (const rawLine of sanitizedSourceText.split(/\r?\n/u)) {
     const heading = rawLine.match(/^\s*(#{2,6})\s+(.+?)\s*$/u);
     if (heading) {
       const depth = heading[1].length - 2;
