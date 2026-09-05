@@ -35,6 +35,7 @@ Rules:
 - Every vocabulary item requires at least one `definition:`.
 - `example:` is optional. When present, it is added to the global sentence corpus and linked to the vocabulary item.
 - Multiple definitions and examples are supported.
+- When an example is intended for sentence practice, it should contain exactly one accepted form of its vocabulary item so the current sentence matcher can produce a single blank reliably.
 - The same vocabulary identity may appear only once inside one collection file. This avoids silently losing lesson-specific content.
 
 ## Persistence model
