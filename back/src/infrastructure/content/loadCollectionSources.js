@@ -4,7 +4,19 @@ import { basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const EXAMPLE_COLLECTION_FILE = "example-collection.md";
+export const DEFAULT_COLLECTION_SLUG = "ielts-listening-core-1500";
 const COLLECTION_FILE_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*\.md$/u;
+
+const COLLECTION_OVERRIDES = new Map([
+  [DEFAULT_COLLECTION_SLUG, {
+    publicId: DEFAULT_COLLECTION_SLUG,
+    kind: "exam",
+    isDefault: true,
+    description: "1,500 IELTS Listening source items normalized into unique vocabulary entries with equivalent spellings merged.",
+    sourceItemCount: 1_500,
+    duplicateAliasCount: 9
+  }]
+]);
 
 function directoryPath(directory) {
   return directory instanceof URL ? fileURLToPath(directory) : String(directory);
@@ -42,6 +54,18 @@ export function collectionSourceHash(parsed) {
   return createHash("sha256").update(JSON.stringify(canonical), "utf8").digest("hex");
 }
 
+function sourceMetadata(slug, parsed) {
+  const override = COLLECTION_OVERRIDES.get(slug) || {};
+  return {
+    publicId: override.publicId || slug,
+    kind: override.kind || "book",
+    isDefault: Boolean(override.isDefault),
+    description: override.description || null,
+    sourceItemCount: Number(override.sourceItemCount ?? parsed.entries.length),
+    duplicateAliasCount: Number(override.duplicateAliasCount ?? 0)
+  };
+}
+
 export async function loadCollectionSources(directory, parser) {
   const root = directoryPath(directory);
   const dirEntries = await readdir(root, { withFileTypes: true });
@@ -58,6 +82,7 @@ export async function loadCollectionSources(directory, parser) {
     sources.push({
       fileName,
       slug,
+      ...sourceMetadata(slug, parsed),
       sourceHash: collectionSourceHash(parsed),
       parsed
     });
