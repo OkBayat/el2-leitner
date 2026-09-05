@@ -32,7 +32,13 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   await expect(weatherLesson).toContainText('3 IELTS-style tests · 30 questions in total');
   await expect(screenTimeLesson).toContainText('Limiting screen time for children');
   await expect(screenTimeLesson).toContainText('3 IELTS-style tests · 30 questions in total');
-  await expect(weatherLesson.getByTestId('start-bbc-test-1')).toContainText('Extreme weather: changing storms and their impacts');
+  const compactWeatherTest = weatherLesson.getByTestId('start-bbc-test-1');
+  await expect(compactWeatherTest).toHaveAttribute(
+    'aria-label',
+    'Extreme weather: changing storms and their impacts — Medium — Start',
+  );
+  await expect(compactWeatherTest).toContainText('Medium');
+  await expect(compactWeatherTest).toContainText('Start');
 
   for (const lesson of [weatherLesson, screenTimeLesson]) {
     for (const testId of ['test-1', 'test-2', 'test-3']) {
