@@ -1,5 +1,6 @@
 import { ValidationError } from "../errors.js";
 import { LegacyNumberedVocabularyFileParser } from "./LegacyNumberedVocabularyFileParser.js";
+import { stripExclamationMarks } from "./PracticeContentSanitizer.js";
 import { cleanVocabularyForms } from "./VocabularyNormalizer.js";
 
 const MAX_IMPORT_BYTES = 2_000_000;
@@ -20,9 +21,10 @@ export class VocabularyFileParser {
       throw new ValidationError("IMPORT_TOO_LARGE", "Collection import is too large.");
     }
 
-    const hasBookHeading = text.split(/\r?\n/u).some((line) => /^#(?!#)\s+\S/u.test(line));
+    const sanitizedText = stripExclamationMarks(text);
+    const hasBookHeading = sanitizedText.split(/\r?\n/u).some((line) => /^#(?!#)\s+\S/u.test(line));
     if (!hasBookHeading && !requireStructured) {
-      return new LegacyNumberedVocabularyFileParser().parse(text);
+      return new LegacyNumberedVocabularyFileParser().parse(sanitizedText);
     }
 
     let title = null;
@@ -42,7 +44,7 @@ export class VocabularyFileParser {
       currentEntry = null;
     };
 
-    const lines = text.split(/\r?\n/u);
+    const lines = sanitizedText.split(/\r?\n/u);
     for (let index = 0; index < lines.length; index += 1) {
       const rawLine = lines[index];
       const lineNumber = index + 1;
