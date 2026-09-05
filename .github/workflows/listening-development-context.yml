@@ -9,47 +9,23 @@ jobs:
   context:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch official public BBC sources
+      - name: Download direct lesson audio, without podcast-feed insertions
         shell: python
         run: |
-          import urllib.request, xml.etree.ElementTree as ET, pathlib, json, re, html
-          root = pathlib.Path('/tmp/bbc-source'); root.mkdir()
-          def get(url):
-              request = urllib.request.Request(url, headers={'User-Agent': 'Vocora episode source verification/1.0'})
+          import urllib.request, pathlib, json, hashlib, subprocess
+          root = pathlib.Path('/tmp/bbc-direct-audio'); root.mkdir()
+          report = []
+          for code, name in [('260618', 'limiting_screen_time_for_children'), ('260903', 'storms_and_climate_change')]:
+              url = f'https://downloads.bbc.co.uk/learningenglish/features/6min/{code}_6_minute_english_{name}_download.mp3'
+              request = urllib.request.Request(url, headers={'User-Agent': 'Vocora personal-study asset verification/1.0'})
               with urllib.request.urlopen(request, timeout=45) as response:
-                  return response.read()
-          reports = []
-          try:
-              rss = get('https://podcasts.files.bbci.co.uk/p02pc9tn.rss')
-              (root/'feed.xml').write_bytes(rss)
-              items = ET.fromstring(rss).findall('./channel/item')
-          except Exception as exc:
-              items = []; reports.append({'rssError': str(exc)})
-          for code in ['260618', '260903']:
-              folder = root / code; folder.mkdir()
-              page = 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-' + code
-              report = {'code': code, 'sourceUrl': page}
-              matches = [item for item in items if code in (item.findtext('description') or '')]
-              if len(matches) == 1:
-                  item = matches[0]; enclosure = item.find('enclosure')
-                  report['title'] = item.findtext('title'); report['date'] = item.findtext('pubDate')
-                  if enclosure is not None:
-                      report['audioUrl'] = enclosure.get('url')
-                      try: (folder/'audio.mp3').write_bytes(get(report['audioUrl']))
-                      except Exception as exc: report['audioError'] = str(exc)
-              try:
-                  page_bytes = get(page); (folder/'page.html').write_bytes(page_bytes)
-                  text = page_bytes.decode('utf-8')
-                  match = re.search(r'<meta[^>]+property=[\"\x27]og:image[\"\x27][^>]+content=[\"\x27]([^\"\x27]+)', text, re.I)
-                  if match:
-                      report['imageUrl'] = html.unescape(match.group(1))
-                      (folder/'cover.jpg').write_bytes(get(report['imageUrl']))
-              except Exception as exc: report['pageError'] = str(exc)
-              reports.append(report)
-          (root/'report.json').write_text(json.dumps(reports, indent=2))
-          print(json.dumps(reports, indent=2))
+                  content = response.read()
+              assert content[:3] == b'ID3' or (content[0] == 255 and content[1] & 224 == 224)
+              folder = root/code; folder.mkdir(); audio = folder/'audio.mp3'; audio.write_bytes(content)
+              report.append({'code': code, 'audioUrl': url, 'bytes': len(content), 'sha256': hashlib.sha256(content).hexdigest()})
+          (root/'report.json').write_text(json.dumps(report, indent=2)); print(json.dumps(report, indent=2))
       - uses: actions/upload-artifact@v4
         with:
-          name: official-bbc-episode-sources
-          path: /tmp/bbc-source
+          name: bbc-direct-lesson-audio
+          path: /tmp/bbc-direct-audio
           retention-days: 1
