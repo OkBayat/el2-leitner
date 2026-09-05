@@ -9,13 +9,18 @@ function sentenceHash(sentenceText) {
   return createHash("sha256").update(sentenceText, "utf8").digest("hex");
 }
 
-async function activeSentenceTexts(executor) {
+async function activeSentenceRows(executor) {
   const [rows] = await executor.execute(
-    `SELECT sentence_text
-     FROM sentences
-     WHERE status = 'active'`
+    `SELECT sentence_text, is_curated, status
+     FROM sentences`
   );
-  return new Set(rows.map((row) => String(row.sentence_text)));
+  return new Map(rows.map((row) => [
+    String(row.sentence_text),
+    {
+      isCurated: Boolean(Number(row.is_curated)),
+      status: String(row.status)
+    }
+  ]));
 }
 
 function uniqueSentenceTexts(sentences) {
@@ -33,28 +38,46 @@ function uniqueSentenceTexts(sentences) {
 }
 
 function insertStatement(batch) {
-  const values = batch.map(() => "(?, ?, 'active')").join(",\n");
-  return `INSERT INTO sentences (sentence_text, sentence_hash, status)
+  const values = batch.map(() => "(?, ?, 'active', TRUE)").join(",\n");
+  return `INSERT INTO sentences (sentence_text, sentence_hash, status, is_curated)
           VALUES ${values}`;
+}
+
+function updateStatement(batch) {
+  const placeholders = batch.map(() => "?").join(",");
+  return `UPDATE sentences
+          SET is_curated = TRUE, status = 'active'
+          WHERE sentence_text IN (${placeholders})`;
 }
 
 export async function seedSentenceCatalog({ pool, sentences }) {
   const expected = uniqueSentenceTexts(sentences);
-  const current = await activeSentenceTexts(pool);
+  const current = await activeSentenceRows(pool);
   const missing = expected.filter((sentenceText) => !current.has(sentenceText));
+  const needsRefresh = expected.filter((sentenceText) => {
+    const row = current.get(sentenceText);
+    return row && (!row.isCurated || row.status !== "active");
+  });
 
-  if (!missing.length) {
+  if (!missing.length && !needsRefresh.length) {
     return { changed: false, sentenceCount: expected.length, insertedCount: 0 };
   }
 
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
+
     for (let offset = 0; offset < missing.length; offset += INSERT_BATCH_SIZE) {
       const batch = missing.slice(offset, offset + INSERT_BATCH_SIZE);
       const params = batch.flatMap((sentenceText) => [sentenceText, sentenceHash(sentenceText)]);
       await connection.execute(insertStatement(batch), params);
     }
+
+    for (let offset = 0; offset < needsRefresh.length; offset += INSERT_BATCH_SIZE) {
+      const batch = needsRefresh.slice(offset, offset + INSERT_BATCH_SIZE);
+      await connection.execute(updateStatement(batch), batch);
+    }
+
     await connection.commit();
   } catch (error) {
     await connection.rollback();
@@ -63,11 +86,14 @@ export async function seedSentenceCatalog({ pool, sentences }) {
     connection.release();
   }
 
-  const verified = await activeSentenceTexts(pool);
-  const missingAfterWrite = expected.filter((sentenceText) => !verified.has(sentenceText));
+  const verified = await activeSentenceRows(pool);
+  const missingAfterWrite = expected.filter((sentenceText) => {
+    const row = verified.get(sentenceText);
+    return !row || !row.isCurated || row.status !== "active";
+  });
   if (missingAfterWrite.length) {
     throw new Error(
-      `Curated sentence catalog verification failed: ${missingAfterWrite.length} sentence(s) are still missing.`
+      `Curated sentence catalog verification failed: ${missingAfterWrite.length} sentence(s) are still missing or inactive.`
     );
   }
 
