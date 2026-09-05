@@ -3,592 +3,1435 @@
   "tests": [
     {
       "id": "bbc-260827-t1",
-      "title": "Elementary: Follow the discussion of smells",
+      "title": "Describing smells: words, preferences and habits",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260827-t1-g1",
+          "id": "bbc-260827-t1-r2-g1",
           "position": 1,
-          "heading": "Elementary: Follow the discussion of smells",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t1-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Material whose smell Georgie says she enjoys: {{blank}}.",
+              "evidence": {
+                "startSeconds": 41.56,
+                "endSeconds": 47.64,
+                "summary": "Georgie first names leather among the smells she enjoys.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "leather"
+              ]
+            },
+            {
+              "id": "bbc-260827-t1-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Petrichor is associated with the ground after {{blank}}.",
+              "evidence": {
+                "startSeconds": 41.56,
+                "endSeconds": 57.1,
+                "summary": "Georgie explains the term by referring to the ground just after rain.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rain"
+              ]
+            },
+            {
+              "id": "bbc-260827-t1-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Neil's favourite example: a freshly opened packet of ground {{blank}}.",
+              "evidence": {
+                "startSeconds": 60.54,
+                "endSeconds": 65.58,
+                "summary": "Neil chooses the smell released by a newly opened packet of ground coffee.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "coffee"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260827-t1-q1",
-              "number": 1,
+              "id": "bbc-260827-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What kind of words did Michael Rosen ask listeners to suggest?",
+              "prompt": "What do words such as stinky and fragrant mainly express in the explanation?",
+              "evidence": {
+                "startSeconds": 149.6,
+                "endSeconds": 162.64,
+                "summary": "These adjectives express a positive or negative judgement rather than a specific objective description.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The explanation contrasts personal evaluation with describing the object itself.",
+                  "C": "No quantity of objects is communicated by these evaluative words."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t1-q1-a",
+                  "id": "bbc-260827-t1-r2-q5-a",
                   "label": "A",
-                  "text": "Words for bright colours."
+                  "text": "Whether a smell seems good or bad to someone."
                 },
                 {
-                  "id": "bbc-260827-t1-q1-b",
+                  "id": "bbc-260827-t1-r2-q5-b",
                   "label": "B",
-                  "text": "Words for unpleasant smells."
+                  "text": "The exact chemical ingredients of a smell."
                 },
                 {
-                  "id": "bbc-260827-t1-q1-c",
+                  "id": "bbc-260827-t1-r2-q5-c",
                   "label": "C",
-                  "text": "Words for loud musical instruments."
+                  "text": "The number of objects producing a smell."
                 }
               ],
-              "answer": "B"
+              "answer": "A"
             },
             {
-              "id": "bbc-260827-t1-q2",
-              "number": 2,
+              "id": "bbc-260827-t1-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "Which smell does Georgie say she especially loves?",
+              "prompt": "What does the perfume example show?",
+              "evidence": {
+                "startSeconds": 163.24,
+                "endSeconds": 170.1,
+                "summary": "The example illustrates differing subjective reactions to one perfume.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The example concerns different opinions about the same perfume, not changing ingredients.",
+                  "B": "The speaker explicitly says both opposing judgements can be true."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t1-q2-a",
+                  "id": "bbc-260827-t1-r2-q6-a",
                   "label": "A",
-                  "text": "The smell of the ground after rain."
+                  "text": "A perfume changes its ingredients whenever someone describes it."
                 },
                 {
-                  "id": "bbc-260827-t1-q2-b",
+                  "id": "bbc-260827-t1-r2-q6-b",
                   "label": "B",
-                  "text": "The smell of sweaty feet."
+                  "text": "Everyone must agree whether a perfume is pleasant."
                 },
                 {
-                  "id": "bbc-260827-t1-q2-c",
+                  "id": "bbc-260827-t1-r2-q6-c",
                   "label": "C",
-                  "text": "The smell of rotten eggs."
+                  "text": "Two people can judge the same smell differently."
                 }
               ],
-              "answer": "A"
+              "answer": "C"
             },
             {
-              "id": "bbc-260827-t1-q3",
-              "number": 3,
+              "id": "bbc-260827-t1-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Which smell does Neil choose as a favourite?",
+              "prompt": "Which sense is used as a contrast with smell?",
+              "evidence": {
+                "startSeconds": 190.44,
+                "endSeconds": 200.52,
+                "summary": "Taste words are contrasted with smell words because they create a more commonly shared idea.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The examples spicy, sweet and salty concern taste rather than temperature.",
+                  "C": "Balance is not the contrasting sense named in this passage."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t1-q3-a",
+                  "id": "bbc-260827-t1-r2-q7-a",
                   "label": "A",
-                  "text": "A newly painted wall."
+                  "text": "Temperature."
                 },
                 {
-                  "id": "bbc-260827-t1-q3-b",
+                  "id": "bbc-260827-t1-r2-q7-b",
                   "label": "B",
-                  "text": "A freshly opened packet of ground coffee."
+                  "text": "Taste."
                 },
                 {
-                  "id": "bbc-260827-t1-q3-c",
+                  "id": "bbc-260827-t1-r2-q7-c",
                   "label": "C",
-                  "text": "A wet woollen coat."
+                  "text": "Balance."
                 }
               ],
               "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t1-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The researcher says people talk very {{blank}} about what they smell.",
+              "evidence": {
+                "startSeconds": 228.38,
+                "endSeconds": 233.84,
+                "summary": "She contrasts frequent discussion of what people see with rare discussion of smells.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "rarely"
+              ]
             },
             {
-              "id": "bbc-260827-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "How do English speakers often describe a smell?",
-              "options": [
-                {
-                  "id": "bbc-260827-t1-q4-a",
-                  "label": "A",
-                  "text": "By giving its exact weight."
-                },
-                {
-                  "id": "bbc-260827-t1-q4-b",
-                  "label": "B",
-                  "text": "By using the same number for every smell."
-                },
-                {
-                  "id": "bbc-260827-t1-q4-c",
-                  "label": "C",
-                  "text": "By comparing it with a familiar object."
-                }
-              ],
-              "answer": "C"
+              "id": "bbc-260827-t1-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Young children in the UK are often {{blank}} in the sense of smell.",
+              "evidence": {
+                "startSeconds": 234.26,
+                "endSeconds": 240.7,
+                "summary": "The researcher describes young children as showing interest and remarking on smells.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "interested"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which word is given for a damp, stale smell? {{blank}}",
+              "evidence": {
+                "startSeconds": 293.48,
+                "endSeconds": 300.42,
+                "summary": "Musty is offered as a word describing a specific damp and stale smell.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "musty"
+              ]
             },
             {
-              "id": "bbc-260827-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What does the adjective \"fragrant\" usually mean?",
-              "options": [
-                {
-                  "id": "bbc-260827-t1-q5-a",
-                  "label": "A",
-                  "text": "Completely silent."
-                },
-                {
-                  "id": "bbc-260827-t1-q5-b",
-                  "label": "B",
-                  "text": "Very colourful."
-                },
-                {
-                  "id": "bbc-260827-t1-q5-c",
-                  "label": "C",
-                  "text": "Pleasant smelling."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260827-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What do parents in the example do when a child talks about a smell?",
-              "options": [
-                {
-                  "id": "bbc-260827-t1-q6-a",
-                  "label": "A",
-                  "text": "Stop the conversation."
-                },
-                {
-                  "id": "bbc-260827-t1-q6-b",
-                  "label": "B",
-                  "text": "Ask the child to write a scientific report."
-                },
-                {
-                  "id": "bbc-260827-t1-q6-c",
-                  "label": "C",
-                  "text": "Always encourage a long discussion."
-                }
-              ],
-              "answer": "A"
+              "id": "bbc-260827-t1-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What place is given as an example of somewhere with that smell? {{blank}}",
+              "evidence": {
+                "startSeconds": 297.18,
+                "endSeconds": 300.42,
+                "summary": "An old bookshop illustrates where the musty smell might be encountered.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "an old bookshop",
+                "old bookshop"
+              ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+        "audioSha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374",
+        "durationSeconds": 375.144,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "2b4c07c632c548f12d1305cea181efe20a6b50c0be426dcc18783ba4c4fdac79"
+      }
     },
     {
       "id": "bbc-260827-t2",
-      "title": "Intermediate: Complete the language notes",
+      "title": "Smell language: evaluation and description",
       "position": 2,
       "format": "ielts",
       "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260827-t2-g1",
+          "id": "bbc-260827-t2-r2-g1",
           "position": 1,
-          "heading": "Intermediate: Complete the language notes",
-          "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260827-t2-q1",
+              "id": "bbc-260827-t2-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Poet who collects listeners' suggestions: {{blank}}.",
+              "prompt": "What material provides Georgie's first example of an enjoyable smell? {{blank}}",
+              "evidence": {
+                "startSeconds": 41.56,
+                "endSeconds": 47.64,
+                "summary": "Georgie's initial positive example concerns the smell of leather.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Michael Rosen"
+                "leather"
               ]
             },
             {
-              "id": "bbc-260827-t2-q2",
+              "id": "bbc-260827-t2-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "Name of his BBC Radio 4 programme: {{blank}}.",
+              "prompt": "What is freshly opened in Neil's preferred smell example? {{blank}}",
+              "evidence": {
+                "startSeconds": 60.54,
+                "endSeconds": 65.58,
+                "summary": "The source of Neil's example is a newly opened packet containing ground coffee.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Word of Mouth"
+                "a packet",
+                "packet"
               ]
             },
             {
-              "id": "bbc-260827-t2-q3",
+              "id": "bbc-260827-t2-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "Name Georgie gives the smell of the ground after rain: {{blank}}.",
+              "prompt": "What does English often compare smells with? {{blank}}",
+              "evidence": {
+                "startSeconds": 122.04,
+                "endSeconds": 126.04,
+                "summary": "The programme says English descriptions commonly refer to other objects as comparisons.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "petrichor"
+                "other objects",
+                "objects"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
             {
-              "id": "bbc-260827-t2-q4",
+              "id": "bbc-260827-t2-r2-q5",
               "number": 4,
-              "position": 4,
+              "position": 1,
               "responseType": "text",
-              "prompt": "University where psychologist Asifa Majid works: {{blank}}.",
+              "prompt": "The researcher characterises the judgement involved as {{blank}}.",
+              "evidence": {
+                "startSeconds": 161.18,
+                "endSeconds": 162.64,
+                "summary": "She presents the adjectives as reflecting subjective judgement rather than properties of the object alone.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Oxford",
-                "Oxford University"
+                "subjective"
               ]
             },
             {
-              "id": "bbc-260827-t2-q5",
+              "id": "bbc-260827-t2-r2-q6",
               "number": 5,
-              "position": 5,
+              "position": 2,
               "responseType": "text",
-              "prompt": "The adjective for things related to smelling: {{blank}}.",
+              "prompt": "Two speakers can use opposite labels for the same {{blank}}.",
+              "evidence": {
+                "startSeconds": 163.24,
+                "endSeconds": 170.1,
+                "summary": "The perfume example demonstrates opposed evaluations of one object.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "perfume"
+              ]
+            },
+            {
+              "id": "bbc-260827-t2-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Spicy, sweet and salty are said to create a {{blank}} idea.",
+              "evidence": {
+                "startSeconds": 193.5,
+                "endSeconds": 198.88,
+                "summary": "Taste words are presented as creating an idea that different speakers can share.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "common"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260827-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which comparison does the research report?",
+              "evidence": {
+                "startSeconds": 222.18,
+                "endSeconds": 233.84,
+                "summary": "The research account contrasts frequent visual talk with infrequent smell talk.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "This reverses the direction of the stated comparison.",
+                  "B": "The passage explicitly reports different frequencies."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t2-r2-q8-a",
+                  "label": "A",
+                  "text": "People discuss smells more often than visual experiences."
+                },
+                {
+                  "id": "bbc-260827-t2-r2-q8-b",
+                  "label": "B",
+                  "text": "People describe every sense with equal frequency."
+                },
+                {
+                  "id": "bbc-260827-t2-r2-q8-c",
+                  "label": "C",
+                  "text": "People discuss what they see more often than what they smell."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260827-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How can the described parental reaction limit children's interest?",
+              "evidence": {
+                "startSeconds": 234.26,
+                "endSeconds": 245.14,
+                "summary": "The reported parental reaction cuts short the child's interest in smells.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The parent's instruction shuts down the activity rather than encouraging it.",
+                  "C": "The example is a dismissive instruction, not vocabulary teaching."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t2-r2-q9-a",
+                  "label": "A",
+                  "text": "It encourages the child to keep discussing an unpleasant object."
+                },
+                {
+                  "id": "bbc-260827-t2-r2-q9-b",
+                  "label": "B",
+                  "text": "It stops a conversation or exploration the child has begun."
+                },
+                {
+                  "id": "bbc-260827-t2-r2-q9-c",
+                  "label": "C",
+                  "text": "It supplies the child with several precise smell terms."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Other languages said to share the limited vocabulary: {{blank}} languages.",
+              "evidence": {
+                "startSeconds": 277.92,
+                "endSeconds": 292.66,
+                "summary": "The presenter groups English with other European languages in this observation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "European"
+              ]
+            },
+            {
+              "id": "bbc-260827-t2-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Musty is described as damp and {{blank}}.",
+              "evidence": {
+                "startSeconds": 293.48,
+                "endSeconds": 300.42,
+                "summary": "Stale is the second quality used to characterise musty.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stale"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+        "audioSha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374",
+        "durationSeconds": 375.144,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "40e0ab0d17d81364ea7beec2a32a84a61668e852120568115af66a8419013ed9"
+      }
+    },
+    {
+      "id": "bbc-260827-t3",
+      "title": "From smell preferences to shared meanings",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260827-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The ground after {{blank}} produces the smell Georgie calls petrichor.",
+              "evidence": {
+                "startSeconds": 41.56,
+                "endSeconds": 57.1,
+                "summary": "Georgie connects the named smell with the ground immediately after rain.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rain"
+              ]
+            },
+            {
+              "id": "bbc-260827-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Neil prefers the smell from a newly opened packet of {{blank}}.",
+              "evidence": {
+                "startSeconds": 60.54,
+                "endSeconds": 65.58,
+                "summary": "His example concerns ground coffee rather than the packet as an odour in itself.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ground coffee"
+              ]
+            },
+            {
+              "id": "bbc-260827-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Old books are linked with a {{blank}} feeling about second-hand bookshops.",
+              "evidence": {
+                "startSeconds": 81.96,
+                "endSeconds": 89.44,
+                "summary": "The introduction to the bookshop example connects the smell with a sentimental response.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sentimental"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260827-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why can a long list of smell words be misleading about the language's precision?",
+              "evidence": {
+                "startSeconds": 109.48,
+                "endSeconds": 136.48,
+                "summary": "The quantity of evaluative labels is distinguished from the ability to describe a smell's specific qualities.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The explanation says the words mainly mean bad-smelling rather than distinct chemical sources.",
+                  "B": "The list concerns bad smells, while flower comparisons are a separate example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t3-r2-q4-a",
+                  "label": "A",
+                  "text": "Every word in the list refers to a different chemical source."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q4-b",
+                  "label": "B",
+                  "text": "The words are all comparisons with pleasant flowers."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q4-c",
+                  "label": "C",
+                  "text": "Many of the words repeat a negative evaluation instead of identifying distinct smells."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260827-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is the perfume example intended to establish?",
+              "evidence": {
+                "startSeconds": 149.6,
+                "endSeconds": 170.1,
+                "summary": "Different subjective reactions can both be valid descriptions of the speakers' experience.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The example concerns evaluation rather than a physical change in the smell.",
+                  "C": "The example explicitly concerns one perfume judged by different people."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t3-r2-q5-a",
+                  "label": "A",
+                  "text": "A change in the adjective proves that the smell has changed physically."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q5-b",
+                  "label": "B",
+                  "text": "Opposing personal evaluations can coexist without one being objectively false."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q5-c",
+                  "label": "C",
+                  "text": "Using two adjectives proves that there are two different perfumes."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260827-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What distinguishes the taste examples in the researcher's account?",
+              "evidence": {
+                "startSeconds": 190.44,
+                "endSeconds": 210.82,
+                "summary": "Taste terms are presented as producing common ideas unlike subjective smell evaluations.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The contrast concerns shared qualities such as salty rather than just liking.",
+                  "C": "Age is introduced later with children's curiosity, not as this contrast."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t3-r2-q6-a",
+                  "label": "A",
+                  "text": "They evoke a more commonly agreed description than the smell labels."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q6-b",
+                  "label": "B",
+                  "text": "They describe only whether the speaker likes the food."
+                },
+                {
+                  "id": "bbc-260827-t3-r2-q6-c",
+                  "label": "C",
+                  "text": "They depend on the age of the person speaking."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t3-r2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Experience people are said to discuss frequently: what they {{blank}}.",
+              "evidence": {
+                "startSeconds": 228.38,
+                "endSeconds": 233.84,
+                "summary": "The research contrasts frequent talk about seeing with rarer talk about smelling.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "see"
+              ]
+            },
+            {
+              "id": "bbc-260827-t3-r2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Age group noted for curiosity about smell: young {{blank}}.",
+              "evidence": {
+                "startSeconds": 234.26,
+                "endSeconds": 240.7,
+                "summary": "Young children are described as interested in smells and likely to comment on them.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "children"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What adjective specifically relates to the sense of smell? {{blank}}",
+              "evidence": {
+                "startSeconds": 259.96,
+                "endSeconds": 262.98,
+                "summary": "The presenter gives olfactory as the smell-related counterpart to visual and auditory.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "olfactory"
               ]
             },
             {
-              "id": "bbc-260827-t2-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260827-t3-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Word for a damp, stale smell, such as in an old bookshop: {{blank}}.",
+              "prompt": "Which more precise smell adjective is illustrated by a damp, stale odour? {{blank}}",
+              "evidence": {
+                "startSeconds": 293.48,
+                "endSeconds": 300.42,
+                "summary": "Musty provides the later example of a word for qualities of an actual smell.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "musty"
               ]
             }
           ]
         }
-      ]
-    },
-    {
-      "id": "bbc-260827-t3",
-      "title": "Intermediate: Retrieve specific examples",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260827-t3-g1",
-          "position": 1,
-          "heading": "Intermediate: Retrieve specific examples",
-          "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260827-t3-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Apart from rain, which material does Georgie say she enjoys smelling? {{blank}}",
-              "answers": [
-                "leather"
-              ]
-            },
-            {
-              "id": "bbc-260827-t3-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Which flower is used as an example of a pleasant-smelling comparison? {{blank}}",
-              "answers": [
-                "a rose",
-                "rose"
-              ]
-            },
-            {
-              "id": "bbc-260827-t3-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Whose research is used to explore the language of smell? {{blank}}",
-              "answers": [
-                "Asifa Majid"
-              ]
-            },
-            {
-              "id": "bbc-260827-t3-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Which adjective is listed alongside spicy and sweet to describe taste? {{blank}}",
-              "answers": [
-                "salty"
-              ]
-            },
-            {
-              "id": "bbc-260827-t3-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Which country is specified in the example of children's conversations about smell? {{blank}}",
-              "answers": [
-                "the UK",
-                "UK",
-                "United Kingdom"
-              ]
-            },
-            {
-              "id": "bbc-260827-t3-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "What word is explained at the end as the smell of cooking meat and fat? {{blank}}",
-              "answers": [
-                "nidor"
-              ]
-            }
-          ]
-        }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+        "audioSha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374",
+        "durationSeconds": 375.144,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "7db1f2f77aa01468cc04d33c8923e90e5a4adbcde350bf4224ed09fc54052313"
+      }
     },
     {
       "id": "bbc-260827-t4",
-      "title": "Advanced: Distinguish description from judgement",
+      "title": "Smell descriptions: scope and subjective evidence",
       "position": 4,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260827-t4-g1",
+          "id": "bbc-260827-t4-r2-g1",
           "position": 1,
-          "heading": "Advanced: Distinguish description from judgement",
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which material illustrates Georgie's liking before she mentions rain? {{blank}}",
+              "evidence": {
+                "startSeconds": 41.56,
+                "endSeconds": 47.64,
+                "summary": "Her first preference is the smell of leather, before the stronger preference for rain.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "leather"
+              ]
+            },
+            {
+              "id": "bbc-260827-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What contents make the newly opened packet appealing to Neil? {{blank}}",
+              "evidence": {
+                "startSeconds": 60.54,
+                "endSeconds": 65.58,
+                "summary": "The packet's ground coffee, rather than the packaging itself, supplies the liked smell.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ground coffee"
+              ]
+            },
+            {
+              "id": "bbc-260827-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What feeling is associated with old books and second-hand bookshops? {{blank}}",
+              "evidence": {
+                "startSeconds": 81.96,
+                "endSeconds": 89.44,
+                "summary": "The example links old-book smells with a sentimental feeling about bookshops.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "sentimental",
+                "a sentimental feeling"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260827-t4-q1",
-              "number": 1,
+              "id": "bbc-260827-t4-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why can a long list of words for bad smells give a misleading impression of precision?",
+              "prompt": "Which distinction underlies the criticism of the long vocabulary list?",
+              "evidence": {
+                "startSeconds": 109.48,
+                "endSeconds": 136.48,
+                "summary": "The argument separates the number of negative labels from the specificity of the descriptions they provide.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The reliance on comparisons is contrasted with the scarcity of dedicated smell terms.",
+                  "C": "The claim concerns vocabulary precision, not an inability to perceive differences."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t4-q1-a",
+                  "id": "bbc-260827-t4-r2-q4-a",
                   "label": "A",
-                  "text": "Every word in the list describes a different chemical substance."
+                  "text": "Object comparisons establish that every smell has its own dedicated adjective."
                 },
                 {
-                  "id": "bbc-260827-t4-q1-b",
+                  "id": "bbc-260827-t4-r2-q4-b",
                   "label": "B",
-                  "text": "Many of those words communicate dislike rather than a distinct smell quality."
+                  "text": "Many ways to express dislike do not necessarily identify many distinct odour qualities."
                 },
                 {
-                  "id": "bbc-260827-t4-q1-c",
+                  "id": "bbc-260827-t4-r2-q4-c",
                   "label": "C",
-                  "text": "The words have no meaning to any English speaker."
+                  "text": "A short list proves that nobody can notice differences between smells."
                 }
               ],
               "answer": "B"
             },
             {
-              "id": "bbc-260827-t4-q2",
-              "number": 2,
+              "id": "bbc-260827-t4-r2-q5",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "Why can two opposing descriptions of the same perfume both be true?",
+              "prompt": "Why can fragrant and stinky both be true in the perfume example?",
+              "evidence": {
+                "startSeconds": 149.6,
+                "endSeconds": 170.1,
+                "summary": "The two speakers can disagree in their reaction without either reaction misreporting that person's experience.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The example does not analyse ingredients or require two substances.",
+                  "C": "The adjectives retain opposite evaluations; subjectivity explains their coexistence."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t4-q2-a",
+                  "id": "bbc-260827-t4-r2-q5-a",
                   "label": "A",
-                  "text": "The perfume must have changed while the speakers were talking."
+                  "text": "They report different personal evaluations rather than mutually exclusive objective properties."
                 },
                 {
-                  "id": "bbc-260827-t4-q2-b",
+                  "id": "bbc-260827-t4-r2-q5-b",
                   "label": "B",
-                  "text": "Neither person can actually smell the perfume."
+                  "text": "The researcher establishes that perfume contains two separate substances."
                 },
                 {
-                  "id": "bbc-260827-t4-q2-c",
+                  "id": "bbc-260827-t4-r2-q5-c",
                   "label": "C",
-                  "text": "They express different personal responses rather than an agreed smell category."
+                  "text": "The adjectives are defined as having exactly the same meaning."
                 }
               ],
-              "answer": "C"
+              "answer": "A"
             },
             {
-              "id": "bbc-260827-t4-q3",
-              "number": 3,
+              "id": "bbc-260827-t4-r2-q6",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "What contrast does Neil draw with taste words such as sweet and salty?",
-              "options": [
-                {
-                  "id": "bbc-260827-t4-q3-a",
-                  "label": "A",
-                  "text": "They depend entirely on the colour of a food package."
-                },
-                {
-                  "id": "bbc-260827-t4-q3-b",
-                  "label": "B",
-                  "text": "They tend to communicate a shared idea more readily than the smell judgements discussed."
-                },
-                {
-                  "id": "bbc-260827-t4-q3-c",
-                  "label": "C",
-                  "text": "They are never used in everyday conversation."
+              "prompt": "What limitation remains even after someone says the perfume is fragrant?",
+              "evidence": {
+                "startSeconds": 184.76,
+                "endSeconds": 210.82,
+                "summary": "The label communicates evaluation without specifying the smell's distinctive qualities.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Fragrant communicates a positive evaluation in the explanation.",
+                  "B": "Taste is a comparison between senses, not a property attributed to this perfume."
                 }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260827-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "How is the scope of the findings about conversational habits qualified?",
+              },
               "options": [
                 {
-                  "id": "bbc-260827-t4-q4-a",
+                  "id": "bbc-260827-t4-r2-q6-a",
                   "label": "A",
-                  "text": "The presenters specify that the pattern is found in the UK at least."
+                  "text": "The listener cannot tell whether the speaker's evaluation is positive."
                 },
                 {
-                  "id": "bbc-260827-t4-q4-b",
+                  "id": "bbc-260827-t4-r2-q6-b",
                   "label": "B",
-                  "text": "The presenters say every culture has been tested with the same result."
+                  "text": "The listener has been told that the perfume must taste sweet."
                 },
                 {
-                  "id": "bbc-260827-t4-q4-c",
+                  "id": "bbc-260827-t4-r2-q6-c",
                   "label": "C",
-                  "text": "The presenters restrict the finding to professional chefs only."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260827-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "How is the link between parenting and adult discussion of smells presented?",
-              "options": [
-                {
-                  "id": "bbc-260827-t4-q5-a",
-                  "label": "A",
-                  "text": "As a possible explanation, not as a fully demonstrated cause."
-                },
-                {
-                  "id": "bbc-260827-t4-q5-b",
-                  "label": "B",
-                  "text": "As proof that adults completely lose their sense of smell."
-                },
-                {
-                  "id": "bbc-260827-t4-q5-c",
-                  "label": "C",
-                  "text": "As a claim that all parents react in exactly the same way."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260827-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What role does the example \"musty\" play in the discussion?",
-              "options": [
-                {
-                  "id": "bbc-260827-t4-q6-a",
-                  "label": "A",
-                  "text": "It proves that English has no words describing smell qualities."
-                },
-                {
-                  "id": "bbc-260827-t4-q6-b",
-                  "label": "B",
-                  "text": "It is another word for an individual's favourite sound."
-                },
-                {
-                  "id": "bbc-260827-t4-q6-c",
-                  "label": "C",
-                  "text": "It provides an exception: a word describing a particular smell quality."
+                  "text": "The listener still lacks a specific description of the perfume's actual smell."
                 }
               ],
               "answer": "C"
             }
           ]
+        },
+        {
+          "id": "bbc-260827-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Geographical qualification on the conversational comparison: the {{blank}} at least.",
+              "evidence": {
+                "startSeconds": 245.7,
+                "endSeconds": 251.56,
+                "summary": "The presenter explicitly confines the immediate research description to the UK at least.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "UK"
+              ]
+            },
+            {
+              "id": "bbc-260827-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Term used for experiences involving hearing: {{blank}}.",
+              "evidence": {
+                "startSeconds": 254.18,
+                "endSeconds": 259.36,
+                "summary": "Auditory is introduced to distinguish hearing-related experience from visual and smell-related experience.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "auditory"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The speaker tentatively links attitudes to how people are raised by their {{blank}}.",
+              "evidence": {
+                "startSeconds": 263.76,
+                "endSeconds": 274,
+                "summary": "The explanation proposes upbringing as a possible influence, rather than claiming a demonstrated universal cause.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "parents"
+              ]
+            },
+            {
+              "id": "bbc-260827-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The limitation is said to apply to English along with other {{blank}} languages.",
+              "evidence": {
+                "startSeconds": 277.92,
+                "endSeconds": 283.04,
+                "summary": "The concluding comparison groups English with other European languages, not all languages worldwide.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "European"
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+        "audioSha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374",
+        "durationSeconds": 375.144,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "423cc272f3debbb4c6a4e7e291759ad9061ba5ac5bda50ca3a676018d3edc2f7"
+      }
     },
     {
       "id": "bbc-260827-t5",
-      "title": "Advanced: Recover the precise contrasts",
+      "title": "Language and perception: evaluating the argument",
       "position": 5,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260827-t5-g1",
+          "id": "bbc-260827-t5-r2-g1",
           "position": 1,
-          "heading": "Advanced: Recover the precise contrasts",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260827-t5-q1",
+              "id": "bbc-260827-t5-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Majid's perfume example illustrates that a smell judgement can be {{blank}}, reflecting the individual speaker.",
+              "prompt": "Neil's preferred example comes from a packet of {{blank}}.",
+              "evidence": {
+                "startSeconds": 60.54,
+                "endSeconds": 65.58,
+                "summary": "The preference concerns a newly opened packet of ground coffee.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ground coffee"
+              ]
+            },
+            {
+              "id": "bbc-260827-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Places linked to the sentimental book smell: {{blank}}.",
+              "evidence": {
+                "startSeconds": 81.96,
+                "endSeconds": 89.44,
+                "summary": "The introductory example connects the smell of old books with second-hand bookshops.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "second-hand bookshops"
+              ]
+            },
+            {
+              "id": "bbc-260827-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Positive object comparison in the general explanation: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 126.68,
+                "endSeconds": 129.46,
+                "summary": "A rose illustrates describing a smell by referring to another object.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rose"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t5-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The perfume judgements are presented as {{blank}}, not descriptions independent of the speaker.",
+              "evidence": {
+                "startSeconds": 161.18,
+                "endSeconds": 162.64,
+                "summary": "The researcher contrasts speaker-dependent evaluation with the properties of the described object.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "subjective"
               ]
             },
             {
-              "id": "bbc-260827-t5-q2",
-              "number": 2,
+              "id": "bbc-260827-t5-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "text",
-              "prompt": "The smell words under discussion are contrasted with the {{blank}} idea evoked by taste words.",
+              "prompt": "Taste descriptions are said to produce a {{blank}} idea that people can agree on.",
+              "evidence": {
+                "startSeconds": 193.5,
+                "endSeconds": 198.88,
+                "summary": "The argument uses the shared idea evoked by taste terms as a contrast with smell evaluations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "common"
               ]
             },
             {
-              "id": "bbc-260827-t5-q3",
-              "number": 3,
+              "id": "bbc-260827-t5-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "text",
-              "prompt": "The research comparison refers to what we see as {{blank}} things.",
+              "prompt": "The smell labels are described as reflecting personal opinions and {{blank}}.",
+              "evidence": {
+                "startSeconds": 207.08,
+                "endSeconds": 210.82,
+                "summary": "Personal feelings accompany opinions in the explanation of subjectivity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "visual"
-              ]
-            },
-            {
-              "id": "bbc-260827-t5-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "The corresponding adjective for matters related to hearing is {{blank}}.",
-              "answers": [
-                "auditory"
-              ]
-            },
-            {
-              "id": "bbc-260827-t5-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "The specific smell described as musty combines dampness with a {{blank}} quality.",
-              "answers": [
-                "stale"
-              ]
-            },
-            {
-              "id": "bbc-260827-t5-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "At the end, the presenters associate the word {{blank}} with old books, rather than the earth after rain.",
-              "answers": [
-                "vellichor"
+                "feelings"
               ]
             }
           ]
+        },
+        {
+          "id": "bbc-260827-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260827-t5-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "According to the researcher, what do we talk about a lot? {{blank}}",
+              "evidence": {
+                "startSeconds": 228.38,
+                "endSeconds": 233.84,
+                "summary": "The researcher's comparison prioritises discussion of what people see over what they smell.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "what we see"
+              ]
+            },
+            {
+              "id": "bbc-260827-t5-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Who often terminates a young child's smell-related exploration in the reported example? {{blank}}",
+              "evidence": {
+                "startSeconds": 234.26,
+                "endSeconds": 245.14,
+                "summary": "The parent is described as shutting down a child's initial interest in a smell.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "the parent",
+                "parent"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260827-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260827-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which statement would overstate the suggested role of upbringing?",
+              "evidence": {
+                "startSeconds": 263.76,
+                "endSeconds": 274,
+                "summary": "A tentative upbringing explanation is not proof of a universal cause across societies.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The tentative maybe is consistent with a possible explanation rather than proof.",
+                  "B": "The parent stopping discussion is an example actually reported."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t5-r2-q11-a",
+                  "label": "A",
+                  "text": "Parental responses may help explain the conversational attitude described."
+                },
+                {
+                  "id": "bbc-260827-t5-r2-q11-b",
+                  "label": "B",
+                  "text": "Some reported parental responses stop children discussing smells."
+                },
+                {
+                  "id": "bbc-260827-t5-r2-q11-c",
+                  "label": "C",
+                  "text": "Parental responses have been proved to explain smell talk in every society."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260827-t5-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which conclusion keeps the distinction made about English vocabulary?",
+              "evidence": {
+                "startSeconds": 277.92,
+                "endSeconds": 292.66,
+                "summary": "The conclusion distinguishes numerous evaluative expressions from a limited set of specific descriptions.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The point is the shortage of precise quality terms despite numerous negative labels.",
+                  "C": "The programme has already given many smell-related words."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260827-t5-r2-q12-a",
+                  "label": "A",
+                  "text": "Every unpleasant smell has a separate precise English name."
+                },
+                {
+                  "id": "bbc-260827-t5-r2-q12-b",
+                  "label": "B",
+                  "text": "It offers many evaluations of smells but relatively few terms for their actual qualities."
+                },
+                {
+                  "id": "bbc-260827-t5-r2-q12-c",
+                  "label": "C",
+                  "text": "It contains no words connected with smells at all."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260827",
+        "audioSha256": "8ec6f5b796d1b405290acad97791d5091bf6545d169607a615efdf8028950374",
+        "durationSeconds": 375.144,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "39615c2a534bd5d588893f6527e6f7cc35ecf1de3e4531b9567c60778518fb33"
+      }
     }
   ]
 }

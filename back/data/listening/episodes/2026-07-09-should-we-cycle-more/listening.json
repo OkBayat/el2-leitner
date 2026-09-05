@@ -3,595 +3,1464 @@
   "tests": [
     {
       "id": "bbc-260709-t1",
-      "title": "Following the two destinations",
+      "title": "Cycling: developments and local conditions",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260709-t1-g1",
+          "id": "bbc-260709-t1-r2-g1",
           "position": 1,
-          "heading": "Following the two destinations",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t1-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Direction of bicycle sales in Britain this year: {{blank}}.",
+              "evidence": {
+                "startSeconds": 15.76,
+                "endSeconds": 20.92,
+                "summary": "The introduction reports that British bicycle sales are up.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "up"
+              ]
+            },
+            {
+              "id": "bbc-260709-t1-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Two reasons for choosing cycling: health and the {{blank}}.",
+              "evidence": {
+                "startSeconds": 21.54,
+                "endSeconds": 24.98,
+                "summary": "Environmental benefits are paired with health as reasons people cycle.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "environment"
+              ]
+            },
+            {
+              "id": "bbc-260709-t1-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "A group gaining access through electric bikes: {{blank}} people.",
+              "evidence": {
+                "startSeconds": 25.78,
+                "endSeconds": 30.64,
+                "summary": "Older people are specifically included among those helped by electric bikes.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "older"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260709-t1-q1",
-              "number": 1,
+              "id": "bbc-260709-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What kind of bicycles are helping more older people cycle?",
+              "prompt": "When did cycling begin to grow in the Netherlands?",
+              "evidence": {
+                "startSeconds": 100.44,
+                "endSeconds": 109.12,
+                "summary": "Glaser locates the rise of Dutch cycling in the industrial era.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "Electric bikes are an opening example of wider access, not the historical starting point.",
+                  "C": "Gulf developments belong to the later comparison."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t1-q1-a",
+                  "id": "bbc-260709-t1-r2-q5-a",
                   "label": "A",
-                  "text": "Electric bikes"
+                  "text": "During the industrial era."
                 },
                 {
-                  "id": "bbc-260709-t1-q1-b",
+                  "id": "bbc-260709-t1-r2-q5-b",
                   "label": "B",
-                  "text": "Racing bikes"
+                  "text": "When electric bikes first appeared."
                 },
                 {
-                  "id": "bbc-260709-t1-q1-c",
+                  "id": "bbc-260709-t1-r2-q5-c",
                   "label": "C",
-                  "text": "Children's bikes"
+                  "text": "When Gulf cities began building cycle tracks."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260709-t1-q2",
-              "number": 2,
+              "id": "bbc-260709-t1-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "Which country has the long-established cycling culture discussed first?",
+              "prompt": "What did the bicycle become after being a rich person's toy?",
+              "evidence": {
+                "startSeconds": 109.12,
+                "endSeconds": 124.14,
+                "summary": "The historical change was from an expensive toy to everyday transportation.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Tourism is the UAE example rather than the historical Dutch change.",
+                  "B": "Racing is not given as the main new use."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t1-q2-a",
+                  "id": "bbc-260709-t1-r2-q6-a",
                   "label": "A",
-                  "text": "The UAE"
+                  "text": "A symbol used only in tourism."
                 },
                 {
-                  "id": "bbc-260709-t1-q2-b",
+                  "id": "bbc-260709-t1-r2-q6-b",
                   "label": "B",
-                  "text": "Britain"
+                  "text": "A product mainly for racing."
                 },
                 {
-                  "id": "bbc-260709-t1-q2-c",
+                  "id": "bbc-260709-t1-r2-q6-c",
                   "label": "C",
-                  "text": "The Netherlands"
+                  "text": "An everyday means of transport."
                 }
               ],
               "answer": "C"
             },
             {
-              "id": "bbc-260709-t1-q3",
-              "number": 3,
+              "id": "bbc-260709-t1-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Who could mainly afford bicycles before mass production?",
+              "prompt": "What made bicycles cheaper to buy?",
+              "evidence": {
+                "startSeconds": 149.48,
+                "endSeconds": 155.24,
+                "summary": "The presenter links new factories with more affordable bicycles.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Rankings are discussed later as a Gulf-city ambition.",
+                  "C": "Tourist policies are not the stated reason for lower Dutch bicycle prices."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t1-q3-a",
+                  "id": "bbc-260709-t1-r2-q7-a",
                   "label": "A",
-                  "text": "Factory workers"
+                  "text": "The global city rankings."
                 },
                 {
-                  "id": "bbc-260709-t1-q3-b",
+                  "id": "bbc-260709-t1-r2-q7-b",
                   "label": "B",
-                  "text": "Rich people"
+                  "text": "New factories."
                 },
                 {
-                  "id": "bbc-260709-t1-q3-c",
+                  "id": "bbc-260709-t1-r2-q7-c",
                   "label": "C",
-                  "text": "Young children"
+                  "text": "New rules for tourists."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260709-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "Which cities are given as UAE examples?",
-              "options": [
-                {
-                  "id": "bbc-260709-t1-q4-a",
-                  "label": "A",
-                  "text": "Amsterdam and Rotterdam"
-                },
-                {
-                  "id": "bbc-260709-t1-q4-b",
-                  "label": "B",
-                  "text": "London and Manchester"
-                },
-                {
-                  "id": "bbc-260709-t1-q4-c",
-                  "label": "C",
-                  "text": "Dubai and Abu Dhabi"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260709-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Besides physical health, what can cycling benefit?",
-              "options": [
-                {
-                  "id": "bbc-260709-t1-q5-a",
-                  "label": "A",
-                  "text": "Only competitive results"
-                },
-                {
-                  "id": "bbc-260709-t1-q5-b",
-                  "label": "B",
-                  "text": "Mental health"
-                },
-                {
-                  "id": "bbc-260709-t1-q5-c",
-                  "label": "C",
-                  "text": "Only car sales"
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260709-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What is provided to help cyclists deal with the heat?",
-              "options": [
-                {
-                  "id": "bbc-260709-t1-q6-a",
-                  "label": "A",
-                  "text": "Water stations and shaded rest areas"
-                },
-                {
-                  "id": "bbc-260709-t1-q6-b",
-                  "label": "B",
-                  "text": "Indoor snow tracks"
-                },
-                {
-                  "id": "bbc-260709-t1-q6-c",
-                  "label": "C",
-                  "text": "Heated waiting rooms"
-                }
-              ],
-              "answer": "A"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260709-t2",
-      "title": "Notes on cycling development",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
+        },
         {
-          "id": "bbc-260709-t2-g1",
-          "position": 1,
-          "heading": "Notes on cycling development",
-          "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
+          "id": "bbc-260709-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260709-t2-q1",
-              "number": 1,
+              "id": "bbc-260709-t1-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "The recording says Dutch cycle routes extend over {{blank}} miles.",
-              "answers": [
-                "95,000",
-                "95000"
-              ]
-            },
-            {
-              "id": "bbc-260709-t2-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "The Netherlands is described as having {{blank}} million citizens.",
-              "answers": [
-                "18",
-                "eighteen"
-              ]
-            },
-            {
-              "id": "bbc-260709-t2-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Dutch bicycle manufacturing expanded during the {{blank}}.",
-              "answers": [
-                "1890s"
-              ]
-            },
-            {
-              "id": "bbc-260709-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Factories made bicycles {{blank}} to buy.",
-              "answers": [
-                "cheaper"
-              ]
-            },
-            {
-              "id": "bbc-260709-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Gulf cities hope to improve their positions in global {{blank}}.",
+              "prompt": "Gulf cities want to be placed high in global {{blank}}.",
+              "evidence": {
+                "startSeconds": 188.36,
+                "endSeconds": 198.6,
+                "summary": "Tillman describes competition for high positions in global city rankings.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "rankings"
               ]
             },
             {
-              "id": "bbc-260709-t2-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260709-t1-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Dubai is said to have built {{blank}} km of cycle tracks.",
+              "prompt": "Dubai has already built {{blank}} kilometres of cycle tracks.",
+              "evidence": {
+                "startSeconds": 232.82,
+                "endSeconds": 238.58,
+                "summary": "The report gives six hundred kilometres as the amount already built.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "600",
                 "six hundred"
               ]
             }
           ]
+        },
+        {
+          "id": "bbc-260709-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Tillman say Dubai is looking for when studying other countries? {{blank}}",
+              "evidence": {
+                "startSeconds": 263.92,
+                "endSeconds": 265.74,
+                "summary": "Tillman says the aim is to find principles rather than produce an exact copy.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "the principles",
+                "principles"
+              ]
+            },
+            {
+              "id": "bbc-260709-t1-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What facilities provide cyclists with water? {{blank}}",
+              "evidence": {
+                "startSeconds": 277.36,
+                "endSeconds": 288.14,
+                "summary": "Water stations are named among the adaptations for cycling in the heat.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "water stations"
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260709",
+        "audioSha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038",
+        "durationSeconds": 373.944,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "177fb4b56660d3696b973b23f59c9f14f8de1dc02824770d984ef9d6657c8426"
+      }
+    },
+    {
+      "id": "bbc-260709-t2",
+      "title": "Cycling cultures: history, ambitions and adaptation",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260709-t2-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260709-t2-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What contribution are electric bikes said to make?",
+              "evidence": {
+                "startSeconds": 25.78,
+                "endSeconds": 30.64,
+                "summary": "Electric assistance is presented as widening access, including for older riders.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The historical rise is later linked to industrial manufacturing.",
+                  "C": "Liveability is a goal of cycling policy, not a measurement performed by electric bikes."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t2-r2-q1-a",
+                  "label": "A",
+                  "text": "They allow a wider range of people to cycle."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q1-b",
+                  "label": "B",
+                  "text": "They explain the historical growth of Dutch factories."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q1-c",
+                  "label": "C",
+                  "text": "They are being used to measure city liveability."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260709-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What comparison illustrates the scale of cycling in the Netherlands?",
+              "evidence": {
+                "startSeconds": 58.48,
+                "endSeconds": 66.28,
+                "summary": "The introduction emphasises bicycles outnumbering the Dutch population.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The speaker states that bicycles outnumber the eighteen million citizens.",
+                  "B": "The network's mileage and the population are separate figures, not equal quantities."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t2-r2-q2-a",
+                  "label": "A",
+                  "text": "There are more residents than bicycles."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q2-b",
+                  "label": "B",
+                  "text": "Its population equals the mileage of its cycle network."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q2-c",
+                  "label": "C",
+                  "text": "There are more bicycles than residents."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260709-t2-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which change is described as a milestone in Dutch cycling?",
+              "evidence": {
+                "startSeconds": 109.12,
+                "endSeconds": 124.14,
+                "summary": "The significant shift concerns the bicycle's everyday transport function.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Tourist attractions appear in the UAE comparison, not this Dutch milestone.",
+                  "C": "The historical movement is away from exclusive ownership, not towards it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t2-r2-q3-a",
+                  "label": "A",
+                  "text": "The bicycle replaced tourist attractions as a source of income."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q3-b",
+                  "label": "B",
+                  "text": "The bicycle became a practical tool for ordinary travel."
+                },
+                {
+                  "id": "bbc-260709-t2-r2-q3-c",
+                  "label": "C",
+                  "text": "The bicycle became a more exclusive toy for wealthy owners."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t2-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Period when Dutch bicycle manufacturing expanded rapidly: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 138.8,
+                "endSeconds": 142.54,
+                "summary": "The presenter places the manufacturing expansion in the eighteen-nineties.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "1890s"
+              ]
+            },
+            {
+              "id": "bbc-260709-t2-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Effect of the new factories on buying a bicycle: it became {{blank}}.",
+              "evidence": {
+                "startSeconds": 149.48,
+                "endSeconds": 155.24,
+                "summary": "New factories reduced the cost of bicycles for purchasers.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "cheaper"
+              ]
+            },
+            {
+              "id": "bbc-260709-t2-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Places UAE visitors might explore more sustainably: {{blank}}.",
+              "evidence": {
+                "startSeconds": 172,
+                "endSeconds": 184.44,
+                "summary": "The UAE hopes visitors will use cycling to visit tourist attractions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "tourist attractions"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "How many kilometres of cycle tracks does the report say Dubai has built? {{blank}}",
+              "evidence": {
+                "startSeconds": 232.82,
+                "endSeconds": 238.58,
+                "summary": "The six-hundred-kilometre figure refers to tracks already built, not only planned.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "600",
+                "six hundred"
+              ]
+            },
+            {
+              "id": "bbc-260709-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What temperature is used to illustrate Dubai's climatic challenge? {{blank}}",
+              "evidence": {
+                "startSeconds": 243.04,
+                "endSeconds": 248.3,
+                "summary": "The regular forty-five-degree heat illustrates the need for local adaptation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "45 degrees Celsius",
+                "45",
+                "forty-five degrees Celsius"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260709-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "One practical response to the heat is to provide {{blank}} for cyclists.",
+              "evidence": {
+                "startSeconds": 277.36,
+                "endSeconds": 284.1,
+                "summary": "Water stations are one of the facilities created in response to the heat.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "water stations"
+              ]
+            },
+            {
+              "id": "bbc-260709-t2-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Cyclists are also offered {{blank}} where they can stop out of the sun.",
+              "evidence": {
+                "startSeconds": 284.1,
+                "endSeconds": 288.14,
+                "summary": "Shaded rest areas are the second named local measure.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "shaded rest areas"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260709",
+        "audioSha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038",
+        "durationSeconds": 373.944,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "dbc2f294cb6cdfd0e31ddc52851578aee102e80e12d97aa71bb49f4f6dfa761d"
+      }
     },
     {
       "id": "bbc-260709-t3",
-      "title": "Specific places and conditions",
+      "title": "Urban cycling: extracting evidence from two countries",
       "position": 3,
       "format": "ielts",
       "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260709-t3-g1",
+          "id": "bbc-260709-t3-r2-g1",
           "position": 1,
-          "heading": "Specific places and conditions",
+          "heading": "Questions 1–3",
           "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What kind of bicycle is helping more people take part in cycling? {{blank}}",
+              "evidence": {
+                "startSeconds": 25.78,
+                "endSeconds": 30.64,
+                "summary": "Electric bikes are said to make cycling accessible to a broader population.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "electric bikes"
+              ]
+            },
+            {
+              "id": "bbc-260709-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How long is the Dutch cycle network, in miles? {{blank}}",
+              "evidence": {
+                "startSeconds": 58.48,
+                "endSeconds": 62.68,
+                "summary": "The recorded network length is over ninety-five thousand miles.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "95,000",
+                "95000"
+              ]
+            },
+            {
+              "id": "bbc-260709-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What population is given for the Netherlands? {{blank}}",
+              "evidence": {
+                "startSeconds": 63.16,
+                "endSeconds": 66.28,
+                "summary": "The comparison uses eighteen million citizens as the population figure.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "18 million",
+                "eighteen million"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260709-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Historical setting for the rise of Dutch cycling: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 100.44,
+                "endSeconds": 109.12,
+                "summary": "Glaser associates the rise of cycling with the industrial era.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "industrial era"
+              ]
+            },
+            {
+              "id": "bbc-260709-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "New everyday purpose of the bicycle: {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.12,
+                "endSeconds": 124.14,
+                "summary": "The bicycle changed from a rich person's toy to a transport tool.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "transportation"
+              ]
+            },
+            {
+              "id": "bbc-260709-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "New production facilities made bicycles {{blank}} to purchase.",
+              "evidence": {
+                "startSeconds": 149.48,
+                "endSeconds": 155.24,
+                "summary": "The narrator explains that new factories lowered purchase costs.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "cheaper"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260709-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How does Tillman connect cycling with competition between Gulf cities?",
+              "evidence": {
+                "startSeconds": 188.36,
+                "endSeconds": 202.44,
+                "summary": "Cycling forms part of a broader ambition for attractive, highly ranked cities.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The ownership ratio illustrates Dutch cycling culture, not the target Tillman names for Gulf cities.",
+                  "C": "Dutch manufacturing is a historical example rather than the stated Gulf-city objective."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "Cycling is seen mainly as a way to match the Dutch ratio of bikes to residents."
+                },
+                {
+                  "id": "bbc-260709-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "Cycling is seen as part of improving quality of life and city rankings."
+                },
+                {
+                  "id": "bbc-260709-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "Cycling is seen mainly as a way to recreate the Dutch manufacturing boom."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260709-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which benefit is mentioned in addition to physical health?",
+              "evidence": {
+                "startSeconds": 226.96,
+                "endSeconds": 238.58,
+                "summary": "The presenter explicitly includes mental as well as physical health.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The passage names mental and physical health, not transport expenditure.",
+                  "C": "The health discussion does not give additional working time as the second benefit."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "Better mental health."
+                },
+                {
+                  "id": "bbc-260709-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "Reduced expenditure on public transport."
+                },
+                {
+                  "id": "bbc-260709-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "More time available for paid employment."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
           "maxWords": 3,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260709-t3-q1",
-              "number": 1,
+              "id": "bbc-260709-t3-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "What other name for the Netherlands does Becca mention? {{blank}}",
+              "prompt": "A cyclist needing a drink can use one of the {{blank}} provided.",
+              "evidence": {
+                "startSeconds": 277.36,
+                "endSeconds": 284.1,
+                "summary": "The locally adapted infrastructure includes water stations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Holland"
+                "water stations"
               ]
             },
             {
-              "id": "bbc-260709-t3-q2",
-              "number": 2,
+              "id": "bbc-260709-t3-r2-q12",
+              "number": 10,
               "position": 2,
               "responseType": "text",
-              "prompt": "In which city is the Urban Cycling Institute based? {{blank}}",
+              "prompt": "Facilities for stopping in cooler conditions include {{blank}}.",
+              "evidence": {
+                "startSeconds": 284.1,
+                "endSeconds": 288.14,
+                "summary": "Shaded stopping places are included among the heat-related measures.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "Amsterdam"
-              ]
-            },
-            {
-              "id": "bbc-260709-t3-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "What era does Meredith associate with the rise of bicycle manufacturing? {{blank}}",
-              "answers": [
-                "the industrial era",
-                "industrial era"
-              ]
-            },
-            {
-              "id": "bbc-260709-t3-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "What broad group of people does the UAE hope will explore attractions by bike? {{blank}}",
-              "answers": [
-                "visitors"
-              ]
-            },
-            {
-              "id": "bbc-260709-t3-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "What temperature, in degrees Celsius, does Dubai regularly reach in the account? {{blank}}",
-              "answers": [
-                "45",
-                "forty-five"
-              ]
-            },
-            {
-              "id": "bbc-260709-t3-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "Which country, alongside Holland, is mentioned as a source of useful cycling principles? {{blank}}",
-              "answers": [
-                "Denmark"
+                "shaded rest areas"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260709",
+        "audioSha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038",
+        "durationSeconds": 373.944,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "a7e411ff7698d678c6363f90b72317d5a52fbfc6a5bbc2cf9ff3f211363e3235"
+      }
     },
     {
       "id": "bbc-260709-t4",
-      "title": "Reasons and limitations",
+      "title": "Cycling policy: interpreting development and local needs",
       "position": 4,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260709-t4-g1",
+          "id": "bbc-260709-t4-r2-g1",
           "position": 1,
-          "heading": "Reasons and limitations",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Age group explicitly included in the expansion enabled by electric bikes: {{blank}} people.",
+              "evidence": {
+                "startSeconds": 25.78,
+                "endSeconds": 30.64,
+                "summary": "The access argument specifically includes older people as beneficiaries.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "older"
+              ]
+            },
+            {
+              "id": "bbc-260709-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Scale of the established Dutch network: more than {{blank}} miles.",
+              "evidence": {
+                "startSeconds": 58.48,
+                "endSeconds": 62.68,
+                "summary": "The network figure shows the scale of an established cycling system.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "95,000",
+                "95000"
+              ]
+            },
+            {
+              "id": "bbc-260709-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Earlier owners for whom the bicycle was largely a toy: {{blank}}.",
+              "evidence": {
+                "startSeconds": 109.12,
+                "endSeconds": 119.82,
+                "summary": "Glaser contrasts the earlier wealthy users with the later everyday transport role.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rich people"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260709-t4-q1",
-              "number": 1,
+              "id": "bbc-260709-t4-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why was cheaper bicycle manufacturing described as a turning point?",
+              "prompt": "What does the description of Dutch cycling as deeply ingrained imply?",
+              "evidence": {
+                "startSeconds": 124.7,
+                "endSeconds": 138.1,
+                "summary": "The cultural description stresses a well-established practice unlikely to disappear easily.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The tourist-policy example is introduced for the UAE.",
+                  "C": "The phrase describes a lasting cultural habit, not only a new technical trend."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t4-q1-a",
+                  "id": "bbc-260709-t4-r2-q4-a",
                   "label": "A",
-                  "text": "It stopped Dutch people using bicycles for practical journeys."
+                  "text": "It is mainly an experiment directed at visiting tourists."
                 },
                 {
-                  "id": "bbc-260709-t4-q1-b",
+                  "id": "bbc-260709-t4-r2-q4-b",
                   "label": "B",
-                  "text": "It made bicycles available only to wealthy collectors."
+                  "text": "It is firmly established in the culture."
                 },
                 {
-                  "id": "bbc-260709-t4-q1-c",
+                  "id": "bbc-260709-t4-r2-q4-c",
                   "label": "C",
-                  "text": "It helped transform a luxury object into everyday transport."
+                  "text": "It is expanding only because of a recent electric-bike trend."
                 }
               ],
-              "answer": "C"
+              "answer": "B"
             },
             {
-              "id": "bbc-260709-t4-q2",
-              "number": 2,
+              "id": "bbc-260709-t4-r2-q5",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What does the phrase \"deeply ingrained\" suggest about Dutch cycling?",
+              "prompt": "Which factor is linked specifically to affordability rather than to comfort or symbolism?",
+              "evidence": {
+                "startSeconds": 138.8,
+                "endSeconds": 155.24,
+                "summary": "The presenter separates brand-associated design from the effect of factories on cost.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Brands are associated with a new comfortable style, whereas factories are linked to cheaper prices.",
+                  "C": "Gulf-city competition appears in a separate contemporary policy example."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t4-q2-a",
+                  "id": "bbc-260709-t4-r2-q5-a",
                   "label": "A",
-                  "text": "It is a recent fashion likely to disappear."
+                  "text": "The arrival of new factories."
                 },
                 {
-                  "id": "bbc-260709-t4-q2-b",
+                  "id": "bbc-260709-t4-r2-q5-b",
                   "label": "B",
-                  "text": "It is firmly embedded in the culture."
+                  "text": "The image associated with particular bicycle brands."
                 },
                 {
-                  "id": "bbc-260709-t4-q2-c",
+                  "id": "bbc-260709-t4-r2-q5-c",
                   "label": "C",
-                  "text": "It survives only because tourists request it."
+                  "text": "The later competition between Gulf cities."
                 }
               ],
-              "answer": "B"
+              "answer": "A"
             },
             {
-              "id": "bbc-260709-t4-q3",
-              "number": 3,
+              "id": "bbc-260709-t4-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Why do Gulf cities connect cycling with international rankings?",
+              "prompt": "Why is cycling relevant to the ambitions Tillman describes?",
+              "evidence": {
+                "startSeconds": 188.36,
+                "endSeconds": 202.44,
+                "summary": "Tillman treats cycling as one contributor to quality of life in competitive cities.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The discussion concerns overall quality of life, not a manufacturing-only ranking.",
+                  "C": "The rich-person's-toy description is a historical contrast, not the present policy aim."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260709-t4-q3-a",
+                  "id": "bbc-260709-t4-r2-q7-a",
                   "label": "A",
-                  "text": "They are trying to rank the fastest professional cyclists."
+                  "text": "It makes city rankings a measure of bicycle manufacturing output."
                 },
                 {
-                  "id": "bbc-260709-t4-q3-b",
+                  "id": "bbc-260709-t4-r2-q7-b",
                   "label": "B",
-                  "text": "They want to be viewed as more desirable places to live."
+                  "text": "It contributes to the living conditions on which cities compete."
                 },
                 {
-                  "id": "bbc-260709-t4-q3-c",
+                  "id": "bbc-260709-t4-r2-q7-c",
                   "label": "C",
-                  "text": "They expect rankings to eliminate summer heat."
+                  "text": "It restores the social status formerly attached to expensive bicycles."
                 }
               ],
               "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260709-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Quality of life is described as a measure of overall {{blank}}.",
+              "evidence": {
+                "startSeconds": 216.76,
+                "endSeconds": 219.36,
+                "summary": "The presenter summarises enjoyment, comfort and health in terms of overall wellbeing.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "wellbeing",
+                "well-being"
+              ]
             },
             {
-              "id": "bbc-260709-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What distinguishes liveability from simply providing a transport route?",
-              "options": [
-                {
-                  "id": "bbc-260709-t4-q4-a",
-                  "label": "A",
-                  "text": "It concerns the wider experience of living in a place."
-                },
-                {
-                  "id": "bbc-260709-t4-q4-b",
-                  "label": "B",
-                  "text": "It measures only how many kilometres a route covers."
-                },
-                {
-                  "id": "bbc-260709-t4-q4-c",
-                  "label": "C",
-                  "text": "It refers only to the number of overseas visitors."
-                }
-              ],
-              "answer": "A"
+              "id": "bbc-260709-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The health case for cycling includes {{blank}} benefits as well as physical ones.",
+              "evidence": {
+                "startSeconds": 226.96,
+                "endSeconds": 232.82,
+                "summary": "The discussion explicitly extends the benefits beyond physical health.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mental"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260709-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Tillman say the study of other countries should reveal? {{blank}}",
+              "evidence": {
+                "startSeconds": 263.92,
+                "endSeconds": 265.74,
+                "summary": "The desired transfer is of underlying principles, not complete arrangements.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "the principles",
+                "principles"
+              ]
             },
             {
-              "id": "bbc-260709-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What approach does Martin favour when learning from other countries?",
-              "options": [
-                {
-                  "id": "bbc-260709-t4-q5-a",
-                  "label": "A",
-                  "text": "Copying every Dutch measure exactly"
-                },
-                {
-                  "id": "bbc-260709-t4-q5-b",
-                  "label": "B",
-                  "text": "Avoiding all examples from cooler climates"
-                },
-                {
-                  "id": "bbc-260709-t4-q5-c",
-                  "label": "C",
-                  "text": "Adapting useful principles rather than reproducing a whole system unchanged"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260709-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "How qualified is the programme's conclusion about cycling?",
-              "options": [
-                {
-                  "id": "bbc-260709-t4-q6-a",
-                  "label": "A",
-                  "text": "It can help in some places, but is not an ideal answer for everyone."
-                },
-                {
-                  "id": "bbc-260709-t4-q6-b",
-                  "label": "B",
-                  "text": "It is the perfect solution in every city and climate."
-                },
-                {
-                  "id": "bbc-260709-t4-q6-c",
-                  "label": "C",
-                  "text": "It has no value outside the Netherlands."
-                }
-              ],
-              "answer": "A"
+              "id": "bbc-260709-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What facilities enable cyclists to rest away from direct sunlight? {{blank}}",
+              "evidence": {
+                "startSeconds": 284.1,
+                "endSeconds": 288.14,
+                "summary": "Shaded rest areas are the adaptation relevant to shelter from the sun.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "shaded rest areas"
+              ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260709",
+        "audioSha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038",
+        "durationSeconds": 373.944,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "08a68d64b05cf6b601f9768e6befcab93b117029a04137f081c763226533af53"
+      }
     },
     {
       "id": "bbc-260709-t5",
-      "title": "Precise planning language",
+      "title": "Transport change: recognising purpose and qualification",
       "position": 5,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260709-t5-g1",
+          "id": "bbc-260709-t5-r2-g1",
           "position": 1,
-          "heading": "Precise planning language",
+          "heading": "Questions 1–3",
           "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260709-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The programme reports that British bicycle sales are {{blank}} this year.",
+              "evidence": {
+                "startSeconds": 15.76,
+                "endSeconds": 20.92,
+                "summary": "The opening supplies a current rise in sales as evidence of cycling's popularity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "up"
+              ]
+            },
+            {
+              "id": "bbc-260709-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "People are motivated by benefits to both their health and the {{blank}}.",
+              "evidence": {
+                "startSeconds": 21.54,
+                "endSeconds": 24.98,
+                "summary": "Health and environmental considerations are paired as motivations.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "environment"
+              ]
+            },
+            {
+              "id": "bbc-260709-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Electric assistance can extend participation to {{blank}} people.",
+              "evidence": {
+                "startSeconds": 25.78,
+                "endSeconds": 30.64,
+                "summary": "Electric bikes are specifically said to improve access for older riders.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "older"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260709-t5-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What is the central historical contrast in Glaser's description?",
+              "evidence": {
+                "startSeconds": 100.44,
+                "endSeconds": 124.14,
+                "summary": "The change is a widening of the bicycle's practical social role.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The passage moves towards everyday transport, not specialised sport.",
+                  "C": "The earlier toy is associated with wealthy people; tourism is not the origin described."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t5-r2-q4-a",
+                  "label": "A",
+                  "text": "A luxury plaything became an ordinary transport tool."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q4-b",
+                  "label": "B",
+                  "text": "An ordinary transport tool became a specialist sporting product."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q4-c",
+                  "label": "C",
+                  "text": "A tourist service became a symbol of a wealthy minority."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260709-t5-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why could bicycle ownership become more affordable in the account given?",
+              "evidence": {
+                "startSeconds": 149.48,
+                "endSeconds": 155.24,
+                "summary": "New manufacturing capacity is the stated reason bicycles became cheaper to buy.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Comfort and brand image are mentioned, but lower prices are linked to factories.",
+                  "B": "Electric bikes belong to the modern opening, not this historical explanation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t5-r2-q5-a",
+                  "label": "A",
+                  "text": "Comfortable brands persuaded people that price no longer mattered."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q5-b",
+                  "label": "B",
+                  "text": "Electric-bike assistance reduced manufacturing costs in the 1890s."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q5-c",
+                  "label": "C",
+                  "text": "New factories reduced the cost of buying bikes."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260709-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What problem is the UAE's visitor-related proposal intended to address?",
+              "evidence": {
+                "startSeconds": 172,
+                "endSeconds": 184.44,
+                "summary": "The proposal concerns the environmental character of visitor travel within cities.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Manufacturing conditions are part of the historical comparison, not the purpose of the tourism proposal.",
+                  "C": "The ownership ratio describes the Netherlands, not the visitor-travel aim in the UAE."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260709-t5-r2-q6-a",
+                  "label": "A",
+                  "text": "How to reproduce the production conditions that made Dutch bikes cheaper."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q6-b",
+                  "label": "B",
+                  "text": "How to explore attractions in a more environmentally friendly way."
+                },
+                {
+                  "id": "bbc-260709-t5-r2-q6-c",
+                  "label": "C",
+                  "text": "How to match the Netherlands in bicycle ownership per resident."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
           "maxWords": 3,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260709-t5-q1",
-              "number": 1,
+              "id": "bbc-260709-t5-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "Meredith calls the change from luxury toy to daily transport an important {{blank}}.",
+              "prompt": "What completed track length is cited as evidence of Dubai's investment? {{blank}}",
+              "evidence": {
+                "startSeconds": 232.82,
+                "endSeconds": 238.58,
+                "summary": "The report cites six hundred kilometres of already-built cycle tracks.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "milestone"
+                "600 kilometres",
+                "600 kilometers",
+                "600 km",
+                "600"
               ]
             },
             {
-              "id": "bbc-260709-t5-q2",
-              "number": 2,
+              "id": "bbc-260709-t5-r2-q9",
+              "number": 8,
               "position": 2,
               "responseType": "text",
-              "prompt": "The UAE hopes bicycles can offer a {{blank}} way to visit attractions.",
+              "prompt": "What temperature is used to explain why direct transplantation could be problematic? {{blank}}",
+              "evidence": {
+                "startSeconds": 243.04,
+                "endSeconds": 248.3,
+                "summary": "Dubai's regular forty-five-degree temperature illustrates a major contextual difference.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "greener"
+                "45 degrees Celsius",
+                "45",
+                "forty-five degrees Celsius"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260709-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260709-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Hydration provision introduced for local conditions: {{blank}}.",
+              "evidence": {
+                "startSeconds": 277.36,
+                "endSeconds": 284.1,
+                "summary": "Water stations adapt the cycling environment to the needs created by heat.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "water stations"
               ]
             },
             {
-              "id": "bbc-260709-t5-q3",
-              "number": 3,
-              "position": 3,
+              "id": "bbc-260709-t5-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Enjoyment, comfort and health together are described as {{blank}}.",
+              "prompt": "Sheltered stopping provision: {{blank}}.",
+              "evidence": {
+                "startSeconds": 284.1,
+                "endSeconds": 288.14,
+                "summary": "The other named adaptation is shaded rest areas.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "quality of life"
-              ]
-            },
-            {
-              "id": "bbc-260709-t5-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "The single-word term for how pleasant somewhere is to inhabit is {{blank}}.",
-              "answers": [
-                "liveability",
-                "livability"
-              ]
-            },
-            {
-              "id": "bbc-260709-t5-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Rather than an exact transfer, Martin's team seeks the underlying {{blank}}.",
-              "answers": [
-                "principles"
-              ]
-            },
-            {
-              "id": "bbc-260709-t5-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "The final Dutch bicycle estimate is roughly {{blank}} million, not Neil's higher guess.",
-              "answers": [
-                "24",
-                "twenty-four"
+                "shaded rest areas"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260709",
+        "audioSha256": "bcf00abc8f7d1a561699f1fcf8a7fe7dc8c71f75cae6c885239c48ae80b01038",
+        "durationSeconds": 373.944,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "8be6b40be6c6184a3ca63bea74ec7522ddde7589bfd83fa3fa1a23f105ace192"
+      }
     }
   ]
 }

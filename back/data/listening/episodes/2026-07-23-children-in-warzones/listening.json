@@ -3,594 +3,1441 @@
   "tests": [
     {
       "id": "bbc-260723-t1",
-      "title": "Elementary: Understand the main discussion",
+      "title": "Children in conflict: experiences and recovery",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260723-t1-g1",
+          "id": "bbc-260723-t1-r2-g1",
           "position": 1,
-          "heading": "Elementary: Understand the main discussion",
-          "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "id": "bbc-260723-t1-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "single_choice",
-              "prompt": "What warning do the presenters give before the discussion?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q1-a",
-                  "label": "A",
-                  "text": "It contains detailed instructions for treating an injury."
-                },
-                {
-                  "id": "bbc-260723-t1-q1-b",
-                  "label": "B",
-                  "text": "It is mainly about violent films."
-                },
-                {
-                  "id": "bbc-260723-t1-q1-c",
-                  "label": "C",
-                  "text": "It includes references to death and trauma."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260723-t1-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What is Fergal Keane best known for reporting on?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q2-a",
-                  "label": "A",
-                  "text": "Medical discoveries in laboratories."
-                },
-                {
-                  "id": "bbc-260723-t1-q2-b",
-                  "label": "B",
-                  "text": "Wars in different parts of the world."
-                },
-                {
-                  "id": "bbc-260723-t1-q2-c",
-                  "label": "C",
-                  "text": "School competitions in Britain."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260723-t1-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "How does Fergal describe his alertness as a child?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q3-a",
-                  "label": "A",
-                  "text": "He rarely noticed his surroundings."
-                },
-                {
-                  "id": "bbc-260723-t1-q3-b",
-                  "label": "B",
-                  "text": "He constantly watched for possible danger."
-                },
-                {
-                  "id": "bbc-260723-t1-q3-c",
-                  "label": "C",
-                  "text": "He worried only when travelling abroad."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260723-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What do the researchers agree makes recovery impossible?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q4-a",
-                  "label": "A",
-                  "text": "Having different opinions about research."
-                },
-                {
-                  "id": "bbc-260723-t1-q4-b",
-                  "label": "B",
-                  "text": "Talking to a familiar adult."
-                },
-                {
-                  "id": "bbc-260723-t1-q4-c",
-                  "label": "C",
-                  "text": "Continuing to experience trauma."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260723-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Which ordinary activity is used to illustrate a difficult step in recovery?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q5-a",
-                  "label": "A",
-                  "text": "Learning to sleep without a parent."
-                },
-                {
-                  "id": "bbc-260723-t1-q5-b",
-                  "label": "B",
-                  "text": "Preparing a meal for the whole family."
-                },
-                {
-                  "id": "bbc-260723-t1-q5-c",
-                  "label": "C",
-                  "text": "Travelling alone to another country."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260723-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What does Fergal emphasise towards the end of the discussion?",
-              "options": [
-                {
-                  "id": "bbc-260723-t1-q6-a",
-                  "label": "A",
-                  "text": "Children can recover remarkably when given a chance."
-                },
-                {
-                  "id": "bbc-260723-t1-q6-b",
-                  "label": "B",
-                  "text": "Every child recovers immediately without support."
-                },
-                {
-                  "id": "bbc-260723-t1-q6-c",
-                  "label": "C",
-                  "text": "Childhood experiences never affect adult life."
-                }
-              ],
-              "answer": "A"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260723-t2",
-      "title": "Intermediate: Complete the programme notes",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260723-t2-g1",
-          "position": 1,
-          "heading": "Intermediate: Complete the programme notes",
+          "heading": "Questions 1–3",
           "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260723-t2-q1",
+              "id": "bbc-260723-t1-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Year of the global figure quoted at the start: {{blank}}.",
+              "prompt": "Year of the estimate quoted at the start: {{blank}}.",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The programme attributes its global figure to an estimate from twenty twenty-four.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "2024"
               ]
             },
             {
-              "id": "bbc-260723-t2-q2",
+              "id": "bbc-260723-t1-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "Number of children living in conflict zones in that figure: {{blank}}.",
+              "prompt": "Estimated number of children living in conflict zones: {{blank}}.",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The reported estimate is five hundred and twenty million children.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "520 million",
-                "520,000,000"
+                "520 million"
               ]
             },
             {
-              "id": "bbc-260723-t2-q3",
+              "id": "bbc-260723-t1-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "BBC programme from which the Fergal Keane clips are taken: The {{blank}}.",
-              "answers": [
-                "Global Story"
-              ]
-            },
-            {
-              "id": "bbc-260723-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "The interviewer who asks Fergal about his childhood: {{blank}}.",
-              "answers": [
-                "Asma Khalid"
-              ]
-            },
-            {
-              "id": "bbc-260723-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Hypervigilance involves extreme alertness and sensitivity to {{blank}}.",
-              "answers": [
-                "surroundings"
-              ]
-            },
-            {
-              "id": "bbc-260723-t2-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "One early step discussed is learning to {{blank}}.",
-              "answers": [
-                "sleep alone"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260723-t3",
-      "title": "Intermediate: Listen for specific answers",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260723-t3-g1",
-          "position": 1,
-          "heading": "Intermediate: Listen for specific answers",
-          "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260723-t3-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Approximately one child in how many worldwide lives in a conflict zone, according to the opening figure? {{blank}}",
+              "prompt": "Approximate worldwide proportion: one in every {{blank}} children.",
+              "evidence": {
+                "startSeconds": 46.32,
+                "endSeconds": 48.8,
+                "summary": "The count is described as about one in every five children worldwide.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "five",
                 "5"
               ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260723-t1-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What do the researchers agree on in the account given?",
+              "evidence": {
+                "startSeconds": 169,
+                "endSeconds": 181.96,
+                "summary": "The shared position concerns the obstacle posed by continuing trauma.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The speaker says researchers may disagree about improvement.",
+                  "C": "Agreement on recovery is distinguished from disagreement on other matters."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t1-r2-q5-a",
+                  "label": "A",
+                  "text": "Recovery cannot happen while the trauma continues."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q5-b",
+                  "label": "B",
+                  "text": "Children's situations are improving at the same rate everywhere."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q5-c",
+                  "label": "C",
+                  "text": "All of their research findings are identical."
+                }
+              ],
+              "answer": "A"
             },
             {
-              "id": "bbc-260723-t3-q2",
-              "number": 2,
+              "id": "bbc-260723-t1-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How should the tasks in the approach be introduced?",
+              "evidence": {
+                "startSeconds": 188.14,
+                "endSeconds": 198.78,
+                "summary": "The proposed approach is gradual and carefully managed.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The stated pace is slow and careful, not speed-focused.",
+                  "B": "The speaker explicitly excludes confronting death and massacre again."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t1-r2-q6-a",
+                  "label": "A",
+                  "text": "As quickly as the child can finish them."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q6-b",
+                  "label": "B",
+                  "text": "Only after asking the child to relive the violence."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q6-c",
+                  "label": "C",
+                  "text": "Slowly and carefully."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t1-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Which everyday task is used as an example?",
+              "evidence": {
+                "startSeconds": 198.78,
+                "endSeconds": 205.42,
+                "summary": "The practical example is learning to sleep alone rather than with a parent.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The aim is not ignoring a parent; it is gradually sleeping independently.",
+                  "C": "The example is an ordinary sleeping task, not describing violence."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t1-r2-q7-a",
+                  "label": "A",
+                  "text": "Learning to ignore a parent."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q7-b",
+                  "label": "B",
+                  "text": "Learning to sleep alone."
+                },
+                {
+                  "id": "bbc-260723-t1-r2-q7-c",
+                  "label": "C",
+                  "text": "Learning to describe a battle in detail."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t1-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "During the war, children had been sleeping with a {{blank}}.",
+              "evidence": {
+                "startSeconds": 198.78,
+                "endSeconds": 205.42,
+                "summary": "Keane describes children sleeping with a parent in the wartime situation.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "parent"
+              ]
+            },
+            {
+              "id": "bbc-260723-t1-r2-q9",
+              "number": 8,
               "position": 2,
               "responseType": "text",
-              "prompt": "Which member of Fergal's family is described as having an alcohol problem? {{blank}}",
+              "prompt": "They did this because they were consistently {{blank}}.",
+              "evidence": {
+                "startSeconds": 206.5,
+                "endSeconds": 210.04,
+                "summary": "The reason given for this sleeping arrangement is ongoing terror.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "father",
-                "his father"
+                "terrified"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Keane say children need to be given in his hopeful conclusion? {{blank}}",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "His statement of resilience is qualified by the phrase given a chance.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "a chance",
+                "chance"
               ]
             },
             {
-              "id": "bbc-260723-t3-q3",
+              "id": "bbc-260723-t1-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How does Keane describe children's ability to recover? {{blank}}",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "Keane describes children as phenomenally resilient when given a chance.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "phenomenally resilient",
+                "resilient"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260723",
+        "audioSha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6",
+        "durationSeconds": 385.728,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "fb3bf95d3dea739605d86e02e109a2a840a102a7a14db899360457600786e02e"
+      }
+    },
+    {
+      "id": "bbc-260723-t2",
+      "title": "Trauma and support: listening for qualifications",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260723-t2-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260723-t2-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How is the global scale described?",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 48.8,
+                "summary": "The statistic is explained as approximately a fifth of children worldwide.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The stated share is one in five, not one in two.",
+                  "C": "One in five is not the one-in-twenty share expressed by five in a hundred."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t2-r2-q1-a",
+                  "label": "A",
+                  "text": "About one child in five lives in a conflict zone."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q1-b",
+                  "label": "B",
+                  "text": "About half of all children live in conflict zones."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q1-c",
+                  "label": "C",
+                  "text": "About five children in every hundred live in conflict zones."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260723-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why is Keane's own childhood introduced?",
+              "evidence": {
+                "startSeconds": 72.6,
+                "endSeconds": 99.52,
+                "summary": "The interview links earlier personal experience with the reporter's later work.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "The chronology runs from childhood experience to later reporting, not the reverse.",
+                  "B": "He describes heightened observation of threat, not ceasing to notice it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t2-r2-q2-a",
+                  "label": "A",
+                  "text": "To establish that his reporting caused events in his childhood."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q2-b",
+                  "label": "B",
+                  "text": "To explain why he stopped observing danger around him."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q2-c",
+                  "label": "C",
+                  "text": "To explore how personal trauma affected his reporting on children."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t2-r2-q3",
               "number": 3,
               "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What distinguishes hypervigilance in the explanation?",
+              "evidence": {
+                "startSeconds": 124.34,
+                "endSeconds": 138.28,
+                "summary": "Hypervigilance is described as extreme alertness and sensitivity, possibly linked to anxiety.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Sleeping arrangements appear later as an intervention example.",
+                  "C": "The explanation concerns increased sensitivity, not a failure to notice."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t2-r2-q3-a",
+                  "label": "A",
+                  "text": "An ordinary preference for sleeping without company."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q3-b",
+                  "label": "B",
+                  "text": "An extreme level of alertness to surroundings."
+                },
+                {
+                  "id": "bbc-260723-t2-r2-q3-c",
+                  "label": "C",
+                  "text": "A complete inability to notice danger."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t2-r2-q4",
+              "number": 4,
+              "position": 1,
               "responseType": "text",
-              "prompt": "Which prefix is explained as expressing a lot or too much of something? {{blank}}",
+              "prompt": "Continuing experience that prevents recovery in the researchers' view: {{blank}}.",
+              "evidence": {
+                "startSeconds": 177.66,
+                "endSeconds": 181.96,
+                "summary": "The researchers' shared point is that ongoing war trauma prevents recovery from it.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "hyper"
+                "war trauma",
+                "trauma"
               ]
             },
             {
-              "id": "bbc-260723-t3-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260723-t2-r2-q5",
+              "number": 5,
+              "position": 2,
               "responseType": "text",
-              "prompt": "In the example from wartime, who did frightened children sleep with? {{blank}}",
+              "prompt": "Qualification about the age of the field: {{blank}} new.",
+              "evidence": {
+                "startSeconds": 188.14,
+                "endSeconds": 191.42,
+                "summary": "Keane qualifies his description of the field as relatively new.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "relatively"
+              ]
+            },
+            {
+              "id": "bbc-260723-t2-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Pace of confronting manageable difficulties: {{blank}} and carefully.",
+              "evidence": {
+                "startSeconds": 191.42,
+                "endSeconds": 198.78,
+                "summary": "He specifies slow, careful confrontation of manageable tasks.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "slowly"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Who had shared the child's sleeping space during the war? {{blank}}",
+              "evidence": {
+                "startSeconds": 198.78,
+                "endSeconds": 205.42,
+                "summary": "The previous arrangement involved sleeping with a parent.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "a parent",
                 "parent"
               ]
             },
             {
-              "id": "bbc-260723-t3-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260723-t2-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "What kind of frightening dream is used in the comparison about bedtime? {{blank}}",
+              "prompt": "What word does Keane use for the children's persistent fear at that time? {{blank}}",
+              "evidence": {
+                "startSeconds": 206.5,
+                "endSeconds": 210.04,
+                "summary": "He describes the children as consistently terrified during the war.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "a nightmare",
-                "nightmare"
+                "terrified"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Keane's positive assessment is conditional on children being given a {{blank}}.",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "The hopeful observation is framed by the condition of being given a chance.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "chance"
               ]
             },
             {
-              "id": "bbc-260723-t3-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260723-t2-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Which adjective describes the ability to recover from a difficult experience? {{blank}}",
+              "prompt": "Being resilient means being able to {{blank}} after something difficult has happened.",
+              "evidence": {
+                "startSeconds": 293.36,
+                "endSeconds": 307.1,
+                "summary": "The explanation of resilience centres on recovering after difficulty.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "recover"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260723",
+        "audioSha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6",
+        "durationSeconds": 385.728,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "a3b03c438f7d19214e0823d670922d778d625243ac8272cb73003ddb76931750"
+      }
+    },
+    {
+      "id": "bbc-260723-t3",
+      "title": "War's effects: evidence, interpretation and gradual support",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260723-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260723-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "From which year does the programme's quoted global estimate come? {{blank}}",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The global estimate is explicitly dated to twenty twenty-four.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "2024"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "How many children does that estimate place in conflict zones? {{blank}}",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The estimate is given as five hundred and twenty million children.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "520 million"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What type of condition is PTSD described as in the introduction? {{blank}}",
+              "evidence": {
+                "startSeconds": 62.02,
+                "endSeconds": 67.28,
+                "summary": "PTSD is introduced as a type of stress disorder experienced by the reporter.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a stress disorder",
+                "stress disorder"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Keane's description of his own early alertness: {{blank}}.",
+              "evidence": {
+                "startSeconds": 91.22,
+                "endSeconds": 95.52,
+                "summary": "Keane characterises himself as hyper-vigilant from his earliest years.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "hyper-vigilant",
+                "hypervigilant"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What he continually checked for: whether he was under {{blank}}.",
+              "evidence": {
+                "startSeconds": 95.84,
+                "endSeconds": 99.52,
+                "summary": "His account includes repeatedly checking whether he was under threat.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "threat"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Topic on which researchers are said to agree: {{blank}} from war trauma.",
+              "evidence": {
+                "startSeconds": 150.36,
+                "endSeconds": 160.6,
+                "summary": "The presenter identifies recovery from war trauma as the area of agreement.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "recovery"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260723-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What is the approach intended to confront?",
+              "evidence": {
+                "startSeconds": 188.14,
+                "endSeconds": 205.42,
+                "summary": "The proposed confrontation concerns ordinary, manageable difficulties in a safe progression.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Research disagreement is separate from the child-focused intervention example.",
+                  "C": "Keane explicitly rules out confronting death and massacre again."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "The differences between researchers' personal opinions."
+                },
+                {
+                  "id": "bbc-260723-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "Manageable everyday difficulties rather than the original violence again."
+                },
+                {
+                  "id": "bbc-260723-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "The original violence before any ordinary tasks are attempted."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260723-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why had the children been sleeping with a parent?",
+              "evidence": {
+                "startSeconds": 198.78,
+                "endSeconds": 210.04,
+                "summary": "The previous sleeping arrangement is explained by persistent fear.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Independent sleeping is the later goal, not the earlier arrangement's purpose.",
+                  "C": "No such causal claim about conflict is made."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "They had been persistently terrified during the war."
+                },
+                {
+                  "id": "bbc-260723-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "They had been practising a research technique for independent sleep."
+                },
+                {
+                  "id": "bbc-260723-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "They had been told that sleeping alone caused the conflict."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The account recommends beginning with more {{blank}} activities such as independent sleeping.",
+              "evidence": {
+                "startSeconds": 234.58,
+                "endSeconds": 239.98,
+                "summary": "The presenter reiterates beginning with simpler everyday things.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "simple"
+              ]
+            },
+            {
+              "id": "bbc-260723-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Keane's description of children given a chance is phenomenally {{blank}}.",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "The key positive description is resilience, qualified by opportunity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "resilient"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260723",
+        "audioSha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6",
+        "durationSeconds": 385.728,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "3cac5cba5886cf6e01af590014b1062fcc1e13d6930dff42855c1c44b8d95b04"
+      }
     },
     {
       "id": "bbc-260723-t4",
-      "title": "Advanced: Distinguish qualifications and implications",
+      "title": "Recovery: distinguishing conditions, methods and claims",
       "position": 4,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260723-t4-g1",
+          "id": "bbc-260723-t4-r2-g1",
           "position": 1,
-          "heading": "Advanced: Distinguish qualifications and implications",
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260723-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The dated estimate puts the number of affected children at {{blank}}.",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The programme quotes a twenty-twenty-four estimate of five hundred and twenty million children in conflict zones.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "520 million"
+              ]
+            },
+            {
+              "id": "bbc-260723-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "That is approximately one in every {{blank}} children worldwide.",
+              "evidence": {
+                "startSeconds": 46.32,
+                "endSeconds": 48.8,
+                "summary": "The estimate is translated into a worldwide proportion of one in five.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "five",
+                "5"
+              ]
+            },
+            {
+              "id": "bbc-260723-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The reporter's PTSD is introduced as a type of {{blank}}.",
+              "evidence": {
+                "startSeconds": 62.02,
+                "endSeconds": 67.28,
+                "summary": "The introduction describes PTSD as a stress disorder that followed his reporting experiences.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "stress disorder"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t4-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What term does Keane use for the heightened watchfulness of his childhood? {{blank}}",
+              "evidence": {
+                "startSeconds": 91.22,
+                "endSeconds": 95.52,
+                "summary": "Keane uses hyper-vigilant to describe his early watchfulness.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "hyper-vigilant",
+                "hypervigilant"
+              ]
+            },
+            {
+              "id": "bbc-260723-t4-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What was he checking for besides a threat? {{blank}}",
+              "evidence": {
+                "startSeconds": 95.84,
+                "endSeconds": 99.52,
+                "summary": "Keane's example questions whether there is danger to him in his surroundings.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "danger"
+              ]
+            },
+            {
+              "id": "bbc-260723-t4-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What aspect of children's war trauma is identified as a point of consensus? {{blank}}",
+              "evidence": {
+                "startSeconds": 150.36,
+                "endSeconds": 160.6,
+                "summary": "The presenter distinguishes consensus about recovery from disagreement about other findings.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "recovery"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260723-t4-q1",
-              "number": 1,
+              "id": "bbc-260723-t4-r2-q7",
+              "number": 7,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "What connection does Asma ask Fergal to consider?",
+              "prompt": "Which statement preserves the boundary of the researchers' agreement?",
+              "evidence": {
+                "startSeconds": 169,
+                "endSeconds": 181.96,
+                "summary": "The consensus is specific to recovery under continuing trauma and is not a claim of agreement on every finding.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The account says continuing trauma obstructs recovery, not that recovery removes exposure.",
+                  "C": "Improvement in children's experiences is given as something they may disagree about."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260723-t4-q1-a",
+                  "id": "bbc-260723-t4-r2-q7-a",
                   "label": "A",
-                  "text": "Whether all journalists had the same childhood as him."
+                  "text": "They agree that recovery itself removes the ongoing exposure."
                 },
                 {
-                  "id": "bbc-260723-t4-q1-b",
+                  "id": "bbc-260723-t4-r2-q7-b",
                   "label": "B",
-                  "text": "Why reporting had prevented him from remembering his childhood."
+                  "text": "They agree about the obstacle of continuing trauma, despite disagreements elsewhere."
                 },
                 {
-                  "id": "bbc-260723-t4-q1-c",
+                  "id": "bbc-260723-t4-r2-q7-c",
                   "label": "C",
-                  "text": "How his childhood experiences influenced his reporting on children."
+                  "text": "They agree that conditions for children are improving everywhere."
                 }
               ],
-              "answer": "C"
+              "answer": "B"
             },
             {
-              "id": "bbc-260723-t4-q2",
-              "number": 2,
+              "id": "bbc-260723-t4-r2-q9",
+              "number": 8,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What distinction is made between vigilance and hypervigilance?",
-              "options": [
-                {
-                  "id": "bbc-260723-t4-q2-a",
-                  "label": "A",
-                  "text": "The latter can involve an excessive level of alertness and anxiety."
-                },
-                {
-                  "id": "bbc-260723-t4-q2-b",
-                  "label": "B",
-                  "text": "The latter means paying less attention to danger."
-                },
-                {
-                  "id": "bbc-260723-t4-q2-c",
-                  "label": "C",
-                  "text": "The two words refer to different physical locations."
+              "prompt": "Which interpretation best respects the limit Keane places on confrontation?",
+              "evidence": {
+                "startSeconds": 191.42,
+                "endSeconds": 205.42,
+                "summary": "The account carefully distinguishes confronting manageable difficulties from repeating traumatic events.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "He explicitly excludes confronting death and massacre again.",
+                  "B": "The research disagreement is not assigned as a task for children."
                 }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260723-t4-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "What does the researchers' agreement establish in the discussion?",
+              },
               "options": [
                 {
-                  "id": "bbc-260723-t4-q3-a",
+                  "id": "bbc-260723-t4-r2-q9-a",
                   "label": "A",
-                  "text": "Agreement that every aspect of their research is settled."
+                  "text": "Children must experience the same violence again before ordinary tasks can help."
                 },
                 {
-                  "id": "bbc-260723-t4-q3-b",
+                  "id": "bbc-260723-t4-r2-q9-b",
                   "label": "B",
-                  "text": "Agreement on one condition for recovery despite disagreements on other matters."
+                  "text": "Children should settle the researchers' disagreements before attempting sleep tasks."
                 },
                 {
-                  "id": "bbc-260723-t4-q3-c",
+                  "id": "bbc-260723-t4-r2-q9-c",
                   "label": "C",
-                  "text": "Agreement that recovery is independent of a child's current circumstances."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260723-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "Which interpretation of the proposed approach does Fergal explicitly rule out?",
-              "options": [
-                {
-                  "id": "bbc-260723-t4-q4-a",
-                  "label": "A",
-                  "text": "Approaching ordinary activities gradually."
-                },
-                {
-                  "id": "bbc-260723-t4-q4-b",
-                  "label": "B",
-                  "text": "Making children face death and massacre again."
-                },
-                {
-                  "id": "bbc-260723-t4-q4-c",
-                  "label": "C",
-                  "text": "Recognising that sleeping alone may be difficult."
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260723-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Why does Fergal compare the situation with an ordinary childhood nightmare?",
-              "options": [
-                {
-                  "id": "bbc-260723-t4-q5-a",
-                  "label": "A",
-                  "text": "To show that an apparently simple bedtime task can still be very difficult."
-                },
-                {
-                  "id": "bbc-260723-t4-q5-b",
-                  "label": "B",
-                  "text": "To claim that every nightmare is a result of war."
-                },
-                {
-                  "id": "bbc-260723-t4-q5-c",
-                  "label": "C",
-                  "text": "To suggest that war trauma is no more serious than a dream."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260723-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "Why is the expression \"given a chance\" important to Fergal's final observation?",
-              "options": [
-                {
-                  "id": "bbc-260723-t4-q6-a",
-                  "label": "A",
-                  "text": "It means resilience can be measured by counting dreams."
-                },
-                {
-                  "id": "bbc-260723-t4-q6-b",
-                  "label": "B",
-                  "text": "It removes the need to address continuing danger."
-                },
-                {
-                  "id": "bbc-260723-t4-q6-c",
-                  "label": "C",
-                  "text": "It qualifies his optimism by recognising that recovery needs an opportunity."
+                  "text": "Children work towards everyday tasks without being re-exposed to the original violence."
                 }
               ],
               "answer": "C"
             }
           ]
+        },
+        {
+          "id": "bbc-260723-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Illustration of a manageable first goal: learning to sleep {{blank}}.",
+              "evidence": {
+                "startSeconds": 234.58,
+                "endSeconds": 239.98,
+                "summary": "The presenter identifies independent sleeping as a simple starting task.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "alone"
+              ]
+            },
+            {
+              "id": "bbc-260723-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Qualification attached to the hopeful claim: being given a {{blank}}.",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "Keane's resilience statement depends on children being given an opportunity.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "chance"
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260723",
+        "audioSha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6",
+        "durationSeconds": 385.728,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "77c15ffc6721129e23fd3f892aaaff3ef6c10403fd19674158d702c35360c6e1"
+      }
     },
     {
       "id": "bbc-260723-t5",
-      "title": "Advanced: Complete precise paraphrases",
+      "title": "Trauma and resilience: close listening to the argument",
       "position": 5,
       "format": "ielts",
       "difficulty": "hard",
       "groups": [
         {
-          "id": "bbc-260723-t5-g1",
+          "id": "bbc-260723-t5-r2-g1",
           "position": 1,
-          "heading": "Advanced: Complete precise paraphrases",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260723-t5-q1",
+              "id": "bbc-260723-t5-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Fergal's childhood alertness centred on whether he was under {{blank}}.",
+              "prompt": "Estimated affected population in the cited figure: {{blank}} children.",
+              "evidence": {
+                "startSeconds": 37.88,
+                "endSeconds": 45.54,
+                "summary": "The opening estimate places five hundred and twenty million children in conflict zones.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "threat"
+                "520 million"
               ]
             },
             {
-              "id": "bbc-260723-t5-q2",
+              "id": "bbc-260723-t5-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "Researchers agree that recovery cannot occur while there is {{blank}}.",
+              "prompt": "Approximate denominator of the worldwide ratio: one in every {{blank}}.",
+              "evidence": {
+                "startSeconds": 46.32,
+                "endSeconds": 48.8,
+                "summary": "The reported share is one in every five children.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "continuing trauma"
+                "five",
+                "5"
               ]
             },
             {
-              "id": "bbc-260723-t5-q3",
+              "id": "bbc-260723-t5-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "The everyday tasks in the proposed approach should be attempted {{blank}}.",
+              "prompt": "Keane's early vigilance centred on a possible threat or {{blank}}.",
+              "evidence": {
+                "startSeconds": 91.22,
+                "endSeconds": 99.52,
+                "summary": "He describes checking his surroundings for threats and danger from childhood.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "slowly and carefully"
+                "danger"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
             {
-              "id": "bbc-260723-t5-q4",
+              "id": "bbc-260723-t5-r2-q4",
               "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Fergal notes that putting an untraumatised child to bed after a bad dream can still be {{blank}}.",
-              "answers": [
-                "very difficult",
-                "difficult"
-              ]
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does the account emphasise about hypervigilance?",
+              "evidence": {
+                "startSeconds": 124.34,
+                "endSeconds": 138.28,
+                "summary": "The explanation concerns extreme alertness and sensitivity, potentially associated with anxiety.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The account describes extreme sensitivity rather than ignoring surroundings.",
+                  "C": "The vigilance is associated with possible danger, not certainty of safety."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t5-r2-q4-a",
+                  "label": "A",
+                  "text": "The intensity of watchfulness can go beyond ordinary caution."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q4-b",
+                  "label": "B",
+                  "text": "It means deliberately ignoring the surrounding environment."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q4-c",
+                  "label": "C",
+                  "text": "It means knowing that the environment is free from danger."
+                }
+              ],
+              "answer": "A"
             },
             {
-              "id": "bbc-260723-t5-q5",
+              "id": "bbc-260723-t5-r2-q5",
               "number": 5,
-              "position": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which inference would go beyond the consensus actually reported?",
+              "evidence": {
+                "startSeconds": 169,
+                "endSeconds": 181.96,
+                "summary": "Agreement on recovery does not establish agreement on whether overall circumstances are improving.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The recovery limit is explicitly identified as their area of agreement.",
+                  "B": "The relevance of continuing trauma is part of the reported consensus."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t5-r2-q5-a",
+                  "label": "A",
+                  "text": "That researchers agree about a limit on recovery under ongoing trauma."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q5-b",
+                  "label": "B",
+                  "text": "That continued trauma matters when considering recovery."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q5-c",
+                  "label": "C",
+                  "text": "That researchers agree on whether children's circumstances are improving."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260723-t5-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What distinction is essential to the proposed confrontation?",
+              "evidence": {
+                "startSeconds": 191.42,
+                "endSeconds": 205.42,
+                "summary": "The method described concerns manageable tasks while excluding renewed exposure to violence.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The speaker explicitly distinguishes sleep tasks from the original violence.",
+                  "C": "The account recognises the children's terror rather than dismissing it as unnecessary."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260723-t5-r2-q7-a",
+                  "label": "A",
+                  "text": "Everyday recovery tasks are not a recreation of the original violence."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q7-b",
+                  "label": "B",
+                  "text": "Independent sleeping is the same as re-exposure to conflict."
+                },
+                {
+                  "id": "bbc-260723-t5-r2-q7-c",
+                  "label": "C",
+                  "text": "A gradual task is intended to prove that earlier fear was unnecessary."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t5-r2-q8",
+              "number": 7,
+              "position": 1,
               "responseType": "text",
-              "prompt": "In Fergal's description of children's resilience, the adverb conveying an extraordinary degree is {{blank}}.",
+              "prompt": "The shared sleeping arrangement developed because the children were consistently {{blank}}.",
+              "evidence": {
+                "startSeconds": 206.5,
+                "endSeconds": 210.04,
+                "summary": "Persistent terror is the reason given for sleeping with a parent during war.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "phenomenally"
+                "terrified"
               ]
             },
             {
-              "id": "bbc-260723-t5-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260723-t5-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "The prefix discussed at the end can indicate something happening {{blank}} an event, rather than before it.",
+              "prompt": "To illustrate the task's difficulty, Keane refers to a child who has had a {{blank}}.",
+              "evidence": {
+                "startSeconds": 210.56,
+                "endSeconds": 221.76,
+                "summary": "The comparison uses an ordinary child's difficulty sleeping after a nightmare.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "after"
+                "nightmare"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260723-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260723-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What opportunity is explicitly included before Keane states his hopeful conclusion? {{blank}}",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "The wording given a chance makes opportunity a qualification of the resilience claim.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a chance",
+                "chance"
+              ]
+            },
+            {
+              "id": "bbc-260723-t5-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word description captures the exceptional recovery capacity he observes? {{blank}}",
+              "evidence": {
+                "startSeconds": 264.56,
+                "endSeconds": 272,
+                "summary": "Keane describes the human spirit, especially children, as phenomenally resilient.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "phenomenally resilient"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260723",
+        "audioSha256": "302f9aab57d6bfa3adf7bbf4092c9a5dc1601b77dab419970efdb19caa5ecfc6",
+        "durationSeconds": 385.728,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "6a67ec2fd2a5a752981ddf228d799a5b10b8812fbb94c635e0ca9aa6b41b5093"
+      }
     }
   ]
 }

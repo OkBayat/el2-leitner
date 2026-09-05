@@ -3,321 +3,263 @@
   "tests": [
     {
       "id": "bbc-260625-t1",
-      "title": "People and food",
+      "title": "Family meals: facts and practical advice",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260625-t1-g1",
+          "id": "bbc-260625-t1-r2-g1",
           "position": 1,
-          "heading": "People and food",
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t1-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "One food Georgie disliked as a child, besides nuts: {{blank}}.",
+              "evidence": {
+                "startSeconds": 29.52,
+                "endSeconds": 35.48,
+                "summary": "Georgie names avocados together with nuts as foods she disliked in childhood.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "avocados"
+              ]
+            },
+            {
+              "id": "bbc-260625-t1-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A family meal is a chance to {{blank}} with one another.",
+              "evidence": {
+                "startSeconds": 49.94,
+                "endSeconds": 53.36,
+                "summary": "The opening describes dinner as an opportunity for the family to reconnect.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "reconnect"
+              ]
+            },
+            {
+              "id": "bbc-260625-t1-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Possible result when children refuse cooked food: {{blank}}.",
+              "evidence": {
+                "startSeconds": 53.84,
+                "endSeconds": 59.9,
+                "summary": "Refusal of the prepared meal can turn family enjoyment into conflict.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "conflict"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260625-t1-q1",
-              "number": 1,
+              "id": "bbc-260625-t1-r2-q5",
+              "number": 4,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "How does Georgie feel about avocados now?",
+              "prompt": "What other factor does Charlotte say can affect her children's appetite?",
+              "evidence": {
+                "startSeconds": 80.28,
+                "endSeconds": 81.68,
+                "summary": "Charlotte adds mood to weather and the day's activities as an influence on appetite.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "Price is not included in Charlotte's list of appetite factors.",
+                  "C": "The number of plates is not given as an explanation."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260625-t1-q1-a",
+                  "id": "bbc-260625-t1-r2-q5-a",
                   "label": "A",
-                  "text": "She still hates them."
+                  "text": "Their mood."
                 },
                 {
-                  "id": "bbc-260625-t1-q1-b",
+                  "id": "bbc-260625-t1-r2-q5-b",
                   "label": "B",
-                  "text": "She loves them."
+                  "text": "The price of their food."
                 },
                 {
-                  "id": "bbc-260625-t1-q1-c",
+                  "id": "bbc-260625-t1-r2-q5-c",
                   "label": "C",
-                  "text": "She has never tried them."
+                  "text": "The number of plates on the table."
                 }
               ],
-              "answer": "B"
+              "answer": "A"
             },
             {
-              "id": "bbc-260625-t1-q2",
-              "number": 2,
+              "id": "bbc-260625-t1-r2-q6",
+              "number": 5,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What does Neil say about his childhood eating habits?",
+              "prompt": "Why does Fishel think eating matters so much to young children?",
+              "evidence": {
+                "startSeconds": 189.56,
+                "endSeconds": 194.56,
+                "summary": "Fishel emphasises the unusual degree of control children have over whether they eat.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Independence in all activities is not the explanation given.",
+                  "B": "The programme describes conflict rather than universal enjoyment."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260625-t1-q2-a",
+                  "id": "bbc-260625-t1-r2-q6-a",
                   "label": "A",
-                  "text": "He liked most foods."
+                  "text": "It is the only activity they can do alone."
                 },
                 {
-                  "id": "bbc-260625-t1-q2-b",
+                  "id": "bbc-260625-t1-r2-q6-b",
                   "label": "B",
-                  "text": "He refused all vegetables."
+                  "text": "It is always their favourite part of the day."
                 },
                 {
-                  "id": "bbc-260625-t1-q2-c",
+                  "id": "bbc-260625-t1-r2-q6-c",
                   "label": "C",
-                  "text": "He only liked nuts."
+                  "text": "It is one of the few things they can control."
                 }
               ],
-              "answer": "A"
+              "answer": "C"
             },
             {
-              "id": "bbc-260625-t1-q3",
-              "number": 3,
+              "id": "bbc-260625-t1-r2-q7",
+              "number": 6,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Does Charlotte say her children always eat everything?",
+              "prompt": "What do parents control in Fishel's example?",
+              "evidence": {
+                "startSeconds": 194.56,
+                "endSeconds": 199.28,
+                "summary": "The parent's authority concerns preparing and serving the meal.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Parents are not said to control a child's future preferences.",
+                  "C": "Fishel reserves the decision to eat for the child."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260625-t1-q3-a",
+                  "id": "bbc-260625-t1-r2-q7-a",
                   "label": "A",
-                  "text": "Yes, they always finish."
+                  "text": "Whether the child will ever dislike a food."
                 },
                 {
-                  "id": "bbc-260625-t1-q3-b",
+                  "id": "bbc-260625-t1-r2-q7-b",
                   "label": "B",
-                  "text": "No, their appetite changes."
+                  "text": "What is cooked and when it is served."
                 },
                 {
-                  "id": "bbc-260625-t1-q3-c",
+                  "id": "bbc-260625-t1-r2-q7-c",
                   "label": "C",
-                  "text": "Only when they eat alone."
+                  "text": "Whether the child will eat the meal."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260625-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "In which country does the Family Dinner Project promote healthy eating?",
-              "options": [
-                {
-                  "id": "bbc-260625-t1-q4-a",
-                  "label": "A",
-                  "text": "Singapore"
-                },
-                {
-                  "id": "bbc-260625-t1-q4-b",
-                  "label": "B",
-                  "text": "Australia"
-                },
-                {
-                  "id": "bbc-260625-t1-q4-c",
-                  "label": "C",
-                  "text": "The United States"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260625-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What does Sharon Wee do?",
-              "options": [
-                {
-                  "id": "bbc-260625-t1-q5-a",
-                  "label": "A",
-                  "text": "She is a food writer."
-                },
-                {
-                  "id": "bbc-260625-t1-q5-b",
-                  "label": "B",
-                  "text": "She is a television presenter."
-                },
-                {
-                  "id": "bbc-260625-t1-q5-c",
-                  "label": "C",
-                  "text": "She is a restaurant inspector."
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260625-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "Which two foods did Sharon find suitable for her daughter?",
-              "options": [
-                {
-                  "id": "bbc-260625-t1-q6-a",
-                  "label": "A",
-                  "text": "Nuts and avocados"
-                },
-                {
-                  "id": "bbc-260625-t1-q6-b",
-                  "label": "B",
-                  "text": "Broccoli and mushrooms"
-                },
-                {
-                  "id": "bbc-260625-t1-q6-c",
-                  "label": "C",
-                  "text": "Rice and beans"
-                }
-              ],
-              "answer": "C"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260625-t2",
-      "title": "Notes on family mealtimes",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
+        },
         {
-          "id": "bbc-260625-t2-g1",
-          "position": 1,
-          "heading": "Notes on family mealtimes",
-          "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "id": "bbc-260625-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
           "maxWords": 3,
-          "maxNumbers": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260625-t2-q1",
-              "number": 1,
+              "id": "bbc-260625-t1-r2-q8",
+              "number": 7,
               "position": 1,
               "responseType": "text",
-              "prompt": "As a child, Georgie disliked avocados and {{blank}}.",
+              "prompt": "Children decide whether they are going to {{blank}} the meal.",
+              "evidence": {
+                "startSeconds": 199.44,
+                "endSeconds": 201.86,
+                "summary": "Fishel makes eating itself the decision that remains with the child.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "nuts"
+                "eat"
               ]
             },
             {
-              "id": "bbc-260625-t2-q2",
-              "number": 2,
+              "id": "bbc-260625-t1-r2-q9",
+              "number": 8,
               "position": 2,
               "responseType": "text",
-              "prompt": "Charlotte describes changes in appetite as ups and {{blank}}.",
+              "prompt": "Sharon's daughter had {{blank}} from birth.",
+              "evidence": {
+                "startSeconds": 241.12,
+                "endSeconds": 246.4,
+                "summary": "Sharon says her daughter was born with allergies.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "downs"
-              ]
-            },
-            {
-              "id": "bbc-260625-t2-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "One factor affecting appetite is a child's {{blank}}.",
-              "answers": [
-                "mood"
-              ]
-            },
-            {
-              "id": "bbc-260625-t2-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Anne helped establish the Family {{blank}} Project.",
-              "answers": [
-                "Dinner"
-              ]
-            },
-            {
-              "id": "bbc-260625-t2-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "Small children value having some {{blank}} over their eating.",
-              "answers": [
-                "control"
-              ]
-            },
-            {
-              "id": "bbc-260625-t2-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "Before a meal, children can be offered healthy snacks and {{blank}}.",
-              "answers": [
-                "dips"
+                "allergies"
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260625-t3",
-      "title": "Listening for specific details",
-      "position": 3,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
+        },
         {
-          "id": "bbc-260625-t3-g1",
-          "position": 1,
-          "heading": "Listening for specific details",
+          "id": "bbc-260625-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
           "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
+          "instruction": "Answer the questions below.",
           "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
           "maxWords": 3,
           "maxNumbers": 1,
           "questions": [
             {
-              "id": "bbc-260625-t3-q1",
-              "number": 1,
+              "id": "bbc-260625-t1-r2-q11",
+              "number": 9,
               "position": 1,
               "responseType": "text",
-              "prompt": "How many children does Charlotte have? {{blank}}",
-              "answers": [
-                "two",
-                "2"
-              ]
-            },
-            {
-              "id": "bbc-260625-t3-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "Besides daily activities and mood, what external condition does Charlotte mention? {{blank}}",
-              "answers": [
-                "weather"
-              ]
-            },
-            {
-              "id": "bbc-260625-t3-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Who can decide whether to eat the food that is served? {{blank}}",
-              "answers": [
-                "kids",
-                "children"
-              ]
-            },
-            {
-              "id": "bbc-260625-t3-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "Which country is Sharon Wee from? {{blank}}",
-              "answers": [
-                "Singapore"
-              ]
-            },
-            {
-              "id": "bbc-260625-t3-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "For approximately how many years did Sharon's daughter grow up eating rice and beans? {{blank}}",
+              "prompt": "For approximately how many years did Sharon's daughter mainly eat that meal? {{blank}}",
+              "evidence": {
+                "startSeconds": 252.8,
+                "endSeconds": 257.2,
+                "summary": "Sharon describes the first five years of her daughter's life as centred on rice and beans.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "five",
                 "5",
@@ -326,271 +268,1175 @@
               ]
             },
             {
-              "id": "bbc-260625-t3-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260625-t1-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "What should parents give children, according to the closing recommendations? {{blank}}",
+              "prompt": "When should small healthy snacks and dips be offered? {{blank}}",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "The suggested snacks and dips are offered before the main meal.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "a choice",
-                "choice"
+                "before the meal"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260625",
+        "audioSha256": "c11fa3a4544aea54792b4fee0b1a3f4c6008beee0b7d11b0b77e2ec79fb02c14",
+        "durationSeconds": 375.504,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "036fe64b252abba6ce3f0d484f1ff6148c064841c0f2c47fc8dc6d7754223cea"
+      }
     },
     {
-      "id": "bbc-260625-t4",
-      "title": "Understanding the explanations",
-      "position": 4,
+      "id": "bbc-260625-t2",
+      "title": "Eating habits: choices and limitations",
+      "position": 2,
       "format": "ielts",
-      "difficulty": "hard",
+      "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260625-t4-g1",
+          "id": "bbc-260625-t2-r2-g1",
           "position": 1,
-          "heading": "Understanding the explanations",
+          "heading": "Questions 1–3",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260625-t4-q1",
+              "id": "bbc-260625-t2-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why does Georgie's opening story challenge fixed ideas about children's tastes?",
-              "options": [
-                {
-                  "id": "bbc-260625-t4-q1-a",
-                  "label": "A",
-                  "text": "She learned that every disliked food causes an allergy."
-                },
-                {
-                  "id": "bbc-260625-t4-q1-b",
-                  "label": "B",
-                  "text": "Her preferences changed substantially as she grew older."
-                },
-                {
-                  "id": "bbc-260625-t4-q1-c",
-                  "label": "C",
-                  "text": "She stopped eating the foods she had always enjoyed."
+              "prompt": "What does Georgie's experience suggest about food preferences?",
+              "evidence": {
+                "startSeconds": 29.52,
+                "endSeconds": 39.8,
+                "summary": "Georgie now enjoys foods she previously disliked, illustrating changing preferences.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Georgie moved from dislike to enjoyment of the same foods, not greater restriction.",
+                  "C": "She does not attribute her change to a nutritionist."
                 }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260625-t4-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What does Charlotte's experience demonstrate?",
+              },
               "options": [
                 {
-                  "id": "bbc-260625-t4-q2-a",
+                  "id": "bbc-260625-t2-r2-q1-a",
                   "label": "A",
-                  "text": "An expert's children can still have an uneven appetite."
+                  "text": "They can change between childhood and adulthood."
                 },
                 {
-                  "id": "bbc-260625-t4-q2-b",
+                  "id": "bbc-260625-t2-r2-q1-b",
                   "label": "B",
-                  "text": "Nutrition knowledge prevents every difficult mealtime."
+                  "text": "They always become more restricted with age."
                 },
                 {
-                  "id": "bbc-260625-t4-q2-c",
+                  "id": "bbc-260625-t2-r2-q1-c",
                   "label": "C",
-                  "text": "A low appetite necessarily stays low permanently."
+                  "text": "They depend entirely on what a nutritionist recommends."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260625-t4-q3",
+              "id": "bbc-260625-t2-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What is significant about Charlotte's answer concerning her own children?",
+              "evidence": {
+                "startSeconds": 69.1,
+                "endSeconds": 76.46,
+                "summary": "The specialist acknowledges ordinary fluctuations in her own children's eating.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "She explicitly describes periods of lower appetite.",
+                  "B": "She is introduced as a mother and discusses her own children."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t2-r2-q2-a",
+                  "label": "A",
+                  "text": "Her children never experience a reduced appetite."
+                },
+                {
+                  "id": "bbc-260625-t2-r2-q2-b",
+                  "label": "B",
+                  "text": "Her professional advice is based on having no children."
+                },
+                {
+                  "id": "bbc-260625-t2-r2-q2-c",
+                  "label": "C",
+                  "text": "Her expertise does not mean that her children always eat everything."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260625-t2-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "How does Anne distinguish parents' control from children's control?",
-              "options": [
-                {
-                  "id": "bbc-260625-t4-q3-a",
-                  "label": "A",
-                  "text": "Parents arrange the meal, but children choose whether to eat it."
-                },
-                {
-                  "id": "bbc-260625-t4-q3-b",
-                  "label": "B",
-                  "text": "Children choose the cooking time, but parents choose who eats."
-                },
-                {
-                  "id": "bbc-260625-t4-q3-c",
-                  "label": "C",
-                  "text": "Parents and children have no influence over mealtimes."
+              "prompt": "How does Charlotte explain a child's reduced appetite?",
+              "evidence": {
+                "startSeconds": 77.08,
+                "endSeconds": 81.68,
+                "summary": "Charlotte presents appetite as responsive to several changing conditions.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "What children have been doing that day is explicitly included.",
+                  "C": "Her explanation includes weather, activity and mood rather than one cooking error."
                 }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260625-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "Why does the programme call control over eating a \"big deal\" for children?",
+              },
               "options": [
                 {
-                  "id": "bbc-260625-t4-q4-a",
+                  "id": "bbc-260625-t2-r2-q3-a",
                   "label": "A",
-                  "text": "They are being asked to plan every family meal."
+                  "text": "It is unrelated to what happened earlier in the day."
                 },
                 {
-                  "id": "bbc-260625-t4-q4-b",
+                  "id": "bbc-260625-t2-r2-q3-b",
                   "label": "B",
-                  "text": "They want to become professional cooks."
+                  "text": "Several everyday factors can influence it."
                 },
                 {
-                  "id": "bbc-260625-t4-q4-c",
+                  "id": "bbc-260625-t2-r2-q3-c",
                   "label": "C",
-                  "text": "They have relatively few other areas in which they can make decisions."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260625-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What distinguishes Sharon's problem from an ordinary dislike of food?",
-              "options": [
-                {
-                  "id": "bbc-260625-t4-q5-a",
-                  "label": "A",
-                  "text": "Her daughter disliked every flavour from Singapore."
-                },
-                {
-                  "id": "bbc-260625-t4-q5-b",
-                  "label": "B",
-                  "text": "Her daughter's allergies restricted what she could safely eat."
-                },
-                {
-                  "id": "bbc-260625-t4-q5-c",
-                  "label": "C",
-                  "text": "Her family refused to eat meals together."
+                  "text": "It always shows that the parent cooked the wrong food."
                 }
               ],
               "answer": "B"
-            },
-            {
-              "id": "bbc-260625-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "What is the emphasis of the final advice?",
-              "options": [
-                {
-                  "id": "bbc-260625-t4-q6-a",
-                  "label": "A",
-                  "text": "Insist that every plate is empty before anyone leaves."
-                },
-                {
-                  "id": "bbc-260625-t4-q6-b",
-                  "label": "B",
-                  "text": "Make each meal introduce as many unfamiliar flavours as possible."
-                },
-                {
-                  "id": "bbc-260625-t4-q6-c",
-                  "label": "C",
-                  "text": "Reduce pressure while allowing children some choice."
-                }
-              ],
-              "answer": "C"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260625-t5",
-      "title": "Paraphrase and precise expressions",
-      "position": 5,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
+        },
         {
-          "id": "bbc-260625-t5-g1",
-          "position": 1,
-          "heading": "Paraphrase and precise expressions",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "id": "bbc-260625-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260625-t5-q1",
-              "number": 1,
+              "id": "bbc-260625-t2-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "text",
-              "prompt": "Dinnertime can help a family {{blank}} after spending the day apart.",
-              "answers": [
-                "reconnect"
-              ]
-            },
-            {
-              "id": "bbc-260625-t5-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "When eating turns into repeated conflict, the meal can become a {{blank}}.",
+              "prompt": "Image used to describe a meal dominated by tension: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 180.02,
+                "endSeconds": 183.94,
+                "summary": "The interviewer compares conflict at dinner with a battleground.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "battleground"
               ]
             },
             {
-              "id": "bbc-260625-t5-q3",
-              "number": 3,
+              "id": "bbc-260625-t2-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Why eating is important to a small child: a rare area of {{blank}}.",
+              "evidence": {
+                "startSeconds": 189.56,
+                "endSeconds": 194.56,
+                "summary": "Fishel links the significance of eating to children's limited opportunities for control.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "control"
+              ]
+            },
+            {
+              "id": "bbc-260625-t2-r2-q6",
+              "number": 6,
               "position": 3,
               "responseType": "text",
-              "prompt": "Anne says having control is, for a young child, {{blank}}.",
+              "prompt": "Parents choose the food and {{blank}} it is served.",
+              "evidence": {
+                "startSeconds": 194.56,
+                "endSeconds": 199.28,
+                "summary": "Parents can determine both the menu and the timing of the meal.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "a big deal"
+                "when"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260625-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What condition had affected Sharon's daughter since birth? {{blank}}",
+              "evidence": {
+                "startSeconds": 241.12,
+                "endSeconds": 246.4,
+                "summary": "The daughter was born with allergies, rather than developing a simple dislike later.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "allergies"
               ]
             },
             {
-              "id": "bbc-260625-t5-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260625-t2-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "The medical condition complicating some children's meals is a {{blank}}.",
+              "prompt": "Which combination became the family's workable solution? {{blank}}",
+              "evidence": {
+                "startSeconds": 246.4,
+                "endSeconds": 252.2,
+                "summary": "Rice and beans are described as the meal that proved successful for the daughter.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "food allergy"
+                "rice and beans"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The restrictions made preparing food for the whole family a {{blank}}.",
+              "evidence": {
+                "startSeconds": 257.7,
+                "endSeconds": 263.02,
+                "summary": "The allergy-related restrictions complicated cooking for everyone, not only the daughter.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "struggle"
               ]
             },
             {
-              "id": "bbc-260625-t5-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260625-t2-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Sharon describes the approach that worked as her {{blank}}.",
+              "prompt": "One way to provide choice is to offer small healthy snacks and {{blank}} before dinner.",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "Dips are specifically paired with the healthy snacks in the recommendation.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "winning formula"
-              ]
-            },
-            {
-              "id": "bbc-260625-t5-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "The experts discourage pressure to finish everything on a child's {{blank}}.",
-              "answers": [
-                "plate"
+                "dips"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260625",
+        "audioSha256": "c11fa3a4544aea54792b4fee0b1a3f4c6008beee0b7d11b0b77e2ec79fb02c14",
+        "durationSeconds": 375.504,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "ef486c40a46f844ac0d52645b1b3327066c13cdf60815d4b1969c096efe0e090"
+      }
+    },
+    {
+      "id": "bbc-260625-t3",
+      "title": "Dinner routines: listening for responsibility and support",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260625-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which food did Georgie dislike in childhood in addition to nuts? {{blank}}",
+              "evidence": {
+                "startSeconds": 29.52,
+                "endSeconds": 35.48,
+                "summary": "Avocados are the second example in Georgie's account of childhood dislikes.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "avocados"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "At dinner, what part of family members' lives can they hear about? {{blank}}",
+              "evidence": {
+                "startSeconds": 49.94,
+                "endSeconds": 53.36,
+                "summary": "The introduction describes sharing news about everyone's day over a meal.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "everyone's day",
+                "day"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "What does Charlotte say can fall and then return in her children? {{blank}}",
+              "evidence": {
+                "startSeconds": 70.32,
+                "endSeconds": 76.46,
+                "summary": "Charlotte describes fluctuations in appetite rather than a permanently fixed refusal.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "their appetite",
+                "appetite"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Appetite may be affected by the weather and what children have been {{blank}} that day.",
+              "evidence": {
+                "startSeconds": 77.08,
+                "endSeconds": 79.92,
+                "summary": "Charlotte includes the day's activity among the reasons for appetite changes.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "doing"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "An emotional influence on appetite: a child's {{blank}}.",
+              "evidence": {
+                "startSeconds": 80.28,
+                "endSeconds": 81.68,
+                "summary": "Mood is listed separately as an influence on eating.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mood"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Country where the Family Dinner Project promotes healthy eating: the {{blank}}.",
+              "evidence": {
+                "startSeconds": 167.2,
+                "endSeconds": 170.98,
+                "summary": "The organisation associated with Fishel is introduced as promoting children's eating in the US.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "US",
+                "United States"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260625-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What boundary does Fishel draw between adult and child decisions?",
+              "evidence": {
+                "startSeconds": 194.56,
+                "endSeconds": 205.28,
+                "summary": "The distinction separates control of provision from control of consumption.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Willingness to eat is precisely what Fishel says parents cannot decide for the child.",
+                  "C": "The timing of serving is assigned to parents, not children."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "Adults can determine both the meal and the child's willingness to eat."
+                },
+                {
+                  "id": "bbc-260625-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "Adults provide the meal, but children decide whether to eat it."
+                },
+                {
+                  "id": "bbc-260625-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "Children decide when adults must cook, but not whether to eat."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260625-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What additional challenge is introduced through Sharon's experience?",
+              "evidence": {
+                "startSeconds": 221.02,
+                "endSeconds": 246.4,
+                "summary": "The allergy example adds a restriction beyond ordinary changes in preference or appetite.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "The passage does not say the daughter was excluded from family meals.",
+                  "C": "Sharon describes searching for and finding a workable combination."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "A medical restriction on what her daughter could eat."
+                },
+                {
+                  "id": "bbc-260625-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "A child who had never been offered family meals."
+                },
+                {
+                  "id": "bbc-260625-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "A parent who refused to try any food combination."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Sharon's difficulty extended to cooking for the {{blank}} family.",
+              "evidence": {
+                "startSeconds": 257.7,
+                "endSeconds": 263.02,
+                "summary": "The narrator emphasises the effect of the restrictions on feeding the whole family.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "whole"
+              ]
+            },
+            {
+              "id": "bbc-260625-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The experts agree that children should be given a {{blank}}.",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "The concluding advice explicitly encourages giving children some choice.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "choice"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260625",
+        "audioSha256": "c11fa3a4544aea54792b4fee0b1a3f4c6008beee0b7d11b0b77e2ec79fb02c14",
+        "durationSeconds": 375.504,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "0c60a141ea54700418a13dc1e5aa32d2fdfa2e4a71ab889817fce7e6a129792c"
+      }
+    },
+    {
+      "id": "bbc-260625-t4",
+      "title": "Mealtime conflict: causes, boundaries and qualifications",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260625-t4-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A shared meal can allow family members to {{blank}} after separate daily activities.",
+              "evidence": {
+                "startSeconds": 49.94,
+                "endSeconds": 53.36,
+                "summary": "Dinner is introduced as a time to restore family connection and exchange news.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "reconnect"
+              ]
+            },
+            {
+              "id": "bbc-260625-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Refusal of an already prepared meal can replace enjoyment with {{blank}}.",
+              "evidence": {
+                "startSeconds": 53.84,
+                "endSeconds": 59.9,
+                "summary": "The programme identifies refusal as a possible trigger for conflict at dinner.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conflict"
+              ]
+            },
+            {
+              "id": "bbc-260625-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Even in a specialist's home, children's {{blank}} can decline temporarily and then recover.",
+              "evidence": {
+                "startSeconds": 70.32,
+                "endSeconds": 76.46,
+                "summary": "Charlotte's personal experience involves lower appetite followed by its return.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "appetite"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260625-t4-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why may a small decision about food carry disproportionate importance for a child?",
+              "evidence": {
+                "startSeconds": 189.56,
+                "endSeconds": 194.56,
+                "summary": "Fishel connects the importance of eating decisions with limited autonomy elsewhere.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Choosing what to cook is assigned to parents, so the child's control is narrower.",
+                  "C": "The child retains the decision whether to eat; the argument does not give parents control of appetite."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t4-r2-q5-a",
+                  "label": "A",
+                  "text": "It offers autonomy in a life with few comparable choices."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q5-b",
+                  "label": "B",
+                  "text": "It gives the child responsibility for deciding the whole family menu."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q5-c",
+                  "label": "C",
+                  "text": "It provides the parents with a way to control the child's appetite."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260625-t4-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which conclusion respects the distinction Fishel makes?",
+              "evidence": {
+                "startSeconds": 194.56,
+                "endSeconds": 205.28,
+                "summary": "Adult control over preparation and timing cannot substitute for the child's decision to eat.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The child's decision remains separate from parental control of serving time.",
+                  "B": "Parents are explicitly described as able to cook what they choose."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t4-r2-q6-a",
+                  "label": "A",
+                  "text": "Choosing the serving time automatically determines how much a child eats."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q6-b",
+                  "label": "B",
+                  "text": "Children control the menu because parents cannot select the ingredients."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q6-c",
+                  "label": "C",
+                  "text": "Controlling a meal's provision does not ensure that it will be eaten."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260625-t4-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "How does Sharon's case differ from ordinary fluctuations in appetite?",
+              "evidence": {
+                "startSeconds": 241.12,
+                "endSeconds": 246.4,
+                "summary": "The allergy case involves a continuing restriction rather than only situational appetite changes.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Sharon says the allergies were present at birth, before the long repeated-meal routine.",
+                  "C": "Weather is Charlotte's example, not the reason given for Sharon's restrictions."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t4-r2-q7-a",
+                  "label": "A",
+                  "text": "Her daughter's difficulty began only after five years of varied meals."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q7-b",
+                  "label": "B",
+                  "text": "Her daughter's options were constrained by allergies present from birth."
+                },
+                {
+                  "id": "bbc-260625-t4-r2-q7-c",
+                  "label": "C",
+                  "text": "Her daughter's preferences changed because of the day's weather alone."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260625-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Combination that solved the immediate feeding problem: {{blank}}.",
+              "evidence": {
+                "startSeconds": 246.4,
+                "endSeconds": 252.2,
+                "summary": "Sharon found rice and beans to be the successful food combination.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "rice and beans"
+              ]
+            },
+            {
+              "id": "bbc-260625-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Approximate duration of reliance on this combination: {{blank}}.",
+              "evidence": {
+                "startSeconds": 252.8,
+                "endSeconds": 257.2,
+                "summary": "The repeated meal was central for roughly the daughter's first five years.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "five years",
+                "5 years"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What element of decision-making do the experts recommend preserving for children? {{blank}}",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "The final recommendations preserve some choice for children rather than removing it.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "a choice",
+                "choice"
+              ]
+            },
+            {
+              "id": "bbc-260625-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What accompaniment is suggested with small healthy snacks before a meal? {{blank}}",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "Dips are mentioned as part of the suggested pre-meal options.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dips"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260625",
+        "audioSha256": "c11fa3a4544aea54792b4fee0b1a3f4c6008beee0b7d11b0b77e2ec79fb02c14",
+        "durationSeconds": 375.504,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "ad4ec677345006166dbf05d7f08c53d08b1b7fb973c03801aceea1053016a045"
+      }
+    },
+    {
+      "id": "bbc-260625-t5",
+      "title": "Family dinners: distinguishing explanation from recommendation",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260625-t5-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What can a child's refusal turn an enjoyable dinner into? {{blank}}",
+              "evidence": {
+                "startSeconds": 53.84,
+                "endSeconds": 59.9,
+                "summary": "The opening contrasts family enjoyment with the conflict that refusal can produce.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "conflict"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What does Charlotte describe as dropping before suddenly coming back? {{blank}}",
+              "evidence": {
+                "startSeconds": 72.92,
+                "endSeconds": 76.46,
+                "summary": "Charlotte describes appetite as variable over time rather than consistently absent.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "appetite",
+                "their appetite"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which emotional condition completes Charlotte's list of influences on eating? {{blank}}",
+              "evidence": {
+                "startSeconds": 80.28,
+                "endSeconds": 81.68,
+                "summary": "Mood completes her list after weather and the day's activities.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mood",
+                "their mood"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t5-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Eating can matter greatly because it is one of children's few areas of {{blank}}.",
+              "evidence": {
+                "startSeconds": 189.56,
+                "endSeconds": 194.56,
+                "summary": "Fishel attributes the significance of eating to the autonomy it provides.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "control"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Parents can choose the meal and decide {{blank}} to serve it.",
+              "evidence": {
+                "startSeconds": 194.56,
+                "endSeconds": 199.28,
+                "summary": "The parent's role includes timing as well as choosing what to cook.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "when"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "The choice that cannot be made by the parent is whether the child will {{blank}}.",
+              "evidence": {
+                "startSeconds": 199.44,
+                "endSeconds": 201.86,
+                "summary": "The child retains the decision about eating the food that has been provided.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "eat"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260625-t5-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which detail rules out interpreting Sharon's account as just a passing food dislike?",
+              "evidence": {
+                "startSeconds": 241.12,
+                "endSeconds": 246.4,
+                "summary": "The explicit history of allergies establishes a constraint beyond ordinary dislike.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "A repeated meal alone would not establish the medical restriction.",
+                  "B": "Family cooking does not distinguish allergy from preference."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t5-r2-q8-a",
+                  "label": "A",
+                  "text": "Her daughter ate the same meal more than once."
+                },
+                {
+                  "id": "bbc-260625-t5-r2-q8-b",
+                  "label": "B",
+                  "text": "Her daughter had access to family cooking."
+                },
+                {
+                  "id": "bbc-260625-t5-r2-q8-c",
+                  "label": "C",
+                  "text": "Her daughter was born with allergies."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260625-t5-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "In Sharon's account, what makes the repeated combination a success rather than a failure of variety?",
+              "evidence": {
+                "startSeconds": 246.4,
+                "endSeconds": 257.2,
+                "summary": "The combination is judged by whether it worked for this child's situation.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The case concerns allergies from birth; mood belongs to the earlier appetite discussion.",
+                  "C": "The repeated combination was useful despite limited variety, not because it changed daily."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260625-t5-r2-q9-a",
+                  "label": "A",
+                  "text": "It showed that her daughter's food choices depended mainly on her mood."
+                },
+                {
+                  "id": "bbc-260625-t5-r2-q9-b",
+                  "label": "B",
+                  "text": "It provided a reliable solution within her daughter's restrictions."
+                },
+                {
+                  "id": "bbc-260625-t5-r2-q9-c",
+                  "label": "C",
+                  "text": "It ensured that her daughter encountered a new flavour every day."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260625-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260625-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Participation recommended for children: having a {{blank}}.",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "The common expert recommendation includes allowing children a choice.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "choice"
+              ]
+            },
+            {
+              "id": "bbc-260625-t5-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Pre-meal options: small healthy snacks with {{blank}}.",
+              "evidence": {
+                "startSeconds": 282.64,
+                "endSeconds": 288.98,
+                "summary": "Dips are the accompaniment given in the practical example.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dips"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260625",
+        "audioSha256": "c11fa3a4544aea54792b4fee0b1a3f4c6008beee0b7d11b0b77e2ec79fb02c14",
+        "durationSeconds": 375.504,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "cda8fc1d1af9081ee13850228c1a505c535df0810d1480ddecf4bfff83e39b85"
+      }
     }
   ]
 }

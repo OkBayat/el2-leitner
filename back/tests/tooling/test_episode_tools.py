@@ -25,6 +25,19 @@ class EpisodeToolsTests(unittest.TestCase):
             shutil.copyfile(source / filename, self.episode / filename)
         (self.episode / "audio.mp3").write_bytes(b"ID3" + bytes(128))
 
+        # This test uses synthetic media, not the BBC recording. Bind the fixture's review
+        # to those exact bytes, then exercise the same review and package owners as production.
+        data = json.loads((self.episode / "listening.json").read_text())
+        digest = tools.hashlib.sha256((self.episode / "audio.mp3").read_bytes()).hexdigest()
+        for selected in data["tests"]:
+            selected["sourceReview"]["audioSha256"] = digest
+            selected["sourceReview"]["method"] = "Synthetic media fixture for packaging and validation regression tests."
+        (self.episode / "listening.json").write_text(json.dumps(data), encoding="utf-8")
+        tools.subprocess.run([
+            shutil.which("node"), str(ROOT / "scripts/record-listening-question-review.js"),
+            "--episode", str(self.episode), "--confirm-reviewed", "--require-audio"
+        ], check=True, capture_output=True, text=True)
+
     def test_official_urls_only_including_redirect_targets(self):
         self.assertEqual(tools.bbc_url("https://downloads.bbc.co.uk/audio.mp3"), "https://downloads.bbc.co.uk/audio.mp3")
         for url in ("http://bbc.co.uk/a", "https://bbc.co.uk.evil.test/a", "https://127.0.0.1/a",
@@ -196,6 +209,37 @@ class EpisodeToolsTests(unittest.TestCase):
         with self.assertRaises(tools.subprocess.CalledProcessError):
             tools.install_bundle(modified, target, allow_source_transcript=True)
         self.assertEqual(list(target.iterdir()), [])
+
+    def test_rehashed_wrong_audio_identity_still_fails_the_quality_gate(self):
+        bundle = self.bundle()
+        def change(files):
+            prefix = self.episode.name + "/"
+            content = b"ID3-different-audio-edit"
+            files[prefix + "audio.mp3"] = content
+            report = json.loads(files[prefix + "BUNDLE.json"])
+            report["files"]["audio.mp3"] = {"bytes": len(content), "sha256": tools.hashlib.sha256(content).hexdigest()}
+            files[prefix + "BUNDLE.json"] = json.dumps(report).encode()
+        modified = self.rewrite_bundle(bundle, change)
+        with self.assertRaises(tools.subprocess.CalledProcessError):
+            tools.verify_bundle(modified)
+
+    def test_schema_valid_six_question_content_cannot_be_packaged(self):
+        path = self.episode / "listening.json"
+        data = json.loads(path.read_text())
+        selected = data["tests"][0]
+        selected["groups"] = selected["groups"][:2]
+        for group in selected["groups"]:
+            group["questions"] = group["questions"][:3]
+        number = 0
+        for group in selected["groups"]:
+            for question in group["questions"]:
+                number += 1
+                question["number"] = number
+        path.write_text(json.dumps(data))
+        destination = self.root / "too-short.zip"
+        with self.assertRaises(tools.subprocess.CalledProcessError):
+            tools.package_episode(self.episode, destination, allow_source_transcript=True)
+        self.assertFalse(destination.exists())
 
     def test_non_object_manifests_and_invalid_cover_types_are_rejected_cleanly(self):
         bundle = self.bundle()

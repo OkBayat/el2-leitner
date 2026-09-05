@@ -3,588 +3,1454 @@
   "tests": [
     {
       "id": "bbc-260611-t1",
-      "title": "Everyday purchases and influences",
+      "title": "Buying choices: explicit information",
       "position": 1,
       "format": "ielts",
       "difficulty": "easy",
       "groups": [
         {
-          "id": "bbc-260611-t1-g1",
+          "id": "bbc-260611-t1-r2-g1",
           "position": 1,
-          "heading": "Everyday purchases and influences",
-          "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
-          "maxWords": null,
-          "maxNumbers": null,
-          "questions": [
-            {
-              "id": "bbc-260611-t1-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "single_choice",
-              "prompt": "What did Pippa recently buy?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q1-a",
-                  "label": "A",
-                  "text": "Sports shoes"
-                },
-                {
-                  "id": "bbc-260611-t1-q1-b",
-                  "label": "B",
-                  "text": "A mobile phone"
-                },
-                {
-                  "id": "bbc-260611-t1-q1-c",
-                  "label": "C",
-                  "text": "Headphones"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260611-t1-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "single_choice",
-              "prompt": "What did Phil buy on his way to work?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q2-a",
-                  "label": "A",
-                  "text": "A soft drink"
-                },
-                {
-                  "id": "bbc-260611-t1-q2-b",
-                  "label": "B",
-                  "text": "Toothpaste"
-                },
-                {
-                  "id": "bbc-260611-t1-q2-c",
-                  "label": "C",
-                  "text": "A newspaper"
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260611-t1-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "single_choice",
-              "prompt": "What product is used as an example of a dentist recommendation?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q3-a",
-                  "label": "A",
-                  "text": "Sportswear"
-                },
-                {
-                  "id": "bbc-260611-t1-q3-b",
-                  "label": "B",
-                  "text": "Coffee"
-                },
-                {
-                  "id": "bbc-260611-t1-q3-c",
-                  "label": "C",
-                  "text": "Toothpaste"
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260611-t1-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "Where are the ordering screens discussed in the programme used?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q4-a",
-                  "label": "A",
-                  "text": "Railway stations"
-                },
-                {
-                  "id": "bbc-260611-t1-q4-b",
-                  "label": "B",
-                  "text": "Fast-food restaurants"
-                },
-                {
-                  "id": "bbc-260611-t1-q4-c",
-                  "label": "C",
-                  "text": "Clothing shops"
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260611-t1-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "What may customers agree to buy when a screen offers it?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q5-a",
-                  "label": "A",
-                  "text": "An extra item"
-                },
-                {
-                  "id": "bbc-260611-t1-q5-b",
-                  "label": "B",
-                  "text": "A smaller basket"
-                },
-                {
-                  "id": "bbc-260611-t1-q5-c",
-                  "label": "C",
-                  "text": "A magazine subscription"
-                }
-              ],
-              "answer": "A"
-            },
-            {
-              "id": "bbc-260611-t1-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "Where is the television series made for the food programme set?",
-              "options": [
-                {
-                  "id": "bbc-260611-t1-q6-a",
-                  "label": "A",
-                  "text": "A school"
-                },
-                {
-                  "id": "bbc-260611-t1-q6-b",
-                  "label": "B",
-                  "text": "A restaurant"
-                },
-                {
-                  "id": "bbc-260611-t1-q6-c",
-                  "label": "C",
-                  "text": "A sports centre"
-                }
-              ],
-              "answer": "B"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260611-t2",
-      "title": "Notes on buying decisions",
-      "position": 2,
-      "format": "ielts",
-      "difficulty": "medium",
-      "groups": [
-        {
-          "id": "bbc-260611-t2-g1",
-          "position": 1,
-          "heading": "Notes on buying decisions",
+          "heading": "Questions 1–3",
           "taskType": "note_completion",
-          "instruction": "Listen and complete the notes using information from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260611-t2-q1",
+              "id": "bbc-260611-t1-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "text",
-              "prompt": "Reason for Pippa's purchase: her old headphones {{blank}}.",
+              "prompt": "Reason for replacing the headphones: the old pair {{blank}}.",
+              "evidence": {
+                "startSeconds": 18.55,
+                "endSeconds": 26.51,
+                "summary": "Pippa replaced failed equipment rather than responding to an endorsement.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "broke"
               ]
             },
             {
-              "id": "bbc-260611-t2-q2",
+              "id": "bbc-260611-t1-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "text",
-              "prompt": "People we follow may seem credible or {{blank}}.",
+              "prompt": "Purchase made on the journey to work: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 28.17,
+                "endSeconds": 30.87,
+                "summary": "Phil identifies his commuting purchase as a soft drink.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "knowledgeable"
+                "soft drink"
               ]
             },
             {
-              "id": "bbc-260611-t2-q3",
+              "id": "bbc-260611-t1-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "text",
-              "prompt": "An endorsement can act as a mental {{blank}}.",
+              "prompt": "When unsure, buyers may follow someone they believe is credible or {{blank}}.",
+              "evidence": {
+                "startSeconds": 47.81,
+                "endSeconds": 53.39,
+                "summary": "Jones links uncertainty to following a person perceived as knowledgeable.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "shortcut"
+                "knowledgeable"
               ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t1-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260611-t1-r2-q5",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why can a trusted endorsement make a decision easier?",
+              "evidence": {
+                "startSeconds": 75.59,
+                "endSeconds": 85.33,
+                "summary": "Trust allows a recommendation to substitute for extended deliberation.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "More comparison is discussed for screens, not trusted endorsements.",
+                  "C": "No direct conversation with the celebrity is described."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t1-r2-q5-a",
+                  "label": "A",
+                  "text": "The buyer needs to think less about the choice."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q5-b",
+                  "label": "B",
+                  "text": "The buyer has more products to compare."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q5-c",
+                  "label": "C",
+                  "text": "The buyer can ask the celebrity questions."
+                }
+              ],
+              "answer": "A"
             },
             {
-              "id": "bbc-260611-t2-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260611-t1-r2-q6",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What change did fast-food chains report after installing ordering screens?",
+              "evidence": {
+                "startSeconds": 127.65,
+                "endSeconds": 137.07,
+                "summary": "The introduction to touchscreen ordering reports a rise in takings.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The report concerns increased revenue, not a reduction in orders.",
+                  "B": "Later discussion associates screens with more extras, not fewer."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t1-r2-q6-a",
+                  "label": "A",
+                  "text": "They received fewer orders."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q6-b",
+                  "label": "B",
+                  "text": "They sold fewer additional items."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q6-c",
+                  "label": "C",
+                  "text": "They took more money."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260611-t1-r2-q7",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why might a customer refuse extra food when speaking to a person?",
+              "evidence": {
+                "startSeconds": 147.23,
+                "endSeconds": 162.27,
+                "summary": "Ward attributes some refusals of larger orders to fear of judgement.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "The offer happens during ordering, not after a completed payment.",
+                  "C": "The stated obstacle is social judgement, not an unavailable menu."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t1-r2-q7-a",
+                  "label": "A",
+                  "text": "They have already paid."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q7-b",
+                  "label": "B",
+                  "text": "They feel judged."
+                },
+                {
+                  "id": "bbc-260611-t1-r2-q7-c",
+                  "label": "C",
+                  "text": "They cannot see the menu."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t1-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t1-r2-q8",
+              "number": 7,
+              "position": 1,
               "responseType": "text",
-              "prompt": "At a touchscreen, customers have more {{blank}} to consider products.",
+              "prompt": "A screen gives customers more {{blank}} to examine their choices.",
+              "evidence": {
+                "startSeconds": 162.27,
+                "endSeconds": 169.45,
+                "summary": "Ward says customers have additional time to look through the display.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
                 "time"
               ]
             },
             {
-              "id": "bbc-260611-t2-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260611-t1-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Upselling increases the amount spent in one {{blank}}.",
+              "prompt": "Without feeling judged, customers are more likely to say {{blank}} to extra items.",
+              "evidence": {
+                "startSeconds": 174.03,
+                "endSeconds": 179.29,
+                "summary": "Ward connects extra browsing time and reduced judgement with accepting additions.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "transaction"
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t1-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t1-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "In which country did the World Food Programme run its campaign? {{blank}}",
+              "evidence": {
+                "startSeconds": 226.51,
+                "endSeconds": 232.63,
+                "summary": "The non-commercial behavioural-science example is located in Tunisia.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "Tunisia"
               ]
             },
             {
-              "id": "bbc-260611-t2-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260611-t1-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "The World Food Programme example comes from {{blank}}.",
+              "prompt": "Where was the campaign's television show set? {{blank}}",
+              "evidence": {
+                "startSeconds": 233.31,
+                "endSeconds": 235.27,
+                "summary": "The programme used a restaurant as its fictional setting.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
               "answers": [
-                "Tunisia"
+                "a restaurant",
+                "restaurant"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+        "audioSha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278",
+        "durationSeconds": 373.752,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "e8d77e5d11e37f61e94c1fa2046451f6bff70e5ab2440f1e8eaac707ebf387dd"
+      }
     },
     {
-      "id": "bbc-260611-t3",
-      "title": "Details behind the examples",
-      "position": 3,
+      "id": "bbc-260611-t2",
+      "title": "Advertising and influence: causes and examples",
+      "position": 2,
       "format": "ielts",
       "difficulty": "medium",
       "groups": [
         {
-          "id": "bbc-260611-t3-g1",
+          "id": "bbc-260611-t2-r2-g1",
           "position": 1,
-          "heading": "Details behind the examples",
-          "taskType": "short_answer",
-          "instruction": "Listen and answer the questions using words or numbers from the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
-          "questions": [
-            {
-              "id": "bbc-260611-t3-q1",
-              "number": 1,
-              "position": 1,
-              "responseType": "text",
-              "prompt": "Who are mentioned alongside parents as early guides for some people? {{blank}}",
-              "answers": [
-                "teachers"
-              ]
-            },
-            {
-              "id": "bbc-260611-t3-q2",
-              "number": 2,
-              "position": 2,
-              "responseType": "text",
-              "prompt": "What are athletes described as endorsing? {{blank}}",
-              "answers": [
-                "sportswear"
-              ]
-            },
-            {
-              "id": "bbc-260611-t3-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "What extra side dish might a customer hesitate to request from a person? {{blank}}",
-              "answers": [
-                "fries"
-              ]
-            },
-            {
-              "id": "bbc-260611-t3-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "text",
-              "prompt": "What sweet course is given as another upselling example? {{blank}}",
-              "answers": [
-                "dessert"
-              ]
-            },
-            {
-              "id": "bbc-260611-t3-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "text",
-              "prompt": "The food programme wanted people to eat with others more often. What adverb describes this? {{blank}}",
-              "answers": [
-                "together"
-              ]
-            },
-            {
-              "id": "bbc-260611-t3-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "text",
-              "prompt": "What word, before \"theory\", names the use of small behavioural prompts? {{blank}}",
-              "answers": [
-                "nudge"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260611-t4",
-      "title": "How persuasion works",
-      "position": 4,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
-        {
-          "id": "bbc-260611-t4-g1",
-          "position": 1,
-          "heading": "How persuasion works",
+          "heading": "Questions 1–3",
           "taskType": "multiple_choice_single",
-          "instruction": "Listen to the episode and choose the best answer to each question. Questions follow the recording.",
-          "answerInstruction": "Choose ONE answer: A, B or C.",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
           "maxWords": null,
           "maxNumbers": null,
           "questions": [
             {
-              "id": "bbc-260611-t4-q1",
+              "id": "bbc-260611-t2-r2-q1",
               "number": 1,
               "position": 1,
               "responseType": "single_choice",
-              "prompt": "Why can a trusted endorsement reduce the effort of choosing?",
+              "prompt": "What distinguishes the two purchases mentioned at the start?",
+              "evidence": {
+                "startSeconds": 18.55,
+                "endSeconds": 35.21,
+                "summary": "The headphone purchase was researched, while the drink may have been influenced by an advertisement.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "Only the headphones replaced something broken.",
+                  "C": "Teachers appear later as early role models, not sources of these purchases."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260611-t4-q1-a",
+                  "id": "bbc-260611-t2-r2-q1-a",
                   "label": "A",
-                  "text": "It provides a credible guide when someone is uncertain."
+                  "text": "One followed research; the other may have followed an advert."
                 },
                 {
-                  "id": "bbc-260611-t4-q1-b",
+                  "id": "bbc-260611-t2-r2-q1-b",
                   "label": "B",
-                  "text": "It proves that the recommended product is the cheapest."
+                  "text": "Both were made to replace broken items."
                 },
                 {
-                  "id": "bbc-260611-t4-q1-c",
+                  "id": "bbc-260611-t2-r2-q1-c",
                   "label": "C",
-                  "text": "It prevents customers from comparing alternatives."
+                  "text": "Both followed recommendations from teachers."
                 }
               ],
               "answer": "A"
             },
             {
-              "id": "bbc-260611-t4-q2",
+              "id": "bbc-260611-t2-r2-q2",
               "number": 2,
               "position": 2,
               "responseType": "single_choice",
-              "prompt": "What makes the screen different from a human assistant in Dean's explanation?",
+              "prompt": "According to Jones, when is following another person's lead especially attractive?",
+              "evidence": {
+                "startSeconds": 47.81,
+                "endSeconds": 59.39,
+                "summary": "Jones describes expert guidance as a shortcut in uncertain decisions.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Uncertainty, rather than exhaustive comparison, is the stated trigger.",
+                  "B": "Perceived credibility or knowledge is essential to the explanation."
+                }
+              },
               "options": [
                 {
-                  "id": "bbc-260611-t4-q2-a",
+                  "id": "bbc-260611-t2-r2-q2-a",
                   "label": "A",
-                  "text": "It removes the feeling that another person is evaluating the order."
+                  "text": "When the buyer has already compared every alternative."
                 },
                 {
-                  "id": "bbc-260611-t4-q2-b",
+                  "id": "bbc-260611-t2-r2-q2-b",
                   "label": "B",
-                  "text": "It hides the prices until the order is complete."
+                  "text": "When the buyer distrusts the person's expertise."
                 },
                 {
-                  "id": "bbc-260611-t4-q2-c",
+                  "id": "bbc-260611-t2-r2-q2-c",
                   "label": "C",
-                  "text": "It stops the customer from adding unwanted items."
+                  "text": "When the buyer is uncertain about a decision."
                 }
               ],
-              "answer": "A"
+              "answer": "C"
             },
             {
-              "id": "bbc-260611-t4-q3",
+              "id": "bbc-260611-t2-r2-q3",
               "number": 3,
               "position": 3,
               "responseType": "single_choice",
-              "prompt": "Why does extra browsing time matter in the touchscreen example?",
-              "options": [
-                {
-                  "id": "bbc-260611-t4-q3-a",
-                  "label": "A",
-                  "text": "Customers forget which restaurant they entered."
-                },
-                {
-                  "id": "bbc-260611-t4-q3-b",
-                  "label": "B",
-                  "text": "The restaurant can reduce the number of products available."
-                },
-                {
-                  "id": "bbc-260611-t4-q3-c",
-                  "label": "C",
-                  "text": "Customers can inspect products and consider related additions."
+              "prompt": "Which pairing illustrates professional authority being used to sell a product?",
+              "evidence": {
+                "startSeconds": 67.85,
+                "endSeconds": 75.07,
+                "summary": "Jones uses a dentist recommending toothpaste to illustrate a relevant endorsement.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "Sportswear is paired with athletes; waiters are a later upselling example.",
+                  "C": "Teachers are early guides, while the soft drink is linked to a celebrity advert."
                 }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260611-t4-q4",
-              "number": 4,
-              "position": 4,
-              "responseType": "single_choice",
-              "prompt": "What does the reported increase in basket spend measure?",
+              },
               "options": [
                 {
-                  "id": "bbc-260611-t4-q4-a",
+                  "id": "bbc-260611-t2-r2-q3-a",
                   "label": "A",
-                  "text": "More separate visits to the restaurant"
+                  "text": "A waiter and sportswear."
                 },
                 {
-                  "id": "bbc-260611-t4-q4-b",
+                  "id": "bbc-260611-t2-r2-q3-b",
                   "label": "B",
-                  "text": "More money spent per purchase"
+                  "text": "A dentist and toothpaste."
                 },
                 {
-                  "id": "bbc-260611-t4-q4-c",
+                  "id": "bbc-260611-t2-r2-q3-c",
                   "label": "C",
-                  "text": "More time spent carrying the food"
-                }
-              ],
-              "answer": "B"
-            },
-            {
-              "id": "bbc-260611-t4-q5",
-              "number": 5,
-              "position": 5,
-              "responseType": "single_choice",
-              "prompt": "Why is the Tunisia project included after the restaurant example?",
-              "options": [
-                {
-                  "id": "bbc-260611-t4-q5-a",
-                  "label": "A",
-                  "text": "It shows that restaurants no longer need advertising."
-                },
-                {
-                  "id": "bbc-260611-t4-q5-b",
-                  "label": "B",
-                  "text": "It proves that television always changes eating habits."
-                },
-                {
-                  "id": "bbc-260611-t4-q5-c",
-                  "label": "C",
-                  "text": "It shows that behavioural influence is not limited to commercial selling."
-                }
-              ],
-              "answer": "C"
-            },
-            {
-              "id": "bbc-260611-t4-q6",
-              "number": 6,
-              "position": 6,
-              "responseType": "single_choice",
-              "prompt": "How was the television series expected to influence viewers?",
-              "options": [
-                {
-                  "id": "bbc-260611-t4-q6-a",
-                  "label": "A",
-                  "text": "Viewers would be fined for eating alone."
-                },
-                {
-                  "id": "bbc-260611-t4-q6-b",
-                  "label": "B",
-                  "text": "Viewers could recognise themselves in the stories and copy behaviour."
-                },
-                {
-                  "id": "bbc-260611-t4-q6-c",
-                  "label": "C",
-                  "text": "Viewers would be given the same meal every day."
+                  "text": "A teacher and a soft drink."
                 }
               ],
               "answer": "B"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "bbc-260611-t5",
-      "title": "Precise language of influence",
-      "position": 5,
-      "format": "ielts",
-      "difficulty": "hard",
-      "groups": [
+        },
         {
-          "id": "bbc-260611-t5-g1",
-          "position": 1,
-          "heading": "Precise language of influence",
-          "taskType": "sentence_completion",
-          "instruction": "Complete the paraphrased sentences with the precise details or expressions used in the recording.",
-          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
-          "maxWords": 3,
-          "maxNumbers": 1,
+          "id": "bbc-260611-t2-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
           "questions": [
             {
-              "id": "bbc-260611-t5-q1",
-              "number": 1,
+              "id": "bbc-260611-t2-r2-q4",
+              "number": 4,
               "position": 1,
               "responseType": "text",
-              "prompt": "A promotion by a well-known person is called a celebrity {{blank}}.",
+              "prompt": "Type of business introducing touchscreens: fast-food {{blank}}.",
+              "evidence": {
+                "startSeconds": 127.65,
+                "endSeconds": 133.59,
+                "summary": "The discussion introduces ordering machines installed by multiple fast-food chains.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "endorsement"
+                "chains"
               ]
             },
             {
-              "id": "bbc-260611-t5-q2",
-              "number": 2,
+              "id": "bbc-260611-t2-r2-q5",
+              "number": 5,
               "position": 2,
               "responseType": "text",
-              "prompt": "Trusted recommendations help people navigate {{blank}} times.",
-              "answers": [
-                "uncertain"
-              ]
-            },
-            {
-              "id": "bbc-260611-t5-q3",
-              "number": 3,
-              "position": 3,
-              "responseType": "text",
-              "prompt": "Worrying about another person's opinion can make a customer feel {{blank}}.",
+              "prompt": "Possible barrier to requesting more food from staff: feeling {{blank}}.",
+              "evidence": {
+                "startSeconds": 147.23,
+                "endSeconds": 162.27,
+                "summary": "Personal interaction can make customers uncomfortable about requesting extras.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "judged"
               ]
             },
             {
-              "id": "bbc-260611-t5-q4",
-              "number": 4,
-              "position": 4,
+              "id": "bbc-260611-t2-r2-q6",
+              "number": 6,
+              "position": 3,
               "responseType": "text",
-              "prompt": "The name for the total value of one order is {{blank}}.",
+              "prompt": "The display includes the selected item and other linked {{blank}}.",
+              "evidence": {
+                "startSeconds": 162.27,
+                "endSeconds": 169.45,
+                "summary": "Ward says the screen shows related products as well as the selected item.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "products"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t2-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260611-t2-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Besides bigger portions and more drinks, what might a waiter suggest? {{blank}}",
+              "evidence": {
+                "startSeconds": 200.89,
+                "endSeconds": 206.31,
+                "summary": "The restaurant example adds dessert to the possible extra purchases.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dessert"
+              ]
+            },
+            {
+              "id": "bbc-260611-t2-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Basket spend adds together purchases made in how many transactions? {{blank}}",
+              "evidence": {
+                "startSeconds": 210.75,
+                "endSeconds": 216.61,
+                "summary": "The metric covers the items bought in one transaction, not spending over several visits.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "one",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t2-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t2-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The stories were designed so that viewers could recognise {{blank}} in them.",
+              "evidence": {
+                "startSeconds": 241.51,
+                "endSeconds": 251.19,
+                "summary": "Khalifi describes a wish for people to see themselves in the stories.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "themselves"
+              ]
+            },
+            {
+              "id": "bbc-260611-t2-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Khalifi includes emotional {{blank}} among the things viewers learn by observing.",
+              "evidence": {
+                "startSeconds": 251.61,
+                "endSeconds": 265.31,
+                "summary": "Her explanation includes observing others' emotional reactions as part of learning.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "reactions"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+        "audioSha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278",
+        "durationSeconds": 373.752,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "5682c26fd87b62846bb3790f9dbfc2b285af2c0ca6e51186f5b5bfb31f00a5ac"
+      }
+    },
+    {
+      "id": "bbc-260611-t3",
+      "title": "Behavioural science: mechanisms and outcomes",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260611-t3-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t3-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What kind of endorsement is associated with the drink purchase? {{blank}}",
+              "evidence": {
+                "startSeconds": 30.87,
+                "endSeconds": 39.59,
+                "summary": "The admired person promoting the drink is described as a celebrity endorsement.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "celebrity endorsement",
+                "a celebrity endorsement"
+              ]
+            },
+            {
+              "id": "bbc-260611-t3-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What two-word expression describes a way of deciding without lengthy thought? {{blank}}",
+              "evidence": {
+                "startSeconds": 54.33,
+                "endSeconds": 59.39,
+                "summary": "Jones characterises quick decisions based on guidance as a mental shortcut.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mental shortcut"
+              ]
+            },
+            {
+              "id": "bbc-260611-t3-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Which group is used to illustrate endorsements of sportswear? {{blank}}",
+              "evidence": {
+                "startSeconds": 67.85,
+                "endSeconds": 75.07,
+                "summary": "Athletes, rather than dentists or teachers, are linked to sportswear.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "athletes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t3-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t3-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Customers in some fast-food chains now place orders using {{blank}} machines.",
+              "evidence": {
+                "startSeconds": 127.65,
+                "endSeconds": 133.59,
+                "summary": "The new ordering interface is described as a touchscreen machine.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "touchscreen"
+              ]
+            },
+            {
+              "id": "bbc-260611-t3-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Concern about another person's opinion can lead a customer to say {{blank}} to an upgrade.",
+              "evidence": {
+                "startSeconds": 156.19,
+                "endSeconds": 162.27,
+                "summary": "Ward explains that feeling judged can produce a refusal of extra food.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "no"
+              ]
+            },
+            {
+              "id": "bbc-260611-t3-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Customers can inspect an item and the other products {{blank}} to it.",
+              "evidence": {
+                "startSeconds": 162.27,
+                "endSeconds": 169.45,
+                "summary": "Ward specifically mentions being able to see products linked to the selected item.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "linked"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t3-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260611-t3-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What does basket spend measure?",
+              "evidence": {
+                "startSeconds": 206.91,
+                "endSeconds": 216.61,
+                "summary": "The explanation defines basket spend at the level of one purchase transaction.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The stated unit is one transaction, not a whole day's takings.",
+                  "C": "The stated unit is a single transaction, not a customer across multiple visits."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t3-r2-q8-a",
+                  "label": "A",
+                  "text": "The value of a shop's sales over a whole day."
+                },
+                {
+                  "id": "bbc-260611-t3-r2-q8-b",
+                  "label": "B",
+                  "text": "The value of everything bought in a single transaction."
+                },
+                {
+                  "id": "bbc-260611-t3-r2-q8-c",
+                  "label": "C",
+                  "text": "The value bought by one customer over several visits."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260611-t3-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "How did the World Food Programme try to encourage shared meals?",
+              "evidence": {
+                "startSeconds": 226.51,
+                "endSeconds": 235.27,
+                "summary": "The public campaign used a restaurant-based television show, not a sales interface.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "B": "Ordering screens belong to the fast-food business example.",
+                  "C": "Celebrity soft-drink promotion is the opening personal example."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t3-r2-q9-a",
+                  "label": "A",
+                  "text": "It created a television story in a restaurant setting."
+                },
+                {
+                  "id": "bbc-260611-t3-r2-q9-b",
+                  "label": "B",
+                  "text": "It installed ordering screens in restaurants."
+                },
+                {
+                  "id": "bbc-260611-t3-r2-q9-c",
+                  "label": "C",
+                  "text": "It asked celebrities to endorse soft drinks."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t3-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t3-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Requirement for the campaign idea: a different approach producing something {{blank}}.",
+              "evidence": {
+                "startSeconds": 274.29,
+                "endSeconds": 282.39,
+                "summary": "The presenter explains thinking differently as a way to produce a creative approach.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "creative"
+              ]
+            },
+            {
+              "id": "bbc-260611-t3-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Behaviour shown for others to copy: {{blank}}.",
+              "evidence": {
+                "startSeconds": 283.17,
+                "endSeconds": 290.89,
+                "summary": "The programme is said to encourage modelling of behaviour.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "modelling",
+                "modeling"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+        "audioSha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278",
+        "durationSeconds": 373.752,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "6588f1ac3acaeb4177c801fcee4bdc1f4cc7a9fe1dc2d80fd0d00062c1ae6088"
+      }
+    },
+    {
+      "id": "bbc-260611-t4",
+      "title": "Persuasion: interpreting evidence and contrasts",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260611-t4-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t4-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "An uncertain buyer may defer to somebody regarded as credible or {{blank}}.",
+              "evidence": {
+                "startSeconds": 47.81,
+                "endSeconds": 53.39,
+                "summary": "The appeal of guidance depends on perceived knowledge or credibility.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "knowledgeable"
+              ]
+            },
+            {
+              "id": "bbc-260611-t4-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Jones presents rapid decision-making through another person's guidance as a {{blank}}.",
+              "evidence": {
+                "startSeconds": 54.33,
+                "endSeconds": 59.39,
+                "summary": "The shortcut reduces the cognitive work of making an uncertain choice.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mental shortcut"
+              ]
+            },
+            {
+              "id": "bbc-260611-t4-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Trust in a recommendation can reduce how much a buyer needs to {{blank}} about a purchase.",
+              "evidence": {
+                "startSeconds": 82.11,
+                "endSeconds": 85.33,
+                "summary": "The presenter links trust directly with reduced deliberation.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "think"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t4-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260611-t4-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which outcome, rather than merely a technological change, motivates the discussion of screens?",
+              "evidence": {
+                "startSeconds": 127.65,
+                "endSeconds": 137.07,
+                "summary": "The reported financial gain is what requires a behavioural explanation.",
+                "paraphrase": true,
+                "skill": "paraphrase",
+                "distractors": {
+                  "A": "The financial change reported is greater revenue, not cheaper individual meals.",
+                  "C": "The introduction reports greater takings, not a count of visiting customers."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t4-r2-q4-a",
+                  "label": "A",
+                  "text": "A reported reduction in the price of individual meals."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q4-b",
+                  "label": "B",
+                  "text": "A reported increase in revenue."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q4-c",
+                  "label": "C",
+                  "text": "A reported increase in the number of visiting customers."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260611-t4-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What limits the claim about customers feeling judged?",
+              "evidence": {
+                "startSeconds": 147.23,
+                "endSeconds": 162.27,
+                "summary": "Ward qualifies his claim by excluding a universal response.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The qualification is about not everyone sharing the response, not whom the food is for.",
+                  "C": "Visible information is a later feature of screens, not the stated limit on who feels judged."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t4-r2-q5-a",
+                  "label": "A",
+                  "text": "Ward presents it as affecting many people, not necessarily everyone."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q5-b",
+                  "label": "B",
+                  "text": "Ward limits the reaction to customers buying food for other people."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q5-c",
+                  "label": "C",
+                  "text": "Ward links the reaction specifically to the prices being visible."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260611-t4-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What combination best explains greater acceptance of extras at a screen?",
+              "evidence": {
+                "startSeconds": 162.27,
+                "endSeconds": 179.29,
+                "summary": "The account combines opportunities to browse with reduced interpersonal judgement.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Ward describes more visible information and less judgement, not the reverse.",
+                  "B": "Neither a restricted range nor a fixed budget is offered as the explanation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t4-r2-q6-a",
+                  "label": "A",
+                  "text": "Less product information and more pressure from staff."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q6-b",
+                  "label": "B",
+                  "text": "A smaller product range and a fixed spending limit."
+                },
+                {
+                  "id": "bbc-260611-t4-r2-q6-c",
+                  "label": "C",
+                  "text": "More time to consider products and less social pressure."
+                }
+              ],
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t4-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t4-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Location chosen for the shared-eating campaign: {{blank}}.",
+              "evidence": {
+                "startSeconds": 226.51,
+                "endSeconds": 232.63,
+                "summary": "The World Food Programme example is situated in Tunisia.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "Tunisia"
+              ]
+            },
+            {
+              "id": "bbc-260611-t4-r2-q9",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Fictional environment used to communicate the idea: a {{blank}}.",
+              "evidence": {
+                "startSeconds": 233.31,
+                "endSeconds": 235.27,
+                "summary": "A restaurant setting provided the environment for the campaign's television narrative.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "restaurant"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t4-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t4-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Besides actions and behaviour, what did Khalifi say people observe and imitate? {{blank}}",
+              "evidence": {
+                "startSeconds": 251.61,
+                "endSeconds": 265.31,
+                "summary": "Khalifi extends observational learning to other people's emotional reactions.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "emotional reactions"
+              ]
+            },
+            {
+              "id": "bbc-260611-t4-r2-q12",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What term names the process of displaying behaviour that can be copied? {{blank}}",
+              "evidence": {
+                "startSeconds": 283.17,
+                "endSeconds": 290.89,
+                "summary": "The presenter labels behaviour that others can copy as modelling.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "modelling",
+                "modeling"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+        "audioSha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278",
+        "durationSeconds": 373.752,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "b5369c5ccd36bfc6bd083cfb02e1b2d938cc06e61457f80f97f07d7574f37971"
+      }
+    },
+    {
+      "id": "bbc-260611-t5",
+      "title": "Influence without instruction: deeper comprehension",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260611-t5-r2-g1",
+          "position": 1,
+          "heading": "Questions 1–3",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t5-r2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Example of a replacement purchase prompted by equipment failure: {{blank}}.",
+              "evidence": {
+                "startSeconds": 18.55,
+                "endSeconds": 26.51,
+                "summary": "The headphone purchase arose from an existing pair breaking, followed by research.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "headphones"
+              ]
+            },
+            {
+              "id": "bbc-260611-t5-r2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Source that may have influenced the drink choice: an {{blank}}.",
+              "evidence": {
+                "startSeconds": 30.87,
+                "endSeconds": 35.21,
+                "summary": "Phil connects the purchase with seeing an admired person in an advert.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "advert"
+              ]
+            },
+            {
+              "id": "bbc-260611-t5-r2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Expression for relying on a quick decision-making aid: {{blank}}.",
+              "evidence": {
+                "startSeconds": 54.33,
+                "endSeconds": 59.39,
+                "summary": "Jones treats expert-led decision-making as a shortcut rather than exhaustive analysis.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "mental shortcut"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t5-r2-g2",
+          "position": 2,
+          "heading": "Questions 4–6",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260611-t5-r2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Jones mention childhood guides before commercial endorsements?",
+              "evidence": {
+                "startSeconds": 59.99,
+                "endSeconds": 75.07,
+                "summary": "Early reliance on parents and teachers helps explain the later commercial use of authority.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "No employment relationship with teachers is described.",
+                  "C": "Jones uses childhood to explain the origin of a wider habit, not to restrict the audience."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t5-r2-q4-a",
+                  "label": "A",
+                  "text": "Businesses can draw on an already learned tendency to follow trusted people."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q4-b",
+                  "label": "B",
+                  "text": "Businesses normally employ the customer's former teachers."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q4-c",
+                  "label": "C",
+                  "text": "Children are the only consumers affected by endorsements."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260611-t5-r2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Which interpretation is most consistent with the explanation of a mental shortcut?",
+              "evidence": {
+                "startSeconds": 75.59,
+                "endSeconds": 85.33,
+                "summary": "The presenter associates a trusted endorsement with less thought, not fuller comparison.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "Exhaustive comparison would remove the shortcut described.",
+                  "B": "Trust is required, but personal acquaintance is not stated as a condition."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t5-r2-q5-a",
+                  "label": "A",
+                  "text": "It requires comparing all available products in detail."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q5-b",
+                  "label": "B",
+                  "text": "It works only when the buyer personally knows the endorser."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q5-c",
+                  "label": "C",
+                  "text": "It can reduce the need for independent deliberation."
+                }
+              ],
+              "answer": "C"
+            },
+            {
+              "id": "bbc-260611-t5-r2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "In Ward's account, refusing a larger order may express what concern?",
+              "evidence": {
+                "startSeconds": 147.23,
+                "endSeconds": 162.27,
+                "summary": "Some customers reject additions because of anticipated judgement by the human taking the order.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Ingredient comparisons appear as browsing information, not the reason for socially motivated refusal.",
+                  "C": "The concern is attached to speaking with a person, not electronic payment."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260611-t5-r2-q6-a",
+                  "label": "A",
+                  "text": "Whether related products use the same ingredients."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q6-b",
+                  "label": "B",
+                  "text": "How the request will be viewed by another person."
+                },
+                {
+                  "id": "bbc-260611-t5-r2-q6-c",
+                  "label": "C",
+                  "text": "Whether the touchscreen has received the payment."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t5-r2-g3",
+          "position": 3,
+          "heading": "Questions 7–8",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN THREE WORDS for each answer.",
+          "maxWords": 3,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t5-r2-q8",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which measure does Ward use to describe the financial effect of these extra purchases? {{blank}}",
+              "evidence": {
+                "startSeconds": 179.93,
+                "endSeconds": 184.31,
+                "summary": "Ward reports an increase in basket spend, tying upselling to transaction value.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
                 "basket spend"
               ]
             },
             {
-              "id": "bbc-260611-t5-q5",
-              "number": 5,
-              "position": 5,
+              "id": "bbc-260611-t5-r2-q9",
+              "number": 8,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Takwa wanted her team to think outside the {{blank}}.",
+              "prompt": "What activity, rather than greater spending, was the public campaign intended to encourage? {{blank}}",
+              "evidence": {
+                "startSeconds": 226.51,
+                "endSeconds": 232.63,
+                "summary": "The World Food Programme sought more shared meals rather than increased purchases.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "box"
+                "eat food together"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260611-t5-r2-g4",
+          "position": 4,
+          "heading": "Questions 9–10",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260611-t5-r2-q11",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "The campaign team wanted viewers to see {{blank}} reflected in its narratives.",
+              "evidence": {
+                "startSeconds": 241.51,
+                "endSeconds": 251.19,
+                "summary": "Identification with the stories is an explicit aim of Khalifi's team.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "themselves"
               ]
             },
             {
-              "id": "bbc-260611-t5-q6",
-              "number": 6,
-              "position": 6,
+              "id": "bbc-260611-t5-r2-q12",
+              "number": 10,
+              "position": 2,
               "responseType": "text",
-              "prompt": "Demonstrating behaviour that others can copy is to {{blank}} it.",
+              "prompt": "Observational learning in the example includes people's actions and their emotional {{blank}}.",
+              "evidence": {
+                "startSeconds": 251.61,
+                "endSeconds": 265.31,
+                "summary": "Khalifi mentions emotional reactions alongside observable actions and behaviour.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
               "answers": [
-                "model"
+                "reactions"
               ]
             }
           ]
         }
-      ]
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260611",
+        "audioSha256": "5000e31074ceec78daa16b1df43591ef723c75bdf2a338c58ccdd29768dc2278",
+        "durationSeconds": 373.752,
+        "checkedAt": "2026-09-05",
+        "method": "Official BBC transcript meaning cross-checked with the direct lesson recording; word-timed ASR used only to locate passages.",
+        "contentSha256": "3c3a1bca45ce666934c6838744db739576ef1ca3187b76f6fa4d2b841a20fd82"
+      }
     }
   ]
 }
