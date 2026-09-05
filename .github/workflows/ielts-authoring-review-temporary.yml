@@ -1,0 +1,80 @@
+name: Temporary IELTS source review
+on:
+  push:
+    branches: [fix/ielts-listening-question-redesign]
+    paths: [.github/workflows/ielts-authoring-review-temporary.yml]
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export task source and official references
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ielts-review/references /tmp/ielts-review/timing
+          git archive --format=zip HEAD -o /tmp/ielts-review/repository.zip
+          python3 - <<'PY'
+          import concurrent.futures, hashlib, json, subprocess, sys
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from html.parser import HTMLParser
+          root=Path('/tmp/ielts-review')
+          class Page(HTMLParser):
+              def __init__(self,text):
+                  super().__init__(); self.text=[]; self.hidden=0; self.feed(text)
+              def handle_starttag(self,tag,attrs):
+                  if tag in ('script','style'): self.hidden+=1
+              def handle_endtag(self,tag):
+                  if tag in ('script','style'): self.hidden=max(0,self.hidden-1)
+              def handle_data(self,data):
+                  if not self.hidden and data.strip(): self.text.append(data.strip())
+          def collect(path):
+              data=json.loads(path.read_text()); code=data['episodeCode']
+              target=root/'media'/path.parent.name; target.mkdir(parents=True,exist_ok=True)
+              (target/'episode.json').write_text(json.dumps(data,indent=2))
+              with urlopen(Request(data['sourceUrl'],headers={'User-Agent':'Vocora study-authoring review/1.0'}),timeout=60) as r: body=r.read(5000000)
+              text=body.decode('utf-8')
+              assert code in text and data['sources']['audioUrl'] in text, 'Official audio identity not present in source page: '+code
+              (root/'references'/(code+'.html')).write_text(text)
+              (root/'references'/(code+'.txt')).write_text('\n'.join(Page(text).text))
+              subprocess.run([sys.executable,'back/scripts/manage-listening-episode.py','fetch-assets',str(target)],check=True)
+              duration=float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',str(target/'audio.mp3')],text=True))
+              return {'code':code,'folder':path.parent.name,'audioSha256':hashlib.sha256((target/'audio.mp3').read_bytes()).hexdigest(),'durationSeconds':duration,'sourceUrl':data['sourceUrl']}
+          files=sorted(Path('back/data/listening/episodes').glob('*/episode.json'))
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool: result=list(pool.map(collect,files))
+          (root/'manifest.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: internal-ielts-source-review-not-a-bundle
+          path: |
+            /tmp/ielts-review/repository.zip
+            /tmp/ielts-review/references/
+            /tmp/ielts-review/manifest.json
+          retention-days: 3
+      - name: Generate private audio-location assistance
+        run: |
+          python3 -m venv /tmp/ielts-asr
+          /tmp/ielts-asr/bin/pip -q install faster-whisper
+          /tmp/ielts-asr/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          from faster_whisper import WhisperModel
+          root=Path('/tmp/ielts-review')
+          model=WhisperModel('base.en',device='cpu',compute_type='int8',cpu_threads=2)
+          for ep in json.loads((root/'manifest.json').read_text()):
+              segments,info=model.transcribe(str(root/'media'/ep['folder']/'audio.mp3'),language='en',beam_size=1,word_timestamps=True,vad_filter=True)
+              result={'episode':ep,'method':'ASR location assistance; official reference remains answer authority','segments':[{'start':s.start,'end':s.end,'text':s.text,'words':[{'start':w.start,'end':w.end,'word':w.word,'probability':w.probability} for w in (s.words or [])]} for s in segments]}
+              (root/'timing'/(ep['code']+'.json')).write_text(json.dumps(result,indent=2))
+              print(ep['code'],len(result['segments']),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: internal-ielts-audio-location-assistance
+          path: /tmp/ielts-review/timing/
+          retention-days: 3
