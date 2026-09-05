@@ -1,7 +1,6 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	ElementRef,
 	HostListener,
 	OnInit,
 	ViewChild,
@@ -9,7 +8,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +21,7 @@ import { ReviewAnswerSoundService } from '../../core/sound/review-answer-sound.s
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { SentenceAnswerComponent } from './sentence-answer.component';
 
 type FooterTone = 'neutral' | 'success' | 'error';
 
@@ -34,13 +34,13 @@ interface FooterState {
 
 @Component({
 	selector: 'app-sentence-practice-page',
-	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatProgressBarModule],
+	imports: [SentenceAnswerComponent, MatButtonModule, MatCardModule, MatProgressBarModule],
 	templateUrl: 'sentence-practice-page.component.html',
 	styleUrls: ['../review/review-page.component.scss', 'sentence-practice-page.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SentencePracticePageComponent implements OnInit {
-	@ViewChild('answerInput') private answerInput?: ElementRef<HTMLInputElement>;
+	@ViewChild(SentenceAnswerComponent) private answerInput?: SentenceAnswerComponent;
 	readonly session = inject(SentencePracticeSessionService);
 	readonly router = inject(Router);
 	readonly answer = new FormControl('', { nonNullable: true });
@@ -79,13 +79,6 @@ export class SentencePracticePageComponent implements OnInit {
 		if (prompt?.retryNumber) return `Retry ${prompt.retryNumber}`;
 		if (this.session.freePractice()) return `${this.session.answered()} practiced`;
 		return `${Math.min(this.session.primaryAnswered() + 1, this.session.initialCount())} / ${this.session.initialCount()}`;
-	});
-	readonly inputWidth = computed(() => {
-		const card = this.session.currentPrompt()?.card;
-		const length = card
-			? Math.max(card.term.length, ...card.accepted.map((value) => value.length))
-			: 8;
-		return `${Math.max(7, Math.min(28, length + 2))}ch`;
 	});
 
 	async ngOnInit(): Promise<void> {
@@ -164,14 +157,15 @@ export class SentencePracticePageComponent implements OnInit {
 
 	private prepareInput(): void {
 		this.answer.setValue('', { emitEvent: false });
-		setTimeout(() => this.answerInput?.nativeElement.focus());
+		setTimeout(() => this.answerInput?.focus());
 	}
 
 	@HostListener('document:keydown', ['$event'])
 	onKeyboard(event: KeyboardEvent): void {
 		if (!this.session.active()) return;
 		const target = event.target as HTMLElement | null;
-		const typing = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
+		const typing = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA'
+			|| Boolean(target?.closest('button, [role="dialog"]'));
 		if (event.key === ' ' && !typing && !this.session.feedback()) {
 			event.preventDefault();
 			this.session.pronounce();

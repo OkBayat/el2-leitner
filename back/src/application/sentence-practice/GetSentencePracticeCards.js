@@ -30,6 +30,7 @@ function groupWords(rows) {
         term: row.term,
         accepted: [],
         acceptedSet: new Set(),
+        definitions: row.definitions ?? [],
         box: row.box,
         mistakes: row.mistakes
       };
