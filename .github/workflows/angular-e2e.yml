@@ -18,6 +18,7 @@ jobs:
       MYSQL_ROOT_PASSWORD: ci-root-password
       JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
       LIBRARY_ADMIN_EMAILS: e2e-admin@example.com
+      AUTH_RATE_LIMIT_MAX: 100
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
