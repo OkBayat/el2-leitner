@@ -6,6 +6,7 @@ import test from "node:test";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import {
+  COLLECTION_SOURCE_FORMAT_VERSION,
   DEFAULT_COLLECTION_SLUG,
   EXAMPLE_COLLECTION_FILE,
   collectionSourceHash,
@@ -47,6 +48,10 @@ test("collection loader always ignores example-collection.md", async () => {
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("collection source format version forces provenance-aware resyncs", () => {
+  assert.equal(COLLECTION_SOURCE_FORMAT_VERSION, 2);
 });
 
 test("IELTS managed source keeps its stable public identity, exam kind, and legacy catalog accounting", async () => {
