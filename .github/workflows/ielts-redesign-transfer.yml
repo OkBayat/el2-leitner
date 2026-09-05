@@ -1,0 +1,52 @@
+name: Finalize IELTS listening redesign
+
+on:
+  push:
+    branches: [fix/ielts-listening-question-redesign-rebased]
+    paths:
+      - .github/workflows/ielts-redesign-transfer.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Materialize redesign
+        run: |
+          set -euo pipefail
+          cat .tmp/ielts-redesign/p*.b64 > /tmp/ielts-redesign-payload.b64
+          base64 -d /tmp/ielts-redesign-payload.b64 > /tmp/ielts-redesign-payload.tar.xz
+          tar -xJf /tmp/ielts-redesign-payload.tar.xz -C .
+
+      - name: Verify skill contract
+        run: |
+          set -euo pipefail
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/validate-skill.py
+          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-validate-skill.py
+
+      - name: Verify listening catalog
+        run: |
+          set -euo pipefail
+          node back/scripts/validate-listening-lessons.js
+          node --test \
+            back/tests/listening-question-quality.test.js \
+            back/tests/listening-catalog-quality.test.js \
+            back/tests/listening-review-command.test.js
+          python3 -m unittest back/tests/tooling/test_episode_tools.py
+
+      - name: Commit real changes only
+        run: |
+          set -euo pipefail
+          rm -rf .tmp/ielts-redesign
+          rm .github/workflows/ielts-redesign-transfer.yml
+          git config user.name "Vocora automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git status --short
+          git commit -m "fix: align BBC listening tests with IELTS rules"
+          git push origin HEAD:fix/ielts-listening-question-redesign-rebased
