@@ -32,6 +32,32 @@ interface FooterState {
 	label: string;
 }
 
+interface SentencePlaybackToken {
+	text: string;
+	start: number;
+	end: number;
+	word: boolean;
+}
+
+interface SentencePlaybackParts {
+	before: SentencePlaybackToken[];
+	after: SentencePlaybackToken[];
+	gapStart: number;
+	gapEnd: number;
+}
+
+function sentencePlaybackTokens(text: string, offset: number): SentencePlaybackToken[] {
+	return [...text.matchAll(/\s+|[^\s]+/gu)].map((match) => {
+		const start = offset + (match.index ?? 0);
+		return {
+			text: match[0],
+			start,
+			end: start + match[0].length,
+			word: /\S/u.test(match[0]),
+		};
+	});
+}
+
 @Component({
 	selector: 'app-sentence-practice-page',
 	imports: [SentenceAnswerComponent, MatButtonModule, MatCardModule, MatProgressBarModule],
@@ -79,6 +105,21 @@ export class SentencePracticePageComponent implements OnInit {
 		if (prompt?.retryNumber) return `Retry ${prompt.retryNumber}`;
 		if (this.session.freePractice()) return `${this.session.answered()} practiced`;
 		return `${Math.min(this.session.primaryAnswered() + 1, this.session.initialCount())} / ${this.session.initialCount()}`;
+	});
+	readonly playbackParts = computed<SentencePlaybackParts>(() => {
+		const prompt = this.session.currentPrompt();
+		if (!prompt) return { before: [], after: [], gapStart: 0, gapEnd: 0 };
+		const sentenceText = prompt.sentence.text.trim();
+		const before = prompt.sentence.before;
+		const after = prompt.sentence.after;
+		const gapStart = before.length;
+		const gapEnd = Math.max(gapStart, sentenceText.length - after.length);
+		return {
+			before: sentencePlaybackTokens(before, 0),
+			after: sentencePlaybackTokens(after, gapEnd),
+			gapStart,
+			gapEnd,
+		};
 	});
 
 	async ngOnInit(): Promise<void> {
@@ -153,6 +194,18 @@ export class SentencePracticePageComponent implements OnInit {
 	async handlePrimary(): Promise<void> {
 		if (this.session.feedback()) await this.next();
 		else await this.submit();
+	}
+
+	isPlaybackTokenSpoken(token: SentencePlaybackToken): boolean {
+		const charIndex = this.session.playbackCharIndex();
+		return token.word
+			&& charIndex !== null
+			&& charIndex >= token.start;
+	}
+
+	isPlaybackGapSpoken(): boolean {
+		const charIndex = this.session.playbackCharIndex();
+		return charIndex !== null && charIndex >= this.playbackParts().gapStart;
 	}
 
 	private prepareInput(): void {

@@ -98,7 +98,7 @@
               <h2>{{ result.passed ? 'Well done!' : 'Try the sentence again' }}</h2>
               <p>{{ result.matchedCount }} of {{ result.totalCount }} words recognized · {{ result.score }}%</p>
             } @else {
-              <p>{{ session.phase() === 'recording' ? (session.assessment()?.matchedCount ?? 0) + ' words recognized so far' : 'Repeat at least 90% of the words to succeed.' }}</p>
+              <p>{{ session.phase() === 'recording' ? (session.assessment()?.matchedCount ?? 0) + ' words recognized so far' : 'Repeat at least 70% of the words to succeed.' }}</p>
               <small>Word recognition, not a pronunciation score.</small>
             }
           </div>

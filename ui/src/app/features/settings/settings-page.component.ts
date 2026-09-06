@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LearningSettingsService } from '../../application/settings/learning-settings.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { createWord, ensureDailyWords, hydrateState, localDay } from '../../domain/learning/learning-rules';
@@ -47,6 +48,11 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
               <mat-form-field appearance="outline">
                 <mat-label>Daily answer goal</mat-label>
                 <input matInput type="number" min="5" max="200" formControlName="dailyGoal">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Listening practices per day</mat-label>
+                <input matInput type="number" min="1" max="12" formControlName="dailyListeningGoal">
+                <mat-hint>Finish the goal, then keep going with Legendary practice.</mat-hint>
               </mat-form-field>
               <label>
                 Pronunciation speed: {{ form.controls.voiceRate.value }}×
@@ -105,24 +111,25 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
 })
 export class SettingsPageComponent implements OnInit {
   readonly store = inject(LearningStoreService);
+  private readonly learningSettings = inject(LearningSettingsService);
   private readonly theme = inject(ThemeService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
   readonly form = new FormGroup({
     dailyNew: new FormControl(10, { nonNullable: true, validators: [Validators.min(1), Validators.max(50)] }),
     dailyGoal: new FormControl(20, { nonNullable: true, validators: [Validators.min(5), Validators.max(200)] }),
+    dailyListeningGoal: new FormControl(3, { nonNullable: true, validators: [Validators.min(1), Validators.max(12)] }),
     voiceRate: new FormControl(.85, { nonNullable: true, validators: [Validators.min(.5), Validators.max(1.2)] }),
     theme: new FormControl<ThemeMode>('system', { nonNullable: true }),
   });
 
   async ngOnInit(): Promise<void> {
     const state = await this.store.initialize();
-    this.form.setValue(state.settings);
+    this.applySettings(state.settings);
   }
 
   async save(): Promise<void> {
-    const settings = this.form.getRawValue();
-    const state = await this.store.update((draft) => { draft.settings = settings; });
+    const state = await this.learningSettings.save(this.form.getRawValue());
     this.theme.apply(state.settings.theme);
     this.snack.open('Settings saved.', 'OK', { duration: 2000 });
   }
@@ -154,7 +161,7 @@ export class SettingsPageComponent implements OnInit {
       if (ok) {
         const daily = ensureDailyWords(parsed);
         await this.store.replaceAndPersist(daily.state);
-        this.form.setValue(daily.state.settings);
+        this.applySettings(daily.state.settings);
         this.theme.apply(daily.state.settings.theme);
         this.snack.open('Backup restored.', 'OK', { duration: 2500 });
       }
@@ -189,5 +196,15 @@ export class SettingsPageComponent implements OnInit {
       state.daily = {};
     });
     this.snack.open('Progress deleted.', 'OK', { duration: 2000 });
+  }
+
+  private applySettings(settings: LearningState['settings']): void {
+    this.form.setValue({
+      dailyNew: settings.dailyNew,
+      dailyGoal: settings.dailyGoal,
+      dailyListeningGoal: settings.dailyListeningGoal ?? 3,
+      voiceRate: settings.voiceRate,
+      theme: settings.theme,
+    });
   }
 }

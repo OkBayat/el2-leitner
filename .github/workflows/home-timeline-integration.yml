@@ -1,0 +1,85 @@
+name: Home timeline integration
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  mysql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: vocora_timeline_ci
+          MYSQL_USER: vocora_ci
+          MYSQL_PASSWORD: integration-only-password
+          MYSQL_ROOT_PASSWORD: integration-only-root
+          MYSQL_ROOT_HOST: '%'
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --user=root --password=integration-only-root --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    env:
+      NODE_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: vocora_timeline_ci
+      DB_USER: vocora_ci
+      DB_PASSWORD: integration-only-password
+      DB_ADMIN_USER: root
+      DB_ADMIN_PASSWORD: integration-only-root
+      JWT_SECRET: integration-only-secret-at-least-thirty-two-characters
+      HOME_TIMELINE_MYSQL_INTEGRATION: '1'
+    defaults:
+      run:
+        working-directory: back
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: back/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run db:setup
+      - run: node --test tests/learning-timeline.test.js tests/mysql-learning-timeline.test.js tests/shadowing-persistence.test.js tests/integration/home-timeline.mysql.test.js
+      - run: npm run db:verify
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Serve the Angular application for isolated timeline browser checks
+        run: |
+          npx ng serve --host 127.0.0.1 --port 3000 > home-server.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:3000/dashboard >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat home-server.log
+          exit 1
+      - run: npx playwright test e2e/home-timeline.spec.ts --reporter=list
+      - name: Upload timeline screenshots and browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-path-browser
+          path: |
+            ui/test-results
+            ui/home-server.log
+          if-no-files-found: ignore

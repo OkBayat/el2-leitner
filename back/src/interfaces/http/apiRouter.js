@@ -195,6 +195,11 @@ export function createApiRouter({
     res.status(200).json(result);
   });
 
+  router.get("/learning/timeline", authenticate, async (req, res) => {
+    const result = await useCases.getLearningTimeline.execute(req.auth.userId, req.query);
+    res.status(200).json(result);
+  });
+
   router.post("/learning/sessions", authenticate, async (req, res) => {
     const result = await useCases.learningSessionCommands.start(req.auth.userId, req.body ?? {});
     res.status(201).json(result);
@@ -261,6 +266,16 @@ export function createApiRouter({
       req.auth.userId,
       req.query.house ?? 1
     );
+    res.status(200).json(result);
+  });
+
+  router.put("/settings", authenticate, async (req, res) => {
+    const result = await useCases.updateLearningSettings.execute(req.auth.userId, req.body ?? {});
+    res.status(200).json(result);
+  });
+
+  router.put("/settings/theme", authenticate, async (req, res) => {
+    const result = await useCases.updateThemePreference.execute(req.auth.userId, req.body ?? {});
     res.status(200).json(result);
   });
 

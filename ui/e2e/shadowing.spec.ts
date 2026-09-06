@@ -52,6 +52,7 @@ async function setup(page: Page, denied = false) {
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
+  await page.getByTestId('home-shadowing').click();
   await page.getByTestId('start-shadowing').click();
   await expect(page.getByTestId('shadowing-session')).toBeVisible();
 }

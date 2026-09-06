@@ -14,7 +14,8 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./shared/app-shell/app-shell.component').then((m) => m.AppShellComponent),
     children: [
-      { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard-page.component').then((m) => m.DashboardPageComponent) },
+      { path: 'dashboard', loadComponent: () => import('./features/home/home-page.component').then((m) => m.HomePageComponent) },
+      { path: 'overview', loadComponent: () => import('./features/dashboard/dashboard-page.component').then((m) => m.DashboardPageComponent) },
       { path: 'words', loadComponent: () => import('./features/words/words-page.component').then((m) => m.WordsPageComponent) },
       { path: 'reports', loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent) },
       { path: 'settings', loadComponent: () => import('./features/settings/settings-page.component').then((m) => m.SettingsPageComponent) },

@@ -83,6 +83,13 @@ export class MySqlPracticeSessionRepository {
          WHERE id = ?`,
         [correctIncrement, wrongIncrement, session.id]
       );
+      // Record evidence in the same transaction; opening a session never colors a timeline step.
+      await connection.execute(
+        `INSERT INTO practice_session_days (practice_session_id, local_day)
+         VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE local_day = VALUES(local_day)`,
+        [session.id, day]
+      );
       await connection.execute(
         `INSERT INTO user_daily_stats
            (user_id, day, attempts, correct_count, wrong_count, new_added, session_count, duration_seconds)

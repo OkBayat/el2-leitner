@@ -23,6 +23,8 @@
             "outputPath": { "base": "dist", "browser": "browser" },
             "assets": [
               "src/manifest.webmanifest",
+              "src/vocora-v2.webmanifest",
+              "src/vocora-v3.webmanifest",
               { "glob": "**/*", "input": "assets", "output": "assets" },
               { "glob": "**/*", "input": "fonts", "output": "fonts" },
               { "glob": "**/*", "input": "data", "output": "data" }

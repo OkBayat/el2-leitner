@@ -8,7 +8,7 @@ async function authenticate(page: Page): Promise<void> {
   await page.getByLabel('Password').fill(PASSWORD);
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
-  await expect(page.getByTestId('open-bbc-listening')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('.path-day.is-today [data-activity="listening"]')).toBeVisible({ timeout: 10_000 });
 }
 
 async function learningState(page: Page): Promise<any> {
@@ -20,9 +20,9 @@ async function learningState(page: Page): Promise<any> {
 
 test('BBC lessons expose three tests each, scroll-aware sticky audio, completion tracking, and isolated mistake capture', async ({ page }) => {
   await authenticate(page);
-  const stateBefore = await learningState(page);
 
-  await page.getByTestId('open-bbc-listening').click();
+  await page.locator('.path-day.is-today [data-activity="listening"]').click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Start', exact: true }).click();
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
   await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
 
@@ -123,6 +123,7 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   await page.getByTestId('listening-option-6-B').getByRole('radio').check();
 
   await expect(page.getByText('9 / 10 answered')).toBeVisible();
+  const stateBeforeSubmit = await learningState(page);
   const submitResponsePromise = page.waitForResponse((response) =>
     response.request().method() === 'POST'
     && /\/api\/listening\/bbc\/attempts\/[^/]+\/submit$/u.test(new URL(response.url()).pathname)
@@ -144,7 +145,7 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   await expect(page.getByTestId('add-listening-word-9')).toHaveCount(0);
 
   const stateAfterSubmit = await learningState(page);
-  expect(stateAfterSubmit).toEqual(stateBefore);
+  expect(stateAfterSubmit).toEqual(stateBeforeSubmit);
 
   const savePromise = page.waitForResponse((response) =>
     response.request().method() === 'PUT'

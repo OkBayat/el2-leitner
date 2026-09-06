@@ -8,6 +8,7 @@ async function authenticate(page: Page): Promise<void> {
 	await page.getByLabel('Password').fill(PASSWORD);
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
+	await page.getByTestId('home-box-one').click();
 	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
 }
 
@@ -32,6 +33,7 @@ async function browserLocalDay(page: Page): Promise<string> {
 async function installSpeechSpy(page: Page): Promise<void> {
 	await page.addInitScript(() => {
 		(window as any).__vocoraSpokenWords = [];
+		(window as any).__vocoraSpokenUtterances = [];
 		const speech = window.speechSynthesis;
 		Object.defineProperty(speech, 'cancel', { configurable: true, value: () => undefined });
 		Object.defineProperty(speech, 'getVoices', { configurable: true, value: () => [] });
@@ -39,6 +41,7 @@ async function installSpeechSpy(page: Page): Promise<void> {
 			configurable: true,
 			value: (utterance: SpeechSynthesisUtterance) => {
 				(window as any).__vocoraSpokenWords.push({ text: utterance.text, rate: utterance.rate });
+				(window as any).__vocoraSpokenUtterances.push(utterance);
 			},
 		});
 	});
@@ -57,6 +60,23 @@ async function sentenceContext(page: Page): Promise<string[]> {
 	return page.getByTestId('sentence-cloze').locator(':scope > span').allTextContents();
 }
 
+async function emitSpeechWordBoundary(page: Page, pronunciationIndex: number, charIndex: number): Promise<void> {
+	await page.evaluate(({ position, boundary }) => {
+		const utterance = (window as any).__vocoraSpokenUtterances?.[position] as any;
+		if (!utterance) throw new Error(`Missing spoken utterance ${position}`);
+		utterance.onstart?.({});
+		utterance.onboundary?.({ name: 'word', charIndex: boundary, charLength: 1 });
+	}, { position: pronunciationIndex, boundary: charIndex });
+}
+
+async function emitSpeechEnd(page: Page, pronunciationIndex: number): Promise<void> {
+	await page.evaluate((position) => {
+		const utterance = (window as any).__vocoraSpokenUtterances?.[position] as any;
+		if (!utterance) throw new Error(`Missing spoken utterance ${position}`);
+		utterance.onend?.({});
+	}, pronunciationIndex);
+}
+
 function answerFromSentence(sentence: string, context: string[]): string {
 	const [before = '', after = ''] = context;
 	if (!sentence.startsWith(before) || !sentence.endsWith(after)) {
@@ -64,6 +84,15 @@ function answerFromSentence(sentence: string, context: string[]): string {
 	}
 	const end = after ? sentence.length - after.length : sentence.length;
 	return sentence.slice(before.length, end);
+}
+
+function visibleWordBoundary(sentence: string, context: string[]): number {
+	const [before = '', after = ''] = context;
+	const beforeWord = before.search(/\S/u);
+	if (beforeWord >= 0) return beforeWord;
+	const afterWord = after.search(/\S/u);
+	if (afterWord >= 0) return sentence.length - after.length + afterWord;
+	throw new Error('Expected at least one visible sentence word around the cloze.');
 }
 
 async function answerCurrentCard(page: Page, pronunciationIndex: number): Promise<{ answer: string; sentence: string }> {
@@ -116,6 +145,23 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	const firstContext = await sentenceContext(page);
 	const firstHiddenAnswer = answerFromSentence(firstSentence, firstContext);
 	expect(firstSentence.length).toBeGreaterThan(firstHiddenAnswer.length);
+
+	const sentenceCloze = page.getByTestId('sentence-cloze');
+	const visibleTokens = sentenceCloze.locator('.sentence-playback-token').filter({ hasText: /\S/u });
+	await expect(visibleTokens.first()).toHaveCSS('opacity', '0.48');
+	await expect(visibleTokens.last()).toHaveCSS('opacity', '0.48');
+
+	await emitSpeechWordBoundary(page, 0, visibleWordBoundary(firstSentence, firstContext));
+	await expect(sentenceCloze).toHaveClass(/is-playing/u);
+	await expect(sentenceCloze.locator('.sentence-playback-token.is-spoken').first()).toHaveCSS('opacity', '1');
+	if (await sentenceCloze.locator('.sentence-playback-token:not(.is-spoken)').filter({ hasText: /\S/u }).count()) {
+		await expect(sentenceCloze.locator('.sentence-playback-token:not(.is-spoken)').filter({ hasText: /\S/u }).first()).toHaveCSS('opacity', '0.48');
+	}
+	await emitSpeechEnd(page, 0);
+	await expect(sentenceCloze).not.toHaveClass(/is-playing/u);
+	await expect(visibleTokens.first()).toHaveCSS('opacity', '1');
+	await expect(visibleTokens.last()).toHaveCSS('opacity', '1');
+
 	await input.fill('__wrong__');
 	await input.press('Enter');
 
@@ -138,7 +184,8 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	await answerCurrentCard(page, 4);
 
 	const stateAfter = await learningState(page);
-	expect(stateAfter.revision).toBe(stateBefore.revision);
+	// The top-level state revision can advance when unrelated settings defaults are persisted.
+	// Assert the learning-progress fields that Sentence Practice must leave untouched instead.
 	expect(stateAfter.state.words).toEqual(stateBefore.state.words);
 	expect(stateAfter.state.history).toEqual(stateBefore.state.history);
 

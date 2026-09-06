@@ -40,8 +40,10 @@ async function expectRenderedCanvas(chart: Locator): Promise<void> {
 	expect(dimensions.height).toBeGreaterThan(0);
 }
 
-test('dashboard renders Leitner coverage and 14-day activity with Chart.js canvases', async ({page}) => {
+test('learning overview preserves Leitner coverage and 14-day activity with Chart.js canvases', async ({page}) => {
 	await authenticate(page);
+	await page.getByRole('link', {name: 'Open learning overview'}).click();
+	await expect(page).toHaveURL(/\/overview$/u);
 	await expect(page.getByText('14-day activity')).toBeVisible();
 	await expect(page.locator('app-learning-chart')).toHaveCount(2);
 

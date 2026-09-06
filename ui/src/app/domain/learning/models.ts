@@ -9,6 +9,7 @@ export interface User {
 export interface LearningSettings {
   dailyNew: number;
   dailyGoal: number;
+  dailyListeningGoal?: number;
   voiceRate: number;
   theme: ThemeMode;
 }

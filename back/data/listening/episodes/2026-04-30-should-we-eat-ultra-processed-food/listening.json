@@ -1,0 +1,1471 @@
+{
+  "schemaVersion": 2,
+  "tests": [
+    {
+      "id": "test-1",
+      "title": "Everyday facts about ultra-processed food",
+      "position": 1,
+      "format": "ielts",
+      "difficulty": "easy",
+      "groups": [
+        {
+          "id": "bbc-260430-t1-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Recognising ultra-processed food",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t1-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Artificial ingredients mentioned include additives and {{blank}}.",
+              "evidence": {
+                "startSeconds": 20.37,
+                "endSeconds": 25.89,
+                "summary": "The presenters introduce additives and sweeteners as artificial ingredients found in ultra-processed food.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "sweeteners"
+              ]
+            },
+            {
+              "id": "bbc-260430-t1-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "These foods often contain a lot of sugar and {{blank}}.",
+              "evidence": {
+                "startSeconds": 35.95,
+                "endSeconds": 41.37,
+                "summary": "The health warning says ultra-processed foods often contain high levels of sugar and salt.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "salt"
+              ]
+            },
+            {
+              "id": "bbc-260430-t1-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "A clue is an ingredient you would not normally find in an average {{blank}}.",
+              "evidence": {
+                "startSeconds": 58.97,
+                "endSeconds": 63.55,
+                "summary": "Annabel says some ingredients in ultra-processed foods would not be found in an average kitchen.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "kitchen"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t1-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Habits and convenience",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260430-t1-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "How has Pippa changed what she eats?",
+              "evidence": {
+                "startSeconds": 78.49,
+                "endSeconds": 91.01,
+                "summary": "Pippa contrasts her earlier high consumption with her current attempt to cook for herself and avoid constant snacks.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "She says she now tries not to eat chocolate and snacks all day.",
+                  "C": "She says she now cooks rather than avoiding ordinary cooking."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t1-q4-a",
+                  "label": "A",
+                  "text": "She now tries to cook for herself."
+                },
+                {
+                  "id": "bbc-260430-t1-q4-b",
+                  "label": "B",
+                  "text": "She now eats more chocolate every day."
+                },
+                {
+                  "id": "bbc-260430-t1-q4-c",
+                  "label": "C",
+                  "text": "She now avoids cooking normal ingredients."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t1-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What reason is given for the popularity of ultra-processed food?",
+              "evidence": {
+                "startSeconds": 151.83,
+                "endSeconds": 157.41,
+                "summary": "The presenter explicitly identifies convenience as one reason ultra-processed food is popular.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Colour is not given as the reason for popularity.",
+                  "C": "The discussion describes this food as common and convenient, not rare."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t1-q5-a",
+                  "label": "A",
+                  "text": "Its colour."
+                },
+                {
+                  "id": "bbc-260430-t1-q5-b",
+                  "label": "B",
+                  "text": "Its convenience."
+                },
+                {
+                  "id": "bbc-260430-t1-q5-c",
+                  "label": "C",
+                  "text": "Its rarity."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260430-t1-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Annabel say about preparing a ready meal?",
+              "evidence": {
+                "startSeconds": 163.67,
+                "endSeconds": 172.45,
+                "summary": "Annabel describes putting a ready meal in the microwave for a couple of minutes until it is hot and ready.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "B": "The long preparation time is contrasted with cooking a fresh meal from scratch.",
+                  "C": "The meal is described as hot and ready after microwaving, not deliberately left cold."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t1-q6-a",
+                  "label": "A",
+                  "text": "It can be heated in a microwave in a couple of minutes."
+                },
+                {
+                  "id": "bbc-260430-t1-q6-b",
+                  "label": "B",
+                  "text": "It must be cooked from raw ingredients for a long time."
+                },
+                {
+                  "id": "bbc-260430-t1-q6-c",
+                  "label": "C",
+                  "text": "It needs to be left cold before serving."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t1-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Useful food expressions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t1-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "A ready meal has already been {{blank}} before it is bought.",
+              "evidence": {
+                "startSeconds": 186.61,
+                "endSeconds": 197.29,
+                "summary": "The definition explains that a ready meal from a supermarket has already been prepared.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "prepared"
+              ]
+            },
+            {
+              "id": "bbc-260430-t1-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Doing something from scratch means starting from the very {{blank}}.",
+              "evidence": {
+                "startSeconds": 197.29,
+                "endSeconds": 206.85,
+                "summary": "The programme defines from scratch as doing something from the very beginning.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "beginning"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t1-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Advice and the final fact",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t1-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What does Annabel say people should not do when thinking about ultra-processed food? {{blank}}",
+              "evidence": {
+                "startSeconds": 249.03,
+                "endSeconds": 252.99,
+                "summary": "Annabel answers the diet question by saying the best thing is not to panic.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "panic"
+              ]
+            },
+            {
+              "id": "bbc-260430-t1-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Which disease was carbonated water once used to try to prevent? {{blank}}",
+              "evidence": {
+                "startSeconds": 303.53,
+                "endSeconds": 310.31,
+                "summary": "The final explanation says carbonated water was used in an attempt to prevent scurvy on sea voyages.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "scurvy"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260430",
+        "audioSha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe",
+        "durationSeconds": 374.249,
+        "checkedAt": "2026-09-06",
+        "method": "Official BBC episode transcript meaning checked against the direct lesson recording; word-timed ASR used only to locate answer passages.",
+        "contentSha256": "6a84076e2a742bb26bb7a4a18e6c217341ed2fbd86e62acb5722ad16ff0fc175"
+      }
+    },
+    {
+      "id": "test-2",
+      "title": "Choices, contrasts and moderation",
+      "position": 2,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260430-t2-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Ingredients and health",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t2-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Common examples range from sliced bread and chocolate biscuits to {{blank}}.",
+              "evidence": {
+                "startSeconds": 25.89,
+                "endSeconds": 29.99,
+                "summary": "The opening list presents crisps alongside sliced bread and chocolate biscuits as everyday ultra-processed foods.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "crisps"
+              ]
+            },
+            {
+              "id": "bbc-260430-t2-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The discussion links these products with poor {{blank}}.",
+              "evidence": {
+                "startSeconds": 29.99,
+                "endSeconds": 35.95,
+                "summary": "The presenters say ultra-processed foods have been linked to poor health despite tasting good.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "health"
+              ]
+            },
+            {
+              "id": "bbc-260430-t2-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "One unfamiliar ingredient type that may appear on the label is {{blank}}.",
+              "evidence": {
+                "startSeconds": 63.95,
+                "endSeconds": 66.57,
+                "summary": "Annabel lists dyes among emulsifiers, preservatives, additives and sweeteners found in these products.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "dyes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t2-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Choices made by the presenters",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260430-t2-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Why does Phil prefer cooking with ordinary ingredients?",
+              "evidence": {
+                "startSeconds": 91.33,
+                "endSeconds": 102.15,
+                "summary": "Phil says normal ingredients let him know what has gone into the food he cooks.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "He is trying to use normal ingredients rather than add more processed additives.",
+                  "C": "He describes cooking the food himself, not avoiding preparation."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t2-q4-a",
+                  "label": "A",
+                  "text": "So he can tell what has gone into the food."
+                },
+                {
+                  "id": "bbc-260430-t2-q4-b",
+                  "label": "B",
+                  "text": "So every meal can contain more additives."
+                },
+                {
+                  "id": "bbc-260430-t2-q4-c",
+                  "label": "C",
+                  "text": "So he never has to prepare food himself."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t2-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "Why does Pippa choose 1872 as the invention date for fizzy drinks?",
+              "evidence": {
+                "startSeconds": 135.05,
+                "endSeconds": 151.83,
+                "summary": "Pippa reasons that 1972 is too late but 1772 sounds too early, so she selects 1872.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "She explicitly says it was before 1972 and does not select 1972.",
+                  "C": "Her concern is that 1772 sounds too early, not that the invention predates it."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t2-q5-a",
+                  "label": "A",
+                  "text": "She thinks 1772 sounds too early."
+                },
+                {
+                  "id": "bbc-260430-t2-q5-b",
+                  "label": "B",
+                  "text": "She knows 1972 is definitely correct."
+                },
+                {
+                  "id": "bbc-260430-t2-q5-c",
+                  "label": "C",
+                  "text": "She says fizzy drinks were invented before 1772."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t2-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What contrast does Annabel make between a ready meal and cooking fresh food?",
+              "evidence": {
+                "startSeconds": 163.67,
+                "endSeconds": 177.21,
+                "summary": "Annabel contrasts a microwave-ready meal taking a couple of minutes with a fresh meal from scratch taking much longer.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "A": "The recording assigns the long preparation time to cooking from scratch, not to the ready meal.",
+                  "C": "The whole point of the comparison is that their preparation times differ."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t2-q6-a",
+                  "label": "A",
+                  "text": "The ready meal is slower because it starts from raw ingredients."
+                },
+                {
+                  "id": "bbc-260430-t2-q6-b",
+                  "label": "B",
+                  "text": "The ready meal is quick, while cooking from scratch can take a long time."
+                },
+                {
+                  "id": "bbc-260430-t2-q6-c",
+                  "label": "C",
+                  "text": "Both methods take exactly the same amount of time."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t2-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Enjoyment and embarrassment",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t2-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Annabel describes chocolate as her guilty {{blank}}.",
+              "evidence": {
+                "startSeconds": 177.41,
+                "endSeconds": 185.97,
+                "summary": "After naming chocolate, biscuits and cake, Annabel labels this food preference her guilty pleasure.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "pleasure"
+              ]
+            },
+            {
+              "id": "bbc-260430-t2-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A guilty pleasure can make someone feel a little {{blank}}.",
+              "evidence": {
+                "startSeconds": 213.59,
+                "endSeconds": 226.59,
+                "summary": "The programme explains that a guilty pleasure is enjoyable but can also make someone feel embarrassed.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "embarrassed"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t2-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Moderation and the quiz answer",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260430-t2-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "According to the advice, what should people avoid having too much of? {{blank}}",
+              "evidence": {
+                "startSeconds": 273.09,
+                "endSeconds": 278.91,
+                "summary": "The explanation of everything in moderation says it is best to avoid too much of anything.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "anything"
+              ]
+            },
+            {
+              "id": "bbc-260430-t2-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "In which year were fizzy drinks actually invented? {{blank}}",
+              "evidence": {
+                "startSeconds": 293.97,
+                "endSeconds": 303.53,
+                "summary": "At the end Phil corrects Pippa and reveals that the answer to the fizzy-drink question is 1772.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "1772"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260430",
+        "audioSha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe",
+        "durationSeconds": 374.249,
+        "checkedAt": "2026-09-06",
+        "method": "Official BBC episode transcript meaning checked against the direct lesson recording; word-timed ASR used only to locate answer passages.",
+        "contentSha256": "9f0245b30e0eed130fc5d2e1995d7e098a2b3d8beef86611852751002fb9efef"
+      }
+    },
+    {
+      "id": "test-3",
+      "title": "Identifying products and weighing the trade-offs",
+      "position": 3,
+      "format": "ielts",
+      "difficulty": "medium",
+      "groups": [
+        {
+          "id": "bbc-260430-t3-g1",
+          "position": 1,
+          "heading": "Questions 1–3: How to identify the food",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260430-t3-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Health problems mentioned include diabetes and {{blank}}.",
+              "evidence": {
+                "startSeconds": 41.37,
+                "endSeconds": 47.57,
+                "summary": "The presenters link ultra-processed foods with health problems including obesity and diabetes.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "obesity"
+              ]
+            },
+            {
+              "id": "bbc-260430-t3-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Annabel says these products often contain at least {{blank}} ingredients.",
+              "evidence": {
+                "startSeconds": 53.47,
+                "endSeconds": 58.97,
+                "summary": "Annabel gives five or more ingredients as a practical characteristic of ultra-processed food.",
+                "paraphrase": true,
+                "skill": "detail"
+              },
+              "answers": [
+                "five",
+                "5"
+              ]
+            },
+            {
+              "id": "bbc-260430-t3-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Her label examples include preservatives, additives and {{blank}}.",
+              "evidence": {
+                "startSeconds": 58.97,
+                "endSeconds": 66.57,
+                "summary": "Annabel lists emulsifiers before preservatives, additives, dyes and sweeteners as examples of unfamiliar ingredients.",
+                "paraphrase": false,
+                "skill": "detail"
+              },
+              "answers": [
+                "emulsifiers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t3-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Examples and practical reasons",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260430-t3-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "Which pair is used as an example of fizzy drinks?",
+              "evidence": {
+                "startSeconds": 114.77,
+                "endSeconds": 121.39,
+                "summary": "Phil uses cola and lemonade as examples when introducing fizzy drinks as ultra-processed products.",
+                "paraphrase": false,
+                "skill": "detail",
+                "distractors": {
+                  "A": "Coffee and tea are not the examples named in this passage.",
+                  "C": "Milk and juice are not the pair used to illustrate fizzy drinks."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t3-q4-a",
+                  "label": "A",
+                  "text": "Coffee and tea."
+                },
+                {
+                  "id": "bbc-260430-t3-q4-b",
+                  "label": "B",
+                  "text": "Cola and lemonade."
+                },
+                {
+                  "id": "bbc-260430-t3-q4-c",
+                  "label": "C",
+                  "text": "Milk and juice."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260430-t3-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What makes the ready meal convenient in Annabel’s example?",
+              "evidence": {
+                "startSeconds": 163.67,
+                "endSeconds": 172.45,
+                "summary": "The ready meal is presented as convenient because microwaving it for a couple of minutes makes it hot and ready.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "Preparing from scratch is the slower alternative in the comparison.",
+                  "C": "Annabel says the meal becomes hot and is then ready to serve."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t3-q5-a",
+                  "label": "A",
+                  "text": "It only needs a few minutes in the microwave."
+                },
+                {
+                  "id": "bbc-260430-t3-q5-b",
+                  "label": "B",
+                  "text": "It has to be prepared from scratch."
+                },
+                {
+                  "id": "bbc-260430-t3-q5-c",
+                  "label": "C",
+                  "text": "It must be eaten before it becomes hot."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t3-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "Why is the topic described as tricky later in the discussion?",
+              "evidence": {
+                "startSeconds": 226.59,
+                "endSeconds": 238.73,
+                "summary": "The presenters set health concerns against the advantages of low cost, convenience and good taste.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The programme has already provided ways of recognising ultra-processed food.",
+                  "C": "The recording says these foods can be cheap and convenient while linked to poor health."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t3-q6-a",
+                  "label": "A",
+                  "text": "The foods have health concerns but are also cheap, convenient and enjoyable."
+                },
+                {
+                  "id": "bbc-260430-t3-q6-b",
+                  "label": "B",
+                  "text": "Nobody knows what ultra-processed food means."
+                },
+                {
+                  "id": "bbc-260430-t3-q6-c",
+                  "label": "C",
+                  "text": "The foods are healthy but always expensive and difficult to find."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t3-g3",
+          "position": 3,
+          "heading": "Questions 7–8: How often to eat it",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t3-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Hannah asks whether it is acceptable to have a packet of {{blank}} once in a while.",
+              "evidence": {
+                "startSeconds": 238.73,
+                "endSeconds": 243.63,
+                "summary": "Hannah uses a packet of crisps as her example when asking whether occasional consumption is acceptable.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "crisps"
+              ]
+            },
+            {
+              "id": "bbc-260430-t3-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "The phrases once in a while and from time to time both mean {{blank}}.",
+              "evidence": {
+                "startSeconds": 259.73,
+                "endSeconds": 273.09,
+                "summary": "The presenters explain that both expressions mean occasionally, or sometimes but not very often.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "occasionally"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t3-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Personal reaction and historical use",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN TWO WORDS for each answer.",
+          "maxWords": 2,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t3-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What food does Phil say he will not feel bad about eating now and then? {{blank}}",
+              "evidence": {
+                "startSeconds": 278.91,
+                "endSeconds": 284.71,
+                "summary": "After hearing the moderation advice, Phil says he will not feel bad about eating chocolate now and then.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "chocolate"
+              ]
+            },
+            {
+              "id": "bbc-260430-t3-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "On what kind of journeys was carbonated water used in an attempt to prevent scurvy? {{blank}}",
+              "evidence": {
+                "startSeconds": 303.53,
+                "endSeconds": 310.31,
+                "summary": "The historical explanation says carbonated water was used in an attempt to prevent scurvy on sea voyages.",
+                "paraphrase": true,
+                "skill": "detail"
+              },
+              "answers": [
+                "sea voyages"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260430",
+        "audioSha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe",
+        "durationSeconds": 374.249,
+        "checkedAt": "2026-09-06",
+        "method": "Official BBC episode transcript meaning checked against the direct lesson recording; word-timed ASR used only to locate answer passages.",
+        "contentSha256": "58d817ae481593fce7b3df4d01db5640e84e30d950f581ec4c3f17774eebdd79"
+      }
+    },
+    {
+      "id": "test-4",
+      "title": "Following causes, contrasts and qualified advice",
+      "position": 4,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260430-t4-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Reading the warning signs",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t4-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Positive taste is contrasted with links to poor {{blank}}.",
+              "evidence": {
+                "startSeconds": 29.99,
+                "endSeconds": 35.95,
+                "summary": "The presenters contrast the appealing taste of these foods with evidence linking them to poor health.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "health"
+              ]
+            },
+            {
+              "id": "bbc-260430-t4-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "One practical warning sign is a product with five or more {{blank}}.",
+              "evidence": {
+                "startSeconds": 53.47,
+                "endSeconds": 58.97,
+                "summary": "Annabel uses the number of ingredients as a practical clue when identifying ultra-processed foods.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "ingredients"
+              ]
+            },
+            {
+              "id": "bbc-260430-t4-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Pippa rejects 1772 because it sounds too {{blank}}.",
+              "evidence": {
+                "startSeconds": 135.05,
+                "endSeconds": 144.21,
+                "summary": "Pippa narrows the possible invention date by saying 1772 sounds too early.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "early"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t4-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Why the foods remain attractive",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260430-t4-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What underlying factor helps explain why these foods remain popular?",
+              "evidence": {
+                "startSeconds": 151.83,
+                "endSeconds": 172.45,
+                "summary": "Convenience is named as the main issue and illustrated by a ready meal becoming hot after only a couple of minutes in a microwave.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "A": "Long preparation is associated with cooking a fresh meal from scratch.",
+                  "C": "The discussion treats these foods as common and convenient rather than restricted to specialist shops."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t4-q4-a",
+                  "label": "A",
+                  "text": "They require lengthy preparation."
+                },
+                {
+                  "id": "bbc-260430-t4-q4-b",
+                  "label": "B",
+                  "text": "They save effort and time."
+                },
+                {
+                  "id": "bbc-260430-t4-q4-c",
+                  "label": "C",
+                  "text": "They are available only in specialist shops."
+                }
+              ],
+              "answer": "B"
+            },
+            {
+              "id": "bbc-260430-t4-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does the fresh-meal comparison imply about cooking from scratch?",
+              "evidence": {
+                "startSeconds": 172.45,
+                "endSeconds": 177.21,
+                "summary": "The comparison says a fresh meal from scratch can take a really long time compared with a ready meal.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The microwave meal is presented as the faster option.",
+                  "C": "From-scratch cooking is explicitly described as requiring substantial time."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t4-q5-a",
+                  "label": "A",
+                  "text": "It can demand considerably more time."
+                },
+                {
+                  "id": "bbc-260430-t4-q5-b",
+                  "label": "B",
+                  "text": "It is always faster than using a microwave."
+                },
+                {
+                  "id": "bbc-260430-t4-q5-c",
+                  "label": "C",
+                  "text": "It requires no preparation at all."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t4-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What creates the central dilemma described by the presenters?",
+              "evidence": {
+                "startSeconds": 226.59,
+                "endSeconds": 238.73,
+                "summary": "The presenters call the topic tricky because poor-health links coexist with cheapness, convenience and enjoyable taste.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "The recording says the food is cheap and convenient, not hard to obtain and healthy.",
+                  "C": "Both health concerns and practical attractions are explicitly presented."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t4-q6-a",
+                  "label": "A",
+                  "text": "Health concerns exist alongside low cost, convenience and good taste."
+                },
+                {
+                  "id": "bbc-260430-t4-q6-b",
+                  "label": "B",
+                  "text": "The food is difficult to buy but always healthy."
+                },
+                {
+                  "id": "bbc-260430-t4-q6-c",
+                  "label": "C",
+                  "text": "The food has no advantages and no health concerns."
+                }
+              ],
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t4-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Interpreting the advice",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t4-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Annabel’s first recommendation is not to {{blank}}.",
+              "evidence": {
+                "startSeconds": 249.03,
+                "endSeconds": 252.99,
+                "summary": "Rather than recommending a complete ban, Annabel begins by telling listeners not to panic.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "panic"
+              ]
+            },
+            {
+              "id": "bbc-260430-t4-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Moderation means avoiding too much of {{blank}}.",
+              "evidence": {
+                "startSeconds": 273.09,
+                "endSeconds": 278.91,
+                "summary": "The explanation generalises moderation as avoiding an excessive amount of anything.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "anything"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t4-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Checking the original guess",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260430-t4-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Which year did Pippa originally choose for the fizzy-drink question? {{blank}}",
+              "evidence": {
+                "startSeconds": 285.35,
+                "endSeconds": 299.97,
+                "summary": "During the final reveal Phil reminds Pippa that her original answer was 1872.",
+                "paraphrase": true,
+                "skill": "detail"
+              },
+              "answers": [
+                "1872"
+              ]
+            },
+            {
+              "id": "bbc-260430-t4-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What disease was the old use of carbonated water intended to prevent? {{blank}}",
+              "evidence": {
+                "startSeconds": 299.97,
+                "endSeconds": 310.31,
+                "summary": "The explanation after the corrected date says carbonated water was used in an attempt to prevent scurvy.",
+                "paraphrase": true,
+                "skill": "cause_effect"
+              },
+              "answers": [
+                "scurvy"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260430",
+        "audioSha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe",
+        "durationSeconds": 374.249,
+        "checkedAt": "2026-09-06",
+        "method": "Official BBC episode transcript meaning checked against the direct lesson recording; word-timed ASR used only to locate answer passages.",
+        "contentSha256": "3c2ef0ae76a9586df60095a0de34b4a180d6867fb480d5d540a7517a00a64f8c"
+      }
+    },
+    {
+      "id": "test-5",
+      "title": "Inferring motives, attitudes and contrasts",
+      "position": 5,
+      "format": "ielts",
+      "difficulty": "hard",
+      "groups": [
+        {
+          "id": "bbc-260430-t5-g1",
+          "position": 1,
+          "heading": "Questions 1–3: Definitions and changing behaviour",
+          "taskType": "note_completion",
+          "instruction": "Complete the notes below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t5-q1",
+              "number": 1,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "Ultra-processed food is introduced as containing {{blank}} ingredients.",
+              "evidence": {
+                "startSeconds": 20.37,
+                "endSeconds": 25.89,
+                "summary": "The opening definition characterises ultra-processed food by the presence of artificial ingredients.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "artificial"
+              ]
+            },
+            {
+              "id": "bbc-260430-t5-q2",
+              "number": 2,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "Annabel’s kitchen test focuses on ingredients absent from an average {{blank}}.",
+              "evidence": {
+                "startSeconds": 53.47,
+                "endSeconds": 63.55,
+                "summary": "Annabel says the products contain ingredients a person would not normally find in an average kitchen.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "kitchen"
+              ]
+            },
+            {
+              "id": "bbc-260430-t5-q3",
+              "number": 3,
+              "position": 3,
+              "responseType": "text",
+              "prompt": "Pippa has moved from eating many processed foods to trying to {{blank}} everything herself.",
+              "evidence": {
+                "startSeconds": 78.49,
+                "endSeconds": 86.59,
+                "summary": "Pippa describes a change from eating a lot of ultra-processed food to trying to cook everything herself.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "cook"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t5-g2",
+          "position": 2,
+          "heading": "Questions 4–6: Reasoning behind choices",
+          "taskType": "multiple_choice_single",
+          "instruction": "Choose the correct answer, A, B or C.",
+          "answerInstruction": "Choose ONE letter for each answer.",
+          "maxWords": null,
+          "maxNumbers": null,
+          "questions": [
+            {
+              "id": "bbc-260430-t5-q4",
+              "number": 4,
+              "position": 1,
+              "responseType": "single_choice",
+              "prompt": "What is Phil’s purpose in choosing ordinary ingredients when he cooks?",
+              "evidence": {
+                "startSeconds": 91.33,
+                "endSeconds": 102.15,
+                "summary": "Phil says using normal ingredients helps him know what has gone into the food.",
+                "paraphrase": true,
+                "skill": "cause_effect",
+                "distractors": {
+                  "B": "His stated aim is the opposite: ordinary ingredients give him more control over what is included.",
+                  "C": "He explicitly wants to know what has gone into the food."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t5-q4-a",
+                  "label": "A",
+                  "text": "To keep track of what the meal contains."
+                },
+                {
+                  "id": "bbc-260430-t5-q4-b",
+                  "label": "B",
+                  "text": "To make the food as processed as possible."
+                },
+                {
+                  "id": "bbc-260430-t5-q4-c",
+                  "label": "C",
+                  "text": "To avoid knowing what has been added."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t5-q5",
+              "number": 5,
+              "position": 2,
+              "responseType": "single_choice",
+              "prompt": "What does Pippa’s reasoning about the quiz dates show?",
+              "evidence": {
+                "startSeconds": 135.05,
+                "endSeconds": 151.83,
+                "summary": "Pippa places the likely date between the two extremes by rejecting 1972 as too late and 1772 as too early.",
+                "paraphrase": true,
+                "skill": "contrast",
+                "distractors": {
+                  "B": "She says the invention was before 1972 and chooses 1872.",
+                  "C": "She calls 1772 too early rather than claiming an even earlier date."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t5-q5-a",
+                  "label": "A",
+                  "text": "She believes the invention was neither as late as 1972 nor as early as 1772."
+                },
+                {
+                  "id": "bbc-260430-t5-q5-b",
+                  "label": "B",
+                  "text": "She is certain the invention happened in 1972."
+                },
+                {
+                  "id": "bbc-260430-t5-q5-c",
+                  "label": "C",
+                  "text": "She believes the invention predates 1772."
+                }
+              ],
+              "answer": "A"
+            },
+            {
+              "id": "bbc-260430-t5-q6",
+              "number": 6,
+              "position": 3,
+              "responseType": "single_choice",
+              "prompt": "What does Annabel’s list of chocolate, biscuits and cake illustrate?",
+              "evidence": {
+                "startSeconds": 177.41,
+                "endSeconds": 185.97,
+                "summary": "Annabel names chocolate, biscuits and cake before calling them her guilty pleasure.",
+                "paraphrase": true,
+                "skill": "attitude",
+                "distractors": {
+                  "A": "She calls herself a chocolate girl, indicating enjoyment rather than dislike.",
+                  "C": "The passage is about her personal guilty pleasure, not whether those foods can be bought ready-made."
+                }
+              },
+              "options": [
+                {
+                  "id": "bbc-260430-t5-q6-a",
+                  "label": "A",
+                  "text": "Foods she avoids because she dislikes them."
+                },
+                {
+                  "id": "bbc-260430-t5-q6-b",
+                  "label": "B",
+                  "text": "Foods she enjoys even though she feels some guilt about them."
+                },
+                {
+                  "id": "bbc-260430-t5-q6-c",
+                  "label": "C",
+                  "text": "Foods she says are impossible to buy ready-made."
+                }
+              ],
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t5-g3",
+          "position": 3,
+          "heading": "Questions 7–8: Meaning behind the expressions",
+          "taskType": "sentence_completion",
+          "instruction": "Complete the sentences below.",
+          "answerInstruction": "Write ONE WORD ONLY for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 0,
+          "questions": [
+            {
+              "id": "bbc-260430-t5-q7",
+              "number": 7,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "To make food from scratch is to begin without using anything already {{blank}}.",
+              "evidence": {
+                "startSeconds": 197.29,
+                "endSeconds": 206.85,
+                "summary": "The definition of from scratch says not to use anything that has already been made.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "made"
+              ]
+            },
+            {
+              "id": "bbc-260430-t5-q8",
+              "number": 8,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "A guilty pleasure may be enjoyable while also making a person feel {{blank}}.",
+              "evidence": {
+                "startSeconds": 213.59,
+                "endSeconds": 226.59,
+                "summary": "The explanation combines enjoyment with the feeling that the person should not do it and may feel embarrassed.",
+                "paraphrase": true,
+                "skill": "attitude"
+              },
+              "answers": [
+                "embarrassed"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bbc-260430-t5-g4",
+          "position": 4,
+          "heading": "Questions 9–10: Frequency and correction",
+          "taskType": "short_answer",
+          "instruction": "Answer the questions below.",
+          "answerInstruction": "Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer.",
+          "maxWords": 1,
+          "maxNumbers": 1,
+          "questions": [
+            {
+              "id": "bbc-260430-t5-q9",
+              "number": 9,
+              "position": 1,
+              "responseType": "text",
+              "prompt": "What single word summarises the frequency meant by both “once in a while” and “from time to time”? {{blank}}",
+              "evidence": {
+                "startSeconds": 259.73,
+                "endSeconds": 273.09,
+                "summary": "The programme defines both frequency expressions with the single word occasionally.",
+                "paraphrase": true,
+                "skill": "paraphrase"
+              },
+              "answers": [
+                "occasionally"
+              ]
+            },
+            {
+              "id": "bbc-260430-t5-q10",
+              "number": 10,
+              "position": 2,
+              "responseType": "text",
+              "prompt": "What year replaces Pippa’s incorrect answer at the end of the programme? {{blank}}",
+              "evidence": {
+                "startSeconds": 293.97,
+                "endSeconds": 303.53,
+                "summary": "Phil corrects Pippa’s 1872 guess and reveals that the actual answer is 1772.",
+                "paraphrase": true,
+                "skill": "contrast"
+              },
+              "answers": [
+                "1772"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceReview": {
+        "policyVersion": 1,
+        "sourceUrl": "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260430",
+        "audioSha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe",
+        "durationSeconds": 374.249,
+        "checkedAt": "2026-09-06",
+        "method": "Official BBC episode transcript meaning checked against the direct lesson recording; word-timed ASR used only to locate answer passages.",
+        "contentSha256": "6ea2ee1f2d43bae64b26620f02c15e26c53971f02fa90494845d4132252c49ec"
+      }
+    }
+  ]
+}
