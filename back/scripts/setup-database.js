@@ -18,6 +18,7 @@ import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persisten
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
 import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
+import { createBbcCourseSourceSynchronizer } from "../src/modules/collection-learning-path/createBbcCourseSourceSynchronizer.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -204,6 +205,13 @@ async function setupDatabase() {
     if (listeningSeedResult.changed || listeningSeedResult.changedCollections) {
       console.info(
         `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.testCount} test(s) and ${listeningSeedResult.questionCount} question(s).`
+      );
+    }
+
+    const bbcCourseSyncResult = await createBbcCourseSourceSynchronizer(applicationPool).execute(listeningSources);
+    if (bbcCourseSyncResult.changed) {
+      console.info(
+        `Synchronized BBC 6 Minute English Learning Path at content version ${bbcCourseSyncResult.contentVersion}.`
       );
     }
 
