@@ -96,7 +96,9 @@ export function buildLearningTimeline(range, data) {
     (total, entry) => total + (dayAt(entry.at) === today ? 1 : 0),
     0
   );
-  const todayListening = { completed: todayListeningCompleted, total: dailyListeningGoal(data) };
+  const todayListening = data.settings
+    ? { completed: todayListeningCompleted, total: dailyListeningGoal(data) }
+    : null;
   const days = [];
   for (let day = start; day <= to; day = shiftDay(day, 1)) {
     const evidence = practiced.get(day) ?? new Set();
@@ -107,7 +109,7 @@ export function buildLearningTimeline(range, data) {
     };
     if (day === today) {
       if (todayVocabulary) timelineDay.vocabularyProgress = todayVocabulary;
-      timelineDay.listeningProgress = todayListening;
+      if (todayListening) timelineDay.listeningProgress = todayListening;
     }
     days.push(timelineDay);
   }
