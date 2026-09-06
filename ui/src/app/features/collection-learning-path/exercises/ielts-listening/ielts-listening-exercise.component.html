@@ -1,0 +1,17 @@
+<section class="ielts-listening-exercise" data-testid="learning-path-ielts-listening-exercise">
+  @if (completed()) {
+    <div class="completed-state" role="status">
+      <strong>IELTS listening completed</strong>
+      <span>Your submitted listening attempt is saved for this Learning Path exercise.</span>
+    </div>
+  } @else if (error()) {
+    <p class="exercise-error" role="alert">{{ error() }}</p>
+  } @else if (payload(); as content) {
+    <app-bbc-listening-practice-page
+      [lessonSlug]="content.reference.lessonSlug"
+      [testId]="content.reference.testId"
+      [embedded]="true"
+      (attemptSubmitted)="onAttemptSubmitted($event)"
+    />
+  }
+</section>

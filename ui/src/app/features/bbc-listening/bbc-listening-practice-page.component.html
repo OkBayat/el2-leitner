@@ -1,10 +1,12 @@
-<section class="practice-page" data-testid="bbc-listening-practice-page">
+<section class="practice-page" data-testid="bbc-listening-practice-page" [attr.data-embedded]="embedded ? 'true' : null">
   @if (session.loading()) {
     <p class="page-status" role="status">Preparing your listening exercise…</p>
   } @else if (routeError() || (!session.lesson() && session.error())) {
     <section class="page-status error" role="alert">
       <p>{{ routeError() || session.error() }}</p>
-      <a mat-stroked-button routerLink="/bbc-6-minute-english">Back to lessons</a>
+      @if (!embedded) {
+        <a mat-stroked-button routerLink="/bbc-6-minute-english">Back to lessons</a>
+      }
     </section>
   } @else if (session.lesson(); as lesson) {
     @if (session.test(); as test) {
@@ -14,7 +16,9 @@
 
       <header class="practice-header">
         <div class="header-copy">
-          <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
+          @if (!embedded) {
+            <a class="back-link" routerLink="/bbc-6-minute-english">← BBC 6 Minute English</a>
+          }
           <p class="eyebrow">IELTS Listening Practice · {{ test.title }}</p>
           <h1>{{ lesson.title }}</h1>
           <div class="listening-levels">
@@ -181,17 +185,19 @@
               <strong>{{ test.title }} completed</strong>
               <span>Review the marked answers above.</span>
             </div>
-            <div class="submit-actions">
-              <button
-                mat-stroked-button
-                type="button"
-                [disabled]="session.restarting()"
-                [attr.aria-label]="'Retake ' + test.title"
-                data-testid="retake-listening-test"
-                (click)="retake()"
-              >{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</button>
-              <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
-            </div>
+            @if (!embedded) {
+              <div class="submit-actions">
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="session.restarting()"
+                  [attr.aria-label]="'Retake ' + test.title"
+                  data-testid="retake-listening-test"
+                  (click)="retake()"
+                >{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</button>
+                <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
+              </div>
+            }
           }
         </footer>
       </form>

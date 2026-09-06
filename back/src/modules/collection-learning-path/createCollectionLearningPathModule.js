@@ -5,18 +5,26 @@ import { StartLearningPath } from "../../application/collection-learning-path/co
 import { createDefaultExerciseRuntimeRegistry } from "../../application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../../application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
+import { GetIeltsListeningExerciseContext } from "../../application/collection-learning-path/queries/GetIeltsListeningExerciseContext.js";
 import { GetLearningPathLesson } from "../../application/collection-learning-path/queries/GetLearningPathLesson.js";
 import { GetLearningPathResumePoint } from "../../application/collection-learning-path/queries/GetLearningPathResumePoint.js";
 import { GetScopedVocabularyQuickReviewContext } from "../../application/collection-learning-path/queries/GetScopedVocabularyQuickReviewContext.js";
 import { GetVocabularyIntakeContext } from "../../application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
+import { VerifyIeltsListeningCompletion } from "../../application/collection-learning-path/queries/VerifyIeltsListeningCompletion.js";
 import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/collection-learning-path/queries/VerifyScopedVocabularyQuickReviewCompletion.js";
 import { VerifyVocabularyIntakeCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyIntakeCompletion.js";
+import {
+  IELTS_LISTENING_COMPLETION_POLICY,
+  IELTS_LISTENING_TYPE,
+} from "../../domain/collection-learning-path/IeltsListeningExercise.js";
 import {
   VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY,
   VOCABULARY_QUICK_REVIEW_TYPE,
 } from "../../domain/collection-learning-path/ScopedVocabularyPractice.js";
 import { VOCABULARY_INTAKE_COMPLETION_POLICY, VOCABULARY_INTAKE_TYPE } from "../../domain/collection-learning-path/VocabularyIntake.js";
+import { ListeningPracticeLearningPathAdapter } from "../../infrastructure/integration/collection-learning-path/ListeningPracticeLearningPathAdapter.js";
 import { MySqlVocabularyActivationRepository } from "../../infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
+import { MySqlListeningPracticeRepository } from "../../infrastructure/persistence/mysql/MySqlListeningPracticeRepository.js";
 import { MySqlLearningPathAccessQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
@@ -49,6 +57,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? new MySqlVocabularyActivationRepository(pool);
   const vocabularyIntakeWriter = adapters.learningPathVocabularyIntakeWriter
     ?? new MySqlLearningPathVocabularyIntakeCommandRepository(vocabularyActivationRepository);
+  const listeningPracticeRepository = adapters.listeningPracticeRepository
+    ?? new MySqlListeningPracticeRepository(pool);
+  const ieltsListeningReader = adapters.learningPathIeltsListeningReader
+    ?? new ListeningPracticeLearningPathAdapter({ listeningPracticeRepository });
   const clock = adapters.learningPathClock ?? (() => new Date());
 
   const getVocabularyIntakeContext = new GetVocabularyIntakeContext({ vocabularyIntakeReader });
@@ -58,15 +70,19 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     scopedVocabularyReader,
     quickReviewEvidenceReader,
   });
+  const getIeltsListeningExerciseContext = new GetIeltsListeningExerciseContext({ ieltsListeningReader });
+  const verifyIeltsListeningCompletion = new VerifyIeltsListeningCompletion({ ieltsListeningReader });
   const exerciseRuntime = adapters.learningPathExerciseRuntime
     ?? createDefaultExerciseRuntimeRegistry({
       contextHydrators: {
         [VOCABULARY_INTAKE_TYPE]: (context) => getVocabularyIntakeContext.execute(context),
         [VOCABULARY_QUICK_REVIEW_TYPE]: (context) => getScopedVocabularyQuickReviewContext.execute(context),
+        [IELTS_LISTENING_TYPE]: (context) => getIeltsListeningExerciseContext.execute(context),
       },
       completionPolicies: {
         [VOCABULARY_INTAKE_COMPLETION_POLICY]: (context) => verifyVocabularyIntakeCompletion.execute(context),
         [VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY]: (context) => verifyScopedVocabularyQuickReviewCompletion.execute(context),
+        [IELTS_LISTENING_COMPLETION_POLICY]: (context) => verifyIeltsListeningCompletion.execute(context),
       },
     });
 
@@ -81,6 +97,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     vocabularyIntakeWriter,
     scopedVocabularyReader,
     quickReviewEvidenceReader,
+    ieltsListeningReader,
     clock,
   };
 

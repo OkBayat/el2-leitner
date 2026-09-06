@@ -279,6 +279,29 @@ export class MySqlListeningPracticeRepository {
     return { attempt, lesson, test, completedResult: null };
   }
 
+  async findCompletedAttempt(userId, attemptId) {
+    const [rows] = await this.pool.execute(
+      `SELECT a.public_id, a.user_id, a.test_id, a.status, a.submitted_at,
+              l.provider, l.slug AS lesson_slug
+       FROM listening_attempts a
+       JOIN listening_lessons l ON l.id = a.lesson_id
+       WHERE a.public_id = ? AND a.user_id = ? AND a.status = 'completed'
+       LIMIT 1`,
+      [attemptId, userId]
+    );
+    const row = rows[0];
+    if (!row) return null;
+    return {
+      id: String(row.public_id),
+      userId: String(row.user_id),
+      provider: String(row.provider),
+      lessonSlug: String(row.lesson_slug),
+      testId: String(row.test_id),
+      status: String(row.status),
+      submittedAt: isoDateTime(row.submitted_at),
+    };
+  }
+
   async completeAttempt(userId, attemptId, grade) {
     const connection = await this.pool.getConnection();
     try {
