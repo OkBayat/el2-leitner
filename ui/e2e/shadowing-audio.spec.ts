@@ -4,11 +4,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const audioPath = join(tmpdir(), 'vocora-shadowing-ci-silence.wav');
-test.use({
-  permissions: ['microphone'],
-  launchOptions: { args: ['--use-fake-device-for-media-stream', `--use-file-for-fake-audio-capture=${audioPath}`] },
-});
-
 test.afterAll(async () => { await rm(audioPath, { force: true }); });
 
 test('native AudioWorklet and real speech API handle silence without changing learning progress', async ({ page }) => {
