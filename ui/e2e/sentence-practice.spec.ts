@@ -146,14 +146,21 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	const firstHiddenAnswer = answerFromSentence(firstSentence, firstContext);
 	expect(firstSentence.length).toBeGreaterThan(firstHiddenAnswer.length);
 
-	await emitSpeechWordBoundary(page, 0, visibleWordBoundary(firstSentence, firstContext));
 	const sentenceCloze = page.getByTestId('sentence-cloze');
+	const visibleTokens = sentenceCloze.locator('.sentence-playback-token').filter({ hasText: /\S/u });
+	await expect(visibleTokens.first()).toHaveCSS('opacity', '0.48');
+	await expect(visibleTokens.last()).toHaveCSS('opacity', '0.48');
+
+	await emitSpeechWordBoundary(page, 0, visibleWordBoundary(firstSentence, firstContext));
 	await expect(sentenceCloze).toHaveClass(/is-playing/u);
-	await expect(sentenceCloze.locator('.sentence-playback-token.is-current-word')).toHaveCount(1);
-	await expect(sentenceCloze.locator('.sentence-playback-token.is-current-word')).toHaveCSS('opacity', '1');
-	await expect(sentenceCloze.locator('.sentence-playback-token:not(.is-current-word)').filter({ hasText: /\S/u }).first()).toHaveCSS('opacity', '0.48');
+	await expect(sentenceCloze.locator('.sentence-playback-token.is-spoken').first()).toHaveCSS('opacity', '1');
+	if (await sentenceCloze.locator('.sentence-playback-token:not(.is-spoken)').filter({ hasText: /\S/u }).count()) {
+		await expect(sentenceCloze.locator('.sentence-playback-token:not(.is-spoken)').filter({ hasText: /\S/u }).first()).toHaveCSS('opacity', '0.48');
+	}
 	await emitSpeechEnd(page, 0);
 	await expect(sentenceCloze).not.toHaveClass(/is-playing/u);
+	await expect(visibleTokens.first()).toHaveCSS('opacity', '1');
+	await expect(visibleTokens.last()).toHaveCSS('opacity', '1');
 
 	await input.fill('__wrong__');
 	await input.press('Enter');
