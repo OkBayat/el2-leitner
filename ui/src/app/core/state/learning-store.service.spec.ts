@@ -116,6 +116,67 @@ describe('LearningStoreService regressions', () => {
     expect(state.words[0].term).toBe('circumstances');
   });
 
+  it('uses the theme endpoint and coalesces duplicate in-flight theme writes', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([]);
+    canonical.settings.theme = 'system';
+    let resolveTheme!: (value: { theme: 'light'; revision: number }) => void;
+    const themeResponse = new Promise<{ theme: 'light'; revision: number }>((resolve) => {
+      resolveTheme = resolve;
+    });
+    const api = {
+      get: vi.fn().mockResolvedValue({ state: canonical, revision: 4 }),
+      put: vi.fn().mockImplementation((path: string) => {
+        if (path === '/api/settings/theme') return themeResponse;
+        throw new Error(`Unexpected PUT ${path}`);
+      }),
+    };
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn(),
+    });
+    await store.initialize();
+
+    const first = store.update((draft) => { draft.settings.theme = 'light'; });
+    const second = store.update((draft) => { draft.settings.theme = 'light'; });
+
+    expect(api.put).toHaveBeenCalledTimes(1);
+    expect(api.put).toHaveBeenCalledWith('/api/settings/theme', { theme: 'light', revision: 4 });
+
+    resolveTheme({ theme: 'light', revision: 5 });
+    const [firstState, secondState] = await Promise.all([first, second]);
+
+    expect(firstState.settings.theme).toBe('light');
+    expect(secondState.settings.theme).toBe('light');
+    expect(store.state()?.settings.theme).toBe('light');
+    expect(store.revision()).toBe(5);
+  });
+
+  it('keeps multi-setting changes on the full-state endpoint', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([]);
+    canonical.settings.theme = 'system';
+    const api = {
+      get: vi.fn().mockResolvedValue({ state: canonical, revision: 4 }),
+      put: vi.fn().mockResolvedValue({ revision: 5 }),
+    };
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn(),
+    });
+    await store.initialize();
+
+    await store.update((draft) => {
+      draft.settings.theme = 'dark';
+      draft.settings.dailyGoal += 5;
+    });
+
+    expect(api.put).toHaveBeenCalledTimes(1);
+    expect(api.put.mock.calls[0][0]).toBe('/api/state');
+    expect(api.put.mock.calls[0][1].revision).toBe(4);
+    expect(api.put.mock.calls[0][1].state.settings.theme).toBe('dark');
+    expect(api.put.mock.calls[0][1].state.settings.dailyGoal).toBe(canonical.settings.dailyGoal + 5);
+    expect(store.revision()).toBe(5);
+  });
+
   it('refreshes canonical vocabulary after a full-state write without advancing the revision', async () => {
     localStorage.clear();
     const initial = createFreshState([{
