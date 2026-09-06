@@ -57,6 +57,9 @@ export interface PathDay {
   steps: PathStep[];
 }
 
+export const DEFAULT_DAILY_LISTENING_GOAL = 3;
+export const MAX_DAILY_LISTENING_GOAL = 12;
+
 const STEPS: ReadonlyArray<Pick<PathStep, 'id' | 'label' | 'route'>> = [
   { id: 'vocabulary', label: 'Vocabulary review', route: '/review' },
   { id: 'listening', label: 'Listening', route: '/bbc-6-minute-english' },
@@ -71,6 +74,12 @@ function progressPercent(progress?: VocabularyProgress): number | null {
   if (!Number.isFinite(total) || total <= 0) return null;
   const completed = Math.min(total, Math.max(0, Number(progress?.completed) || 0));
   return Math.round((completed / total) * 100);
+}
+
+export function normalizeDailyListeningGoal(value: unknown): number | null {
+  const goal = Number(value);
+  if (!Number.isSafeInteger(goal) || goal < 1 || goal > MAX_DAILY_LISTENING_GOAL) return null;
+  return goal;
 }
 
 function safeListeningProgress(progress?: ListeningProgress | null): ListeningProgress | null {
@@ -96,8 +105,13 @@ export function nextPathDay(day: string, amount = 1): string {
   return new Date(Date.parse(`${day}T12:00:00Z`) + amount * 86_400_000).toISOString().slice(0, 10);
 }
 
-export function buildDailyPath(records: TimelineDay[], today: string): PathDay[] {
+export function buildDailyPath(
+  records: TimelineDay[],
+  today: string,
+  dailyListeningGoal?: number | null,
+): PathDay[] {
   if (!today) return [];
+  const configuredListeningGoal = normalizeDailyListeningGoal(dailyListeningGoal);
   const byDay = new Map(records.filter(record => record.day <= today).map(record => [record.day, record]));
   for (const offset of [1, 2]) {
     const day = nextPathDay(today, offset);
@@ -108,10 +122,15 @@ export function buildDailyPath(records: TimelineDay[], today: string): PathDay[]
     const isToday = record.day === today;
     const future = record.day > today;
     const ordinal = Math.floor(Date.parse(`${record.day}T12:00:00Z`) / 86_400_000);
+    const serverListeningProgress = safeListeningProgress(record.listeningProgress);
+    const todayListeningProgress: ListeningProgress = {
+      completed: serverListeningProgress?.completed ?? (record.activities.includes('listening') ? 1 : 0),
+      total: configuredListeningGoal ?? serverListeningProgress?.total ?? DEFAULT_DAILY_LISTENING_GOAL,
+    };
     let currentAssigned = false;
     const steps: PathStep[] = STEPS.map(step => {
       const progress = isToday && step.id === 'vocabulary' ? progressPercent(record.vocabularyProgress) : null;
-      const listeningProgress = isToday && step.id === 'listening' ? safeListeningProgress(record.listeningProgress) : null;
+      const listeningProgress = isToday && step.id === 'listening' ? todayListeningProgress : null;
       const listeningComplete = Boolean(listeningProgress && listeningProgress.completed >= listeningProgress.total);
       const status: PathStatus = future ? 'upcoming' : !step.route ? 'planned'
         : listeningProgress ? listeningComplete ? 'practiced' : listeningProgress.completed > 0 ? 'in-progress' : 'available'
