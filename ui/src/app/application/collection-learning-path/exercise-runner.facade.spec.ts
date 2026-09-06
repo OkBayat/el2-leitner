@@ -8,7 +8,10 @@ function context(state: ExerciseContextView['state']): ExerciseContextView {
   return {
     path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', contentVersion: 'v1' },
     lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
-    exercise: { id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'explicit', config: {} },
+    exercise: {
+      id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true,
+      completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } },
+    },
     progress: null, state, payload: null,
   };
 }
@@ -16,12 +19,21 @@ function context(state: ExerciseContextView['state']): ExerciseContextView {
 describe('ExerciseRunnerFacade', () => {
   const queryExerciseContext = vi.fn();
   const commandStartExercise = vi.fn();
+  const commandCompleteExercise = vi.fn();
   let facade: ExerciseRunnerFacade;
 
   beforeEach(() => {
-    queryExerciseContext.mockReset(); commandStartExercise.mockReset();
+    queryExerciseContext.mockReset();
+    commandStartExercise.mockReset();
+    commandCompleteExercise.mockReset();
     commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress' });
-    TestBed.configureTestingModule({ providers: [ExerciseRunnerFacade, { provide: CollectionLearningPathApiService, useValue: { queryExerciseContext, commandStartExercise } }] });
+    commandCompleteExercise.mockResolvedValue({ exerciseStatus: 'completed' });
+    TestBed.configureTestingModule({
+      providers: [
+        ExerciseRunnerFacade,
+        { provide: CollectionLearningPathApiService, useValue: { queryExerciseContext, commandStartExercise, commandCompleteExercise } },
+      ],
+    });
     facade = TestBed.inject(ExerciseRunnerFacade);
   });
 
@@ -38,6 +50,19 @@ describe('ExerciseRunnerFacade', () => {
     await facade.load('path-1', 'lesson-1', 'exercise-1');
     expect(commandStartExercise).not.toHaveBeenCalled();
     expect(facade.context()?.state).toBe('locked');
+  });
+
+  it('submits a normalized completed outcome and reloads server-authoritative completion', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress'));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    queryExerciseContext.mockResolvedValueOnce(context('completed'));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(true);
+
+    expect(commandCompleteExercise).toHaveBeenCalledWith(
+      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' },
+    );
+    expect(facade.context()?.state).toBe('completed');
   });
 
   it('surfaces a recoverable error without inventing progress', async () => {

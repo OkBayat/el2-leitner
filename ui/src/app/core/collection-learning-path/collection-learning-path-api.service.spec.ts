@@ -10,8 +10,10 @@ describe('CollectionLearningPathApiService', () => {
 
   beforeEach(() => {
     get.mockReset(); post.mockReset();
-    get.mockResolvedValue({}); post.mockResolvedValue({});
-    TestBed.configureTestingModule({ providers: [CollectionLearningPathApiService, { provide: ApiClientService, useValue: { get, post } }] });
+    get.mockResolvedValue({ context: {} }); post.mockResolvedValue({});
+    TestBed.configureTestingModule({
+      providers: [CollectionLearningPathApiService, { provide: ApiClientService, useValue: { get, post } }],
+    });
     api = TestBed.inject(CollectionLearningPathApiService);
   });
 
@@ -26,12 +28,18 @@ describe('CollectionLearningPathApiService', () => {
     ]);
   });
 
-  it('keeps mutations on explicit command endpoints', async () => {
+  it('keeps generic and type-specific mutations on explicit command endpoints', async () => {
     await api.commandStartPath('path/1');
     await api.commandStartExercise('path/1', 'lesson/1', 'exercise/1');
+    await api.commandActivateVocabularyIntake('path/1', 'lesson/1', 'exercise/1');
+    await api.commandCompleteExercise('path/1', 'lesson/1', 'exercise/1', { kind: 'completed' });
+
     expect(post.mock.calls.map(([path]) => path)).toEqual([
       '/api/learning-paths/path%2F1/start',
       '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/start',
+      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/vocabulary-intake/activate',
+      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/complete',
     ]);
+    expect(post.mock.calls.at(-1)?.[1]).toEqual({ outcome: { kind: 'completed' } });
   });
 });

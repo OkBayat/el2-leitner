@@ -42,15 +42,10 @@
           <p>Your completion is already saved.</p>
         </div>
       } @else {
-        <div class="runner-card runner-card--ready">
-          <p class="runner-card__eyebrow">Lesson {{ context.lesson.position }}</p>
-          <h1>{{ exerciseLabel() }}</h1>
-          <p>The exercise workspace is ready for this activity.</p>
-          <div class="runner-card__meta">
-            <span>{{ context.exercise.required ? 'Required' : 'Optional' }}</span>
-            <span>Step {{ context.exercise.position }}</span>
-          </div>
-        </div>
+        <app-learning-path-exercise-host
+          [context]="context"
+          (outcome)="onExerciseOutcome($event)"
+        />
       }
     }
   </section>

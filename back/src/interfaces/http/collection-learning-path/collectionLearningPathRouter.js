@@ -85,6 +85,16 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
     res.status(200).json(result);
   });
 
+  router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/vocabulary-intake/activate", async (req, res) => {
+    const result = await commands.activateVocabularyIntake.execute(
+      req.auth.userId,
+      learningPathId(req.params.pathId),
+      lessonId(req.params.lessonId),
+      exerciseId(req.params.exerciseId),
+    );
+    res.status(200).json(result);
+  });
+
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/complete", async (req, res) => {
     const result = await commands.completeExercise.execute(
       req.auth.userId,

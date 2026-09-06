@@ -1,6 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import type { ExerciseContextView } from '../../domain/collection-learning-path/learning-path';
+import type {
+  CompletedLearningPathExerciseOutcome,
+  ExerciseContextView,
+} from '../../domain/collection-learning-path/learning-path';
 
 function message(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Exercise could not load.';
@@ -27,6 +30,35 @@ export class ExerciseRunnerFacade {
       }
       if (request !== this.requestVersion) return false;
       this.context.set(context);
+      return true;
+    } catch (error) {
+      if (request === this.requestVersion) this.error.set(message(error));
+      return false;
+    } finally {
+      if (request === this.requestVersion) this.loading.set(false);
+    }
+  }
+
+  async complete(outcome: CompletedLearningPathExerciseOutcome): Promise<boolean> {
+    const current = this.context();
+    if (!current) return false;
+    const request = ++this.requestVersion;
+    this.loading.set(true);
+    this.error.set('');
+    try {
+      await this.api.commandCompleteExercise(
+        current.path.id,
+        current.lesson.id,
+        current.exercise.id,
+        outcome,
+      );
+      const refreshed = await this.api.queryExerciseContext(
+        current.path.id,
+        current.lesson.id,
+        current.exercise.id,
+      );
+      if (request !== this.requestVersion) return false;
+      this.context.set(refreshed);
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(message(error));
