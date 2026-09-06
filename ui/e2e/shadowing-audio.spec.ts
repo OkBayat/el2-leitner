@@ -33,7 +33,7 @@ async function writeSilenceAudio(): Promise<void> {
 test('native AudioWorklet and real speech API handle silence without changing learning progress', async () => {
   await writeSilenceAudio();
   const browser = await chromium.launch({
-    channel: 'chromium',
+    channel: 'chrome',
     args: [
       '--use-fake-ui-for-media-stream',
       '--use-fake-device-for-media-stream',
