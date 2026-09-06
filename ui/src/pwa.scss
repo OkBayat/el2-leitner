@@ -9,7 +9,7 @@ html {
 
 @media(display-mode: standalone) {
 	html, body {
-		background: var(--vocora-system-chrome-color, var(--mat-sys-surface));
+		background-color: var(--vocora-system-chrome-color, var(--mat-sys-surface));
 	}
 }
 
