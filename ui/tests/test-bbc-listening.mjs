@@ -177,9 +177,10 @@ const shell = read('src/app/shared/app-shell/app-shell.component.ts');
 assert.match(shell, /BBC 6 Minute English/u, 'BBC listening must be available from the application menu.');
 assert.match(
   shell,
-  /item\.path !== '\/bbc-6-minute-english'/u,
-  'The existing five-item mobile navigation must not become overcrowded.',
+  /path: '\/bbc-6-minute-english'[\s\S]*?mobile: true/u,
+  'BBC listening must remain one of the five direct mobile learning destinations.',
 );
+assert.match(shell, /mobileNavItems = this\.navItems\.filter\(item => item\.mobile\)/u, 'The mobile dock must derive its five direct learning destinations from the shared navigation model.');
 
 const dashboard = read('src/app/features/dashboard/dashboard-page.component.html');
 assert.match(dashboard, /data-testid="open-bbc-listening"/u, 'Home must expose a direct BBC listening entry point.');
