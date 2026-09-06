@@ -10,6 +10,9 @@ const emptyState = {
 };
 
 async function mockHome(page: Page) {
+  // Exercise the installed-app presentation so an unrelated first-install prompt
+  // does not cover Home in its visual regression screenshots.
+  await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { configurable: true, value: true }));
   const control = {
     fail: false, olderGate: Promise.resolve(), requests: [] as string[], writes: [] as string[],
     activities: ['vocabulary'] as PathActivity[],
@@ -132,4 +135,17 @@ test('network errors preserve loaded evidence and a subsequent refresh reads new
   await page.reload();
   await expect(current.locator('.is-practiced')).toHaveCount(2);
   expect(control.writes).toEqual([]);
+});
+
+test('an open practice popover stays inside the viewport after resizing to a narrow phone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockHome(page);
+  await page.goto('/dashboard');
+  const current = page.locator('.path-day.is-today');
+  await current.locator('[data-activity="listening"]').click();
+  await expectFits(page.getByRole('dialog'), page);
+  await page.setViewportSize({ width: 320, height: 844 });
+  await expectFits(page.getByRole('dialog'), page);
+  await page.keyboard.press('Escape');
+  await expect(current.locator('[data-activity="listening"]')).toBeFocused();
 });
