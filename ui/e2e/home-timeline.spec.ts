@@ -66,6 +66,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     const listening = current.locator('[data-activity="listening"]');
     await expect(listening).toHaveClass(/is-current/u);
     await expect(listening).toHaveCSS('background-color', 'rgb(230, 232, 234)');
+    await expect(listening).toHaveCSS('outline-style', 'none');
     await expect(page.locator(`[data-day="${shift(-1)}"] .is-practiced`)).toHaveCount(3);
     await expect(page.locator('.is-future .is-practiced')).toHaveCount(0);
     await expect(page.locator('.is-future .path-node:disabled')).toHaveCount(12);
