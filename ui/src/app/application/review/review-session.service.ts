@@ -28,6 +28,7 @@ export class ReviewSessionService {
   private readonly currentWordSignal = signal<LearningWord | null>(null);
   private readonly activeSignal = signal(false);
   private readonly completedSignal = signal(false);
+  private readonly completedSessionIdSignal = signal<string | null>(null);
   private readonly feedbackSignal = signal<ReviewFeedback | null>(null);
   private readonly remediationSignal = signal<RemediationSnapshot | null>(null);
   private readonly canAdvanceSignal = signal(false);
@@ -45,10 +46,13 @@ export class ReviewSessionService {
   private backendSessionId: string | null = null;
   private startedAt = 0;
   private preparedNewIds: string[] = [];
+  private repeatBoxOneCycle = true;
+  private remediationEnabled = true;
 
   readonly currentWord = this.currentWordSignal.asReadonly();
   readonly active = this.activeSignal.asReadonly();
   readonly completed = this.completedSignal.asReadonly();
+  readonly completedSessionId = this.completedSessionIdSignal.asReadonly();
   readonly feedback = this.feedbackSignal.asReadonly();
   readonly remediation = this.remediationSignal.asReadonly();
   readonly canAdvance = this.canAdvanceSignal.asReadonly();
@@ -68,6 +72,9 @@ export class ReviewSessionService {
     await this.store.initialize();
     const state = this.store.snapshot();
     this.mode = mode;
+    this.repeatBoxOneCycle = true;
+    this.remediationEnabled = true;
+    this.completedSessionIdSignal.set(null);
     this.freePracticeSignal.set(mode === 'box1');
     this.rechecks.clear();
     this.remediationAttempt = null;
@@ -81,13 +88,41 @@ export class ReviewSessionService {
       this.queue = getDueWords(state).map((word) => word.id);
       if (limit > 0) this.queue = this.queue.slice(0, limit);
     }
-    if (!this.queue.length) return false;
-    const response = await this.learningApi.startSession(mode, this.queue.length);
+    return this.openBackendSession(mode, this.queue);
+  }
+
+  async startScopedBoxOne(ids: readonly string[]): Promise<boolean> {
+    await this.store.initialize();
+    const state = this.store.snapshot();
+    const requested = new Set(ids.map(String));
+    this.mode = 'box1';
+    this.repeatBoxOneCycle = false;
+    this.remediationEnabled = false;
+    this.completedSessionIdSignal.set(null);
+    this.freePracticeSignal.set(true);
+    this.rechecks.clear();
+    this.remediationAttempt = null;
+    this.currentRecheck = null;
+    this.queue = state.words
+      .filter((word) => requested.has(String(word.id)) && word.box === 1)
+      .map((word) => word.id);
+    return this.openBackendSession('learning-path.quick-review', this.queue);
+  }
+
+  private async openBackendSession(sessionMode: string, queue: readonly string[]): Promise<boolean> {
+    if (!queue.length) return false;
+    const response = await this.learningApi.startSession(sessionMode, queue.length);
     this.backendSessionId = response.session.id;
     this.startedAt = Date.now();
-    this.initialCountSignal.set(this.queue.length);
-    this.answeredSignal.set(0); this.correctSignal.set(0); this.wrongSignal.set(0);
-    this.completedSignal.set(false); this.activeSignal.set(true);
+    this.initialCountSignal.set(queue.length);
+    this.answeredSignal.set(0);
+    this.correctSignal.set(0);
+    this.wrongSignal.set(0);
+    this.completedSignal.set(false);
+    this.activeSignal.set(true);
+    this.feedbackSignal.set(null);
+    this.remediationSignal.set(null);
+    this.canAdvanceSignal.set(false);
     this.nextTask(false);
     return true;
   }
@@ -138,7 +173,7 @@ export class ReviewSessionService {
       spelling: transition.word.accepted.join(' / '),
     });
 
-    if (!transition.event.correct) {
+    if (!transition.event.correct && this.remediationEnabled) {
       this.remediationAttempt = RemediationAttempt.immediate({
         wordId: transition.word.id,
         accepted: transition.word.accepted,
@@ -189,7 +224,9 @@ export class ReviewSessionService {
   private nextTask(_advanced: boolean): void {
     const availableRecheck = this.rechecks.takeNext();
     if (availableRecheck) { this.openRecheck(availableRecheck); return; }
-    if (!this.queue.length && this.mode === 'box1') this.queue = buildWeightedBoxOneCycle(this.store.snapshot().words, this.currentWordSignal()?.id || null);
+    if (!this.queue.length && this.mode === 'box1' && this.repeatBoxOneCycle) {
+      this.queue = buildWeightedBoxOneCycle(this.store.snapshot().words, this.currentWordSignal()?.id || null);
+    }
     const id = this.queue.shift();
     if (id) {
       const word = this.store.snapshot().words.find((item) => item.id === id && (this.mode !== 'box1' || item.box === 1));
@@ -219,6 +256,7 @@ export class ReviewSessionService {
     this.activeSignal.set(false);
     this.completedSignal.set(true);
     const durationSeconds = Math.max(0, Math.round((Date.now() - this.startedAt) / 1000));
+    const completedSessionId = this.backendSessionId;
     if (this.backendSessionId) {
       await this.learningApi.completeSession(this.backendSessionId, {
         completedCount: this.answeredSignal(), correctCount: this.correctSignal(), wrongCount: this.wrongSignal(), durationSeconds,
@@ -229,6 +267,7 @@ export class ReviewSessionService {
       daily.sessions += 1;
       daily.durationSeconds += durationSeconds;
     });
+    this.completedSessionIdSignal.set(completedSessionId);
     this.backendSessionId = null;
   }
 
@@ -236,6 +275,7 @@ export class ReviewSessionService {
     if (this.backendSessionId) await this.learningApi.abandonSession(this.backendSessionId, Math.max(0, Math.round((Date.now() - this.startedAt) / 1000)));
     this.speech.cancel();
     this.backendSessionId = null;
+    this.completedSessionIdSignal.set(null);
     this.queue = [];
     this.rechecks.clear();
     this.activeSignal.set(false);
