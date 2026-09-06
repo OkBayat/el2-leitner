@@ -40,35 +40,14 @@ export class PathIconComponent {
 @Component({
   selector: 'app-book-wagon',
   template: `
-    <svg viewBox="0 0 180 166" fill="none" aria-hidden="true" focusable="false">
-      <ellipse cx="92" cy="151" rx="65" ry="11" fill="#202a37" opacity=".09"/>
-      <path d="m139 108 16-38h13" stroke="#52616a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="29" y="47" width="35" height="70" rx="7" fill="#61b9a5" transform="rotate(-14 29 47)"/>
-      <path d="m35 57 8-2 11 45-8 2-11-45Z" fill="#9cdfc6"/>
-      <rect x="104" y="41" width="32" height="76" rx="7" fill="#ef7f67" transform="rotate(12 104 41)"/>
-      <path d="m111 50 15 3-2 7-15-3 2-7Z" fill="#ffbf9c"/>
-      <rect x="57" y="22" width="62" height="89" rx="12" fill="#efae26"/>
-      <path d="M67 27h45v73H67c-5 0-8-3-8-7V35c0-5 3-8 8-8Z" fill="#fff0bc"/>
-      <path d="M110 24v29l-7-5-7 5V24" fill="#ef7f67"/>
-      <ellipse cx="77" cy="63" rx="7" ry="9" fill="white"/>
-      <ellipse cx="100" cy="63" rx="7" ry="9" fill="white"/>
-      <ellipse cx="79" cy="65" rx="3.8" ry="5.5" fill="#344554"/>
-      <ellipse cx="102" cy="65" rx="3.8" ry="5.5" fill="#344554"/>
-      <path d="M82 79q7 8 14-1" stroke="#a36838" stroke-width="3" stroke-linecap="round"/>
-      <ellipse cx="70" cy="77" rx="5" ry="3" fill="#f4aa78" opacity=".7"/>
-      <ellipse cx="106" cy="77" rx="5" ry="3" fill="#f4aa78" opacity=".7"/>
-      <path d="M25 103h120l-10 29c-2 6-7 8-13 8H48c-7 0-12-4-14-10l-9-27Z" fill="#d88716"/>
-      <path d="M25 96h120l-6 29H37L25 96Z" fill="#ffac22"/>
-      <rect x="23" y="93" width="126" height="13" rx="6.5" fill="#ffc548"/>
-      <path d="M51 116h60" stroke="#ffdb81" stroke-width="6" stroke-linecap="round"/>
-      <circle cx="49" cy="140" r="14" fill="#465360"/>
-      <circle cx="122" cy="140" r="14" fill="#465360"/>
-      <circle cx="49" cy="140" r="6" fill="#d9e2df"/>
-      <circle cx="122" cy="140" r="6" fill="#d9e2df"/>
-      <path d="m38 19 3 7 8 3-8 3-3 8-3-8-7-3 7-3 3-7Z" fill="#ffcc4d"/>
-    </svg>
+    <span class="mascot-shadow" aria-hidden="true"></span>
+    <img src="/assets/vocora-dumbbell.svg" alt="" aria-hidden="true" draggable="false" />
   `,
-  styles: ':host,svg{display:block;width:100%;height:100%}',
+  styles: `
+    :host{position:relative;display:block;width:100%;height:100%}
+    img{position:relative;z-index:1;display:block;width:100%;height:100%;object-fit:contain;user-select:none}
+    .mascot-shadow{position:absolute;z-index:0;left:50%;bottom:8px;width:58%;height:10px;transform:translateX(-50%);border-radius:50%;background:#202a37;opacity:.10;filter:blur(1px);pointer-events:none}
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookWagonComponent {}
