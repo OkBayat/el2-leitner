@@ -7,7 +7,6 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDirectory, '..');
 const distRoot = path.join(uiRoot, 'dist', 'browser');
 const read = (relative) => fs.readFileSync(path.join(uiRoot, relative), 'utf8');
-const exists = (relative) => fs.existsSync(path.join(uiRoot, relative));
 
 function pngDimensions(filePath) {
 	const bytes = fs.readFileSync(filePath);
@@ -41,21 +40,30 @@ for (const size of ['192x192', '512x512']) {
 }
 for (const icon of icons) {
 	assert.equal(icon.type, 'image/png', `${icon.src} must declare image/png.`);
+	assert.match(icon.src, /^\/assets\/icons\/vocora-v\d+-/u, `${icon.src} must use a versioned Vocora icon URL so install caches can be invalidated.`);
 	const [expectedWidth, expectedHeight] = icon.sizes.split('x').map(Number);
 	const iconPath = path.join(uiRoot, icon.src.replace(/^\//u, ''));
 	assert.ok(fs.existsSync(iconPath), `${icon.src} must exist.`);
 	assert.deepEqual(pngDimensions(iconPath), {width: expectedWidth, height: expectedHeight}, `${icon.src} must match its declared dimensions.`);
 }
-assert.deepEqual(pngDimensions(path.join(uiRoot, 'assets/icons/apple-touch-icon-180.png')), {width: 180, height: 180});
-assert.ok(exists('assets/icons/safari-pinned-tab.svg'), 'Safari pinned-tab artwork must exist.');
 
 const index = read('src/index.html');
 assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/u);
 assert.match(index, /apple-mobile-web-app-capable" content="yes"/u);
 assert.match(index, /apple-mobile-web-app-title" content="Vocora"/u);
-assert.match(index, /apple-touch-icon" sizes="180x180"/u);
 assert.match(index, /viewport-fit=cover/u);
 assert.match(index, /format-detection" content="telephone=no"/u);
+assert.doesNotMatch(index, /safari-pinned-tab\.svg/u, 'The legacy Safari pinned-tab book artwork must not remain referenced.');
+
+const appleTouchMatch = index.match(/<link rel="apple-touch-icon" sizes="180x180" href="([^"]+)">/u);
+assert.ok(appleTouchMatch, 'iPhone installation must reference an explicit 180x180 Apple touch icon.');
+const appleTouchUrl = appleTouchMatch[1];
+assert.match(appleTouchUrl, /^\/assets\/icons\/vocora-v\d+-apple-touch-180\.png$/u, 'The iPhone icon must use a versioned Vocora asset URL.');
+assert.deepEqual(
+	pngDimensions(path.join(uiRoot, appleTouchUrl.replace(/^\//u, ''))),
+	{width: 180, height: 180},
+	'The referenced iPhone installation icon must be exactly 180x180.',
+);
 
 const appRoot = read('src/app/app.ts');
 const installService = read('src/app/core/pwa/pwa-install.service.ts');
@@ -115,7 +123,13 @@ assert.match(worker, /response\.status === 200/u, 'Runtime caching must only per
 const precacheMatch = worker.match(/const PRECACHE_URLS = Object\.freeze\((\[[\s\S]*?\])\);/u);
 assert.ok(precacheMatch, 'The generated worker must expose a deterministic precache list.');
 const precache = JSON.parse(precacheMatch[1]);
-for (const required of ['/index.html', '/manifest.webmanifest', '/assets/icons/icon-192.png', '/assets/icons/icon-maskable-512.png']) {
+const requiredOfflineAssets = new Set([
+	'/index.html',
+	'/manifest.webmanifest',
+	appleTouchUrl,
+	...icons.map((icon) => icon.src),
+]);
+for (const required of requiredOfflineAssets) {
 	assert.ok(precache.includes(required), `${required} must be available to the installed app offline.`);
 }
 assert.equal(precache.some((url) => url.startsWith('/api/')), false, 'Authenticated API responses must never be precached.');
