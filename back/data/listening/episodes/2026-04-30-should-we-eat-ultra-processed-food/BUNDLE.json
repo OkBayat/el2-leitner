@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bbc-6-minute-english-260430",
+  "folder": "2026-04-30-should-we-eat-ultra-processed-food",
+  "testCount": 5,
+  "transcriptStatus": "source_reference_only",
+  "notice": "BBC assets retain their original copyright. Availability is not a redistribution licence. Verify your intended use. Tests and vocabulary explanations are independently authored IELTS-style practice, not an official IELTS test.",
+  "files": {
+    "audio.mp3": {
+      "bytes": 6298755,
+      "sha256": "9eb495d35e86deb0d20b1e581b97b0cb2b98e9f51ff4ab0801af456807d3cfbe"
+    },
+    "cover.jpg": {
+      "bytes": 131944,
+      "sha256": "f34053befbce3c741354f986151c8573a098a2ad652e85fccf2eb920adf66069"
+    },
+    "episode.json": {
+      "bytes": 1415,
+      "sha256": "1512bab8af2d0de1c38ab904bbff820fc38687c22686c3a06a6075a1b4a80c07"
+    },
+    "listening.json": {
+      "bytes": 57203,
+      "sha256": "11885b466e8d8c4b42ce6a7d35fb76c02c3b9e79d1288b27cfd2be6e9ac44bd0"
+    },
+    "transcript.md": {
+      "bytes": 437,
+      "sha256": "73663726f8056985a58ae514d1dc0818d69058a5b48c16d401dafce00606a608"
+    },
+    "vocabulary.md": {
+      "bytes": 1077,
+      "sha256": "dec1cc33b305a7dc72fbabbf3951667eb9bef880d65c32c2b084e904e54e8e81"
+    }
+  }
+}
