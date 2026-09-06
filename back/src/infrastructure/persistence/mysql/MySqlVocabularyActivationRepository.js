@@ -1,4 +1,5 @@
 import { ConflictError, NotFoundError } from "../../../domain/errors.js";
+import { isNewVocabularyProgress } from "../../../domain/learning/VocabularyProgress.js";
 
 function dayValue(value) {
   if (!value) return null;
@@ -16,10 +17,22 @@ function isSameActivation(target, day, source = "word-bank") {
     && target.progress_introduced_via === source;
 }
 
+function progressFromTarget(target) {
+  if (target.progress_user_id === null || target.progress_user_id === undefined) return null;
+  return {
+    status: target.progress_status,
+    box: Number(target.progress_box ?? 0),
+    introducedOn: dayValue(target.progress_introduced_on),
+    masteredAt: target.progress_mastered_at ?? null,
+  };
+}
+
 function isUnseenProgress(target) {
-  return target.progress_user_id === null
-    || target.progress_user_id === undefined
-    || (Number(target.progress_box) === 0 && !target.progress_introduced_on);
+  return isNewVocabularyProgress(progressFromTarget(target));
+}
+
+function normalizedVocabularyIds(value) {
+  return [...new Set((value ?? []).map((item) => String(item ?? "").trim()).filter(Boolean))];
 }
 
 export class MySqlVocabularyActivationRepository {
@@ -35,6 +48,14 @@ export class MySqlVocabularyActivationRepository {
     return rows[0] ? Number(rows[0].revision) : null;
   }
 
+  async lockedRevision(connection, userId) {
+    const [rows] = await connection.execute(
+      "SELECT revision FROM user_state_revisions WHERE user_id = ? LIMIT 1 FOR UPDATE",
+      [userId]
+    );
+    return rows[0] ? Number(rows[0].revision) : null;
+  }
+
   async activationTarget(connection, userId, vocabularyId) {
     const [rows] = await connection.execute(
       `SELECT ve.id AS vocabulary_entry_id,
@@ -44,7 +65,8 @@ export class MySqlVocabularyActivationRepository {
               uvp.box AS progress_box,
               uvp.due_date AS progress_due_date,
               uvp.introduced_on AS progress_introduced_on,
-              uvp.introduced_via AS progress_introduced_via
+              uvp.introduced_via AS progress_introduced_via,
+              uvp.mastered_at AS progress_mastered_at
        FROM vocabulary_entries ve
        JOIN collection_entries ce
          ON ce.vocabulary_entry_id = ve.id AND ce.removed_at IS NULL
@@ -72,7 +94,8 @@ export class MySqlVocabularyActivationRepository {
               uvp.box AS progress_box,
               uvp.due_date AS progress_due_date,
               uvp.introduced_on AS progress_introduced_on,
-              uvp.introduced_via AS progress_introduced_via
+              uvp.introduced_via AS progress_introduced_via,
+              uvp.mastered_at AS progress_mastered_at
        FROM vocabulary_entries ve
        JOIN collection_entries ce
          ON ce.vocabulary_entry_id = ve.id AND ce.removed_at IS NULL
@@ -83,6 +106,29 @@ export class MySqlVocabularyActivationRepository {
          ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ve.id
        WHERE ve.public_id IN (${placeholders}) AND ve.status = 'active'`,
       [userId, userId, ...vocabularyIds]
+    );
+    return rows;
+  }
+
+  async trustedActivationTargets(connection, userId, vocabularyIds) {
+    if (!vocabularyIds.length) return [];
+    const placeholders = vocabularyIds.map(() => "?").join(", ");
+    const [rows] = await connection.execute(
+      `SELECT ve.id AS vocabulary_entry_id,
+              ve.public_id AS vocabulary_id,
+              uvp.user_id AS progress_user_id,
+              uvp.status AS progress_status,
+              uvp.box AS progress_box,
+              uvp.due_date AS progress_due_date,
+              uvp.introduced_on AS progress_introduced_on,
+              uvp.introduced_via AS progress_introduced_via,
+              uvp.mastered_at AS progress_mastered_at
+       FROM vocabulary_entries ve
+       LEFT JOIN user_vocabulary_progress uvp
+         ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ve.id
+       WHERE ve.public_id IN (${placeholders}) AND ve.status = 'active'
+       ORDER BY ve.id`,
+      [userId, ...vocabularyIds]
     );
     return rows;
   }
@@ -138,7 +184,13 @@ export class MySqlVocabularyActivationRepository {
            ON existing.user_id = ? AND existing.vocabulary_entry_id = ve.id
          WHERE ve.public_id = ?
            AND ve.status = 'active'
-           AND (existing.user_id IS NULL OR (existing.box = 0 AND existing.introduced_on IS NULL))
+           AND (existing.user_id IS NULL OR (
+             existing.status <> 'excluded'
+             AND existing.status <> 'mastered'
+             AND existing.mastered_at IS NULL
+             AND existing.box = 0
+             AND existing.introduced_on IS NULL
+           ))
          ORDER BY c.is_default DESC, ce.collection_id
          LIMIT 1
          ON DUPLICATE KEY UPDATE
@@ -261,6 +313,82 @@ export class MySqlVocabularyActivationRepository {
       await connection.commit();
       transactionStarted = false;
       return expectedRevision + 1;
+    } catch (error) {
+      if (transactionStarted) await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async activateUnseen(userId, { vocabularyIds, day, source }) {
+    const ids = normalizedVocabularyIds(vocabularyIds);
+    if (!ids.length) return { revision: null, activatedCount: 0 };
+
+    const connection = await this.pool.getConnection();
+    let transactionStarted = false;
+    try {
+      await connection.beginTransaction();
+      transactionStarted = true;
+
+      const revision = await this.lockedRevision(connection, userId);
+      if (revision === null) {
+        throw new NotFoundError("LEARNING_STATE_NOT_FOUND", "Learning state was not found.");
+      }
+
+      const targets = await this.trustedActivationTargets(connection, userId, ids);
+      const byPublicId = new Map(targets.map((target) => [String(target.vocabulary_id), target]));
+      const missing = ids.find((id) => !byPublicId.has(id));
+      if (missing) {
+        throw new NotFoundError("VOCABULARY_NOT_FOUND", "Vocabulary entry was not found.");
+      }
+
+      const unseenTargets = ids
+        .map((id) => byPublicId.get(id))
+        .filter((target) => isUnseenProgress(target));
+      if (!unseenTargets.length) {
+        await connection.commit();
+        transactionStarted = false;
+        return { revision, activatedCount: 0 };
+      }
+
+      const rowSql = unseenTargets
+        .map(() => "(?, ?, 'active', 1, ?, 0, 0, 0, 0, ?, ?, NULL, NULL, NULL, NULL)")
+        .join(", ");
+      const parameters = unseenTargets.flatMap((target) => [
+        userId,
+        target.vocabulary_entry_id,
+        day,
+        day,
+        source,
+      ]);
+      await connection.execute(
+        `INSERT INTO user_vocabulary_progress
+           (user_id, vocabulary_entry_id, status, box, due_date, attempts, correct_count, mistake_count,
+            current_streak, introduced_on, introduced_via, last_reviewed_at, last_promoted_on,
+            blocked_until, mastered_at)
+         VALUES ${rowSql}
+         ON DUPLICATE KEY UPDATE
+           status = 'active', box = 1, due_date = VALUES(due_date), attempts = 0,
+           correct_count = 0, mistake_count = 0, current_streak = 0,
+           introduced_on = VALUES(introduced_on), introduced_via = VALUES(introduced_via),
+           last_reviewed_at = NULL, last_promoted_on = NULL, blocked_until = NULL, mastered_at = NULL`,
+        parameters,
+      );
+      await connection.execute(
+        `INSERT INTO user_daily_stats (user_id, day, new_added)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE new_added = new_added + VALUES(new_added)`,
+        [userId, day, unseenTargets.length],
+      );
+      await connection.execute(
+        "UPDATE user_state_revisions SET revision = revision + 1 WHERE user_id = ?",
+        [userId],
+      );
+
+      await connection.commit();
+      transactionStarted = false;
+      return { revision: revision + 1, activatedCount: unseenTargets.length };
     } catch (error) {
       if (transactionStarted) await connection.rollback();
       throw error;

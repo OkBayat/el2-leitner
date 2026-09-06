@@ -1,18 +1,21 @@
-export type ExerciseStatus = 'completed' | 'failed' | 'cancelled';
+import type { Observable } from 'rxjs';
+import type { CompletedLearningPathExerciseOutcome } from '../../../../domain/collection-learning-path/learning-path';
 
-export interface ExerciseContext {
+export interface ExerciseContext<TPayload = unknown> {
+  readonly pathId: string;
   readonly exerciseId: string;
   readonly lessonId: string;
   readonly type: string;
   readonly schemaVersion: number;
-  readonly config: Record<string, unknown>;
+  readonly config: Readonly<Record<string, unknown>>;
+  readonly payload: TPayload;
 }
 
-export interface ExerciseOutcome {
-  readonly status: ExerciseStatus;
-  readonly evidence?: Record<string, unknown>;
-}
+export type ExerciseOutcome = CompletedLearningPathExerciseOutcome
+  | { kind: 'cancelled' }
+  | { kind: 'failed'; reason: string };
 
 export interface ExerciseComponent {
+  readonly outcome: Observable<ExerciseOutcome>;
   load(context: ExerciseContext): void;
 }

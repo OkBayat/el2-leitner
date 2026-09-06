@@ -48,5 +48,10 @@ jobs:
           cache-dependency-path: back/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm run db:setup
-      - run: node --test tests/mysql-learning-path-persistence.test.js tests/integration/collection-learning-path-persistence.mysql.test.js
+      - run: >-
+          node --test
+          tests/mysql-learning-path-persistence.test.js
+          tests/mysql-learning-path-vocabulary-intake.test.js
+          tests/integration/collection-learning-path-persistence.mysql.test.js
+          tests/integration/collection-learning-path-vocabulary-intake.mysql.test.js
       - run: npm run db:verify

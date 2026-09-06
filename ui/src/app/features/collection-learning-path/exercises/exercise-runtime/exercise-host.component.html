@@ -1,0 +1,6 @@
+<div class="exercise-host" data-testid="learning-path-exercise-host">
+  <ng-template #outlet></ng-template>
+  @if (unsupportedType) {
+    <app-unsupported-exercise [type]="unsupportedType" />
+  }
+</div>

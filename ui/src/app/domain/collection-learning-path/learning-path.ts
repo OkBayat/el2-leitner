@@ -63,6 +63,21 @@ export interface LearningPathResumeView {
   resumePoint: LearningPathResumePoint | null;
 }
 
+export interface CompletedLearningPathExerciseOutcome {
+  kind: 'completed';
+  evidence?: Readonly<Record<string, unknown>>;
+}
+
+export interface LearningPathExerciseCompletionView {
+  pathId: string;
+  lessonId: string;
+  exerciseId: string;
+  exerciseStatus: LearningPathNodeState;
+  lessonStatus: string;
+  pathStatus: LearningPathLearnerStatus;
+  resumePoint: LearningPathResumePoint | null;
+}
+
 export interface ExerciseContextView {
   path: {
     id: string;

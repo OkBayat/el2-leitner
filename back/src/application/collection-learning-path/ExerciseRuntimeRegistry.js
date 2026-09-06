@@ -38,10 +38,15 @@ export class ExerciseRuntimeRegistry {
   }
 }
 
-export function createDefaultExerciseRuntimeRegistry() {
+export function createDefaultExerciseRuntimeRegistry({
+  contextHydrators = {},
+  completionPolicies = {},
+} = {}) {
   return new ExerciseRuntimeRegistry({
-    completionPolicies: {
-      explicit: async () => ({ evidenceType: null, evidenceRef: null }),
-    },
+    contextHydrators,
+    completionPolicies: new Map([
+      ["explicit", async () => ({ evidenceType: null, evidenceRef: null })],
+      ...entries(completionPolicies),
+    ]),
   });
 }

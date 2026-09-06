@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
 import { exerciseTypeLabel, learningPathStateLabel } from '../../../domain/collection-learning-path/learning-path';
+import type { ExerciseOutcome } from '../exercises/exercise-runtime/exercise-contracts';
+import { ExerciseHostComponent } from '../exercises/exercise-runtime/exercise-host.component';
 
 interface RunnerRoute {
   pathId: string;
@@ -13,7 +15,7 @@ interface RunnerRoute {
 @Component({
   selector: 'app-learning-path-exercise-runner-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ExerciseHostComponent],
   templateUrl: './exercise-runner-page.component.html',
   styleUrl: './exercise-runner-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,5 +49,9 @@ export class ExerciseRunnerPageComponent {
   retry(): void {
     const state = this.routeState();
     if (state) void this.facade.load(state.pathId, state.lessonId, state.exerciseId);
+  }
+
+  onExerciseOutcome(outcome: ExerciseOutcome): void {
+    if (outcome.kind === 'completed') void this.facade.complete(outcome);
   }
 }
