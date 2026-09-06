@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ScopedVocabularyPracticeExerciseComponent } from '../scoped-vocabulary-practice/scoped-vocabulary-practice-exercise.component';
 import { VocabularyIntakeExerciseComponent } from '../vocabulary-intake/vocabulary-intake-exercise.component';
+import { VocabularyMasteryCheckExerciseComponent } from '../vocabulary-mastery-check/vocabulary-mastery-check-exercise.component';
 import { createLearningPathExerciseRegistry } from './learning-path-exercise-registry';
 
 describe('Learning Path exercise registry composition', () => {
@@ -8,6 +9,7 @@ describe('Learning Path exercise registry composition', () => {
     const registry = createLearningPathExerciseRegistry();
     expect(registry.resolve('vocabulary.intake')).toBe(VocabularyIntakeExerciseComponent);
     expect(registry.resolve('vocabulary.quick-review')).toBe(ScopedVocabularyPracticeExerciseComponent);
+    expect(registry.resolve('vocabulary.mastery-check')).toBe(VocabularyMasteryCheckExerciseComponent);
     expect(registry.resolve('unknown.exercise')).toBeUndefined();
   });
 });
