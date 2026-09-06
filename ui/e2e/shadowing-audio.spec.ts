@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { writeFile, rm } from 'node:fs/promises';
+import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -9,16 +9,6 @@ test.use({
   launchOptions: { args: ['--use-fake-device-for-media-stream', `--use-file-for-fake-audio-capture=${audioPath}`] },
 });
 
-test.beforeAll(async () => {
-  const size = 44100 * 2 * 5;
-  const wav = Buffer.alloc(44 + size);
-  wav.write('RIFF', 0); wav.writeUInt32LE(36 + size, 4); wav.write('WAVEfmt ', 8);
-  wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22);
-  wav.writeUInt32LE(44100, 24); wav.writeUInt32LE(88200, 28);
-  wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34);
-  wav.write('data', 36); wav.writeUInt32LE(size, 40);
-  await writeFile(audioPath, wav);
-});
 test.afterAll(async () => { await rm(audioPath, { force: true }); });
 
 test('native AudioWorklet and real speech API handle silence without changing learning progress', async ({ page }) => {
