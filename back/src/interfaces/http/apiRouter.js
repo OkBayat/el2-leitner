@@ -195,6 +195,11 @@ export function createApiRouter({
     res.status(200).json(result);
   });
 
+  router.get("/learning/timeline", authenticate, async (req, res) => {
+    const result = await useCases.getLearningTimeline.execute(req.auth.userId, req.query);
+    res.status(200).json(result);
+  });
+
   router.post("/learning/sessions", authenticate, async (req, res) => {
     const result = await useCases.learningSessionCommands.start(req.auth.userId, req.body ?? {});
     res.status(201).json(result);

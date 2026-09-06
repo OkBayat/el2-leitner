@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { MySqlLearningTimelineRepository } from '../src/infrastructure/persistence/mysql/MySqlLearningTimelineRepository.js';
+
+test('timeline reads are bounded, parameterized, user-scoped, and exclude unsubmitted listening', async () => {
+  const calls = [];
+  const pool = { execute: async (sql, values) => { calls.push({ sql, values }); return [[]]; } };
+  const result = await new MySqlLearningTimelineRepository(pool).read(42, { from: '2026-09-01', to: '2026-09-06' });
+  assert.equal(calls.length, 5);
+  for (const { sql, values } of calls) {
+    assert.match(sql, /user_id = \?/u);
+    assert.equal(values[0], 42);
+    assert.doesNotMatch(sql, /answers_json|result_json|term_snapshot|user_daily_stats|INSERT|UPDATE|DELETE/u);
+  }
+  assert.deepEqual(calls[0].values, [42, '2026-09-01', '2026-09-06']);
+  assert.match(calls[0].sql, /mode = 'box1' THEN 'box1'/u);
+  assert.match(calls[1].sql, /practice_session_days/u);
+  assert.match(calls[2].sql, /status = 'completed'/u);
+  assert.deepEqual(calls[2].values, [42, Date.parse('2026-08-31T00:00:00Z') / 1000, Date.parse('2026-09-08T00:00:00Z') / 1000]);
+  assert.match(calls[3].sql, /completed_count > 0/u);
+  assert.match(calls[3].sql, /NOT EXISTS/u);
+  assert.deepEqual(calls[4].values, [42, 42, 42, 42]);
+  assert.deepEqual(result, { reviews: [], practice: [], listening: [], legacy: [], first: {} });
+});
+
+test('a failed source rejects the whole read rather than presenting false unpracticed days', async () => {
+  const pool = { execute: async sql => {
+    if (sql.includes('FROM listening_attempts')) throw new Error('Database unavailable');
+    return [[]];
+  } };
+  await assert.rejects(new MySqlLearningTimelineRepository(pool).read(1, { from: '2026-09-01', to: '2026-09-06' }), /Database unavailable/u);
+});

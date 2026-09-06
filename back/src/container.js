@@ -1,3 +1,5 @@
+import { GetLearningTimeline } from "./application/learning/GetLearningTimeline.js";
+import { MySqlLearningTimelineRepository } from "./infrastructure/persistence/mysql/MySqlLearningTimelineRepository.js";
 import { ShadowingPractice } from "./application/shadowing-practice/ShadowingPractice.js";
 import { HttpSpeechRecognizer } from "./infrastructure/speech/HttpSpeechRecognizer.js";
 import { GetListeningEpisodeImage } from "./application/listening-practice/GetListeningEpisodeImage.js";
@@ -75,6 +77,9 @@ export function createContainer({ pool, config, adapters = {} }) {
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
     useCases: {
+      getLearningTimeline: new GetLearningTimeline({
+        timelineRepository: adapters.timelineRepository ?? new MySqlLearningTimelineRepository(pool)
+      }),
       shadowingPractice: new ShadowingPractice({
         getSentencePracticeCards,
         sentencePracticeRepository,

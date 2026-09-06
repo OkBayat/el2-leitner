@@ -1,0 +1,111 @@
+<div class="home-path" data-testid="home-path" [attr.aria-busy]="timeline.loading()">
+  <h1 class="visually-hidden">Your daily learning path</h1>
+  <p class="visually-hidden">Scroll up for earlier days. Colored steps have recorded practice. Gray steps have not been practised.</p>
+
+  @if (timeline.error()) {
+    <div class="path-notice" role="alert">
+      <p>{{ timeline.error() }}</p>
+      <button type="button" (click)="refresh(!timeline.today())" [disabled]="timeline.loading()">Try again</button>
+    </div>
+  }
+  @if (!timeline.today() && timeline.loading()) {
+    <div class="path-loading" role="status"><span></span><span></span><span></span><p>Loading your path…</p></div>
+  }
+
+  <div class="history-sentinel" aria-hidden="true"></div>
+  @if (timeline.nextBefore() || timeline.historyError()) {
+    <div class="history-control">
+      @if (timeline.historyError()) { <p role="alert">{{ timeline.historyError() }}</p> }
+      <button type="button" (click)="loadOlder()" [disabled]="timeline.loadingOlder() || timeline.loading()">
+        {{ timeline.loadingOlder() ? 'Loading earlier days…' : 'Earlier days' }} <span aria-hidden="true">↑</span>
+      </button>
+    </div>
+  }
+  @if (timeline.limitedHistory()) {
+    <p class="history-note">Some older multi-day sessions do not have a daily breakdown.</p>
+  }
+
+  @for (day of days(); track day.day) {
+    <section class="path-day" [attr.data-day]="day.day" [attr.data-palette]="day.palette"
+      [class.is-today]="day.today" [class.is-future]="day.future" [class.is-mirrored]="day.mirrored"
+      [attr.aria-labelledby]="'day-title-' + day.day">
+      <header class="day-heading">
+        <div>
+          @if (day.today || day.future) { <span class="day-date">{{ day.dateLabel }}</span> }
+          <h2 [id]="'day-title-' + day.day">{{ day.title }}</h2>
+        </div>
+        @if (day.today) {
+          <a class="overview-link" routerLink="/overview" aria-label="Open learning overview" title="Learning overview">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V12m7 7V5m7 14V9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </a>
+        }
+      </header>
+      <div class="day-trail">
+        <ol class="path-steps" [attr.aria-label]="day.dateLabel + ' activities'">
+          @for (step of day.steps; track step.id) {
+            <li class="step-row">
+              <button type="button" class="path-node" cdkOverlayOrigin #origin="cdkOverlayOrigin"
+                [attr.data-activity]="step.id" [attr.data-status]="step.status"
+                [class.is-practiced]="step.status === 'practiced'" [class.is-current]="step.current"
+                [class.is-reserved]="step.id.startsWith('reserved')"
+                [disabled]="day.future || step.id.startsWith('reserved')"
+                [attr.aria-label]="step.label + ' — ' + statusLabel(step) + ' — ' + day.dateLabel"
+                [attr.aria-current]="step.current ? 'step' : null"
+                [attr.aria-expanded]="selection()?.origin === origin" aria-haspopup="dialog"
+                (click)="open(day, step, origin)">
+                @if (!step.id.startsWith('reserved')) { <app-path-icon [kind]="step.id" /> }
+                @if (step.status === 'practiced') {
+                  <span class="node-check" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                }
+                @if (step.current) { <span class="start-flag" aria-hidden="true">START</span> }
+              </button>
+            </li>
+          }
+        </ol>
+        <button type="button" class="book-wagon" cdkOverlayOrigin #wagon="cdkOverlayOrigin"
+          [class.is-quiet]="!day.today && !day.boxOnePracticed" [disabled]="day.future"
+          [attr.aria-label]="'Box 1 practice — ' + day.dateLabel" aria-haspopup="dialog"
+          [attr.aria-expanded]="selection()?.origin === wagon" (click)="open(day, null, wagon)">
+          <app-book-wagon />
+          <span class="wagon-label">BOX 1</span>
+        </button>
+      </div>
+    </section>
+  }
+  @if (timeline.today() && !todayVisible()) {
+    <button type="button" class="back-today" aria-label="Back to today" (click)="goToToday()">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      <span>Today</span>
+    </button>
+  }
+</div>
+
+@if (selection(); as selected) {
+  <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="selected.origin"
+    [cdkConnectedOverlayOpen]="true" [cdkConnectedOverlayPositions]="positions"
+    [cdkConnectedOverlayScrollStrategy]="scrollStrategy" (detach)="close()"
+    [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="16"
+    (backdropClick)="close()" (overlayKeydown)="onOverlayKey($event)" (positionChange)="positionPopover($event)">
+    <div #popup class="path-popover" [class.is-above]="popoverAbove()" [style.--arrow-x.px]="arrowX()"
+      role="dialog" aria-modal="true" aria-labelledby="home-popup-title" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
+      <button type="button" class="close-popover" aria-label="Close practice options" (click)="close()">×</button>
+      @if (selected.step; as step) {
+        <h3 id="home-popup-title">{{ step.label }}</h3>
+        @if (!step.route) {
+          <p>Reading practice is coming soon.</p>
+        } @else {
+          <p>{{ step.status === 'practiced' ? 'Practised' : 'No practice recorded' }} · {{ selected.day.dateLabel }}</p>
+          <a class="popover-action" [routerLink]="step.route" (click)="close()">
+            {{ step.status === 'practiced' ? 'Practise again' : selected.day.today ? 'Start' : 'Practise today' }}
+          </a>
+        }
+      } @else {
+        <h3 id="home-popup-title">Box 1 practice</h3>
+        <p>Choose how to practise.</p>
+        <a class="popover-action" routerLink="/review" [queryParams]="{ mode: 'box1' }" (click)="close()">Word by word</a>
+        <a class="popover-action is-secondary" routerLink="/sentence" [queryParams]="{ house: 1 }" (click)="close()">Sentence by sentence</a>
+      }
+    </div>
+  </ng-template>
+}
