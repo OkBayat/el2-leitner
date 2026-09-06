@@ -100,10 +100,12 @@ test('after the daily goal the node becomes Legendary and an extra attempt adds 
   await expect(dialog.getByRole('link', { name: 'Legendary practice', exact: true })).toBeVisible();
 });
 
-test('changing Listening practices per day in Settings persists it and Home immediately renders the new segment count', async ({ page }) => {
+test('Settings sends only settings plus revision and Home immediately renders the saved listening goal', async ({ page }) => {
   let goal = 3;
   let revision = 11;
   let savedGoal: number | null = null;
+  let settingsPayload: Record<string, unknown> | null = null;
+  let fullStateWrites = 0;
 
   await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { configurable: true, value: true }));
   await page.route('**/api/auth/me', route => route.fulfill({
@@ -111,11 +113,8 @@ test('changing Listening practices per day in Settings persists it and Home imme
   }));
   await page.route('**/api/state**', async route => {
     if (route.request().method() === 'PUT') {
-      const body = route.request().postDataJSON() as { state?: { settings?: { dailyListeningGoal?: number } } };
-      savedGoal = body.state?.settings?.dailyListeningGoal ?? null;
-      goal = savedGoal ?? goal;
-      revision += 1;
-      return route.fulfill({ json: { revision } });
+      fullStateWrites += 1;
+      return route.fulfill({ status: 500, json: { error: { code: 'UNEXPECTED_STATE_WRITE' } } });
     }
     return route.fulfill({
       json: {
@@ -131,6 +130,17 @@ test('changing Listening practices per day in Settings persists it and Home imme
         },
       },
     });
+  });
+  await page.route('**/api/settings', async route => {
+    const body = route.request().postDataJSON() as {
+      settings: { dailyNew: number; dailyGoal: number; dailyListeningGoal: number; voiceRate: number; theme: string };
+      revision: number;
+    };
+    settingsPayload = body as unknown as Record<string, unknown>;
+    savedGoal = body.settings.dailyListeningGoal;
+    goal = savedGoal;
+    revision += 1;
+    return route.fulfill({ json: { settings: body.settings, revision } });
   });
   await page.route('**/api/learning/timeline?**', route => route.fulfill({
     json: {
@@ -153,6 +163,10 @@ test('changing Listening practices per day in Settings persists it and Home imme
   await input.fill('4');
   await page.getByRole('button', { name: 'Save settings' }).click();
   await expect.poll(() => savedGoal).toBe(4);
+  expect(fullStateWrites).toBe(0);
+  expect(Object.keys(settingsPayload ?? {}).sort()).toEqual(['revision', 'settings']);
+  expect(settingsPayload).not.toHaveProperty('state');
+  expect(settingsPayload).not.toHaveProperty('words');
 
   await page.goto('/dashboard');
   const listening = page.getByTestId('home-listening');
