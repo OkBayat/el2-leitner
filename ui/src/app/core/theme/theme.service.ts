@@ -34,11 +34,18 @@ export class ThemeService {
 
   private applyResolved(resolved: 'light' | 'dark'): void {
     const root = this.document.documentElement;
+    const body = this.document.body;
     const chromeColor = resolved === 'dark' ? DARK_SYSTEM_CHROME_COLOR : LIGHT_SYSTEM_CHROME_COLOR;
 
     root.style.colorScheme = resolved;
     root.dataset['theme'] = resolved;
     root.style.setProperty('--vocora-system-chrome-color', chromeColor);
+    root.style.backgroundColor = chromeColor;
+
+    if (body) {
+      body.style.colorScheme = resolved;
+      body.style.backgroundColor = chromeColor;
+    }
 
     this.updateMeta('color-scheme', resolved);
     this.updateMeta('theme-color', chromeColor);
