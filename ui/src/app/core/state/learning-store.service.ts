@@ -3,7 +3,7 @@ import { CatalogService } from '../catalog/catalog.service';
 import { ApiClientService, ApiError } from '../http/api-client.service';
 import { VocabularyApiService } from '../learning/vocabulary-api.service';
 import { activateUnseenWords, createFreshState, ensureDailyWords, hydrateState, localDay } from '../../domain/learning/learning-rules';
-import { LearningState, LearningStateResponse, LearningWord } from '../../domain/learning/models';
+import { LearningState, LearningStateResponse, LearningWord, ThemeMode } from '../../domain/learning/models';
 
 const LEGACY_STORAGE_KEY = 'vazheyar-ielts-state-v1';
 const EDITABLE_WORD_KEYS = new Set<keyof LearningWord>(['term', 'accepted', 'category', 'notes']);
@@ -36,6 +36,17 @@ export function detectSingleVocabularyEdit(before: LearningState, after: Learnin
   return { index, word: next };
 }
 
+export function detectThemePreferenceEdit(before: LearningState, after: LearningState): ThemeMode | null {
+  if (before.settings.theme === after.settings.theme) return null;
+  const beforeComparable = {
+    ...before,
+    updatedAt: '',
+    settings: { ...before.settings, theme: after.settings.theme },
+  };
+  const afterComparable = { ...after, updatedAt: '' };
+  return JSON.stringify(beforeComparable) === JSON.stringify(afterComparable) ? after.settings.theme : null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LearningStoreService {
   private readonly api = inject(ApiClientService);
@@ -46,6 +57,7 @@ export class LearningStoreService {
   private readonly loadingSignal = signal(false);
   private readonly writeBlockedSignal = signal(false);
   private initializePromise: Promise<LearningState> | null = null;
+  private themeUpdateInFlight: { theme: ThemeMode; promise: Promise<LearningState> } | null = null;
 
   readonly state = this.stateSignal.asReadonly();
   readonly revision = this.revisionSignal.asReadonly();
@@ -147,6 +159,8 @@ export class LearningStoreService {
     const state = structuredClone(before);
     mutator(state);
     state.updatedAt = new Date().toISOString();
+    const themeEdit = detectThemePreferenceEdit(before, state);
+    if (themeEdit) return this.updateThemePreference(themeEdit);
     const vocabularyEdit = detectSingleVocabularyEdit(before, state);
     if (vocabularyEdit) {
       await this.persistVocabularyEdit(state, vocabularyEdit);
@@ -159,6 +173,41 @@ export class LearningStoreService {
 
   async replaceAndPersist(state: LearningState): Promise<void> { await this.persistState(state); this.stateSignal.set(structuredClone(state)); }
   async persistCurrent(): Promise<void> { await this.persistState(this.snapshot()); }
+
+  private updateThemePreference(theme: ThemeMode): Promise<LearningState> {
+    const active = this.themeUpdateInFlight;
+    if (active) {
+      if (active.theme === theme) return active.promise;
+      return active.promise.then(() => this.updateThemePreference(theme));
+    }
+
+    const promise = this.persistThemePreference(theme).finally(() => {
+      if (this.themeUpdateInFlight?.promise === promise) this.themeUpdateInFlight = null;
+    });
+    this.themeUpdateInFlight = { theme, promise };
+    return promise;
+  }
+
+  private async persistThemePreference(theme: ThemeMode): Promise<LearningState> {
+    if (this.writeBlockedSignal()) throw new ApiError('Saving is blocked because the state revision conflicts with a newer version.', 409, 'STATE_CONFLICT');
+    const revision = this.revisionSignal();
+    try {
+      const response = await this.api.put<{ theme: ThemeMode; revision: number }>('/api/settings/theme', { theme, revision });
+      const nextRevision = Number(response.revision);
+      if (response.theme !== theme || !Number.isSafeInteger(nextRevision) || nextRevision <= revision) {
+        throw new ApiError('The saved theme preference response is invalid.', 502, 'INVALID_THEME_RESPONSE');
+      }
+      const state = this.snapshot();
+      state.settings.theme = theme;
+      state.updatedAt = new Date().toISOString();
+      this.revisionSignal.set(nextRevision);
+      this.stateSignal.set(state);
+      return state;
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'STATE_CONFLICT') this.writeBlockedSignal.set(true);
+      throw error;
+    }
+  }
 
   private async persistVocabularyEdit(state: LearningState, edit: VocabularyEditCandidate): Promise<void> {
     if (this.writeBlockedSignal()) throw new ApiError('Saving is blocked because the state revision conflicts with a newer version.', 409, 'STATE_CONFLICT');
