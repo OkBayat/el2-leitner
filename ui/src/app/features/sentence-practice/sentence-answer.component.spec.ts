@@ -37,7 +37,14 @@ describe('SentenceAnswerComponent', () => {
 
 	afterEach(() => fixture.destroy());
 
+	function enableDetails(): void {
+		fixture.componentRef.setInput('readOnly', true);
+		fixture.componentRef.setInput('revealed', true);
+		fixture.detectChanges();
+	}
+
 	async function open(): Promise<HTMLElement> {
+		enableDetails();
 		fixture.componentInstance.focus();
 		field.click();
 		fixture.detectChanges();
@@ -95,20 +102,56 @@ describe('SentenceAnswerComponent', () => {
 		expect(field.getAttribute('aria-invalid')).toBe('true');
 	});
 
-	it('opens on click without stealing typing focus and displays real definitions and provenance', async () => {
+	it('keeps word meaning unavailable until the checked answer is revealed and locked', async () => {
+		field.click();
+		fixture.detectChanges();
+		await fixture.whenStable();
+		expect(fixture.componentInstance.detailsOpen()).toBe(false);
+		expect(overlay.querySelector('[role="dialog"]')).toBeNull();
+		expect(field.getAttribute('aria-haspopup')).toBeNull();
+		expect(field.getAttribute('title')).toBeNull();
+
+		const beforeCheckShortcut = new KeyboardEvent('keydown', { key: 'ArrowDown', altKey: true, bubbles: true, cancelable: true });
+		field.dispatchEvent(beforeCheckShortcut);
+		fixture.detectChanges();
+		expect(beforeCheckShortcut.defaultPrevented).toBe(false);
+		expect(fixture.componentInstance.detailsOpen()).toBe(false);
+
+		fixture.componentRef.setInput('readOnly', true);
+		fixture.detectChanges();
+		field.click();
+		fixture.detectChanges();
+		expect(fixture.componentInstance.detailsOpen()).toBe(false);
+		expect(overlay.querySelector('[role="dialog"]')).toBeNull();
+
+		fixture.componentRef.setInput('revealed', true);
+		fixture.detectChanges();
+		expect(field.getAttribute('aria-haspopup')).toBe('dialog');
+		field.click();
+		fixture.detectChanges();
+		await fixture.whenStable();
+		expect(fixture.componentInstance.detailsOpen()).toBe(true);
+		expect(overlay.querySelector('[role="dialog"] mark')?.textContent).toBe('stationery');
+
+		fixture.componentRef.setInput('readOnly', false);
+		fixture.detectChanges();
+		await fixture.whenStable();
+		expect(fixture.componentInstance.detailsOpen()).toBe(false);
+		expect(overlay.querySelector('[role="dialog"]')).toBeNull();
+	});
+
+	it('opens after check without stealing focus and displays real definitions and provenance', async () => {
 		fixture.componentInstance.focus();
 		expect(fixture.componentInstance.detailsOpen()).toBe(false);
 		const panel = await open();
 		expect(document.activeElement).toBe(field);
 		expect(panel.textContent).toContain('Materials for writing.');
 		expect(panel.textContent).toContain('Campus vocabulary');
-		expect(panel.querySelector('mark')?.textContent).toBe('…');
-		fixture.componentRef.setInput('revealed', true);
-		fixture.detectChanges();
 		expect(panel.querySelector('mark')?.textContent).toBe('stationery');
 	});
 
-	it('supports keyboard opening, Escape, outside click and explicit close', async () => {
+	it('supports keyboard opening, Escape, outside click and explicit close after check', async () => {
+		enableDetails();
 		field.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', altKey: true, bubbles: true, cancelable: true }));
 		fixture.detectChanges();
 		expect(fixture.componentInstance.detailsOpen()).toBe(true);

@@ -34,8 +34,14 @@ export class SentenceAnswerComponent implements OnChanges {
 		return text.slice(before.length, text.length - after.length) || this.prompt.card.term;
 	}
 
+	get detailsEnabled(): boolean {
+		return this.readOnly && this.revealed;
+	}
+
 	ngOnChanges(changes: SimpleChanges): void {
-		if (changes['prompt']) this.detailsOpen.set(false);
+		if (changes['prompt'] || ((changes['readOnly'] || changes['revealed']) && !this.detailsEnabled)) {
+			this.detailsOpen.set(false);
+		}
 	}
 
 	focus(): void {
@@ -52,11 +58,17 @@ export class SentenceAnswerComponent implements OnChanges {
 		}
 	}
 
+	openDetails(): void {
+		if (!this.detailsEnabled) return;
+		this.detailsOpen.set(true);
+	}
+
 	onKeydown(event: KeyboardEvent): void {
 		if (event.isComposing || event.keyCode === 229) return;
 		if (event.altKey && event.key === 'ArrowDown') {
+			if (!this.detailsEnabled) return;
 			event.preventDefault();
-			this.detailsOpen.set(true);
+			this.openDetails();
 		} else if (event.key === 'Enter') {
 			event.preventDefault();
 			if (!event.repeat) this.primary.emit();
