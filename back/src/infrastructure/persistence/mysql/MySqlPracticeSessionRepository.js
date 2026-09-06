@@ -40,12 +40,12 @@ export class MySqlPracticeSessionRepository {
     this.pool = pool;
   }
 
-  async start(userId, { mode, plannedCount }) {
+  async start(userId, { mode, plannedCount, metadata = null }) {
     const publicId = randomUUID();
     const [result] = await this.pool.execute(
-      `INSERT INTO practice_sessions (public_id, user_id, mode, started_at, planned_count)
-       VALUES (?, ?, ?, CURRENT_TIMESTAMP(3), ?)`,
-      [publicId, userId, mode, plannedCount]
+      `INSERT INTO practice_sessions (public_id, user_id, mode, started_at, planned_count, metadata_json)
+       VALUES (?, ?, ?, CURRENT_TIMESTAMP(3), ?, ?)`,
+      [publicId, userId, mode, plannedCount, metadata == null ? null : JSON.stringify(metadata)]
     );
     const [rows] = await this.pool.execute("SELECT * FROM practice_sessions WHERE id = ?", [result.insertId]);
     return mapSession(rows[0]);
@@ -83,7 +83,6 @@ export class MySqlPracticeSessionRepository {
          WHERE id = ?`,
         [correctIncrement, wrongIncrement, session.id]
       );
-      // Record evidence in the same transaction; opening a session never colors a timeline step.
       await connection.execute(
         `INSERT INTO practice_session_days (practice_session_id, local_day)
          VALUES (?, ?)

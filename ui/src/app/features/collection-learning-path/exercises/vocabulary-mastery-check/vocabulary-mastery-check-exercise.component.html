@@ -1,0 +1,50 @@
+<section class="mastery-check" aria-labelledby="mastery-check-title">
+  <header class="mastery-check__header">
+    <div>
+      <p class="mastery-check__eyebrow">Mastered vocabulary · revalidation</p>
+      <h2 id="mastery-check-title">Vocabulary mastery check</h2>
+    </div>
+    @if (started()) {
+      <span class="mastery-check__progress" aria-label="Mastery check progress">{{ positionLabel() }}</span>
+    }
+  </header>
+
+  @if (error()) {
+    <p class="mastery-check__error" role="alert">{{ error() }}</p>
+  }
+
+  @if (payload(); as data) {
+    @if (!started()) {
+      <div class="mastery-check__intro">
+        <p>
+          @if (data.summary.eligibleCount === 0) {
+            No previously mastered words from this lesson need revalidation right now.
+          } @else {
+            Recheck {{ data.summary.eligibleCount }} mastered lesson word{{ data.summary.eligibleCount === 1 ? '' : 's' }}. A missed word returns to House 1 through the existing Leitner rules.
+          }
+        </p>
+        <button class="mastery-check__primary" type="button" [disabled]="busy()" (click)="start()">
+          {{ data.summary.eligibleCount === 0 ? 'Continue' : 'Start mastery check' }}
+        </button>
+      </div>
+    } @else if (session.currentWord(); as word) {
+      <div class="mastery-check__card">
+        <button class="mastery-check__listen" type="button" (click)="replay()" aria-label="Play pronunciation">Listen again</button>
+        <p class="mastery-check__term">{{ word.term }}</p>
+        @if (!answered()) {
+          <p class="mastery-check__prompt">Do you still remember this word?</p>
+          <div class="mastery-check__actions">
+            <button class="mastery-check__secondary" type="button" [disabled]="busy()" (click)="mark(false)">Needs work</button>
+            <button class="mastery-check__primary" type="button" [disabled]="busy()" (click)="mark(true)">Remembered</button>
+          </div>
+        } @else if (session.feedback(); as feedback) {
+          <div class="mastery-check__feedback" [class.mastery-check__feedback--correct]="feedback.correct">
+            <strong>{{ feedback.correct ? 'Mastery retained' : 'Returned to House 1' }}</strong>
+            <span>{{ feedback.detail }}</span>
+          </div>
+          <button class="mastery-check__primary" type="button" [disabled]="busy()" (click)="next()">Continue</button>
+        }
+      </div>
+    }
+  }
+</section>

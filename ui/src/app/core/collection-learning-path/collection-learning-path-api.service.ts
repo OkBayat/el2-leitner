@@ -7,6 +7,7 @@ import type {
   LearningPathResumeView,
 } from '../../domain/collection-learning-path/learning-path';
 import type { VocabularyIntakeActivationView } from '../../domain/collection-learning-path/vocabulary-intake';
+import type { VocabularyMasteryCheckStartView } from '../../domain/collection-learning-path/vocabulary-mastery-check';
 import { ApiClientService } from '../http/api-client.service';
 
 function segment(value: string): string {
@@ -49,6 +50,16 @@ export class CollectionLearningPathApiService {
   ): Promise<VocabularyIntakeActivationView> {
     return this.api.post<VocabularyIntakeActivationView>(
       `${exercisePath(pathId, lessonId, exerciseId)}/vocabulary-intake/activate`,
+    );
+  }
+
+  commandStartVocabularyMasteryCheck(
+    pathId: string,
+    lessonId: string,
+    exerciseId: string,
+  ): Promise<VocabularyMasteryCheckStartView> {
+    return this.api.post<VocabularyMasteryCheckStartView>(
+      `${exercisePath(pathId, lessonId, exerciseId)}/vocabulary-mastery-check/start`,
     );
   }
 

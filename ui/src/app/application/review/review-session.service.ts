@@ -109,10 +109,44 @@ export class ReviewSessionService {
     return this.openBackendSession('learning-path.quick-review', this.queue);
   }
 
+  async startScopedMasteryCheck(ids: readonly string[], sessionId: string): Promise<boolean> {
+    await this.store.initialize();
+    const normalizedSessionId = String(sessionId ?? '').trim();
+    const requested = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
+    if (!normalizedSessionId || requested.length === 0) return false;
+    const wordsById = new Map<string, string>(
+      this.store.snapshot().words.map((word) => [String(word.id), String(word.id)] as const),
+    );
+    const queue = requested.flatMap((id) => {
+      const wordId = wordsById.get(id);
+      return wordId ? [wordId] : [];
+    });
+    if (queue.length !== requested.length) {
+      await this.learningApi.abandonSession(normalizedSessionId, 0);
+      return false;
+    }
+
+    this.mode = 'review';
+    this.repeatBoxOneCycle = false;
+    this.remediationEnabled = false;
+    this.completedSessionIdSignal.set(null);
+    this.freePracticeSignal.set(false);
+    this.rechecks.clear();
+    this.remediationAttempt = null;
+    this.currentRecheck = null;
+    this.queue = queue;
+    return this.openExistingBackendSession(normalizedSessionId, this.queue);
+  }
+
   private async openBackendSession(sessionMode: string, queue: readonly string[]): Promise<boolean> {
     if (!queue.length) return false;
     const response = await this.learningApi.startSession(sessionMode, queue.length);
-    this.backendSessionId = response.session.id;
+    return this.openExistingBackendSession(response.session.id, queue);
+  }
+
+  private openExistingBackendSession(sessionId: string, queue: readonly string[]): boolean {
+    if (!queue.length) return false;
+    this.backendSessionId = sessionId;
     this.startedAt = Date.now();
     this.initialCountSignal.set(queue.length);
     this.answeredSignal.set(0);
