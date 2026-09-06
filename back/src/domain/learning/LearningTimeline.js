@@ -2,6 +2,8 @@ import { ValidationError } from '../errors.js';
 
 const ACTIVITIES = ['vocabulary', 'listening', 'shadowing'];
 const DAY_MS = 86_400_000;
+const DEFAULT_DAILY_LISTENING_GOAL = 3;
+const MAX_DAILY_LISTENING_GOAL = 12;
 
 export function shiftDay(day, amount) {
   return new Date(Date.parse(`${day}T12:00:00Z`) + amount * DAY_MS).toISOString().slice(0, 10);
@@ -33,6 +35,12 @@ function vocabularyProgress(data) {
   const safeRemaining = Number.isSafeInteger(remaining) && remaining > 0 ? remaining : 0;
   const total = safeCompleted + safeRemaining;
   return total ? { completed: safeCompleted, total } : null;
+}
+
+function dailyListeningGoal(data) {
+  const goal = Number(data.settings?.dailyListeningGoal);
+  if (!Number.isSafeInteger(goal)) return DEFAULT_DAILY_LISTENING_GOAL;
+  return Math.min(MAX_DAILY_LISTENING_GOAL, Math.max(1, goal));
 }
 
 export function timelineQuery(input = {}, now = new Date()) {
@@ -84,6 +92,11 @@ export function buildLearningTimeline(range, data) {
     else if (firstDate && lastDate) limitedHistory = true;
   }
   const todayVocabulary = vocabularyProgress(data);
+  const todayListeningCompleted = data.listening.reduce(
+    (total, entry) => total + (dayAt(entry.at) === today ? 1 : 0),
+    0
+  );
+  const todayListening = { completed: todayListeningCompleted, total: dailyListeningGoal(data) };
   const days = [];
   for (let day = start; day <= to; day = shiftDay(day, 1)) {
     const evidence = practiced.get(day) ?? new Set();
@@ -92,7 +105,10 @@ export function buildLearningTimeline(range, data) {
       activities: ACTIVITIES.filter(activity => evidence.has(activity)),
       boxOnePracticed: evidence.has('box1'),
     };
-    if (day === today && todayVocabulary) timelineDay.vocabularyProgress = todayVocabulary;
+    if (day === today) {
+      if (todayVocabulary) timelineDay.vocabularyProgress = todayVocabulary;
+      timelineDay.listeningProgress = todayListening;
+    }
     days.push(timelineDay);
   }
   return { today, days, nextBefore: days.length && start > firstDay ? start : null, limitedHistory };
