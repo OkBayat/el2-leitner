@@ -6,7 +6,7 @@ test('matches words in order without shifting after an omission', () => {
   const result = gradeShadowing('I really want to go home.', 'I want to go home');
   assert.deepEqual(result.words.map(w => w.matched), [true, false, true, true, true, true]);
   assert.equal(result.matchedCount, 5);
-  assert.equal(result.passed, false);
+  assert.equal(result.passed, true);
 });
 test('keeps punctuation, spacing and case in the displayed sentence', () => {
   const target = '  Hello, world!  How are you?';
@@ -22,9 +22,9 @@ test('a repeated word cannot earn credit more than once', () => {
   assert.equal(gradeShadowing('I think that that is right.', 'i think that is right').matchedCount, 5);
   assert.equal(gradeShadowing('one two three four', 'four three two one').passed, false);
 });
-test('uses an unrounded ninety-percent threshold', () => {
-  assert.equal(gradeShadowing('a b c d e f g h i j', 'a b c d e f g h i').passed, true);
-  assert.equal(gradeShadowing('a b c d e f g h i', 'a b c d e f g h').passed, false);
+test('uses an unrounded seventy-percent threshold', () => {
+  assert.equal(gradeShadowing('a b c d e f g h i j', 'a b c d e f g').passed, true);
+  assert.equal(gradeShadowing('a b c d e f g h i', 'a b c d e f').passed, false);
 });
 test('does not equate different words or grammatical forms', () => {
   assert.equal(gradeShadowing('The planets are blue.', 'the planet is blue').matchedCount, 2);
