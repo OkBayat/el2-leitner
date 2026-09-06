@@ -65,15 +65,15 @@
 						<p class="sentence-text" data-testid="sentence-cloze" [class.is-playing]="session.playbackActive()">
 							<span class="sentence-context-part">@for (token of playbackParts().before; track $index) {<span
 								class="sentence-playback-token"
-								[class.is-current-word]="isPlaybackTokenActive(token)">{{ token.text }}</span>}</span><app-sentence-answer
-								[class.is-current-word]="isPlaybackGapActive()"
+								[class.is-spoken]="isPlaybackTokenSpoken(token)">{{ token.text }}</span>}</span><app-sentence-answer
+								[class.is-spoken]="isPlaybackGapSpoken()"
 								[control]="answer" [prompt]="prompt"
 								[readOnly]="saving() || session.feedback() !== null"
 								[incorrect]="session.feedback()?.correct === false"
 								[revealed]="session.feedback() !== null"
 								(primary)="handlePrimary()"></app-sentence-answer><span class="sentence-context-part">@for (token of playbackParts().after; track $index) {<span
 								class="sentence-playback-token"
-								[class.is-current-word]="isPlaybackTokenActive(token)">{{ token.text }}</span>}</span>
+								[class.is-spoken]="isPlaybackTokenSpoken(token)">{{ token.text }}</span>}</span>
 						</p>
 					</form>
 				</article>
