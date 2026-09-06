@@ -97,7 +97,7 @@
   pointer-events: none;
 }
 .path-node.is-practiced { --node-face: var(--path-tone); --node-side: var(--path-side); color: white; }
-.path-node.is-in-progress { --node-face: #fff4df; --node-side: #d9c9aa; color: var(--path-ink); }
+.path-node.is-in-progress { --node-face: var(--path-tone); --node-side: var(--path-side); color: white; }
 .path-node:not(:disabled):hover { transform: translateY(-2px); }
 .path-node:not(:disabled):active { transform: translateY(4px); box-shadow: 0 3px 0 var(--node-side); }
 .path-node:disabled { cursor: default; }
@@ -109,35 +109,19 @@
   position: absolute;
   top: 32px;
   left: 50%;
-  width: 88px;
-  height: 88px;
+  width: 100px;
+  height: 100px;
   transform: translate(-50%, -50%) rotate(-90deg);
   overflow: visible;
   pointer-events: none;
+  filter: drop-shadow(0 2px 0 rgb(190 114 9 / .16));
 }
 .node-progress-track, .node-progress-value {
   fill: none;
-  stroke-width: 5;
+  stroke-width: 7;
 }
 .node-progress-track { stroke: #d7dbdf; }
 .node-progress-value { stroke: var(--path-tone); stroke-linecap: round; }
-.node-progress-label {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: -28px;
-  transform: translateX(-50%);
-  min-width: 38px;
-  padding: 3px 6px;
-  border: 1px solid var(--path-tone);
-  border-radius: 999px;
-  background: var(--mat-sys-surface);
-  color: var(--path-ink);
-  font-size: 10px;
-  font-weight: 850;
-  line-height: 1.2;
-  text-align: center;
-}
 .node-check {
   position: absolute;
   right: -3px;
