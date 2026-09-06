@@ -31,7 +31,7 @@ function toUrl(relativePath) {
 	return `/${relativePath.split(path.sep).join('/')}`;
 }
 
-function shouldPrecache(relativePath) {
+function shouldCache(relativePath) {
 	if (relativePath === 'service-worker.js' || relativePath.endsWith('.map')) return false;
 	return CACHEABLE_EXTENSIONS.has(path.extname(relativePath).toLowerCase());
 }
@@ -50,16 +50,72 @@ async function walk(directory, root = directory) {
 	return files;
 }
 
-export async function collectPrecacheFiles(outputDirectory = DEFAULT_OUTPUT_DIRECTORY) {
+function normalizeLocalAssetReference(reference) {
+	if (typeof reference !== 'string') return null;
+	const value = reference.trim();
+	if (!value || value.startsWith('#') || value.startsWith('data:') || value.startsWith('//')) return null;
+	if (/^[a-z][a-z\d+.-]*:/iu.test(value)) return null;
+	const withoutQuery = value.split(/[?#]/u, 1)[0];
+	const normalized = withoutQuery.replace(/^\/+|^\.\//u, '');
+	if (!normalized || normalized === '.' || normalized.startsWith('../')) return null;
+	return normalized.split('/').join(path.sep);
+}
+
+function collectHtmlAssetReferences(html) {
+	const references = [];
+	for (const match of html.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/giu)) {
+		const normalized = normalizeLocalAssetReference(match[1]);
+		if (normalized) references.push(normalized);
+	}
+	return references;
+}
+
+function collectManifestAssetReferences(manifest) {
+	const references = [];
+	const visit = (value) => {
+		if (Array.isArray(value)) {
+			for (const item of value) visit(item);
+			return;
+		}
+		if (!value || typeof value !== 'object') return;
+		for (const [key, child] of Object.entries(value)) {
+			if (key === 'src') {
+				const normalized = normalizeLocalAssetReference(child);
+				if (normalized) references.push(normalized);
+			} else {
+				visit(child);
+			}
+		}
+	};
+	visit(manifest);
+	return references;
+}
+
+export async function collectVersionFiles(outputDirectory = DEFAULT_OUTPUT_DIRECTORY) {
 	const outputStats = await stat(outputDirectory);
 	if (!outputStats.isDirectory()) throw new Error(`PWA output directory does not exist: ${outputDirectory}`);
 	const files = (await walk(outputDirectory))
-		.filter(shouldPrecache)
+		.filter(shouldCache)
 		.sort((a, b) => a.localeCompare(b, 'en'));
 	for (const required of ['index.html', 'manifest.webmanifest']) {
 		if (!files.includes(required)) throw new Error(`Required PWA asset is missing: ${required}`);
 	}
 	return files;
+}
+
+export async function collectPrecacheFiles(outputDirectory = DEFAULT_OUTPUT_DIRECTORY, versionFiles = null) {
+	const files = versionFiles || await collectVersionFiles(outputDirectory);
+	const available = new Set(files);
+	const precache = new Set(['index.html', 'manifest.webmanifest']);
+	const index = await readFile(path.join(outputDirectory, 'index.html'), 'utf8');
+	for (const reference of collectHtmlAssetReferences(index)) {
+		if (available.has(reference)) precache.add(reference);
+	}
+	const manifest = JSON.parse(await readFile(path.join(outputDirectory, 'manifest.webmanifest'), 'utf8'));
+	for (const reference of collectManifestAssetReferences(manifest)) {
+		if (available.has(reference)) precache.add(reference);
+	}
+	return [...precache].sort((a, b) => a.localeCompare(b, 'en'));
 }
 
 export async function buildCacheVersion(outputDirectory, files) {
@@ -83,6 +139,7 @@ const CACHE_NAME = CACHE_PREFIX + ${JSON.stringify(version)};
 const APP_SHELL_URL = '/index.html';
 const PRECACHE_URLS = Object.freeze(${JSON.stringify(precacheUrls, null, 2)});
 const PRECACHE_PATHS = new Set(PRECACHE_URLS);
+const CACHEABLE_PATH = /\\.(?:css|gif|html|jpe?g|js|json|md|mp3|ogg|png|svg|wav|webmanifest|webp|woff2?)$/iu;
 
 async function precacheApplication() {
   const cache = await caches.open(CACHE_NAME);
@@ -102,7 +159,7 @@ async function cachedAsset(request, pathname) {
   const cached = await cache.match(pathname, {ignoreSearch: true});
   if (cached) return cached;
   const response = await fetch(request);
-  if (response.ok) await cache.put(pathname, response.clone());
+  if (response.status === 200) await cache.put(pathname, response.clone());
   return response;
 }
 
@@ -141,7 +198,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (PRECACHE_PATHS.has(url.pathname)) {
+  if (PRECACHE_PATHS.has(url.pathname) || CACHEABLE_PATH.test(url.pathname)) {
     event.respondWith(cachedAsset(request, url.pathname));
   }
 });
@@ -159,8 +216,9 @@ self.addEventListener('message', (event) => {
 }
 
 export async function generatePwaWorker(outputDirectory = DEFAULT_OUTPUT_DIRECTORY) {
-	const files = await collectPrecacheFiles(outputDirectory);
-	const version = await buildCacheVersion(outputDirectory, files);
+	const versionFiles = await collectVersionFiles(outputDirectory);
+	const files = await collectPrecacheFiles(outputDirectory, versionFiles);
+	const version = await buildCacheVersion(outputDirectory, versionFiles);
 	const worker = renderServiceWorker(version, files);
 	const workerPath = path.join(outputDirectory, 'service-worker.js');
 	await writeFile(workerPath, worker, 'utf8');
