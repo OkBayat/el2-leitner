@@ -2,11 +2,11 @@
 export class MySqlLearningTimelineRepository {
   constructor(pool) { this.pool = pool; }
 
-  async read(userId, { from, to }) {
+  async read(userId, { from, to, today = to }) {
     // A padded UTC window contains every IANA local day, including historical DST changes.
     const fromSeconds = Date.parse(`${from}T00:00:00Z`) / 1000 - 86_400;
     const toSeconds = Date.parse(`${to}T00:00:00Z`) / 1000 + 172_800;
-    const [reviews, practice, listening, legacy, bounds] = await Promise.all([
+    const [reviews, practice, listening, legacy, bounds, vocabularyToday] = await Promise.all([
       this.pool.execute(
         `SELECT DISTINCT DATE_FORMAT(local_day, '%Y-%m-%d') AS day,
                 CASE WHEN mode = 'box1' THEN 'box1' ELSE 'vocabulary' END AS activity
@@ -58,7 +58,46 @@ export class MySqlLearningTimelineRepository {
              AND NOT EXISTS (SELECT 1 FROM practice_session_days d WHERE d.practice_session_id = s.id)) AS legacyAt`,
         [userId, userId, userId, userId]
       ),
+      this.pool.execute(
+        `SELECT
+          (SELECT COUNT(DISTINCT re.vocabulary_entry_id)
+           FROM review_events re
+           JOIN vocabulary_entries ve ON ve.id = re.vocabulary_entry_id AND ve.status = 'active'
+           JOIN collection_entries ce ON ce.vocabulary_entry_id = ve.id AND ce.removed_at IS NULL
+           JOIN user_collections uc ON uc.collection_id = ce.collection_id
+             AND uc.user_id = re.user_id AND uc.status = 'active'
+           JOIN collections c ON c.id = ce.collection_id AND c.archived_at IS NULL
+           WHERE re.user_id = ? AND re.local_day = ?
+             AND (re.mode IN ('review', 'new') OR re.mode IS NULL)) AS completed,
+          (SELECT COUNT(DISTINCT uvp.vocabulary_entry_id)
+           FROM user_vocabulary_progress uvp
+           JOIN vocabulary_entries ve ON ve.id = uvp.vocabulary_entry_id AND ve.status = 'active'
+           JOIN collection_entries ce ON ce.vocabulary_entry_id = ve.id AND ce.removed_at IS NULL
+           JOIN user_collections uc ON uc.collection_id = ce.collection_id
+             AND uc.user_id = uvp.user_id AND uc.status = 'active'
+           JOIN collections c ON c.id = ce.collection_id AND c.archived_at IS NULL
+           WHERE uvp.user_id = ?
+             AND COALESCE(uvp.status, 'active') <> 'excluded'
+             AND uvp.box > 0 AND uvp.mastered_at IS NULL
+             AND uvp.due_date IS NOT NULL AND uvp.due_date <= ?
+             AND (uvp.blocked_until IS NULL OR uvp.blocked_until <= ?)
+             AND NOT EXISTS (
+               SELECT 1 FROM review_events re
+               WHERE re.user_id = uvp.user_id
+                 AND re.vocabulary_entry_id = uvp.vocabulary_entry_id
+                 AND re.local_day = ?
+                 AND (re.mode IN ('review', 'new') OR re.mode IS NULL)
+             )) AS remaining`,
+        [userId, today, userId, today, today, today]
+      ),
     ]);
-    return { reviews: reviews[0], practice: practice[0], listening: listening[0], legacy: legacy[0], first: bounds[0][0] ?? {} };
+    return {
+      reviews: reviews[0],
+      practice: practice[0],
+      listening: listening[0],
+      legacy: legacy[0],
+      first: bounds[0][0] ?? {},
+      vocabularyToday: vocabularyToday[0][0] ?? { completed: 0, remaining: 0 },
+    };
   }
 }

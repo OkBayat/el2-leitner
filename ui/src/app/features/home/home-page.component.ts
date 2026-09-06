@@ -118,6 +118,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   statusLabel(step: PathStep): string {
+    if (step.status === 'in-progress') return `In progress, ${step.progress ?? 0}% complete`;
     return { practiced: 'Practised', available: 'Not practised', upcoming: 'Upcoming', planned: 'Coming soon' }[step.status];
   }
 

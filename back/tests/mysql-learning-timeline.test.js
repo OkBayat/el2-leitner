@@ -6,7 +6,7 @@ test('timeline reads are bounded, parameterized, user-scoped, and exclude unsubm
   const calls = [];
   const pool = { execute: async (sql, values) => { calls.push({ sql, values }); return [[]]; } };
   const result = await new MySqlLearningTimelineRepository(pool).read(42, { from: '2026-09-01', to: '2026-09-06' });
-  assert.equal(calls.length, 5);
+  assert.equal(calls.length, 6);
   for (const { sql, values } of calls) {
     assert.match(sql, /user_id = \?/u);
     assert.equal(values[0], 42);
@@ -20,7 +20,14 @@ test('timeline reads are bounded, parameterized, user-scoped, and exclude unsubm
   assert.match(calls[3].sql, /completed_count > 0/u);
   assert.match(calls[3].sql, /NOT EXISTS/u);
   assert.deepEqual(calls[4].values, [42, 42, 42, 42]);
-  assert.deepEqual(result, { reviews: [], practice: [], listening: [], legacy: [], first: {} });
+  assert.match(calls[5].sql, /COUNT\(DISTINCT re\.vocabulary_entry_id\)/u);
+  assert.match(calls[5].sql, /uvp\.due_date <= \?/u);
+  assert.match(calls[5].sql, /NOT EXISTS/u);
+  assert.deepEqual(calls[5].values, [42, '2026-09-06', 42, '2026-09-06', '2026-09-06', '2026-09-06']);
+  assert.deepEqual(result, {
+    reviews: [], practice: [], listening: [], legacy: [], first: {},
+    vocabularyToday: { completed: 0, remaining: 0 },
+  });
 });
 
 test('a failed source rejects the whole read rather than presenting false unpracticed days', async () => {

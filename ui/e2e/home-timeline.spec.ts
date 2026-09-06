@@ -16,6 +16,7 @@ async function mockHome(page: Page) {
   const control = {
     fail: false, olderGate: Promise.resolve(), requests: [] as string[], writes: [] as string[],
     activities: ['vocabulary'] as PathActivity[],
+    vocabularyProgress: undefined as TimelinePage['days'][number]['vocabularyProgress'],
   };
   page.on('request', request => {
     if (new URL(request.url()).pathname.startsWith('/api/') && request.method() !== 'GET') control.writes.push(request.url());
@@ -33,6 +34,7 @@ async function mockHome(page: Page) {
       days: offsets.map(offset => ({
         day: shift(offset), boxOnePracticed: offset === -1,
         activities: offset === 0 ? control.activities : offset === -1 ? ['vocabulary', 'listening', 'shadowing'] : before ? ['vocabulary'] : [],
+        ...(offset === 0 && control.vocabularyProgress ? { vocabularyProgress: control.vocabularyProgress } : {}),
       })),
     };
     await route.fulfill({ json: response });
@@ -99,6 +101,28 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     expect(errors).toEqual([]);
   });
 }
+
+test('partial vocabulary progress stays current with a clockwise ring and Continue CTA', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const control = await mockHome(page);
+  control.vocabularyProgress = { completed: 5, total: 10 };
+  await page.goto('/dashboard');
+  const current = page.locator('.path-day.is-today');
+  const vocabulary = current.locator('[data-activity="vocabulary"]');
+  const listening = current.locator('[data-activity="listening"]');
+  await expect(vocabulary).toHaveAttribute('data-status', 'in-progress');
+  await expect(vocabulary).toHaveClass(/is-current/u);
+  await expect(listening).not.toHaveClass(/is-current/u);
+  await expect(vocabulary.locator('.node-progress-label')).toHaveText('50%');
+  await expect(vocabulary.locator('.node-progress-value')).toHaveAttribute('stroke-dasharray', '50 50');
+  await expect(vocabulary.locator('.start-flag')).toHaveText('CONTINUE');
+  expect(await vocabulary.locator('.start-flag').evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
+  await expect(listening.locator('.start-flag')).toHaveCount(0);
+  await vocabulary.click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('50% complete');
+  await expect(dialog.getByRole('link', { name: 'Continue', exact: true })).toHaveAttribute('href', '/review');
+});
 
 test('scrolling up prepends history without moving the existing day on screen', async ({ page }) => {
   const control = await mockHome(page);

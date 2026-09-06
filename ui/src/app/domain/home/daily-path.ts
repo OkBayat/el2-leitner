@@ -1,11 +1,17 @@
 export type PathActivity = 'vocabulary' | 'listening' | 'shadowing' | 'reading';
 export type PathStepId = PathActivity | 'reserved-5' | 'reserved-6';
-export type PathStatus = 'practiced' | 'available' | 'upcoming' | 'planned';
+export type PathStatus = 'practiced' | 'in-progress' | 'available' | 'upcoming' | 'planned';
+
+export interface VocabularyProgress {
+  completed: number;
+  total: number;
+}
 
 export interface TimelineDay {
   day: string;
   activities: PathActivity[];
   boxOnePracticed: boolean;
+  vocabularyProgress?: VocabularyProgress;
 }
 
 export interface TimelinePage {
@@ -21,6 +27,7 @@ export interface PathStep {
   route: string | null;
   status: PathStatus;
   current: boolean;
+  progress: number | null;
 }
 
 export interface PathDay {
@@ -44,6 +51,13 @@ const STEPS: ReadonlyArray<Pick<PathStep, 'id' | 'label' | 'route'>> = [
   { id: 'reserved-6', label: 'Activity 6', route: null },
 ];
 
+function progressPercent(progress?: VocabularyProgress): number | null {
+  const total = Number(progress?.total);
+  if (!Number.isFinite(total) || total <= 0) return null;
+  const completed = Math.min(total, Math.max(0, Number(progress?.completed) || 0));
+  return Math.round((completed / total) * 100);
+}
+
 export function nextPathDay(day: string, amount = 1): string {
   return new Date(Date.parse(`${day}T12:00:00Z`) + amount * 86_400_000).toISOString().slice(0, 10);
 }
@@ -62,11 +76,13 @@ export function buildDailyPath(records: TimelineDay[], today: string): PathDay[]
     const ordinal = Math.floor(Date.parse(`${record.day}T12:00:00Z`) / 86_400_000);
     let currentAssigned = false;
     const steps: PathStep[] = STEPS.map(step => {
+      const progress = isToday && step.id === 'vocabulary' ? progressPercent(record.vocabularyProgress) : null;
       const status: PathStatus = future ? 'upcoming' : !step.route ? 'planned'
+        : progress !== null ? progress >= 100 ? 'practiced' : progress > 0 ? 'in-progress' : 'available'
         : record.activities.includes(step.id as PathActivity) ? 'practiced' : 'available';
-      const current = isToday && status === 'available' && !currentAssigned;
+      const current = isToday && (status === 'available' || status === 'in-progress') && !currentAssigned;
       if (current) currentAssigned = true;
-      return { ...step, status, current };
+      return { ...step, status, current, progress };
     });
     const dateLabel = formatter.format(new Date(`${record.day}T12:00:00Z`));
     return {

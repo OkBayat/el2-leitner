@@ -10,6 +10,26 @@ describe('daily home path', () => {
     expect(days[0].steps.map(step => step.status)).toEqual(['available', 'practiced', 'available', 'planned', 'planned', 'planned']);
     expect(days[0].steps.filter(step => step.current).map(step => step.id)).toEqual(['vocabulary']);
   });
+  it('keeps a partially completed vocabulary step current and reports its percentage', () => {
+    const [day] = buildDailyPath([{
+      day: today,
+      activities: ['vocabulary'],
+      boxOnePracticed: false,
+      vocabularyProgress: { completed: 5, total: 10 },
+    }], today);
+    expect(day.steps[0]).toMatchObject({ id: 'vocabulary', status: 'in-progress', current: true, progress: 50 });
+    expect(day.steps[1]).toMatchObject({ id: 'listening', status: 'available', current: false, progress: null });
+  });
+  it('advances the current marker only after the vocabulary workload reaches 100 percent', () => {
+    const [day] = buildDailyPath([{
+      day: today,
+      activities: ['vocabulary'],
+      boxOnePracticed: false,
+      vocabularyProgress: { completed: 10, total: 10 },
+    }], today);
+    expect(day.steps[0]).toMatchObject({ status: 'practiced', current: false, progress: 100 });
+    expect(day.steps[1]).toMatchObject({ status: 'available', current: true });
+  });
   it('preserves colored history and leaves missed historical tasks gray', () => {
     const days = buildDailyPath([
       { day: '2026-09-05', activities: ['vocabulary', 'shadowing'], boxOnePracticed: true },

@@ -35,10 +35,30 @@ test('each activity uses its own evidence; wrong answers and repeated practice s
   const { useCase, calls } = subject(data);
   const result = await useCase.execute(17, { timeZone: 'Asia/Tehran', limit: '3' });
   assert.equal(calls[0][0], 17);
+  assert.equal(calls[0][1].today, '2026-09-06');
   assert.deepEqual(result.days, [
     { day: '2026-09-04', activities: ['vocabulary'], boxOnePracticed: false },
     { day: '2026-09-05', activities: [], boxOnePracticed: false },
     { day: '2026-09-06', activities: ['vocabulary', 'listening', 'shadowing'], boxOnePracticed: true },
+  ]);
+});
+
+test('today exposes partial vocabulary workload without fabricating historical progress', async () => {
+  const data = empty();
+  data.first.reviewDay = '2026-09-05';
+  data.reviews = [
+    { day: '2026-09-05', activity: 'vocabulary' },
+    { day: '2026-09-06', activity: 'vocabulary' },
+  ];
+  data.vocabularyToday = { completed: '5', remaining: '5' };
+  const { useCase } = subject(data);
+  const result = await useCase.execute(17, { limit: '2' });
+  assert.deepEqual(result.days, [
+    { day: '2026-09-05', activities: ['vocabulary'], boxOnePracticed: false },
+    {
+      day: '2026-09-06', activities: ['vocabulary'], boxOnePracticed: false,
+      vocabularyProgress: { completed: 5, total: 10 },
+    },
   ]);
 });
 
