@@ -11,8 +11,7 @@ export class MySqlLearningTimelineRepository {
         `SELECT DISTINCT DATE_FORMAT(local_day, '%Y-%m-%d') AS day,
                 CASE WHEN mode = 'box1' THEN 'box1' ELSE 'vocabulary' END AS activity
          FROM review_events
-         WHERE user_id = ? AND local_day BETWEEN ? AND ?
-           AND (mode IN ('review', 'new', 'box1') OR mode IS NULL)`,
+         WHERE user_id = ? AND local_day BETWEEN ? AND ?`,
         [userId, from, to]
       ),
       this.pool.execute(
@@ -46,7 +45,7 @@ export class MySqlLearningTimelineRepository {
       this.pool.execute(
         `SELECT
           (SELECT DATE_FORMAT(MIN(local_day), '%Y-%m-%d') FROM review_events
-           WHERE user_id = ? AND (mode IN ('review', 'new', 'box1') OR mode IS NULL)) AS reviewDay,
+           WHERE user_id = ?) AS reviewDay,
           (SELECT DATE_FORMAT(MIN(d.local_day), '%Y-%m-%d') FROM practice_session_days d
            JOIN practice_sessions s ON s.id = d.practice_session_id
            WHERE s.user_id = ? AND s.mode IN ('sentence-house-1', 'shadowing-house-1')) AS practiceDay,
@@ -68,7 +67,7 @@ export class MySqlLearningTimelineRepository {
              AND uc.user_id = re.user_id AND uc.status = 'active'
            JOIN collections c ON c.id = ce.collection_id AND c.archived_at IS NULL
            WHERE re.user_id = ? AND re.local_day = ?
-             AND (re.mode IN ('review', 'new') OR re.mode IS NULL)) AS completed,
+             AND COALESCE(re.mode, 'review') <> 'box1') AS completed,
           (SELECT COUNT(DISTINCT uvp.vocabulary_entry_id)
            FROM user_vocabulary_progress uvp
            JOIN vocabulary_entries ve ON ve.id = uvp.vocabulary_entry_id AND ve.status = 'active'
@@ -86,7 +85,7 @@ export class MySqlLearningTimelineRepository {
                WHERE re.user_id = uvp.user_id
                  AND re.vocabulary_entry_id = uvp.vocabulary_entry_id
                  AND re.local_day = ?
-                 AND (re.mode IN ('review', 'new') OR re.mode IS NULL)
+                 AND COALESCE(re.mode, 'review') <> 'box1'
              )) AS remaining`,
         [userId, today, userId, today, today, today]
       ),
