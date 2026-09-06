@@ -27,7 +27,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
   readonly todayVisible = signal(true);
   readonly popoverAbove = signal(false);
   readonly arrowX = signal<number | null>(null);
-  positions: ConnectedPosition[] = [];
+  readonly popoverOrigin = signal({ x: 0, y: 0, width: 0, height: 0 });
+  readonly positions: ConnectedPosition[] = [
+    { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 16 },
+    { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -16 },
+  ];
   @ViewChild('popup') private popup?: ElementRef<HTMLElement>;
   private historyObserver?: IntersectionObserver;
   private todayObserver?: IntersectionObserver;
@@ -77,7 +81,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (day.future || step?.id.startsWith('reserved')) return;
     const previous = this.selection();
     if (previous?.origin === origin) { this.close(); return; }
-    this.updatePositions(origin);
+    this.updatePopoverOrigin(origin);
     this.arrowX.set(null); this.popoverAbove.set(false);
     this.selection.set({ day, step, origin });
   }
@@ -85,21 +89,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize(): void {
     const selected = this.selection();
-    if (selected) this.updatePositions(selected.origin);
+    if (selected) this.updatePopoverOrigin(selected.origin);
   }
 
-  private updatePositions(origin: CdkOverlayOrigin): void {
+  private updatePopoverOrigin(origin: CdkOverlayOrigin): void {
     const rect = origin.elementRef.nativeElement.getBoundingClientRect();
     const width = Math.min(310, window.innerWidth - 32);
     const center = rect.left + rect.width / 2;
     const left = Math.max(16, Math.min(center - width / 2, window.innerWidth - width - 16));
-    // Supply an already-fitting horizontal anchor. CDK still selects above/below,
-    // but cannot push a narrow-screen dialog flush against the viewport edge.
-    const offsetX = left + width / 2 - center;
-    this.positions = [
-      { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetX, offsetY: 16 },
-      { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetX, offsetY: -16 },
-    ];
+    // Use a bounded point rather than a post-position transform. This keeps the
+    // entire panel inside narrow viewports while its arrow follows the real trigger.
+    this.popoverOrigin.set({ x: left + width / 2, y: rect.top, width: 0, height: rect.height });
   }
 
   close(): void { this.selection.set(null); }
