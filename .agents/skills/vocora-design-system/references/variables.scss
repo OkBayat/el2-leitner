@@ -1,0 +1,125 @@
+// Vocora design-system reference mapping.
+// Light is the default theme. Dark values are activated by html[data-theme='dark'].
+// Product implementation should consume semantic custom properties instead of raw colors.
+
+:root,
+html[data-theme='light'] {
+  color-scheme: light;
+
+  --vocora-surface-page: #f8faf9;
+  --vocora-surface-base: #ffffff;
+  --vocora-surface-raised: #ffffff;
+  --vocora-surface-subtle: #f1f5f2;
+  --vocora-border: #e4eae6;
+
+  --vocora-text-primary: #18201b;
+  --vocora-text-secondary: #59635c;
+  --vocora-text-disabled: #a7b2aa;
+  --vocora-text-on-primary: #ffffff;
+  --vocora-text-on-strong: #ffffff;
+
+  --vocora-action-primary: #258a49;
+  --vocora-action-primary-hover: #176437;
+  --vocora-action-secondary: #effbf3;
+  --vocora-action-secondary-foreground: #176437;
+  --vocora-focus-ring: #086f6b;
+
+  --vocora-success: #258a49;
+  --vocora-information: #2563eb;
+  --vocora-warning: #e99a00;
+  --vocora-error: #d83a3a;
+
+  --vocora-mastered: #258a49;
+  --vocora-leitner-active: #2563eb;
+  --vocora-not-started: #7c4ddb;
+  --vocora-future: #d2dad5;
+  --vocora-disabled: #a7b2aa;
+
+  --vocora-activity-vocabulary: #258a49;
+  --vocora-activity-listening: #2563eb;
+  --vocora-activity-shadowing: #086f6b;
+  --vocora-activity-reading: #7c4ddb;
+  --vocora-activity-writing: #d96a12;
+  --vocora-activity-grammar: #4f46e5;
+
+  --vocora-brand-green: #4fc66a;
+  --vocora-brand-green-strong: #258a49;
+  --vocora-brand-mint: #c8f3d5;
+  --vocora-brand-mint-light: #effbf3;
+  --vocora-brand-teal: #086f6b;
+  --vocora-brand-orange: #ffb51b;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --vocora-surface-page: #0f1611;
+  --vocora-surface-base: #161f19;
+  --vocora-surface-raised: #1d2921;
+  --vocora-surface-subtle: #223027;
+  --vocora-border: #2a392f;
+
+  --vocora-text-primary: #f0f7f2;
+  --vocora-text-secondary: #a9b8ad;
+  --vocora-text-disabled: #6f7d73;
+  --vocora-text-on-primary: #08130b;
+  --vocora-text-on-strong: #f6fff8;
+
+  --vocora-action-primary: #65d780;
+  --vocora-action-primary-hover: #7de392;
+  --vocora-action-secondary: #274b35;
+  --vocora-action-secondary-foreground: #ddf7e5;
+  --vocora-focus-ring: #42bdb4;
+
+  --vocora-success: #65d780;
+  --vocora-information: #6ea8fe;
+  --vocora-warning: #ffc45a;
+  --vocora-error: #ff7b7b;
+
+  --vocora-mastered: #65d780;
+  --vocora-leitner-active: #6ea8fe;
+  --vocora-not-started: #a98bff;
+  --vocora-future: #536159;
+  --vocora-disabled: #6f7d73;
+
+  --vocora-activity-vocabulary: #65d780;
+  --vocora-activity-listening: #6ea8fe;
+  --vocora-activity-shadowing: #42bdb4;
+  --vocora-activity-reading: #a98bff;
+  --vocora-activity-writing: #ffb26b;
+  --vocora-activity-grammar: #8f8bff;
+
+  --vocora-brand-green: #65d780;
+  --vocora-brand-green-strong: #4fc66a;
+  --vocora-brand-mint: #274b35;
+  --vocora-brand-mint-light: #1f3327;
+  --vocora-brand-teal: #42bdb4;
+  --vocora-brand-orange: #ffc15a;
+}
+
+:root {
+  --vocora-space-1: 4px;
+  --vocora-space-2: 8px;
+  --vocora-space-3: 12px;
+  --vocora-space-4: 16px;
+  --vocora-space-5: 20px;
+  --vocora-space-6: 24px;
+  --vocora-space-8: 32px;
+  --vocora-space-10: 40px;
+  --vocora-space-12: 48px;
+  --vocora-space-16: 64px;
+
+  --vocora-radius-xs: 8px;
+  --vocora-radius-sm: 10px;
+  --vocora-radius-md: 14px;
+  --vocora-radius-lg: 18px;
+  --vocora-radius-xl: 24px;
+  --vocora-radius-dialog: 28px;
+  --vocora-radius-pill: 999px;
+
+  --vocora-motion-fast: 120ms;
+  --vocora-motion-normal: 180ms;
+  --vocora-motion-slow: 240ms;
+
+  --vocora-touch-target-min: 44px;
+}
