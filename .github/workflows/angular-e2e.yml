@@ -26,15 +26,46 @@ jobs:
           node-version: 22.23.2
           cache: npm
           cache-dependency-path: ui/package-lock.json
+      - name: Pin Playwright AudioWorklet fix
+        working-directory: ui
+        # Playwright 1.55 can leave AudioWorklet.addModule() pending forever in CI.
+        # Patch the clean dependency manifest and lockfile before npm ci so npm
+        # installs the upstream-fixed 1.56.1 without mutating an installed tree.
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+
+          packageJson.devDependencies['@playwright/test'] = '1.56.1';
+          lock.packages[''].devDependencies['@playwright/test'] = '1.56.1';
+
+          Object.assign(lock.packages['node_modules/@playwright/test'], {
+            version: '1.56.1',
+            resolved: 'https://registry.npmjs.org/@playwright/test/-/test-1.56.1.tgz',
+            integrity: 'sha512-vSMYtL/zOcFpvJCW71Q/OEGQb7KYBPAdKh35WNSkaZA75JlAO8ED8UN6GUNTm3drWomcbcqRPFqQbLae8yBTdg=='
+          });
+          lock.packages['node_modules/@playwright/test'].dependencies.playwright = '1.56.1';
+
+          Object.assign(lock.packages['node_modules/playwright'], {
+            version: '1.56.1',
+            resolved: 'https://registry.npmjs.org/playwright/-/playwright-1.56.1.tgz',
+            integrity: 'sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw=='
+          });
+          lock.packages['node_modules/playwright'].dependencies['playwright-core'] = '1.56.1';
+
+          Object.assign(lock.packages['node_modules/playwright-core'], {
+            version: '1.56.1',
+            resolved: 'https://registry.npmjs.org/playwright-core/-/playwright-core-1.56.1.tgz',
+            integrity: 'sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ=='
+          });
+
+          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 4)}\n`);
+          fs.writeFileSync('package-lock.json', `${JSON.stringify(lock, null, 4)}\n`);
+          NODE
       - name: Install UI dependencies
         working-directory: ui
         run: npm ci
-      - name: Use AudioWorklet-safe Playwright
-        working-directory: ui
-        # Playwright 1.55 can leave AudioWorklet.addModule() pending forever in CI.
-        # 1.56 contains the upstream fix; keep this exact CI override until the
-        # repository dependency is upgraded separately.
-        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
       - name: Install Playwright Chromium
         working-directory: ui
         run: npx playwright install --with-deps chromium
