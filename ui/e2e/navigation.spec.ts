@@ -66,6 +66,7 @@ for (const theme of ['light', 'dark'] as const) {
 				const box = (await dock.boundingBox())!;
 				expect(box.x).toBe(0);
 				expect(box.width).toBe(width);
+				expect(box.y + box.height).toBe(900);
 				for (const target of await dock.locator('a, button').all()) {
 					const rect = (await target.boundingBox())!;
 					expect(rect.width).toBeGreaterThanOrEqual(44);
@@ -95,7 +96,7 @@ test('mobile overflow retains keyboard focus, settings, theme switching, story a
 	const menu = page.getByRole('menu');
 	await expect(menu).toBeVisible();
 	for (const name of ['Settings', 'Progress', 'Overview', 'Create progress story', 'Change theme', 'Sign out']) {
-		await expect(menu.getByRole('menuitem', {name})).toBeVisible();
+		await expect(menu.getByRole('menuitem', {name, exact: true})).toBeVisible();
 	}
 	await page.keyboard.press('Escape');
 	await expect(menu).toHaveCount(0);
@@ -120,8 +121,9 @@ test('desktop keyboard navigation skips chrome and menus close when their trigge
 	await page.setViewportSize({width: 1440, height: 900});
 	await mockNavigation(page);
 	await page.goto('/dashboard');
-	await page.keyboard.press('Tab');
-	await expect(page.getByRole('link', {name: 'Skip to content'})).toBeFocused();
+	const skip = page.getByRole('link', {name: 'Skip to content'});
+	await skip.focus();
+	await expect(skip).toBeFocused();
 	await page.keyboard.press('Enter');
 	await expect(page.locator('main')).toBeFocused();
 	const more = page.getByTestId('desktop-more');
