@@ -103,7 +103,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
 }
 
 test('partial vocabulary progress stays current as a solid 3D node with a larger clockwise ring and Continue CTA', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.emulateMedia({ reducedMotion: 'no-preference', colorScheme: 'dark' });
   const control = await mockHome(page);
   control.vocabularyProgress = { completed: 5, total: 10 };
   await page.goto('/dashboard');
@@ -122,8 +122,11 @@ test('partial vocabulary progress stays current as a solid 3D node with a larger
   const ringBox = await vocabulary.locator('.node-progress-ring').boundingBox();
   expect(ringBox?.width ?? 0).toBeGreaterThanOrEqual(97.5);
   expect(ringBox?.height ?? 0).toBeGreaterThanOrEqual(97.5);
-  await expect(vocabulary.locator('.start-flag')).toHaveText('CONTINUE');
-  expect(await vocabulary.locator('.start-flag').evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
+  const activeFlag = vocabulary.locator('.start-flag');
+  await expect(activeFlag).toHaveText('CONTINUE');
+  await expect(activeFlag).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  expect(await activeFlag.evaluate(element => getComputedStyle(element, '::after').backgroundColor)).toBe('rgb(255, 255, 255)');
+  expect(await activeFlag.evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
   await expect(listening.locator('.start-flag')).toHaveCount(0);
   await vocabulary.click();
   const dialog = page.getByRole('dialog');
