@@ -19,16 +19,19 @@ assert.match(pkg.scripts['build:production'], /generate-pwa-worker\.mjs/u, 'Prod
 assert.match(pkg.scripts.test, /build:production.*check:pwa/u, 'The complete test command must validate the generated PWA output.');
 
 const angular = JSON.parse(read('angular.json'));
-assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/manifest.webmanifest'), 'Angular must publish the web app manifest at the origin root.');
+assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/manifest.webmanifest'), 'Angular must keep the compatibility web app manifest available at the origin root.');
+assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/vocora-v2.webmanifest'), 'Angular must publish the versioned install manifest at the origin root.');
 assert.ok(angular.projects.vocora.architect.build.options.styles.includes('src/pwa.scss'), 'The installed-app safe-area stylesheet must be part of every build.');
 
-const manifest = JSON.parse(read('src/manifest.webmanifest'));
+const manifest = JSON.parse(read('src/vocora-v2.webmanifest'));
 assert.equal(manifest.id, '/', 'The PWA needs a stable app identity.');
 assert.equal(manifest.start_url, '/dashboard');
 assert.equal(manifest.scope, '/');
 assert.equal(manifest.display, 'standalone');
 assert.equal(manifest.prefer_related_applications, false);
-assert.ok(manifest.name && manifest.short_name && manifest.description, 'Install metadata must include a name, short name, and description.');
+assert.equal(manifest.name, 'Vocora', 'The install prompt must use the current Vocora product name.');
+assert.equal(manifest.short_name, 'Vocora', 'The installed app label must use the current Vocora product name.');
+assert.ok(manifest.description, 'Install metadata must include a description.');
 assert.match(manifest.theme_color, /^#[0-9a-f]{6}$/iu);
 assert.match(manifest.background_color, /^#[0-9a-f]{6}$/iu);
 assert.ok(Array.isArray(manifest.shortcuts) && manifest.shortcuts.length >= 2, 'Installed app shortcuts must expose Review and Words.');
@@ -48,7 +51,10 @@ for (const icon of icons) {
 }
 
 const index = read('src/index.html');
-assert.match(index, /<link rel="manifest" href="\/manifest\.webmanifest">/u);
+const manifestLinkMatch = index.match(/<link rel="manifest" href="([^"]+)">/u);
+assert.ok(manifestLinkMatch, 'The document must reference a web app manifest.');
+const manifestUrl = manifestLinkMatch[1];
+assert.equal(manifestUrl, '/vocora-v2.webmanifest', 'The install manifest URL must be versioned so an older service worker cannot serve stale install metadata.');
 assert.match(index, /apple-mobile-web-app-capable" content="yes"/u);
 assert.match(index, /apple-mobile-web-app-title" content="Vocora"/u);
 assert.match(index, /viewport-fit=cover/u);
@@ -97,7 +103,7 @@ assert.match(pwaStyles, /app-review-page \.review-action-footer[\s\S]*var\(--saf
 const standaloneRootOverflow = /@media\s*\(\s*display-mode\s*:\s*standalone\s*\)\s*\{[\s\S]*?html\s*,\s*body\s*\{[\s\S]*?(?:overflow(?:-[xy])?|overscroll-behavior(?:-[xy])?)\s*:/u;
 assert.doesNotMatch(globalStyles, standaloneRootOverflow, 'Standalone mode must not turn the root document into a separate overflow container; the viewport must remain vertically scrollable.');
 assert.doesNotMatch(pwaStyles, standaloneRootOverflow, 'PWA-only styles must not lock or replace native viewport scrolling in the installed app.');
-assert.match(server, /manifest\.webmanifest/u, 'The server must give the manifest deterministic headers.');
+assert.match(server, /extension === "\.webmanifest"/u, 'The server must give every versioned manifest deterministic no-store headers.');
 assert.match(server, /Service-Worker-Allowed/u, 'The service-worker scope must be explicit.');
 assert.match(
 	dockerfile,
@@ -106,11 +112,12 @@ assert.match(
 );
 
 assert.ok(fs.existsSync(distRoot), 'Production output must exist before PWA validation.');
-for (const required of ['index.html', 'manifest.webmanifest', 'service-worker.js']) {
+for (const required of ['index.html', 'vocora-v2.webmanifest', 'service-worker.js']) {
 	assert.ok(fs.existsSync(path.join(distRoot, required)), `Production output must contain ${required}.`);
 }
-const builtManifest = JSON.parse(fs.readFileSync(path.join(distRoot, 'manifest.webmanifest'), 'utf8'));
+const builtManifest = JSON.parse(fs.readFileSync(path.join(distRoot, 'vocora-v2.webmanifest'), 'utf8'));
 assert.equal(builtManifest.id, manifest.id, 'The built manifest must match source install identity.');
+assert.equal(builtManifest.name, 'Vocora', 'The built install manifest must expose the current product name.');
 
 const worker = fs.readFileSync(path.join(distRoot, 'service-worker.js'), 'utf8');
 assert.match(worker, /const CACHE_NAME = CACHE_PREFIX \+ "[0-9a-f]{20}";/u, 'The generated cache must be content-versioned.');
@@ -125,7 +132,7 @@ assert.ok(precacheMatch, 'The generated worker must expose a deterministic preca
 const precache = JSON.parse(precacheMatch[1]);
 const requiredOfflineAssets = new Set([
 	'/index.html',
-	'/manifest.webmanifest',
+	manifestUrl,
 	appleTouchUrl,
 	...icons.map((icon) => icon.src),
 ]);
