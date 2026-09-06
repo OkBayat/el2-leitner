@@ -108,7 +108,9 @@ export class SentencePracticeSessionService {
 					this.playbackCharIndexSignal.set(charIndex);
 				},
 				onEnd: () => {
-					if (this.currentPromptSignal() === prompt) this.resetPlaybackState();
+					if (this.currentPromptSignal() !== prompt) return;
+					this.playbackActiveSignal.set(false);
+					this.playbackCharIndexSignal.set(sentenceText.length);
 				},
 			},
 		);
