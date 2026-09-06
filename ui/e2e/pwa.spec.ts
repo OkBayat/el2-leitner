@@ -1,7 +1,11 @@
 import {expect, test, type Request} from '@playwright/test';
 
 test('production exposes an installable PWA and reloads the cached shell offline', async ({page, request, context}) => {
-	const manifestResponse = await request.get('/manifest.webmanifest');
+	await page.goto('/offline');
+	const manifestLink = await page.locator('link[rel="manifest"]').getAttribute('href');
+	expect(manifestLink).toMatch(/^\/[^/?#]+\.webmanifest$/u);
+
+	const manifestResponse = await request.get(manifestLink!);
 	expect(manifestResponse.ok()).toBe(true);
 	expect(manifestResponse.headers()['content-type']).toContain('application/manifest+json');
 	const manifest = await manifestResponse.json();
@@ -31,8 +35,7 @@ test('production exposes an installable PWA and reloads the cached shell offline
 	};
 	page.on('requestfailed', trackFailedChunk);
 
-	await page.goto('/offline');
-	await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/manifest.webmanifest');
+	await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', manifestLink!);
 	await expect(page.getByRole('heading', {name: "You're offline"})).toBeVisible();
 
 	await expect.poll(async () => page.evaluate(async () => {

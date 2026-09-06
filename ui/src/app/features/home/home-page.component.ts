@@ -3,7 +3,7 @@ import { CdkOverlayOrigin, Overlay, OverlayModule, type ConnectedPosition, type 
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, type OnDestroy, type OnInit, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HomeTimelineService } from '../../application/home/home-timeline.service';
-import { type PathDay, type PathStep, buildDailyPath } from '../../domain/home/daily-path';
+import { type ListeningRingSegment, type PathDay, type PathStep, buildDailyPath, listeningRingSegments } from '../../domain/home/daily-path';
 import { localDay } from '../../domain/learning/learning-rules';
 import { BookWagonComponent, PathIconComponent } from './home-artwork.component';
 
@@ -117,7 +117,27 @@ export class HomePageComponent implements OnInit, OnDestroy {
     } }, { injector: this.injector });
   }
 
+  listeningSegments(step: PathStep): ListeningRingSegment[] {
+    return listeningRingSegments(step.listeningProgress);
+  }
+
+  listeningSegmentDash(step: PathStep): string {
+    const count = Math.max(1, this.listeningSegments(step).length);
+    const segment = Math.max(1, (100 / count) - 2);
+    return `${segment} ${100 - segment}`;
+  }
+
+  listeningSegmentRotation(index: number, count: number): number {
+    return count > 0 ? (360 / count) * index : 0;
+  }
+
   statusLabel(step: PathStep): string {
+    if (step.id === 'listening' && step.listeningProgress) {
+      const { completed, total } = step.listeningProgress;
+      return completed >= total
+        ? `Daily goal complete, ${completed} listening practices completed`
+        : `${completed} of ${total} listening practices complete`;
+    }
     if (step.status === 'in-progress') return `In progress, ${step.progress ?? 0}% complete`;
     return { practiced: 'Practised', available: 'Not practised', upcoming: 'Upcoming', planned: 'Coming soon' }[step.status];
   }

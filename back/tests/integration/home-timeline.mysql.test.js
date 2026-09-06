@@ -47,7 +47,10 @@ test('persisted Home timeline against MySQL 8.4 and the authenticated HTTP bound
     await request(app).get('/api/learning/timeline?timeZone=not-a-zone').set('Cookie', cookie(learner)).expect(400);
     const empty = await get(learner).expect(200);
     assert.equal(empty.headers['cache-control'], 'no-store');
-    assert.deepEqual(empty.body.days, [{ day: '2026-09-06', activities: [], boxOnePracticed: false }]);
+    assert.deepEqual(empty.body.days, [{
+      day: '2026-09-06', activities: [], boxOnePracticed: false,
+      listeningProgress: { completed: 0, total: 3 },
+    }]);
   });
 
   await t.test('records actual attempts on each local day without changing Leitner revisions', async () => {
@@ -68,9 +71,15 @@ test('persisted Home timeline against MySQL 8.4 and the authenticated HTTP bound
     const result = await get(learner).expect(200);
     assert.deepEqual(day(result.body, '2026-09-04').activities, ['shadowing']);
     assert.deepEqual(day(result.body, '2026-09-05').activities, ['shadowing']);
-    assert.deepEqual(day(result.body, '2026-09-06'), { day: '2026-09-06', activities: [], boxOnePracticed: true });
+    assert.deepEqual(day(result.body, '2026-09-06'), {
+      day: '2026-09-06', activities: [], boxOnePracticed: true,
+      listeningProgress: { completed: 0, total: 3 },
+    });
     const isolated = await get(other).expect(200);
-    assert.deepEqual(isolated.body.days, [{ day: '2026-09-06', activities: [], boxOnePracticed: false }]);
+    assert.deepEqual(isolated.body.days, [{
+      day: '2026-09-06', activities: [], boxOnePracticed: false,
+      listeningProgress: { completed: 0, total: 3 },
+    }]);
   });
 
   await t.test('reads every historical review_events mode and completed listening in the learner timezone', async () => {

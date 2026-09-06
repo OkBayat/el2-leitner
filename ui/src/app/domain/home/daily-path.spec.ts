@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildDailyPath, type TimelineDay } from './daily-path';
+import { buildDailyPath, listeningRingSegments, type TimelineDay } from './daily-path';
 
 describe('daily home path', () => {
   const today = '2026-09-06';
@@ -29,6 +29,46 @@ describe('daily home path', () => {
     }], today);
     expect(day.steps[0]).toMatchObject({ status: 'practiced', current: false, progress: 100 });
     expect(day.steps[1]).toMatchObject({ status: 'available', current: true });
+  });
+  it('tracks listening against its daily goal instead of completing after one attempt', () => {
+    const [day] = buildDailyPath([{
+      day: today,
+      activities: ['vocabulary', 'listening'],
+      boxOnePracticed: false,
+      vocabularyProgress: { completed: 10, total: 10 },
+      listeningProgress: { completed: 1, total: 3 },
+    }], today);
+    expect(day.steps[1]).toMatchObject({
+      id: 'listening', status: 'in-progress', current: true, legendary: false,
+      listeningProgress: { completed: 1, total: 3 },
+    });
+    expect(listeningRingSegments(day.steps[1].listeningProgress).map(segment => segment.state))
+      .toEqual(['complete', 'pending', 'pending']);
+  });
+  it('turns listening legendary at the goal and makes extra attempts gold segments', () => {
+    const [atGoal] = buildDailyPath([{
+      day: today, activities: ['listening'], boxOnePracticed: false,
+      listeningProgress: { completed: 3, total: 3 },
+    }], today);
+    expect(atGoal.steps[1]).toMatchObject({ status: 'practiced', legendary: true });
+    expect(listeningRingSegments(atGoal.steps[1].listeningProgress).map(segment => segment.state))
+      .toEqual(['complete', 'complete', 'complete']);
+
+    const [extra] = buildDailyPath([{
+      day: today, activities: ['listening'], boxOnePracticed: false,
+      listeningProgress: { completed: 4, total: 3 },
+    }], today);
+    expect(extra.steps[1]).toMatchObject({ status: 'practiced', legendary: true });
+    expect(listeningRingSegments(extra.steps[1].listeningProgress).map(segment => segment.state))
+      .toEqual(['complete', 'complete', 'complete', 'legendary']);
+  });
+  it('automatically changes the ring segment count when the listening goal changes', () => {
+    expect(listeningRingSegments({ completed: 2, total: 4 })).toEqual([
+      { index: 0, state: 'complete' },
+      { index: 1, state: 'complete' },
+      { index: 2, state: 'pending' },
+      { index: 3, state: 'pending' },
+    ]);
   });
   it('preserves colored history and leaves missed historical tasks gray', () => {
     const days = buildDailyPath([
