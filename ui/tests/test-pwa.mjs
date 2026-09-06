@@ -109,6 +109,8 @@ assert.match(worker, /const CACHE_NAME = CACHE_PREFIX \+ "[0-9a-f]{20}";/u, 'The
 assert.match(worker, /request\.mode === 'navigate'/u, 'Offline navigation must fall back to the cached app shell.');
 assert.match(worker, /url\.pathname === '\/service-worker\.js'.*api/u, 'API traffic must be explicitly excluded from the service-worker cache.');
 assert.match(worker, /removeOldCaches/u, 'Obsolete app versions must be removed after activation.');
+assert.match(worker, /CACHEABLE_PATH\.test\(url\.pathname\)/u, 'Non-shell static assets must be cached on demand instead of blocking service-worker installation.');
+assert.match(worker, /response\.status === 200/u, 'Runtime caching must only persist complete successful responses.');
 
 const precacheMatch = worker.match(/const PRECACHE_URLS = Object\.freeze\((\[[\s\S]*?\])\);/u);
 assert.ok(precacheMatch, 'The generated worker must expose a deterministic precache list.');
@@ -118,7 +120,20 @@ for (const required of ['/index.html', '/manifest.webmanifest', '/assets/icons/i
 }
 assert.equal(precache.some((url) => url.startsWith('/api/')), false, 'Authenticated API responses must never be precached.');
 
+const builtIndex = fs.readFileSync(path.join(distRoot, 'index.html'), 'utf8');
+const startupAssets = new Set(
+	[...builtIndex.matchAll(/\b(?:src|href)=["']([^"']+\.(?:js|css))(?:\?[^"']*)?["']/giu)]
+		.map((match) => path.basename(match[1])),
+);
 const builtBundles = fs.readdirSync(distRoot).filter((name) => /\.(?:js|css)$/u.test(name) && name !== 'service-worker.js');
-for (const bundle of builtBundles) assert.ok(precache.includes(`/${bundle}`), `${bundle} must be precached for offline startup.`);
+const startupBundles = builtBundles.filter((name) => startupAssets.has(name));
+assert.ok(startupBundles.length > 0, 'The production index must reference at least one startup bundle.');
+for (const bundle of startupBundles) assert.ok(precache.includes(`/${bundle}`), `${bundle} must be precached for offline startup.`);
+
+const lazyBundles = builtBundles.filter((name) => !startupAssets.has(name));
+assert.ok(lazyBundles.some((name) => name.startsWith('chunk-')), 'The production build must include lazy chunks for this regression test.');
+for (const bundle of lazyBundles) {
+	assert.equal(precache.includes(`/${bundle}`), false, `${bundle} must be cached on demand rather than during service-worker installation.`);
+}
 
 console.log(`PWA contract passed with ${icons.length} manifest icons and ${precache.length} precached assets.`);
