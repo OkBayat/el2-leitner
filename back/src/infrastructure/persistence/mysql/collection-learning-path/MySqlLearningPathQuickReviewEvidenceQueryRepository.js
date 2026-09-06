@@ -1,0 +1,38 @@
+import { LearningPathQuickReviewEvidenceReader } from "../../../../application/collection-learning-path/ports/LearningPathQuickReviewEvidenceReader.js";
+
+export class MySqlLearningPathQuickReviewEvidenceQueryRepository extends LearningPathQuickReviewEvidenceReader {
+  constructor(pool) {
+    super();
+    this.pool = pool;
+  }
+
+  async findCompletedSession(userId, sessionId) {
+    const [sessionRows] = await this.pool.execute(
+      `SELECT id, public_id, mode, status, planned_count, completed_count
+       FROM practice_sessions
+       WHERE public_id = ? AND user_id = ?
+       LIMIT 1`,
+      [sessionId, userId],
+    );
+    const session = sessionRows[0];
+    if (!session) return null;
+
+    const [reviewRows] = await this.pool.execute(
+      `SELECT DISTINCT ve.public_id AS vocabulary_id
+       FROM review_events re
+       JOIN vocabulary_entries ve ON ve.id = re.vocabulary_entry_id
+       WHERE re.practice_session_id = ? AND re.user_id = ?
+       ORDER BY ve.public_id`,
+      [session.id, userId],
+    );
+
+    return {
+      id: session.public_id,
+      mode: session.mode,
+      status: session.status,
+      plannedCount: session.planned_count === null ? null : Number(session.planned_count),
+      completedCount: Number(session.completed_count ?? 0),
+      reviewedVocabularyIds: reviewRows.map((row) => String(row.vocabulary_id)),
+    };
+  }
+}

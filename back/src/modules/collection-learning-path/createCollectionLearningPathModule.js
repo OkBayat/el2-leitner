@@ -7,14 +7,21 @@ import { GetCollectionLearningPath } from "../../application/collection-learning
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
 import { GetLearningPathLesson } from "../../application/collection-learning-path/queries/GetLearningPathLesson.js";
 import { GetLearningPathResumePoint } from "../../application/collection-learning-path/queries/GetLearningPathResumePoint.js";
+import { GetScopedVocabularyQuickReviewContext } from "../../application/collection-learning-path/queries/GetScopedVocabularyQuickReviewContext.js";
 import { GetVocabularyIntakeContext } from "../../application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
+import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/collection-learning-path/queries/VerifyScopedVocabularyQuickReviewCompletion.js";
 import { VerifyVocabularyIntakeCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyIntakeCompletion.js";
+import {
+  VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY,
+  VOCABULARY_QUICK_REVIEW_TYPE,
+} from "../../domain/collection-learning-path/ScopedVocabularyPractice.js";
 import { VOCABULARY_INTAKE_COMPLETION_POLICY, VOCABULARY_INTAKE_TYPE } from "../../domain/collection-learning-path/VocabularyIntake.js";
 import { MySqlVocabularyActivationRepository } from "../../infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { MySqlLearningPathAccessQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
+import { MySqlLearningPathQuickReviewEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathQuickReviewEvidenceQueryRepository.js";
 import { MySqlLearningPathTransactionManager } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathTransactionManager.js";
 import { MySqlLearningPathVocabularyIntakeCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeCommandRepository.js";
 import { MySqlLearningPathVocabularyIntakeQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeQueryRepository.js";
@@ -33,6 +40,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? new MySqlLearningPathTransactionManager(pool);
   const vocabularyIntakeReader = adapters.learningPathVocabularyIntakeReader
     ?? new MySqlLearningPathVocabularyIntakeQueryRepository(pool);
+  const scopedVocabularyReader = adapters.learningPathScopedVocabularyReader
+    ?? vocabularyIntakeReader;
+  const quickReviewEvidenceReader = adapters.learningPathQuickReviewEvidenceReader
+    ?? new MySqlLearningPathQuickReviewEvidenceQueryRepository(pool);
   const vocabularyActivationRepository = adapters.learningPathVocabularyActivationRepository
     ?? adapters.vocabularyActivationRepository
     ?? new MySqlVocabularyActivationRepository(pool);
@@ -42,13 +53,20 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
 
   const getVocabularyIntakeContext = new GetVocabularyIntakeContext({ vocabularyIntakeReader });
   const verifyVocabularyIntakeCompletion = new VerifyVocabularyIntakeCompletion({ vocabularyIntakeReader });
+  const getScopedVocabularyQuickReviewContext = new GetScopedVocabularyQuickReviewContext({ scopedVocabularyReader });
+  const verifyScopedVocabularyQuickReviewCompletion = new VerifyScopedVocabularyQuickReviewCompletion({
+    scopedVocabularyReader,
+    quickReviewEvidenceReader,
+  });
   const exerciseRuntime = adapters.learningPathExerciseRuntime
     ?? createDefaultExerciseRuntimeRegistry({
       contextHydrators: {
         [VOCABULARY_INTAKE_TYPE]: (context) => getVocabularyIntakeContext.execute(context),
+        [VOCABULARY_QUICK_REVIEW_TYPE]: (context) => getScopedVocabularyQuickReviewContext.execute(context),
       },
       completionPolicies: {
         [VOCABULARY_INTAKE_COMPLETION_POLICY]: (context) => verifyVocabularyIntakeCompletion.execute(context),
+        [VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY]: (context) => verifyScopedVocabularyQuickReviewCompletion.execute(context),
       },
     });
 
@@ -61,6 +79,8 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     exerciseRuntime,
     vocabularyIntakeReader,
     vocabularyIntakeWriter,
+    scopedVocabularyReader,
+    quickReviewEvidenceReader,
     clock,
   };
 

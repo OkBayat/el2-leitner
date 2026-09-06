@@ -1,0 +1,50 @@
+<section class="quick-review" aria-labelledby="quick-review-title">
+  <header class="quick-review__header">
+    <div>
+      <p class="quick-review__eyebrow">House 1 · scoped practice</p>
+      <h2 id="quick-review-title">Quick vocabulary review</h2>
+    </div>
+    @if (started()) {
+      <span class="quick-review__progress">{{ positionLabel() }}</span>
+    }
+  </header>
+
+  @if (error()) {
+    <p class="quick-review__error" role="alert">{{ error() }}</p>
+  }
+
+  @if (payload(); as data) {
+    @if (!started()) {
+      <div class="quick-review__intro">
+        <p>
+          @if (data.summary.eligibleCount === 0) {
+            No words from this lesson are currently in House 1.
+          } @else {
+            {{ data.summary.eligibleCount }} lesson word{{ data.summary.eligibleCount === 1 ? '' : 's' }} are ready for a fast House 1 practice.
+          }
+        </p>
+        <button class="quick-review__primary" type="button" [disabled]="busy()" (click)="start()">
+          {{ data.summary.eligibleCount === 0 ? 'Continue' : 'Start quick review' }}
+        </button>
+      </div>
+    } @else if (session.currentWord(); as word) {
+      <div class="quick-review__card">
+        <button class="quick-review__listen" type="button" (click)="replay()" aria-label="Play pronunciation">Listen again</button>
+        <p class="quick-review__term">{{ word.term }}</p>
+        @if (!answered()) {
+          <p class="quick-review__prompt">Do you remember this word?</p>
+          <div class="quick-review__actions">
+            <button class="quick-review__secondary" type="button" [disabled]="busy()" (click)="mark(false)">Needs work</button>
+            <button class="quick-review__primary" type="button" [disabled]="busy()" (click)="mark(true)">Remembered</button>
+          </div>
+        } @else if (session.feedback(); as feedback) {
+          <div class="quick-review__feedback" [class.quick-review__feedback--correct]="feedback.correct">
+            <strong>{{ feedback.correct ? 'Recorded' : 'Keep practicing' }}</strong>
+            <span>{{ feedback.detail }}</span>
+          </div>
+          <button class="quick-review__primary" type="button" [disabled]="busy()" (click)="next()">Continue</button>
+        }
+      </div>
+    }
+  }
+</section>
