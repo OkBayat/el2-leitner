@@ -73,7 +73,7 @@ function progressPercent(progress?: VocabularyProgress): number | null {
   return Math.round((completed / total) * 100);
 }
 
-function safeListeningProgress(progress?: ListeningProgress): ListeningProgress | null {
+function safeListeningProgress(progress?: ListeningProgress | null): ListeningProgress | null {
   const total = Number(progress?.total);
   const completed = Number(progress?.completed);
   if (!Number.isSafeInteger(total) || total < 1 || !Number.isSafeInteger(completed) || completed < 0) return null;
