@@ -1,5 +1,7 @@
 import { LearningPathDefinitionReader } from "../../../../application/collection-learning-path/ports/LearningPathDefinitionReader.js";
 
+const executor = (pool, options) => options?.connection ?? pool;
+
 const parseConfig = (value) => {
   if (value == null) return {};
   if (typeof value === "string") return JSON.parse(value);
@@ -53,24 +55,25 @@ export class MySqlLearningPathDefinitionQueryRepository extends LearningPathDefi
     this.pool = pool;
   }
 
-  async findByPublicId(publicId, { includeRetired = false } = {}) {
+  async findByPublicId(publicId, { includeRetired = false, connection = null } = {}) {
     return this.#findPath(
       `p.public_id = ?${includeRetired ? "" : " AND p.retired_at IS NULL"}`,
       [publicId],
-      { includeRetired },
+      { includeRetired, connection },
     );
   }
 
-  async findActiveByCollectionPublicId(collectionPublicId) {
+  async findActiveByCollectionPublicId(collectionPublicId, { connection = null } = {}) {
     return this.#findPath(
       "c.public_id = ? AND p.retired_at IS NULL AND p.status <> 'retired'",
       [collectionPublicId],
-      { includeRetired: false },
+      { includeRetired: false, connection },
     );
   }
 
-  async #findPath(predicate, parameters, { includeRetired }) {
-    const [paths] = await this.pool.execute(
+  async #findPath(predicate, parameters, { includeRetired, connection }) {
+    const db = executor(this.pool, { connection });
+    const [paths] = await db.execute(
       `SELECT p.public_id AS id, c.public_id AS collectionId, p.title, p.mode, p.status,
               p.content_version AS contentVersion, p.source_hash AS sourceHash,
               p.published_at AS publishedAt, p.retired_at AS retiredAt
@@ -85,7 +88,7 @@ export class MySqlLearningPathDefinitionQueryRepository extends LearningPathDefi
 
     const path = pathFromRow(paths[0]);
     const retiredClause = includeRetired ? "" : " AND l.retired_at IS NULL";
-    const [lessonRows] = await this.pool.execute(
+    const [lessonRows] = await db.execute(
       `SELECT l.public_id AS id, l.title, l.position, l.source_kind AS sourceKind,
               l.source_ref AS sourceRef, l.status, l.introduced_version AS introducedVersion,
               l.retired_version AS retiredVersion, l.published_at AS publishedAt,
@@ -102,7 +105,7 @@ export class MySqlLearningPathDefinitionQueryRepository extends LearningPathDefi
     const lessonIds = path.lessons.map((lesson) => lesson.id);
     const placeholders = lessonIds.map(() => "?").join(", ");
     const exerciseRetiredClause = includeRetired ? "" : " AND e.retired_at IS NULL";
-    const [exerciseRows] = await this.pool.execute(
+    const [exerciseRows] = await db.execute(
       `SELECT l.public_id AS lessonId, e.public_id AS id, e.position, e.type,
               e.schema_version AS schemaVersion, e.required, e.completion_policy AS completionPolicy,
               e.config_json AS configJson, e.status, e.introduced_version AS introducedVersion,
