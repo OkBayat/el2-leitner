@@ -7,33 +7,40 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDirectory, '..');
 const read = (relative) => fs.readFileSync(path.join(uiRoot, relative), 'utf8');
 const INSTALL_BRAND_COLOR = '#48BF68';
+const DEFAULT_RUNTIME_CHROME_COLOR = '#f8f9ff';
 
 const index = read('src/index.html');
-const manifest = JSON.parse(read('src/manifest.webmanifest'));
+const compatibilityManifest = JSON.parse(read('src/manifest.webmanifest'));
+const installManifest = JSON.parse(read('src/vocora-v2.webmanifest'));
 const themeService = read('src/app/core/theme/theme.service.ts');
 const pwaStyles = read('src/pwa.scss');
 
 const themeColorTags = index.match(/<meta name="theme-color"[^>]*>/gu) || [];
 assert.equal(themeColorTags.length, 1, 'Installed PWA must expose exactly one initial theme-color source.');
-assert.match(themeColorTags[0], /content="#48BF68"/u, 'PWA boot chrome should start with the Vocora brand color before Angular synchronizes the active app theme.');
-assert.doesNotMatch(themeColorTags[0], /media=/u, 'Device dark mode must not override the deterministic install/boot brand color before Angular synchronizes it.');
+assert.match(themeColorTags[0], /content="#f8f9ff"/u, 'Runtime system chrome must start from the light app surface rather than remaining pinned to the install brand color.');
+assert.doesNotMatch(themeColorTags[0], /media=/u, 'Device dark mode must not override an explicit Vocora theme before Angular synchronizes saved settings.');
 assert.match(index, /<meta name="color-scheme" content="light">/u, 'System controls should start in the same light scheme as the initial app surface.');
-assert.match(index, /<meta name="msapplication-TileColor" content="#48BF68">/u, 'Windows tile fallback must use the Vocora brand color.');
+assert.match(index, /<meta name="msapplication-TileColor" content="#48BF68">/u, 'Windows tile fallback must keep the Vocora brand color.');
 
-assert.equal(manifest.theme_color, INSTALL_BRAND_COLOR, 'WebAPK install chrome must use the Vocora brand color.');
-assert.equal(manifest.background_color, INSTALL_BRAND_COLOR, 'WebAPK launch background must use the Vocora brand color.');
-assert.equal(manifest.theme_color, manifest.background_color, 'Installed launch chrome and launch background must use the same brand color.');
+for (const manifest of [compatibilityManifest, installManifest]) {
+	assert.equal(manifest.background_color, INSTALL_BRAND_COLOR, 'Install splash background must keep the Vocora brand color.');
+	assert.equal(manifest.theme_color, DEFAULT_RUNTIME_CHROME_COLOR, 'Installed system chrome fallback must match the default app surface, not the splash color.');
+	assert.notEqual(manifest.theme_color, manifest.background_color, 'Splash branding and runtime system chrome must remain separate concerns.');
+}
 
-assert.match(themeService, /LIGHT_SYSTEM_CHROME_COLOR = '#f8f9ff'/u, 'After Angular boots, light mode should return system chrome to the active light app surface.');
-assert.match(themeService, /DARK_SYSTEM_CHROME_COLOR = '#111318'/u, 'After Angular boots, dark mode should use the active dark app surface.');
-assert.match(themeService, /updateMeta\('theme-color', chromeColor\)/u, 'Changing Vocora theme must update the browser/PWA system chrome color after startup.');
-assert.match(themeService, /updateMeta\('color-scheme', resolved\)/u, 'Changing Vocora theme must also update the native control color scheme.');
+assert.match(themeService, /LIGHT_SYSTEM_CHROME_COLOR = '#f8f9ff'/u, 'Light mode should use the active light app surface for system chrome.');
+assert.match(themeService, /DARK_SYSTEM_CHROME_COLOR = '#111318'/u, 'Dark mode should use the active dark app surface for system chrome.');
+assert.match(themeService, /updateMeta\('theme-color', chromeColor\)/u, 'Changing Vocora theme must update the browser/PWA status-bar color.');
+assert.match(themeService, /updateMeta\('color-scheme', resolved\)/u, 'Changing Vocora theme must update the native control and navigation-bar color scheme.');
+assert.match(themeService, /root\.style\.backgroundColor = chromeColor/u, 'The root surface behind transparent Android system bars must follow the app theme.');
+assert.match(themeService, /body\.style\.backgroundColor = chromeColor/u, 'The body surface behind transparent Android navigation chrome must follow the app theme.');
+assert.match(themeService, /body\.style\.colorScheme = resolved/u, 'The body must explicitly opt into the app-selected color scheme instead of the phone theme.');
 assert.match(themeService, /activeMode !== 'system'/u, 'OS theme changes must only drive system chrome while Vocora follows the system theme.');
 
 assert.match(
 	pwaStyles,
-	/@media\(display-mode: standalone\)[\s\S]*html, body\s*\{[\s\S]*background:\s*var\(--vocora-system-chrome-color, var\(--mat-sys-surface\)\)/u,
-	'Edge-to-edge Android system bars must have the active app surface painted behind them after startup.',
+	/@media\(display-mode: standalone\)[\s\S]*html, body\s*\{[\s\S]*background-color:\s*var\(--vocora-system-chrome-color, var\(--mat-sys-surface\)\)/u,
+	'Edge-to-edge Android system bars must have the active app surface painted behind them.',
 );
 assert.doesNotMatch(
 	pwaStyles,
