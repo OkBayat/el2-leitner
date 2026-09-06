@@ -37,7 +37,7 @@
 
 .sentence-playback-token,
 .sentence-text app-sentence-answer {
-	transition: opacity 120ms ease, color 120ms ease, font-weight 120ms ease;
+	transition: opacity 120ms ease;
 }
 
 .sentence-text.is-playing .sentence-playback-token,
@@ -45,13 +45,17 @@
 	opacity: .48;
 }
 
-.sentence-text.is-playing .sentence-playback-token.is-current-word {
+/* Keep every word that playback has already reached at full text color. */
+.sentence-text.is-playing .sentence-playback-token.is-current-word,
+.sentence-text.is-playing .sentence-playback-token:has(~ .sentence-playback-token.is-current-word),
+.sentence-text.is-playing .sentence-context-part:has(~ app-sentence-answer.is-current-word) .sentence-playback-token,
+.sentence-text.is-playing .sentence-context-part:has(~ .sentence-context-part .sentence-playback-token.is-current-word) .sentence-playback-token {
 	opacity: 1;
-	color: var(--mat-sys-on-surface);
-	font-weight: 850;
 }
 
-.sentence-text.is-playing app-sentence-answer.is-current-word {
+/* Once the hidden cloze has been spoken, keep the gap emphasized too. */
+.sentence-text.is-playing app-sentence-answer.is-current-word,
+.sentence-text.is-playing app-sentence-answer:has(~ .sentence-context-part .sentence-playback-token.is-current-word) {
 	opacity: 1;
 }
 
