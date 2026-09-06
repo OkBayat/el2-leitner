@@ -47,18 +47,30 @@
               <button type="button" class="path-node" cdkOverlayOrigin #origin="cdkOverlayOrigin"
                 [attr.data-activity]="step.id" [attr.data-status]="step.status"
                 [attr.data-testid]="day.today && step.id === 'shadowing' ? 'home-shadowing' : null"
-                [class.is-practiced]="step.status === 'practiced'" [class.is-current]="step.current"
-                [class.is-reserved]="step.id.startsWith('reserved')"
+                [class.is-practiced]="step.status === 'practiced'" [class.is-in-progress]="step.status === 'in-progress'"
+                [class.is-current]="step.current" [class.is-reserved]="step.id.startsWith('reserved')"
                 [disabled]="day.future || step.id.startsWith('reserved')"
                 [attr.aria-label]="step.label + ' — ' + statusLabel(step) + ' — ' + day.dateLabel"
                 [attr.aria-current]="step.current ? 'step' : null"
                 [attr.aria-expanded]="selection()?.origin === origin" aria-haspopup="dialog"
                 (click)="open(day, step, origin)">
+                @if (step.status === 'in-progress' && step.progress !== null) {
+                  <svg class="node-progress-ring" viewBox="0 0 84 84" aria-hidden="true">
+                    <circle class="node-progress-track" cx="42" cy="42" r="38" pathLength="100" />
+                    <circle class="node-progress-value" cx="42" cy="42" r="38" pathLength="100"
+                      [attr.stroke-dasharray]="(step.progress ?? 0) + ' ' + (100 - (step.progress ?? 0))" />
+                  </svg>
+                }
                 @if (!step.id.startsWith('reserved')) { <app-path-icon [kind]="step.id" /> }
                 @if (step.status === 'practiced') {
                   <span class="node-check" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 }
-                @if (step.current) { <span class="start-flag" aria-hidden="true">START</span> }
+                @if (step.status === 'in-progress' && step.progress !== null) {
+                  <span class="node-progress-label" aria-hidden="true">{{ step.progress }}%</span>
+                }
+                @if (step.current) {
+                  <span class="start-flag" aria-hidden="true">{{ step.status === 'in-progress' ? 'CONTINUE' : 'START' }}</span>
+                }
               </button>
             </li>
           }
@@ -99,9 +111,15 @@
         @if (!step.route) {
           <p>Reading practice is coming soon.</p>
         } @else {
-          <p>{{ step.status === 'practiced' ? 'Practised' : 'No practice recorded' }} · {{ selected.day.dateLabel }}</p>
+          @if (step.status === 'practiced') {
+            <p>Practised · {{ selected.day.dateLabel }}</p>
+          } @else if (step.status === 'in-progress') {
+            <p>{{ step.progress }}% complete · {{ selected.day.dateLabel }}</p>
+          } @else {
+            <p>No practice recorded · {{ selected.day.dateLabel }}</p>
+          }
           <a class="popover-action" [routerLink]="step.route" [attr.data-testid]="step.id === 'shadowing' ? 'start-shadowing' : null" (click)="close()">
-            {{ step.status === 'practiced' ? 'Practise again' : selected.day.today ? 'Start' : 'Practise today' }}
+            {{ step.status === 'practiced' ? 'Practise again' : step.status === 'in-progress' ? 'Continue' : selected.day.today ? 'Start' : 'Practise today' }}
           </a>
         }
       } @else {
