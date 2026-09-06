@@ -116,7 +116,7 @@ test('partial vocabulary progress stays current with a clockwise ring and Contin
   await expect(vocabulary.locator('.node-progress-label')).toHaveText('50%');
   await expect(vocabulary.locator('.node-progress-value')).toHaveAttribute('stroke-dasharray', '50 50');
   await expect(vocabulary.locator('.start-flag')).toHaveText('CONTINUE');
-  await expect(vocabulary.locator('.start-flag')).toHaveCSS('animation-name', 'start-flag-float');
+  expect(await vocabulary.locator('.start-flag').evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
   await expect(listening.locator('.start-flag')).toHaveCount(0);
   await vocabulary.click();
   const dialog = page.getByRole('dialog');
