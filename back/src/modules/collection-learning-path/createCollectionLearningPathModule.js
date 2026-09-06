@@ -2,6 +2,7 @@ import { ActivateVocabularyIntake } from "../../application/collection-learning-
 import { CompleteExercise } from "../../application/collection-learning-path/commands/CompleteExercise.js";
 import { StartExercise } from "../../application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../../application/collection-learning-path/commands/StartLearningPath.js";
+import { StartVocabularyMasteryCheck } from "../../application/collection-learning-path/commands/StartVocabularyMasteryCheck.js";
 import { createDefaultExerciseRuntimeRegistry } from "../../application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../../application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
@@ -9,16 +10,25 @@ import { GetLearningPathLesson } from "../../application/collection-learning-pat
 import { GetLearningPathResumePoint } from "../../application/collection-learning-path/queries/GetLearningPathResumePoint.js";
 import { GetScopedVocabularyQuickReviewContext } from "../../application/collection-learning-path/queries/GetScopedVocabularyQuickReviewContext.js";
 import { GetVocabularyIntakeContext } from "../../application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
+import { GetVocabularyMasteryCheckContext } from "../../application/collection-learning-path/queries/GetVocabularyMasteryCheckContext.js";
 import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/collection-learning-path/queries/VerifyScopedVocabularyQuickReviewCompletion.js";
 import { VerifyVocabularyIntakeCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyIntakeCompletion.js";
+import { VerifyVocabularyMasteryCheckCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyMasteryCheckCompletion.js";
 import {
   VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY,
   VOCABULARY_QUICK_REVIEW_TYPE,
 } from "../../domain/collection-learning-path/ScopedVocabularyPractice.js";
 import { VOCABULARY_INTAKE_COMPLETION_POLICY, VOCABULARY_INTAKE_TYPE } from "../../domain/collection-learning-path/VocabularyIntake.js";
+import {
+  VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY,
+  VOCABULARY_MASTERY_CHECK_TYPE,
+} from "../../domain/collection-learning-path/VocabularyMasteryCheck.js";
+import { MySqlPracticeSessionRepository } from "../../infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlVocabularyActivationRepository } from "../../infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { MySqlLearningPathAccessQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
+import { MySqlLearningPathMasteryCheckEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathMasteryCheckEvidenceQueryRepository.js";
+import { MySqlLearningPathMasteryCheckSessionCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathMasteryCheckSessionCommandRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
 import { MySqlLearningPathQuickReviewEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathQuickReviewEvidenceQueryRepository.js";
@@ -44,6 +54,13 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? vocabularyIntakeReader;
   const quickReviewEvidenceReader = adapters.learningPathQuickReviewEvidenceReader
     ?? new MySqlLearningPathQuickReviewEvidenceQueryRepository(pool);
+  const masteryCheckEvidenceReader = adapters.learningPathMasteryCheckEvidenceReader
+    ?? new MySqlLearningPathMasteryCheckEvidenceQueryRepository(pool);
+  const practiceSessionRepository = adapters.learningPathPracticeSessionRepository
+    ?? adapters.practiceSessionRepository
+    ?? new MySqlPracticeSessionRepository(pool);
+  const masteryCheckSessionWriter = adapters.learningPathMasteryCheckSessionWriter
+    ?? new MySqlLearningPathMasteryCheckSessionCommandRepository(practiceSessionRepository);
   const vocabularyActivationRepository = adapters.learningPathVocabularyActivationRepository
     ?? adapters.vocabularyActivationRepository
     ?? new MySqlVocabularyActivationRepository(pool);
@@ -58,15 +75,22 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     scopedVocabularyReader,
     quickReviewEvidenceReader,
   });
+  const getVocabularyMasteryCheckContext = new GetVocabularyMasteryCheckContext({ scopedVocabularyReader });
+  const verifyVocabularyMasteryCheckCompletion = new VerifyVocabularyMasteryCheckCompletion({
+    scopedVocabularyReader,
+    masteryCheckEvidenceReader,
+  });
   const exerciseRuntime = adapters.learningPathExerciseRuntime
     ?? createDefaultExerciseRuntimeRegistry({
       contextHydrators: {
         [VOCABULARY_INTAKE_TYPE]: (context) => getVocabularyIntakeContext.execute(context),
         [VOCABULARY_QUICK_REVIEW_TYPE]: (context) => getScopedVocabularyQuickReviewContext.execute(context),
+        [VOCABULARY_MASTERY_CHECK_TYPE]: (context) => getVocabularyMasteryCheckContext.execute(context),
       },
       completionPolicies: {
         [VOCABULARY_INTAKE_COMPLETION_POLICY]: (context) => verifyVocabularyIntakeCompletion.execute(context),
         [VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY]: (context) => verifyScopedVocabularyQuickReviewCompletion.execute(context),
+        [VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY]: (context) => verifyVocabularyMasteryCheckCompletion.execute(context),
       },
     });
 
@@ -81,6 +105,8 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     vocabularyIntakeWriter,
     scopedVocabularyReader,
     quickReviewEvidenceReader,
+    masteryCheckEvidenceReader,
+    masteryCheckSessionWriter,
     clock,
   };
 
@@ -94,6 +120,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     startLearningPath: new StartLearningPath(dependencies),
     startExercise: new StartExercise(dependencies),
     activateVocabularyIntake: new ActivateVocabularyIntake(dependencies),
+    startVocabularyMasteryCheck: new StartVocabularyMasteryCheck(dependencies),
     completeExercise: new CompleteExercise(dependencies),
   };
 

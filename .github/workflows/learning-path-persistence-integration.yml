@@ -54,4 +54,5 @@ jobs:
           tests/mysql-learning-path-vocabulary-intake.test.js
           tests/integration/collection-learning-path-persistence.mysql.test.js
           tests/integration/collection-learning-path-vocabulary-intake.mysql.test.js
+          tests/integration/collection-learning-path-vocabulary-mastery-check.mysql.test.js
       - run: npm run db:verify
