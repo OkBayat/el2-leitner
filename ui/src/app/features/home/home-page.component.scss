@@ -107,10 +107,10 @@
 .path-node.is-reserved::before { display: none; }
 .node-progress-ring {
   position: absolute;
-  top: 32px;
+  top: 35px;
   left: 50%;
-  width: 100px;
-  height: 100px;
+  width: 98px;
+  height: 98px;
   transform: translate(-50%, -50%) rotate(-90deg);
   overflow: visible;
   pointer-events: none;
