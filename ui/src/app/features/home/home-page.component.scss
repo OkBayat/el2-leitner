@@ -141,6 +141,7 @@
   50% { transform: translate(-50%, -4px); }
 }
 .start-flag {
+  --start-flag-face: #fff;
   position: absolute;
   z-index: 3;
   left: 50%;
@@ -150,8 +151,9 @@
   border: 2px solid #d7dbdf;
   border-bottom-width: 4px;
   border-radius: 12px;
-  background: var(--mat-sys-surface);
+  background: var(--start-flag-face);
   color: var(--path-ink);
+  box-shadow: 0 2px 0 rgb(0 0 0 / .08);
   font-size: 12px;
   font-weight: 850;
   line-height: 1.25;
@@ -168,7 +170,7 @@
   transform: rotate(45deg);
   border-right: 2px solid #d7dbdf;
   border-bottom: 2px solid #d7dbdf;
-  background: var(--mat-sys-surface);
+  background: var(--start-flag-face);
 }
 .book-wagon {
   position: absolute;
