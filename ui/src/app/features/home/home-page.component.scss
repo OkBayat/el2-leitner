@@ -17,7 +17,7 @@
 [data-palette='blue'] { --path-tone: #66a7ce; --path-side: #407fa9; --path-ink: #183d57; }
 [data-palette='purple'] { --path-tone: #a190cc; --path-side: #7965a5; --path-ink: #382956; }
 
-.path-day { position: relative; scroll-margin-top: 80px; }
+.path-day { position: relative; scroll-margin-top: calc(var(--shell-header-height, 64px) + 16px); }
 .day-heading {
   display: flex;
   align-items: center;
@@ -36,7 +36,7 @@
 .day-date { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 650; }
 .is-today > .day-heading {
   position: sticky;
-  top: 72px;
+  top: calc(var(--shell-header-height, 64px) + 8px);
   z-index: 4;
   justify-content: space-between;
   min-height: 78px;
@@ -210,8 +210,8 @@
 .path-loading span { display: inline-block; width: 14px; height: 14px; margin: 8px; border-radius: 50%; background: var(--mat-sys-outline-variant); }
 .back-today {
   position: fixed;
-  right: max(20px, calc((100vw - 640px) / 2));
-  bottom: 90px;
+  right: max(20px, calc((100vw - var(--shell-sidebar-width, 0px) - 640px) / 2));
+  bottom: calc(var(--shell-bottom-height, 0px) + 16px);
   z-index: 8;
   display: flex;
   align-items: center;
