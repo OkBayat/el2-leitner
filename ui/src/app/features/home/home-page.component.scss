@@ -97,12 +97,47 @@
   pointer-events: none;
 }
 .path-node.is-practiced { --node-face: var(--path-tone); --node-side: var(--path-side); color: white; }
+.path-node.is-in-progress { --node-face: #fff4df; --node-side: #d9c9aa; color: var(--path-ink); }
 .path-node:not(:disabled):hover { transform: translateY(-2px); }
 .path-node:not(:disabled):active { transform: translateY(4px); box-shadow: 0 3px 0 var(--node-side); }
 .path-node:disabled { cursor: default; }
 .path-node.is-current { outline: 3px solid var(--path-tone); outline-offset: 6px; }
+.path-node.is-in-progress.is-current { outline: none; }
 .path-node.is-reserved { background: transparent; box-shadow: none; border: 3px dashed #d9dde0; }
 .path-node.is-reserved::before { display: none; }
+.node-progress-ring {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  width: 88px;
+  height: 88px;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  overflow: visible;
+  pointer-events: none;
+}
+.node-progress-track, .node-progress-value {
+  fill: none;
+  stroke-width: 5;
+}
+.node-progress-track { stroke: #d7dbdf; }
+.node-progress-value { stroke: var(--path-tone); stroke-linecap: round; }
+.node-progress-label {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: -28px;
+  transform: translateX(-50%);
+  min-width: 38px;
+  padding: 3px 6px;
+  border: 1px solid var(--path-tone);
+  border-radius: 999px;
+  background: var(--mat-sys-surface);
+  color: var(--path-ink);
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1.2;
+  text-align: center;
+}
 .node-check {
   position: absolute;
   right: -3px;
@@ -117,9 +152,13 @@
   color: white;
 }
 .node-check svg { width: 16px; height: 16px; }
+@keyframes start-flag-float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -4px); }
+}
 .start-flag {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   left: 50%;
   bottom: calc(100% + 18px);
   transform: translateX(-50%);
@@ -132,6 +171,8 @@
   font-size: 12px;
   font-weight: 850;
   line-height: 1.25;
+  animation: start-flag-float 2.6s ease-in-out infinite;
+  will-change: transform;
 }
 .start-flag::after {
   content: '';
@@ -232,4 +273,5 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--mat-sys-on-surf
 }
 @media (prefers-reduced-motion: reduce) {
   .path-node, .book-wagon { transition: none; }
+  .start-flag { animation: none; will-change: auto; }
 }
