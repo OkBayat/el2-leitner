@@ -3,16 +3,19 @@
 	<span class="answer-measure" aria-hidden="true">{{ control.value }}</span>
 	<textarea #answerInput class="sentence-answer-input" data-testid="sentence-answer-input"
 		rows="1" wrap="soft" [formControl]="control" [readOnly]="readOnly"
-		[attr.aria-invalid]="incorrect" aria-label="Missing word" aria-haspopup="dialog"
-		[attr.aria-expanded]="detailsOpen()" [attr.aria-controls]="detailsOpen() ? 'sentence-word-details' : null"
-		aria-keyshortcuts="Alt+ArrowDown" title="Click for word meaning, or press Alt + Down Arrow"
-		(click)="detailsOpen.set(true)" (keydown)="onKeydown($event)"
+		[attr.aria-invalid]="incorrect" aria-label="Missing word"
+		[attr.aria-haspopup]="detailsEnabled ? 'dialog' : null"
+		[attr.aria-expanded]="detailsEnabled ? detailsOpen() : null"
+		[attr.aria-controls]="detailsEnabled && detailsOpen() ? 'sentence-word-details' : null"
+		[attr.aria-keyshortcuts]="detailsEnabled ? 'Alt+ArrowDown' : null"
+		[attr.title]="detailsEnabled ? 'Click for word meaning, or press Alt + Down Arrow' : null"
+		(click)="openDetails()" (keydown)="onKeydown($event)"
 		(input)="normalizeInput($event)" (compositionend)="normalizeInput($event)"
 		enterkeyhint="go" lang="en" autocomplete="off" autocapitalize="none"
 		autocorrect="off" spellcheck="false"></textarea>
 </span>
 <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-	[cdkConnectedOverlayOpen]="detailsOpen()" [cdkConnectedOverlayPositions]="positions"
+	[cdkConnectedOverlayOpen]="detailsEnabled && detailsOpen()" [cdkConnectedOverlayPositions]="positions"
 	[cdkConnectedOverlayHasBackdrop]="false" [cdkConnectedOverlayPush]="true"
 	[cdkConnectedOverlayViewportMargin]="0" [cdkConnectedOverlayDisposeOnNavigation]="true"
 	(overlayOutsideClick)="onOutsideClick($event)" (detach)="closeDetails()">
