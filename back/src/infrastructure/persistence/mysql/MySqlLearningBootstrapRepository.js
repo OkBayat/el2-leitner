@@ -1,7 +1,7 @@
 import { normalizeVocabularyForm } from "../../../domain/library/VocabularyNormalizer.js";
 import { reviewFingerprint } from "./MySqlEfficientLearningStateRepository.js";
 
-const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "system" });
+const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, dailyListeningGoal: 3, voiceRate: 0.85, theme: "system" });
 const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "tags", "lessons", "notes", "createdAt"]);
 
 function parseJson(value, fallback = null) {
@@ -85,7 +85,7 @@ export class MySqlLearningBootstrapRepository {
 
     const [settingsRows, dailyRows, wordRows, eventRows, subscriptionRows] = await Promise.all([
       this.pool.execute(
-        "SELECT daily_new, daily_goal, voice_rate, theme FROM user_settings WHERE user_id = ? LIMIT 1",
+        "SELECT daily_new, daily_goal, daily_listening_goal, voice_rate, theme FROM user_settings WHERE user_id = ? LIMIT 1",
         [userId]
       ),
       this.pool.execute(
@@ -181,6 +181,7 @@ export class MySqlLearningBootstrapRepository {
         ? {
             dailyNew: Number(settingsRow.daily_new),
             dailyGoal: Number(settingsRow.daily_goal),
+            dailyListeningGoal: Number(settingsRow.daily_listening_goal) || 3,
             voiceRate: Number(settingsRow.voice_rate),
             theme: settingsRow.theme
           }
