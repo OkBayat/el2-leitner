@@ -22,6 +22,7 @@ import { GetLeitnerHouse } from "./application/learning/GetLeitnerHouse.js";
 import { LearningSessionCommands } from "./application/learning/LearningSessionCommands.js";
 import { RecordReviewResult } from "./application/learning/RecordReviewResult.js";
 import { SaveLearningState } from "./application/learning/SaveLearningState.js";
+import { UpdateThemePreference } from "./application/learning/UpdateThemePreference.js";
 import { UpdateVocabulary } from "./application/learning/UpdateVocabulary.js";
 import { GetSentencePracticeCards } from "./application/sentence-practice/GetSentencePracticeCards.js";
 import { LibraryAdminPolicy } from "./domain/library/LibraryAdminPolicy.js";
@@ -106,6 +107,7 @@ export function createContainer({ pool, config, adapters = {} }) {
       getLeitnerHouse: new GetLeitnerHouse({ learningStateRepository }),
       getSentencePracticeCards,
       saveLearningState: new SaveLearningState({ learningStateRepository }),
+      updateThemePreference: new UpdateThemePreference({ learningStateRepository }),
       updateVocabulary: new UpdateVocabulary({ learningStateRepository }),
       activateVocabulary: new ActivateVocabulary({ vocabularyActivationRepository }),
       activateVocabularyBatch: new ActivateVocabularyBatch({ vocabularyActivationRepository }),
