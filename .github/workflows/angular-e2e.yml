@@ -29,6 +29,12 @@ jobs:
       - name: Install UI dependencies
         working-directory: ui
         run: npm ci
+      - name: Use AudioWorklet-safe Playwright
+        working-directory: ui
+        # Playwright 1.55 can leave AudioWorklet.addModule() pending forever in CI.
+        # 1.56 contains the upstream fix; keep this exact CI override until the
+        # repository dependency is upgraded separately.
+        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
       - name: Install Playwright Chromium
         working-directory: ui
         run: npx playwright install --with-deps chromium
