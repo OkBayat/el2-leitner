@@ -21,11 +21,6 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "outputPath": { "base": "dist", "browser": "browser" },
-            "index": {
-              "input": "src/index.html",
-              "output": "index.html",
-              "preloadInitial": false
-            },
             "assets": [
               "src/manifest.webmanifest",
               { "glob": "**/*", "input": "assets", "output": "assets" },
