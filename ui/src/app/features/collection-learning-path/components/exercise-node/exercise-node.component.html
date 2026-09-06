@@ -1,0 +1,21 @@
+<button
+  type="button"
+  class="exercise-node"
+  [class.exercise-node--completed]="exercise().state === 'completed'"
+  [class.exercise-node--active]="exercise().state === 'in_progress'"
+  [disabled]="!actionable()"
+  [attr.data-state]="exercise().state"
+  [attr.aria-label]="label() + ', ' + stateLabel()"
+  (click)="open()"
+>
+  <span class="exercise-node__index" aria-hidden="true">{{ exercise().position }}</span>
+  <span class="exercise-node__copy">
+    <strong>{{ label() }}</strong>
+    <small>{{ stateLabel() }}{{ exercise().required ? '' : ' · Optional' }}</small>
+  </span>
+  <span class="exercise-node__marker" aria-hidden="true">
+    @if (exercise().state === 'completed') { ✓ }
+    @else if (exercise().state === 'locked') { · }
+    @else { → }
+  </span>
+</button>

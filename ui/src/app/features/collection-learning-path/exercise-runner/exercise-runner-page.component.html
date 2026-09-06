@@ -1,0 +1,57 @@
+<main class="runner" data-testid="learning-path-runner">
+  <header class="runner__topbar">
+    <a [routerLink]="backLink()" class="runner__back" aria-label="Back to Learning Path">←</a>
+    @if (facade.context(); as context) {
+      <div class="runner__heading">
+        <strong>{{ context.lesson.title }}</strong>
+        <span>{{ exerciseLabel() }}</span>
+      </div>
+      <span class="runner__status">{{ stateLabel() }}</span>
+    } @else {
+      <div class="runner__heading"><strong>Learning Path</strong><span>Exercise</span></div>
+    }
+  </header>
+
+  <section class="runner__workspace">
+    @if (facade.loading() && !facade.context()) {
+      <div class="runner-card" aria-live="polite">
+        <span class="runner-spinner" aria-hidden="true"></span>
+        <h1>Preparing exercise…</h1>
+      </div>
+    } @else if (facade.error() && !facade.context()) {
+      <div class="runner-card runner-card--error" role="alert">
+        <h1>Exercise unavailable</h1>
+        <p>{{ facade.error() }}</p>
+        <button type="button" (click)="retry()">Try again</button>
+      </div>
+    } @else if (facade.context(); as context) {
+      @if (facade.error()) {
+        <div class="runner-inline-error" role="status">{{ facade.error() }} <button type="button" (click)="retry()">Retry</button></div>
+      }
+
+      @if (context.state === 'locked') {
+        <div class="runner-card">
+          <span class="runner-card__marker" aria-hidden="true">·</span>
+          <h1>This exercise is locked</h1>
+          <p>Complete the required exercises before this one to continue.</p>
+        </div>
+      } @else if (context.state === 'completed') {
+        <div class="runner-card">
+          <span class="runner-card__marker" aria-hidden="true">✓</span>
+          <h1>Exercise completed</h1>
+          <p>Your completion is already saved.</p>
+        </div>
+      } @else {
+        <div class="runner-card runner-card--ready">
+          <p class="runner-card__eyebrow">Lesson {{ context.lesson.position }}</p>
+          <h1>{{ exerciseLabel() }}</h1>
+          <p>The exercise workspace is ready for this activity.</p>
+          <div class="runner-card__meta">
+            <span>{{ context.exercise.required ? 'Required' : 'Optional' }}</span>
+            <span>Step {{ context.exercise.position }}</span>
+          </div>
+        </div>
+      }
+    }
+  </section>
+</main>
