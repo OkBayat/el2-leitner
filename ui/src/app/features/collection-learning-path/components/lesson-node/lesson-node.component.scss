@@ -1,0 +1,21 @@
+:host { display: block; }
+
+.lesson { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 18px; }
+.lesson__rail { display: flex; flex-direction: column; align-items: center; }
+.lesson__badge { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 50%; border: 2px solid var(--mat-sys-outline-variant); background: var(--mat-sys-surface); font-weight: 900; z-index: 1; }
+.lesson[data-state='in_progress'] .lesson__badge, .lesson[data-state='available'] .lesson__badge { border-color: var(--mat-sys-primary); color: var(--mat-sys-primary); }
+.lesson[data-state='completed'] .lesson__badge { background: var(--mat-sys-primary); border-color: var(--mat-sys-primary); color: var(--mat-sys-on-primary); }
+.lesson__line { width: 2px; min-height: 100%; flex: 1; background: var(--mat-sys-outline-variant); }
+.lesson__body { min-width: 0; padding: 2px 0 36px; }
+.lesson__header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 14px; }
+.lesson__header p { margin: 0 0 4px; color: var(--mat-sys-on-surface-variant); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.lesson__header h2 { margin: 0; font-size: 1.25rem; }
+.lesson__state { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; background: var(--mat-sys-surface-container-high); color: var(--mat-sys-on-surface-variant); font-size: 0.78rem; font-weight: 700; }
+.lesson__exercises { display: grid; gap: 10px; }
+.lesson__empty { margin: 0; padding: 16px; color: var(--mat-sys-on-surface-variant); border: 1px dashed var(--mat-sys-outline-variant); border-radius: 16px; }
+
+@media (max-width: 560px) {
+  .lesson { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; }
+  .lesson__badge { width: 40px; height: 40px; }
+  .lesson__header { align-items: center; }
+}
