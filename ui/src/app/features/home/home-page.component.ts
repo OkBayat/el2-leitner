@@ -27,10 +27,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   readonly todayVisible = signal(true);
   readonly popoverAbove = signal(false);
   readonly arrowX = signal<number | null>(null);
-  readonly positions: ConnectedPosition[] = [
-    { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 16 },
-    { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -16 },
-  ];
+  positions: ConnectedPosition[] = [];
   @ViewChild('popup') private popup?: ElementRef<HTMLElement>;
   private historyObserver?: IntersectionObserver;
   private todayObserver?: IntersectionObserver;
@@ -80,8 +77,29 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (day.future || step?.id.startsWith('reserved')) return;
     const previous = this.selection();
     if (previous?.origin === origin) { this.close(); return; }
+    this.updatePositions(origin);
     this.arrowX.set(null); this.popoverAbove.set(false);
     this.selection.set({ day, step, origin });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    const selected = this.selection();
+    if (selected) this.updatePositions(selected.origin);
+  }
+
+  private updatePositions(origin: CdkOverlayOrigin): void {
+    const rect = origin.elementRef.nativeElement.getBoundingClientRect();
+    const width = Math.min(310, window.innerWidth - 32);
+    const center = rect.left + rect.width / 2;
+    const left = Math.max(16, Math.min(center - width / 2, window.innerWidth - width - 16));
+    // Supply an already-fitting horizontal anchor. CDK still selects above/below,
+    // but cannot push a narrow-screen dialog flush against the viewport edge.
+    const offsetX = left + width / 2 - center;
+    this.positions = [
+      { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetX, offsetY: 16 },
+      { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetX, offsetY: -16 },
+    ];
   }
 
   close(): void { this.selection.set(null); }
