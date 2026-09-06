@@ -27,10 +27,13 @@ describe('ThemeService system chrome', () => {
 		vi.unstubAllGlobals();
 		document.documentElement.removeAttribute('data-theme');
 		document.documentElement.style.removeProperty('color-scheme');
+		document.documentElement.style.removeProperty('background-color');
 		document.documentElement.style.removeProperty('--vocora-system-chrome-color');
+		document.body.style.removeProperty('color-scheme');
+		document.body.style.removeProperty('background-color');
 	});
 
-	it('keeps the Android and iOS browser chrome aligned with an explicit light app theme', () => {
+	it('keeps Android status and navigation chrome aligned with an explicit light app theme', () => {
 		const service = TestBed.inject(ThemeService);
 		service.apply('light');
 
@@ -40,16 +43,24 @@ describe('ThemeService system chrome', () => {
 		expect(themeColor?.hasAttribute('media')).toBe(false);
 		expect(colorScheme?.content).toBe('light');
 		expect(document.documentElement.dataset['theme']).toBe('light');
+		expect(document.documentElement.style.colorScheme).toBe('light');
+		expect(document.body.style.colorScheme).toBe('light');
+		expect(document.documentElement.style.backgroundColor).toBe(LIGHT_SYSTEM_CHROME_COLOR);
+		expect(document.body.style.backgroundColor).toBe(LIGHT_SYSTEM_CHROME_COLOR);
 		expect(document.documentElement.style.getPropertyValue('--vocora-system-chrome-color')).toBe(LIGHT_SYSTEM_CHROME_COLOR);
 	});
 
-	it('switches the system chrome to the dark app surface when Vocora uses dark mode', () => {
+	it('switches both system bars and edge-to-edge surfaces to the dark app theme', () => {
 		const service = TestBed.inject(ThemeService);
 		service.apply('dark');
 
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe(DARK_SYSTEM_CHROME_COLOR);
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')?.content).toBe('dark');
 		expect(document.documentElement.dataset['theme']).toBe('dark');
+		expect(document.documentElement.style.colorScheme).toBe('dark');
+		expect(document.body.style.colorScheme).toBe('dark');
+		expect(document.documentElement.style.backgroundColor).toBe(DARK_SYSTEM_CHROME_COLOR);
+		expect(document.body.style.backgroundColor).toBe(DARK_SYSTEM_CHROME_COLOR);
 	});
 
 	it('follows device theme changes only while the app theme is set to system', () => {
