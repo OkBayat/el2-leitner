@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.ielts-listening-exercise {
+  min-width: 0;
+}
+
+.completed-state,
+.exercise-error {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.completed-state {
+  display: grid;
+  gap: 6px;
+}
+
+.completed-state span {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.exercise-error {
+  color: var(--mat-sys-error);
+}

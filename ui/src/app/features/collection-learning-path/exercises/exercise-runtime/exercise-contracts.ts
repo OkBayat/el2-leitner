@@ -1,5 +1,8 @@
 import type { Observable } from 'rxjs';
-import type { CompletedLearningPathExerciseOutcome } from '../../../../domain/collection-learning-path/learning-path';
+import type {
+  CompletedLearningPathExerciseOutcome,
+  LearningPathNodeState,
+} from '../../../../domain/collection-learning-path/learning-path';
 
 export interface ExerciseContext<TPayload = unknown> {
   readonly pathId: string;
@@ -7,6 +10,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly lessonId: string;
   readonly type: string;
   readonly schemaVersion: number;
+  readonly state?: LearningPathNodeState;
   readonly config: Readonly<Record<string, unknown>>;
   readonly payload: TPayload;
 }

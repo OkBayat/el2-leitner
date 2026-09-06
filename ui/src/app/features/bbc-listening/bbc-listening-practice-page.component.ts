@@ -1,5 +1,5 @@
 import { listeningDifficultyLabel, listeningLevelLabel } from '../../domain/listening-practice/listening-practice';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -36,6 +36,11 @@ import { ListeningAudioPlayerComponent } from './listening-audio-player.componen
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BbcListeningPracticePageComponent implements OnInit {
+  @Input() lessonSlug = '';
+  @Input() testId = '';
+  @Input() embedded = false;
+  @Output() readonly attemptSubmitted = new EventEmitter<{ attemptId: string }>();
+
   readonly levelLabel = listeningLevelLabel;
   readonly difficultyLabel = listeningDifficultyLabel;
   readonly session = inject(ListeningAttemptService);
@@ -69,8 +74,8 @@ export class BbcListeningPracticePageComponent implements OnInit {
   private readonly mistakePractice = inject(ListeningMistakePracticeService);
 
   async ngOnInit(): Promise<void> {
-    const lessonSlug = this.route.snapshot.paramMap.get('lessonSlug')?.trim();
-    const testId = this.route.snapshot.paramMap.get('testId')?.trim();
+    const lessonSlug = this.lessonSlug.trim() || this.route.snapshot.paramMap.get('lessonSlug')?.trim();
+    const testId = this.testId.trim() || this.route.snapshot.paramMap.get('testId')?.trim();
     if (!lessonSlug || !testId) {
       this.routeError.set('The listening test could not be identified.');
       return;
@@ -130,7 +135,11 @@ export class BbcListeningPracticePageComponent implements OnInit {
   async submit(): Promise<void> {
     if (!this.canSubmit()) return;
     const submitted = await this.session.submit(this.answers.getRawValue());
-    if (submitted) await this.refreshHouseOneVocabularyStatus();
+    if (!submitted) return;
+
+    await this.refreshHouseOneVocabularyStatus();
+    const attemptId = String(this.session.result()?.attempt.id ?? '').trim();
+    if (attemptId) this.attemptSubmitted.emit({ attemptId });
   }
 
   async retake(): Promise<void> {
