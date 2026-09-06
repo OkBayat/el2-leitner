@@ -46,6 +46,7 @@
             <li class="step-row">
               <button type="button" class="path-node" cdkOverlayOrigin #origin="cdkOverlayOrigin"
                 [attr.data-activity]="step.id" [attr.data-status]="step.status"
+                [attr.data-testid]="day.today && step.id === 'shadowing' ? 'home-shadowing' : null"
                 [class.is-practiced]="step.status === 'practiced'" [class.is-current]="step.current"
                 [class.is-reserved]="step.id.startsWith('reserved')"
                 [disabled]="day.future || step.id.startsWith('reserved')"
@@ -63,7 +64,8 @@
           }
         </ol>
         <button type="button" class="book-wagon" cdkOverlayOrigin #wagon="cdkOverlayOrigin"
-          [class.is-quiet]="!day.today && !day.boxOnePracticed" [disabled]="day.future"
+          [class.is-quiet]="!day.boxOnePracticed" [disabled]="day.future"
+          [attr.data-testid]="day.today ? 'home-box-one' : null"
           [attr.aria-label]="'Box 1 practice — ' + day.dateLabel" aria-haspopup="dialog"
           [attr.aria-expanded]="selection()?.origin === wagon" (click)="open(day, null, wagon)">
           <app-book-wagon />
@@ -96,7 +98,7 @@
           <p>Reading practice is coming soon.</p>
         } @else {
           <p>{{ step.status === 'practiced' ? 'Practised' : 'No practice recorded' }} · {{ selected.day.dateLabel }}</p>
-          <a class="popover-action" [routerLink]="step.route" (click)="close()">
+          <a class="popover-action" [routerLink]="step.route" [attr.data-testid]="step.id === 'shadowing' ? 'start-shadowing' : null" (click)="close()">
             {{ step.status === 'practiced' ? 'Practise again' : selected.day.today ? 'Start' : 'Practise today' }}
           </a>
         }
@@ -104,7 +106,7 @@
         <h3 id="home-popup-title">Box 1 practice</h3>
         <p>Choose how to practise.</p>
         <a class="popover-action" routerLink="/review" [queryParams]="{ mode: 'box1' }" (click)="close()">Word by word</a>
-        <a class="popover-action is-secondary" routerLink="/sentence" [queryParams]="{ house: 1 }" (click)="close()">Sentence by sentence</a>
+        <a class="popover-action is-secondary" data-testid="start-sentence-practice" routerLink="/sentence" [queryParams]="{ house: 1 }" (click)="close()">Sentence by sentence</a>
       }
     </div>
   </ng-template>

@@ -67,6 +67,7 @@ test('native AudioWorklet and real speech API handle silence without changing le
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
+  await page.getByTestId('home-shadowing').click();
   await expect(page.getByTestId('start-shadowing')).toBeVisible();
   const before = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
   await page.getByTestId('start-shadowing').click();
@@ -77,7 +78,7 @@ test('native AudioWorklet and real speech API handle silence without changing le
   await expect(page.getByRole('button', { name: 'Stop recording', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Stop recording', exact: true })).toContainText(/Stop · [1-9]/u);
   await expect(page.locator('.shadowing-word.recognized')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Stop recording', exact: true }).click();
+  await page.getByRole('button', { name: 'Stop recording', exact: true })).click();
   await expect(page.getByRole('alert')).toContainText('No clear speech');
   await expect(page.getByTestId('shadowing-feedback')).toHaveClass(/neutral/u);
   expect(await page.evaluate(() => (window as any).__shadowingMicrophone.tracks.map((track: MediaStreamTrack) => track.readyState))).toEqual(['ended']);
