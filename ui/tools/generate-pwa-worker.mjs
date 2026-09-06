@@ -172,7 +172,7 @@ async function precacheApplication() {
   const cache = await caches.open(CACHE_NAME);
   // Keep install traffic deliberately sequential. cache.addAll() starts every
   // request at once and an interrupted update cancels the entire remaining
-  // chunk burst, which is exactly what DevTools reports as `(canceled)`.
+  // chunk burst, which is exactly what DevTools reports as (canceled).
   for (const url of PRECACHE_URLS) await precacheAsset(cache, url);
 }
 
