@@ -37,25 +37,13 @@
 
 .sentence-playback-token,
 .sentence-text app-sentence-answer {
+	opacity: .48;
 	transition: opacity 120ms ease;
 }
 
-.sentence-text.is-playing .sentence-playback-token,
-.sentence-text.is-playing app-sentence-answer {
-	opacity: .48;
-}
-
-/* Keep every word that playback has already reached at full text color. */
-.sentence-text.is-playing .sentence-playback-token.is-current-word,
-.sentence-text.is-playing .sentence-playback-token:has(~ .sentence-playback-token.is-current-word),
-.sentence-text.is-playing .sentence-context-part:has(~ app-sentence-answer.is-current-word) .sentence-playback-token,
-.sentence-text.is-playing .sentence-context-part:has(~ .sentence-context-part .sentence-playback-token.is-current-word) .sentence-playback-token {
-	opacity: 1;
-}
-
-/* Once the hidden cloze has been spoken, keep the gap emphasized too. */
-.sentence-text.is-playing app-sentence-answer.is-current-word,
-.sentence-text.is-playing app-sentence-answer:has(~ .sentence-context-part .sentence-playback-token.is-current-word) {
+/* Reveal words progressively as playback reaches them, without changing typography. */
+.sentence-playback-token.is-spoken,
+.sentence-text app-sentence-answer.is-spoken {
 	opacity: 1;
 }
 
