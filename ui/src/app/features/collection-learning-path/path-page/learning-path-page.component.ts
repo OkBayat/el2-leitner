@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
+import { learningPathPrimaryAction } from '../../../domain/collection-learning-path/learning-path';
 import type { LearningPathExerciseSelection } from '../../../domain/collection-learning-path/learning-path';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
@@ -20,14 +21,15 @@ export class LearningPathPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly collectionId = signal('');
-  readonly continueLabel = computed(() => {
+  readonly primaryAction = computed(() => {
     const status = this.facade.view()?.path.learnerStatus;
-    if (status === 'available') return 'Start course';
-    if (status === 'up_to_date') return 'Up to date';
-    if (status === 'completed') return 'Completed';
-    return 'Continue';
+    return status ? learningPathPrimaryAction(status) : { label: 'Continue', actionable: false };
   });
-  readonly canContinue = computed(() => Boolean(this.facade.resume()?.resumePoint) && !this.facade.loading() && !this.facade.starting());
+  readonly continueLabel = computed(() => this.primaryAction().label);
+  readonly canContinue = computed(() => this.primaryAction().actionable
+    && Boolean(this.facade.resume()?.resumePoint)
+    && !this.facade.loading()
+    && !this.facade.starting());
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {

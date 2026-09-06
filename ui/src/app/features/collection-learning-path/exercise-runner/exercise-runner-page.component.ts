@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
 import { exerciseTypeLabel, learningPathStateLabel } from '../../../domain/collection-learning-path/learning-path';
 import type { ExerciseOutcome } from '../exercises/exercise-runtime/exercise-contracts';
@@ -23,6 +23,7 @@ interface RunnerRoute {
 export class ExerciseRunnerPageComponent {
   readonly facade = inject(ExerciseRunnerFacade);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly routeState = signal<RunnerRoute | null>(null);
   readonly exerciseLabel = computed(() => this.facade.context() ? exerciseTypeLabel(this.facade.context()!.exercise.type) : 'Exercise');
@@ -53,5 +54,18 @@ export class ExerciseRunnerPageComponent {
 
   onExerciseOutcome(outcome: ExerciseOutcome): void {
     if (outcome.kind === 'completed') void this.facade.complete(outcome);
+  }
+
+  continueJourney(): void {
+    const context = this.facade.context();
+    const resumePoint = this.facade.resume()?.resumePoint;
+    if (!context) return;
+    if (resumePoint) {
+      void this.router.navigate([
+        '/learning-path', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
+      ]);
+      return;
+    }
+    void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
   }
 }

@@ -39,7 +39,19 @@
         <div class="runner-card">
           <span class="runner-card__marker" aria-hidden="true">✓</span>
           <h1>Exercise completed</h1>
-          <p>Your completion is already saved.</p>
+          @if (facade.resume()?.resumePoint) {
+            <p>Your completion is saved. Continue with the next exercise in this course.</p>
+            <button type="button" data-testid="learning-path-continue" (click)="continueJourney()">Continue</button>
+          } @else {
+            @if (facade.resume()?.pathStatus === 'up_to_date') {
+              <p>Your completion is saved. You are up to date with all currently published lessons.</p>
+            } @else if (facade.resume()?.pathStatus === 'completed') {
+              <p>Your completion is saved. You have completed this course.</p>
+            } @else {
+              <p>Your completion is already saved.</p>
+            }
+            <button type="button" data-testid="learning-path-back-to-course" (click)="continueJourney()">Back to course</button>
+          }
         </div>
       } @else {
         <app-learning-path-exercise-host
