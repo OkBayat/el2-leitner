@@ -73,11 +73,18 @@ test('persisted Home timeline against MySQL 8.4 and the authenticated HTTP bound
     assert.deepEqual(isolated.body.days, [{ day: '2026-09-06', activities: [], boxOnePracticed: false }]);
   });
 
-  await t.test('reads all historical reviews and completed listening in the learner timezone', async () => {
-    for (const date of ['2025-01-01', '2026-09-05']) {
+  await t.test('reads every historical review_events mode and completed listening in the learner timezone', async () => {
+    const reviewFixtures = [
+      ['2025-01-01', 'legacy-review'],
+      ['2026-08-26', 'training'],
+      ['2026-08-27', 'box1'],
+      ['2026-09-05', 'review'],
+    ];
+    for (const [date, mode] of reviewFixtures) {
       await pool.execute(`INSERT INTO review_events
         (event_key, user_id, occurred_at, local_day, correct, mode, term_snapshot)
-        VALUES (?, ?, ?, ?, FALSE, 'review', 'fixture word')`, [randomUUID().replaceAll('-', '').padEnd(64, '0'), learner, `${date} 12:00:00`, date]);
+        VALUES (?, ?, ?, ?, FALSE, ?, 'fixture word')`,
+      [randomUUID().replaceAll('-', '').padEnd(64, '0'), learner, `${date} 12:00:00`, date, mode]);
     }
     const [lessons] = await pool.execute('SELECT id, content_version FROM listening_lessons ORDER BY id LIMIT 1');
     assert.ok(lessons.length, 'Database setup must install the canonical listening catalog.');
@@ -96,6 +103,14 @@ test('persisted Home timeline against MySQL 8.4 and the authenticated HTTP bound
     const prior = await get(learner, `&limit=2&before=${latest.body.nextBefore}`).expect(200);
     assert.deepEqual(prior.body.days.map(row => row.day), ['2026-09-03', '2026-09-04']);
     assert.deepEqual(day(prior.body, '2026-09-04').activities, ['shadowing']);
+
+    const augustHistory = await get(learner, '&limit=2&before=2026-08-28').expect(200);
+    assert.deepEqual(augustHistory.body.days.map(row => row.day), ['2026-08-26', '2026-08-27']);
+    assert.deepEqual(day(augustHistory.body, '2026-08-26').activities, ['vocabulary']);
+    assert.equal(day(augustHistory.body, '2026-08-26').boxOnePracticed, false);
+    assert.deepEqual(day(augustHistory.body, '2026-08-27').activities, []);
+    assert.equal(day(augustHistory.body, '2026-08-27').boxOnePracticed, true);
+
     const earliest = await get(learner, '&limit=2&before=2025-01-03').expect(200);
     assert.deepEqual(earliest.body.days.map(row => row.day), ['2025-01-01', '2025-01-02']);
     assert.deepEqual(earliest.body.days[0].activities, ['vocabulary']);
