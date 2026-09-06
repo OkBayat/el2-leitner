@@ -159,7 +159,6 @@ export class ShadowingSessionService {
     } catch (error) {
       if (generation !== this.generation) return;
       if (error instanceof ApiError && [400, 404, 409, 422].includes(error.status)) { this.fail(error, generation); return; }
-      // Keep the recording ID so a lost response can be retried without counting twice.
       this.showError(error); this.phase.set('evaluation-error');
     }
   }
@@ -188,14 +187,22 @@ export class ShadowingSessionService {
     this.errorCode.set(error instanceof ApiError ? error.code : '');
   }
 
-  async complete(): Promise<void> {
+  async complete(): Promise<string | null> {
     this.pause();
     const id = this.sessionId;
-    this.sessionId = null;
-    if (id) {
-      try { await this.api.close(id); } catch (error) { this.showError(error); }
+    if (!id) {
+      this.phase.set('complete');
+      return null;
     }
-    this.phase.set('complete');
+    try {
+      await this.api.close(id);
+      this.sessionId = null;
+      this.phase.set('complete');
+      return id;
+    } catch (error) {
+      this.showError(error);
+      return null;
+    }
   }
 
   dispose(): void {

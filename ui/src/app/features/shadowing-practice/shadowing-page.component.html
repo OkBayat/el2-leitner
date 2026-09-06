@@ -10,7 +10,7 @@
         </mat-card-content>
         <mat-card-actions>
           <button mat-flat-button type="button" (click)="session.load()">Try again</button>
-          <button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+          <button mat-stroked-button type="button" (click)="back()">Back home</button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -29,7 +29,7 @@
         </mat-card-content>
         <mat-card-actions>
           <button mat-flat-button type="button" (click)="session.load()">Practice again</button>
-          <button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+          <button mat-stroked-button type="button" (click)="back()">Back home</button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -109,7 +109,7 @@
               <button mat-flat-button class="review-action-primary" type="button" (click)="session.result()?.passed ? session.next() : session.record()">{{ session.result()?.passed ? 'Continue' : 'Try again' }}</button>
             }
             <button mat-button type="button" [disabled]="session.busy()" (click)="session.next()">Skip sentence</button>
-            @if (session.counts().completedCount) { <button mat-button type="button" [disabled]="session.busy()" (click)="session.complete()">Finish practice</button> }
+            @if (session.counts().completedCount) { <button mat-button type="button" [disabled]="session.busy()" (click)="finish()">Finish practice</button> }
           </div>
         </div>
       </footer>
