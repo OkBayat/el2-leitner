@@ -1,4 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const fakeAudioPath = join(tmpdir(), 'vocora-shadowing-ci-silence.wav');
 
 export default defineConfig({
   testDir: './e2e',
@@ -15,5 +19,18 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [{
+    name: 'chromium',
+    use: {
+      ...devices['Desktop Chrome'],
+      permissions: ['microphone'],
+      launchOptions: {
+        args: [
+          '--use-fake-ui-for-media-stream',
+          '--use-fake-device-for-media-stream',
+          `--use-file-for-fake-audio-capture=${fakeAudioPath}`,
+        ],
+      },
+    },
+  }],
 });
