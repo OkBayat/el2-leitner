@@ -7,11 +7,24 @@ export interface VocabularyProgress {
   total: number;
 }
 
+export interface ListeningProgress {
+  completed: number;
+  total: number;
+}
+
+export type ListeningSegmentState = 'pending' | 'complete' | 'legendary';
+
+export interface ListeningRingSegment {
+  index: number;
+  state: ListeningSegmentState;
+}
+
 export interface TimelineDay {
   day: string;
   activities: PathActivity[];
   boxOnePracticed: boolean;
   vocabularyProgress?: VocabularyProgress;
+  listeningProgress?: ListeningProgress;
 }
 
 export interface TimelinePage {
@@ -28,6 +41,8 @@ export interface PathStep {
   status: PathStatus;
   current: boolean;
   progress: number | null;
+  listeningProgress: ListeningProgress | null;
+  legendary: boolean;
 }
 
 export interface PathDay {
@@ -58,6 +73,25 @@ function progressPercent(progress?: VocabularyProgress): number | null {
   return Math.round((completed / total) * 100);
 }
 
+function safeListeningProgress(progress?: ListeningProgress): ListeningProgress | null {
+  const total = Number(progress?.total);
+  const completed = Number(progress?.completed);
+  if (!Number.isSafeInteger(total) || total < 1 || !Number.isSafeInteger(completed) || completed < 0) return null;
+  return { completed, total };
+}
+
+export function listeningRingSegments(progress: ListeningProgress | null | undefined): ListeningRingSegment[] {
+  const safe = safeListeningProgress(progress);
+  if (!safe) return [];
+  const count = Math.max(safe.total, safe.completed);
+  return Array.from({ length: count }, (_, index) => ({
+    index,
+    state: index >= safe.total && index < safe.completed
+      ? 'legendary'
+      : index < Math.min(safe.completed, safe.total) ? 'complete' : 'pending',
+  }));
+}
+
 export function nextPathDay(day: string, amount = 1): string {
   return new Date(Date.parse(`${day}T12:00:00Z`) + amount * 86_400_000).toISOString().slice(0, 10);
 }
@@ -77,12 +111,22 @@ export function buildDailyPath(records: TimelineDay[], today: string): PathDay[]
     let currentAssigned = false;
     const steps: PathStep[] = STEPS.map(step => {
       const progress = isToday && step.id === 'vocabulary' ? progressPercent(record.vocabularyProgress) : null;
+      const listeningProgress = isToday && step.id === 'listening' ? safeListeningProgress(record.listeningProgress) : null;
+      const listeningComplete = Boolean(listeningProgress && listeningProgress.completed >= listeningProgress.total);
       const status: PathStatus = future ? 'upcoming' : !step.route ? 'planned'
+        : listeningProgress ? listeningComplete ? 'practiced' : listeningProgress.completed > 0 ? 'in-progress' : 'available'
         : progress !== null ? progress >= 100 ? 'practiced' : progress > 0 ? 'in-progress' : 'available'
         : record.activities.includes(step.id as PathActivity) ? 'practiced' : 'available';
       const current = isToday && (status === 'available' || status === 'in-progress') && !currentAssigned;
       if (current) currentAssigned = true;
-      return { ...step, status, current, progress };
+      return {
+        ...step,
+        status,
+        current,
+        progress,
+        listeningProgress,
+        legendary: Boolean(isToday && step.id === 'listening' && listeningComplete),
+      };
     });
     const dateLabel = formatter.format(new Date(`${record.day}T12:00:00Z`));
     return {
