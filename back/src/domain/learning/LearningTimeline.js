@@ -26,6 +26,15 @@ function dayFormatter(timeZone) {
   };
 }
 
+function vocabularyProgress(data) {
+  const completed = Number(data.vocabularyToday?.completed);
+  const remaining = Number(data.vocabularyToday?.remaining);
+  const safeCompleted = Number.isSafeInteger(completed) && completed > 0 ? completed : 0;
+  const safeRemaining = Number.isSafeInteger(remaining) && remaining > 0 ? remaining : 0;
+  const total = safeCompleted + safeRemaining;
+  return total ? { completed: safeCompleted, total } : null;
+}
+
 export function timelineQuery(input = {}, now = new Date()) {
   const timeZone = input.timeZone ?? 'UTC';
   let dayAt;
@@ -74,10 +83,17 @@ export function buildLearningTimeline(range, data) {
     if (firstDate && firstDate === lastDate) record(firstDate, entry.activity);
     else if (firstDate && lastDate) limitedHistory = true;
   }
+  const todayVocabulary = vocabularyProgress(data);
   const days = [];
   for (let day = start; day <= to; day = shiftDay(day, 1)) {
     const evidence = practiced.get(day) ?? new Set();
-    days.push({ day, activities: ACTIVITIES.filter(activity => evidence.has(activity)), boxOnePracticed: evidence.has('box1') });
+    const timelineDay = {
+      day,
+      activities: ACTIVITIES.filter(activity => evidence.has(activity)),
+      boxOnePracticed: evidence.has('box1'),
+    };
+    if (day === today && todayVocabulary) timelineDay.vocabularyProgress = todayVocabulary;
+    days.push(timelineDay);
   }
   return { today, days, nextBefore: days.length && start > firstDay ? start : null, limitedHistory };
 }
