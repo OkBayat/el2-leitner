@@ -1,86 +1,87 @@
-<header
-	class="topbar"
-	[class.is-hidden]="mobileNavHidden()"
-	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
-	[attr.inert]="mobileNavHidden() ? '' : null"
->
-	<button mat-icon-button type="button" [matMenuTriggerFor]="navigationMenu" aria-label="Open navigation menu">
-		<span class="topbar-icon" aria-hidden="true">☰</span>
-	</button>
+<a class="skip-link" href="#main-content" (click)="skipToContent($event)">Skip to content</a>
 
+<aside class="desktop-sidebar" aria-label="Vocora sidebar">
 	<a class="brand" routerLink="/dashboard" aria-label="Vocora home">
-		<img src="/assets/vocora-icon.png" alt="" width="34" height="34">
-		<span>Vocora</span>
+		<img src="/assets/vocora-icon.png" alt="" width="36" height="36">
+		<span class="sidebar-label">Vocora</span>
 	</a>
-
-	<span class="spacer"></span>
-
-	<span class="streak">{{ streak() }} day streak</span>
-	<button mat-icon-button type="button" aria-label="Create progress story" title="Story Studio" (click)="share.open()">
-		<span class="topbar-icon" aria-hidden="true">↗</span>
-	</button>
-	<a mat-icon-button routerLink="/settings" aria-label="Settings" title="Settings">
-		<span class="topbar-icon" aria-hidden="true">⚙</span>
-	</a>
-	<button mat-icon-button type="button" aria-label="Change theme" title="Change theme" (click)="cycleTheme()">
-		<span class="topbar-icon" aria-hidden="true">◐</span>
-	</button>
-	<button class="avatar" type="button" [matMenuTriggerFor]="userMenu" aria-label="Open account menu">
-		{{ userInitials() }}
-	</button>
-</header>
-
-<mat-menu #navigationMenu="matMenu">
-	@for (item of navItems; track item.path) {
-		<a mat-menu-item [routerLink]="item.path">
-			<span class="menu-symbol" aria-hidden="true">{{ item.symbol }}</span>
-			<span>{{ item.label }}</span>
-		</a>
-	}
-</mat-menu>
-
-<mat-menu #userMenu="matMenu">
-	<div class="account-email" (click)="$event.stopPropagation()">{{ auth.user()?.email }}</div>
-	<button mat-menu-item type="button" (click)="logout()">
-		<span class="menu-symbol" aria-hidden="true">↪</span>
-		<span>Sign out</span>
-	</button>
-</mat-menu>
-
-<nav class="product-tabs" aria-label="Primary navigation">
-	<div class="product-tabs-inner">
-		@for (item of primaryNavItems; track item.path) {
-			<a
-				mat-stroked-button
-				class="product-tab"
-				[routerLink]="item.path"
-				routerLinkActive="active-tab"
-			>
-				<span aria-hidden="true">{{ item.symbol }}</span>
-				<span>{{ item.label }}</span>
+	<nav class="sidebar-links" aria-label="Primary navigation">
+		@for (item of navItems; track item.path) {
+			<a class="sidebar-link" [routerLink]="item.path" routerLinkActive="is-active"
+				ariaCurrentWhenActive="page" [attr.aria-label]="item.accessibleLabel" [title]="item.accessibleLabel">
+				<app-navigation-icon [name]="item.icon" />
+				<span class="sidebar-label">{{ item.label }}</span>
 			</a>
 		}
+		<button class="sidebar-link" type="button" (click)="share.open()"
+			aria-label="Create progress story" title="Story Studio">
+			<app-navigation-icon name="share" />
+			<span class="sidebar-label">Story</span>
+		</button>
+		<button class="sidebar-link" type="button" [matMenuTriggerFor]="moreMenu"
+			aria-label="Open account menu" title="More" data-testid="desktop-more">
+			<app-navigation-icon name="more" />
+			<span class="sidebar-label">More</span>
+		</button>
+	</nav>
+	<div class="sidebar-summary" [attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'">
+		<app-navigation-icon name="streak" />
+		<span class="sidebar-label">{{ formatCount(stats()?.streak) }} day streak</span>
 	</div>
-</nav>
+</aside>
 
-<main class="content">
+<header class="mobile-status" aria-label="Learning status">
+	<span class="status-item" role="img" aria-label="Learning English" title="Learning English">
+		<app-navigation-icon name="course" /><span>EN</span>
+	</span>
+	<a class="status-item" routerLink="/reports"
+		[attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'" title="Day streak">
+		<app-navigation-icon name="streak" /><span>{{ formatCount(stats()?.streak) }}</span>
+	</a>
+	<a class="status-item" routerLink="/review"
+		[attr.aria-label]="stats() ? stats()!.due + ' words due for review' : 'Loading due words'" title="Words due for review">
+		<app-navigation-icon name="words" /><span>{{ formatCount(stats()?.due) }}</span>
+	</a>
+	<a class="status-item" routerLink="/words"
+		[attr.aria-label]="stats() ? stats()!.mastered + ' mastered words' : 'Loading mastered words'" title="Mastered words">
+		<app-navigation-icon name="progress" /><span>{{ formatCount(stats()?.mastered) }}</span>
+	</a>
+</header>
+
+<main #mainContent id="main-content" class="content" tabindex="-1">
 	<router-outlet />
 </main>
 
-<nav
-	class="mobile-nav"
-	[class.is-hidden]="mobileNavHidden()"
-	[attr.aria-hidden]="mobileNavHidden() ? 'true' : null"
-	aria-label="Mobile navigation"
->
-	@for (item of primaryNavItems; track item.path) {
-		<a
-			[routerLink]="item.path"
-			routerLinkActive="active-mobile"
-			[attr.tabindex]="mobileNavHidden() ? -1 : null"
-		>
-			<span aria-hidden="true">{{ item.symbol }}</span>
-			<small>{{ item.label }}</small>
+<nav class="mobile-nav" aria-label="Mobile navigation">
+	@for (item of mobileNavItems; track item.path) {
+		<a [routerLink]="item.path" routerLinkActive="active-mobile" ariaCurrentWhenActive="page"
+			[attr.aria-label]="item.accessibleLabel" [title]="item.accessibleLabel">
+			<app-navigation-icon [name]="item.icon" />
 		</a>
 	}
+	<button type="button" [matMenuTriggerFor]="moreMenu" [class.active-mobile]="moreActive()"
+		aria-label="More navigation and account" title="More" data-testid="mobile-more">
+		<app-navigation-icon name="account" />
+	</button>
 </nav>
+
+<mat-menu #moreMenu="matMenu" yPosition="above">
+	<div class="account-email">{{ auth.user()?.email }}</div>
+	@for (item of overflowNavItems; track item.path) {
+		<a mat-menu-item [routerLink]="item.path">
+			<app-navigation-icon class="menu-icon" [name]="item.icon" /><span>{{ item.label }}</span>
+		</a>
+	}
+	<a mat-menu-item routerLink="/overview">
+		<app-navigation-icon class="menu-icon" name="words" /><span>Overview</span>
+	</a>
+	<button mat-menu-item type="button" (click)="share.open()">
+		<app-navigation-icon class="menu-icon" name="share" /><span>Create progress story</span>
+	</button>
+	<button mat-menu-item type="button" (click)="cycleTheme()" [disabled]="!store.state()">
+		<app-navigation-icon class="menu-icon" name="theme" /><span>Change theme</span>
+	</button>
+	<button mat-menu-item type="button" (click)="logout()">
+		<app-navigation-icon class="menu-icon" name="logout" /><span>Sign out</span>
+	</button>
+</mat-menu>

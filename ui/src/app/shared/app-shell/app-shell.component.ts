@@ -1,20 +1,26 @@
-import {ChangeDetectionStrategy, Component, HostListener, OnInit, computed, inject, signal} from '@angular/core';
-import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {MatButtonModule} from '@angular/material/button';
-import {MatMenuModule} from '@angular/material/menu';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, computed, inject, type OnInit} from '@angular/core';
+import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {filter, map} from 'rxjs';
+import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
-import {calculateStreak} from '../../domain/learning/learning-rules';
+import {calculateStreak, getDueWords, totalStats} from '../../domain/learning/learning-rules';
 import {ShareStoryService} from '../share-story/share-story.service';
+import {NavigationIconComponent, type NavigationIcon} from './navigation-icon.component';
 
-const MOBILE_NAV_BREAKPOINT = 640;
-const MOBILE_NAV_SCROLL_THRESHOLD = 8;
-const MOBILE_NAV_TOP_SAFE_ZONE = 12;
+interface NavigationItem {
+	path: string;
+	label: string;
+	accessibleLabel: string;
+	icon: NavigationIcon;
+	mobile: boolean;
+}
 
 @Component({
 	selector: 'app-shell',
-	imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, MatMenuModule],
+	imports: [RouterOutlet, RouterLink, RouterLinkActive, MatMenuModule, NavigationIconComponent],
 	templateUrl: 'app-shell.component.html',
 	styleUrl: 'app-shell.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,58 +30,58 @@ export class AppShellComponent implements OnInit {
 	readonly store = inject(LearningStoreService);
 	readonly share = inject(ShareStoryService);
 	private readonly theme = inject(ThemeService);
-	private lastScrollY = 0;
-	readonly mobileNavHidden = signal(false);
+	private readonly router = inject(Router);
+	private readonly currentUrl = toSignal(this.router.events.pipe(
+		filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+		map(event => event.urlAfterRedirects),
+	), {initialValue: this.router.url});
+	private readonly countFormatter = new Intl.NumberFormat('en', {notation: 'compact', maximumFractionDigits: 1});
+
+	@ViewChild('mainContent') private mainContent?: ElementRef<HTMLElement>;
+	@ViewChildren(MatMenuTrigger) private menuTriggers?: QueryList<MatMenuTrigger>;
+
 	readonly navItems = [
-		{path: '/dashboard', label: 'Home', symbol: '⌂'},
-		{path: '/review', label: "Today's Review", symbol: '◷'},
-		{path: '/words', label: 'Words', symbol: '▤'},
-		{path: '/library', label: 'Library', symbol: '▦'},
-		{path: '/bbc-6-minute-english', label: 'BBC 6 Minute English', symbol: '◉'},
-		{path: '/reports', label: 'Progress', symbol: '↗'},
-		{path: '/settings', label: 'Settings', symbol: '⚙'},
-	] as const;
-	readonly primaryNavItems = this.navItems.filter((item) =>
-		item.path !== '/settings' && item.path !== '/bbc-6-minute-english'
-	);
-	readonly streak = computed(() => this.store.state() ? calculateStreak(this.store.state()!) : 0);
-	readonly userInitials = computed(() => {
-		const email = this.auth.user()?.email || 'Vocora';
-		const localPart = email.split('@')[0].replace(/[^a-z0-9]+/giu, ' ').trim();
-		const words = localPart.split(/\s+/u).filter(Boolean);
-		if (words.length > 1) return `${words[0][0]}${words[1][0]}`.toUpperCase();
-		return localPart.slice(0, 2).toUpperCase() || 'VO';
+		{path: '/dashboard', label: 'Home', accessibleLabel: 'Home', icon: 'home', mobile: true},
+		{path: '/bbc-6-minute-english', label: 'Listening', accessibleLabel: 'BBC 6 Minute English', icon: 'listening', mobile: true},
+		{path: '/review', label: "Today's Review", accessibleLabel: "Today's Review", icon: 'review', mobile: true},
+		{path: '/words', label: 'Words', accessibleLabel: 'Words', icon: 'words', mobile: true},
+		{path: '/library', label: 'Library', accessibleLabel: 'Library', icon: 'library', mobile: true},
+		{path: '/reports', label: 'Progress', accessibleLabel: 'Progress', icon: 'progress', mobile: false},
+		{path: '/settings', label: 'Settings', accessibleLabel: 'Settings', icon: 'settings', mobile: false},
+	] as const satisfies readonly NavigationItem[];
+	readonly mobileNavItems = this.navItems.filter(item => item.mobile);
+	readonly overflowNavItems = this.navItems.filter(item => !item.mobile);
+	readonly moreActive = computed(() => {
+		const path = this.currentUrl().split(/[?#]/u)[0];
+		return ['/reports', '/settings', '/overview'].some(route => path === route || path.startsWith(`${route}/`));
+	});
+	readonly stats = computed(() => {
+		const state = this.store.state();
+		return state ? {
+			streak: calculateStreak(state),
+			due: getDueWords(state).length,
+			mastered: totalStats(state).mastered,
+		} : null;
 	});
 
 	async ngOnInit(): Promise<void> {
 		const state = await this.store.initialize();
 		this.theme.apply(state.settings.theme);
-		this.lastScrollY = window.scrollY;
 	}
 
-	@HostListener('window:scroll')
-	onWindowScroll(): void {
-		const currentScrollY = Math.max(0, window.scrollY);
-		if (window.innerWidth > MOBILE_NAV_BREAKPOINT) {
-			this.mobileNavHidden.set(false);
-			this.lastScrollY = currentScrollY;
-			return;
-		}
+	formatCount(value: number | null | undefined): string {
+		return value == null ? '—' : this.countFormatter.format(value);
+	}
 
-		if (currentScrollY <= MOBILE_NAV_TOP_SAFE_ZONE) {
-			this.mobileNavHidden.set(false);
-			this.lastScrollY = currentScrollY;
-			return;
-		}
+	skipToContent(event: Event): void {
+		event.preventDefault();
+		this.mainContent?.nativeElement.focus({preventScroll: true});
+	}
 
-		const delta = currentScrollY - this.lastScrollY;
-		if (delta >= MOBILE_NAV_SCROLL_THRESHOLD) {
-			this.mobileNavHidden.set(true);
-			this.lastScrollY = currentScrollY;
-		} else if (delta <= -MOBILE_NAV_SCROLL_THRESHOLD) {
-			this.mobileNavHidden.set(false);
-			this.lastScrollY = currentScrollY;
-		}
+	@HostListener('window:resize')
+	closeMenusOnResize(): void {
+		// A menu must not remain anchored to a trigger hidden by a breakpoint change.
+		this.menuTriggers?.forEach(trigger => trigger.closeMenu());
 	}
 
 	async logout(): Promise<void> {

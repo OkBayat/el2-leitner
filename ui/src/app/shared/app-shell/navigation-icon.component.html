@@ -1,0 +1,90 @@
+<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+	@switch (name()) {
+		@case ('home') {
+			<path d="M8 17h24v17a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3z" fill="var(--vocora-nav-art-gold)" />
+			<path d="M26 17h6v17a3 3 0 0 1-3 3h-3z" fill="var(--vocora-nav-art-orange)" />
+			<path d="m4 17 13-12a4 4 0 0 1 6 0l13 12a3 3 0 0 1-4 4L20 10 8 21a3 3 0 0 1-4-4" fill="var(--vocora-nav-art-coral)" />
+			<rect x="16" y="25" width="8" height="12" rx="2" fill="var(--vocora-nav-art-teal)" />
+			<rect x="15" y="17" width="10" height="6" rx="2" fill="var(--vocora-nav-art-paper)" />
+			<path d="M6 37h28" stroke="var(--vocora-nav-art-green)" stroke-width="4" stroke-linecap="round" />
+		}
+		@case ('listening') {
+			<path d="M4 16c0-7 8-10 16-6 8-4 16-1 16 6 0 13-7 21-16 21S4 29 4 16" fill="var(--vocora-nav-art-coral)" />
+			<path d="M9 18c7 2 15 2 22 0-1 10-5 14-11 14S10 28 9 18" fill="var(--vocora-nav-art-ink)" />
+			<path d="M9 17c7 2 15 2 22 0l-2 6H11z" fill="var(--vocora-nav-art-paper)" />
+			<path d="M13 29c4-5 10-5 14 0-4 5-10 5-14 0" fill="var(--vocora-nav-art-rose)" />
+			<path d="M7 14c2-4 5-4 9-2m8 0c4-2 7-2 9 2" fill="none" stroke="var(--vocora-nav-art-rose)" stroke-width="3" stroke-linecap="round" />
+		}
+		@case ('review') {
+			<g transform="rotate(-32 20 20)">
+				<rect x="11" y="17" width="18" height="6" rx="2" fill="var(--vocora-nav-art-blue)" />
+				<rect x="7" y="9" width="8" height="22" rx="3" fill="var(--vocora-nav-art-sky)" />
+				<rect x="25" y="9" width="8" height="22" rx="3" fill="var(--vocora-nav-art-sky)" />
+				<rect x="2" y="13" width="6" height="14" rx="3" fill="var(--vocora-nav-art-blue)" />
+				<rect x="32" y="13" width="6" height="14" rx="3" fill="var(--vocora-nav-art-blue)" />
+				<path d="M10 13v6m18-6v6" stroke="var(--vocora-nav-art-paper)" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" />
+			</g>
+		}
+		@case ('words') {
+			<path d="M4 9c6-3 11-3 16 0 5-3 10-3 16 0v24c-6-2-11-2-16 1-5-3-10-3-16-1z" fill="var(--vocora-nav-art-blue)" />
+			<path d="M7 6c5-2 9-1 13 2v23c-4-3-8-4-13-2zm26 0c-5-2-9-1-13 2v23c4-3 8-4 13-2z" fill="var(--vocora-nav-art-paper)" />
+			<path d="M20 9v22" stroke="var(--vocora-nav-art-sky)" stroke-width="2" />
+			<path d="M25 6v11l3-2 3 2V5z" fill="var(--vocora-nav-art-gold)" />
+			<path d="m10 13 6 1m-6 5 6 1m-6 5 6 1" stroke="var(--vocora-nav-art-sky)" stroke-width="2" stroke-linecap="round" />
+		}
+		@case ('library') {
+			<rect x="5" y="14" width="30" height="21" rx="3" fill="var(--vocora-nav-art-orange)" />
+			<path d="M7 7h26a2 2 0 0 1 2 2v12H5V9a2 2 0 0 1 2-2" fill="var(--vocora-nav-art-gold)" />
+			<path d="M10 8v27m20-27v27" stroke="var(--vocora-nav-art-paper)" stroke-opacity=".45" stroke-width="4" />
+			<path d="M5 20h30" stroke="var(--vocora-nav-art-ink)" stroke-opacity=".3" stroke-width="3" />
+			<rect x="16" y="17" width="8" height="10" rx="2" fill="var(--vocora-nav-art-gold)" />
+			<path d="M20 20v4" stroke="var(--vocora-nav-art-ink)" stroke-width="2" stroke-linecap="round" />
+		}
+		@case ('progress') {
+			<path d="M7 5h26v15c0 9-6 14-13 17C13 34 7 29 7 20z" fill="var(--vocora-nav-art-gold)" />
+			<path d="M33 8v12c0 9-6 14-13 17l-9-6z" fill="var(--vocora-nav-art-orange)" />
+			<path d="m13 20 5 5 10-11" fill="none" stroke="var(--vocora-nav-art-paper)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+		}
+		@case ('settings') {
+			<path d="m16 3 8 0 1 5 4 2 5-1 4 7-4 4v3l4 4-4 7-5-2-4 2-1 4h-8l-1-4-4-2-5 2-4-7 4-4v-3l-4-4 4-7 5 1 4-2z" fill="var(--vocora-nav-art-teal)" />
+			<circle cx="20" cy="21" r="9" fill="var(--vocora-nav-art-mint)" />
+			<circle cx="20" cy="21" r="4" fill="var(--vocora-nav-art-paper)" />
+		}
+		@case ('more') {
+			<path d="M20 3a17 17 0 0 1 14 27l1 6-7-2A17 17 0 1 1 20 3" fill="var(--vocora-nav-art-purple)" />
+			<circle cx="11" cy="20" r="2" fill="var(--vocora-nav-art-paper)" />
+			<circle cx="20" cy="20" r="2" fill="var(--vocora-nav-art-paper)" />
+			<circle cx="29" cy="20" r="2" fill="var(--vocora-nav-art-paper)" />
+		}
+		@case ('account') {
+			<circle cx="20" cy="20" r="18" fill="var(--vocora-nav-art-purple)" />
+			<path d="M7 34c2-9 24-9 26 0a18 18 0 0 1-26 0" fill="var(--vocora-nav-art-mint)" />
+			<path d="M10 16c0-13 20-13 20 0v8c0 14-20 14-20 0z" fill="var(--vocora-nav-art-skin)" />
+			<path d="M9 19C5 2 29 0 31 13l-2 9-5-12c-2 6-7 9-15 9" fill="var(--vocora-nav-art-ink)" />
+			<path d="M16 26q4 4 8 0" fill="none" stroke="var(--vocora-nav-art-paper)" stroke-width="3" stroke-linecap="round" />
+		}
+		@case ('course') {
+			<rect x="2" y="7" width="36" height="27" rx="5" fill="var(--vocora-nav-art-paper)" />
+			<path d="M4 10h32M3 16h34M3 22h34M3 28h34M6 33h28" stroke="var(--vocora-nav-art-coral)" stroke-width="3" />
+			<path d="M7 7h13v15H2V12a5 5 0 0 1 5-5" fill="var(--vocora-nav-art-blue)" />
+			<path d="M6 11h1m5 0h1m4 0h1M6 16h1m5 0h1m4 0h1" stroke="var(--vocora-nav-art-paper)" stroke-width="2" stroke-linecap="round" />
+		}
+		@case ('streak') {
+			<path d="M21 2c2 10 10 10 7 20 4-1 5-5 4-8 12 15 4 25-12 25C4 39 0 28 8 17c0 5 2 6 4 6C7 13 18 11 21 2" fill="var(--vocora-nav-art-orange)" />
+			<path d="M21 19c0 6 6 6 6 12 0 8-15 8-15 0 0-5 5-7 5-11 3 2 2 6 4 6z" fill="var(--vocora-nav-art-gold)" />
+		}
+		@case ('share') {
+			<rect x="4" y="10" width="28" height="26" rx="6" fill="var(--vocora-nav-art-sky)" />
+			<path d="M14 25 31 8m-10 0h10v10" fill="none" stroke="var(--vocora-nav-art-paper)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+		}
+		@case ('theme') {
+			<circle cx="20" cy="20" r="16" fill="var(--vocora-nav-art-purple)" />
+			<path d="M23 8a13 13 0 1 0 9 22A14 14 0 0 1 23 8" fill="var(--vocora-nav-art-gold)" />
+			<path d="m29 9 1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="var(--vocora-nav-art-paper)" />
+		}
+		@case ('logout') {
+			<rect x="5" y="5" width="20" height="30" rx="5" fill="var(--vocora-nav-art-coral)" />
+			<path d="M19 20h16m-6-6 6 6-6 6" fill="none" stroke="var(--vocora-nav-art-ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+		}
+	}
+</svg>
