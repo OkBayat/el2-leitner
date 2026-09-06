@@ -132,7 +132,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   listeningSegmentDash(step: PathStep): string {
     const count = Math.max(1, this.listeningSegments(step).length);
-    const segment = Math.max(1, (100 / count) - 2);
+    // Round stroke caps visually consume part of each SVG gap. Give the common
+    // 3/4-part goals a clearly visible break, then taper the gap for dense rings.
+    const gap = count <= 4 ? 6 : count <= 6 ? 3.5 : 2;
+    const segment = Math.max(1, (100 / count) - gap);
     return `${segment} ${100 - segment}`;
   }
 
