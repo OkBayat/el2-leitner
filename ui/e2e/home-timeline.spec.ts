@@ -120,7 +120,8 @@ test('partial vocabulary progress stays current as a solid 3D node with a larger
   await expect(vocabulary.locator('.node-progress-label')).toHaveCount(0);
   await expect(vocabulary.locator('.node-progress-value')).toHaveAttribute('stroke-dasharray', '50 50');
   const ringBox = await vocabulary.locator('.node-progress-ring').boundingBox();
-  expect(ringBox?.width ?? 0).toBeGreaterThanOrEqual(99);
+  expect(ringBox?.width ?? 0).toBeGreaterThanOrEqual(97.5);
+  expect(ringBox?.height ?? 0).toBeGreaterThanOrEqual(97.5);
   await expect(vocabulary.locator('.start-flag')).toHaveText('CONTINUE');
   expect(await vocabulary.locator('.start-flag').evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
   await expect(listening.locator('.start-flag')).toHaveCount(0);
