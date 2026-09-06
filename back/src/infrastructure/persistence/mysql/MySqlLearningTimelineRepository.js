@@ -6,7 +6,7 @@ export class MySqlLearningTimelineRepository {
     // A padded UTC window contains every IANA local day, including historical DST changes.
     const fromSeconds = Date.parse(`${from}T00:00:00Z`) / 1000 - 86_400;
     const toSeconds = Date.parse(`${to}T00:00:00Z`) / 1000 + 172_800;
-    const [reviews, practice, listening, legacy, bounds, vocabularyToday] = await Promise.all([
+    const [reviews, practice, listening, legacy, bounds, vocabularyToday, settings] = await Promise.all([
       this.pool.execute(
         `SELECT DISTINCT DATE_FORMAT(local_day, '%Y-%m-%d') AS day,
                 CASE WHEN mode = 'box1' THEN 'box1' ELSE 'vocabulary' END AS activity
@@ -89,6 +89,10 @@ export class MySqlLearningTimelineRepository {
              )) AS remaining`,
         [userId, today, userId, today, today, today]
       ),
+      this.pool.execute(
+        "SELECT daily_listening_goal AS dailyListeningGoal FROM user_settings WHERE user_id = ? LIMIT 1",
+        [userId]
+      ),
     ]);
     return {
       reviews: reviews[0],
@@ -97,6 +101,7 @@ export class MySqlLearningTimelineRepository {
       legacy: legacy[0],
       first: bounds[0][0] ?? {},
       vocabularyToday: vocabularyToday[0][0] ?? { completed: 0, remaining: 0 },
+      settings: settings[0][0] ?? { dailyListeningGoal: 3 },
     };
   }
 }
