@@ -200,7 +200,7 @@
 .book-wagon:not(:disabled):hover { transform: translateY(-4px) rotate(-3deg); }
 .book-wagon.is-quiet { filter: grayscale(1); }
 .book-wagon:disabled { cursor: default; opacity: .65; }
-.wagon-label { position: absolute; bottom: -4px; left: 0; width: 100%; color: var(--mat-sys-on-surface-variant); font-size: 10px; font-weight: 850; letter-spacing: 1px; }
+.wagon-label { position: absolute; bottom: -20px; left: 0; width: 100%; color: var(--mat-sys-on-surface-variant); font-size: 10px; font-weight: 850; letter-spacing: 1px; }
 
 .path-notice, .history-control, .history-note, .path-loading { text-align: center; padding: 16px; font-size: 13px; }
 .path-notice { border: 1px solid var(--mat-sys-outline-variant); border-radius: 16px; margin-bottom: 20px; }
