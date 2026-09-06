@@ -41,6 +41,7 @@ import { MySqlVocabularyActivationRepository } from "./infrastructure/persistenc
 import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
+import { createCollectionLearningPathModule } from "./modules/collection-learning-path/createCollectionLearningPathModule.js";
 
 export function createContainer({ pool, config, adapters = {} }) {
   const userRepository = adapters.userRepository ?? new MySqlUserRepository(pool);
@@ -74,6 +75,7 @@ export function createContainer({ pool, config, adapters = {} }) {
     adapters.libraryAdminPolicy ?? new LibraryAdminPolicy(config.library?.adminEmails || []);
   const vocabularyFileParser = adapters.vocabularyFileParser ?? new VocabularyFileParser();
   const getSentencePracticeCards = new GetSentencePracticeCards({ sentencePracticeRepository });
+  const collectionLearningPath = createCollectionLearningPathModule({ pool, adapters });
 
   return {
     tokenService,
@@ -81,6 +83,7 @@ export function createContainer({ pool, config, adapters = {} }) {
     authRateLimit: config.auth.rateLimit,
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
+    collectionLearningPath,
     useCases: {
       getLearningTimeline: new GetLearningTimeline({
         timelineRepository: adapters.timelineRepository ?? new MySqlLearningTimelineRepository(pool)
