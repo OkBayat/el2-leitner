@@ -8,6 +8,7 @@ async function authenticate(page: Page): Promise<void> {
 	await page.getByLabel('Password').fill(PASSWORD);
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
+	await page.getByTestId('home-box-one').click();
 	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
 }
 

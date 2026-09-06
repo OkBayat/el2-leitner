@@ -106,6 +106,8 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
   await expect(page.getByText("Today's plan")).toBeVisible();
 
+  await page.getByRole('link', { name: 'Open learning overview' }).click();
+  await expect(page).toHaveURL(/\/overview$/u);
   const houseStatus = page.getByTestId('house-status');
   await expect(houseStatus).toBeVisible();
   await expect(houseStatus.locator('mat-progress-bar')).toHaveCount(0);

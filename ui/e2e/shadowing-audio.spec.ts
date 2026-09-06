@@ -78,7 +78,7 @@ test('native AudioWorklet and real speech API handle silence without changing le
   await expect(page.getByRole('button', { name: 'Stop recording', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Stop recording', exact: true })).toContainText(/Stop · [1-9]/u);
   await expect(page.locator('.shadowing-word.recognized')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Stop recording', exact: true })).click();
+  await page.getByRole('button', { name: 'Stop recording', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('No clear speech');
   await expect(page.getByTestId('shadowing-feedback')).toHaveClass(/neutral/u);
   expect(await page.evaluate(() => (window as any).__shadowingMicrophone.tracks.map((track: MediaStreamTrack) => track.readyState))).toEqual(['ended']);

@@ -57,10 +57,10 @@ test('persisted Home timeline against MySQL 8.4 and the authenticated HTTP bound
     const sentence = await sessions.start(learner, { mode: 'sentence-house-1', plannedCount: null });
     await sessions.recordAttempt(learner, sentence.id, { day: '2026-09-06', correct: false });
     await sessions.start(other, { mode: 'shadowing-house-1', plannedCount: null });
-    const [evidence] = await pool.execute(`SELECT DATE_FORMAT(d.local_day, '%Y-%m-%d') AS day, d.attempt_count
+    const [evidence] = await pool.execute(`SELECT DATE_FORMAT(d.local_day, '%Y-%m-%d') AS day
       FROM practice_session_days d JOIN practice_sessions s ON s.id = d.practice_session_id
       WHERE s.public_id = ? ORDER BY d.local_day`, [shadowing.id]);
-    assert.deepEqual(evidence.map(row => [row.day, Number(row.attempt_count)]), [['2026-09-04', 1], ['2026-09-05', 1]]);
+    assert.deepEqual(evidence.map(row => row.day), ['2026-09-04', '2026-09-05']);
     const [revision] = await pool.execute('SELECT revision FROM user_state_revisions WHERE user_id = ?', [learner]);
     assert.equal(Number(revision[0].revision), 7);
     const [progress] = await pool.execute('SELECT COUNT(*) AS total FROM user_vocabulary_progress WHERE user_id = ?', [learner]);

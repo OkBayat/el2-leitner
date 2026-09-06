@@ -37,6 +37,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
 			await page.getByLabel('Password').fill('password123');
 			await page.getByRole('button', { name: 'Create account' }).click();
 			await expect(page).toHaveURL(/\/dashboard$/u);
+			await page.getByTestId('home-box-one').click();
 			await page.getByTestId('start-sentence-practice').click();
 
 			const field = page.getByTestId('sentence-answer-input');
