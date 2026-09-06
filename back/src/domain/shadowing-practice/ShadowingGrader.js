@@ -51,6 +51,6 @@ export function gradeShadowing(reference, transcript) {
   return {
     leading: reference.slice(0, surface[0]?.index ?? reference.length), words, transcript,
     matchedCount, totalCount, score: totalCount ? Math.floor(matchedCount * 1000 / totalCount) / 10 : 0,
-    passed: totalCount > 0 && matchedCount * 100 >= totalCount * 90,
+    passed: totalCount > 0 && matchedCount * 100 >= totalCount * 70,
   };
 }
