@@ -101,8 +101,7 @@
 .path-node:not(:disabled):hover { transform: translateY(-2px); }
 .path-node:not(:disabled):active { transform: translateY(4px); box-shadow: 0 3px 0 var(--node-side); }
 .path-node:disabled { cursor: default; }
-.path-node.is-current { outline: 3px solid var(--path-tone); outline-offset: 6px; }
-.path-node.is-in-progress.is-current { outline: none; }
+.path-node.is-current { outline: none; }
 .path-node.is-reserved { background: transparent; box-shadow: none; border: 3px dashed #d9dde0; }
 .path-node.is-reserved::before { display: none; }
 .node-progress-ring {
