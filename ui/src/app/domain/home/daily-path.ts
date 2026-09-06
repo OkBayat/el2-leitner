@@ -123,9 +123,11 @@ export function buildDailyPath(
     const future = record.day > today;
     const ordinal = Math.floor(Date.parse(`${record.day}T12:00:00Z`) / 86_400_000);
     const serverListeningProgress = safeListeningProgress(record.listeningProgress);
+    const listeningGoal = configuredListeningGoal ?? serverListeningProgress?.total ?? DEFAULT_DAILY_LISTENING_GOAL;
+    const legacyListeningComplete = !serverListeningProgress && !configuredListeningGoal && record.activities.includes('listening');
     const todayListeningProgress: ListeningProgress = {
-      completed: serverListeningProgress?.completed ?? (record.activities.includes('listening') ? 1 : 0),
-      total: configuredListeningGoal ?? serverListeningProgress?.total ?? DEFAULT_DAILY_LISTENING_GOAL,
+      completed: serverListeningProgress?.completed ?? (record.activities.includes('listening') ? (legacyListeningComplete ? listeningGoal : 1) : 0),
+      total: listeningGoal,
     };
     let currentAssigned = false;
     const steps: PathStep[] = STEPS.map(step => {
