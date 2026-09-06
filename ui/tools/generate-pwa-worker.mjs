@@ -63,9 +63,18 @@ function normalizeLocalAssetReference(reference) {
 
 function collectHtmlAssetReferences(html) {
 	const references = [];
-	for (const match of html.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/giu)) {
-		const normalized = normalizeLocalAssetReference(match[1]);
-		if (normalized) references.push(normalized);
+	for (const tagMatch of html.matchAll(/<([a-z][\w:-]*)\b([^>]*)>/giu)) {
+		const tagName = tagMatch[1].toLowerCase();
+		const attributes = tagMatch[2];
+		if (tagName === 'link') {
+			const relMatch = attributes.match(/\brel\s*=\s*["']([^"']+)["']/iu);
+			const relTokens = relMatch ? relMatch[1].toLowerCase().split(/\s+/u) : [];
+			if (relTokens.some((token) => token === 'modulepreload' || token === 'preload' || token === 'prefetch')) continue;
+		}
+		for (const attributeMatch of attributes.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/giu)) {
+			const normalized = normalizeLocalAssetReference(attributeMatch[1]);
+			if (normalized) references.push(normalized);
+		}
 	}
 	return references;
 }
@@ -140,11 +149,31 @@ const APP_SHELL_URL = '/index.html';
 const PRECACHE_URLS = Object.freeze(${JSON.stringify(precacheUrls, null, 2)});
 const PRECACHE_PATHS = new Set(PRECACHE_URLS);
 const CACHEABLE_PATH = /\\.(?:css|gif|html|jpe?g|js|json|md|mp3|ogg|png|svg|wav|webmanifest|webp|woff2?)$/iu;
+const PRECACHE_RETRIES = 2;
+
+async function precacheAsset(cache, url) {
+  let lastError = null;
+  for (let attempt = 0; attempt < PRECACHE_RETRIES; attempt++) {
+    try {
+      const response = await fetch(new Request(url, {cache: 'reload'}));
+      if (response.status === 200) {
+        await cache.put(url, response.clone());
+        return;
+      }
+      lastError = new Error('Unexpected precache response ' + response.status + ' for ' + url);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error('Failed to precache ' + url);
+}
 
 async function precacheApplication() {
   const cache = await caches.open(CACHE_NAME);
-  const requests = PRECACHE_URLS.map((url) => new Request(url, {cache: 'reload'}));
-  await cache.addAll(requests);
+  // Keep install traffic deliberately sequential. cache.addAll() starts every
+  // request at once and an interrupted update cancels the entire remaining
+  // chunk burst, which is exactly what DevTools reports as `(canceled)`.
+  for (const url of PRECACHE_URLS) await precacheAsset(cache, url);
 }
 
 async function removeOldCaches() {
