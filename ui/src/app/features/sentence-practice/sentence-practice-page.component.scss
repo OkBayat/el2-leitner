@@ -35,23 +35,15 @@
 	white-space: pre-wrap;
 }
 
+/* Start dimmed, then reveal each spoken word without changing font weight or size. */
 .sentence-playback-token,
 .sentence-text app-sentence-answer {
-	transition: opacity 120ms ease, color 120ms ease, font-weight 120ms ease;
-}
-
-.sentence-text.is-playing .sentence-playback-token,
-.sentence-text.is-playing app-sentence-answer {
 	opacity: .48;
+	transition: opacity 120ms ease;
 }
 
-.sentence-text.is-playing .sentence-playback-token.is-current-word {
-	opacity: 1;
-	color: var(--mat-sys-on-surface);
-	font-weight: 850;
-}
-
-.sentence-text.is-playing app-sentence-answer.is-current-word {
+.sentence-playback-token.is-spoken,
+.sentence-text app-sentence-answer.is-spoken {
 	opacity: 1;
 }
 
