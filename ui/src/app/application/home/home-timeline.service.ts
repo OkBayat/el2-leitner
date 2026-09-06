@@ -20,11 +20,15 @@ export class HomeTimelineService {
     try {
       const page = await this.fetchPage();
       const newDay = this.today() !== page.today;
-      // A new day starts a fresh window; older dates remain available through the cursor.
-      if (newDay) this.days.set([]);
+      const previousOldest = this.days()[0]?.day;
+      // A new day starts a fresh window; earlier dates remain available through the cursor.
+      if (newDay) { this.days.set([]); this.historyError.set(''); this.limitedHistory.set(false); }
       this.merge(page);
       this.today.set(page.today);
-      if (newDay) { this.nextBefore.set(page.nextBefore); this.limitedHistory.set(page.limitedHistory); }
+      // Preserve an already expanded window, but discover history imported by another device.
+      if (newDay || !previousOldest || (page.days[0] && page.days[0].day <= previousOldest)) {
+        this.nextBefore.set(page.nextBefore);
+      }
       return true;
     } catch {
       this.error.set(this.days().length ? 'Could not refresh your history. Showing the last loaded record.' : 'Your practice history could not load.');
