@@ -114,8 +114,13 @@ export class ReviewSessionService {
     const normalizedSessionId = String(sessionId ?? '').trim();
     const requested = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
     if (!normalizedSessionId || requested.length === 0) return false;
-    const wordsById = new Map(this.store.snapshot().words.map((word) => [String(word.id), word.id]));
-    const queue = requested.flatMap((id) => wordsById.has(id) ? [wordsById.get(id)!] : []);
+    const wordsById = new Map<string, string>(
+      this.store.snapshot().words.map((word) => [String(word.id), String(word.id)] as const),
+    );
+    const queue = requested.flatMap((id) => {
+      const wordId = wordsById.get(id);
+      return wordId ? [wordId] : [];
+    });
     if (queue.length !== requested.length) {
       await this.learningApi.abandonSession(normalizedSessionId, 0);
       return false;
