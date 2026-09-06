@@ -102,7 +102,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
   });
 }
 
-test('partial vocabulary progress stays current with a clockwise ring and Continue CTA', async ({ page }) => {
+test('partial vocabulary progress stays current as a solid 3D node with a larger clockwise ring and Continue CTA', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   const control = await mockHome(page);
   control.vocabularyProgress = { completed: 5, total: 10 };
@@ -113,14 +113,21 @@ test('partial vocabulary progress stays current with a clockwise ring and Contin
   await expect(vocabulary).toHaveAttribute('data-status', 'in-progress');
   await expect(vocabulary).toHaveClass(/is-current/u);
   await expect(listening).not.toHaveClass(/is-current/u);
-  await expect(vocabulary.locator('.node-progress-label')).toHaveText('50%');
+  await expect(vocabulary).toHaveCSS('background-color', 'rgb(237, 153, 13)');
+  const nodeShadow = await vocabulary.evaluate(element => getComputedStyle(element).boxShadow);
+  expect(nodeShadow).not.toBe('none');
+  expect(nodeShadow).toContain('rgb(190, 114, 9)');
+  await expect(vocabulary.locator('.node-progress-label')).toHaveCount(0);
   await expect(vocabulary.locator('.node-progress-value')).toHaveAttribute('stroke-dasharray', '50 50');
+  const ringBox = await vocabulary.locator('.node-progress-ring').boundingBox();
+  expect(ringBox?.width ?? 0).toBeGreaterThanOrEqual(99);
   await expect(vocabulary.locator('.start-flag')).toHaveText('CONTINUE');
   expect(await vocabulary.locator('.start-flag').evaluate(element => getComputedStyle(element).animationName)).toContain('start-flag-float');
   await expect(listening.locator('.start-flag')).toHaveCount(0);
   await vocabulary.click();
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toContainText('50% complete');
+  await expect(dialog).toContainText('In progress');
+  await expect(dialog).not.toContainText('%');
   await expect(dialog.getByRole('link', { name: 'Continue', exact: true })).toHaveAttribute('href', '/review');
 });
 
