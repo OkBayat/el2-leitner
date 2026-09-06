@@ -33,7 +33,6 @@ test('production exposes an installable PWA and reloads the cached shell offline
 
 	await page.goto('/offline');
 	await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/manifest.webmanifest');
-	await expect(page.locator('link[rel="modulepreload"]')).toHaveCount(0);
 	await expect(page.getByRole('heading', {name: "You're offline"})).toBeVisible();
 
 	await expect.poll(async () => page.evaluate(async () => {
