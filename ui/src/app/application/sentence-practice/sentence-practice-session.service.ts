@@ -32,6 +32,8 @@ export class SentencePracticeSessionService {
 	private readonly primaryAnsweredSignal = signal(0);
 	private readonly initialCountSignal = signal(0);
 	private readonly houseSignal = signal(1);
+	private readonly playbackActiveSignal = signal(false);
+	private readonly playbackCharIndexSignal = signal<number | null>(null);
 	private queue: SentencePracticeQueue | null = null;
 	private backendSessionId: string | null = null;
 	private startedAt = 0;
@@ -45,6 +47,8 @@ export class SentencePracticeSessionService {
 	readonly wrong = this.wrongSignal.asReadonly();
 	readonly initialCount = this.initialCountSignal.asReadonly();
 	readonly primaryAnswered = this.primaryAnsweredSignal.asReadonly();
+	readonly playbackActive = this.playbackActiveSignal.asReadonly();
+	readonly playbackCharIndex = this.playbackCharIndexSignal.asReadonly();
 	readonly freePractice = computed(() => this.houseSignal() === 1);
 	readonly accuracy = computed(() => this.answeredSignal()
 		? Math.round(this.correctSignal() / this.answeredSignal() * 100)
@@ -57,7 +61,7 @@ export class SentencePracticeSessionService {
 	readonly canAdvance = computed(() => Boolean(this.feedbackSignal()));
 
 	async start(house = 1): Promise<boolean> {
-		this.speech.cancel();
+		this.stopPlayback();
 		this.activeSignal.set(false);
 		this.completedSignal.set(false);
 		this.currentPromptSignal.set(null);
@@ -88,10 +92,28 @@ export class SentencePracticeSessionService {
 		const prompt = this.currentPromptSignal();
 		if (!prompt) return false;
 		const sentenceText = prompt.sentence.text.trim();
-		return this.speech.speak(
+		this.resetPlaybackState();
+		const started = this.speech.speak(
 			sentenceText || prompt.card.term,
 			this.store.snapshot().settings.voiceRate * multiplier,
+			{
+				onStart: () => {
+					if (this.currentPromptSignal() !== prompt) return;
+					this.playbackActiveSignal.set(true);
+					this.playbackCharIndexSignal.set(null);
+				},
+				onWordBoundary: (charIndex) => {
+					if (this.currentPromptSignal() !== prompt) return;
+					this.playbackActiveSignal.set(true);
+					this.playbackCharIndexSignal.set(charIndex);
+				},
+				onEnd: () => {
+					if (this.currentPromptSignal() === prompt) this.resetPlaybackState();
+				},
+			},
 		);
+		if (!started) this.resetPlaybackState();
+		return started;
 	}
 
 	async submit(answer: string): Promise<void> {
@@ -121,6 +143,7 @@ export class SentencePracticeSessionService {
 
 	async next(): Promise<void> {
 		if (!this.feedbackSignal() || !this.activeSignal()) return;
+		this.stopPlayback();
 		this.feedbackSignal.set(null);
 		const prompt = this.queue?.next() ?? null;
 		this.currentPromptSignal.set(prompt);
@@ -133,7 +156,7 @@ export class SentencePracticeSessionService {
 				await this.learningApi.abandonSession(this.backendSessionId, this.durationSeconds());
 			}
 		} finally {
-			this.speech.cancel();
+			this.stopPlayback();
 			this.backendSessionId = null;
 			this.queue?.clear();
 			this.queue = null;
@@ -162,7 +185,7 @@ export class SentencePracticeSessionService {
 	}
 
 	private async finish(): Promise<void> {
-		this.speech.cancel();
+		this.stopPlayback();
 		this.activeSignal.set(false);
 		this.completedSignal.set(true);
 		this.currentPromptSignal.set(null);
@@ -176,6 +199,16 @@ export class SentencePracticeSessionService {
 		}
 		this.backendSessionId = null;
 		this.queue = null;
+	}
+
+	private stopPlayback(): void {
+		this.speech.cancel();
+		this.resetPlaybackState();
+	}
+
+	private resetPlaybackState(): void {
+		this.playbackActiveSignal.set(false);
+		this.playbackCharIndexSignal.set(null);
 	}
 
 	private durationSeconds(): number {

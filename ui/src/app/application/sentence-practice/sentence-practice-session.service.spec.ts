@@ -74,10 +74,52 @@ describe('SentencePracticeSessionService', () => {
 
 		expect(prompt.sentence.text).not.toBe(prompt.card.term);
 		expect(service.pronounce()).toBe(true);
-		expect(speech.speak).toHaveBeenLastCalledWith(prompt.sentence.text, .85);
+		expect(speech.speak).toHaveBeenLastCalledWith(
+			prompt.sentence.text,
+			.85,
+			expect.objectContaining({
+				onStart: expect.any(Function),
+				onWordBoundary: expect.any(Function),
+				onEnd: expect.any(Function),
+			}),
+		);
 
 		expect(service.pronounce(.75)).toBe(true);
-		expect(speech.speak).toHaveBeenLastCalledWith(prompt.sentence.text, .85 * .75);
+		expect(speech.speak).toHaveBeenLastCalledWith(
+			prompt.sentence.text,
+			.85 * .75,
+			expect.objectContaining({
+				onStart: expect.any(Function),
+				onWordBoundary: expect.any(Function),
+				onEnd: expect.any(Function),
+			}),
+		);
+	});
+
+	it('tracks the active spoken word and clears playback state when speech ends', async () => {
+		const service = TestBed.inject(SentencePracticeSessionService);
+		await service.start(1);
+		service.pronounce();
+		const observer = speech.speak.mock.calls.at(-1)?.[2] as {
+			onStart: () => void;
+			onWordBoundary: (charIndex: number, charLength: number) => void;
+			onEnd: () => void;
+		};
+
+		expect(service.playbackActive()).toBe(false);
+		expect(service.playbackCharIndex()).toBeNull();
+
+		observer.onStart();
+		expect(service.playbackActive()).toBe(true);
+		expect(service.playbackCharIndex()).toBeNull();
+
+		observer.onWordBoundary(3, 4);
+		expect(service.playbackActive()).toBe(true);
+		expect(service.playbackCharIndex()).toBe(3);
+
+		observer.onEnd();
+		expect(service.playbackActive()).toBe(false);
+		expect(service.playbackCharIndex()).toBeNull();
 	});
 
 	it('records each sentence answer in daily practice totals without using review persistence', async () => {

@@ -62,13 +62,18 @@
 					</div>
 
 					<form class="sentence-answer-form" (submit)="$event.preventDefault(); session.feedback() ? next() : submit()">
-						<p class="sentence-text" data-testid="sentence-cloze">
-							<span>{{ prompt.sentence.before }}</span><app-sentence-answer
+						<p class="sentence-text" data-testid="sentence-cloze" [class.is-playing]="session.playbackActive()">
+							<span class="sentence-context-part">@for (token of playbackParts().before; track $index) {<span
+								class="sentence-playback-token"
+								[class.is-current-word]="isPlaybackTokenActive(token)">{{ token.text }}</span>}</span><app-sentence-answer
+								[class.is-current-word]="isPlaybackGapActive()"
 								[control]="answer" [prompt]="prompt"
 								[readOnly]="saving() || session.feedback() !== null"
 								[incorrect]="session.feedback()?.correct === false"
 								[revealed]="session.feedback() !== null"
-								(primary)="handlePrimary()"></app-sentence-answer><span>{{ prompt.sentence.after }}</span>
+								(primary)="handlePrimary()"></app-sentence-answer><span class="sentence-context-part">@for (token of playbackParts().after; track $index) {<span
+								class="sentence-playback-token"
+								[class.is-current-word]="isPlaybackTokenActive(token)">{{ token.text }}</span>}</span>
 						</p>
 					</form>
 				</article>

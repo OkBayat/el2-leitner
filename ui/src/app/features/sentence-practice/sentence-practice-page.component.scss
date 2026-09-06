@@ -35,6 +35,26 @@
 	white-space: pre-wrap;
 }
 
+.sentence-playback-token,
+.sentence-text app-sentence-answer {
+	transition: opacity 120ms ease, color 120ms ease, font-weight 120ms ease;
+}
+
+.sentence-text.is-playing .sentence-playback-token,
+.sentence-text.is-playing app-sentence-answer {
+	opacity: .48;
+}
+
+.sentence-text.is-playing .sentence-playback-token.is-current-word {
+	opacity: 1;
+	color: var(--mat-sys-on-surface);
+	font-weight: 850;
+}
+
+.sentence-text.is-playing app-sentence-answer.is-current-word {
+	opacity: 1;
+}
+
 .sentence-instruction,
 .loading-state,
 .practice-note {
@@ -59,5 +79,12 @@
 
 	.sentence-instruction {
 		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sentence-playback-token,
+	.sentence-text app-sentence-answer {
+		transition: none;
 	}
 }
