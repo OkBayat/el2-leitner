@@ -86,7 +86,7 @@
   cursor: pointer;
   isolation: isolate;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 180ms ease;
 }
 .path-node::before {
   content: '';
@@ -98,6 +98,11 @@
 }
 .path-node.is-practiced { --node-face: var(--path-tone); --node-side: var(--path-side); color: white; }
 .path-node.is-in-progress { --node-face: var(--path-tone); --node-side: var(--path-side); color: white; }
+.path-node.is-legendary {
+  --node-face: var(--vocora-brand-orange, #ffb51b);
+  --node-side: #d68b00;
+  color: white;
+}
 .path-node:not(:disabled):hover { transform: translateY(-2px); }
 .path-node:not(:disabled):active { transform: translateY(4px); box-shadow: 0 3px 0 var(--node-side); }
 .path-node:disabled { cursor: default; }
@@ -115,12 +120,19 @@
   pointer-events: none;
   filter: drop-shadow(0 2px 0 rgb(190 114 9 / .16));
 }
-.node-progress-track, .node-progress-value {
+.node-progress-track, .node-progress-value, .node-progress-segment {
   fill: none;
   stroke-width: 7;
 }
 .node-progress-track { stroke: #d7dbdf; }
 .node-progress-value { stroke: var(--path-tone); stroke-linecap: round; }
+.node-progress-segment {
+  stroke: #d7dbdf;
+  stroke-linecap: round;
+  transition: stroke 180ms ease;
+}
+.node-progress-segment.is-complete { stroke: var(--path-tone); }
+.node-progress-segment.is-legendary { stroke: var(--vocora-brand-orange, #ffb51b); }
 .node-check {
   position: absolute;
   right: -3px;
@@ -240,13 +252,27 @@
   color: var(--path-ink);
   box-shadow: 0 5px 0 var(--path-side);
 }
+.path-popover.is-legendary {
+  --path-tone: var(--vocora-brand-orange, #ffb51b);
+  --path-side: #d68b00;
+  --path-ink: #5b3c00;
+}
 .path-popover::before { content: ''; position: absolute; top: -8px; left: calc(var(--arrow-x, 50%) - 9px); width: 18px; height: 18px; transform: rotate(45deg); background: inherit; border-radius: 3px; }
 .path-popover.is-above::before { top: auto; bottom: -8px; }
 .path-popover h3 { margin: 0 34px 7px 0; font-size: 18px; font-weight: 800; }
 .path-popover p { margin: 0 0 16px; font-size: 14px; line-height: 1.6; }
+.popover-kicker {
+  display: block;
+  margin: 0 34px 5px 0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
 .close-popover { position: absolute; top: 8px; right: 7px; width: 36px; height: 36px; border: 0; border-radius: 10px; background: transparent; color: inherit; font-size: 26px; cursor: pointer; }
 .popover-action { display: grid; min-height: 48px; margin-top: 12px; padding: 10px; place-items: center; border-radius: 13px; background: #fff; color: #704207; box-shadow: 0 4px 0 rgb(89 48 0 / .17); text-align: center; text-decoration: none; font-weight: 800; font-size: 14px; }
-.popover-action.is-secondary { background: #ffda59; color: #594006; }
+.popover-action.is-secondary, .popover-action.is-legendary { background: #ffda59; color: #594006; }
 .popover-action:active { transform: translateY(3px); box-shadow: 0 1px 0 rgb(89 48 0 / .17); }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--mat-sys-on-surface); outline-offset: 5px; }
 
@@ -258,5 +284,6 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--mat-sys-on-surf
 }
 @media (prefers-reduced-motion: reduce) {
   .path-node, .book-wagon { transition: none; }
+  .node-progress-segment { transition: none; }
   .start-flag { animation: none; will-change: auto; }
 }
