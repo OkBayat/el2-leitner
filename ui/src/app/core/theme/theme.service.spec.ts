@@ -15,6 +15,12 @@ function addMeta(name: string, content: string, media?: string): HTMLMetaElement
 	return meta;
 }
 
+function normalizedBackground(color: string): string {
+	const element = document.createElement('div');
+	element.style.backgroundColor = color;
+	return element.style.backgroundColor;
+}
+
 describe('ThemeService system chrome', () => {
 	beforeEach(() => {
 		document.head.querySelectorAll('meta[name="theme-color"], meta[name="color-scheme"]').forEach((meta) => meta.remove());
@@ -45,8 +51,8 @@ describe('ThemeService system chrome', () => {
 		expect(document.documentElement.dataset['theme']).toBe('light');
 		expect(document.documentElement.style.colorScheme).toBe('light');
 		expect(document.body.style.colorScheme).toBe('light');
-		expect(document.documentElement.style.backgroundColor).toBe(LIGHT_SYSTEM_CHROME_COLOR);
-		expect(document.body.style.backgroundColor).toBe(LIGHT_SYSTEM_CHROME_COLOR);
+		expect(document.documentElement.style.backgroundColor).toBe(normalizedBackground(LIGHT_SYSTEM_CHROME_COLOR));
+		expect(document.body.style.backgroundColor).toBe(normalizedBackground(LIGHT_SYSTEM_CHROME_COLOR));
 		expect(document.documentElement.style.getPropertyValue('--vocora-system-chrome-color')).toBe(LIGHT_SYSTEM_CHROME_COLOR);
 	});
 
@@ -59,8 +65,8 @@ describe('ThemeService system chrome', () => {
 		expect(document.documentElement.dataset['theme']).toBe('dark');
 		expect(document.documentElement.style.colorScheme).toBe('dark');
 		expect(document.body.style.colorScheme).toBe('dark');
-		expect(document.documentElement.style.backgroundColor).toBe(DARK_SYSTEM_CHROME_COLOR);
-		expect(document.body.style.backgroundColor).toBe(DARK_SYSTEM_CHROME_COLOR);
+		expect(document.documentElement.style.backgroundColor).toBe(normalizedBackground(DARK_SYSTEM_CHROME_COLOR));
+		expect(document.body.style.backgroundColor).toBe(normalizedBackground(DARK_SYSTEM_CHROME_COLOR));
 	});
 
 	it('follows device theme changes only while the app theme is set to system', () => {
