@@ -83,12 +83,13 @@
 </div>
 
 @if (selection(); as selected) {
-  <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="selected.origin"
+  <!-- The bounded origin and panel width reserve horizontal gutters without a second viewport reduction. -->
+  <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="popoverOrigin()"
     [cdkConnectedOverlayOpen]="true" [cdkConnectedOverlayPositions]="positions"
     [cdkConnectedOverlayScrollStrategy]="scrollStrategy" (detach)="close()"
     [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     cdkConnectedOverlayWidth="min(310px, calc(100vw - 32px))" [cdkConnectedOverlayFlexibleDimensions]="false"
-    [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="16"
+    [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="0"
     (backdropClick)="close()" (overlayKeydown)="onOverlayKey($event)" (positionChange)="positionPopover($event)">
     <div #popup class="path-popover" [class.is-above]="popoverAbove()" [style.--arrow-x.px]="arrowX()"
       role="dialog" aria-modal="true" aria-labelledby="home-popup-title" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
