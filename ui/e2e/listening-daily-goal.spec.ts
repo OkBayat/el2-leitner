@@ -99,3 +99,63 @@ test('after the daily goal the node becomes Legendary and an extra attempt adds 
   await expect(dialog).toContainText('Legendary');
   await expect(dialog.getByRole('link', { name: 'Legendary practice', exact: true })).toBeVisible();
 });
+
+test('changing Listening practices per day in Settings persists it and Home immediately renders the new segment count', async ({ page }) => {
+  let goal = 3;
+  let revision = 11;
+  let savedGoal: number | null = null;
+
+  await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { configurable: true, value: true }));
+  await page.route('**/api/auth/me', route => route.fulfill({
+    json: { user: { id: 'listening-setting-save', email: 'listening-setting-save@example.test' } },
+  }));
+  await page.route('**/api/state**', async route => {
+    if (route.request().method() === 'PUT') {
+      const body = route.request().postDataJSON() as { state?: { settings?: { dailyListeningGoal?: number } } };
+      savedGoal = body.state?.settings?.dailyListeningGoal ?? null;
+      goal = savedGoal ?? goal;
+      revision += 1;
+      return route.fulfill({ json: { revision } });
+    }
+    return route.fulfill({
+      json: {
+        revision,
+        state: {
+          schemaVersion: 2,
+          createdAt: `${today}T00:00:00Z`,
+          updatedAt: `${today}T00:00:00Z`,
+          settings: { dailyNew: 10, dailyGoal: 20, dailyListeningGoal: goal, voiceRate: 0.85, theme: 'light' },
+          words: [],
+          daily: {},
+          history: [],
+        },
+      },
+    });
+  });
+  await page.route('**/api/learning/timeline?**', route => route.fulfill({
+    json: {
+      today,
+      nextBefore: null,
+      limitedHistory: false,
+      days: [{
+        day: today,
+        activities: [],
+        boxOnePracticed: false,
+        // Deliberately stale to prove Home uses the just-saved learner setting.
+        listeningProgress: { completed: 0, total: 3 },
+      }],
+    },
+  }));
+
+  await page.goto('/settings');
+  const input = page.getByLabel('Listening practices per day');
+  await expect(input).toHaveValue('3');
+  await input.fill('4');
+  await page.getByRole('button', { name: 'Save settings' }).click();
+  await expect.poll(() => savedGoal).toBe(4);
+
+  await page.goto('/dashboard');
+  const listening = page.getByTestId('home-listening');
+  await expect(listening).toHaveAttribute('data-listening-goal', '4');
+  await expect(listening.locator('.node-progress-segment')).toHaveCount(4);
+});
