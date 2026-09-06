@@ -196,22 +196,16 @@ export class SentencePracticePageComponent implements OnInit {
 		else await this.submit();
 	}
 
-	isPlaybackTokenActive(token: SentencePlaybackToken): boolean {
+	isPlaybackTokenSpoken(token: SentencePlaybackToken): boolean {
 		const charIndex = this.session.playbackCharIndex();
-		return this.session.playbackActive()
-			&& token.word
+		return token.word
 			&& charIndex !== null
-			&& charIndex >= token.start
-			&& charIndex < token.end;
+			&& charIndex >= token.start;
 	}
 
-	isPlaybackGapActive(): boolean {
+	isPlaybackGapSpoken(): boolean {
 		const charIndex = this.session.playbackCharIndex();
-		const parts = this.playbackParts();
-		return this.session.playbackActive()
-			&& charIndex !== null
-			&& charIndex >= parts.gapStart
-			&& charIndex < parts.gapEnd;
+		return charIndex !== null && charIndex >= this.playbackParts().gapStart;
 	}
 
 	private prepareInput(): void {
