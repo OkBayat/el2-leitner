@@ -69,7 +69,7 @@ function collectHtmlAssetReferences(html) {
 		if (tagName === 'link') {
 			const relMatch = attributes.match(/\brel\s*=\s*["']([^"']+)["']/iu);
 			const relTokens = relMatch ? relMatch[1].toLowerCase().split(/\s+/u) : [];
-			if (relTokens.some((token) => token === 'modulepreload' || token === 'preload' || token === 'prefetch')) continue;
+			if (relTokens.some((token) => token === 'preload' || token === 'prefetch')) continue;
 		}
 		for (const attributeMatch of attributes.matchAll(/\b(?:src|href)\s*=\s*["']([^"']+)["']/giu)) {
 			const normalized = normalizeLocalAssetReference(attributeMatch[1]);
