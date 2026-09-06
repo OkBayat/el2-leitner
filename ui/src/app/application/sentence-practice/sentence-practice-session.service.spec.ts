@@ -96,9 +96,10 @@ describe('SentencePracticeSessionService', () => {
 		);
 	});
 
-	it('tracks the active spoken word and clears playback state when speech ends', async () => {
+	it('tracks spoken progress and keeps the sentence fully revealed when speech ends', async () => {
 		const service = TestBed.inject(SentencePracticeSessionService);
 		await service.start(1);
+		const prompt = service.currentPrompt()!;
 		service.pronounce();
 		const observer = speech.speak.mock.calls.at(-1)?.[2] as {
 			onStart: () => void;
@@ -119,7 +120,7 @@ describe('SentencePracticeSessionService', () => {
 
 		observer.onEnd();
 		expect(service.playbackActive()).toBe(false);
-		expect(service.playbackCharIndex()).toBeNull();
+		expect(service.playbackCharIndex()).toBe(prompt.sentence.text.trim().length);
 	});
 
 	it('records each sentence answer in daily practice totals without using review persistence', async () => {
