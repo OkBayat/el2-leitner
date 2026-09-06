@@ -82,7 +82,7 @@ describe('daily home path', () => {
   it('always generates two gray future days and ignores any future completion payload', () => {
     const days = buildDailyPath([
       { day: today, activities: [], boxOnePracticed: false },
-      { day: '2026-09-07', activities: ['vocabulary', 'listening', 'shadowing'], boxOnePractised: true } as unknown as TimelineDay,
+      { day: '2026-09-07', activities: ['vocabulary', 'listening', 'shadowing'], boxOnePracticed: true },
     ], today);
     const future = days.filter(day => day.future);
     expect(future.map(day => day.day)).toEqual(['2026-09-07', '2026-09-08']);
