@@ -3,6 +3,7 @@ import { CdkOverlayOrigin, Overlay, OverlayModule, type ConnectedPosition, type 
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, type OnDestroy, type OnInit, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HomeTimelineService } from '../../application/home/home-timeline.service';
+import { LearningStoreService } from '../../core/state/learning-store.service';
 import { type ListeningRingSegment, type PathDay, type PathStep, buildDailyPath, listeningRingSegments } from '../../domain/home/daily-path';
 import { localDay } from '../../domain/learning/learning-rules';
 import { BookWagonComponent, PathIconComponent } from './home-artwork.component';
@@ -19,10 +20,15 @@ interface PathSelection { day: PathDay; step: PathStep | null; origin: CdkOverla
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   readonly timeline = inject(HomeTimelineService);
+  private readonly learningStore = inject(LearningStoreService);
   private readonly injector = inject(Injector);
   readonly scrollStrategy = inject(Overlay).scrollStrategies.close();
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  readonly days = computed(() => buildDailyPath(this.timeline.days(), this.timeline.today()));
+  readonly days = computed(() => buildDailyPath(
+    this.timeline.days(),
+    this.timeline.today(),
+    this.learningStore.state()?.settings.dailyListeningGoal,
+  ));
   readonly selection = signal<PathSelection | null>(null);
   readonly todayVisible = signal(true);
   readonly popoverAbove = signal(false);
@@ -39,7 +45,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private destroyed = false;
   private observersReady = false;
 
-  async ngOnInit(): Promise<void> { await this.refresh(true); }
+  async ngOnInit(): Promise<void> {
+    void this.learningStore.initialize().catch(() => undefined);
+    await this.refresh(true);
+  }
 
   ngOnDestroy(): void {
     this.destroyed = true;
@@ -123,7 +132,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   listeningSegmentDash(step: PathStep): string {
     const count = Math.max(1, this.listeningSegments(step).length);
-    const segment = Math.max(1, (100 / count) - 2);
+    // Round stroke caps visually consume part of each SVG gap. Give the common
+    // 3/4-part goals a clearly visible break, then taper the gap for dense rings.
+    const gap = count <= 4 ? 6 : count <= 6 ? 3.5 : 2;
+    const segment = Math.max(1, (100 / count) - gap);
     return `${segment} ${100 - segment}`;
   }
 
