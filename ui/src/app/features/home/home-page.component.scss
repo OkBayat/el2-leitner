@@ -204,6 +204,7 @@
 .back-today svg { width: 23px; height: 23px; }
 
 .path-popover {
+  box-sizing: border-box;
   position: relative;
   width: min(310px, calc(100vw - 32px));
   max-height: calc(100dvh - 48px);

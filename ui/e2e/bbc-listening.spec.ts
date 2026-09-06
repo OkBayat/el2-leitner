@@ -8,7 +8,7 @@ async function authenticate(page: Page): Promise<void> {
   await page.getByLabel('Password').fill(PASSWORD);
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
-  await expect(page.getByTestId('open-bbc-listening')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('.path-day.is-today [data-activity="listening"]')).toBeVisible({ timeout: 10_000 });
 }
 
 async function learningState(page: Page): Promise<any> {
@@ -22,7 +22,8 @@ test('BBC lessons expose three tests each, scroll-aware sticky audio, completion
   await authenticate(page);
   const stateBefore = await learningState(page);
 
-  await page.getByTestId('open-bbc-listening').click();
+  await page.locator('.path-day.is-today [data-activity="listening"]').click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Start', exact: true }).click();
   await expect(page).toHaveURL(/\/bbc-6-minute-english$/u);
   await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
 

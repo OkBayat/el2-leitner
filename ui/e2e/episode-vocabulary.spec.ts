@@ -13,7 +13,8 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
-  await page.getByTestId('open-bbc-listening').click();
+  await page.locator('.path-day.is-today [data-activity="listening"]').click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Start', exact: true }).click();
   const card = page.getByTestId('bbc-lesson-limiting-screen-time-for-children');
   await expect(card.getByTestId('episode-level')).toHaveText('Intermediate');
   await expect(card.getByTestId('start-bbc-test-1')).toContainText('Medium');
