@@ -6,7 +6,7 @@ test('timeline reads are bounded, parameterized, user-scoped, and include every 
   const calls = [];
   const pool = { execute: async (sql, values) => { calls.push({ sql, values }); return [[]]; } };
   const result = await new MySqlLearningTimelineRepository(pool).read(42, { from: '2026-09-01', to: '2026-09-06' });
-  assert.equal(calls.length, 6);
+  assert.equal(calls.length, 7);
   for (const { sql, values } of calls) {
     assert.match(sql, /user_id = \?/u);
     assert.equal(values[0], 42);
@@ -29,9 +29,12 @@ test('timeline reads are bounded, parameterized, user-scoped, and include every 
   assert.match(calls[5].sql, /NOT EXISTS/u);
   assert.match(calls[5].sql, /COALESCE\(re\.mode, 'review'\) <> 'box1'/u);
   assert.deepEqual(calls[5].values, [42, '2026-09-06', 42, '2026-09-06', '2026-09-06', '2026-09-06']);
+  assert.match(calls[6].sql, /daily_listening_goal AS dailyListeningGoal/u);
+  assert.deepEqual(calls[6].values, [42]);
   assert.deepEqual(result, {
     reviews: [], practice: [], listening: [], legacy: [], first: {},
     vocabularyToday: { completed: 0, remaining: 0 },
+    settings: { dailyListeningGoal: 3 },
   });
 });
 
