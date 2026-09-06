@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LearningSettingsService } from '../../application/settings/learning-settings.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { createWord, ensureDailyWords, hydrateState, localDay } from '../../domain/learning/learning-rules';
@@ -110,6 +111,7 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
 })
 export class SettingsPageComponent implements OnInit {
   readonly store = inject(LearningStoreService);
+  private readonly learningSettings = inject(LearningSettingsService);
   private readonly theme = inject(ThemeService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
@@ -127,8 +129,7 @@ export class SettingsPageComponent implements OnInit {
   }
 
   async save(): Promise<void> {
-    const settings = this.form.getRawValue();
-    const state = await this.store.update((draft) => { draft.settings = settings; });
+    const state = await this.learningSettings.save(this.form.getRawValue());
     this.theme.apply(state.settings.theme);
     this.snack.open('Settings saved.', 'OK', { duration: 2000 });
   }
