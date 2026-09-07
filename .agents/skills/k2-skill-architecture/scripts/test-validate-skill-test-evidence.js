@@ -217,6 +217,21 @@ function testPythonCommentOnlyModificationDoesNotRequireTestChange() {
   assert.equal(problemCodes(result).includes('missing_skill_test'), false);
 }
 
+function testPythonShebangModificationRequiresTestChange() {
+  const pythonScript = `${root}/scripts/create_worktree.py`;
+  const change = {
+    basePath: pythonScript,
+    baseSource: '#!/usr/bin/env python3\nVALUE = True\n',
+    path: pythonScript,
+    source: '#!/usr/bin/python3 -O\nVALUE = True\n',
+    status: 'M',
+  };
+  const result = resultFor([change], {
+    extraFiles: { [pythonScript]: change.source },
+  });
+  assert.ok(problemCodes(result).includes('missing_skill_test'));
+}
+
 const tests = [
   testModifiedBehaviorWithoutAnyTestNeedsChangedTest,
   testUnchangedExistingTestDoesNotSatisfyRule,
@@ -227,6 +242,7 @@ const tests = [
   testDeletedTestDoesNotCoverModifiedBehavior,
   testModifiedPythonBehaviorRequiresChangedPythonTest,
   testPythonCommentOnlyModificationDoesNotRequireTestChange,
+  testPythonShebangModificationRequiresTestChange,
 ];
 
 for (const test of tests) test();

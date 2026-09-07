@@ -25,7 +25,7 @@ function scanPython(source, maskComments) {
       continue;
     }
 
-    if (current === '#' && maskComments) {
+    if (current === '#' && maskComments && !(index === 0 && input[1] === '!')) {
       output += ' ';
       while (index + 1 < input.length && input[index + 1] !== '\n' && input[index + 1] !== '\r') {
         output += ' ';
