@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 BBC Listening Bundles"
+  short_description: "Author and validate source-grounded BBC IELTS-style practice."
+  default_prompt: "Use $k2-bbc-listening-bundles. Read its IELTS question-design rules before authoring. Prepare or revise the requested episode tests with exactly 10 scored questions, all four implemented task types, verified forward-only audio evidence and genuine difficulty distinctions in every test. Preserve existing identities and learner history. Run semantic review and canonical quality validation, then return separate verified bundles or the explicitly requested PR. Disclose reference-only transcripts and do not call these official IELTS papers."

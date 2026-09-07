@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan and verify Vocora BBC listening bundle requests."""
+"""Plan and verify K2 BBC listening bundle requests for Vocora."""
 from __future__ import annotations
 
 import argparse

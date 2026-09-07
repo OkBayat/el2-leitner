@@ -1,4 +1,4 @@
-# Vocora Skill Architecture Rules
+# K2 Skill Architecture Rules
 
 Read this only for non-trivial ownership, determinism, or refactoring decisions.
 

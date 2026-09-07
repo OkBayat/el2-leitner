@@ -3,7 +3,7 @@ name: k2-skill-script-architecture
 description: Enforce modular, bounded architecture when creating, changing, reviewing, or refactoring executable JavaScript or TypeScript under .agents/skills/**/scripts/**. Use before any skill-script code edit, especially for oversized legacy scripts, broad module.exports surfaces, mixed CLI/domain/I/O responsibilities, or new validators and automation helpers.
 ---
 
-# Vocora Skill Script Architecture
+# K2 Skill Script Architecture
 
 Keep skill automation cheap for Codex to inspect, safe to change, and easy to
 test. Apply this skill before editing executable code under

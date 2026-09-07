@@ -1,9 +1,9 @@
 ---
-name: vocora-design-system
+name: k2-design-system
 description: Mandatory visual design system for all Vocora UI work, including color, light/dark theming, typography, spacing, layout, component styling, responsive behavior, PWA surfaces, branding, mascot usage, and semantic states. Use before creating or modifying any visual product surface. Do not use for backend- or infrastructure-only changes with no visual impact.
 ---
 
-# Vocora Design System
+# K2 Design System
 
 Use this skill as the source of truth for visual design work in Vocora.
 
@@ -195,9 +195,9 @@ The validator owns deterministic checks for:
 - required light/dark parity for semantic color keys;
 - expected source-reference files.
 
-### Agent-owned
+### Codex-owned
 
-The agent owns semantic design judgment, including:
+Codex owns semantic design judgment, including:
 
 - visual hierarchy;
 - token selection by meaning;
@@ -211,9 +211,9 @@ The agent owns semantic design judgment, including:
 
 ### No manual fallback
 
-Do not bypass or replace deterministic validation with manual inspection.
+- Do not bypass or replace deterministic validation with manual inspection.
 
-If the validator fails, fix the skill source, token data, or validator. Do not disable the rule, ignore the failure, or substitute prose-only verification.
+- If the validator fails, fix the skill source, token data, or validator. Do not disable the rule, ignore the failure, or substitute prose-only verification.
 
 ## Stop conditions
 

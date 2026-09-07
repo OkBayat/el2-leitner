@@ -1,4 +1,4 @@
 interface:
-  display_name: "Vocora Task Delivery"
+  display_name: "K2 Task Delivery"
   short_description: "Deliver multi-stage Vocora tasks to verified closure"
   default_prompt: "Use $k2-task-delivery to implement this multi-stage Vocora request to verified closure, including publication gates only when authorized."

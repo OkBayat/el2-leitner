@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the Vocora design-system skill deterministically."""
+"""Validate the K2 design-system skill deterministically."""
 
 from __future__ import annotations
 
@@ -241,7 +241,7 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
         "Light theme is the default theme.",
         "Every visual change must be designed for light and dark themes at the same time.",
         "### Script-owned",
-        "### Agent-owned",
+        "### Codex-owned",
         "### No manual fallback",
         "## Stop conditions",
     )
@@ -289,12 +289,12 @@ def main() -> int:
     root = skill_root()
     errors = validate(root)
     if errors:
-        print("Vocora design-system validation failed:", file=sys.stderr)
+        print("K2 design-system skill validation failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Vocora design-system validation passed.")
+    print("K2 design-system skill validation passed.")
     return 0
 
 

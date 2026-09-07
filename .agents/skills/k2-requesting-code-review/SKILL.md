@@ -3,7 +3,7 @@ name: k2-requesting-code-review
 description: Request an independent read-only review of a completed Vocora change against its requirements and exact Git range. Use before authorized publication or when a fresh technical review is explicitly required.
 ---
 
-# Vocora Requesting Code Review
+# K2 Requesting Code Review
 
 Dispatch an independent reviewer with only the evidence needed to inspect the
 work product. The reviewer must not mutate the worktree, index, HEAD, branch, or

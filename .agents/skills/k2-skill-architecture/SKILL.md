@@ -3,7 +3,7 @@ name: k2-skill-architecture
 description: Enforce simple, deterministic, testable, phase-aware architecture when creating or changing Vocora skills or shared skill assets. Use before any structural or behavioral change under .agents/skills/**; additionally use k2-skill-script-architecture when executable JavaScript or TypeScript changes.
 ---
 
-# Vocora Skill Architecture
+# K2 Skill Architecture
 
 Keep Vocora skills easy to understand, cheap to load, safe to change, and deterministic
 wherever the work can be expressed as code.

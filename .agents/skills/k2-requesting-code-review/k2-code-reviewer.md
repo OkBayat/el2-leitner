@@ -1,4 +1,4 @@
-# Vocora Code Reviewer Prompt Template
+# K2 Code Reviewer Prompt Template
 
 Use this template for an independent read-only review.
 
