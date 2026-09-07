@@ -17,6 +17,21 @@ describe('vocabulary intake payload', () => {
     expect(parsed.items.map((item) => vocabularyIntakeStateLabel(item))).toEqual(['New', 'Mastered']);
   });
 
+  it('accepts collection-section scopes used by finite file-managed courses', () => {
+    const parsed = parseVocabularyIntakePayload({
+      ...payload,
+      scope: { kind: 'collection-section', ref: 'section-unit-01' },
+    });
+    expect(parsed.scope).toEqual({ kind: 'collection-section', ref: 'section-unit-01' });
+  });
+
+  it('rejects unknown scope kinds instead of widening the client contract', () => {
+    expect(() => parseVocabularyIntakePayload({
+      ...payload,
+      scope: { kind: 'arbitrary-query', ref: 'unsafe' },
+    })).toThrow('Invalid vocabulary intake payload.');
+  });
+
   it('rejects inconsistent summary counts instead of inventing UI state', () => {
     expect(() => parseVocabularyIntakePayload({ ...payload, summary: { ...payload.summary, total: 3 } })).toThrow(
       'Invalid vocabulary intake payload.',
