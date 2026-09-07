@@ -104,6 +104,46 @@ async function mockIntake(page: Page) {
   return commands;
 }
 
+test('slide exercise desktop shell fills the viewport and centers content and footer action', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await mockIntake(page);
+
+  await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
+  await expect(page.getByTestId('slide-exercise')).toBeVisible();
+  await expect(page.getByTestId('message-slide-content')).toBeVisible();
+  await expect(page.getByRole('button', { name: "Let's Go" })).toBeVisible();
+
+  const layout = await page.evaluate(() => {
+    const shell = document.querySelector<HTMLElement>('[data-testid="slide-exercise"]');
+    const stage = document.querySelector<HTMLElement>('.slide-exercise__stage');
+    const content = document.querySelector<HTMLElement>('[data-testid="message-slide-content"]');
+    const footer = document.querySelector<HTMLElement>('[data-testid="slide-exercise-footer"]');
+    const action = document.querySelector<HTMLElement>('[data-testid="slide-exercise-footer"] button');
+    if (!shell || !stage || !content || !footer || !action) throw new Error('Slide exercise layout is incomplete.');
+    const shellRect = shell.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    const contentRect = content.getBoundingClientRect();
+    const footerRect = footer.getBoundingClientRect();
+    const actionRect = action.getBoundingClientRect();
+    return {
+      viewportWidth: innerWidth,
+      viewportHeight: innerHeight,
+      shellHeight: shellRect.height,
+      stageCenterY: stageRect.top + (stageRect.height / 2),
+      contentCenterY: contentRect.top + (contentRect.height / 2),
+      footerWidth: footerRect.width,
+      footerBottom: footerRect.bottom,
+      actionCenterX: actionRect.left + (actionRect.width / 2),
+    };
+  });
+
+  expect(Math.abs(layout.shellHeight - layout.viewportHeight)).toBeLessThanOrEqual(1);
+  expect(Math.abs(layout.footerBottom - layout.viewportHeight)).toBeLessThanOrEqual(1);
+  expect(Math.abs(layout.footerWidth - layout.viewportWidth)).toBeLessThanOrEqual(1);
+  expect(Math.abs(layout.contentCenterY - layout.stageCenterY)).toBeLessThanOrEqual(4);
+  expect(Math.abs(layout.actionCenterX - (layout.viewportWidth / 2))).toBeLessThanOrEqual(4);
+});
+
 test('Cambridge vocabulary intake runs as a slide quiz for new and Box 1 words', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const errors: string[] = [];
