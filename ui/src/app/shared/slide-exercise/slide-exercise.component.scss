@@ -1,14 +1,13 @@
 :host {
   display: block;
-  height: 100vh;
-  min-height: 0;
+  min-height: 100dvh;
   background: var(--vocora-surface-page);
   color: var(--vocora-text-primary);
 }
 
 .slide-exercise {
-  height: 100%;
-  min-height: 0;
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
@@ -29,6 +28,18 @@
   margin: 0 auto;
   padding: var(--vocora-space-8) var(--vocora-space-6);
   box-sizing: border-box;
+}
+
+@media (min-width: 601px) {
+  :host {
+    height: 100vh;
+    min-height: 0;
+  }
+
+  .slide-exercise {
+    height: 100%;
+    min-height: 0;
+  }
 }
 
 @media (max-width: 600px) {
