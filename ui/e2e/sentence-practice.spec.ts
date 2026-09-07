@@ -20,6 +20,20 @@ async function learningState(page: Page): Promise<any> {
 	});
 }
 
+function learningWordProgress(words: any[]): unknown[] {
+	return (words ?? []).map((word) => ({
+		id: word.id,
+		attempts: word.attempts ?? 0,
+		correct: word.correct ?? 0,
+		mistakes: word.mistakes ?? 0,
+		currentStreak: word.currentStreak ?? 0,
+		lastReviewed: word.lastReviewed ?? null,
+		lastPromotedDay: word.lastPromotedDay ?? null,
+		blockedUntil: word.blockedUntil ?? null,
+		masteredAt: word.masteredAt ?? null,
+	}));
+}
+
 async function browserLocalDay(page: Page): Promise<string> {
 	return page.evaluate(() => {
 		const now = new Date();
@@ -184,9 +198,9 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	await answerCurrentCard(page, 4);
 
 	const stateAfter = await learningState(page);
-	// The top-level state revision can advance when unrelated settings defaults are persisted.
-	// Assert the learning-progress fields that Sentence Practice must leave untouched instead.
-	expect(stateAfter.state.words).toEqual(stateBefore.state.words);
+	// State normalization may materialize default word metadata while this exercise runs.
+	// Compare only the learner-progress fields Sentence Practice is allowed to leave untouched.
+	expect(learningWordProgress(stateAfter.state.words)).toEqual(learningWordProgress(stateBefore.state.words));
 	expect(stateAfter.state.history).toEqual(stateBefore.state.history);
 
 	const beforeDaily = stateBefore.state.daily?.[localDay] ?? {

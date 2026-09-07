@@ -5,6 +5,20 @@ import { join } from 'node:path';
 
 const audioPath = join(tmpdir(), 'vocora-shadowing-ci-silence.wav');
 
+function learningWordProgress(words: any[]): unknown[] {
+  return (words ?? []).map((word) => ({
+    id: word.id,
+    attempts: word.attempts ?? 0,
+    correct: word.correct ?? 0,
+    mistakes: word.mistakes ?? 0,
+    currentStreak: word.currentStreak ?? 0,
+    lastReviewed: word.lastReviewed ?? null,
+    lastPromotedDay: word.lastPromotedDay ?? null,
+    blockedUntil: word.blockedUntil ?? null,
+    masteredAt: word.masteredAt ?? null,
+  }));
+}
+
 async function writeSilenceAudio(): Promise<void> {
   const sampleRate = 44_100;
   const channels = 2;
@@ -109,9 +123,9 @@ test('native AudioWorklet and real speech API handle silence without changing le
     expect(await page.evaluate(() => (window as any).__shadowingMicrophone.tracks.map((track: MediaStreamTrack) => track.readyState))).toEqual(['ended']);
 
     const after = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
-    // The top-level revision may advance when unrelated settings defaults are persisted after registration.
-    // Shadowing silence must leave the actual learning-progress fields unchanged.
-    expect(after.state.words).toEqual(before.state.words);
+    // State normalization may materialize default word metadata while this exercise runs.
+    // Silence must not change the learner-progress fields owned by Shadowing.
+    expect(learningWordProgress(after.state.words)).toEqual(learningWordProgress(before.state.words));
     expect(after.state.history).toEqual(before.state.history);
     expect(after.state.daily).toEqual(before.state.daily);
     await page.getByRole('button', { name: 'Exit shadowing', exact: true }).click();

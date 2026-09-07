@@ -160,7 +160,8 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   await page.getByTestId('library-learning-path-action').click();
 
   await expect(page).toHaveURL(new RegExp(`/learning-path/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
-  await expect(page.getByText('Vocabulary intake', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
+  await expect(page.getByRole('heading', { name: "Meet this lesson's words" })).toBeVisible();
   expect(writes).toEqual(['subscribe', 'start-path', 'start-exercise']);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

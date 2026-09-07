@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
-import { exerciseTypeLabel, learningPathStateLabel } from '../../../domain/collection-learning-path/learning-path';
 import type { ExerciseOutcome } from '../exercises/exercise-runtime/exercise-contracts';
 import { ExerciseHostComponent } from '../exercises/exercise-runtime/exercise-host.component';
 
@@ -15,7 +14,7 @@ interface RunnerRoute {
 @Component({
   selector: 'app-learning-path-exercise-runner-page',
   standalone: true,
-  imports: [RouterLink, ExerciseHostComponent],
+  imports: [ExerciseHostComponent],
   templateUrl: './exercise-runner-page.component.html',
   styleUrl: './exercise-runner-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,12 +25,6 @@ export class ExerciseRunnerPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly routeState = signal<RunnerRoute | null>(null);
-  readonly exerciseLabel = computed(() => this.facade.context() ? exerciseTypeLabel(this.facade.context()!.exercise.type) : 'Exercise');
-  readonly stateLabel = computed(() => this.facade.context() ? learningPathStateLabel(this.facade.context()!.state) : '');
-  readonly backLink = computed(() => {
-    const collectionId = this.facade.context()?.path.collectionId;
-    return collectionId ? ['/library', collectionId, 'learning-path'] : ['/library'];
-  });
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -53,7 +46,14 @@ export class ExerciseRunnerPageComponent {
   }
 
   onExerciseOutcome(outcome: ExerciseOutcome): void {
-    if (outcome.kind === 'completed') void this.facade.complete(outcome);
+    if (outcome.kind === 'completed') {
+      void this.facade.complete(outcome);
+      return;
+    }
+    if (outcome.kind === 'cancelled') {
+      const context = this.facade.context();
+      if (context) void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
+    }
   }
 
   continueJourney(): void {

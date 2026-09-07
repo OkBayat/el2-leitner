@@ -1,0 +1,24 @@
+<footer class="slide-exercise-footer" [attr.data-tone]="tone()" data-testid="slide-exercise-footer">
+  <div class="slide-exercise-footer__inner">
+    @if (hasFeedback()) {
+      <div class="slide-exercise-footer__feedback" [attr.role]="feedbackRole()" aria-live="polite">
+        @if (tone() !== 'neutral') {
+          <span class="slide-exercise-footer__icon" aria-hidden="true">
+            @switch (tone()) {
+              @case ('success') { <span>✓</span> }
+              @case ('information') { <span>i</span> }
+              @case ('warning') { <span>!</span> }
+              @case ('error') { <span>×</span> }
+            }
+          </span>
+        }
+        <div class="slide-exercise-footer__copy">
+          @if (title()) { <strong>{{ title() }}</strong> }
+          @if (detail()) { <span>{{ detail() }}</span> }
+          <ng-content select="[slideExerciseFeedbackExtra]"></ng-content>
+        </div>
+      </div>
+    }
+    <div class="slide-exercise-footer__actions"><ng-content></ng-content></div>
+  </div>
+</footer>

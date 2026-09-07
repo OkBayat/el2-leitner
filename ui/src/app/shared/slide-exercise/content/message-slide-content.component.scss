@@ -1,0 +1,6 @@
+:host { display: grid; min-height: 100%; place-items: center; }
+.message-slide { width: min(680px, 100%); display: grid; gap: var(--vocora-space-3); text-align: center; }
+.message-slide__eyebrow, .message-slide h1, .message-slide__body { margin: 0; }
+.message-slide__eyebrow { color: var(--vocora-action-primary); font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.message-slide h1 { color: var(--vocora-text-primary); font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
+.message-slide__body { color: var(--vocora-text-secondary); font-size: 16px; line-height: 24px; }

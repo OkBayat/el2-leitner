@@ -1,0 +1,21 @@
+@if (content(); as data) {
+  <section class="summary-slide" data-testid="summary-slide-content">
+    <div class="summary-slide__copy">
+      @if (data.eyebrow) { <p>{{ data.eyebrow }}</p> }
+      <h1>{{ data.title }}</h1>
+      @if (data.subtitle) { <span>{{ data.subtitle }}</span> }
+    </div>
+
+    @if (data.metrics.length) {
+      <dl class="summary-slide__metrics" aria-label="Exercise results">
+        @for (metric of data.metrics; track metric.label) {
+          <div class="summary-slide__metric">
+            <dt>{{ metric.label }}</dt>
+            <dd>{{ metric.value }}</dd>
+            @if (metric.detail) { <span>{{ metric.detail }}</span> }
+          </div>
+        }
+      </dl>
+    }
+  </section>
+}
