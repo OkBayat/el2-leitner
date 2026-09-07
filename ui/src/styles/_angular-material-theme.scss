@@ -1,0 +1,24 @@
+@mixin apply() {
+  :root {
+    --mat-sys-primary: var(--vocora-action-primary);
+    --mat-sys-on-primary: var(--vocora-text-on-primary);
+    --mat-sys-primary-container: var(--vocora-action-secondary);
+    --mat-sys-on-primary-container: var(--vocora-action-secondary-foreground);
+
+    --mat-sys-secondary: var(--vocora-action-secondary);
+    --mat-sys-on-secondary: var(--vocora-action-secondary-foreground);
+
+    --mat-sys-error: var(--vocora-error);
+    --mat-sys-on-error: #ffffff;
+
+    --mat-sys-surface: var(--vocora-surface-page);
+    --mat-sys-on-surface: var(--vocora-text-primary);
+    --mat-sys-outline: var(--vocora-border);
+
+    --mdc-filled-button-container-color: var(--vocora-action-primary);
+    --mdc-filled-button-label-text-color: var(--vocora-text-on-primary);
+    --mdc-text-button-label-text-color: var(--vocora-action-primary);
+    --mdc-outlined-button-outline-color: var(--vocora-border);
+    --mdc-dialog-container-color: var(--vocora-surface-raised);
+  }
+}
