@@ -1,5 +1,5 @@
 ---
-name: vocora-bbc-listening-bundles
+name: k2-bbc-listening-bundles
 description: >-
   Find, author, revise and validate BBC 6 Minute English episodes for Vocora;
   prepare separate episode ZIPs by date, range, title or official URL with the
@@ -7,7 +7,7 @@ description: >-
   or redesigning existing IELTS-style listening questions or their authoring rules.
 ---
 
-# Vocora BBC Listening Bundles
+# K2 BBC Listening Bundles
 
 Prepare source-grounded IELTS-style practice and independently validated episode bundles. For content revisions, preserve existing episode identities, test routes and completed attempts and deliver the requested separate PR instead of manufacturing new episode ZIPs.
 
@@ -40,9 +40,9 @@ The full official task-family catalogue, supported/unsupported mapping, per-type
 Use the skill planner and final delivery verifier:
 
 ```bash
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan ...
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py bind-discovery ...
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py verify-delivery ...
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py plan ...
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py bind-discovery ...
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py verify-delivery ...
 ```
 
 Use the application tool for episode/media operations:
@@ -84,19 +84,19 @@ For existing-content revisions: `CATALOG_AUDIT -> DESIGN_POLICY -> AUTHORING -> 
 For an exact date:
 
 ```bash
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan \
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py plan \
   --date 2026-06-18 --tests 5 \
   --difficulty-distribution easy=1,medium=2,hard=2 \
-  --output /tmp/vocora-bbc-plan.json
+  --output /tmp/k2-bbc-plan.json
 ```
 
 For an inclusive range:
 
 ```bash
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py plan \
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py plan \
   --from-date 2026-06-01 --to-date 2026-06-30 --tests 5 \
   --difficulty-distribution easy=1,medium=2,hard=2 \
-  --output /tmp/vocora-bbc-plan.json
+  --output /tmp/k2-bbc-plan.json
 ```
 
 Do not hand-edit a rejected plan, guess missing dates, or silently change the requested distribution.
@@ -108,11 +108,11 @@ Use the official BBC feed for discovery assistance and confirm each identity aga
 Bind every and only resolved episode before authoring:
 
 ```bash
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py bind-discovery \
-  --plan /tmp/vocora-bbc-plan.json \
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py bind-discovery \
+  --plan /tmp/k2-bbc-plan.json \
   --episode 2026-06-18=bbc-6-minute-english-260618 \
   --episode 2026-06-25=bbc-6-minute-english-260625 \
-  --output /tmp/vocora-bbc-bound-plan.json
+  --output /tmp/k2-bbc-bound-plan.json
 ```
 
 Do not fabricate bundles for dates without episodes or omit an episode to reduce work. Explain a verified empty result honestly.
@@ -145,8 +145,8 @@ For authorized full text, omit `--allow-source-transcript`.
 Verify the entire delivery set against the bound plan:
 
 ```bash
-python3 .agents/skills/vocora-bbc-listening-bundles/scripts/bundle-request.py verify-delivery \
-  --plan /tmp/vocora-bbc-bound-plan.json <episode-1.zip> <episode-2.zip>
+python3 .agents/skills/k2-bbc-listening-bundles/scripts/bundle-request.py verify-delivery \
+  --plan /tmp/k2-bbc-bound-plan.json <episode-1.zip> <episode-2.zip>
 ```
 
 This must pass along with the canonical question-quality checks. Fix/repackage failures. Return each final ZIP separately, chronologically, stating date, title, episode level, test count/mix, questions PER test and actual transcript status. Do not present internal source/media artifacts as installable finished bundles. Do not say complete when only structure checks passed or a known required file is missing.
@@ -159,12 +159,12 @@ Stop with a precise blocker rather than inventing facts when identity/date, offi
 
 ### Script-owned
 
-Validate dates, requested counts/mix, discovery binding, exact delivered identities, canonical JSON/media/ZIP contracts, exact ten-question count, supported task diversity, numbering, IDs, option shape, answer limits, duplicate prompts, source-evidence order/range/audio identity and scoring regression fixtures. Run focused skill tests, the skill validator and affected application tests. Report actual results, not assumed success.
+- Validate dates, requested counts/mix, discovery binding, exact delivered identities, canonical JSON/media/ZIP contracts, exact ten-question count, supported task diversity, numbering, IDs, option shape, answer limits, duplicate prompts, source-evidence order/range/audio identity and scoring regression fixtures. Run focused skill tests, the skill validator and affected application tests. Report actual results, not assumed success.
 
-### Agent-owned
+### Codex-owned
 
-Resolve official sources; interpret the request; verify source meaning and answer locations; write original coherent tests, fair distractors, vocabulary and examples; judge actual paraphrase and difficulty; confirm distinctness and sensible pacing; decide transcript authorization; and honestly present artifacts or PR results. Automated labels cannot replace this review.
+- Resolve official sources; interpret the request; verify source meaning and answer locations; write original coherent tests, fair distractors, vocabulary and examples; judge actual paraphrase and difficulty; confirm distinctness and sensible pacing; decide transcript authorization; and honestly present artifacts or PR results. Automated labels cannot replace this review.
 
 ### No manual fallback
 
-Do not bypass planning, binding, the application validator, question-quality gates, package/ZIP verification or final `verify-delivery`. Do not manually assert completeness, manufacture timestamps, invent missing media/answers, weaken an unrelated regression test, or substitute a badge for real difficulty. Repair deterministic tooling under test when necessary; never silently opt out.
+- Do not bypass planning, binding, the application validator, question-quality gates, package/ZIP verification or final `verify-delivery`. Do not manually assert completeness, manufacture timestamps, invent missing media/answers, weaken an unrelated regression test, or substitute a badge for real difficulty. Repair deterministic tooling under test when necessary; never silently opt out.

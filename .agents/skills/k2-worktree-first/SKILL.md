@@ -3,7 +3,7 @@ name: k2-worktree-first
 description: Explicit-only Vocora worktree bootstrap. Use only when the user directly names `k2-worktree-first` or `$k2-worktree-first`; never select this skill from inferred worktree, isolation, branch, or task intent.
 ---
 
-# Vocora Worktree First
+# K2 Worktree First
 
 Use this skill only after the user directly names `k2-worktree-first` or `$k2-worktree-first`.
 

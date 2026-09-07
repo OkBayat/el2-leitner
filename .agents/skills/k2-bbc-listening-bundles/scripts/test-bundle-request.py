@@ -11,7 +11,7 @@ from unittest.mock import patch
 import zipfile
 
 SCRIPT = Path(__file__).with_name("bundle-request.py")
-SPEC = importlib.util.spec_from_file_location("vocora_bbc_bundle_request", SCRIPT)
+SPEC = importlib.util.spec_from_file_location("k2_bbc_bundle_request", SCRIPT)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError("Could not load bundle-request.py")
 MODULE = importlib.util.module_from_spec(SPEC)

@@ -3,7 +3,7 @@ name: k2-receiving-code-review
 description: Evaluate code-review feedback against Vocora source and contracts before applying it. Use when review findings may be valid, stale, unclear, out of scope, or technically incorrect.
 ---
 
-# Vocora Code Review Reception
+# K2 Code Review Reception
 
 Review feedback is evidence to verify, not an instruction to apply blindly.
 

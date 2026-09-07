@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 SCHEMA_VERSION = 1
-SKILL_NAME = "vocora-bbc-listening-bundles"
+SKILL_NAME = "k2-bbc-listening-bundles"
 SCRIPT = Path(__file__).resolve()
 SKILL_DIR = SCRIPT.parent.parent
 REPO_ROOT = SKILL_DIR.parents[2]
@@ -45,7 +45,7 @@ def validate() -> dict:
     required_skill_sections = (
         "## Determinism Boundary",
         "### Script-owned",
-        "### Agent-owned",
+        "### Codex-owned",
         "### No manual fallback",
         "## Stop conditions",
     )

@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 SCRIPT = Path(__file__).with_name("validate-skill.py")
-SPEC = importlib.util.spec_from_file_location("vocora_bbc_skill_validator", SCRIPT)
+SPEC = importlib.util.spec_from_file_location("k2_bbc_skill_validator", SCRIPT)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError("Could not load validate-skill.py")
 MODULE = importlib.util.module_from_spec(SPEC)
@@ -19,7 +19,7 @@ class SkillValidatorTests(unittest.TestCase):
     def test_repository_skill_contract_is_valid(self) -> None:
         result = MODULE.validate()
         self.assertEqual(result["status"], "valid")
-        self.assertEqual(result["skill"], "vocora-bbc-listening-bundles")
+        self.assertEqual(result["skill"], "k2-bbc-listening-bundles")
         self.assertGreaterEqual(result["files_checked"], 9)
 
     def reject_missing_text(self, target: str, token: str, message: str) -> None:

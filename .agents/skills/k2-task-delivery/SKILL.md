@@ -3,7 +3,7 @@ name: k2-task-delivery
 description: Deliver multi-stage Vocora implementation requests to verified closure without dropping requirements. Use when work spans several behaviors, files, contracts, migrations, test surfaces, documentation changes, or authorized publication steps.
 ---
 
-# Vocora Task Delivery
+# K2 Task Delivery
 
 Treat the request supplied with this skill as the immutable **Original Request**.
 Vocora repository instructions and the smallest owning domain skill remain

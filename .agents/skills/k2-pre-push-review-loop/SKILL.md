@@ -3,7 +3,7 @@ name: k2-pre-push-review-loop
 description: Run Vocora's reusable identity-bound code review loop after focused verification and before authorized publication. Use when a caller requires a clean review for an exact committed base-to-HEAD range.
 ---
 
-# Vocora Pre-Push Review Loop
+# K2 Pre-Push Review Loop
 
 ## Purpose
 

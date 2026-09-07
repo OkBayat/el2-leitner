@@ -26,8 +26,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate BBC bundle skill architecture
-        run: python3 .agents/skills/vocora-bbc-listening-bundles/scripts/validate-skill.py
+        run: python3 .agents/skills/k2-bbc-listening-bundles/scripts/validate-skill.py
       - name: Run BBC bundle skill tests
         run: |
-          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-bundle-request.py
-          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-validate-skill.py
+          python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-bundle-request.py
+          python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-validate-skill.py
