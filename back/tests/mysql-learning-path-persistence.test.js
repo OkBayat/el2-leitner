@@ -92,6 +92,30 @@ test("definition persistence stores variable exercise configuration as JSON with
   assert.equal(pool.calls[0].parameters.at(-1), "lesson-1");
 });
 
+test("progress persistence converts application ISO timestamps before handing them to mysql2", async () => {
+  const pool = new RecordingPool();
+  const repository = new MySqlLearningPathProgressCommandRepository(pool);
+  const startedAt = "2026-09-07T02:45:00.123Z";
+  const lastActivityAt = "2026-09-07T02:46:00.456Z";
+
+  await repository.upsertPathProgress({
+    userId: "user-1",
+    pathId: "path-1",
+    status: "in_progress",
+    startedAt,
+    completedAt: null,
+    lastActivityAt,
+    lastSeenContentVersion: 4,
+  });
+
+  const parameters = pool.calls[0].parameters;
+  assert.ok(parameters[2] instanceof Date);
+  assert.equal(parameters[2].toISOString(), startedAt);
+  assert.equal(parameters[3], null);
+  assert.ok(parameters[4] instanceof Date);
+  assert.equal(parameters[4].toISOString(), lastActivityAt);
+});
+
 test("progress reads scope every projection query by user and path identity", async () => {
   const pool = new RecordingPool([
     [[{ status: "in_progress", startedAt: "a", completedAt: null, lastActivityAt: "b", lastSeenContentVersion: 2 }], []],
