@@ -37,6 +37,11 @@ describe('vocabulary intake slide factory', () => {
       expect(data.options).toHaveLength(3);
       expect(new Set(data.options.map((option) => option.label)).size).toBe(3);
       expect(data.options.some((option) => data.correctOptionIds.includes(option.id))).toBe(true);
+      expect(data.speech).toEqual({
+        text: data.question,
+        autoplay: true,
+        replay: true,
+      });
     }
     expect(questions[0].chrome?.header?.progress?.label).toBe('Word 1 of 2');
     expect(questions[1].chrome?.header?.progress?.label).toBe('Word 2 of 2');

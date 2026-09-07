@@ -88,15 +88,15 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
       const component = await renderer.loadComponent();
       if (version !== this.renderVersion) return;
       this.componentRef = this.outlet.createComponent(component);
+      const stateChange = this.componentRef.instance.stateChange;
+      if (stateChange) this.stateSubscription = stateChange.subscribe((state) => this.stateChange.emit(state));
+      const event = this.componentRef.instance.event;
+      if (event) this.eventSubscription = event.subscribe((value) => this.event.emit(value));
       this.componentRef.instance.load({
         slideId: this.slide.id,
         type: this.slide.type,
         data: this.slide.data,
       });
-      const stateChange = this.componentRef.instance.stateChange;
-      if (stateChange) this.stateSubscription = stateChange.subscribe((state) => this.stateChange.emit(state));
-      const event = this.componentRef.instance.event;
-      if (event) this.eventSubscription = event.subscribe((value) => this.event.emit(value));
       this.rendererLoading = false;
       this.changeDetector.markForCheck();
     } catch {

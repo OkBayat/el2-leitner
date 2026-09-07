@@ -1,6 +1,9 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
+import { SpeechService } from '../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../core/state/learning-store.service';
 import { createDefaultSlideContentRegistry } from '../slide-content-registry';
 import { SlideExerciseComponent } from '../slide-exercise.component';
 import { REUSABLE_SLIDE_FIXTURES } from './slide-library.fixtures';
@@ -13,6 +16,14 @@ describe('reusable slide renderer contract', () => {
 				{
 					provide: ReviewAnswerSoundService,
 					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal(null) },
 				},
 			],
 		});
@@ -48,6 +59,14 @@ describe('reusable slide renderer contract', () => {
 				{
 					provide: ReviewAnswerSoundService,
 					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal(null) },
 				},
 			],
 		});
@@ -95,6 +114,55 @@ describe('reusable slide renderer contract', () => {
 				'[data-state="correct"]',
 			)?.textContent,
 		).toContain('environment');
+		expect(
+			(fixture.nativeElement as HTMLElement)
+				.querySelector('[data-state="incorrect"]')
+				?.getAttribute('aria-label'),
+		).toContain('your answer, incorrect');
+		expect(
+			(fixture.nativeElement as HTMLElement)
+				.querySelector('[data-state="correct"]')
+				?.getAttribute('aria-label'),
+		).toContain('correct answer');
+		expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+			'Correct answer: environment',
+		);
+		fixture.destroy();
+	});
+
+	it('captures the initial Submit action for a model-only RewriteSlide', async () => {
+		TestBed.configureTestingModule({ imports: [SlideExerciseComponent] });
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		fixture.componentRef.setInput('slides', [
+			{
+				id: 'rewrite-model',
+				type: 'rewrite',
+				data: {
+					original: 'People use less energy now.',
+					modelAnswer: 'Less energy is used now.',
+				},
+			},
+		]);
+		fixture.detectChanges();
+		await vi.waitFor(() => {
+			fixture.detectChanges();
+			expect(
+				fixture.componentInstance.presentation?.footer.primary?.label,
+			).toBe('Submit');
+		});
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea',
+		) as HTMLTextAreaElement;
+		textarea.value = 'Energy use has fallen.';
+		textarea.dispatchEvent(new Event('input'));
+		fixture.detectChanges();
+		expect(
+			fixture.componentInstance.presentation?.footer.primary,
+		).toMatchObject({
+			id: 'submit',
+			disabled: false,
+		});
 		fixture.destroy();
 	});
 });

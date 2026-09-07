@@ -24,35 +24,11 @@
 			</div>
 		}
 		@case ('audio') {
-			<div class="slide-stimulus__audio">
-				<audio
-					#audio
-					[src]="stimulus.src"
-					preload="metadata"
-					aria-label="Audio stimulus"
-				></audio>
-				<button
-					mat-stroked-button
-					type="button"
-					[disabled]="!canReplay()"
-					aria-label="Play audio stimulus"
-					(click)="play(audio)"
-				>
-					Play audio
-				</button>
-				@if (stimulus.maxReplays) {
-					<span aria-live="polite"
-						>{{ replayCount() }} of {{ stimulus.maxReplays }} plays
-						used</span
-					>
-				}
-				@if (stimulus.transcript) {
-					<details>
-						<summary>Transcript</summary>
-						<p>{{ stimulus.transcript }}</p>
-					</details>
-				}
-			</div>
+			<app-slide-audio-control
+				[src]="stimulus.src"
+				[maxReplays]="stimulus.maxReplays"
+				[transcript]="stimulus.transcript"
+			/>
 		}
 		@case ('image') {
 			<figure>

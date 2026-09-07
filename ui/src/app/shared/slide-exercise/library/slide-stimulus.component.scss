@@ -28,8 +28,7 @@ figcaption {
 	margin: 0;
 }
 
-.slide-stimulus__reading section,
-.slide-stimulus__audio {
+.slide-stimulus__reading section {
 	display: grid;
 	gap: var(--vocora-space-3);
 }
@@ -42,11 +41,6 @@ figcaption {
 	font-size: 16px;
 }
 
-.slide-stimulus__audio {
-	justify-items: start;
-}
-
-.slide-stimulus__audio span,
 figcaption {
 	color: var(--vocora-text-secondary);
 	font-size: 14px;

@@ -11,12 +11,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
+import { SpeechService } from '../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
 } from '../slide-content-contracts';
 import { LocalAudioRecorderService } from './local-audio-recorder.service';
 import { ScoredSlideBase } from './scored-slide.base';
+import { SlideAudioControlComponent } from './slide-audio-control.component';
 import { SlideStimulusComponent } from './slide-stimulus.component';
 import type {
 	AnswerField,
@@ -109,12 +112,26 @@ function parseChoice(value: unknown): ChoiceSlideData {
 	const mode = stringMode(source['mode'], CHOICE_MODES, 'single');
 	if (mode !== 'multiple' && correctOptionIds.length !== 1)
 		throw new Error('Single-choice slides require one correct option.');
+	const speechSource =
+		source['speech'] === undefined
+			? null
+			: record(source['speech'], 'speech playback');
 	return {
 		...common(source),
 		mode,
 		question: requiredText(source['question'], 'Choice question'),
 		options: parsedOptions,
 		correctOptionIds,
+		speech: speechSource
+			? {
+					text: requiredText(
+						speechSource['text'],
+						'Speech playback text',
+					),
+					autoplay: speechSource['autoplay'] === true,
+					replay: speechSource['replay'] !== false,
+				}
+			: undefined,
 	};
 }
 
@@ -125,10 +142,18 @@ const CHOICE_TEMPLATE = `
       <section class="slide-interaction">
         <p class="slide-instruction">{{ data.instruction || (data.mode === 'multiple' ? 'Choose all correct answers.' : 'Choose one answer.') }}</p>
         <h1>{{ data.question }}</h1>
+		@if (data.speech; as speechPlayback) {
+			@if (speechPlayback.replay) {
+			<button mat-stroked-button type="button" class="speech-replay" [attr.aria-label]="'Play pronunciation for ' + speechPlayback.text" (click)="playSpeech()">
+				Play pronunciation
+			</button>
+			}
+		}
         <div class="choice-grid" [attr.role]="data.mode === 'multiple' ? 'group' : 'radiogroup'" aria-label="Answer options">
           @for (option of data.options; track option.id; let index = $index) {
             <button mat-stroked-button type="button" class="choice-option" [attr.data-state]="optionState(option.id)"
               [attr.role]="data.mode === 'multiple' ? 'checkbox' : 'radio'" [attr.aria-checked]="isSelected(option.id)"
+			  [attr.aria-label]="optionAriaLabel(option, index)"
               [disabled]="interactionState() !== 'idle'" (click)="selectOption(option.id)">
               <span class="choice-option__content">
                 <span class="choice-option__number" aria-hidden="true">{{ index + 1 }}</span>
@@ -155,11 +180,21 @@ export class ChoiceSlideComponent
 	implements SlideContentComponent, OnDestroy
 {
 	private readonly answerSound = inject(ReviewAnswerSoundService);
+	private readonly speech = inject(SpeechService);
+	private readonly store = inject(LearningStoreService);
 	readonly selectedOptionIds = signal<readonly string[]>([]);
 
 	load(context: SlideContentContext): void {
 		this.begin(context.slideId, parseChoice(context.data));
 		this.selectedOptionIds.set([]);
+		if (this.data().speech?.autoplay) this.playSpeech();
+	}
+
+	playSpeech(): boolean {
+		const speech = this.data().speech;
+		if (!speech) return false;
+		const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+		return this.speech.speak(speech.text, rate);
 	}
 
 	handleShortcut(key: string): void {
@@ -199,6 +234,16 @@ export class ChoiceSlideComponent
 		return this.isSelected(optionId) ? 'incorrect' : 'neutral';
 	}
 
+	optionAriaLabel(option: SlideOption, index: number): string {
+		const prefix = `${index + 1}. ${option.label}`;
+		if (this.interactionState() === 'idle') return prefix;
+		if (this.data().correctOptionIds.includes(option.id))
+			return `${prefix}, correct answer`;
+		if (this.isSelected(option.id))
+			return `${prefix}, your answer, incorrect`;
+		return prefix;
+	}
+
 	handleAction(actionId: string): void {
 		if (
 			actionId !== 'check' ||
@@ -209,16 +254,26 @@ export class ChoiceSlideComponent
 		const selectedOptionIds = this.selectedOptionIds();
 		const correctOptionIds = this.data().correctOptionIds;
 		const correct = equalIds(selectedOptionIds, correctOptionIds);
+		const correctLabels = this.data()
+			.options.filter((option) => correctOptionIds.includes(option.id))
+			.map((option) => option.label)
+			.join(', ');
+		const detail = correct
+			? (this.data().explanation ?? '')
+			: [`Correct answer: ${correctLabels}`, this.data().explanation]
+					.filter(Boolean)
+					.join(' ');
 		this.answerSound.play(correct ? 'correct' : 'incorrect');
 		this.finish(
 			correct,
 			{ selectedOptionIds, correctOptionIds, correct },
-			this.data().explanation ?? '',
+			detail,
 		);
 	}
 
 	ngOnDestroy(): void {
 		this.answerSound.stop();
+		this.speech.cancel();
 		this.destroy();
 	}
 }
@@ -480,7 +535,10 @@ export class MatchingSlideComponent
 	readonly selectedLeftId = signal('');
 	readonly matchedPairIds = signal<readonly string[]>([]);
 	readonly pairFeedback = signal('');
-	readonly wrongPair = signal<{ readonly leftId: string; readonly rightId: string } | null>(null);
+	readonly wrongPair = signal<{
+		readonly leftId: string;
+		readonly rightId: string;
+	} | null>(null);
 	readonly rightOptions = signal<readonly SlideOption[]>([]);
 	load(context: SlideContentContext): void {
 		const data = parseMatching(context.data);
@@ -544,9 +602,9 @@ export class MatchingSlideComponent
 			? 'correct'
 			: this.wrongPair()?.leftId === id
 				? 'incorrect'
-			: this.selectedLeftId() === id
-				? 'selected'
-				: 'neutral';
+				: this.selectedLeftId() === id
+					? 'selected'
+					: 'neutral';
 	}
 	rightButtonState(id: string): string {
 		return this.rightLocked(id)
@@ -995,6 +1053,9 @@ abstract class AnswerFieldsSlideBase<
 													$event.value
 												)
 											"
+											(openedChange)="
+												$event && focusBlank(field.id)
+											"
 										>
 											@for (
 												word of data.wordBank ?? [];
@@ -1023,6 +1084,7 @@ abstract class AnswerFieldsSlideBase<
 													inputFrom($event)
 												)
 											"
+											(focus)="focusBlank(field.id)"
 									/></mat-form-field>
 								}
 							</span>
@@ -1076,11 +1138,21 @@ export class ClozeSlideComponent
 		this.activeBlankId.set(id);
 		super.setAnswer(id, value);
 	}
+	focusBlank(id: string): void {
+		this.activeBlankId.set(id);
+	}
 	useWord(word: string): void {
-		const id =
-			this.activeBlankId() ||
-			this.data().blanks.find((field) => !this.answers()[field.id])?.id;
-		if (id) this.setAnswer(id, word);
+		const blanks = this.data().blanks;
+		const activeId = this.activeBlankId();
+		const activeIsEmpty = activeId && !this.answers()[activeId]?.trim();
+		const id = activeIsEmpty
+			? activeId
+			: blanks.find((field) => !this.answers()[field.id]?.trim())?.id;
+		if (!id) return;
+		this.setAnswer(id, word);
+		this.activeBlankId.set(
+			blanks.find((field) => !this.answers()[field.id]?.trim())?.id ?? id,
+		);
 	}
 	handleAction(actionId: string): void {
 		if (
@@ -1678,13 +1750,26 @@ export class RewriteSlideComponent
 		return inputValue(event);
 	}
 	load(context: SlideContentContext): void {
-		this.begin(context.slideId, parseRewrite(context.data));
+		const data = parseRewrite(context.data);
+		this.begin(
+			context.slideId,
+			data,
+			this.isScored(data) ? 'check' : 'submit',
+		);
 		this.response.set('');
 	}
 	setResponse(value: string): void {
 		if (this.interactionState() !== 'idle') return;
 		this.response.set(value);
-		this.setReady(Boolean(value.trim()));
+		this.setReady(
+			Boolean(value.trim()),
+			this.isScored(this.data()) ? 'check' : 'submit',
+		);
+	}
+	private isScored(data: RewriteSlideData): boolean {
+		return Boolean(
+			data.acceptedAnswers?.length || data.requiredFragments?.length,
+		);
 	}
 	private correct(): boolean {
 		const data = this.data();
@@ -1700,6 +1785,7 @@ export class RewriteSlideComponent
 		);
 	}
 	responseState(): string {
+		if (!this.isScored(this.data())) return 'neutral';
 		return this.interactionState() === 'idle'
 			? 'neutral'
 			: this.correct()
@@ -1707,7 +1793,16 @@ export class RewriteSlideComponent
 				: 'incorrect';
 	}
 	handleAction(actionId: string): void {
-		if (actionId !== 'check' || !this.response().trim()) return;
+		if (!this.response().trim()) return;
+		if (!this.isScored(this.data())) {
+			if (actionId !== 'submit') return;
+			this.submit({
+				response: this.response(),
+				modelAnswer: this.data().modelAnswer,
+			});
+			return;
+		}
+		if (actionId !== 'check') return;
 		const correct = this.correct();
 		this.finish(
 			correct,
@@ -1801,9 +1896,9 @@ function parseDictation(value: unknown): DictationSlideData {
 	selector: 'app-dictation-slide',
 	standalone: true,
 	imports: [
-		MatButtonModule,
 		MatFormFieldModule,
 		MatInputModule,
+		SlideAudioControlComponent,
 		SlideStimulusComponent,
 	],
 	template: `@if (content(); as data) {
@@ -1815,27 +1910,14 @@ function parseDictation(value: unknown): DictationSlideData {
 				<p class="slide-instruction">
 					{{ data.instruction || 'Listen and type what you hear.' }}
 				</p>
-				<audio
-					#audio
+				<app-slide-audio-control
 					[src]="data.audio"
-					preload="metadata"
-					aria-label="Dictation audio"
-				></audio
-				><button
-					mat-stroked-button
-					type="button"
-					[disabled]="!canReplay()"
-					aria-label="Play dictation audio"
-					(click)="playAudio(audio)"
-				>
-					Play audio
-				</button>
-				@if (data.maxReplays) {
-					<span class="replay-status"
-						>{{ replayCount() }} of {{ data.maxReplays }} plays
-						used</span
-					>
-				}
+					[maxReplays]="data.maxReplays"
+					buttonLabel="Play audio"
+					playLabel="Play dictation audio"
+					audioLabel="Dictation audio"
+					(replayCountChange)="replayCount.set($event)"
+				/>
 				<mat-form-field
 					appearance="outline"
 					[attr.data-state]="answerState()"
@@ -1874,16 +1956,6 @@ export class DictationSlideComponent
 		this.begin(context.slideId, parseDictation(context.data));
 		this.answer.set('');
 		this.replayCount.set(0);
-	}
-	canReplay(): boolean {
-		const maxReplays = this.data().maxReplays;
-		return !maxReplays || this.replayCount() < maxReplays;
-	}
-	playAudio(audio: HTMLAudioElement): void {
-		if (!this.canReplay()) return;
-		this.replayCount.update((count) => count + 1);
-		audio.currentTime = 0;
-		void audio.play();
 	}
 	setAnswer(value: string): void {
 		if (this.interactionState() !== 'idle') return;

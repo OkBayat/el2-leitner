@@ -53,12 +53,22 @@ export class LocalAudioRecorderService {
 		const recorder = this.recorder;
 		if (!recorder || recorder.state === 'inactive')
 			throw new Error('No recording is active.');
-		const blob = await new Promise<Blob>((resolve, reject) => {
-			recorder.onstop = () => resolve(new Blob(this.chunks, { type: recorder.mimeType || 'audio/webm' }));
-			recorder.onerror = () => reject(new Error('Recording was interrupted.'));
-			recorder.stop();
-		});
-		this.releaseStream();
+		let blob: Blob;
+		try {
+			blob = await new Promise<Blob>((resolve, reject) => {
+				recorder.onstop = () =>
+					resolve(
+						new Blob(this.chunks, {
+							type: recorder.mimeType || 'audio/webm',
+						}),
+					);
+				recorder.onerror = () =>
+					reject(new Error('Recording was interrupted.'));
+				recorder.stop();
+			});
+		} finally {
+			this.releaseStream();
+		}
 		if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
 		this.objectUrl = URL.createObjectURL(blob);
 		return this.objectUrl;

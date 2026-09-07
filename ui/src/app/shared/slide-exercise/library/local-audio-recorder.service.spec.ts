@@ -20,9 +20,10 @@ describe('LocalAudioRecorderService', () => {
 		vi.stubGlobal('isSecureContext', true);
 		vi.stubGlobal('navigator', {
 			mediaDevices: {
-				getUserMedia: () => new Promise<MediaStream>((resolve) => {
-					grant = resolve;
-				}),
+				getUserMedia: () =>
+					new Promise<MediaStream>((resolve) => {
+						grant = resolve;
+					}),
 			},
 		});
 		vi.stubGlobal('MediaRecorder', class {});
@@ -63,6 +64,33 @@ describe('LocalAudioRecorderService', () => {
 
 		await service.start();
 		await expect(service.stop()).resolves.toBe('blob:local');
+		expect(stopTrack).toHaveBeenCalledOnce();
+	});
+
+	it('releases the microphone when stopping is interrupted', async () => {
+		const stopTrack = vi.fn();
+		const stream = { getTracks: () => [{ stop: stopTrack }] };
+		class Recorder {
+			state = 'recording';
+			mimeType = 'audio/webm';
+			ondataavailable: ((event: BlobEvent) => void) | null = null;
+			onerror: ((event: Event) => void) | null = null;
+			onstop: (() => void) | null = null;
+			start(): void {}
+			stop(): void {
+				this.state = 'inactive';
+				this.onerror?.(new Event('error'));
+			}
+		}
+		vi.stubGlobal('isSecureContext', true);
+		vi.stubGlobal('navigator', {
+			mediaDevices: { getUserMedia: vi.fn().mockResolvedValue(stream) },
+		});
+		vi.stubGlobal('MediaRecorder', Recorder);
+		const service = new LocalAudioRecorderService();
+
+		await service.start();
+		await expect(service.stop()).rejects.toThrow('interrupted');
 		expect(stopTrack).toHaveBeenCalledOnce();
 	});
 });

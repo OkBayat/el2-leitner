@@ -59,6 +59,12 @@ export interface SlideOption {
 	readonly label: string;
 }
 
+export interface SpeechPlaybackConfig {
+	readonly text: string;
+	readonly autoplay?: boolean;
+	readonly replay?: boolean;
+}
+
 export type ChoiceSlideMode =
 	| 'single'
 	| 'multiple'
@@ -75,6 +81,7 @@ export interface ChoiceSlideData extends SlideTypeData {
 	readonly question: string;
 	readonly options: readonly SlideOption[];
 	readonly correctOptionIds: readonly string[];
+	readonly speech?: SpeechPlaybackConfig;
 }
 
 export type TruthSlideMode =

@@ -43,6 +43,7 @@ function questionData(payload: VocabularyIntakePayload, item: VocabularyIntakeIt
     question: item.term,
     options,
     correctOptionIds: [correctOptionId],
+    speech: { text: item.term, autoplay: true, replay: true },
   };
 }
 

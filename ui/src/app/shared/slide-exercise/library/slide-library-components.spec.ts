@@ -1,7 +1,11 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
+import { SpeechService } from '../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../core/state/learning-store.service';
 import { LocalAudioRecorderService } from './local-audio-recorder.service';
+import { SlideAudioControlComponent } from './slide-audio-control.component';
 import {
 	ChoiceSlideComponent,
 	ClassificationSlideComponent,
@@ -9,6 +13,7 @@ import {
 	DictationSlideComponent,
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
+	RewriteSlideComponent,
 	SpeakingResponseSlideComponent,
 	WordFormationSlideComponent,
 	WritingResponseSlideComponent,
@@ -24,7 +29,11 @@ function load(
 	component.load({ slideId: 'slide-1', type, data });
 }
 
-function configure(): void {
+function configure(): {
+	speak: ReturnType<typeof vi.fn>;
+	cancel: ReturnType<typeof vi.fn>;
+} {
+	const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
 	TestBed.configureTestingModule({
 		providers: [
 			{
@@ -40,8 +49,14 @@ function configure(): void {
 					cancel: vi.fn(),
 				},
 			},
+			{ provide: SpeechService, useValue: speech },
+			{
+				provide: LearningStoreService,
+				useValue: { state: signal({ settings: { voiceRate: 0.95 } }) },
+			},
 		],
 	});
+	return speech;
 }
 
 describe('reusable slide library behavior', () => {
@@ -87,6 +102,28 @@ describe('reusable slide library behavior', () => {
 		component.selectOption('c');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
+	});
+
+	it('supports optional generic speech autoplay and replay for ChoiceSlide', () => {
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ChoiceSlideComponent(),
+		);
+		load(component, 'choice', {
+			question: 'persistent',
+			options: [
+				{ id: 'a', label: 'continuing for a long time' },
+				{ id: 'b', label: 'ending quickly' },
+			],
+			correctOptionIds: ['a'],
+			speech: { text: 'persistent', autoplay: true, replay: true },
+		});
+
+		expect(speech.speak).toHaveBeenCalledWith('persistent', 0.95);
+		component.playSpeech();
+		expect(speech.speak).toHaveBeenCalledTimes(2);
+		component.ngOnDestroy();
+		expect(speech.cancel).toHaveBeenCalledOnce();
 	});
 
 	it('locks correct MatchingSlide pairs, rejects wrong pairs, and completes only after every pair', () => {
@@ -170,6 +207,28 @@ describe('reusable slide library behavior', () => {
 		expect(component.blankState('energy')).toBe('incorrect');
 	});
 
+	it('advances across ClozeSlide blanks when the word bank is the only input', () => {
+		const component = new ClozeSlideComponent();
+		load(component, 'cloze', {
+			content: '{{first}} power reduces {{second}}.',
+			inputMode: 'word-bank',
+			wordBank: ['Renewable', 'emissions'],
+			blanks: [
+				{ id: 'first', answers: ['Renewable'] },
+				{ id: 'second', answers: ['emissions'] },
+			],
+		});
+
+		component.useWord('Renewable');
+		component.useWord('emissions');
+		expect(component.answers()).toEqual({
+			first: 'Renewable',
+			second: 'emissions',
+		});
+		component.handleAction('check');
+		expect(component.interactionState()).toBe('answered-correct');
+	});
+
 	it('checks only the requested WordFormationSlide forms', () => {
 		const component = new WordFormationSlideComponent();
 		load(component, 'word-formation', {
@@ -203,20 +262,47 @@ describe('reusable slide library behavior', () => {
 		expect(component.correction()).toContain('economical car');
 	});
 
-	it('enforces DictationSlide replay limits and exact spelling', () => {
-		const component = new DictationSlideComponent();
+	it('shares replay-limited audio control with DictationSlide and enforces exact spelling', () => {
+		const audioControl = new SlideAudioControlComponent();
+		audioControl.maxReplays = 1;
 		const play = vi.fn().mockResolvedValue(undefined);
+		audioControl.play({
+			play,
+			currentTime: 2,
+		} as unknown as HTMLAudioElement);
+		audioControl.play({
+			play,
+			currentTime: 2,
+		} as unknown as HTMLAudioElement);
+		expect(play).toHaveBeenCalledTimes(1);
+
+		const component = new DictationSlideComponent();
 		load(component, 'dictation', {
 			audio: '/audio/example.mp3',
 			answer: 'environment',
 			maxReplays: 1,
 		});
-		component.playAudio({ play } as unknown as HTMLAudioElement);
-		component.playAudio({ play } as unknown as HTMLAudioElement);
-		expect(play).toHaveBeenCalledTimes(1);
 		component.setAnswer('Environment');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-incorrect');
+	});
+
+	it('submits model-only RewriteSlide responses without false scoring', () => {
+		const component = new RewriteSlideComponent();
+		const events: unknown[] = [];
+		component.event.subscribe((event) => events.push(event));
+		load(component, 'rewrite', {
+			original: 'People use less energy now.',
+			modelAnswer: 'Less energy is used now.',
+		});
+
+		component.setResponse('Energy use has fallen.');
+		component.handleAction('submit');
+		expect(component.interactionState()).toBe('revealed');
+		expect(events.at(-1)).toMatchObject({
+			type: 'submitted',
+			data: { response: 'Energy use has fallen.' },
+		});
 	});
 
 	it('moves SpeakingResponseSlide through recording and enables submission after stopping', async () => {
