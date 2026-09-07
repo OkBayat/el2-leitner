@@ -9,7 +9,7 @@ import type { ExerciseContextView } from '../../../domain/collection-learning-pa
 import { ExerciseRunnerPageComponent } from './exercise-runner-page.component';
 
 const context: ExerciseContextView = {
-  path: { id: 'cvfi-learning-path', collectionId: 'cambridge-vocabulary-for-ielts', title: 'Course', mode: 'finite', contentVersion: 'v1' },
+  path: { id: 'cvfi-learning-path', collectionId: 'cambridge-vocabulary-for-ielts-intermediate', title: 'Course', mode: 'finite', contentVersion: 'v1' },
   lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
   exercise: { id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } } },
   progress: null,
@@ -26,7 +26,7 @@ const context: ExerciseContextView = {
 };
 
 describe('ExerciseRunnerPageComponent', () => {
-  it('loads authoritative context and hosts the registered slide-based vocabulary renderer', async () => {
+  it('loads authoritative context without adding runner-owned exercise chrome', async () => {
     const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({
       imports: [ExerciseRunnerPageComponent],
@@ -38,6 +38,7 @@ describe('ExerciseRunnerPageComponent', () => {
     expect(facade.load).toHaveBeenCalledWith('cvfi-learning-path', 'lesson-1', 'exercise-1');
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('[data-testid="learning-path-runner"]')).not.toBeNull();
+    expect(element.querySelector('.runner__topbar')).toBeNull();
 
     await vi.waitFor(() => {
       fixture.detectChanges();

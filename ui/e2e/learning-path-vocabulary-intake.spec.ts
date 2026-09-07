@@ -10,7 +10,7 @@ const contextPath = `/api/learning-paths/${pathId}/lessons/${lessonId}/exercises
 function context(state: 'available' | 'in_progress' | 'completed', newCount: number) {
   return {
     context: {
-      path: { id: pathId, collectionId: 'cambridge-vocabulary-for-ielts', title: 'Cambridge Vocabulary for IELTS', mode: 'finite', contentVersion: 1 },
+      path: { id: pathId, collectionId: 'cambridge-vocabulary-for-ielts-intermediate', title: 'Cambridge Vocabulary for IELTS', mode: 'finite', contentVersion: 1 },
       lesson: { id: lessonId, title: 'Unit 1 — Growing up', position: 1 },
       exercise: {
         id: exerciseId,
@@ -104,44 +104,104 @@ async function mockIntake(page: Page) {
   return commands;
 }
 
-test('slide exercise desktop shell fills the viewport and centers content and footer action', async ({ page }) => {
+test('slide exercise desktop shell owns the viewport and constrains exercise chrome', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await mockIntake(page);
 
   await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
   await expect(page.getByTestId('slide-exercise')).toBeVisible();
   await expect(page.getByTestId('message-slide-content')).toBeVisible();
-  await expect(page.getByRole('button', { name: "Let's Go" })).toBeVisible();
+  await expect(page.locator('.runner__topbar')).toHaveCount(0);
 
-  const layout = await page.evaluate(() => {
+  const introLayout = await page.evaluate(() => {
     const shell = document.querySelector<HTMLElement>('[data-testid="slide-exercise"]');
     const stage = document.querySelector<HTMLElement>('.slide-exercise__stage');
     const content = document.querySelector<HTMLElement>('[data-testid="message-slide-content"]');
     const footer = document.querySelector<HTMLElement>('[data-testid="slide-exercise-footer"]');
+    const footerInner = document.querySelector<HTMLElement>('.slide-exercise-footer__inner');
     const action = document.querySelector<HTMLElement>('[data-testid="slide-exercise-footer"] button');
-    if (!shell || !stage || !content || !footer || !action) throw new Error('Slide exercise layout is incomplete.');
+    if (!shell || !stage || !content || !footer || !footerInner || !action) throw new Error('Slide exercise layout is incomplete.');
     const shellRect = shell.getBoundingClientRect();
     const stageRect = stage.getBoundingClientRect();
     const contentRect = content.getBoundingClientRect();
     const footerRect = footer.getBoundingClientRect();
+    const footerInnerRect = footerInner.getBoundingClientRect();
     const actionRect = action.getBoundingClientRect();
+    const footerInnerStyle = getComputedStyle(footerInner);
     return {
       viewportWidth: innerWidth,
       viewportHeight: innerHeight,
+      shellTop: shellRect.top,
       shellHeight: shellRect.height,
       stageCenterY: stageRect.top + (stageRect.height / 2),
       contentCenterY: contentRect.top + (contentRect.height / 2),
       footerWidth: footerRect.width,
       footerBottom: footerRect.bottom,
-      actionCenterX: actionRect.left + (actionRect.width / 2),
+      footerContentRight: footerInnerRect.right - Number.parseFloat(footerInnerStyle.paddingRight),
+      actionRight: actionRect.right,
+      documentHeight: document.documentElement.scrollHeight,
+      windowScrollY: scrollY,
     };
   });
 
-  expect(Math.abs(layout.shellHeight - layout.viewportHeight)).toBeLessThanOrEqual(1);
-  expect(Math.abs(layout.footerBottom - layout.viewportHeight)).toBeLessThanOrEqual(1);
-  expect(Math.abs(layout.footerWidth - layout.viewportWidth)).toBeLessThanOrEqual(1);
-  expect(Math.abs(layout.contentCenterY - layout.stageCenterY)).toBeLessThanOrEqual(4);
-  expect(Math.abs(layout.actionCenterX - (layout.viewportWidth / 2))).toBeLessThanOrEqual(4);
+  expect(Math.abs(introLayout.shellTop)).toBeLessThanOrEqual(1);
+  expect(Math.abs(introLayout.shellHeight - introLayout.viewportHeight)).toBeLessThanOrEqual(1);
+  expect(Math.abs(introLayout.footerBottom - introLayout.viewportHeight)).toBeLessThanOrEqual(1);
+  expect(Math.abs(introLayout.footerWidth - introLayout.viewportWidth)).toBeLessThanOrEqual(1);
+  expect(Math.abs(introLayout.contentCenterY - introLayout.stageCenterY)).toBeLessThanOrEqual(4);
+  expect(Math.abs(introLayout.actionRight - introLayout.footerContentRight)).toBeLessThanOrEqual(2);
+  expect(introLayout.documentHeight).toBeLessThanOrEqual(introLayout.viewportHeight + 1);
+  expect(introLayout.windowScrollY).toBe(0);
+
+  await page.getByRole('button', { name: "Let's Go" }).click();
+  await expect(page.getByRole('progressbar')).toBeVisible();
+
+  const practiceChrome = await page.evaluate(() => {
+    const header = document.querySelector<HTMLElement>('[data-testid="slide-exercise-header"]');
+    const progress = document.querySelector<HTMLElement>('[role="progressbar"]');
+    const contentFrame = document.querySelector<HTMLElement>('.slide-exercise__content');
+    if (!header || !progress || !contentFrame) throw new Error('Practice chrome is incomplete.');
+    const headerRect = header.getBoundingClientRect();
+    const progressRect = progress.getBoundingClientRect();
+    const contentRect = contentFrame.getBoundingClientRect();
+    return {
+      viewportWidth: innerWidth,
+      headerLeft: headerRect.left,
+      headerRight: headerRect.right,
+      headerWidth: headerRect.width,
+      progressWidth: progressRect.width,
+      contentLeft: contentRect.left,
+      contentRight: contentRect.right,
+    };
+  });
+
+  expect(practiceChrome.headerWidth).toBeLessThanOrEqual(981);
+  expect(Math.abs(practiceChrome.headerLeft - practiceChrome.contentLeft)).toBeLessThanOrEqual(1);
+  expect(Math.abs(practiceChrome.headerRight - practiceChrome.contentRight)).toBeLessThanOrEqual(1);
+  expect(practiceChrome.progressWidth).toBeLessThan(practiceChrome.viewportWidth);
+});
+
+test('desktop slide stage scrolls with the mouse wheel while the footer stays visible', async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 360 });
+  await mockIntake(page);
+
+  await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
+  await page.getByRole('button', { name: "Let's Go" }).click();
+  await expect(page.getByRole('heading', { name: 'persistent' })).toBeVisible();
+
+  const stage = page.locator('.slide-exercise__stage');
+  await expect.poll(() => stage.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  await stage.hover();
+  await page.mouse.wheel(0, 220);
+  await expect.poll(() => stage.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+
+  const position = await page.evaluate(() => {
+    const footer = document.querySelector<HTMLElement>('[data-testid="slide-exercise-footer"]');
+    if (!footer) throw new Error('Footer is missing.');
+    return { footerBottom: footer.getBoundingClientRect().bottom, viewportHeight: innerHeight, windowScrollY: scrollY };
+  });
+  expect(Math.abs(position.footerBottom - position.viewportHeight)).toBeLessThanOrEqual(1);
+  expect(position.windowScrollY).toBe(0);
 });
 
 test('Cambridge vocabulary intake runs as a slide quiz for new and Box 1 words', async ({ page }) => {
