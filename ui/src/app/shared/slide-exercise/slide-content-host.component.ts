@@ -65,6 +65,10 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
     this.componentRef?.instance.handleAction?.(actionId);
   }
 
+  handleShortcut(key: string): void {
+    this.componentRef?.instance.handleShortcut?.(key);
+  }
+
   private async render(): Promise<void> {
     const version = ++this.renderVersion;
     this.disposeRenderer();
