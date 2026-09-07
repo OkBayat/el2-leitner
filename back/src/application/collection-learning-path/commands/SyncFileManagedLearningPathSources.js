@@ -58,7 +58,7 @@ function referenceError(message) {
 }
 
 async function materializeDefinition(definition, sourceReferenceReader, options) {
-  const collection = await sourceReferenceReader.findCollectionByPublicId(definition.path.collectionId, options);
+  const collection = await sourceReferenceReader.resolveCollection(definition.path.collectionId, options);
   if (!collection) {
     referenceError(`Learning Path collection ${definition.path.collectionId} was not found or is not published.`);
   }
@@ -66,12 +66,12 @@ async function materializeDefinition(definition, sourceReferenceReader, options)
   const lessons = [];
   for (const lesson of definition.lessons) {
     const resolved = await sourceReferenceReader.findCollectionSection({
-      collectionId: lesson.source.collectionId,
+      collectionId: collection.id,
       sectionTitle: lesson.source.sectionTitle,
     }, options);
     if (!resolved) {
       referenceError(
-        `Learning Path collection section ${lesson.source.collectionId} / ${lesson.source.sectionTitle} was not found.`,
+        `Learning Path collection section ${definition.path.collectionId} / ${lesson.source.sectionTitle} was not found.`,
       );
     }
     const runtimeSource = { kind: FILE_MANAGED_LESSON_SOURCE_KIND, ref: String(resolved.id) };
@@ -89,7 +89,7 @@ async function materializeDefinition(definition, sourceReferenceReader, options)
   }
 
   return {
-    path: { ...definition.path },
+    path: { ...definition.path, collectionId: collection.id },
     managedIdPrefix: definition.managedIdPrefix,
     lessons,
   };
