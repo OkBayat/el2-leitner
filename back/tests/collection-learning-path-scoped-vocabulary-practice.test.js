@@ -102,6 +102,31 @@ describe("Scoped vocabulary quick review", () => {
     assert.deepEqual(evidenceReader.calls, [{ userId: "user-1", sessionId: "session-1" }]);
   });
 
+  it("accepts completed session evidence after a reviewed House 1 word is promoted", async () => {
+    const afterReviewItems = items.map((item) => item.vocabularyId === "box1-a"
+      ? { ...item, progress: { ...item.progress, box: 2, lastPromotedOn: "2026-09-07" } }
+      : item);
+    const verifier = new VerifyScopedVocabularyQuickReviewCompletion({
+      scopedVocabularyReader: new ScopedReaderFake(new Map([["user-1", afterReviewItems]])),
+      quickReviewEvidenceReader: new EvidenceReaderFake({
+        mode: "learning-path.quick-review",
+        status: "completed",
+        plannedCount: 2,
+        completedCount: 2,
+        reviewedVocabularyIds: ["box1-a", "box1-b"],
+      }),
+    });
+
+    const result = await verifier.execute({
+      userId: "user-1",
+      exercise: exercise(),
+      outcome: { kind: "completed", evidence: { sessionId: "session-promoted" } },
+    });
+
+    assert.equal(result.evidenceType, "vocabulary-quick-review");
+    assert.match(result.evidenceRef, /session:session-promoted$/u);
+  });
+
   it("rejects missing, cross-scope, incomplete or wrong-mode session evidence", async () => {
     for (const evidence of [
       null,
