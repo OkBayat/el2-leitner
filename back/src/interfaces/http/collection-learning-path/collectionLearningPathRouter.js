@@ -32,6 +32,11 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   });
   router.use(authenticate);
 
+  router.get("/collections", async (req, res) => {
+    const collectionIds = await queries.listAvailableCollections.execute(req.auth.userId);
+    res.status(200).json({ collectionIds });
+  });
+
   router.get("/collections/:collectionId", async (req, res) => {
     const result = await queries.getCollectionLearningPath.execute(
       req.auth.userId,
