@@ -13,16 +13,19 @@ describe('LessonNodeComponent', () => {
     const selected = vi.fn(); fixture.componentInstance.selectExercise.subscribe(selected);
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('.lesson')?.classList.contains('is-active')).toBe(true);
+    expect(element.querySelector('.lesson')?.getAttribute('data-palette')).toBe('green');
     expect(element.querySelector('[data-testid="lesson-trail"]')).not.toBeNull();
     expect(element.textContent).toContain('Lesson 1');
     (element.querySelector('button') as HTMLButtonElement).click();
     expect(selected).toHaveBeenCalledWith({ lessonId: 'lesson-1', exerciseId: 'exercise-1' });
   });
 
-  it('mirrors alternate lessons so the trail keeps a gentle zig-zag rhythm', () => {
+  it('mirrors alternate lessons and rotates their trail palette', () => {
     TestBed.configureTestingModule({ imports: [LessonNodeComponent] });
     const fixture = TestBed.createComponent(LessonNodeComponent);
     fixture.componentRef.setInput('lesson', { ...lesson, id: 'lesson-2', position: 2, state: 'locked' }); fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelector('.lesson')?.classList.contains('is-mirrored')).toBe(true);
+    const element = (fixture.nativeElement as HTMLElement).querySelector('.lesson');
+    expect(element?.classList.contains('is-mirrored')).toBe(true);
+    expect(element?.getAttribute('data-palette')).toBe('purple');
   });
 });
