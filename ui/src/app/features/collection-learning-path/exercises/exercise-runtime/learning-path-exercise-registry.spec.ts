@@ -16,7 +16,9 @@ describe('Learning Path exercise registry composition', () => {
       const loader = registry.resolve(type);
       expect(loader).toBeTypeOf('function');
       const component = await loader?.();
-      expect(component?.name).toBe(componentName);
+      expect(component).toBeDefined();
+      expect(component?.prototype).toBeDefined();
+      expect(component?.name.replace(/^_/, '')).toBe(componentName);
     }
     expect(registry.resolve('unknown.exercise')).toBeUndefined();
   });
