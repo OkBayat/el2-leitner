@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
 import type { LearningPathExerciseSelection } from '../../../domain/collection-learning-path/learning-path';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
+
+const LESSON_BATCH_SIZE = 40;
 
 @Component({
   selector: 'app-learning-path-page',
@@ -20,17 +22,45 @@ export class LearningPathPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly collectionId = signal('');
+  readonly requestedVisibleLessonCount = signal(LESSON_BATCH_SIZE);
+  readonly visibleLessonCount = computed(() => {
+    const view = this.facade.view();
+    if (!view) return this.requestedVisibleLessonCount();
+    const resumeLessonId = view.resumePoint?.lessonId;
+    const resumeIndex = resumeLessonId
+      ? view.lessons.findIndex((lesson) => lesson.id === resumeLessonId)
+      : -1;
+    const resumeBatchEnd = resumeIndex < 0
+      ? 0
+      : Math.ceil((resumeIndex + 1) / LESSON_BATCH_SIZE) * LESSON_BATCH_SIZE;
+    return Math.min(
+      view.lessons.length,
+      Math.max(this.requestedVisibleLessonCount(), resumeBatchEnd),
+    );
+  });
+  readonly visibleLessons = computed(() => this.facade.view()?.lessons.slice(0, this.visibleLessonCount()) ?? []);
+  readonly remainingLessonCount = computed(() => Math.max(
+    0,
+    (this.facade.view()?.lessons.length ?? 0) - this.visibleLessonCount(),
+  ));
+  readonly nextLessonBatchSize = computed(() => Math.min(LESSON_BATCH_SIZE, this.remainingLessonCount()));
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const collectionId = params.get('collectionId')?.trim() ?? '';
       this.collectionId.set(collectionId);
+      this.requestedVisibleLessonCount.set(LESSON_BATCH_SIZE);
       if (collectionId) void this.facade.load(collectionId);
     });
   }
 
   retry(): void {
     if (this.collectionId()) void this.facade.load(this.collectionId());
+  }
+
+  showMoreLessons(): void {
+    const total = this.facade.view()?.lessons.length ?? 0;
+    this.requestedVisibleLessonCount.set(Math.min(total, this.visibleLessonCount() + LESSON_BATCH_SIZE));
   }
 
   async openExercise(selection: LearningPathExerciseSelection): Promise<void> {

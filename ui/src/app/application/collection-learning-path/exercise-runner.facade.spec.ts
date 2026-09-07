@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { ApiError } from '../../core/http/api-client.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import type { ExerciseContextView } from '../../domain/collection-learning-path/learning-path';
 import { ExerciseRunnerFacade } from './exercise-runner.facade';
 
-function context(state: ExerciseContextView['state']): ExerciseContextView {
+function context(state: ExerciseContextView['state'], progressRevision = 0): ExerciseContextView {
   return {
-    path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', contentVersion: 'v1' },
+    path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', contentVersion: 'v1', progressRevision },
     lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
     exercise: {
       id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true,
@@ -36,6 +37,7 @@ function quickReviewContext(state: ExerciseContextView['state']): ExerciseContex
 
 describe('ExerciseRunnerFacade', () => {
   const queryExerciseContext = vi.fn();
+  const queryResumePoint = vi.fn();
   const commandStartExercise = vi.fn();
   const commandCompleteExercise = vi.fn();
   const refreshAfterSubscriptionChange = vi.fn();
@@ -43,28 +45,37 @@ describe('ExerciseRunnerFacade', () => {
 
   beforeEach(() => {
     queryExerciseContext.mockReset();
+    queryResumePoint.mockReset();
     commandStartExercise.mockReset();
     commandCompleteExercise.mockReset();
     refreshAfterSubscriptionChange.mockReset();
-    commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress' });
-    commandCompleteExercise.mockResolvedValue({ exerciseStatus: 'completed' });
+    queryResumePoint.mockResolvedValue({ pathId: 'path-1', pathStatus: 'in_progress', resumePoint: null, progressRevision: 0 });
+    commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress', progressRevision: 1 });
+    commandCompleteExercise.mockResolvedValue({
+      pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1', exerciseStatus: 'completed',
+      lessonStatus: 'completed', pathStatus: 'completed', resumePoint: null, progressRevision: 2,
+    });
     refreshAfterSubscriptionChange.mockResolvedValue({});
     TestBed.configureTestingModule({
       providers: [
         ExerciseRunnerFacade,
-        { provide: CollectionLearningPathApiService, useValue: { queryExerciseContext, commandStartExercise, commandCompleteExercise } },
+        {
+          provide: CollectionLearningPathApiService,
+          useValue: { queryExerciseContext, queryResumePoint, commandStartExercise, commandCompleteExercise },
+        },
         { provide: LearningStoreService, useValue: { refreshAfterSubscriptionChange } },
       ],
     });
     facade = TestBed.inject(ExerciseRunnerFacade);
   });
 
-  it('starts an available exercise through the command boundary then reloads authoritative context', async () => {
-    queryExerciseContext.mockResolvedValueOnce(context('available')).mockResolvedValueOnce(context('in_progress'));
+  it('starts an available exercise with the authoritative revision then reloads context', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4)).mockResolvedValueOnce(context('in_progress', 5));
     expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
-    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1');
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 4);
     expect(queryExerciseContext).toHaveBeenCalledTimes(2);
     expect(facade.context()?.state).toBe('in_progress');
+    expect(facade.context()?.path.progressRevision).toBe(5);
   });
 
   it('reconciles canonical global Leitner state before exposing scoped quick review', async () => {
@@ -83,24 +94,39 @@ describe('ExerciseRunnerFacade', () => {
     expect(facade.context()?.state).toBe('locked');
   });
 
-  it('submits a normalized completed outcome and reloads server-authoritative completion', async () => {
-    queryExerciseContext.mockResolvedValueOnce(context('in_progress'));
+  it('submits a completed outcome with the loaded revision and reloads server-authoritative completion', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 8));
     await facade.load('path-1', 'lesson-1', 'exercise-1');
-    queryExerciseContext.mockResolvedValueOnce(context('completed'));
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 9));
 
     expect(await facade.complete({ kind: 'completed' })).toBe(true);
 
     expect(commandCompleteExercise).toHaveBeenCalledWith(
-      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' },
+      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' }, 8,
     );
     expect(facade.context()?.state).toBe('completed');
   });
 
-  it('surfaces a recoverable error without inventing progress', async () => {
-    queryExerciseContext.mockRejectedValueOnce(new Error('network unavailable'));
+  it('restores authoritative state after a stale concurrent-tab mutation', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 3));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    commandCompleteExercise.mockRejectedValueOnce(new ApiError(
+      'Learning Path progress changed in another tab or request. Refresh and retry.',
+      409,
+      'LEARNING_PATH_PROGRESS_STALE',
+    ));
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 4));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(false);
+    expect(facade.context()?.path.progressRevision).toBe(4);
+    expect(facade.error()).toContain('latest saved state has been restored');
+  });
+
+  it('surfaces a recoverable network-specific error without inventing progress', async () => {
+    queryExerciseContext.mockRejectedValueOnce(new ApiError('network unavailable', 0, 'API_ERROR'));
     expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(false);
     expect(facade.context()).toBeNull();
-    expect(facade.error()).toBe('network unavailable');
+    expect(facade.error()).toContain('saved progress is safe');
     expect(facade.loading()).toBe(false);
   });
 });

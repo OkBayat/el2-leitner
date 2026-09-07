@@ -1,8 +1,11 @@
 import { ConflictError } from "../../../domain/errors.js";
 import {
   ensureLearningPathProgressAccess,
+  ensureProgressMutationAccepted,
+  expectedProgressRevision,
   isoTimestamp,
   loadPathById,
+  progressRevision,
   projectedPathForUser,
   requireProjectedExercise,
   requireProjectedLesson,
@@ -25,12 +28,13 @@ export class StartExercise {
     this.clock = clock;
   }
 
-  async execute(userId, pathId, lessonId, exerciseId) {
+  async execute(userId, pathId, lessonId, exerciseId, rawExpectedRevision = null) {
     const path = await loadPathById(this.definitionReader, pathId);
     await ensureLearningPathProgressAccess(this.accessReader, userId, path);
     const current = await projectedPathForUser({ progressReader: this.progressReader, userId, path });
     const lesson = requireProjectedLesson(current.projected, lessonId);
     const exercise = requireProjectedExercise(lesson, exerciseId);
+    const currentRevision = progressRevision(current.progress);
 
     if (exercise.state === "completed") {
       return {
@@ -38,6 +42,16 @@ export class StartExercise {
         lessonId: lesson.id,
         exerciseId: exercise.id,
         exerciseStatus: "completed",
+        progressRevision: currentRevision,
+      };
+    }
+    if (exercise.progress?.status === "in_progress") {
+      return {
+        pathId: path.id,
+        lessonId: lesson.id,
+        exerciseId: exercise.id,
+        exerciseStatus: "in_progress",
+        progressRevision: currentRevision,
       };
     }
     if (exercise.state === "locked") {
@@ -47,6 +61,7 @@ export class StartExercise {
       );
     }
 
+    const expectedRevision = expectedProgressRevision(rawExpectedRevision, current.progress);
     const at = isoTimestamp(this.clock);
     const pathStatus = current.projected.path.learnerStatus === "completed"
       || current.projected.path.learnerStatus === "up_to_date"
@@ -55,7 +70,7 @@ export class StartExercise {
     const lessonStatus = lesson.state === "completed" ? "completed" : "in_progress";
 
     await this.transactionManager.execute(async (connection) => {
-      await this.progressWriter.upsertPathProgress({
+      const mutation = await this.progressWriter.upsertPathProgress({
         userId,
         pathId: path.id,
         status: pathStatus,
@@ -63,7 +78,9 @@ export class StartExercise {
         completedAt: current.progress.path?.completedAt ?? null,
         lastActivityAt: at,
         lastSeenContentVersion: path.contentVersion,
+        expectedRevision,
       }, { connection });
+      ensureProgressMutationAccepted(mutation);
       await this.progressWriter.upsertLessonProgress({
         userId,
         lessonId: lesson.id,
@@ -89,6 +106,7 @@ export class StartExercise {
       lessonId: lesson.id,
       exerciseId: exercise.id,
       exerciseStatus: "in_progress",
+      progressRevision: expectedRevision + 1,
     };
   }
 }

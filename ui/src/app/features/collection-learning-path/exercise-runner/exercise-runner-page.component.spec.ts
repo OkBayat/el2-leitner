@@ -11,37 +11,23 @@ import { ExerciseRunnerPageComponent } from './exercise-runner-page.component';
 const context: ExerciseContextView = {
   path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', contentVersion: 'v1' },
   lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
-  exercise: {
-    id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true,
-    completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } },
-  },
+  exercise: { id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } } },
   progress: null,
   state: 'in_progress',
-  payload: {
-    scope: { kind: 'listening-episode', ref: 'episode-1' },
-    items: [{ id: 'v-1', term: 'persistent', definitions: ['continuing'], examples: [], progress: { state: 'new', box: 0 } }],
-    summary: { total: 1, newCount: 1, learningCount: 0, masteredCount: 0, excludedCount: 0 },
-  },
+  payload: { scope: { kind: 'listening-episode', ref: 'episode-1' }, items: [{ id: 'v-1', term: 'persistent', definitions: ['continuing'], examples: [], progress: { state: 'new', box: 0 } }], summary: { total: 1, newCount: 1, learningCount: 0, masteredCount: 0, excludedCount: 0 } },
 };
 
 describe('ExerciseRunnerPageComponent', () => {
   it('loads authoritative context and hosts the registered exercise renderer', async () => {
-    const facade = {
-      context: signal(context), loading: signal(false), error: signal(''),
-      load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true),
-    };
+    const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({
       imports: [ExerciseRunnerPageComponent],
-      providers: [
-        provideRouter([]),
-        { provide: ExerciseRunnerFacade, useValue: facade },
-        { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn().mockResolvedValue({ activatedCount: 1 }) } },
-        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } },
-      ],
+      providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn().mockResolvedValue({ activatedCount: 1 }) } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } }],
     });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
 
     expect(facade.load).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1');
@@ -52,19 +38,8 @@ describe('ExerciseRunnerPageComponent', () => {
   });
 
   it('forwards completed renderer outcomes to the generic runner completion command', () => {
-    const facade = {
-      context: signal(context), loading: signal(false), error: signal(''),
-      load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true),
-    };
-    TestBed.configureTestingModule({
-      imports: [ExerciseRunnerPageComponent],
-      providers: [
-        provideRouter([]),
-        { provide: ExerciseRunnerFacade, useValue: facade },
-        { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } },
-        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } },
-      ],
-    });
+    const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
+    TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } }] });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.componentInstance.onExerciseOutcome({ kind: 'completed' });
     expect(facade.complete).toHaveBeenCalledWith({ kind: 'completed' });

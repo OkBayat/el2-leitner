@@ -39,8 +39,8 @@ export class CollectionLearningPathApiService {
     return this.api.post<LearningPathResumeView>(`/api/learning-paths/${segment(pathId)}/start`);
   }
 
-  commandStartExercise(pathId: string, lessonId: string, exerciseId: string): Promise<unknown> {
-    return this.api.post(`${exercisePath(pathId, lessonId, exerciseId)}/start`);
+  commandStartExercise(pathId: string, lessonId: string, exerciseId: string, progressRevision = 0): Promise<unknown> {
+    return this.api.post(`${exercisePath(pathId, lessonId, exerciseId)}/start`, { progressRevision });
   }
 
   commandActivateVocabularyIntake(
@@ -68,10 +68,11 @@ export class CollectionLearningPathApiService {
     lessonId: string,
     exerciseId: string,
     outcome: CompletedLearningPathExerciseOutcome,
+    progressRevision = 0,
   ): Promise<LearningPathExerciseCompletionView> {
     return this.api.post<LearningPathExerciseCompletionView>(
       `${exercisePath(pathId, lessonId, exerciseId)}/complete`,
-      { outcome },
+      { outcome, progressRevision },
     );
   }
 }

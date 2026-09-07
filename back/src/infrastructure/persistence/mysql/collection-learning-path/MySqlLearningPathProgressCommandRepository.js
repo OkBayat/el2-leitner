@@ -19,18 +19,47 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
 
   async upsertPathProgress(progress, options = {}) {
     const db = executor(this.pool, options);
+    const expectedRevision = progress.expectedRevision;
+    if (expectedRevision == null) {
+      const [result] = await db.execute(
+        `INSERT INTO user_learning_path_progress
+          (user_id, learning_path_id, status, started_at, completed_at, last_activity_at, last_seen_content_version, revision)
+         SELECT ?, p.id, ?, ?, ?, ?, ?, 0
+         FROM collection_learning_paths p
+         WHERE p.public_id = ?
+         ON DUPLICATE KEY UPDATE
+           status = VALUES(status),
+           started_at = LEAST(started_at, VALUES(started_at)),
+           completed_at = VALUES(completed_at),
+           last_activity_at = GREATEST(last_activity_at, VALUES(last_activity_at)),
+           last_seen_content_version = GREATEST(last_seen_content_version, VALUES(last_seen_content_version))`,
+        [
+          progress.userId,
+          progress.status,
+          timestampParameter(progress.startedAt),
+          timestampParameter(progress.completedAt),
+          timestampParameter(progress.lastActivityAt),
+          progress.lastSeenContentVersion ?? 0,
+          progress.pathId,
+        ],
+      );
+      return { changed: result.affectedRows > 0, conflict: false };
+    }
+
+    const expected = Number(expectedRevision);
     const [result] = await db.execute(
       `INSERT INTO user_learning_path_progress
-        (user_id, learning_path_id, status, started_at, completed_at, last_activity_at, last_seen_content_version)
-       SELECT ?, p.id, ?, ?, ?, ?, ?
+        (user_id, learning_path_id, status, started_at, completed_at, last_activity_at, last_seen_content_version, revision)
+       SELECT ?, p.id, ?, ?, ?, ?, ?, 1
        FROM collection_learning_paths p
        WHERE p.public_id = ?
        ON DUPLICATE KEY UPDATE
-         status = VALUES(status),
-         started_at = LEAST(started_at, VALUES(started_at)),
-         completed_at = VALUES(completed_at),
-         last_activity_at = GREATEST(last_activity_at, VALUES(last_activity_at)),
-         last_seen_content_version = GREATEST(last_seen_content_version, VALUES(last_seen_content_version))`,
+         status = IF(revision = ?, VALUES(status), status),
+         started_at = IF(revision = ?, LEAST(started_at, VALUES(started_at)), started_at),
+         completed_at = IF(revision = ?, VALUES(completed_at), completed_at),
+         last_activity_at = IF(revision = ?, GREATEST(last_activity_at, VALUES(last_activity_at)), last_activity_at),
+         last_seen_content_version = IF(revision = ?, GREATEST(last_seen_content_version, VALUES(last_seen_content_version)), last_seen_content_version),
+         revision = IF(revision = ?, revision + 1, revision)`,
       [
         progress.userId,
         progress.status,
@@ -39,9 +68,19 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
         timestampParameter(progress.lastActivityAt),
         progress.lastSeenContentVersion ?? 0,
         progress.pathId,
+        expected,
+        expected,
+        expected,
+        expected,
+        expected,
+        expected,
       ],
     );
-    return { changed: result.affectedRows > 0 };
+    // INSERT means no prior progress row. Only revision 0 is valid in that case;
+    // a higher expected revision is stale and the enclosing transaction rolls it back.
+    const insertedWithStaleRevision = result.affectedRows === 1 && expected !== 0;
+    const conflict = result.affectedRows === 0 || insertedWithStaleRevision;
+    return { changed: !conflict, conflict, revision: conflict ? expected : expected + 1 };
   }
 
   async upsertLessonProgress(progress, options = {}) {

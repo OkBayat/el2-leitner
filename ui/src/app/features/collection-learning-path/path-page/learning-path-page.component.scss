@@ -35,6 +35,30 @@
   margin-top: var(--vocora-space-5);
 }
 
+.lesson-pagination {
+  display: grid;
+  justify-items: center;
+  gap: var(--vocora-space-2);
+  margin-top: var(--vocora-space-6);
+  color: var(--vocora-text-secondary);
+  font-size: 13px;
+}
+
+.load-more-lessons {
+  min-height: var(--vocora-touch-target-min);
+  padding: 0 var(--vocora-space-5);
+  border: 0;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.load-more-lessons:hover {
+  background: var(--vocora-action-primary-hover);
+}
+
 .inline-error {
   display: flex;
   justify-content: space-between;
@@ -112,6 +136,10 @@ a:focus-visible {
   .learning-path-page {
     padding-inline: 10px;
     padding-top: 10px;
+  }
+
+  .load-more-lessons {
+    width: 100%;
   }
 }
 

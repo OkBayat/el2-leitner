@@ -138,7 +138,10 @@ test('vocabulary intake activates only new scoped words and completes through se
     `${contextPath}/vocabulary-intake/activate`,
     `${contextPath}/complete`,
   ]);
-  expect(commands.at(-1)?.body).toEqual({ outcome: { kind: 'completed' } });
+  expect(commands.at(-1)?.body).toEqual({
+    outcome: { kind: 'completed' },
+    progressRevision: 0,
+  });
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

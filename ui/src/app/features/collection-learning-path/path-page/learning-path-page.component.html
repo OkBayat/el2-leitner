@@ -1,4 +1,4 @@
-<main class="learning-path-page" data-testid="collection-learning-path">
+<main class="learning-path-page" data-testid="collection-learning-path" [attr.aria-busy]="facade.loading()">
   <nav class="learning-path-page__nav" aria-label="Learning Path navigation">
     <a [routerLink]="['/library', collectionId()]" class="back-link">
       <span aria-hidden="true">←</span>
@@ -28,7 +28,7 @@
     }
 
     <section class="lesson-list" aria-label="Course lessons">
-      @for (lesson of view.lessons; track lesson.id) {
+      @for (lesson of visibleLessons(); track lesson.id) {
         <app-learning-path-lesson-node [lesson]="lesson" (selectExercise)="openExercise($event)" />
       } @empty {
         <div class="state-card">
@@ -37,5 +37,20 @@
         </div>
       }
     </section>
+
+    @if (remainingLessonCount() > 0) {
+      <div class="lesson-pagination" aria-live="polite">
+        <button
+          type="button"
+          class="load-more-lessons"
+          data-testid="load-more-lessons"
+          [attr.aria-label]="'Show ' + nextLessonBatchSize() + ' more lessons'"
+          (click)="showMoreLessons()"
+        >
+          Show {{ nextLessonBatchSize() }} more
+        </button>
+        <span>{{ visibleLessons().length }} of {{ view.lessons.length }} lessons shown</span>
+      </div>
+    }
   }
 </main>

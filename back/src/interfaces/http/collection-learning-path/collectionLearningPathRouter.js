@@ -81,6 +81,7 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
       learningPathId(req.params.pathId),
       lessonId(req.params.lessonId),
       exerciseId(req.params.exerciseId),
+      req.body?.progressRevision,
     );
     res.status(200).json(result);
   });
@@ -112,6 +113,7 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
       lessonId(req.params.lessonId),
       exerciseId(req.params.exerciseId),
       completionOutcome(req.body?.outcome),
+      req.body?.progressRevision,
     );
     res.status(200).json(result);
   });

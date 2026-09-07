@@ -6,6 +6,7 @@ const mapPathProgress = (row) => row ? ({
   completedAt: row.completedAt ?? null,
   lastActivityAt: row.lastActivityAt,
   lastSeenContentVersion: Number(row.lastSeenContentVersion),
+  revision: Number(row.revision ?? 0),
 }) : null;
 
 const mapLessonProgress = (row) => ({
@@ -36,7 +37,8 @@ export class MySqlLearningPathProgressQueryRepository extends LearningPathProgre
     const [pathRows] = await this.pool.execute(
       `SELECT up.status, up.started_at AS startedAt, up.completed_at AS completedAt,
               up.last_activity_at AS lastActivityAt,
-              up.last_seen_content_version AS lastSeenContentVersion
+              up.last_seen_content_version AS lastSeenContentVersion,
+              up.revision AS revision
        FROM user_learning_path_progress up
        JOIN collection_learning_paths p ON p.id = up.learning_path_id
        WHERE up.user_id = ? AND p.public_id = ?

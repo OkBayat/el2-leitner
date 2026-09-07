@@ -55,6 +55,7 @@ export function pathDto(path) {
     progress: path.progress ? {
       ...progressDto(path.progress),
       lastSeenContentVersion: path.progress.lastSeenContentVersion,
+      revision: Number(path.progress.revision ?? 0),
     } : null,
   };
 }
@@ -69,6 +70,7 @@ export function collectionLearningPathDto(view) {
 }
 
 export function exerciseContextDto(context) {
+  const progressRevision = context.path.progress?.revision;
   return {
     path: {
       id: context.path.id,
@@ -76,6 +78,7 @@ export function exerciseContextDto(context) {
       title: context.path.title,
       mode: context.path.mode,
       contentVersion: context.path.contentVersion,
+      ...(progressRevision == null ? {} : { progressRevision: Number(progressRevision) }),
     },
     lesson: {
       id: context.lesson.id,
