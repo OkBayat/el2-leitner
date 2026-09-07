@@ -4,8 +4,10 @@
 @use './styles/table-design' as table-design;
 @use './styles/navigation-theme' as navigation-theme;
 @use './styles/vocora-design-system' as vocora-design-system;
+@use './styles/bootstrap-theme' as bootstrap-theme;
 
 @include vocora-design-system.apply();
+@include bootstrap-theme.apply();
 
 html {
 	@include mat.theme((

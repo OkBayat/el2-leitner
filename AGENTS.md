@@ -58,7 +58,10 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 ## Frontend styling
 
-- Prefer Bootstrap utility classes whenever they can express layout, spacing, alignment, display, sizing, and similar presentational rules (for example `d-flex`, `justify-content-center`, `align-items-center`, `gap-2`, `pt-5`, and `w-100`).
+- Prefer Bootstrap utility classes whenever they can express layout, spacing, alignment, display, sizing, color, and similar presentational rules (for example `d-flex`, `justify-content-center`, `align-items-center`, `gap-2`, `pt-5`, `w-100`, `bg-primary`, `text-primary`, and `border-success`).
+- For semantic colors, prefer Bootstrap color utilities such as `bg-primary`, `text-primary`, `border-primary`, `bg-success`, `text-warning`, and `text-danger` instead of hard-coded colors or component-local color helpers.
+- Bootstrap semantic colors must be mapped centrally in `ui/src/styles/_bootstrap-theme.scss` to Vocora design-system tokens. Do not redefine Bootstrap semantic colors in component styles.
+- Keep raw palette values in the Vocora design system; the Bootstrap theme adapter must reference those tokens rather than own duplicate hex/RGB colors.
 - Prefer, in order: Bootstrap utilities, existing shared project styles/components, then custom CSS.
 - Do not add custom CSS when an equivalent Bootstrap utility already exists; keep frontend styling consistent across the application.
 
