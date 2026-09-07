@@ -48,6 +48,8 @@ export class ReviewSessionService {
   private preparedNewIds: string[] = [];
   private repeatBoxOneCycle = true;
   private remediationEnabled = true;
+  private completionPending = false;
+  private completionDurationSeconds: number | null = null;
 
   readonly currentWord = this.currentWordSignal.asReadonly();
   readonly active = this.activeSignal.asReadonly();
@@ -186,6 +188,8 @@ export class ReviewSessionService {
     this.correctSignal.set(0);
     this.wrongSignal.set(0);
     this.completedSignal.set(false);
+    this.completionPending = false;
+    this.completionDurationSeconds = null;
     this.activeSignal.set(true);
     this.feedbackSignal.set(null);
     this.remediationSignal.set(null);
@@ -278,6 +282,11 @@ export class ReviewSessionService {
 
   async next(): Promise<void> {
     if (!this.canAdvanceSignal()) return;
+    if (this.completionPending) {
+      this.canAdvanceSignal.set(false);
+      await this.finishPendingSession();
+      return;
+    }
     const completedReviewCard = this.currentTaskSignal() === 'review';
     this.feedbackSignal.set(null);
     this.remediationSignal.set(null);
@@ -285,7 +294,19 @@ export class ReviewSessionService {
     this.canAdvanceSignal.set(false);
     if (completedReviewCard) this.rechecks.advance();
     this.nextTask(completedReviewCard);
-    if (!this.currentWordSignal()) await this.finish();
+    if (!this.currentWordSignal()) {
+      this.completionPending = true;
+      await this.finishPendingSession();
+    }
+  }
+
+  private async finishPendingSession(): Promise<void> {
+    try {
+      await this.finish();
+    } catch (error) {
+      this.canAdvanceSignal.set(true);
+      throw error;
+    }
   }
 
   private nextTask(_advanced: boolean): void {
@@ -320,9 +341,9 @@ export class ReviewSessionService {
   }
 
   private async finish(): Promise<void> {
-    this.activeSignal.set(false);
-    this.completedSignal.set(true);
-    const durationSeconds = Math.max(0, Math.round((Date.now() - this.startedAt) / 1000));
+    const durationSeconds = this.completionDurationSeconds
+      ?? Math.max(0, Math.round((Date.now() - this.startedAt) / 1000));
+    this.completionDurationSeconds = durationSeconds;
     const completedSessionId = this.backendSessionId;
     if (this.backendSessionId) {
       await this.learningApi.completeSession(this.backendSessionId, {
@@ -334,14 +355,19 @@ export class ReviewSessionService {
       daily.sessions += 1;
       daily.durationSeconds += durationSeconds;
     });
+    this.activeSignal.set(false);
+    this.completedSignal.set(true);
     this.completedSessionIdSignal.set(completedSessionId);
     this.backendSessionId = null;
+    this.completionPending = false;
   }
 
   async abandon(): Promise<void> {
     if (this.backendSessionId) await this.learningApi.abandonSession(this.backendSessionId, Math.max(0, Math.round((Date.now() - this.startedAt) / 1000)));
     this.speech.cancel();
     this.backendSessionId = null;
+    this.completionPending = false;
+    this.completionDurationSeconds = null;
     this.completedSessionIdSignal.set(null);
     this.queue = [];
     this.rechecks.clear();

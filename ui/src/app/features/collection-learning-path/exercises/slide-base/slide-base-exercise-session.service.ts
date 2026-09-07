@@ -19,6 +19,7 @@ export class SlideBaseExerciseSessionService {
   private scope: VocabularySpellingScope | null = null;
   private items: readonly VocabularySpellingItem[] = [];
   private started = false;
+  private completionCursor = 0;
 
   async startVocabularySpelling(
     context: ExerciseContext,
@@ -33,6 +34,7 @@ export class SlideBaseExerciseSessionService {
     ));
     this.scope = response.payload.scope;
     this.items = response.payload.items;
+    this.completionCursor = 0;
     if (response.session) {
       const opened = await this.reviewSession.openLearningPathSpelling(
         this.items.map((item) => item.id),
@@ -59,12 +61,17 @@ export class SlideBaseExerciseSessionService {
       if (answer) answersByItem.set(result.itemId, answer);
     }
     if (answersByItem.size !== this.items.length) throw new Error('Answer every spelling word before finishing.');
-    for (const item of this.items) {
+    while (this.completionCursor < this.items.length) {
+      const item = this.items[this.completionCursor];
       const answer = answersByItem.get(item.id);
       if (!answer || this.reviewSession.currentWord()?.id !== item.id) {
         throw new Error('Spelling session order changed. Reopen the exercise.');
       }
       await this.reviewSession.submit(answer);
+      this.completionCursor += 1;
+      await this.reviewSession.next();
+    }
+    if (!this.reviewSession.completedSessionId() && this.reviewSession.active()) {
       await this.reviewSession.next();
     }
     const sessionId = this.reviewSession.completedSessionId();

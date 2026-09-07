@@ -85,4 +85,32 @@ describe('SlideBaseExerciseSessionService', () => {
     expect(submit).not.toHaveBeenCalled();
     expect(outcome).toEqual({ kind: 'completed', evidence: { scope: 'all' } });
   });
+
+  it('resumes answer persistence from the first unsaved item after a transient failure', async () => {
+    let currentId: string | null = 'word-1';
+    currentWord.mockReset();
+    currentWord.mockImplementation(() => currentId ? { id: currentId } : null);
+    completedSessionId.mockReturnValue('session-1');
+    submit.mockReset();
+    submit
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('network unavailable'))
+      .mockResolvedValueOnce(undefined);
+    next.mockReset();
+    next.mockImplementation(async () => {
+      currentId = currentId === 'word-1' ? 'word-2' : null;
+    });
+    const results = [
+      { slideId: 'slide-1', rootSlideId: 'slide-1', slideType: 'dictation', itemId: 'word-1', data: { answer: 'alpha', correct: true } },
+      { slideId: 'slide-2', rootSlideId: 'slide-2', slideType: 'dictation', itemId: 'word-2', data: { answer: 'bet', correct: false } },
+    ];
+    await service.startVocabularySpelling(context, 'course');
+
+    await expect(service.complete('vocabulary-spelling', results)).rejects.toThrow('network unavailable');
+    await expect(service.complete('vocabulary-spelling', results)).resolves.toEqual({
+      kind: 'completed', evidence: { scope: 'course', sessionId: 'session-1' },
+    });
+
+    expect(submit.mock.calls.map(([answer]) => answer)).toEqual(['alpha', 'bet', 'bet']);
+  });
 });

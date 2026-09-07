@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { parseFileManagedLearningPathSource } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
+import { projectLearningPathProgress } from "../src/domain/collection-learning-path/LearningPathProgression.js";
 import { loadLearningPathSources } from "../src/infrastructure/content/loadLearningPathSources.js";
 
 const SOURCES = new URL("../data/learning-paths/", import.meta.url);
@@ -23,6 +24,7 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
   for (const lesson of source.definition.lessons) {
     assert.deepEqual(lesson.exercises.map((exercise) => exercise.position), [10, 20, 30, 40]);
     assert.equal(lesson.exercises[1].type, "slide-base");
+    assert.equal(lesson.exercises[1].required, false);
     assert.equal(lesson.exercises[1].completionPolicy, "vocabulary-spelling");
     assert.deepEqual(lesson.exercises[1].config.slides.map((slide) => slide.type), [
       "leitner-house-one-scope",
@@ -35,4 +37,33 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
     assert.equal(lesson.exercises[2].type, "vocabulary.quick-review");
     assert.equal(lesson.exercises[3].type, "vocabulary.mastery-check");
   }
+});
+
+test("Cambridge spelling additions do not revoke previously completed learner progress", async () => {
+  const sources = await loadLearningPathSources(SOURCES, parseFileManagedLearningPathSource);
+  const definition = sources.find(({ fileName }) => fileName === "cambridge-vocabulary-for-ielts.json")?.definition;
+  assert.ok(definition);
+  const path = {
+    ...definition.path,
+    contentVersion: 2,
+    lessons: definition.lessons.map((lesson) => ({
+      ...lesson,
+      status: "published",
+      retiredAt: null,
+      exercises: lesson.exercises.map((exercise) => ({ ...exercise, status: "published", retiredAt: null })),
+    })),
+  };
+  const progress = {
+    path: { status: "completed" },
+    lessons: definition.lessons.map((lesson) => ({ lessonId: lesson.id, status: "completed" })),
+    exercises: definition.lessons.flatMap((lesson) => lesson.exercises
+      .filter((exercise) => exercise.type !== "slide-base")
+      .map((exercise) => ({ exerciseId: exercise.id, status: "completed" }))),
+  };
+
+  const projected = projectLearningPathProgress(path, progress);
+
+  assert.equal(projected.path.learnerStatus, "completed");
+  assert.ok(projected.lessons.every((lesson) => lesson.state === "completed"));
+  assert.ok(projected.lessons.every((lesson) => lesson.exercises[1].state === "available"));
 });
