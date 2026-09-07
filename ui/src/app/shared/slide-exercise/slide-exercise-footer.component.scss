@@ -11,6 +11,7 @@
 .slide-exercise-footer__copy strong { color: var(--slide-exercise-footer-accent); font-size: 18px; line-height: 26px; font-weight: 700; }
 .slide-exercise-footer__copy span { color: var(--vocora-text-secondary); font-size: 14px; line-height: 20px; }
 .slide-exercise-footer__actions { grid-column: 2; display: flex; justify-content: flex-end; align-items: center; gap: var(--vocora-space-3); flex-wrap: wrap; }
+:host ::ng-deep .slide-exercise-footer[data-tone='error'] .slide-exercise-action { background: var(--vocora-error); color: var(--vocora-text-on-primary); box-shadow: 0 2px 0 color-mix(in srgb, var(--vocora-error) 68%, var(--vocora-text-primary)); }
 
 @media (max-width: 600px) {
   .slide-exercise-footer__inner { min-height: 104px; grid-template-columns: 1fr; gap: var(--vocora-space-3); padding: var(--vocora-space-4) max(var(--vocora-space-4), var(--safe-area-right)) calc(var(--vocora-space-4) + var(--safe-area-bottom)) max(var(--vocora-space-4), var(--safe-area-left)); }
