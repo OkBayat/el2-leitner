@@ -5,8 +5,6 @@
 }
 
 .exercise-node {
-  --activity-face: var(--mat-sys-primary);
-  --activity-ink: var(--mat-sys-on-primary);
   --node-face: var(--mat-sys-surface-container-highest);
   --node-side: var(--mat-sys-outline-variant);
   --node-ink: var(--mat-sys-on-surface-variant);
@@ -36,22 +34,12 @@
   pointer-events: none;
 }
 
-.exercise-node[data-kind='listening'] {
-  --activity-face: var(--mat-sys-tertiary);
-  --activity-ink: var(--mat-sys-on-tertiary);
-}
-
-.exercise-node[data-kind='shadowing'] {
-  --activity-face: var(--mat-sys-secondary);
-  --activity-ink: var(--mat-sys-on-secondary);
-}
-
 .exercise-node[data-state='available'],
 .exercise-node[data-state='in_progress'],
 .exercise-node[data-state='completed'] {
-  --node-face: var(--activity-face);
-  --node-side: color-mix(in srgb, var(--activity-face) 74%, black);
-  --node-ink: var(--activity-ink);
+  --node-face: var(--lesson-tone, #70af67);
+  --node-side: var(--lesson-side, #4d8745);
+  --node-ink: white;
 }
 
 .exercise-node[data-state='locked'] {
@@ -104,7 +92,7 @@
   border-bottom-width: 4px;
   border-radius: 12px;
   background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  color: var(--lesson-ink, var(--mat-sys-on-surface));
   font-size: 11px;
   font-weight: 850;
   line-height: 1.2;
