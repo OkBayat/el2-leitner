@@ -8,18 +8,22 @@ export class MySqlLearningPathSourceReferenceQueryRepository extends LearningPat
     this.pool = pool;
   }
 
-  async findCollectionByPublicId(publicId, options = {}) {
+  async resolveCollection(reference, options = {}) {
     const db = executor(this.pool, options);
     const [rows] = await db.execute(
       `SELECT c.public_id AS id, c.title
        FROM collections c
-       WHERE c.public_id = ?
+       WHERE (c.public_id = ? OR c.slug = ?)
          AND c.status = 'published'
          AND c.archived_at IS NULL
-       LIMIT 1`,
-      [publicId],
+       ORDER BY (c.public_id = ?) DESC, c.id
+       LIMIT 2`,
+      [reference, reference, reference],
     );
     if (!rows.length) return null;
+    if (rows.length > 1 && rows[0].id !== rows[1].id) {
+      throw new Error(`Ambiguous Learning Path collection reference: ${reference}`);
+    }
     return { id: rows[0].id, title: rows[0].title };
   }
 
