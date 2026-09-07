@@ -135,7 +135,7 @@ export class MySqlLearningStateRepository {
       this.pool.execute(
         `SELECT ve.public_id, ve.primary_form,
                 GROUP_CONCAT(DISTINCT vf.form ORDER BY vf.form SEPARATOR '\u001f') AS accepted_forms,
-                MIN(CASE WHEN c.is_default THEN 0 ELSE 1 END) AS source_priority,
+                MIN(CASE WHEN uc.user_id IS NOT NULL AND c.is_default THEN 0 WHEN uc.user_id IS NOT NULL THEN 1 ELSE 2 END) AS source_priority,
                 MIN(uc.subscribed_at) AS source_subscribed_at,
                 MIN(ce.position) AS source_position,
                 COALESCE(MAX(uvp.legacy_category), MIN(s.title), 'بدون دسته‌بندی') AS category,
@@ -147,18 +147,20 @@ export class MySqlLearningStateRepository {
                 MAX(uvp.last_reviewed_at) AS last_reviewed_at, MAX(uvp.last_promoted_on) AS last_promoted_on,
                 MAX(uvp.blocked_until) AS blocked_until, MAX(uvp.mastered_at) AS mastered_at,
                 COALESCE(MAX(uvp.created_at), MIN(ve.created_at)) AS progress_created_at
-         FROM user_collections uc
-         JOIN collections c ON c.id = uc.collection_id
+         FROM collections c
          JOIN collection_entries ce ON ce.collection_id = c.id AND ce.removed_at IS NULL
          JOIN vocabulary_entries ve ON ve.id = ce.vocabulary_entry_id AND ve.status = 'active'
+         LEFT JOIN user_collections uc
+           ON uc.collection_id = c.id AND uc.user_id = ? AND uc.status = 'active'
          LEFT JOIN vocabulary_forms vf ON vf.vocabulary_entry_id = ve.id
          LEFT JOIN collection_sections s ON s.id = ce.section_id
          LEFT JOIN user_vocabulary_progress uvp
-           ON uvp.user_id = uc.user_id AND uvp.vocabulary_entry_id = ve.id
-         WHERE uc.user_id = ? AND uc.status = 'active' AND COALESCE(uvp.status, 'active') <> 'excluded'
+           ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ve.id
+         WHERE (uc.user_id IS NOT NULL OR uvp.user_id IS NOT NULL)
+           AND COALESCE(uvp.status, 'active') <> 'excluded'
          GROUP BY ve.id
          ORDER BY source_priority, source_subscribed_at, source_position, ve.id`,
-        [userId]
+        [userId, userId]
       ),
       this.pool.execute(
         `SELECT * FROM (
