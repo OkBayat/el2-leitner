@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 import { SelectedCoursesFacade, courseMenuCollections } from './selected-courses.facade';
@@ -21,41 +22,70 @@ function collection(overrides: Partial<LibraryCollection> = {}): LibraryCollecti
 
 describe('SelectedCoursesFacade', () => {
   const list = vi.fn();
+  const queryCollectionLearningPath = vi.fn();
   let facade: SelectedCoursesFacade;
 
   beforeEach(() => {
     list.mockReset();
+    queryCollectionLearningPath.mockReset();
     list.mockResolvedValue({ collections: [collection()] });
+    queryCollectionLearningPath.mockResolvedValue({});
     TestBed.configureTestingModule({ providers: [
       SelectedCoursesFacade,
       { provide: LibraryApiService, useValue: { list } },
+      { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath } },
     ] });
     facade = TestBed.inject(SelectedCoursesFacade);
   });
 
-  it('keeps user-selected course subscriptions and excludes other library content', () => {
-    const result = courseMenuCollections([
-      collection(),
-      collection({ id: 'unselected-course', slug: 'unselected-course', title: 'Unselected course', subscribed: false }),
-      collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'collection', subscribed: true }),
-    ]);
+  it('keeps subscribed Learning Path collections regardless of library kind', () => {
+    const cambridge = collection({
+      id: 'cambridge-vocabulary-for-ielts',
+      slug: 'cambridge-vocabulary-for-ielts',
+      title: 'Cambridge Vocabulary for IELTS',
+      kind: 'book',
+      subscribed: true,
+    });
+    const unrelated = collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'book', subscribed: true });
+    const result = courseMenuCollections(
+      [collection({ subscribed: false }), cambridge, unrelated],
+      new Set(['bbc-six-minute-english', cambridge.id]),
+    );
 
-    expect(result.map((course) => course.id)).toEqual(['bbc-six-minute-english']);
+    expect(result.map((course) => course.id)).toEqual([cambridge.id]);
   });
 
-  it('shows BBC 6 Minute English as the initial course while it is the only course', () => {
-    const result = courseMenuCollections([
-      collection({ subscribed: false }),
-      collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'collection', subscribed: true }),
-    ]);
+  it('shows BBC 6 Minute English as the initial course while no Learning Path is selected', () => {
+    const result = courseMenuCollections(
+      [
+        collection({ subscribed: false }),
+        collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'book', subscribed: true }),
+      ],
+      new Set(['bbc-six-minute-english']),
+    );
 
     expect(result.map((course) => course.title)).toEqual(['BBC 6 Minute English']);
   });
 
-  it('loads course-menu choices from the existing library contract', async () => {
+  it('loads My Courses from actual Learning Path availability instead of collection kind', async () => {
+    const cambridge = collection({
+      id: 'cambridge-vocabulary-for-ielts',
+      slug: 'cambridge-vocabulary-for-ielts',
+      title: 'Cambridge Vocabulary for IELTS',
+      kind: 'book',
+      subscribed: true,
+    });
+    const unrelated = collection({ id: 'other-book', slug: 'other-book', title: 'Other book', kind: 'book', subscribed: true });
+    list.mockResolvedValue({ collections: [collection({ subscribed: false }), cambridge, unrelated] });
+    queryCollectionLearningPath.mockImplementation(async (collectionId: string) => {
+      if (collectionId === unrelated.id) throw new Error('Learning Path not found');
+      return {};
+    });
+
     expect(await facade.load()).toBe(true);
-    expect(list).toHaveBeenCalledTimes(1);
-    expect(facade.courses().map((course) => course.title)).toEqual(['BBC 6 Minute English']);
+    expect(queryCollectionLearningPath).toHaveBeenCalledWith(cambridge.id);
+    expect(queryCollectionLearningPath).toHaveBeenCalledWith(unrelated.id);
+    expect(facade.courses().map((course) => course.title)).toEqual(['Cambridge Vocabulary for IELTS']);
     expect(facade.loading()).toBe(false);
     expect(facade.error()).toBe('');
   });

@@ -1,10 +1,12 @@
+import { parseVocabularyScope, type VocabularyScope } from './vocabulary-scope';
+
 export interface ScopedVocabularyPracticeItem {
   readonly id: string;
   readonly term: string;
 }
 
 export interface ScopedVocabularyPracticePayload {
-  readonly scope: { readonly kind: string; readonly ref: string };
+  readonly scope: VocabularyScope;
   readonly items: readonly ScopedVocabularyPracticeItem[];
   readonly summary: { readonly eligibleCount: number; readonly box: 1 };
 }
@@ -16,14 +18,12 @@ function object(value: unknown): Record<string, unknown> {
 
 export function parseScopedVocabularyPracticePayload(value: unknown): ScopedVocabularyPracticePayload {
   const root = object(value);
-  const scope = object(root['scope']);
+  const scope = parseVocabularyScope(root['scope'], 'Invalid scoped vocabulary practice payload.');
   const summary = object(root['summary']);
   const rawItems = Array.isArray(root['items']) ? root['items'] : null;
-  const kind = String(scope['kind'] ?? '').trim();
-  const ref = String(scope['ref'] ?? '').trim();
   const eligibleCount = Number(summary['eligibleCount']);
   const box = Number(summary['box']);
-  if (!kind || !ref || !rawItems || !Number.isSafeInteger(eligibleCount) || eligibleCount < 0 || box !== 1) {
+  if (!rawItems || !Number.isSafeInteger(eligibleCount) || eligibleCount < 0 || box !== 1) {
     throw new Error('Invalid scoped vocabulary practice payload.');
   }
   const seen = new Set<string>();
@@ -36,5 +36,5 @@ export function parseScopedVocabularyPracticePayload(value: unknown): ScopedVoca
     return { id, term };
   });
   if (items.length !== eligibleCount) throw new Error('Scoped vocabulary practice summary does not match its items.');
-  return { scope: { kind, ref }, items, summary: { eligibleCount, box: 1 } };
+  return { scope, items, summary: { eligibleCount, box: 1 } };
 }

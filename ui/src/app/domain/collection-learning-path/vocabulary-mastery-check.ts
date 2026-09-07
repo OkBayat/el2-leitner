@@ -1,10 +1,12 @@
+import { parseVocabularyScope, type VocabularyScope } from './vocabulary-scope';
+
 export interface VocabularyMasteryCheckItem {
   readonly id: string;
   readonly term: string;
 }
 
 export interface VocabularyMasteryCheckPayload {
-  readonly scope: { readonly kind: string; readonly ref: string };
+  readonly scope: VocabularyScope;
   readonly items: readonly VocabularyMasteryCheckItem[];
   readonly summary: { readonly eligibleCount: number };
 }
@@ -37,12 +39,10 @@ function identifier(value: unknown): string {
 
 export function parseVocabularyMasteryCheckPayload(value: unknown): VocabularyMasteryCheckPayload {
   const root = object(value);
-  const scope = object(root['scope']);
+  const scope = parseVocabularyScope(root['scope'], 'Invalid vocabulary mastery check payload.');
   const summary = object(root['summary']);
   const rawItems = Array.isArray(root['items']) ? root['items'] : null;
   if (!rawItems) throw new Error('Invalid vocabulary mastery check payload.');
-  const kind = identifier(scope['kind']);
-  const ref = identifier(scope['ref']);
   const eligibleCount = Number(summary['eligibleCount']);
   if (!Number.isSafeInteger(eligibleCount) || eligibleCount < 0) throw new Error('Invalid vocabulary mastery check summary.');
   const seen = new Set<string>();
@@ -55,7 +55,7 @@ export function parseVocabularyMasteryCheckPayload(value: unknown): VocabularyMa
     return { id, term };
   });
   if (items.length !== eligibleCount) throw new Error('Vocabulary mastery check summary does not match its items.');
-  return { scope: { kind, ref }, items, summary: { eligibleCount } };
+  return { scope, items, summary: { eligibleCount } };
 }
 
 export function parseVocabularyMasteryCheckStart(value: unknown): VocabularyMasteryCheckStartView {

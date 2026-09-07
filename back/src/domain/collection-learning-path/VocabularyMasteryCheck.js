@@ -1,11 +1,11 @@
 import { ValidationError } from "../errors.js";
 import { classifyVocabularyProgress, VOCABULARY_PROGRESS_STATE } from "../learning/VocabularyProgress.js";
+import { isSupportedVocabularyScopeKind, parseVocabularyExerciseScope } from "./VocabularyExerciseScope.js";
 
 export const VOCABULARY_MASTERY_CHECK_TYPE = "vocabulary.mastery-check";
 export const VOCABULARY_MASTERY_CHECK_SCHEMA_VERSION = 1;
 export const VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY = "vocabulary-mastery-check";
 export const VOCABULARY_MASTERY_CHECK_SESSION_MODE = "learning-path.mastery-check";
-const SUPPORTED_SCOPE_KIND = "listening-episode";
 
 function invalid(message) {
   throw new ValidationError("INVALID_VOCABULARY_MASTERY_CHECK_DEFINITION", message);
@@ -27,16 +27,9 @@ export function resolveVocabularyMasteryCheckScope(exercise) {
   if (exercise.completionPolicy !== VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY) {
     invalid(`vocabulary.mastery-check completionPolicy must be ${VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY}.`);
   }
-  const scope = exercise.config?.scope;
-  if (!scope || typeof scope !== "object" || Array.isArray(scope)) {
-    invalid("vocabulary.mastery-check config.scope is required.");
-  }
-  if (scope.kind !== SUPPORTED_SCOPE_KIND) {
-    invalid(`vocabulary.mastery-check scope.kind must be ${SUPPORTED_SCOPE_KIND}.`);
-  }
-  return Object.freeze({
-    kind: SUPPORTED_SCOPE_KIND,
-    ref: requiredIdentifier(scope.ref, "vocabulary.mastery-check scope.ref"),
+  return parseVocabularyExerciseScope(exercise.config?.scope, {
+    code: "INVALID_VOCABULARY_MASTERY_CHECK_DEFINITION",
+    label: "vocabulary.mastery-check scope",
   });
 }
 
@@ -58,6 +51,10 @@ export function createVocabularyMasteryCheckPayload(scope, scopedVocabulary = []
 }
 
 export function createVocabularyMasteryCheckSessionMetadata(exercise, scope, vocabularyIds) {
+  const parsedScope = parseVocabularyExerciseScope(scope, {
+    code: "INVALID_VOCABULARY_MASTERY_CHECK_DEFINITION",
+    label: "vocabulary.mastery-check scope",
+  });
   const ids = [...vocabularyIds].map((value) => requiredIdentifier(value, "mastery vocabulary id"));
   if (new Set(ids).size !== ids.length) invalid("vocabulary.mastery-check session vocabulary ids must be unique.");
   return {
@@ -65,7 +62,7 @@ export function createVocabularyMasteryCheckSessionMetadata(exercise, scope, voc
       kind: VOCABULARY_MASTERY_CHECK_TYPE,
       schemaVersion: VOCABULARY_MASTERY_CHECK_SCHEMA_VERSION,
       exerciseId: requiredIdentifier(exercise?.id, "vocabulary.mastery-check exercise id"),
-      scope: { kind: scope.kind, ref: scope.ref },
+      scope: { kind: parsedScope.kind, ref: parsedScope.ref },
       vocabularyIds: ids,
     },
   };
@@ -83,7 +80,7 @@ export function parseVocabularyMasteryCheckSessionSnapshot(metadata) {
   if (!exerciseId || !scope || typeof scope !== "object" || Array.isArray(scope) || !Array.isArray(rawIds)) return null;
   const kind = String(scope.kind ?? "").trim();
   const ref = String(scope.ref ?? "").trim();
-  if (kind !== SUPPORTED_SCOPE_KIND || !ref) return null;
+  if (!isSupportedVocabularyScopeKind(kind) || !ref || ref.length > 64) return null;
   const vocabularyIds = rawIds.map((value) => String(value ?? "").trim());
   if (vocabularyIds.some((id) => !id) || new Set(vocabularyIds).size !== vocabularyIds.length) return null;
   return { exerciseId, scope: { kind, ref }, vocabularyIds };

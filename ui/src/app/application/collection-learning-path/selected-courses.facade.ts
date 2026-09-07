@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 
@@ -12,8 +13,11 @@ function byTitle(left: LibraryCollection, right: LibraryCollection): number {
   return left.title.localeCompare(right.title);
 }
 
-export function courseMenuCollections(collections: readonly LibraryCollection[]): LibraryCollection[] {
-  const courses = collections.filter((collection) => collection.kind === 'course');
+export function courseMenuCollections(
+  collections: readonly LibraryCollection[],
+  learningPathCollectionIds: ReadonlySet<string>,
+): LibraryCollection[] {
+  const courses = collections.filter((collection) => learningPathCollectionIds.has(collection.id));
   const selected = courses.filter((collection) => collection.subscribed).sort(byTitle);
   if (selected.length) return selected;
 
@@ -24,6 +28,7 @@ export function courseMenuCollections(collections: readonly LibraryCollection[])
 @Injectable({ providedIn: 'root' })
 export class SelectedCoursesFacade {
   private readonly library = inject(LibraryApiService);
+  private readonly learningPaths = inject(CollectionLearningPathApiService);
   private requestVersion = 0;
 
   readonly courses = signal<LibraryCollection[]>([]);
@@ -36,8 +41,18 @@ export class SelectedCoursesFacade {
     this.error.set('');
     try {
       const result = await this.library.list();
+      const collections = result.collections ?? [];
+      const discovered = await Promise.all(collections.map(async (collection) => {
+        try {
+          await this.learningPaths.queryCollectionLearningPath(collection.id);
+          return collection.id;
+        } catch {
+          return null;
+        }
+      }));
       if (request !== this.requestVersion) return false;
-      this.courses.set(courseMenuCollections(result.collections ?? []));
+      const learningPathCollectionIds = new Set(discovered.filter((id): id is string => id !== null));
+      this.courses.set(courseMenuCollections(collections, learningPathCollectionIds));
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(errorMessage(error));

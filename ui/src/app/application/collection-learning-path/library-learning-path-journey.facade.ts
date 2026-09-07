@@ -36,13 +36,12 @@ export class LibraryLearningPathJourneyFacade {
     return this.views().get(collectionId) ?? null;
   }
 
-  async load(collections: readonly Pick<LibraryCollection, 'id' | 'kind'>[]): Promise<boolean> {
+  async load(collections: readonly Pick<LibraryCollection, 'id'>[]): Promise<boolean> {
     const request = ++this.requestVersion;
-    const candidates = collections.filter((collection) => collection.kind === 'course');
     this.loading.set(true);
     this.error.set('');
     try {
-      const results = await Promise.all(candidates.map(async (collection) => {
+      const results = await Promise.all(collections.map(async (collection) => {
         try {
           return [collection.id, await this.api.queryCollectionLearningPath(collection.id)] as const;
         } catch {

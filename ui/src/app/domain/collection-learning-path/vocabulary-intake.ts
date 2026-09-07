@@ -1,3 +1,5 @@
+import { parseVocabularyScope, type VocabularyScope } from './vocabulary-scope';
+
 export type VocabularyIntakeProgressState = 'new' | 'learning' | 'mastered' | 'excluded';
 
 export interface VocabularyIntakeItem {
@@ -12,10 +14,7 @@ export interface VocabularyIntakeItem {
 }
 
 export interface VocabularyIntakePayload {
-  scope: {
-    kind: 'listening-episode';
-    ref: string;
-  };
+  scope: VocabularyScope;
   items: VocabularyIntakeItem[];
   summary: {
     total: number;
@@ -65,8 +64,7 @@ function progressState(value: unknown): VocabularyIntakeProgressState {
 
 export function parseVocabularyIntakePayload(value: unknown): VocabularyIntakePayload {
   const source = record(value);
-  const scope = record(source['scope']);
-  if (scope['kind'] !== 'listening-episode') throw new Error('Invalid vocabulary intake payload.');
+  const scope = parseVocabularyScope(source['scope'], 'Invalid vocabulary intake payload.');
   if (!Array.isArray(source['items'])) throw new Error('Invalid vocabulary intake payload.');
   const items = source['items'].map((rawItem) => {
     const item = record(rawItem);
@@ -84,7 +82,7 @@ export function parseVocabularyIntakePayload(value: unknown): VocabularyIntakePa
   });
   const summary = record(source['summary']);
   const parsed: VocabularyIntakePayload = {
-    scope: { kind: 'listening-episode', ref: text(scope['ref']) },
+    scope,
     items,
     summary: {
       total: count(summary['total']),
