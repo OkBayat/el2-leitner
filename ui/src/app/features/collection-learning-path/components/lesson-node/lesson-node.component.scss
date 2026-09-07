@@ -3,8 +3,29 @@
 }
 
 .lesson {
+  --lesson-tone: #70af67;
+  --lesson-side: #4d8745;
+  --lesson-ink: #244e25;
   position: relative;
   scroll-margin-top: calc(var(--shell-header-height, 64px) + 16px);
+}
+
+.lesson[data-palette='purple'] {
+  --lesson-tone: #a190cc;
+  --lesson-side: #7965a5;
+  --lesson-ink: #382956;
+}
+
+.lesson[data-palette='blue'] {
+  --lesson-tone: #66a7ce;
+  --lesson-side: #407fa9;
+  --lesson-ink: #183d57;
+}
+
+.lesson[data-palette='orange'] {
+  --lesson-tone: #ed990d;
+  --lesson-side: #be7209;
+  --lesson-ink: #65400a;
 }
 
 .lesson__header {
@@ -55,14 +76,14 @@
   min-height: 82px;
   padding: 12px 16px;
   border-radius: 18px;
-  background: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
-  box-shadow: 0 5px 0 color-mix(in srgb, var(--mat-sys-primary) 72%, black);
+  background: var(--lesson-tone);
+  color: var(--lesson-ink);
+  box-shadow: 0 5px 0 var(--lesson-side);
   text-align: left;
 }
 
 .lesson.is-active .lesson__heading p {
-  color: color-mix(in srgb, var(--mat-sys-on-primary) 82%, transparent);
+  color: color-mix(in srgb, var(--lesson-ink) 78%, transparent);
 }
 
 .lesson.is-active .lesson__heading h2 {
