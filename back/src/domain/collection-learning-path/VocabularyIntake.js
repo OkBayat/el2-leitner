@@ -1,21 +1,13 @@
 import { ValidationError } from "../errors.js";
 import { classifyVocabularyProgress } from "../learning/VocabularyProgress.js";
+import { parseVocabularyExerciseScope } from "./VocabularyExerciseScope.js";
 
 export const VOCABULARY_INTAKE_TYPE = "vocabulary.intake";
 export const VOCABULARY_INTAKE_SCHEMA_VERSION = 1;
 export const VOCABULARY_INTAKE_COMPLETION_POLICY = "vocabulary-intake";
-const SUPPORTED_SCOPE_KIND = "listening-episode";
 
 function invalid(message) {
   throw new ValidationError("INVALID_VOCABULARY_INTAKE_DEFINITION", message);
-}
-
-function requiredRef(value) {
-  const ref = String(value ?? "").trim();
-  if (!ref || ref.length > 64) {
-    invalid("vocabulary.intake scope.ref must be a valid public id of at most 64 characters.");
-  }
-  return ref;
 }
 
 export function resolveVocabularyIntakeScope(exercise) {
@@ -28,14 +20,10 @@ export function resolveVocabularyIntakeScope(exercise) {
   if (exercise.completionPolicy !== VOCABULARY_INTAKE_COMPLETION_POLICY) {
     invalid(`vocabulary.intake completionPolicy must be ${VOCABULARY_INTAKE_COMPLETION_POLICY}.`);
   }
-  const scope = exercise.config?.scope;
-  if (!scope || typeof scope !== "object" || Array.isArray(scope)) {
-    invalid("vocabulary.intake config.scope is required.");
-  }
-  if (scope.kind !== SUPPORTED_SCOPE_KIND) {
-    invalid(`vocabulary.intake scope.kind must be ${SUPPORTED_SCOPE_KIND}.`);
-  }
-  return Object.freeze({ kind: SUPPORTED_SCOPE_KIND, ref: requiredRef(scope.ref) });
+  return parseVocabularyExerciseScope(exercise.config?.scope, {
+    code: "INVALID_VOCABULARY_INTAKE_DEFINITION",
+    label: "vocabulary.intake scope",
+  });
 }
 
 function textList(value) {
