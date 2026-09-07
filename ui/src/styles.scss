@@ -5,9 +5,11 @@
 @use './styles/navigation-theme' as navigation-theme;
 @use './styles/vocora-design-system' as vocora-design-system;
 @use './styles/bootstrap-theme' as bootstrap-theme;
+@use './styles/angular-material-theme' as angular-material-theme;
 
 @include vocora-design-system.apply();
 @include bootstrap-theme.apply();
+@include angular-material-theme.apply();
 
 html {
 	@include mat.theme((
