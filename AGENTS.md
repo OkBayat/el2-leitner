@@ -6,6 +6,21 @@ This file is the repository-wide source of truth for coding agents working in Vo
 Read it before changing code, data contracts, tests, deployment behavior, or agent skills.
 Then read the nearest task-specific documentation or skill referenced from `.agents/AGENTS.md`.
 
+## Mandatory principle selection
+
+Before making any code, docs, config, test, workflow, architecture, schema,
+contract, data-model, migration, or agent-skill change, apply `k2-principles`
+once at task start.
+
+- `k2-principles` is the sole owner of general Karpathy, TDD, DDD, SOLID,
+  CQRS, security, data-integrity, contract, and reliability guidance.
+- Specialized domain, execution, review, and validation skills remain workflow
+  owners but must not redefine general principles.
+- Load only the references selected by `k2-principles`, state why each applies,
+  then return execution to the primary workflow.
+- Read-only investigation, explanation, and review do not require principle
+  selection unless a mutation is requested.
+
 ## Language rule
 
 All engineering artifacts must be written in English unless the user explicitly requests a specific data item or user-facing content in another language.
