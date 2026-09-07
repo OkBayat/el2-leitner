@@ -5,8 +5,11 @@ import {
 import { ConflictError, ValidationError } from "../../../domain/errors.js";
 import {
   ensureLearningPathProgressAccess,
+  ensureProgressMutationAccepted,
+  expectedProgressRevision,
   isoTimestamp,
   loadPathById,
+  progressRevision,
   projectedPathForUser,
   requireProjectedExercise,
   requireProjectedLesson,
@@ -70,13 +73,14 @@ export class CompleteExercise {
     this.clock = clock;
   }
 
-  async execute(userId, pathId, lessonId, exerciseId, rawOutcome) {
+  async execute(userId, pathId, lessonId, exerciseId, rawOutcome, rawExpectedRevision = null) {
     const outcome = completedOutcome(rawOutcome);
     const path = await loadPathById(this.definitionReader, pathId);
     await ensureLearningPathProgressAccess(this.accessReader, userId, path);
     const current = await projectedPathForUser({ progressReader: this.progressReader, userId, path });
     const lesson = requireProjectedLesson(current.projected, lessonId);
     const exercise = requireProjectedExercise(lesson, exerciseId);
+    const currentRevision = progressRevision(current.progress);
 
     if (exercise.state === "completed") {
       return {
@@ -87,6 +91,7 @@ export class CompleteExercise {
         lessonStatus: lesson.state,
         pathStatus: current.projected.path.learnerStatus,
         resumePoint: findLearningPathResumePoint(current.projected),
+        progressRevision: currentRevision,
       };
     }
     if (exercise.state === "locked") {
@@ -102,6 +107,7 @@ export class CompleteExercise {
       );
     }
 
+    const expectedRevision = expectedProgressRevision(rawExpectedRevision, current.progress);
     const evidence = await this.exerciseRuntime.verifyCompletion({
       userId,
       path: current.projected.path,
@@ -123,6 +129,17 @@ export class CompleteExercise {
     const lessonStatus = nextLesson.state === "completed" ? "completed" : "in_progress";
 
     await this.transactionManager.execute(async (connection) => {
+      const mutation = await this.progressWriter.upsertPathProgress({
+        userId,
+        pathId: path.id,
+        status: pathStatus,
+        startedAt: current.progress.path?.startedAt ?? exercise.progress.startedAt,
+        completedAt: pathStatus === "completed" ? (current.progress.path?.completedAt ?? at) : null,
+        lastActivityAt: at,
+        lastSeenContentVersion: path.contentVersion,
+        expectedRevision,
+      }, { connection });
+      ensureProgressMutationAccepted(mutation);
       await this.progressWriter.upsertExerciseProgress({
         userId,
         exerciseId: exercise.id,
@@ -141,15 +158,6 @@ export class CompleteExercise {
         completedAt: lessonStatus === "completed" ? (lesson.progress?.completedAt ?? at) : null,
         lastActivityAt: at,
       }, { connection });
-      await this.progressWriter.upsertPathProgress({
-        userId,
-        pathId: path.id,
-        status: pathStatus,
-        startedAt: current.progress.path?.startedAt ?? exercise.progress.startedAt,
-        completedAt: pathStatus === "completed" ? (current.progress.path?.completedAt ?? at) : null,
-        lastActivityAt: at,
-        lastSeenContentVersion: path.contentVersion,
-      }, { connection });
     });
 
     return {
@@ -160,6 +168,7 @@ export class CompleteExercise {
       lessonStatus,
       pathStatus,
       resumePoint: findLearningPathResumePoint(nextProjected),
+      progressRevision: expectedRevision + 1,
     };
   }
 }

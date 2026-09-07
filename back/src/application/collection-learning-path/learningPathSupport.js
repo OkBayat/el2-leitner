@@ -3,7 +3,7 @@ import {
   findProjectedLesson,
   projectLearningPathProgress,
 } from "../../domain/collection-learning-path/LearningPathProgression.js";
-import { ForbiddenError, NotFoundError, ValidationError } from "../../domain/errors.js";
+import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from "../../domain/errors.js";
 
 function identifier(value, code, message) {
   const normalized = typeof value === "string" ? value.trim() : String(value ?? "").trim();
@@ -98,6 +98,34 @@ export function requireProjectedExercise(projectedLesson, rawExerciseId) {
     throw new NotFoundError("LEARNING_PATH_EXERCISE_NOT_FOUND", "Learning Path exercise was not found.");
   }
   return exercise;
+}
+
+export function progressRevision(progress) {
+  const raw = progress?.path?.revision ?? 0;
+  const revision = Number(raw);
+  return Number.isSafeInteger(revision) && revision >= 0 ? revision : 0;
+}
+
+export function expectedProgressRevision(value, currentProgress) {
+  if (value == null) return progressRevision(currentProgress);
+  const revision = Number(value);
+  if (!Number.isSafeInteger(revision) || revision < 0) {
+    throw new ValidationError(
+      "INVALID_LEARNING_PATH_PROGRESS_REVISION",
+      "Learning Path progress revision must be a non-negative integer.",
+    );
+  }
+  return revision;
+}
+
+export function ensureProgressMutationAccepted(result) {
+  if (result?.conflict) {
+    throw new ConflictError(
+      "LEARNING_PATH_PROGRESS_STALE",
+      "Learning Path progress changed in another tab or request. Refresh and retry.",
+    );
+  }
+  return result;
 }
 
 export function isoTimestamp(clock) {

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   EventEmitter,
@@ -11,6 +12,7 @@ import {
   SimpleChanges,
   ViewChild,
   ViewContainerRef,
+  inject,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import type { ExerciseContextView } from '../../../../domain/collection-learning-path/learning-path';
@@ -45,35 +47,60 @@ export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
 
   unsupportedType = '';
+  rendererLoadFailed = false;
+  rendererLoading = false;
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly registry = createLearningPathExerciseRegistry();
   private componentRef: ComponentRef<ExerciseComponent> | null = null;
   private outcomeSubscription: Subscription | null = null;
   private initialized = false;
+  private renderVersion = 0;
 
   ngOnInit(): void {
     this.initialized = true;
-    this.render();
+    void this.render();
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
-    if (this.initialized) this.render();
+    if (this.initialized) void this.render();
   }
 
   ngOnDestroy(): void {
+    this.renderVersion += 1;
     this.disposeRenderer();
   }
 
-  private render(): void {
+  retryRenderer(): void {
+    void this.render();
+  }
+
+  private async render(): Promise<void> {
+    const version = ++this.renderVersion;
     this.disposeRenderer();
-    const renderer = this.registry.resolve(this.context.exercise.type);
-    if (!renderer) {
+    this.rendererLoadFailed = false;
+    this.rendererLoading = false;
+    const loader = this.registry.resolve(this.context.exercise.type);
+    if (!loader) {
       this.unsupportedType = this.context.exercise.type;
       return;
     }
     this.unsupportedType = '';
-    this.componentRef = this.outlet.createComponent(renderer);
-    this.componentRef.instance.load(runtimeContext(this.context));
-    this.outcomeSubscription = this.componentRef.instance.outcome.subscribe((outcome) => this.outcome.emit(outcome));
+    this.rendererLoading = true;
+    this.changeDetector.markForCheck();
+    try {
+      const renderer = await loader();
+      if (version !== this.renderVersion) return;
+      this.componentRef = this.outlet.createComponent(renderer);
+      this.componentRef.instance.load(runtimeContext(this.context));
+      this.outcomeSubscription = this.componentRef.instance.outcome.subscribe((outcome) => this.outcome.emit(outcome));
+      this.rendererLoading = false;
+      this.changeDetector.markForCheck();
+    } catch {
+      if (version !== this.renderVersion) return;
+      this.rendererLoading = false;
+      this.rendererLoadFailed = true;
+      this.changeDetector.markForCheck();
+    }
   }
 
   private disposeRenderer(): void {

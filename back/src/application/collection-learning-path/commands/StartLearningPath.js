@@ -3,6 +3,7 @@ import {
   ensureLearningPathProgressAccess,
   isoTimestamp,
   loadPathById,
+  progressRevision,
   projectedPathForUser,
 } from "../learningPathSupport.js";
 
@@ -47,6 +48,7 @@ export class StartLearningPath {
       pathId: path.id,
       pathStatus: refreshed.projected.path.learnerStatus,
       resumePoint: findLearningPathResumePoint(refreshed.projected),
+      progressRevision: progressRevision(refreshed.progress),
     };
   }
 }

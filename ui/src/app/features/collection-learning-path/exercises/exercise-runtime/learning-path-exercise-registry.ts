@@ -1,16 +1,31 @@
-import { IeltsListeningExerciseComponent } from '../ielts-listening/ielts-listening-exercise.component';
-import { ScopedVocabularyPracticeExerciseComponent } from '../scoped-vocabulary-practice/scoped-vocabulary-practice-exercise.component';
-import { ShadowingExerciseComponent } from '../shadowing/shadowing-exercise.component';
-import { VocabularyIntakeExerciseComponent } from '../vocabulary-intake/vocabulary-intake-exercise.component';
-import { VocabularyMasteryCheckExerciseComponent } from '../vocabulary-mastery-check/vocabulary-mastery-check-exercise.component';
 import { ExerciseRegistry } from './exercise-registry';
 
 export function createLearningPathExerciseRegistry(): ExerciseRegistry {
   const registry = new ExerciseRegistry();
-  registry.register({ type: 'vocabulary.intake', component: VocabularyIntakeExerciseComponent });
-  registry.register({ type: 'vocabulary.quick-review', component: ScopedVocabularyPracticeExerciseComponent });
-  registry.register({ type: 'vocabulary.mastery-check', component: VocabularyMasteryCheckExerciseComponent });
-  registry.register({ type: 'listening.ielts', component: IeltsListeningExerciseComponent });
-  registry.register({ type: 'speaking.shadowing', component: ShadowingExerciseComponent });
+  registry.register({
+    type: 'vocabulary.intake',
+    loadComponent: () => import('../vocabulary-intake/vocabulary-intake-exercise.component')
+      .then((module) => module.VocabularyIntakeExerciseComponent),
+  });
+  registry.register({
+    type: 'vocabulary.quick-review',
+    loadComponent: () => import('../scoped-vocabulary-practice/scoped-vocabulary-practice-exercise.component')
+      .then((module) => module.ScopedVocabularyPracticeExerciseComponent),
+  });
+  registry.register({
+    type: 'vocabulary.mastery-check',
+    loadComponent: () => import('../vocabulary-mastery-check/vocabulary-mastery-check-exercise.component')
+      .then((module) => module.VocabularyMasteryCheckExerciseComponent),
+  });
+  registry.register({
+    type: 'listening.ielts',
+    loadComponent: () => import('../ielts-listening/ielts-listening-exercise.component')
+      .then((module) => module.IeltsListeningExerciseComponent),
+  });
+  registry.register({
+    type: 'speaking.shadowing',
+    loadComponent: () => import('../shadowing/shadowing-exercise.component')
+      .then((module) => module.ShadowingExerciseComponent),
+  });
   return registry;
 }

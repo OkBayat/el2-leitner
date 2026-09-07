@@ -11,6 +11,7 @@ export interface LearningPathProgressView {
 
 export interface LearningPathPathProgressView extends LearningPathProgressView {
   lastSeenContentVersion: string | null;
+  revision?: number;
 }
 
 export interface LearningPathExerciseView {
@@ -63,6 +64,7 @@ export interface LearningPathResumeView {
   pathId: string;
   pathStatus: LearningPathLearnerStatus;
   resumePoint: LearningPathResumePoint | null;
+  progressRevision?: number;
 }
 
 export interface CompletedLearningPathExerciseOutcome {
@@ -78,6 +80,7 @@ export interface LearningPathExerciseCompletionView {
   lessonStatus: string;
   pathStatus: LearningPathLearnerStatus;
   resumePoint: LearningPathResumePoint | null;
+  progressRevision?: number;
 }
 
 export interface ExerciseContextView {
@@ -87,6 +90,7 @@ export interface ExerciseContextView {
     title: string;
     mode: LearningPathMode;
     contentVersion: string;
+    progressRevision?: number;
   };
   lesson: {
     id: string;
