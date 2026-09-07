@@ -12,6 +12,7 @@ import { GetLearningPathResumePoint } from "../../application/collection-learnin
 import { GetScopedVocabularyQuickReviewContext } from "../../application/collection-learning-path/queries/GetScopedVocabularyQuickReviewContext.js";
 import { GetVocabularyIntakeContext } from "../../application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
 import { GetVocabularyMasteryCheckContext } from "../../application/collection-learning-path/queries/GetVocabularyMasteryCheckContext.js";
+import { ListAvailableLearningPathCollections } from "../../application/collection-learning-path/queries/ListAvailableLearningPathCollections.js";
 import { VerifyIeltsListeningCompletion } from "../../application/collection-learning-path/queries/VerifyIeltsListeningCompletion.js";
 import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/collection-learning-path/queries/VerifyScopedVocabularyQuickReviewCompletion.js";
 import { VerifyShadowingExerciseCompletion } from "../../application/collection-learning-path/queries/VerifyShadowingExerciseCompletion.js";
@@ -136,6 +137,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
   };
 
   const queries = {
+    listAvailableCollections: new ListAvailableLearningPathCollections(dependencies),
     getCollectionLearningPath: new GetCollectionLearningPath(dependencies),
     getLearningPathLesson: new GetLearningPathLesson(dependencies),
     getExerciseContext: new GetExerciseContext(dependencies),

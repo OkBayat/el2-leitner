@@ -55,6 +55,18 @@ export class MySqlLearningPathDefinitionQueryRepository extends LearningPathDefi
     this.pool = pool;
   }
 
+  async listActiveCollectionPublicIds({ connection = null } = {}) {
+    const db = executor(this.pool, { connection });
+    const [rows] = await db.execute(
+      `SELECT DISTINCT c.public_id AS collectionId
+       FROM collection_learning_paths p
+       JOIN collections c ON c.id = p.collection_id
+       WHERE p.status = 'published' AND p.retired_at IS NULL
+       ORDER BY c.public_id`,
+    );
+    return rows.map((row) => row.collectionId);
+  }
+
   async findByPublicId(publicId, { includeRetired = false, connection = null } = {}) {
     return this.#findPath(
       `p.public_id = ?${includeRetired ? "" : " AND p.retired_at IS NULL"}`,

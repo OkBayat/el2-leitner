@@ -40,18 +40,13 @@ export class SelectedCoursesFacade {
     this.loading.set(true);
     this.error.set('');
     try {
-      const result = await this.library.list();
-      const collections = result.collections ?? [];
-      const discovered = await Promise.all(collections.map(async (collection) => {
-        try {
-          await this.learningPaths.queryCollectionLearningPath(collection.id);
-          return collection.id;
-        } catch {
-          return null;
-        }
-      }));
+      const [result, learningPathCollections] = await Promise.all([
+        this.library.list(),
+        this.learningPaths.queryLearningPathCollectionIds(),
+      ]);
       if (request !== this.requestVersion) return false;
-      const learningPathCollectionIds = new Set(discovered.filter((id): id is string => id !== null));
+      const collections = result.collections ?? [];
+      const learningPathCollectionIds = new Set(learningPathCollections.collectionIds ?? []);
       this.courses.set(courseMenuCollections(collections, learningPathCollectionIds));
       return true;
     } catch (error) {

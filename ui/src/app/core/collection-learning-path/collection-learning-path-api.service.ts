@@ -22,6 +22,10 @@ function exercisePath(pathId: string, lessonId: string, exerciseId: string): str
 export class CollectionLearningPathApiService {
   private readonly api = inject(ApiClientService);
 
+  queryLearningPathCollectionIds(): Promise<{ collectionIds: string[] }> {
+    return this.api.get<{ collectionIds: string[] }>('/api/learning-paths/collections');
+  }
+
   queryCollectionLearningPath(collectionId: string): Promise<CollectionLearningPathView> {
     return this.api.get<CollectionLearningPathView>(`/api/learning-paths/collections/${segment(collectionId)}`);
   }

@@ -22,18 +22,18 @@ function collection(overrides: Partial<LibraryCollection> = {}): LibraryCollecti
 
 describe('SelectedCoursesFacade', () => {
   const list = vi.fn();
-  const queryCollectionLearningPath = vi.fn();
+  const queryLearningPathCollectionIds = vi.fn();
   let facade: SelectedCoursesFacade;
 
   beforeEach(() => {
     list.mockReset();
-    queryCollectionLearningPath.mockReset();
+    queryLearningPathCollectionIds.mockReset();
     list.mockResolvedValue({ collections: [collection()] });
-    queryCollectionLearningPath.mockResolvedValue({});
+    queryLearningPathCollectionIds.mockResolvedValue({ collectionIds: ['bbc-six-minute-english'] });
     TestBed.configureTestingModule({ providers: [
       SelectedCoursesFacade,
       { provide: LibraryApiService, useValue: { list } },
-      { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath } },
+      { provide: CollectionLearningPathApiService, useValue: { queryLearningPathCollectionIds } },
     ] });
     facade = TestBed.inject(SelectedCoursesFacade);
   });
@@ -67,7 +67,7 @@ describe('SelectedCoursesFacade', () => {
     expect(result.map((course) => course.title)).toEqual(['BBC 6 Minute English']);
   });
 
-  it('loads My Courses from actual Learning Path availability instead of collection kind', async () => {
+  it('loads My Courses from one Learning Path discovery request instead of probing every collection', async () => {
     const cambridge = collection({
       id: 'cambridge-vocabulary-for-ielts',
       slug: 'cambridge-vocabulary-for-ielts',
@@ -77,14 +77,12 @@ describe('SelectedCoursesFacade', () => {
     });
     const unrelated = collection({ id: 'other-book', slug: 'other-book', title: 'Other book', kind: 'book', subscribed: true });
     list.mockResolvedValue({ collections: [collection({ subscribed: false }), cambridge, unrelated] });
-    queryCollectionLearningPath.mockImplementation(async (collectionId: string) => {
-      if (collectionId === unrelated.id) throw new Error('Learning Path not found');
-      return {};
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: ['bbc-six-minute-english', cambridge.id],
     });
 
     expect(await facade.load()).toBe(true);
-    expect(queryCollectionLearningPath).toHaveBeenCalledWith(cambridge.id);
-    expect(queryCollectionLearningPath).toHaveBeenCalledWith(unrelated.id);
+    expect(queryLearningPathCollectionIds).toHaveBeenCalledTimes(1);
     expect(facade.courses().map((course) => course.title)).toEqual(['Cambridge Vocabulary for IELTS']);
     expect(facade.loading()).toBe(false);
     expect(facade.error()).toBe('');
