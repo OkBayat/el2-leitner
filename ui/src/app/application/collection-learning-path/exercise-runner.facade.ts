@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { LearningStoreService } from '../../core/state/learning-store.service';
 import type {
   CompletedLearningPathExerciseOutcome,
   ExerciseContextView,
@@ -13,6 +14,7 @@ function message(error: unknown): string {
 @Injectable({ providedIn: 'root' })
 export class ExerciseRunnerFacade {
   private readonly api = inject(CollectionLearningPathApiService);
+  private readonly learningStore = inject(LearningStoreService);
   private requestVersion = 0;
 
   readonly context = signal<ExerciseContextView | null>(null);
@@ -30,6 +32,9 @@ export class ExerciseRunnerFacade {
       if (context.state === 'available') {
         await this.api.commandStartExercise(pathId, lessonId, exerciseId);
         context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
+      }
+      if (context.exercise.type === 'vocabulary.quick-review') {
+        await this.learningStore.refreshAfterSubscriptionChange();
       }
       const resume = context.state === 'completed'
         ? await this.api.queryResumePoint(pathId)
