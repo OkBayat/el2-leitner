@@ -3,6 +3,7 @@ import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from 
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
 import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
+import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
@@ -29,6 +30,7 @@ export class AppShellComponent implements OnInit {
 	readonly auth = inject(AuthService);
 	readonly store = inject(LearningStoreService);
 	readonly share = inject(ShareStoryService);
+	readonly courses = inject(SelectedCoursesFacade);
 	private readonly theme = inject(ThemeService);
 	private readonly router = inject(Router);
 	private readonly currentUrl = toSignal(this.router.events.pipe(
@@ -65,6 +67,7 @@ export class AppShellComponent implements OnInit {
 	});
 
 	async ngOnInit(): Promise<void> {
+		void this.courses.load();
 		const state = await this.store.initialize();
 		this.theme.apply(state.settings.theme);
 	}
