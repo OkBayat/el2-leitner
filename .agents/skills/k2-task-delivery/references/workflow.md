@@ -52,7 +52,7 @@ content identity.
 Run:
 
 ```bash
-node .agents/skills/k2-task-delivery/scripts/workflow-next-action.mjs \
+rtk node .agents/skills/k2-task-delivery/scripts/workflow-next-action.mjs \
   --input <current-evidence-projection.json>
 ```
 

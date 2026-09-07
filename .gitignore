@@ -20,3 +20,6 @@ back/data/listening/episodes/**/*.zip
 # Local Python tooling caches
 **/__pycache__/
 *.pyc
+
+# Repository-owned linked worktrees created by k2-worktree-first
+.worktrees/

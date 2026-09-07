@@ -105,15 +105,15 @@ the output instead.
 From the repository root, run:
 
 ```bash
-node .agents/skills/k2-skill-script-architecture/scripts/test-validate-skill-scripts.js
-node .agents/skills/k2-skill-script-architecture/scripts/validate-skill-scripts.js \
+rtk node .agents/skills/k2-skill-script-architecture/scripts/test-validate-skill-scripts.js
+rtk node .agents/skills/k2-skill-script-architecture/scripts/validate-skill-scripts.js \
   --base <base-sha> --head HEAD
 ```
 
 For a pre-edit report of named files, run:
 
 ```bash
-node .agents/skills/k2-skill-script-architecture/scripts/validate-skill-scripts.js \
+rtk node .agents/skills/k2-skill-script-architecture/scripts/validate-skill-scripts.js \
   --files .agents/skills/<skill>/scripts/<file>.js
 ```
 

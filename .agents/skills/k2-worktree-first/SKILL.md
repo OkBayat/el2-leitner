@@ -21,7 +21,10 @@ rtk python3 .agents/skills/k2-worktree-first/scripts/create_worktree.py --name "
 
 ### Script-owned
 
-- Resolve the repository and primary worktree, fetch `origin/main`, safely synchronize and verify local `main`, validate the name, detect conflicts, create the flat branch/worktree, verify the result, and emit machine-readable output.
+- Resolve the repository and primary worktree, require the repository-owned
+  `.worktrees/` root to be ignored, fetch `origin/main`, safely synchronize
+  and verify local `main`, validate the name, detect conflicts, create the
+  flat branch/worktree, verify the result, and emit machine-readable output.
 
 ### Codex-owned
 

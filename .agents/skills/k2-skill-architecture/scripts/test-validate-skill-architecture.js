@@ -536,7 +536,7 @@ function testGitBatchReadsSkillFiles() {
   const directory = path.join(root, skillRoot(name));
   fs.mkdirSync(path.join(directory, 'references'), { recursive: true });
   fs.writeFileSync(path.join(directory, 'SKILL.md'), skillDocument(name));
-  fs.writeFileSync(path.join(directory, 'references', 'rules.md'), '# قانون\n');
+  fs.writeFileSync(path.join(directory, 'references', 'rules.md'), '# Café rule\n');
   runGit('add', '.');
   runGit('commit', '-qm', 'skill');
   const head = runGit('rev-parse', 'HEAD');
@@ -544,7 +544,7 @@ function testGitBatchReadsSkillFiles() {
   const entries = listGitEntries(root, head, skillRoot(name));
   const files = readGitEntries(root, entries);
   assert.equal(entries.length, 2);
-  assert.equal(files.get(`${skillRoot(name)}/references/rules.md`), '# قانون\n');
+  assert.equal(files.get(`${skillRoot(name)}/references/rules.md`), '# Café rule\n');
   fs.rmSync(root, { recursive: true, force: true });
 }
 

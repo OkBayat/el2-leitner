@@ -173,16 +173,18 @@ A phased skill must satisfy all of these rules:
 From the repository root:
 
 ```bash
-find .agents/skills/k2-skill-architecture/scripts -maxdepth 1 \
-  -type f -name 'test-*.js' -print0 | sort -z | xargs -0 -n1 node
-node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js \
+rtk proxy find .agents/skills/k2-skill-architecture/scripts -maxdepth 1 \
+  -type f -name 'test-*.js' -print0 \
+  | rtk proxy sort -z \
+  | rtk proxy xargs -0 -n1 rtk node
+rtk node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js \
   --base <base-sha> --head HEAD
 ```
 
 For a working-tree inspection:
 
 ```bash
-node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js \
+rtk node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js \
   --files .agents/skills/<skill>/SKILL.md
 ```
 

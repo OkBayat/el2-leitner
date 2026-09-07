@@ -35,7 +35,8 @@ class CreateWorktreeTests(unittest.TestCase):
         run(["git", "init", "-b", "main", str(self.seed)], self.root)
         self.configure(self.seed)
         (self.seed / "README.md").write_text("initial\n", encoding="utf-8")
-        git(self.seed, "add", "README.md")
+        (self.seed / ".gitignore").write_text(".worktrees/\n", encoding="utf-8")
+        git(self.seed, "add", "README.md", ".gitignore")
         git(self.seed, "commit", "-m", "initial")
         git(self.seed, "remote", "add", "origin", str(self.remote))
         git(self.seed, "push", "-u", "origin", "main")
@@ -79,6 +80,12 @@ class CreateWorktreeTests(unittest.TestCase):
         self.assertEqual(Path(str(payload["worktree_path"])), target)
         self.assertEqual(payload["branch_name"], "codex/fix-worktree-routing")
         self.assertEqual(git(target, "rev-parse", "HEAD"), remote_head)
+        ignored = run(
+            ["git", "check-ignore", "--quiet", "--no-index", ".worktrees/ignore-probe"],
+            self.primary,
+            check=False,
+        )
+        self.assertEqual(ignored.returncode, 0)
 
     def test_primary_non_main_updates_main_without_switching(self) -> None:
         git(self.primary, "switch", "-c", "feature/local")
@@ -136,6 +143,13 @@ class CreateWorktreeTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 2)
         self.assertEqual(payload["code"], "invalid_name")
         self.assertEqual(git(self.primary, "rev-parse", "origin/main"), before)
+
+    def test_missing_worktree_ignore_blocks_before_creation(self) -> None:
+        (self.primary / ".gitignore").write_text("", encoding="utf-8")
+        proc, payload = self.invoke(self.primary, "missing-ignore")
+        self.assertEqual(proc.returncode, 2)
+        self.assertEqual(payload["code"], "worktrees_not_ignored")
+        self.assertFalse((self.primary / ".worktrees" / "missing-ignore").exists())
 
     def test_branch_name_conflict_blocks(self) -> None:
         git(self.primary, "branch", "codex/name-conflict", "main")

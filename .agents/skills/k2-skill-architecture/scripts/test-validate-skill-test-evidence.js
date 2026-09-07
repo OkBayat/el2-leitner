@@ -168,6 +168,40 @@ function testDeletedTestDoesNotCoverModifiedBehavior() {
   assert.ok(problemCodes(result).includes('missing_skill_test'));
 }
 
+function testModifiedPythonBehaviorRequiresChangedPythonTest() {
+  const pythonScript = `${root}/scripts/create_worktree.py`;
+  const pythonTest = `${root}/scripts/test_create_worktree.py`;
+  const implementation = {
+    basePath: pythonScript,
+    baseSource: 'VALUE = False\n',
+    path: pythonScript,
+    source: 'VALUE = True\n',
+    status: 'M',
+  };
+  const withoutChangedTest = resultFor([implementation], {
+    extraFiles: {
+      [pythonScript]: implementation.source,
+      [pythonTest]: 'def test_create():\n    assert True\n',
+    },
+  });
+  assert.ok(problemCodes(withoutChangedTest).includes('missing_skill_test'));
+
+  const changedTest = {
+    basePath: pythonTest,
+    baseSource: 'def test_create():\n    assert False\n',
+    path: pythonTest,
+    source: 'def test_create():\n    assert True\n',
+    status: 'M',
+  };
+  const withChangedTest = resultFor([implementation, changedTest], {
+    extraFiles: {
+      [pythonScript]: implementation.source,
+      [pythonTest]: changedTest.source,
+    },
+  });
+  assert.equal(withChangedTest.ok, true);
+}
+
 const tests = [
   testModifiedBehaviorWithoutAnyTestNeedsChangedTest,
   testUnchangedExistingTestDoesNotSatisfyRule,
@@ -176,6 +210,7 @@ const tests = [
   testRenamedScriptNeedsChangedTest,
   testCompleteSkillDeletionWithTestDeletionPasses,
   testDeletedTestDoesNotCoverModifiedBehavior,
+  testModifiedPythonBehaviorRequiresChangedPythonTest,
 ];
 
 for (const test of tests) test();

@@ -144,11 +144,26 @@ def validate_name(name: str) -> None:
         )
 
 
+def require_ignored_worktrees_root(primary: Path, worktrees_dir: Path) -> None:
+    probe = (worktrees_dir / ".ignore-probe").relative_to(primary).as_posix()
+    ignored = git(
+        primary,
+        ["check-ignore", "--quiet", "--no-index", "--", probe],
+        check=False,
+    )
+    if ignored.returncode != 0:
+        raise Blocked(
+            "worktrees_not_ignored",
+            "the primary .worktrees directory must be ignored before creating a linked worktree",
+        )
+
+
 def create_named_worktree(primary: Path, name: str, base_oid: str) -> tuple[Path, str]:
     worktrees_dir = (primary / ".worktrees").resolve()
     target = (worktrees_dir / name).resolve()
     if target.parent != worktrees_dir:
         raise Blocked("invalid_target", "worktree target must be a direct child of the primary .worktrees directory")
+    require_ignored_worktrees_root(primary, worktrees_dir)
 
     branch_name = f"codex/{name}"
     conflicts: list[str] = []

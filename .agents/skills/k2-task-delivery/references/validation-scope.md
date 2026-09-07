@@ -10,7 +10,7 @@ validation.
 For a committed checkpoint:
 
 ```bash
-node .agents/skills/k2-task-delivery/scripts/validation-scope.mjs \
+rtk node .agents/skills/k2-task-delivery/scripts/validation-scope.mjs \
   --base <validation_checkpoint_sha> --head HEAD
 ```
 
@@ -19,7 +19,7 @@ This mode requires a clean worktree and returns `input_state: commit`.
 When commit authority was not granted:
 
 ```bash
-node .agents/skills/k2-task-delivery/scripts/validation-scope.mjs \
+rtk node .agents/skills/k2-task-delivery/scripts/validation-scope.mjs \
   --base <task_base_sha> --worktree
 ```
 
@@ -62,9 +62,9 @@ Behavior-bearing surfaces include:
 
 Documentation under `docs/**` and standard root documentation files is
 focused-only unless an owning workflow says otherwise. Recognized test files,
-test trees, fixtures, and snapshots are focused-only. Operational contracts
-remain behavior-bearing even when a nested folder is named `tests` or
-`fixtures`.
+including Python `test_*.py` and `*_test.py` files, test trees, fixtures,
+and snapshots are focused-only. Operational contracts remain behavior-bearing
+even when a nested folder is named `tests` or `fixtures`.
 
 ## Actions
 

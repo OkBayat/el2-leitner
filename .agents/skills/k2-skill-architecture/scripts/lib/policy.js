@@ -5,7 +5,7 @@ const { maskComments } = require('./comment-mask');
 
 const SKILLS_ROOT = '.agents/skills';
 const SHARED_ROOT = `${SKILLS_ROOT}/shared`;
-const SCRIPT_EXTENSIONS = new Set(['.js', '.cjs', '.mjs', '.ts', '.cts', '.mts']);
+const SCRIPT_EXTENSIONS = new Set(['.js', '.cjs', '.mjs', '.ts', '.cts', '.mts', '.py']);
 
 function normalize(filePath) {
   return filePath.split(path.sep).join('/').replace(/^\.\//, '');
@@ -36,7 +36,8 @@ function isTestFile(filePath) {
   return normalized.includes('/tests/')
     || normalized.includes('/__tests__/')
     || /^(?:test-|spec-)/.test(base)
-    || /(?:\.test|\.spec)\.(?:[cm]?[jt]s)$/.test(base);
+    || /(?:\.test|\.spec)\.(?:[cm]?[jt]s)$/.test(base)
+    || /^(?:test_.+|.+_test)\.py$/.test(base);
 }
 
 function privateSkillDependencies(source, currentSkill) {

@@ -24,7 +24,8 @@ The caller must supply:
 - the Original Request or complete requirement ledger;
 - explicit authority for any review-fix commit.
 
-Do not substitute `HEAD~1`, a runner provenance SHA, or an inferred base.
+Do not substitute `HEAD~1`, an unrelated caller-provenance SHA, or an inferred
+base.
 
 ## Workflow
 
@@ -34,7 +35,7 @@ Do not substitute `HEAD~1`, a runner provenance SHA, or an inferred base.
 3. Validate the exact range:
 
    ```bash
-   node .agents/skills/shared/code-review/scripts/pre-push-review-range.cjs \
+   rtk node .agents/skills/shared/code-review/scripts/pre-push-review-range.cjs \
      --base-ref "$BASE_REF" \
      --base-sha "$BASE_SHA" \
      --branch "$BRANCH" \

@@ -8,6 +8,13 @@ import { fileURLToPath } from 'node:url';
 import { selectValidationScope } from '../lib/validation-scope.mjs';
 
 const SCRIPT = fileURLToPath(new URL('../validation-scope.mjs', import.meta.url));
+const PYTHON_SKILL_TEST = [
+  '.agents',
+  'skills',
+  'k2-worktree-first',
+  'scripts',
+  'test_create_worktree.py',
+].join('/');
 
 function testBehaviorChangesRequireFullSuite() {
   assert.deepEqual(selectValidationScope([
@@ -160,10 +167,16 @@ function testOperationalRootsCannotMasqueradeAsTestLocations() {
 function testKnownSourceTestLocationRemainsFocused() {
   const result = selectValidationScope([
     'ui/src/app/worker/worker.spec.ts',
+    'speech/test_server.py',
+    PYTHON_SKILL_TEST,
   ]);
 
   assert.equal(result.validation_scope, 'focused');
-  assert.deepEqual(result.files.test, ['ui/src/app/worker/worker.spec.ts']);
+  assert.deepEqual(result.files.test, [
+    PYTHON_SKILL_TEST,
+    'speech/test_server.py',
+    'ui/src/app/worker/worker.spec.ts',
+  ]);
 }
 
 function git(cwd, ...args) {

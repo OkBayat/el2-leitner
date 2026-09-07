@@ -16,7 +16,8 @@ const DOCUMENTATION_EXTENSIONS = new Set([
 ]);
 
 const TEST_FILE = /\.(?:spec|test)\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)$/;
-const SKILL_TEST_FILE = /^\.agents\/skills\/(?:[^/]+|shared\/[^/]+)\/scripts\/test-[^/]+\.(?:cjs|cts|js|mjs|mts|ts)$/;
+const PYTHON_TEST_FILE = /^(?:test_.+|.+_test)\.py$/;
+const SKILL_TEST_FILE = /^\.agents\/skills\/(?:[^/]+|shared\/[^/]+)\/scripts\/(?:test-[^/]+\.(?:cjs|cts|js|mjs|mts|ts)|test_[^/]+\.py|[^/]+_test\.py)$/;
 const SKILL_SCRIPT = /^\.agents\/skills\/(?:[^/]+|shared\/[^/]+)\/scripts\//;
 const SKILL_TEST_TREE = /^\.agents\/skills\/(?:[^/]+|shared\/[^/]+)\/scripts\/tests\//;
 
@@ -52,8 +53,12 @@ function isFixture(file) {
 
 function isKnownTest(file) {
   if (isKnownTestTree(file) || SKILL_TEST_FILE.test(file)) return true;
-  if (file.startsWith('back/') || file.startsWith('ui/') || SKILL_SCRIPT.test(file)) {
-    return TEST_FILE.test(basename(file));
+  if (file.startsWith('back/')
+    || file.startsWith('speech/')
+    || file.startsWith('ui/')
+    || SKILL_SCRIPT.test(file)) {
+    const name = basename(file);
+    return TEST_FILE.test(name) || PYTHON_TEST_FILE.test(name);
   }
   return false;
 }
@@ -91,7 +96,8 @@ function classifyFile(file) {
   if (isKnownTest(file)) return 'test';
   if (isOperationalContract(file)) return 'behavior';
   if (isBehaviorRoot(file)) return 'behavior';
-  if (TEST_FILE.test(basename(file))) return 'test';
+  const name = basename(file);
+  if (TEST_FILE.test(name) || PYTHON_TEST_FILE.test(name)) return 'test';
   if (isDocumentation(file)) return 'documentation';
   return 'behavior';
 }
