@@ -1,5 +1,5 @@
 import { SimpleChange } from '@angular/core';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { SlideExerciseComponent } from './slide-exercise.component';
 import type { SlideExerciseSlide } from './slide-exercise.models';
 
@@ -22,5 +22,29 @@ describe('SlideExerciseComponent', () => {
 
     expect(component.currentSlide?.id).toBe('question');
     expect(component.runtime).toEqual({ chrome: { footer: { tone: 'success' } } });
+  });
+
+  it('maps Enter to the current primary action', () => {
+    const component = new SlideExerciseComponent();
+    const slides: SlideExerciseSlide[] = [{
+      id: 'question',
+      type: 'message',
+      data: {},
+      chrome: {
+        footer: {
+          primary: { id: 'check', label: 'Check', behavior: 'emit' },
+        },
+      },
+    }];
+    component.slides = slides;
+    component.ngOnChanges({ slides: new SimpleChange(undefined, slides, true) });
+    const actions: unknown[] = [];
+    component.action.subscribe((action) => actions.push(action));
+    const preventDefault = vi.fn();
+
+    component.handleKeyboard({ key: 'Enter', preventDefault } as unknown as KeyboardEvent);
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(actions).toEqual([{ slideId: 'question', actionId: 'check', behavior: 'emit', slot: 'primary' }]);
   });
 });

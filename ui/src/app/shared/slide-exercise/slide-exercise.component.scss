@@ -23,7 +23,7 @@ app-slide-exercise-header {
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
 }
 
 app-slide-exercise-footer {

@@ -58,6 +58,19 @@ describe('MultipleChoiceSlideContentComponent', () => {
     expect(component.optionState('a')).toBe('correct');
   });
 
+  it('selects the matching option from a numeric keyboard shortcut', () => {
+    const { component } = setup();
+    const states: SlideExerciseRuntimeState[] = [];
+    component.stateChange.subscribe((state) => states.push(state));
+    component.load({ slideId: 'word-1', type: 'multiple-choice', data });
+
+    component.handleShortcut('2');
+
+    expect(component.selectedOptionId()).toBe('b');
+    expect(component.optionState('b')).toBe('selected');
+    expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: false } } } });
+  });
+
   it('shows the correct answer after an incorrect check', () => {
     const { component } = setup();
     const states: SlideExerciseRuntimeState[] = [];
@@ -85,7 +98,7 @@ describe('MultipleChoiceSlideContentComponent', () => {
     expect(speech.speak).toHaveBeenCalledTimes(1);
     expect(speech.speak).toHaveBeenLastCalledWith('persistent', 0.92);
 
-    const replay = fixture.nativeElement.querySelector<HTMLButtonElement>('[aria-label="Play pronunciation for persistent"]');
+    const replay = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[aria-label="Play pronunciation for persistent"]');
     expect(replay).not.toBeNull();
     expect(replay?.classList.contains('mat-mdc-icon-button')).toBe(true);
     replay?.click();

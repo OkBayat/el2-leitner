@@ -6,9 +6,15 @@ import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type { SlideContentComponent, SlideContentContext, SlideContentEvent } from '../slide-content-contracts';
 import type { SlideExerciseRuntimeState } from '../slide-exercise.models';
-import type { MultipleChoiceAnswerEvent, MultipleChoiceSlideData, MultipleChoiceSlideOption } from './multiple-choice-slide-content.models';
+import type {
+  MultipleChoiceAnswerEvent,
+  MultipleChoiceSlideData,
+  MultipleChoiceSlideOption,
+} from './multiple-choice-slide-content.models';
 
-function text(value: unknown): string { return typeof value === 'string' ? value.trim() : ''; }
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
 
 function parseData(value: unknown): MultipleChoiceSlideData {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid multiple-choice slide data.');
@@ -24,7 +30,16 @@ function parseData(value: unknown): MultipleChoiceSlideData {
     return { id, label } satisfies MultipleChoiceSlideOption;
   }) : [];
   if (!prompt || options.length < 2 || !correctOptionId) throw new Error('Invalid multiple-choice slide data.');
-  return { instruction: text(source['instruction']) || 'Choose one answer.', prompt, options, correctOptionId, correctTitle: text(source['correctTitle']) || 'Correct', incorrectTitle: text(source['incorrectTitle']) || 'Not quite' };
+  if (new Set(options.map((option) => option.id)).size !== options.length) throw new Error('Multiple-choice option ids must be unique.');
+  if (!options.some((option) => option.id === correctOptionId)) throw new Error('Multiple-choice correct option is unavailable.');
+  return {
+    instruction: text(source['instruction']) || 'Choose one answer.',
+    prompt,
+    options,
+    correctOptionId,
+    correctTitle: text(source['correctTitle']) || 'Correct',
+    incorrectTitle: text(source['incorrectTitle']) || 'Not quite',
+  };
 }
 
 @Component({
@@ -47,8 +62,19 @@ export class MultipleChoiceSlideContentComponent implements SlideContentComponen
   readonly selectedOptionId = signal('');
   readonly checked = signal(false);
 
-  load(context: SlideContentContext): void { this.content.set(parseData(context.data)); this.selectedOptionId.set(''); this.checked.set(false); this.playPronunciation(); }
-  playPronunciation(): boolean { const word = this.content().prompt; if (!word) return false; return this.speech.speak(word, this.store.state()?.settings.voiceRate ?? 0.85); }
+  load(context: SlideContentContext): void {
+    this.content.set(parseData(context.data));
+    this.selectedOptionId.set('');
+    this.checked.set(false);
+    this.playPronunciation();
+  }
+
+  playPronunciation(): boolean {
+    const word = this.content().prompt;
+    if (!word) return false;
+    const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+    return this.speech.speak(word, rate);
+  }
 
   handleShortcut(key: string): void {
     const index = Number(key) - 1;
@@ -71,10 +97,32 @@ export class MultipleChoiceSlideContentComponent implements SlideContentComponen
     const correctLabel = data.options.find((option) => option.id === data.correctOptionId)?.label ?? '';
     this.checked.set(true);
     this.answerSound.play(correct ? 'correct' : 'incorrect');
-    this.stateChanges.next({ chrome: { footer: { tone: correct ? 'success' : 'error', title: correct ? data.correctTitle : data.incorrectTitle, detail: correct ? '' : `Correct answer: ${correctLabel}`, primary: { id: 'continue', label: 'Continue', behavior: 'next', disabled: false } } } });
-    this.events.next({ type: 'answered', data: { selectedOptionId, correctOptionId: data.correctOptionId, correct } });
+    this.stateChanges.next({
+      chrome: {
+        footer: {
+          tone: correct ? 'success' : 'error',
+          title: correct ? data.correctTitle : data.incorrectTitle,
+          detail: correct ? '' : `Correct answer: ${correctLabel}`,
+          primary: { id: 'continue', label: 'Continue', behavior: 'next', disabled: false },
+        },
+      },
+    });
+    this.events.next({
+      type: 'answered',
+      data: { selectedOptionId, correctOptionId: data.correctOptionId, correct },
+    });
   }
 
-  optionState(optionId: string): 'neutral' | 'selected' | 'correct' | 'incorrect' { if (!this.checked()) return this.selectedOptionId() === optionId ? 'selected' : 'neutral'; if (optionId === this.content().correctOptionId) return 'correct'; return this.selectedOptionId() === optionId ? 'incorrect' : 'neutral'; }
-  ngOnDestroy(): void { this.answerSound.stop(); this.speech.cancel(); this.stateChanges.complete(); this.events.complete(); }
+  optionState(optionId: string): 'neutral' | 'selected' | 'correct' | 'incorrect' {
+    if (!this.checked()) return this.selectedOptionId() === optionId ? 'selected' : 'neutral';
+    if (optionId === this.content().correctOptionId) return 'correct';
+    return this.selectedOptionId() === optionId ? 'incorrect' : 'neutral';
+  }
+
+  ngOnDestroy(): void {
+    this.answerSound.stop();
+    this.speech.cancel();
+    this.stateChanges.complete();
+    this.events.complete();
+  }
 }
