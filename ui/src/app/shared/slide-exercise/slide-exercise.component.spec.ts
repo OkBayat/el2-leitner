@@ -10,7 +10,7 @@ function slide(id: string, type = 'message'): SlideExerciseSlide {
 describe('SlideExerciseComponent', () => {
   it('preserves the active slide and renderer state when another slide configuration changes', () => {
     const component = new SlideExerciseComponent();
-    const initial = [slide('intro'), slide('question', 'multiple-choice'), slide('summary', 'summary')];
+    const initial = [slide('intro'), slide('question', 'choice'), slide('summary', 'summary')];
     component.slides = initial;
     component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
     component.goTo('question');

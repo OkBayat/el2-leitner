@@ -1,0 +1,95 @@
+<aside class="slide-stimulus" [attr.data-stimulus-type]="stimulus.type">
+	@switch (stimulus.type) {
+		@case ('text') {
+			<div
+				class="slide-stimulus__reading"
+				tabindex="0"
+				aria-label="Reading passage"
+			>
+				@if (stimulus.content) {
+					<p>{{ stimulus.content }}</p>
+				}
+				@for (section of stimulus.sections ?? []; track section.id) {
+					<section
+						[attr.aria-labelledby]="
+							'stimulus-section-' + section.id
+						"
+					>
+						<h2 [id]="'stimulus-section-' + section.id">
+							{{ section.title || section.id }}
+						</h2>
+						<p>{{ section.content }}</p>
+					</section>
+				}
+			</div>
+		}
+		@case ('audio') {
+			<div class="slide-stimulus__audio">
+				<audio
+					#audio
+					[src]="stimulus.src"
+					preload="metadata"
+					aria-label="Audio stimulus"
+				></audio>
+				<button
+					mat-stroked-button
+					type="button"
+					[disabled]="!canReplay()"
+					aria-label="Play audio stimulus"
+					(click)="play(audio)"
+				>
+					Play audio
+				</button>
+				@if (stimulus.maxReplays) {
+					<span aria-live="polite"
+						>{{ replayCount() }} of {{ stimulus.maxReplays }} plays
+						used</span
+					>
+				}
+				@if (stimulus.transcript) {
+					<details>
+						<summary>Transcript</summary>
+						<p>{{ stimulus.transcript }}</p>
+					</details>
+				}
+			</div>
+		}
+		@case ('image') {
+			<figure>
+				<img [src]="stimulus.src" [alt]="stimulus.alt" />
+				@if (stimulus.caption) {
+					<figcaption>{{ stimulus.caption }}</figcaption>
+				}
+			</figure>
+		}
+		@case ('chart') {
+			@if (stimulus.imageSrc) {
+				<figure>
+					<img
+						[src]="stimulus.imageSrc"
+						[alt]="stimulus.alt || 'Chart stimulus'"
+					/>
+					@if (stimulus.caption) {
+						<figcaption>{{ stimulus.caption }}</figcaption>
+					}
+				</figure>
+			} @else {
+				<p
+					class="slide-stimulus__placeholder"
+					role="img"
+					[attr.aria-label]="stimulus.alt || 'Chart stimulus'"
+				>
+					Chart preview
+				</p>
+			}
+		}
+		@case ('diagram') {
+			<figure>
+				<img [src]="stimulus.imageSrc" [alt]="stimulus.alt" />
+				@if (stimulus.caption) {
+					<figcaption>{{ stimulus.caption }}</figcaption>
+				}
+			</figure>
+		}
+	}
+</aside>
