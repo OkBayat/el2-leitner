@@ -1,0 +1,133 @@
+:host {
+	position: relative;
+	z-index: 1000;
+}
+
+.pwa-status-stack {
+	position: fixed;
+	z-index: 1000;
+	top: max(12px, var(--safe-area-top));
+	left: 50%;
+	display: grid;
+	width: min(620px, calc(100% - max(24px, calc(var(--safe-area-left) + var(--safe-area-right) + 16px))));
+	gap: 8px;
+	pointer-events: none;
+	transform: translateX(-50%);
+}
+
+.pwa-status {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	border: 1px solid var(--mat-sys-outline-variant);
+	border-radius: 16px;
+	background: color-mix(in srgb, var(--mat-sys-surface-container-high) 96%, transparent);
+	color: var(--mat-sys-on-surface);
+	box-shadow: var(--mat-sys-level3);
+	backdrop-filter: blur(14px);
+	pointer-events: none;
+}
+
+.pwa-status.offline {
+	grid-template-columns: auto minmax(0, 1fr);
+}
+
+.status-mark {
+	display: grid;
+	width: 32px;
+	height: 32px;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--mat-sys-secondary-container);
+	color: var(--mat-sys-on-secondary-container);
+	font-weight: 800;
+}
+
+.pwa-status.install .status-mark {
+	background: var(--mat-sys-primary-container);
+	color: var(--mat-sys-on-primary-container);
+}
+
+.pwa-status.error .status-mark {
+	background: var(--mat-sys-error-container);
+	color: var(--mat-sys-on-error-container);
+}
+
+.pwa-status strong,
+.pwa-status small {
+	display: block;
+}
+
+.pwa-status strong {
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.pwa-status small {
+	margin-top: 2px;
+	color: var(--mat-sys-on-surface-variant);
+	font-size: 11px;
+	line-height: 1.4;
+}
+
+.status-actions {
+	display: flex;
+	gap: 6px;
+}
+
+.status-actions,
+.pwa-status > button {
+	pointer-events: auto;
+}
+
+button {
+	min-height: 34px;
+	padding: 0 11px;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--mat-sys-primary);
+	font: inherit;
+	font-size: 11px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+button:hover {
+	background: var(--mat-sys-surface-container-highest);
+}
+
+button.primary {
+	background: var(--mat-sys-primary);
+	color: var(--mat-sys-on-primary);
+}
+
+button:disabled {
+	opacity: .55;
+	cursor: wait;
+}
+
+@media (max-width: 560px) {
+	.pwa-status {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+	}
+
+	.status-actions,
+	.pwa-status > button {
+		grid-column: 2;
+		justify-self: start;
+	}
+
+	.status-actions {
+		margin-top: 2px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		scroll-behavior: auto !important;
+	}
+}
