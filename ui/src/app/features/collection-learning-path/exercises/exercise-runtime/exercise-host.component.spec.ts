@@ -33,6 +33,7 @@ describe('ExerciseHostComponent', () => {
     fixture.componentRef.setInput('context', context());
     fixture.detectChanges();
     await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve, 0));
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="vocabulary-intake"]')).not.toBeNull();
