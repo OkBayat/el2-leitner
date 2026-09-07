@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
-import { SelectedCoursesFacade, selectedCourseCollections } from './selected-courses.facade';
+import { SelectedCoursesFacade, courseMenuCollections } from './selected-courses.facade';
 
 function collection(overrides: Partial<LibraryCollection> = {}): LibraryCollection {
   return {
@@ -33,8 +33,8 @@ describe('SelectedCoursesFacade', () => {
     facade = TestBed.inject(SelectedCoursesFacade);
   });
 
-  it('keeps only previously selected course collections', () => {
-    const result = selectedCourseCollections([
+  it('keeps user-selected course subscriptions and excludes other library content', () => {
+    const result = courseMenuCollections([
       collection(),
       collection({ id: 'unselected-course', slug: 'unselected-course', title: 'Unselected course', subscribed: false }),
       collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'collection', subscribed: true }),
@@ -43,7 +43,16 @@ describe('SelectedCoursesFacade', () => {
     expect(result.map((course) => course.id)).toEqual(['bbc-six-minute-english']);
   });
 
-  it('loads selected courses from the existing library subscription contract', async () => {
+  it('shows BBC 6 Minute English as the initial course while it is the only course', () => {
+    const result = courseMenuCollections([
+      collection({ subscribed: false }),
+      collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'collection', subscribed: true }),
+    ]);
+
+    expect(result.map((course) => course.title)).toEqual(['BBC 6 Minute English']);
+  });
+
+  it('loads course-menu choices from the existing library contract', async () => {
     expect(await facade.load()).toBe(true);
     expect(list).toHaveBeenCalledTimes(1);
     expect(facade.courses().map((course) => course.title)).toEqual(['BBC 6 Minute English']);
