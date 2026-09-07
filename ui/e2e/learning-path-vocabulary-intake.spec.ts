@@ -46,12 +46,53 @@ function context(state: 'available' | 'in_progress' | 'completed', newCount: num
   };
 }
 
+function canonicalStateAfterActivation() {
+  const timestamp = '2026-09-06T18:00:00.000Z';
+  return {
+    revision: 3,
+    state: {
+      schemaVersion: 2,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      settings: { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: 'system' },
+      words: [
+        {
+          id: 'new-1',
+          number: 1,
+          term: 'persistent',
+          accepted: ['persistent'],
+          category: 'Uncategorized',
+          tags: [],
+          lessons: [],
+          notes: '',
+          createdAt: timestamp,
+          box: 1,
+          due: '2026-09-06',
+          attempts: 0,
+          correct: 0,
+          mistakes: 0,
+          currentStreak: 0,
+          introducedOn: '2026-09-06',
+          addedSource: 'learning-path',
+          lastReviewed: null,
+          lastPromotedDay: null,
+          blockedUntil: null,
+          masteredAt: null,
+        },
+      ],
+      daily: {},
+      history: [],
+    },
+  };
+}
+
 async function mockIntake(page: Page) {
   let state: 'available' | 'in_progress' | 'completed' = 'available';
   let newCount = 1;
   const commands: Array<{ path: string; body: unknown }> = [];
 
   await page.route('**/api/auth/me', (route) => route.fulfill({ json: { user: { id: 'learner-1', email: 'learner@example.test' } } }));
+  await page.route(/\/api\/state\?view=bootstrap$/u, (route) => route.fulfill({ json: canonicalStateAfterActivation() }));
   await page.route(`**${contextPath}`, (route) => route.fulfill({ json: context(state, newCount) }));
   await page.route(`**${contextPath}/start`, async (route) => {
     state = 'in_progress';

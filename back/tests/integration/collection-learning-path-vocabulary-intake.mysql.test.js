@@ -3,8 +3,11 @@ import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 
 import { GetVocabularyIntakeContext } from "../../src/application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
+import { GetLeitnerHouse } from "../../src/application/learning/GetLeitnerHouse.js";
 import { loadConfig } from "../../src/config/loadConfig.js";
 import { createPool } from "../../src/infrastructure/persistence/mysql/createPool.js";
+import { MySqlLearningBootstrapRepository } from "../../src/infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js";
+import { MySqlLearningStateRepository } from "../../src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js";
 import { MySqlVocabularyActivationRepository } from "../../src/infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { MySqlLearningPathVocabularyIntakeCommandRepository } from "../../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeCommandRepository.js";
 import { MySqlLearningPathVocabularyIntakeQueryRepository } from "../../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeQueryRepository.js";
@@ -17,7 +20,7 @@ const exercise = (episodeId) => ({
   config: { scope: { kind: "listening-episode", ref: episodeId } },
 });
 
-test("Learning Path vocabulary intake preserves existing global progress on MySQL", {
+test("Learning Path vocabulary intake persists in the global Leitner state without a second subscription on MySQL", {
   skip: process.env.LEARNING_PATH_MYSQL_INTEGRATION !== "1",
 }, async (t) => {
   assert.match(process.env.DB_NAME || "", /_ci$/u, "Never run Learning Path fixtures against a production database.");
@@ -145,6 +148,37 @@ test("Learning Path vocabulary intake preserves existing global progress on MySQ
     [ids.vocabulary[2], "mastered", 5],
     [ids.vocabulary[3], "excluded", 0],
   ]);
+
+  const globalRepository = new MySqlLearningStateRepository(pool);
+  const globalState = await globalRepository.findByUserId(userId);
+  const activatedGlobalWord = globalState.state.words.find((word) => word.id === ids.vocabulary[0]);
+  assert.deepEqual(
+    [activatedGlobalWord?.box, activatedGlobalWord?.introducedOn, activatedGlobalWord?.addedSource],
+    [1, "2026-09-06", "learning-path"],
+    "course intake must become ordinary global Leitner progress",
+  );
+  assert.equal(globalState.state.words.some((word) => word.id === ids.vocabulary[3]), false, "excluded vocabulary stays hidden globally");
+
+  const bootstrapRepository = new MySqlLearningBootstrapRepository(pool, globalRepository);
+  const bootstrap = await bootstrapRepository.findByUserId(userId);
+  const bootstrapWord = bootstrap.state.words.find((word) => word.id === ids.vocabulary[0]);
+  assert.equal(bootstrapWord?.box, 1, "bootstrap refresh must expose the newly activated global House 1 word");
+
+  const houseOne = await new GetLeitnerHouse({
+    learningStateRepository: globalRepository,
+    today: () => "2026-09-06",
+  }).execute(userId, 1);
+  assert.ok(
+    houseOne.words.some((word) => word.id === ids.vocabulary[0]),
+    "the main Leitner House 1 must contain vocabulary activated from the course",
+  );
+
+  const [[subscriptionAfterActivation]] = await pool.execute(
+    "SELECT COUNT(*) AS count FROM user_collections WHERE user_id = ? AND collection_id = ?",
+    [userId, vocabularyCollection.id],
+  );
+  assert.equal(Number(subscriptionAfterActivation.count), 0, "global progress must not create a per-course vocabulary subscription");
+
   const [[stats]] = await pool.execute(
     "SELECT new_added FROM user_daily_stats WHERE user_id = ? AND day = '2026-09-06'",
     [userId],

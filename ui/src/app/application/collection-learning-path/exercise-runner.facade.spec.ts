@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { LearningStoreService } from '../../core/state/learning-store.service';
 import type { ExerciseContextView } from '../../domain/collection-learning-path/learning-path';
 import { ExerciseRunnerFacade } from './exercise-runner.facade';
 
@@ -16,22 +17,43 @@ function context(state: ExerciseContextView['state']): ExerciseContextView {
   };
 }
 
+function quickReviewContext(state: ExerciseContextView['state']): ExerciseContextView {
+  const value = context(state);
+  return {
+    ...value,
+    exercise: {
+      ...value.exercise,
+      type: 'vocabulary.quick-review',
+      completionPolicy: 'vocabulary-quick-review',
+    },
+    payload: {
+      scope: { kind: 'listening-episode', ref: 'episode-1' },
+      items: [{ id: 'word-1', term: 'at ease' }],
+      summary: { eligibleCount: 1, box: 1 },
+    },
+  } as ExerciseContextView;
+}
+
 describe('ExerciseRunnerFacade', () => {
   const queryExerciseContext = vi.fn();
   const commandStartExercise = vi.fn();
   const commandCompleteExercise = vi.fn();
+  const refreshAfterSubscriptionChange = vi.fn();
   let facade: ExerciseRunnerFacade;
 
   beforeEach(() => {
     queryExerciseContext.mockReset();
     commandStartExercise.mockReset();
     commandCompleteExercise.mockReset();
+    refreshAfterSubscriptionChange.mockReset();
     commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress' });
     commandCompleteExercise.mockResolvedValue({ exerciseStatus: 'completed' });
+    refreshAfterSubscriptionChange.mockResolvedValue({});
     TestBed.configureTestingModule({
       providers: [
         ExerciseRunnerFacade,
         { provide: CollectionLearningPathApiService, useValue: { queryExerciseContext, commandStartExercise, commandCompleteExercise } },
+        { provide: LearningStoreService, useValue: { refreshAfterSubscriptionChange } },
       ],
     });
     facade = TestBed.inject(ExerciseRunnerFacade);
@@ -43,6 +65,15 @@ describe('ExerciseRunnerFacade', () => {
     expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1');
     expect(queryExerciseContext).toHaveBeenCalledTimes(2);
     expect(facade.context()?.state).toBe('in_progress');
+  });
+
+  it('reconciles canonical global Leitner state before exposing scoped quick review', async () => {
+    queryExerciseContext.mockResolvedValueOnce(quickReviewContext('in_progress'));
+
+    expect(await facade.load('path-1', 'lesson-1', 'quick-review-1')).toBe(true);
+
+    expect(refreshAfterSubscriptionChange).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.exercise.type).toBe('vocabulary.quick-review');
   });
 
   it('does not mutate locked or already-completed exercises', async () => {
