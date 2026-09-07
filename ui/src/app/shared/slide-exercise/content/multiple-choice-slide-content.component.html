@@ -2,9 +2,20 @@
   <article class="multiple-choice-slide" data-testid="multiple-choice-slide-content">
     <div class="multiple-choice-slide__copy">
       <p>{{ data.instruction }}</p>
-      <div class="multiple-choice-slide__prompt-row">
+      <div class="d-flex align-items-center gap-2">
         <h1>{{ data.prompt }}</h1>
-        <button type="button" aria-label="Play pronunciation" (click)="playPronunciation()">🔊</button>
+        <button
+          mat-icon-button
+          type="button"
+          class="text-primary"
+          [attr.aria-label]="'Play pronunciation for ' + data.prompt"
+          (click)="playPronunciation()"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 10v4h4l5 4V6L8 10H4Z" fill="currentColor"/>
+            <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
     </div>
 
