@@ -65,3 +65,31 @@ export function reviewedIdsMatchScope(payload, evidence) {
   }
   return true;
 }
+
+export function reviewedIdsProveScopedQuickReview(scopedVocabulary, payload, evidence) {
+  const inScope = new Set(
+    (scopedVocabulary ?? [])
+      .map((item) => String(item?.vocabularyId ?? "").trim())
+      .filter(Boolean),
+  );
+  const currentEligible = new Set((payload?.items ?? []).map((item) => String(item.id)));
+  const reviewed = new Set(
+    (evidence?.reviewedVocabularyIds ?? [])
+      .map((id) => String(id).trim())
+      .filter(Boolean),
+  );
+  const plannedCount = Number(evidence?.plannedCount);
+  const completedCount = Number(evidence?.completedCount);
+
+  if (!Number.isSafeInteger(plannedCount) || plannedCount < 0) return false;
+  if (!Number.isSafeInteger(completedCount) || completedCount !== plannedCount) return false;
+  if (reviewed.size !== plannedCount) return false;
+
+  for (const id of reviewed) {
+    if (!inScope.has(id)) return false;
+  }
+  for (const id of currentEligible) {
+    if (!reviewed.has(id)) return false;
+  }
+  return true;
+}
