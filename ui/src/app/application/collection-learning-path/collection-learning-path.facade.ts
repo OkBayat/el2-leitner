@@ -1,14 +1,24 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { LibraryApiService } from '../../core/library/library-api.service';
 import type { CollectionLearningPathView, LearningPathResumeView } from '../../domain/collection-learning-path/learning-path';
 
 function message(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
+function resumeFromView(view: CollectionLearningPathView): LearningPathResumeView {
+  return {
+    pathId: view.path.id,
+    pathStatus: view.path.learnerStatus,
+    resumePoint: view.resumePoint,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class CollectionLearningPathFacade {
   private readonly api = inject(CollectionLearningPathApiService);
+  private readonly library = inject(LibraryApiService);
   private requestVersion = 0;
 
   readonly view = signal<CollectionLearningPathView | null>(null);
@@ -23,10 +33,9 @@ export class CollectionLearningPathFacade {
     this.error.set('');
     try {
       const view = await this.api.queryCollectionLearningPath(collectionId);
-      const resume = await this.api.queryResumePoint(view.path.id);
       if (request !== this.requestVersion) return false;
       this.view.set(view);
-      this.resume.set(resume);
+      this.resume.set(resumeFromView(view));
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(message(error, 'Learning Path could not load.'));
@@ -43,6 +52,9 @@ export class CollectionLearningPathFacade {
     this.starting.set(true);
     this.error.set('');
     try {
+      if (!current.access.canProgress) {
+        await this.library.subscribe(path.collectionId);
+      }
       const resume = await this.api.commandStartPath(path.id);
       const refreshed = await this.api.queryCollectionLearningPath(path.collectionId);
       if (this.view()?.path.id !== path.id) return false;

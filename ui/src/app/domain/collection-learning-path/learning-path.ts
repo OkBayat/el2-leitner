@@ -47,14 +47,16 @@ export interface LearningPathPathView {
   progress: LearningPathPathProgressView | null;
 }
 
-export interface CollectionLearningPathView {
-  path: LearningPathPathView;
-  lessons: LearningPathLessonView[];
-}
-
 export interface LearningPathResumePoint {
   lessonId: string;
   exerciseId: string;
+}
+
+export interface CollectionLearningPathView {
+  access: { canProgress: boolean };
+  resumePoint: LearningPathResumePoint | null;
+  path: LearningPathPathView;
+  lessons: LearningPathLessonView[];
 }
 
 export interface LearningPathResumeView {
@@ -110,6 +112,11 @@ export interface LearningPathSummary {
   percent: number;
 }
 
+export interface LearningPathPrimaryAction {
+  label: string;
+  actionable: boolean;
+}
+
 export function summarizeLearningPath(lessons: readonly LearningPathLessonView[]): LearningPathSummary {
   const requiredExercises = lessons.flatMap((lesson) => lesson.exercises.filter((exercise) => exercise.required));
   const completedRequiredExercises = requiredExercises.filter((exercise) => exercise.state === 'completed').length;
@@ -141,6 +148,15 @@ export function learningPathStatusLabel(status: LearningPathLearnerStatus): stri
     in_progress: 'In progress',
     completed: 'Completed',
     up_to_date: 'Up to date',
+  }[status];
+}
+
+export function learningPathPrimaryAction(status: LearningPathLearnerStatus): LearningPathPrimaryAction {
+  return {
+    available: { label: 'Start course', actionable: true },
+    in_progress: { label: 'Continue', actionable: true },
+    completed: { label: 'Completed', actionable: false },
+    up_to_date: { label: 'Up to date', actionable: false },
   }[status];
 }
 

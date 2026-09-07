@@ -1,4 +1,7 @@
 import {
+  findLearningPathResumePoint,
+} from "../../../domain/collection-learning-path/LearningPathProgression.js";
+import {
   ensureLearningPathReadAccess,
   loadPathByCollection,
   projectedPathForUser,
@@ -13,12 +16,16 @@ export class GetCollectionLearningPath {
 
   async execute(userId, collectionId) {
     const path = await loadPathByCollection(this.definitionReader, collectionId);
-    await ensureLearningPathReadAccess(this.accessReader, userId, path);
+    const access = await ensureLearningPathReadAccess(this.accessReader, userId, path);
     const { projected } = await projectedPathForUser({
       progressReader: this.progressReader,
       userId,
       path,
     });
-    return projected;
+    return {
+      ...projected,
+      access: { canProgress: Boolean(access.canProgress) },
+      resumePoint: findLearningPathResumePoint(projected),
+    };
   }
 }

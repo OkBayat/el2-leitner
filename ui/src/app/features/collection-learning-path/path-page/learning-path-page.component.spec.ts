@@ -7,7 +7,7 @@ import { CollectionLearningPathFacade } from '../../../application/collection-le
 import type { CollectionLearningPathView, LearningPathResumeView } from '../../../domain/collection-learning-path/learning-path';
 import { LearningPathPageComponent } from './learning-path-page.component';
 
-const view: CollectionLearningPathView = { path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', status: 'published', contentVersion: 'v1', learnerStatus: 'available', progress: null }, lessons: [{ id: 'lesson-1', title: 'Lesson 1', position: 1, sourceKind: null, sourceRef: null, state: 'available', progress: null, exercises: [{ id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'explicit', config: {}, state: 'available', progress: null }] }] };
+const view: CollectionLearningPathView = { access: { canProgress: true }, resumePoint: { lessonId: 'lesson-1', exerciseId: 'exercise-1' }, path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', status: 'published', contentVersion: 'v1', learnerStatus: 'available', progress: null }, lessons: [{ id: 'lesson-1', title: 'Lesson 1', position: 1, sourceKind: null, sourceRef: null, state: 'available', progress: null, exercises: [{ id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'explicit', config: {}, state: 'available', progress: null }] }] };
 const resume: LearningPathResumeView = { pathId: 'path-1', pathStatus: 'available', resumePoint: { lessonId: 'lesson-1', exerciseId: 'exercise-1' } };
 
 describe('LearningPathPageComponent', () => {
@@ -21,5 +21,16 @@ describe('LearningPathPageComponent', () => {
     await fixture.componentInstance.continuePath();
     expect(facade.start).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/learning-path', 'path-1', 'lessons', 'lesson-1', 'exercises', 'exercise-1']);
+  });
+
+  it('shows rolling terminal status without inventing another resume action', async () => {
+    const terminalView: CollectionLearningPathView = { ...view, resumePoint: null, path: { ...view.path, mode: 'rolling', learnerStatus: 'up_to_date' } };
+    const facade = { view: signal(terminalView), resume: signal({ pathId: 'path-1', pathStatus: 'up_to_date' as const, resumePoint: null }), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), start: vi.fn() };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: 'collection-1' })) } }] });
+    const fixture = TestBed.createComponent(LearningPathPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const button = (fixture.nativeElement as HTMLElement).querySelector('.primary-action') as HTMLButtonElement;
+    expect(button.textContent).toContain('Up to date');
+    expect(button.disabled).toBe(true);
   });
 });

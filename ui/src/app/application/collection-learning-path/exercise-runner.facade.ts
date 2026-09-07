@@ -3,6 +3,7 @@ import { CollectionLearningPathApiService } from '../../core/collection-learning
 import type {
   CompletedLearningPathExerciseOutcome,
   ExerciseContextView,
+  LearningPathResumeView,
 } from '../../domain/collection-learning-path/learning-path';
 
 function message(error: unknown): string {
@@ -15,6 +16,7 @@ export class ExerciseRunnerFacade {
   private requestVersion = 0;
 
   readonly context = signal<ExerciseContextView | null>(null);
+  readonly resume = signal<LearningPathResumeView | null>(null);
   readonly loading = signal(false);
   readonly error = signal('');
 
@@ -22,14 +24,19 @@ export class ExerciseRunnerFacade {
     const request = ++this.requestVersion;
     this.loading.set(true);
     this.error.set('');
+    this.resume.set(null);
     try {
       let context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
       if (context.state === 'available') {
         await this.api.commandStartExercise(pathId, lessonId, exerciseId);
         context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
       }
+      const resume = context.state === 'completed'
+        ? await this.api.queryResumePoint(pathId)
+        : null;
       if (request !== this.requestVersion) return false;
       this.context.set(context);
+      this.resume.set(resume);
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(message(error));
@@ -46,7 +53,7 @@ export class ExerciseRunnerFacade {
     this.loading.set(true);
     this.error.set('');
     try {
-      await this.api.commandCompleteExercise(
+      const completion = await this.api.commandCompleteExercise(
         current.path.id,
         current.lesson.id,
         current.exercise.id,
@@ -59,6 +66,11 @@ export class ExerciseRunnerFacade {
       );
       if (request !== this.requestVersion) return false;
       this.context.set(refreshed);
+      this.resume.set({
+        pathId: completion.pathId,
+        pathStatus: completion.pathStatus,
+        resumePoint: completion.resumePoint,
+      });
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(message(error));

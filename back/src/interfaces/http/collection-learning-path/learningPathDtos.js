@@ -8,6 +8,14 @@ function progressDto(progress) {
   };
 }
 
+function resumePointDto(resumePoint) {
+  if (!resumePoint) return null;
+  return {
+    lessonId: resumePoint.lessonId,
+    exerciseId: resumePoint.exerciseId,
+  };
+}
+
 export function exerciseDto(exercise) {
   return {
     id: exercise.id,
@@ -53,6 +61,8 @@ export function pathDto(path) {
 
 export function collectionLearningPathDto(view) {
   return {
+    access: { canProgress: Boolean(view.access?.canProgress) },
+    resumePoint: resumePointDto(view.resumePoint),
     path: pathDto(view.path),
     lessons: (view.lessons ?? []).map(lessonDto),
   };
