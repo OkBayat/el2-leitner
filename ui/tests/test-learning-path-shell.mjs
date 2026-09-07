@@ -69,4 +69,19 @@ assert.match(intakeStyles, /--vocora-action-primary/u, 'Vocabulary intake must u
 assert.match(intakeStyles, /--vocora-surface-raised/u, 'Vocabulary intake must use Vocora semantic surfaces.');
 assert.match(intakeStyles, /prefers-reduced-motion/u, 'Vocabulary intake must respect reduced-motion preferences.');
 
+for (const relative of [
+  'src/app/features/collection-learning-path/path-page/learning-path-page.component.scss',
+  'src/app/features/collection-learning-path/components/progress-header/progress-header.component.scss',
+  'src/app/features/collection-learning-path/components/lesson-node/lesson-node.component.scss',
+  'src/app/features/collection-learning-path/components/exercise-node/exercise-node.component.scss',
+]) {
+  const styles = read(relative);
+  assert.doesNotMatch(styles, /#[0-9a-f]{3,8}/iu, `${relative} must not introduce raw feature colors.`);
+  assert.match(styles, /--vocora-/u, `${relative} must consume Vocora semantic design tokens.`);
+}
+
+const globalStyles = read('src/styles.scss');
+assert.ok(exists('src/styles/_vocora-design-system.scss'), 'Vocora design-system token mapping must be available to the product UI.');
+assert.match(globalStyles, /vocora-design-system/u, 'Global styles must load the Vocora design-system token mapping.');
+
 console.log('Learning Path shell architecture checks passed.');
