@@ -165,7 +165,7 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('rolling BBC course changes from Up to date to Continue when a newly synchronized episode appears', async ({ page }) => {
+test('rolling BBC course exposes a ready lesson trail node when a newly synchronized episode appears', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockShell(page);
   let exerciseState: 'available' | 'in_progress' = 'available';
@@ -186,9 +186,9 @@ test('rolling BBC course changes from Up to date to Continue when a newly synchr
   });
 
   await page.goto(`/library/${collectionId}/learning-path`);
-  const primary = page.locator('.learning-path-page__actions .primary-action');
-  await expect(primary).toContainText('Up to date');
-  await expect(primary).toBeDisabled();
+  const pathStatus = page.locator('.path-header__status');
+  await expect(pathStatus).toHaveText('Up to date');
+  await expect(page.getByRole('button', { name: 'Vocabulary intake, Completed' })).toBeDisabled();
   await expect(page.getByText('BBC episode 1')).toBeVisible();
 
   currentView = pathView({
@@ -203,10 +203,12 @@ test('rolling BBC course changes from Up to date to Continue when a newly synchr
   });
   await page.reload();
 
-  await expect(primary).toContainText('Continue');
-  await expect(primary).toBeEnabled();
+  await expect(pathStatus).toHaveText('In progress');
   await expect(page.getByText('BBC episode 1')).toBeVisible();
   await expect(page.getByText('BBC episode 2')).toBeVisible();
-  await primary.click();
+  const readyNode = page.getByRole('button', { name: 'Vocabulary intake, Ready' });
+  await expect(readyNode).toBeEnabled();
+  await expect(readyNode.locator('.exercise-node__flag')).toHaveText('START');
+  await readyNode.click();
   await expect(page).toHaveURL(new RegExp(`/learning-path/${pathId}/lessons/${episodeTwo}/exercises/${intakeTwo}$`, 'u'));
 });
