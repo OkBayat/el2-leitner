@@ -5,9 +5,9 @@
 }
 
 .exercise-node {
-  --node-face: var(--mat-sys-surface-container-highest);
-  --node-side: var(--mat-sys-outline-variant);
-  --node-ink: var(--mat-sys-on-surface-variant);
+  --node-face: var(--vocora-surface-subtle);
+  --node-side: var(--vocora-border);
+  --node-ink: var(--vocora-text-disabled);
   position: relative;
   display: grid;
   width: 72px;
@@ -22,7 +22,7 @@
   cursor: pointer;
   isolation: isolate;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 180ms ease;
+  transition: transform var(--vocora-motion-fast) ease, box-shadow var(--vocora-motion-fast) ease, background var(--vocora-motion-normal) ease;
 }
 
 .exercise-node::before {
@@ -37,15 +37,15 @@
 .exercise-node[data-state='available'],
 .exercise-node[data-state='in_progress'],
 .exercise-node[data-state='completed'] {
-  --node-face: var(--lesson-tone, #70af67);
-  --node-side: var(--lesson-side, #4d8745);
-  --node-ink: white;
+  --node-face: var(--lesson-tone);
+  --node-side: var(--lesson-side);
+  --node-ink: var(--vocora-text-on-strong);
 }
 
 .exercise-node[data-state='locked'] {
-  --node-face: var(--mat-sys-surface-container-highest);
-  --node-side: var(--mat-sys-outline-variant);
-  --node-ink: var(--mat-sys-on-surface-variant);
+  --node-face: var(--vocora-surface-subtle);
+  --node-side: var(--vocora-border);
+  --node-ink: var(--vocora-text-disabled);
 }
 
 .exercise-node:not(:disabled):hover {
@@ -62,7 +62,7 @@
 }
 
 .exercise-node:focus-visible {
-  outline: 3px solid var(--mat-sys-primary);
+  outline: 3px solid var(--vocora-focus-ring);
   outline-offset: 5px;
 }
 
@@ -88,11 +88,11 @@
   min-width: 64px;
   transform: translateX(-50%);
   padding: 7px 10px;
-  border: 2px solid var(--mat-sys-outline-variant);
+  border: 2px solid var(--vocora-border);
   border-bottom-width: 4px;
-  border-radius: 12px;
-  background: var(--mat-sys-surface);
-  color: var(--lesson-ink, var(--mat-sys-on-surface));
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-surface-raised);
+  color: var(--vocora-text-primary);
   font-size: 11px;
   font-weight: 850;
   line-height: 1.2;
@@ -109,9 +109,9 @@
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
-  border-right: 2px solid var(--mat-sys-outline-variant);
-  border-bottom: 2px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface);
+  border-right: 2px solid var(--vocora-border);
+  border-bottom: 2px solid var(--vocora-border);
+  background: var(--vocora-surface-raised);
 }
 
 @media (prefers-reduced-motion: reduce) {
