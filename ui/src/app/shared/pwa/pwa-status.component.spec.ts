@@ -20,4 +20,10 @@ describe('PWA install suggestion', () => {
 		expect(shouldShowPwaInstallSuggestion('/dashboard', 'prompt', false, true, true)).toBe(false);
 		expect(shouldShowPwaInstallSuggestion('/dashboard', 'prompt', false, false, false)).toBe(false);
 	});
+
+	it('keeps the install suggestion eligible while dashboard content remains interactive beneath the passive card', () => {
+		expect(shouldShowPwaInstallSuggestion('/dashboard', 'prompt', false, false, true)).toBe(true);
+		// Pointer-event ownership is intentionally limited to the card actions in the component stylesheet;
+		// the suggestion itself remains visible instead of being disabled to make dashboard clicks work.
+	});
 });
