@@ -3,29 +3,23 @@
 }
 
 .lesson {
-  --lesson-tone: #70af67;
-  --lesson-side: #4d8745;
-  --lesson-ink: #244e25;
+  --lesson-tone: var(--vocora-activity-vocabulary);
+  --lesson-side: color-mix(in srgb, var(--lesson-tone) 74%, black);
+  --lesson-ink: var(--vocora-text-on-strong);
   position: relative;
   scroll-margin-top: calc(var(--shell-header-height, 64px) + 16px);
 }
 
 .lesson[data-palette='purple'] {
-  --lesson-tone: #a190cc;
-  --lesson-side: #7965a5;
-  --lesson-ink: #382956;
+  --lesson-tone: var(--vocora-activity-reading);
 }
 
 .lesson[data-palette='blue'] {
-  --lesson-tone: #66a7ce;
-  --lesson-side: #407fa9;
-  --lesson-ink: #183d57;
+  --lesson-tone: var(--vocora-activity-listening);
 }
 
 .lesson[data-palette='orange'] {
-  --lesson-tone: #ed990d;
-  --lesson-side: #be7209;
-  --lesson-ink: #65400a;
+  --lesson-tone: var(--vocora-activity-writing);
 }
 
 .lesson__header {
@@ -33,7 +27,7 @@
   align-items: center;
   gap: 16px;
   min-height: 68px;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--vocora-text-secondary);
   text-align: center;
 }
 
@@ -42,7 +36,7 @@
   content: '';
   flex: 1;
   height: 2px;
-  background: var(--mat-sys-outline-variant);
+  background: var(--vocora-border);
 }
 
 .lesson__heading {
@@ -75,7 +69,7 @@
   justify-content: flex-start;
   min-height: 82px;
   padding: 12px 16px;
-  border-radius: 18px;
+  border-radius: var(--vocora-radius-lg);
   background: var(--lesson-tone);
   color: var(--lesson-ink);
   box-shadow: 0 5px 0 var(--lesson-side);
@@ -83,7 +77,7 @@
 }
 
 .lesson.is-active .lesson__heading p {
-  color: color-mix(in srgb, var(--lesson-ink) 78%, transparent);
+  color: color-mix(in srgb, var(--lesson-ink) 80%, transparent);
 }
 
 .lesson.is-active .lesson__heading h2 {
@@ -140,9 +134,9 @@
 
 .lesson__empty {
   padding: 20px;
-  border: 1px dashed var(--mat-sys-outline-variant);
-  border-radius: 16px;
-  color: var(--mat-sys-on-surface-variant);
+  border: 1px dashed var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  color: var(--vocora-text-secondary);
   text-align: center;
 }
 
