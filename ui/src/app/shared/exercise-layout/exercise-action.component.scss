@@ -4,6 +4,7 @@
 }
 
 .exercise-action {
+  --exercise-action-shadow: color-mix(in srgb, var(--vocora-action-primary) 68%, var(--vocora-text-primary));
   width: 100%;
   min-height: 52px;
   display: inline-flex;
@@ -21,35 +22,38 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 2px 0 color-mix(in srgb, currentColor 24%, transparent);
+  box-shadow: 0 2px 0 var(--exercise-action-shadow);
   transition: transform var(--vocora-motion-fast), box-shadow var(--vocora-motion-fast), background var(--vocora-motion-fast), border-color var(--vocora-motion-fast);
 }
 
 .exercise-action[data-state='secondary'] {
+  --exercise-action-shadow: var(--vocora-border);
   border-color: color-mix(in srgb, var(--vocora-action-secondary-foreground) 38%, var(--vocora-border));
   background: var(--vocora-action-secondary);
   color: var(--vocora-action-secondary-foreground);
-  box-shadow: 0 2px 0 var(--vocora-border);
 }
 
 .exercise-action[data-state='success'] {
+  --exercise-action-shadow: color-mix(in srgb, var(--vocora-success) 68%, var(--vocora-text-primary));
   background: var(--vocora-success);
   color: var(--vocora-text-on-primary);
 }
 
 .exercise-action[data-state='information'] {
+  --exercise-action-shadow: color-mix(in srgb, var(--vocora-information) 68%, var(--vocora-text-primary));
   background: var(--vocora-information);
   color: var(--vocora-text-on-primary);
 }
 
 .exercise-action[data-state='warning'] {
+  --exercise-action-shadow: color-mix(in srgb, var(--vocora-warning) 52%, var(--vocora-border));
   border-color: var(--vocora-warning);
   background: color-mix(in srgb, var(--vocora-warning) 20%, var(--vocora-surface-base));
   color: var(--vocora-text-primary);
-  box-shadow: 0 2px 0 color-mix(in srgb, var(--vocora-warning) 50%, var(--vocora-border));
 }
 
 .exercise-action[data-state='error'] {
+  --exercise-action-shadow: color-mix(in srgb, var(--vocora-error) 68%, var(--vocora-text-primary));
   background: var(--vocora-error);
   color: var(--vocora-text-on-primary);
 }
