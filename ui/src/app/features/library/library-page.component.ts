@@ -13,6 +13,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {LibraryApiService} from '../../core/library/library-api.service';
 import {
   learningPathPrimaryAction,
@@ -42,6 +43,7 @@ export class LibraryPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialogs = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
+  private readonly selectedCourses = inject(SelectedCoursesFacade);
   private readonly missingCoverSlugs = signal<ReadonlySet<string>>(new Set());
   readonly learningPaths = inject(LibraryLearningPathJourneyFacade);
 
@@ -111,6 +113,7 @@ export class LibraryPageComponent implements OnInit {
       if (this.learningPaths.error()) this.snack.open(this.learningPaths.error(), 'OK', {duration: 3000});
       return;
     }
+    await this.selectedCourses.load();
     if (destination.kind === 'exercise') {
       await this.router.navigate([
         '/learning-path', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
@@ -124,6 +127,7 @@ export class LibraryPageComponent implements OnInit {
     if (collection.subscribed) await this.api.unsubscribe(collection.id);
     else await this.api.subscribe(collection.id);
     await this.load();
+    await this.selectedCourses.load();
   }
 
   async createCollection(): Promise<void> {
