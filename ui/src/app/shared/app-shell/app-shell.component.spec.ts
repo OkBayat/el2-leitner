@@ -2,16 +2,29 @@ import {Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {provideRouter, Router} from '@angular/router';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
 import {addDays, createFreshState, localDay} from '../../domain/learning/learning-rules';
-import type {LearningState} from '../../domain/learning/models';
+import type {LearningState, LibraryCollection} from '../../domain/learning/models';
 import {ShareStoryService} from '../share-story/share-story.service';
 import {AppShellComponent} from './app-shell.component';
 
 @Component({template: ''})
 class EmptyPage {}
+
+const bbcCourse: LibraryCollection = {
+	id: 'bbc-six-minute-english',
+	slug: 'bbc-six-minute-english',
+	title: 'BBC 6 Minute English',
+	kind: 'course',
+	visibility: 'public',
+	status: 'published',
+	contentVersion: 1,
+	wordCount: 0,
+	subscribed: true,
+};
 
 function fixtureState(): LearningState {
 	const day = localDay();
@@ -29,6 +42,10 @@ function fixtureState(): LearningState {
 
 describe('AppShell responsive navigation', () => {
 	const state = signal<LearningState | null>(null);
+	const selectedCourses = signal<LibraryCollection[]>([bbcCourse]);
+	const coursesLoading = signal(false);
+	const coursesError = signal('');
+	const courseLoad = vi.fn(async () => true);
 	const apply = vi.fn();
 	const logout = vi.fn(async () => undefined);
 	const update = vi.fn(async (mutator: (draft: LearningState) => void) => {
@@ -41,17 +58,22 @@ describe('AppShell responsive navigation', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks();
 		state.set(fixtureState());
+		selectedCourses.set([bbcCourse]);
+		coursesLoading.set(false);
+		coursesError.set('');
 		await TestBed.configureTestingModule({
 			imports: [AppShellComponent],
 			providers: [
 				provideRouter([
 					{path: 'dashboard', component: EmptyPage}, {path: 'settings', component: EmptyPage},
-					{path: 'library/:id', component: EmptyPage}, {path: 'reports', component: EmptyPage},
+					{path: 'library/:id', component: EmptyPage}, {path: 'library/:collectionId/learning-path', component: EmptyPage},
+					{path: 'reports', component: EmptyPage},
 				]),
 				{provide: AuthService, useValue: {user: signal({id: 'fixture', email: 'learner@example.test'}), logout}},
 				{provide: LearningStoreService, useValue: {state, initialize: vi.fn(async () => state()!), update}},
 				{provide: ThemeService, useValue: {apply}},
 				{provide: ShareStoryService, useValue: {open: vi.fn()}},
+				{provide: SelectedCoursesFacade, useValue: {courses: selectedCourses, loading: coursesLoading, error: coursesError, load: courseLoad}},
 			],
 		}).compileComponents();
 	});
@@ -73,6 +95,28 @@ describe('AppShell responsive navigation', () => {
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
 		expect(host.querySelector('.mobile-status')).not.toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
+	});
+
+	it('reserves a desktop right rail and mirrors the mobile learning status in it', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		const mobileItems = Array.from(host.querySelectorAll('.mobile-status .status-item'));
+		const desktopItems = Array.from(host.querySelectorAll('[data-testid="desktop-right-rail"] .status-item'));
+		expect(host.querySelector('[data-testid="desktop-workspace"]')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(mobileItems).toHaveLength(4);
+		expect(desktopItems).toHaveLength(4);
+		expect(desktopItems.map(item => item.getAttribute('title'))).toEqual(mobileItems.map(item => item.getAttribute('title')));
+		expect(desktopItems.map(item => item.textContent?.trim())).toEqual(mobileItems.map(item => item.textContent?.trim()));
+	});
+
+	it('turns the course flag into the same course-menu trigger on mobile and desktop', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		expect(host.querySelector('[data-testid="mobile-course-trigger"]')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-course-trigger"]')).not.toBeNull();
+		expect(fixture.componentInstance.courses.courses().map(course => course.title)).toEqual(['BBC 6 Minute English']);
+		expect(courseLoad).toHaveBeenCalledTimes(1);
 	});
 
 	it('keeps the BBC destination directly available instead of hiding it in overflow', async () => {

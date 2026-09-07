@@ -8,7 +8,8 @@
 	color: var(--vocora-nav-text);
 }
 
-.desktop-sidebar {
+.desktop-sidebar,
+.desktop-right-rail {
 	display: none;
 }
 
@@ -51,8 +52,21 @@
 	text-decoration: none;
 	font-variant-numeric: tabular-nums;
 }
+button.status-item {
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	font-family: inherit;
+	cursor: pointer;
+}
 .status-item app-navigation-icon { width: 28px; height: 28px; flex: 0 0 28px; }
 .status-item span { white-space: nowrap; }
+.course-trigger:hover, a.status-item:hover { background: var(--vocora-nav-hover); }
+
+.shell-workspace {
+	min-width: 0;
+}
 
 .content {
 	width: min(1280px, 100%);
@@ -98,7 +112,7 @@
 	background: var(--vocora-nav-active-surface);
 	color: var(--vocora-nav-active-text);
 }
-.mobile-nav a:hover, .mobile-nav button:hover, .sidebar-link:hover, a.status-item:hover {
+.mobile-nav a:hover, .mobile-nav button:hover, .sidebar-link:hover {
 	background: var(--vocora-nav-hover);
 }
 .mobile-nav .active-mobile:hover, .sidebar-link.is-active:hover { background: var(--vocora-nav-active-surface); }
@@ -108,6 +122,60 @@
 a:focus-visible, button:focus-visible {
 	outline: 3px solid var(--vocora-nav-focus);
 	outline-offset: 3px;
+}
+
+.course-menu-content {
+	width: min(300px, calc(100vw - 32px));
+	padding: 4px 0;
+	color: var(--vocora-nav-text);
+}
+.course-menu-heading {
+	padding: 8px 16px 10px;
+	color: var(--vocora-nav-muted);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: .5px;
+}
+.course-menu-state {
+	padding: 14px 16px 16px;
+	color: var(--vocora-nav-muted);
+	font-size: 13px;
+	line-height: 1.4;
+}
+.course-menu-item,
+.course-menu-add {
+	min-height: 56px;
+	color: var(--vocora-nav-text);
+	font-size: 14px;
+	font-weight: 700;
+}
+.course-menu-item:hover,
+.course-menu-add:hover {
+	background: var(--vocora-nav-hover);
+}
+.course-menu-icon {
+	width: 30px;
+	height: 30px;
+	margin-right: 12px;
+	vertical-align: middle;
+}
+.course-menu-divider {
+	margin: 4px 0;
+	border-top: 1px solid var(--vocora-nav-border);
+}
+.course-add-icon {
+	display: inline-grid;
+	width: 28px;
+	height: 28px;
+	place-items: center;
+	margin-right: 12px;
+	border: 2px solid var(--vocora-nav-border);
+	border-radius: 8px;
+	color: var(--vocora-nav-muted);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1;
+	vertical-align: middle;
 }
 
 .account-email {
@@ -201,6 +269,35 @@ a:focus-visible, button:focus-visible {
 	.content { padding: 28px max(24px, var(--safe-area-right, 0px)) 56px 24px; }
 }
 
+@media (min-width: 1024px) {
+	.shell-workspace {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) clamp(220px, 20vw, 320px);
+		gap: 24px;
+		width: min(1440px, 100%);
+		margin: 0 auto;
+		padding: 28px 24px 56px;
+	}
+	.content {
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	.desktop-right-rail {
+		display: block;
+		min-width: 0;
+	}
+	.desktop-status {
+		position: sticky;
+		top: calc(24px + var(--safe-area-top, 0px));
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		align-items: center;
+		min-height: 56px;
+		background: var(--vocora-nav-surface);
+	}
+}
+
 @media (min-width: 1100px) {
 	:host { --shell-sidebar-width: 232px; }
 	.desktop-sidebar { padding-right: 16px; padding-left: calc(16px + var(--safe-area-left, 0px)); }
@@ -208,7 +305,6 @@ a:focus-visible, button:focus-visible {
 	.brand { justify-content: flex-start; padding-left: 12px; }
 	.sidebar-link { justify-content: flex-start; padding-inline: 12px; }
 	.sidebar-summary { justify-content: flex-start; padding-inline: 12px; }
-	.content { padding-inline: 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -31,9 +31,10 @@
 </aside>
 
 <header class="mobile-status" aria-label="Learning status">
-	<span class="status-item" role="img" aria-label="Learning English" title="Learning English">
+	<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
+		aria-label="Open my courses" title="My courses" data-testid="mobile-course-trigger">
 		<app-navigation-icon name="course" /><span>EN</span>
-	</span>
+	</button>
 	<a class="status-item" routerLink="/reports"
 		[attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'" title="Day streak">
 		<app-navigation-icon name="streak" /><span>{{ formatCount(stats()?.streak) }}</span>
@@ -48,9 +49,32 @@
 	</a>
 </header>
 
-<main #mainContent id="main-content" class="content" tabindex="-1">
-	<router-outlet />
-</main>
+<div class="shell-workspace" data-testid="desktop-workspace">
+	<main #mainContent id="main-content" class="content" tabindex="-1">
+		<router-outlet />
+	</main>
+
+	<aside class="desktop-right-rail" data-testid="desktop-right-rail" aria-label="Learning status">
+		<header class="desktop-status">
+			<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
+				aria-label="Open my courses" title="My courses" data-testid="desktop-course-trigger">
+				<app-navigation-icon name="course" /><span>EN</span>
+			</button>
+			<a class="status-item" routerLink="/reports"
+				[attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'" title="Day streak">
+				<app-navigation-icon name="streak" /><span>{{ formatCount(stats()?.streak) }}</span>
+			</a>
+			<a class="status-item" routerLink="/review"
+				[attr.aria-label]="stats() ? stats()!.due + ' words due for review' : 'Loading due words'" title="Words due for review">
+				<app-navigation-icon name="words" /><span>{{ formatCount(stats()?.due) }}</span>
+			</a>
+			<a class="status-item" routerLink="/words"
+				[attr.aria-label]="stats() ? stats()!.mastered + ' mastered words' : 'Loading mastered words'" title="Mastered words">
+				<app-navigation-icon name="progress" /><span>{{ formatCount(stats()?.mastered) }}</span>
+			</a>
+		</header>
+	</aside>
+</div>
 
 <nav class="mobile-nav" aria-label="Mobile navigation">
 	@for (item of mobileNavItems; track item.path) {
@@ -64,6 +88,30 @@
 		<app-navigation-icon name="account" />
 	</button>
 </nav>
+
+<mat-menu #courseMenu="matMenu" [overlapTrigger]="false">
+	<div class="course-menu-content" data-testid="course-menu">
+		<div class="course-menu-heading">MY COURSES</div>
+		@if (courses.loading() && !courses.courses().length) {
+			<div class="course-menu-state">Loading courses…</div>
+		} @else {
+			@for (course of courses.courses(); track course.id) {
+				<a mat-menu-item class="course-menu-item" [routerLink]="['/library', course.id, 'learning-path']"
+					[attr.aria-label]="'Open ' + course.title" [attr.data-course-id]="course.id">
+					<app-navigation-icon class="course-menu-icon" name="course" />
+					<span>{{ course.title }}</span>
+				</a>
+			} @empty {
+				<div class="course-menu-state">No courses selected yet.</div>
+			}
+		}
+		<div class="course-menu-divider" aria-hidden="true"></div>
+		<a mat-menu-item class="course-menu-add" routerLink="/library" data-testid="add-course-link">
+			<span class="course-add-icon" aria-hidden="true">+</span>
+			<span>Add a new course</span>
+		</a>
+	</div>
+</mat-menu>
 
 <mat-menu #moreMenu="matMenu" yPosition="above">
 	<div class="account-email">{{ auth.user()?.email }}</div>
