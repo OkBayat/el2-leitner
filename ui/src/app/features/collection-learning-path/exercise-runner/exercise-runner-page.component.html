@@ -1,47 +1,30 @@
-<main class="runner" [class.runner--slide]="usesSlideExerciseChrome()" data-testid="learning-path-runner">
-  @if (!usesSlideExerciseChrome()) {
-    <header class="runner__topbar">
-      <a [routerLink]="backLink()" class="runner__back" aria-label="Back to Learning Path">←</a>
-      @if (facade.context(); as context) {
-        <div class="runner__heading">
-          <strong>{{ context.lesson.title }}</strong>
-          <span>{{ exerciseLabel() }}</span>
-        </div>
-        <span class="runner__status">{{ stateLabel() }}</span>
-      } @else {
-        <div class="runner__heading"><strong>Learning Path</strong><span>Exercise</span></div>
-      }
-    </header>
-  }
-
-  <section
-    class="runner__workspace"
-    [class.runner__workspace--slide]="usesSlideExerciseChrome()"
-    [attr.aria-busy]="facade.loading()"
-  >
-    @if (facade.loading() && !facade.context()) {
+<main class="runner" data-testid="learning-path-runner" [attr.aria-busy]="facade.loading()">
+  @if (facade.loading() && !facade.context()) {
+    <section class="runner__workspace">
       <div class="runner-card" aria-live="polite">
         <span class="runner-spinner" aria-hidden="true"></span>
         <h1>Preparing exercise…</h1>
       </div>
-    } @else if (facade.error() && !facade.context()) {
+    </section>
+  } @else if (facade.error() && !facade.context()) {
+    <section class="runner__workspace">
       <div class="runner-card runner-card--error" role="alert">
         <h1>Exercise unavailable</h1>
         <p>{{ facade.error() }}</p>
         <button type="button" (click)="retry()">Try again</button>
       </div>
-    } @else if (facade.context(); as context) {
-      @if (facade.error()) {
-        <div class="runner-inline-error" role="status">{{ facade.error() }} <button type="button" (click)="retry()">Retry</button></div>
-      }
-
-      @if (context.state === 'locked') {
+    </section>
+  } @else if (facade.context(); as context) {
+    @if (context.state === 'locked') {
+      <section class="runner__workspace">
         <div class="runner-card">
           <span class="runner-card__marker" aria-hidden="true">·</span>
           <h1>This exercise is locked</h1>
           <p>Complete the required exercises before this one to continue.</p>
         </div>
-      } @else if (context.state === 'completed') {
+      </section>
+    } @else if (context.state === 'completed') {
+      <section class="runner__workspace">
         <div class="runner-card">
           <span class="runner-card__marker" aria-hidden="true">✓</span>
           <h1>Exercise completed</h1>
@@ -59,12 +42,17 @@
             <button type="button" data-testid="learning-path-back-to-course" (click)="continueJourney()">Back to course</button>
           }
         </div>
-      } @else {
+      </section>
+    } @else {
+      <section class="runner__exercise">
+        @if (facade.error()) {
+          <div class="runner-inline-error" role="status">{{ facade.error() }} <button type="button" (click)="retry()">Retry</button></div>
+        }
         <app-learning-path-exercise-host
           [context]="context"
           (outcome)="onExerciseOutcome($event)"
         />
-      }
+      </section>
     }
-  </section>
+  }
 </main>
