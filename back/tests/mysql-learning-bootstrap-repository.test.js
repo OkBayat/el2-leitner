@@ -118,8 +118,12 @@ describe("MySqlLearningBootstrapRepository", () => {
     assert.match(wordQuery.sql, /FROM user_collections uc[\s\S]*WHERE uc\.user_id = \?/u,
       "collection metadata must remain restricted to the learner's active subscriptions");
     assert.match(wordQuery.sql, /LEFT JOIN user_vocabulary_progress uvp[\s\S]*uvp\.user_id = \?/u,
-      "persisted Leitner progress must be visible without requiring a collection subscription");
-    assert.match(wordQuery.sql, /source\.user_id IS NOT NULL OR uvp\.user_id IS NOT NULL/u);
+      "Learning Path progress must be readable without a second collection subscription");
+    assert.match(
+      wordQuery.sql,
+      /source\.user_id IS NOT NULL[\s\S]*uvp\.user_id IS NOT NULL AND uvp\.introduced_via = 'learning-path'/u,
+      "only Learning Path-owned progress may remain visible without active collection membership",
+    );
     assert.deepEqual(wordQuery.parameters, [7, 7]);
   });
 });
