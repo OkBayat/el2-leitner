@@ -1,0 +1,16 @@
+@mixin apply() {
+  :root {
+    --bs-primary: var(--vocora-action-primary);
+    --bs-primary-rgb: var(--vocora-action-primary-rgb);
+    --bs-secondary: var(--vocora-text-secondary);
+    --bs-secondary-rgb: var(--vocora-text-secondary-rgb);
+    --bs-success: var(--vocora-success);
+    --bs-success-rgb: var(--vocora-success-rgb);
+    --bs-info: var(--vocora-information);
+    --bs-info-rgb: var(--vocora-information-rgb);
+    --bs-warning: var(--vocora-warning);
+    --bs-warning-rgb: var(--vocora-warning-rgb);
+    --bs-danger: var(--vocora-error);
+    --bs-danger-rgb: var(--vocora-error-rgb);
+  }
+}

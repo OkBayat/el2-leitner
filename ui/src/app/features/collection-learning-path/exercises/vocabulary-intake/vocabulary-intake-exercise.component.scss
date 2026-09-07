@@ -11,6 +11,13 @@
   color: var(--vocora-text-primary);
 }
 
+.intake--slide {
+  width: 100%;
+  min-height: 100dvh;
+  gap: 0;
+  background: var(--vocora-surface-page);
+}
+
 .intake__header {
   display: grid;
   gap: var(--vocora-space-2);
@@ -84,21 +91,10 @@
   font-weight: 700;
 }
 
-.word-state[data-state='new'] {
-  color: var(--vocora-not-started);
-}
-
-.word-state[data-state='learning'] {
-  color: var(--vocora-leitner-active);
-}
-
-.word-state[data-state='mastered'] {
-  color: var(--vocora-mastered);
-}
-
-.word-state[data-state='excluded'] {
-  color: var(--vocora-disabled);
-}
+.word-state[data-state='new'] { color: var(--vocora-not-started); }
+.word-state[data-state='learning'] { color: var(--vocora-leitner-active); }
+.word-state[data-state='mastered'] { color: var(--vocora-mastered); }
+.word-state[data-state='excluded'] { color: var(--vocora-disabled); }
 
 .word-card__example {
   padding-inline-start: var(--vocora-space-3);
@@ -130,19 +126,9 @@
   transition: background var(--vocora-motion-fast) ease;
 }
 
-.intake__primary:hover:not(:disabled) {
-  background: var(--vocora-action-primary-hover);
-}
-
-.intake__primary:focus-visible {
-  outline: 3px solid var(--vocora-focus-ring);
-  outline-offset: 2px;
-}
-
-.intake__primary:disabled {
-  cursor: not-allowed;
-  opacity: 0.62;
-}
+.intake__primary:hover:not(:disabled) { background: var(--vocora-action-primary-hover); }
+.intake__primary:focus-visible { outline: 3px solid var(--vocora-focus-ring); outline-offset: 2px; }
+.intake__primary:disabled { cursor: not-allowed; opacity: 0.62; }
 
 .intake__empty {
   display: grid;
@@ -153,21 +139,27 @@
   background: var(--vocora-surface-raised);
 }
 
+.intake__empty--slide {
+  width: min(560px, calc(100% - (2 * var(--vocora-space-4))));
+  min-height: 100dvh;
+  margin: 0 auto;
+  place-content: center;
+  text-align: center;
+  border: 0;
+  background: transparent;
+}
+
+.intake__empty--slide p { color: var(--vocora-error); }
+
 @media (min-width: 720px) {
-  .word-card {
-    padding: var(--vocora-space-5);
-  }
+  .word-card { padding: var(--vocora-space-5); }
 }
 
 @media (max-width: 480px) {
   .intake__actions,
-  .intake__primary {
-    width: 100%;
-  }
+  .intake__primary { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intake__primary {
-    transition: none;
-  }
+  .intake__primary { transition: none; }
 }

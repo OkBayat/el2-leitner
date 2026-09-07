@@ -54,12 +54,12 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
        FROM collection_learning_paths p
        WHERE p.public_id = ?
        ON DUPLICATE KEY UPDATE
-         status = IF(revision = ?, VALUES(status), status),
-         started_at = IF(revision = ?, LEAST(started_at, VALUES(started_at)), started_at),
-         completed_at = IF(revision = ?, VALUES(completed_at), completed_at),
-         last_activity_at = IF(revision = ?, GREATEST(last_activity_at, VALUES(last_activity_at)), last_activity_at),
-         last_seen_content_version = IF(revision = ?, GREATEST(last_seen_content_version, VALUES(last_seen_content_version)), last_seen_content_version),
-         revision = IF(revision = ?, revision + 1, revision)`,
+         status = IF(user_learning_path_progress.revision = ?, VALUES(status), user_learning_path_progress.status),
+         started_at = IF(user_learning_path_progress.revision = ?, LEAST(user_learning_path_progress.started_at, VALUES(started_at)), user_learning_path_progress.started_at),
+         completed_at = IF(user_learning_path_progress.revision = ?, VALUES(completed_at), user_learning_path_progress.completed_at),
+         last_activity_at = IF(user_learning_path_progress.revision = ?, GREATEST(user_learning_path_progress.last_activity_at, VALUES(last_activity_at)), user_learning_path_progress.last_activity_at),
+         last_seen_content_version = IF(user_learning_path_progress.revision = ?, GREATEST(user_learning_path_progress.last_seen_content_version, VALUES(last_seen_content_version)), user_learning_path_progress.last_seen_content_version),
+         revision = IF(user_learning_path_progress.revision = ?, user_learning_path_progress.revision + 1, user_learning_path_progress.revision)`,
       [
         progress.userId,
         progress.status,

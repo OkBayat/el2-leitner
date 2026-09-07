@@ -29,7 +29,14 @@ describe("MySQL Learning Path progress optimistic concurrency", () => {
     const result = await repository.upsertPathProgress(progress(4));
 
     assert.equal(result.conflict, true);
-    assert.match(calls[0].sql, /revision = IF\(revision = \?, revision \+ 1, revision\)/u);
+    assert.match(
+      calls[0].sql,
+      /status = IF\(user_learning_path_progress\.revision = \?, VALUES\(status\), user_learning_path_progress\.status\)/u,
+    );
+    assert.match(
+      calls[0].sql,
+      /revision = IF\(user_learning_path_progress\.revision = \?, user_learning_path_progress\.revision \+ 1, user_learning_path_progress\.revision\)/u,
+    );
     assert.equal(calls[0].parameters.at(-1), 4);
   });
 

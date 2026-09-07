@@ -1,6 +1,7 @@
 import {
   ensureLearningPathReadAccess,
   loadPathById,
+  progressRevision,
   projectedPathForUser,
   requireProjectedExercise,
   requireProjectedLesson,
@@ -17,7 +18,7 @@ export class GetExerciseContext {
   async execute(userId, pathId, lessonId, exerciseId) {
     const path = await loadPathById(this.definitionReader, pathId);
     await ensureLearningPathReadAccess(this.accessReader, userId, path);
-    const { projected } = await projectedPathForUser({
+    const { progress, projected } = await projectedPathForUser({
       progressReader: this.progressReader,
       userId,
       path,
@@ -31,7 +32,10 @@ export class GetExerciseContext {
       exercise,
     });
     return {
-      path: projected.path,
+      path: {
+        ...projected.path,
+        progressRevision: progressRevision(progress),
+      },
       lesson,
       exercise,
       progress: exercise.progress,

@@ -1,4 +1,18 @@
-:host, .slide-content-host { display: block; width: 100%; min-height: 100%; }
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.slide-content-host {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  align-items: safe center;
+}
+
 .slide-content-host__status { min-height: 240px; display: grid; place-items: center; align-content: center; gap: var(--vocora-space-3); color: var(--vocora-text-secondary); text-align: center; }
 .slide-content-host__status--error { color: var(--vocora-error); }
 .slide-content-host__status button { min-height: var(--vocora-touch-target-min); padding: 0 var(--vocora-space-4); border: 1px solid var(--vocora-border); border-radius: var(--vocora-radius-md); background: var(--vocora-surface-base); color: var(--vocora-text-primary); cursor: pointer; }

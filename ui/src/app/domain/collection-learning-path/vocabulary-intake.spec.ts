@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { parseVocabularyIntakePayload, vocabularyIntakeStateLabel } from './vocabulary-intake';
+import {
+  parseVocabularyIntakePayload,
+  vocabularyIntakeNeedsPractice,
+  vocabularyIntakePracticeItems,
+  vocabularyIntakeStateLabel,
+} from './vocabulary-intake';
 
 const payload = {
   scope: { kind: 'listening-episode', ref: 'episode-1' },
@@ -36,5 +41,23 @@ describe('vocabulary intake payload', () => {
     expect(() => parseVocabularyIntakePayload({ ...payload, summary: { ...payload.summary, total: 3 } })).toThrow(
       'Invalid vocabulary intake payload.',
     );
+  });
+
+  it('practices new and Box 1 words while leaving later Leitner boxes out', () => {
+    const candidates = [
+      { ...payload.items[0], progress: { state: 'new' as const, box: 0 } },
+      { ...payload.items[0], id: 'box-1', progress: { state: 'learning' as const, box: 1 } },
+      { ...payload.items[0], id: 'box-2', progress: { state: 'learning' as const, box: 2 } },
+      { ...payload.items[0], id: 'done', progress: { state: 'mastered' as const, box: 5 } },
+      { ...payload.items[0], id: 'excluded', progress: { state: 'excluded' as const, box: 0 } },
+    ];
+    expect(candidates.map(vocabularyIntakeNeedsPractice)).toEqual([true, true, false, false, false]);
+
+    const parsed = parseVocabularyIntakePayload({
+      scope: payload.scope,
+      items: candidates,
+      summary: { total: 5, newCount: 1, learningCount: 2, masteredCount: 1, excludedCount: 1 },
+    });
+    expect(vocabularyIntakePracticeItems(parsed).map((item) => item.id)).toEqual(['v-1', 'box-1']);
   });
 });

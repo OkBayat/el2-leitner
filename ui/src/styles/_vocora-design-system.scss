@@ -9,20 +9,26 @@
 
     --vocora-text-primary: #18201b;
     --vocora-text-secondary: #59635c;
+    --vocora-text-secondary-rgb: 89, 99, 92;
     --vocora-text-disabled: #a7b2aa;
     --vocora-text-on-primary: #ffffff;
     --vocora-text-on-strong: #ffffff;
 
     --vocora-action-primary: #258a49;
+    --vocora-action-primary-rgb: 37, 138, 73;
     --vocora-action-primary-hover: #176437;
     --vocora-action-secondary: #effbf3;
     --vocora-action-secondary-foreground: #176437;
     --vocora-focus-ring: #086f6b;
 
     --vocora-success: #258a49;
+    --vocora-success-rgb: 37, 138, 73;
     --vocora-information: #2563eb;
+    --vocora-information-rgb: 37, 99, 235;
     --vocora-warning: #e99a00;
+    --vocora-warning-rgb: 233, 154, 0;
     --vocora-error: #d83a3a;
+    --vocora-error-rgb: 216, 58, 58;
     --vocora-mastered: #258a49;
     --vocora-leitner-active: #2563eb;
     --vocora-not-started: #7c4ddb;
@@ -53,20 +59,26 @@
 
     --vocora-text-primary: #f0f7f2;
     --vocora-text-secondary: #a9b8ad;
+    --vocora-text-secondary-rgb: 169, 184, 173;
     --vocora-text-disabled: #6f7d73;
     --vocora-text-on-primary: #08130b;
     --vocora-text-on-strong: #f6fff8;
 
     --vocora-action-primary: #65d780;
+    --vocora-action-primary-rgb: 101, 215, 128;
     --vocora-action-primary-hover: #7de392;
     --vocora-action-secondary: #274b35;
     --vocora-action-secondary-foreground: #ddf7e5;
     --vocora-focus-ring: #42bdb4;
 
     --vocora-success: #65d780;
+    --vocora-success-rgb: 101, 215, 128;
     --vocora-information: #6ea8fe;
+    --vocora-information-rgb: 110, 168, 254;
     --vocora-warning: #ffc45a;
+    --vocora-warning-rgb: 255, 196, 90;
     --vocora-error: #ff7b7b;
+    --vocora-error-rgb: 255, 123, 123;
     --vocora-mastered: #65d780;
     --vocora-leitner-active: #6ea8fe;
     --vocora-not-started: #a98bff;
@@ -89,6 +101,8 @@
   }
 
   :root {
+    --vocora-neutral-black: #000000;
+
     --vocora-space-1: 4px;
     --vocora-space-2: 8px;
     --vocora-space-3: 12px;

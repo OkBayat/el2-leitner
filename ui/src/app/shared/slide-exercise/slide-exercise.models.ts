@@ -85,6 +85,12 @@ export interface SlideExerciseActionEvent {
   readonly slot: 'primary' | 'secondary';
 }
 
+export interface SlideExerciseContentEvent<TData = unknown> {
+  readonly slideId: string;
+  readonly type: string;
+  readonly data?: TData;
+}
+
 export interface SlideExerciseSlideChange {
   readonly index: number;
   readonly slideId: string;

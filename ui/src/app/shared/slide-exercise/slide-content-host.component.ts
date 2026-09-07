@@ -15,7 +15,7 @@ import {
   inject,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import type { SlideContentComponent } from './slide-content-contracts';
+import type { SlideContentComponent, SlideContentEvent } from './slide-content-contracts';
 import type { SlideContentRegistry } from './slide-content-registry';
 import type { SlideExerciseRuntimeState, SlideExerciseSlide } from './slide-exercise.models';
 
@@ -30,6 +30,7 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) slide!: SlideExerciseSlide;
   @Input({ required: true }) registry!: SlideContentRegistry;
   @Output() readonly stateChange = new EventEmitter<SlideExerciseRuntimeState>();
+  @Output() readonly event = new EventEmitter<SlideContentEvent>();
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
 
   rendererLoading = false;
@@ -38,6 +39,7 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
   private readonly changeDetector = inject(ChangeDetectorRef);
   private componentRef: ComponentRef<SlideContentComponent> | null = null;
   private stateSubscription: Subscription | null = null;
+  private eventSubscription: Subscription | null = null;
   private initialized = false;
   private renderVersion = 0;
 
@@ -61,6 +63,10 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
 
   handleAction(actionId: string): void {
     this.componentRef?.instance.handleAction?.(actionId);
+  }
+
+  handleShortcut(key: string): void {
+    this.componentRef?.instance.handleShortcut?.(key);
   }
 
   private async render(): Promise<void> {
@@ -89,6 +95,8 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
       });
       const stateChange = this.componentRef.instance.stateChange;
       if (stateChange) this.stateSubscription = stateChange.subscribe((state) => this.stateChange.emit(state));
+      const event = this.componentRef.instance.event;
+      if (event) this.eventSubscription = event.subscribe((value) => this.event.emit(value));
       this.rendererLoading = false;
       this.changeDetector.markForCheck();
     } catch {
@@ -102,6 +110,8 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
   private disposeRenderer(): void {
     this.stateSubscription?.unsubscribe();
     this.stateSubscription = null;
+    this.eventSubscription?.unsubscribe();
+    this.eventSubscription = null;
     this.outlet?.clear();
     this.componentRef = null;
   }

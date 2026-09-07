@@ -7,6 +7,11 @@ Read the repository root `AGENTS.md` first. It is the repository-wide source of 
 Use the smallest applicable existing skill.
 
 - `k2-principles`: mandatory once at the start of every mutation task before any code, docs, tests, configuration, workflow, architecture, schema, contract, data-model, migration, or agent-skill change. Select only the smallest relevant principle set, read only those references, state why each applies, then return execution to the owning workflow. Read-only investigation, explanation, and review do not require it unless a mutation is requested.
+- `k2-skill-architecture`: mandatory after `k2-principles` when creating, changing, moving, or deleting a skill or shared skill asset. It owns skill boundaries, deterministic ownership, phased-workflow structure, and skill architecture validation.
+- `k2-skill-script-architecture`: additionally mandatory before changing executable JavaScript or TypeScript under `.agents/skills/**/scripts/**`. It owns module limits, dependency-cycle checks, and script architecture validation.
+- `k2-task-delivery`: use for multi-stage implementation requests that span several behaviors, contracts, files, test surfaces, documentation changes, or authorized publication gates.
+- `k2-worktree-first`: explicit-only. Use only when the user directly names `k2-worktree-first` or `$k2-worktree-first`; do not infer it from ordinary isolation or branch intent.
+- `k2-pre-push-review-loop`: use when an owning workflow requires an exact-range, identity-bound review before authorized publication. It routes review requests through `k2-requesting-code-review` and feedback evaluation through `k2-receiving-code-review`.
 - `vocora-bbc-listening-bundles`: use when the user asks to find, prepare, validate, or return one or more BBC 6 Minute English episode ZIP bundles by exact date, inclusive date range, title, or official episode URL. Also use it to review or redesign existing BBC listening questions and their quality rules; read its IELTS design reference before authoring. It owns multi-episode discovery orchestration, exact requested test counts/difficulty distribution, episode assets, episode vocabulary, source-reference/full-transcript handling, canonical packaging, and one-ZIP-per-episode delivery.
 
 Do not use the BBC bundle skill for normal listening UI implementation, database migrations, generic vocabulary collection editing, or deployment unless the request also asks to prepare episode bundles.
@@ -16,11 +21,12 @@ Do not use the BBC bundle skill for normal listening UI implementation, database
 When creating or changing a skill:
 
 1. Follow the `Agent skill architecture` section in the root `AGENTS.md`.
-2. Apply `k2-principles` first, then keep the task-specific skill as the execution owner.
+2. Apply `k2-principles` first and `k2-skill-architecture` second, then keep the task-specific skill as the execution owner.
 3. Keep `SKILL.md` as the initial router/invariant contract.
 4. Keep repeatable parsing, planning, validation, and artifact checks script-owned.
 5. Keep source interpretation and language/content judgment agent-owned.
 6. Add focused deterministic tests with executable skill scripts.
-7. Run the skill-owned validator and focused tests before finalizing.
+7. For executable JavaScript or TypeScript skill scripts, also apply `k2-skill-script-architecture`.
+8. Run focused tests, the skill-owned validator, and the applicable architecture validators before finalizing.
 
 Do not copy another repository's project-specific policy into Vocora. Reuse the structural pattern only and keep Vocora's own contracts authoritative.

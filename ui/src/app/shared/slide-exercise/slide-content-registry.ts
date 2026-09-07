@@ -33,6 +33,16 @@ export function createDefaultSlideContentRegistry(): SlideContentRegistry {
       .then((module) => module.MessageSlideContentComponent),
   });
   registry.register({
+    type: 'multiple-choice',
+    chromeDefaults: {
+      footer: {
+        primary: { id: 'check', label: 'Check', behavior: 'content', disabled: true },
+      },
+    },
+    loadComponent: () => import('./content/multiple-choice-slide-content.component')
+      .then((module) => module.MultipleChoiceSlideContentComponent),
+  });
+  registry.register({
     type: 'summary',
     chromeDefaults: { header: { visible: false } },
     loadComponent: () => import('./content/summary-slide-content.component')
