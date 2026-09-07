@@ -1,5 +1,6 @@
 import { LearningPathVocabularyIntakeReader } from "../../../../application/collection-learning-path/ports/LearningPathVocabularyIntakeReader.js";
 import { NotFoundError } from "../../../../domain/errors.js";
+import { VOCABULARY_SCOPE_KIND } from "../../../../domain/collection-learning-path/VocabularyExerciseScope.js";
 
 function dayValue(value) {
   if (!value) return null;
@@ -22,6 +23,13 @@ function collect(rows, key) {
   return values;
 }
 
+function scopeNotFound() {
+  throw new NotFoundError(
+    "LEARNING_PATH_VOCABULARY_SCOPE_NOT_FOUND",
+    "The configured vocabulary scope was not found.",
+  );
+}
+
 export class MySqlLearningPathVocabularyIntakeQueryRepository extends LearningPathVocabularyIntakeReader {
   constructor(pool) {
     super();
@@ -29,27 +37,11 @@ export class MySqlLearningPathVocabularyIntakeQueryRepository extends LearningPa
   }
 
   async findForScope(userId, scope) {
-    if (scope.kind !== "listening-episode") {
-      throw new Error(`Unsupported Learning Path vocabulary scope: ${scope.kind}`);
-    }
-    const [scopeRows] = await this.pool.execute(
-      `SELECT l.public_id AS episode_public_id, c.id AS collection_id, c.public_id AS collection_public_id
-       FROM listening_lessons l
-       JOIN collections c ON c.public_id = l.vocabulary_collection_id
-       WHERE l.public_id = ?
-         AND l.status = 'published'
-         AND c.status = 'published'
-         AND c.archived_at IS NULL
-       LIMIT 1`,
-      [scope.ref],
-    );
-    const resolved = scopeRows[0];
-    if (!resolved) {
-      throw new NotFoundError(
-        "LEARNING_PATH_VOCABULARY_SCOPE_NOT_FOUND",
-        "The configured vocabulary scope was not found.",
-      );
-    }
+    const resolved = await this.#resolveScope(scope);
+    const sectionClause = resolved.sectionId == null ? "" : " AND ce.section_id = ?";
+    const scopeParameters = resolved.sectionId == null
+      ? [resolved.collectionId]
+      : [resolved.collectionId, resolved.sectionId];
 
     const [entryRows] = await this.pool.execute(
       `SELECT ce.id AS collection_entry_id, ve.public_id AS vocabulary_id,
@@ -62,32 +54,32 @@ export class MySqlLearningPathVocabularyIntakeQueryRepository extends LearningPa
          ON ve.id = ce.vocabulary_entry_id AND ve.status = 'active'
        LEFT JOIN user_vocabulary_progress uvp
          ON uvp.vocabulary_entry_id = ve.id AND uvp.user_id = ?
-       WHERE ce.collection_id = ? AND ce.removed_at IS NULL
+       WHERE ce.collection_id = ?${sectionClause} AND ce.removed_at IS NULL
        ORDER BY ce.position, ce.id`,
-      [userId, resolved.collection_id],
+      [userId, ...scopeParameters],
     );
     const [definitionRows] = await this.pool.execute(
       `SELECT d.collection_entry_id, d.definition_text
        FROM collection_entry_definitions d
        JOIN collection_entries ce ON ce.id = d.collection_entry_id
-       WHERE ce.collection_id = ? AND ce.removed_at IS NULL
+       WHERE ce.collection_id = ?${sectionClause} AND ce.removed_at IS NULL
        ORDER BY d.position, d.id`,
-      [resolved.collection_id],
+      scopeParameters,
     );
     const [exampleRows] = await this.pool.execute(
       `SELECT e.collection_entry_id, s.sentence_text
        FROM collection_entry_examples e
        JOIN collection_entries ce ON ce.id = e.collection_entry_id
        JOIN sentences s ON s.id = e.sentence_id
-       WHERE ce.collection_id = ? AND ce.removed_at IS NULL
+       WHERE ce.collection_id = ?${sectionClause} AND ce.removed_at IS NULL
        ORDER BY e.position, e.sentence_id`,
-      [resolved.collection_id],
+      scopeParameters,
     );
     const definitions = collect(definitionRows, "definition_text");
     const examples = collect(exampleRows, "sentence_text");
 
     return {
-      collectionId: resolved.collection_public_id,
+      collectionId: resolved.collectionPublicId,
       items: entryRows.map((row) => ({
         vocabularyId: row.vocabulary_id,
         term: row.term,
@@ -101,5 +93,49 @@ export class MySqlLearningPathVocabularyIntakeQueryRepository extends LearningPa
         },
       })),
     };
+  }
+
+  async #resolveScope(scope) {
+    if (scope.kind === VOCABULARY_SCOPE_KIND.LISTENING_EPISODE) {
+      const [rows] = await this.pool.execute(
+        `SELECT l.public_id AS episode_public_id, c.id AS collection_id, c.public_id AS collection_public_id
+         FROM listening_lessons l
+         JOIN collections c ON c.public_id = l.vocabulary_collection_id
+         WHERE l.public_id = ?
+           AND l.status = 'published'
+           AND c.status = 'published'
+           AND c.archived_at IS NULL
+         LIMIT 1`,
+        [scope.ref],
+      );
+      if (!rows[0]) scopeNotFound();
+      return {
+        collectionId: rows[0].collection_id,
+        collectionPublicId: rows[0].collection_public_id,
+        sectionId: null,
+      };
+    }
+
+    if (scope.kind === VOCABULARY_SCOPE_KIND.COLLECTION_SECTION) {
+      const [rows] = await this.pool.execute(
+        `SELECT cs.id AS section_id, cs.public_id AS section_public_id,
+                c.id AS collection_id, c.public_id AS collection_public_id
+         FROM collection_sections cs
+         JOIN collections c ON c.id = cs.collection_id
+         WHERE cs.public_id = ?
+           AND c.status = 'published'
+           AND c.archived_at IS NULL
+         LIMIT 1`,
+        [scope.ref],
+      );
+      if (!rows[0]) scopeNotFound();
+      return {
+        collectionId: rows[0].collection_id,
+        collectionPublicId: rows[0].collection_public_id,
+        sectionId: rows[0].section_id,
+      };
+    }
+
+    throw new Error(`Unsupported Learning Path vocabulary scope: ${scope.kind}`);
   }
 }
