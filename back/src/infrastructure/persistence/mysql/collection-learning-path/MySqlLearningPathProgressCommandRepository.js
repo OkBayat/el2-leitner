@@ -2,6 +2,15 @@ import { LearningPathProgressWriter } from "../../../../application/collection-l
 
 const executor = (pool, options) => options?.connection ?? pool;
 
+function timestampParameter(value) {
+  if (value == null) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new TypeError("Learning Path progress timestamp must be a valid date.");
+  }
+  return date;
+}
+
 export class MySqlLearningPathProgressCommandRepository extends LearningPathProgressWriter {
   constructor(pool) {
     super();
@@ -25,9 +34,9 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
       [
         progress.userId,
         progress.status,
-        progress.startedAt,
-        progress.completedAt ?? null,
-        progress.lastActivityAt,
+        timestampParameter(progress.startedAt),
+        timestampParameter(progress.completedAt),
+        timestampParameter(progress.lastActivityAt),
         progress.lastSeenContentVersion ?? 0,
         progress.pathId,
       ],
@@ -51,9 +60,9 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
       [
         progress.userId,
         progress.status,
-        progress.startedAt,
-        progress.completedAt ?? null,
-        progress.lastActivityAt,
+        timestampParameter(progress.startedAt),
+        timestampParameter(progress.completedAt),
+        timestampParameter(progress.lastActivityAt),
         progress.lessonId,
       ],
     );
@@ -78,9 +87,9 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
       [
         progress.userId,
         progress.status,
-        progress.startedAt,
-        progress.completedAt ?? null,
-        progress.lastActivityAt,
+        timestampParameter(progress.startedAt),
+        timestampParameter(progress.completedAt),
+        timestampParameter(progress.lastActivityAt),
         progress.evidenceType ?? null,
         progress.evidenceRef ?? null,
         progress.exerciseId,
