@@ -92,9 +92,20 @@ export class ReviewSessionService {
   }
 
   async startScopedBoxOne(ids: readonly string[]): Promise<boolean> {
+    return this.startScopedBoxOneSession(ids, 'learning-path.quick-review', false);
+  }
+
+  async openLearningPathSpelling(ids: readonly string[], sessionId: string): Promise<boolean> {
     await this.store.initialize();
-    const state = this.store.snapshot();
-    const requested = new Set(ids.map(String));
+    const normalizedSessionId = String(sessionId ?? '').trim();
+    const requestedIds = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
+    if (!normalizedSessionId || requestedIds.length === 0) return false;
+    const wordsById = new Map(this.store.snapshot().words.map((word) => [String(word.id), word] as const));
+    const queue = requestedIds.flatMap((id) => wordsById.get(id)?.box === 1 ? [id] : []);
+    if (queue.length !== requestedIds.length) {
+      await this.learningApi.abandonSession(normalizedSessionId, 0);
+      return false;
+    }
     this.mode = 'box1';
     this.repeatBoxOneCycle = false;
     this.remediationEnabled = false;
@@ -103,10 +114,32 @@ export class ReviewSessionService {
     this.rechecks.clear();
     this.remediationAttempt = null;
     this.currentRecheck = null;
-    this.queue = state.words
-      .filter((word) => requested.has(String(word.id)) && word.box === 1)
-      .map((word) => word.id);
-    return this.openBackendSession('learning-path.quick-review', this.queue);
+    this.queue = queue;
+    return this.openExistingBackendSession(normalizedSessionId, this.queue);
+  }
+
+  private async startScopedBoxOneSession(
+    ids: readonly string[],
+    sessionMode: string,
+    preserveRequestedOrder: boolean,
+  ): Promise<boolean> {
+    await this.store.initialize();
+    const state = this.store.snapshot();
+    const requestedIds = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
+    const requested = new Set(requestedIds);
+    this.mode = 'box1';
+    this.repeatBoxOneCycle = false;
+    this.remediationEnabled = false;
+    this.completedSessionIdSignal.set(null);
+    this.freePracticeSignal.set(true);
+    this.rechecks.clear();
+    this.remediationAttempt = null;
+    this.currentRecheck = null;
+    const wordsById = new Map(state.words.map((word) => [String(word.id), word] as const));
+    this.queue = preserveRequestedOrder
+      ? requestedIds.flatMap((id) => wordsById.get(id)?.box === 1 ? [id] : [])
+      : state.words.filter((word) => requested.has(String(word.id)) && word.box === 1).map((word) => word.id);
+    return this.openBackendSession(sessionMode, this.queue);
   }
 
   async startScopedMasteryCheck(ids: readonly string[], sessionId: string): Promise<boolean> {

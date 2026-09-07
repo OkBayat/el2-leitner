@@ -41,7 +41,8 @@ export class ExerciseRunnerFacade {
         await this.api.commandStartExercise(pathId, lessonId, exerciseId, context.path.progressRevision ?? 0);
         context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
       }
-      if (context.exercise.type === 'vocabulary.quick-review') {
+      if (context.exercise.type === 'vocabulary.quick-review'
+        || context.exercise.completionPolicy === 'vocabulary-spelling') {
         await this.learningStore.refreshAfterSubscriptionChange();
       }
       const resume = context.state === 'completed'

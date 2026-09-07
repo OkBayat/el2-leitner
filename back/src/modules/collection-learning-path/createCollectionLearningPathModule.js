@@ -3,6 +3,7 @@ import { CompleteExercise } from "../../application/collection-learning-path/com
 import { StartExercise } from "../../application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../../application/collection-learning-path/commands/StartLearningPath.js";
 import { StartVocabularyMasteryCheck } from "../../application/collection-learning-path/commands/StartVocabularyMasteryCheck.js";
+import { StartVocabularySpelling } from "../../application/collection-learning-path/commands/StartVocabularySpelling.js";
 import { createDefaultExerciseRuntimeRegistry } from "../../application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../../application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
@@ -18,6 +19,7 @@ import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/c
 import { VerifyShadowingExerciseCompletion } from "../../application/collection-learning-path/queries/VerifyShadowingExerciseCompletion.js";
 import { VerifyVocabularyIntakeCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyIntakeCompletion.js";
 import { VerifyVocabularyMasteryCheckCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularyMasteryCheckCompletion.js";
+import { VerifyVocabularySpellingCompletion } from "../../application/collection-learning-path/queries/VerifyVocabularySpellingCompletion.js";
 import {
   IELTS_LISTENING_COMPLETION_POLICY,
   IELTS_LISTENING_TYPE,
@@ -32,6 +34,9 @@ import {
   VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY,
   VOCABULARY_MASTERY_CHECK_TYPE,
 } from "../../domain/collection-learning-path/VocabularyMasteryCheck.js";
+import {
+  VOCABULARY_SPELLING_COMPLETION_POLICY,
+} from "../../domain/collection-learning-path/VocabularySpellingPractice.js";
 import { ListeningPracticeLearningPathAdapter } from "../../infrastructure/integration/collection-learning-path/ListeningPracticeLearningPathAdapter.js";
 import { MySqlListeningPracticeRepository } from "../../infrastructure/persistence/mysql/MySqlListeningPracticeRepository.js";
 import { MySqlPracticeSessionRepository } from "../../infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
@@ -47,6 +52,8 @@ import { MySqlLearningPathShadowingEvidenceQueryRepository } from "../../infrast
 import { MySqlLearningPathTransactionManager } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathTransactionManager.js";
 import { MySqlLearningPathVocabularyIntakeCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeCommandRepository.js";
 import { MySqlLearningPathVocabularyIntakeQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeQueryRepository.js";
+import { MySqlLearningPathVocabularySpellingQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularySpellingQueryRepository.js";
+import { MySqlLearningPathVocabularySpellingSessionCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularySpellingSessionCommandRepository.js";
 import { createCollectionLearningPathRouter } from "../../interfaces/http/collection-learning-path/collectionLearningPathRouter.js";
 
 export function createCollectionLearningPathModule({ pool, adapters = {} }) {
@@ -66,6 +73,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? vocabularyIntakeReader;
   const quickReviewEvidenceReader = adapters.learningPathQuickReviewEvidenceReader
     ?? new MySqlLearningPathQuickReviewEvidenceQueryRepository(pool);
+  const spellingReader = adapters.learningPathVocabularySpellingReader
+    ?? new MySqlLearningPathVocabularySpellingQueryRepository(pool);
+  const spellingEvidenceReader = adapters.learningPathVocabularySpellingEvidenceReader
+    ?? quickReviewEvidenceReader;
   const masteryCheckEvidenceReader = adapters.learningPathMasteryCheckEvidenceReader
     ?? new MySqlLearningPathMasteryCheckEvidenceQueryRepository(pool);
   const shadowingEvidenceReader = adapters.learningPathShadowingEvidenceReader
@@ -75,6 +86,8 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? new MySqlPracticeSessionRepository(pool);
   const masteryCheckSessionWriter = adapters.learningPathMasteryCheckSessionWriter
     ?? new MySqlLearningPathMasteryCheckSessionCommandRepository(practiceSessionRepository);
+  const spellingSessionWriter = adapters.learningPathVocabularySpellingSessionWriter
+    ?? new MySqlLearningPathVocabularySpellingSessionCommandRepository(practiceSessionRepository);
   const vocabularyActivationRepository = adapters.learningPathVocabularyActivationRepository
     ?? adapters.vocabularyActivationRepository
     ?? new MySqlVocabularyActivationRepository(pool);
@@ -98,6 +111,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     scopedVocabularyReader,
     masteryCheckEvidenceReader,
   });
+  const verifyVocabularySpellingCompletion = new VerifyVocabularySpellingCompletion({
+    spellingReader,
+    spellingEvidenceReader,
+  });
   const getIeltsListeningExerciseContext = new GetIeltsListeningExerciseContext({ ieltsListeningReader });
   const verifyIeltsListeningCompletion = new VerifyIeltsListeningCompletion({ ieltsListeningReader });
   const verifyShadowingExerciseCompletion = new VerifyShadowingExerciseCompletion({ shadowingEvidenceReader });
@@ -113,6 +130,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
         [VOCABULARY_INTAKE_COMPLETION_POLICY]: (context) => verifyVocabularyIntakeCompletion.execute(context),
         [VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY]: (context) => verifyScopedVocabularyQuickReviewCompletion.execute(context),
         [VOCABULARY_MASTERY_CHECK_COMPLETION_POLICY]: (context) => verifyVocabularyMasteryCheckCompletion.execute(context),
+        [VOCABULARY_SPELLING_COMPLETION_POLICY]: (context) => verifyVocabularySpellingCompletion.execute(context),
         [IELTS_LISTENING_COMPLETION_POLICY]: (context) => verifyIeltsListeningCompletion.execute(context),
         [SHADOWING_COMPLETION_POLICY]: (context) => verifyShadowingExerciseCompletion.execute(context),
       },
@@ -131,6 +149,9 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     quickReviewEvidenceReader,
     masteryCheckEvidenceReader,
     masteryCheckSessionWriter,
+    spellingReader,
+    spellingEvidenceReader,
+    spellingSessionWriter,
     ieltsListeningReader,
     shadowingEvidenceReader,
     clock,
@@ -148,6 +169,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     startExercise: new StartExercise(dependencies),
     activateVocabularyIntake: new ActivateVocabularyIntake(dependencies),
     startVocabularyMasteryCheck: new StartVocabularyMasteryCheck(dependencies),
+    startVocabularySpelling: new StartVocabularySpelling({
+      ...dependencies,
+      practiceSessionWriter: spellingSessionWriter,
+    }),
     completeExercise: new CompleteExercise(dependencies),
   };
 

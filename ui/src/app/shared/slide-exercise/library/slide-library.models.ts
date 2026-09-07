@@ -269,7 +269,8 @@ export interface PronunciationSlideData extends SlideTypeData {
 
 export interface DictationSlideData extends SlideTypeData {
 	readonly mode?: 'word' | 'phrase' | 'sentence';
-	readonly audio: string;
+	readonly audio?: string;
+	readonly speech?: SpeechPlaybackConfig;
 	readonly answer: string;
 	readonly acceptedAnswers?: readonly string[];
 	readonly maxReplays?: number;

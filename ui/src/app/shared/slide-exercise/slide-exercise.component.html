@@ -10,6 +10,8 @@
           <app-slide-content-host
             [slide]="slide"
             [registry]="registry"
+            [deck]="deckController"
+            [environment]="environment"
             (stateChange)="onContentState($event)"
             (event)="onContentEvent($event)"
           />

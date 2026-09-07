@@ -111,6 +111,17 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
     res.status(200).json(result);
   });
 
+  router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/vocabulary-spelling/start", async (req, res) => {
+    const result = await commands.startVocabularySpelling.execute(
+      req.auth.userId,
+      learningPathId(req.params.pathId),
+      lessonId(req.params.lessonId),
+      exerciseId(req.params.exerciseId),
+      req.body?.scope,
+    );
+    res.status(201).json(result);
+  });
+
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/complete", async (req, res) => {
     const result = await commands.completeExercise.execute(
       req.auth.userId,
