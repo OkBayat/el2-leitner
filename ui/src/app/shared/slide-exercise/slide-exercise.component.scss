@@ -16,8 +16,8 @@
 
 .slide-exercise__stage {
   min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  overflow-x: hidden;
+  overflow-y: auto;
   scrollbar-gutter: stable;
 }
 
