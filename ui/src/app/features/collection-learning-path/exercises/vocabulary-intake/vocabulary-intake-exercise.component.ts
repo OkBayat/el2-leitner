@@ -9,8 +9,14 @@ import {
   signal,
 } from '@angular/core';
 import { VocabularyIntakeFacade } from '../../../../application/collection-learning-path/vocabulary-intake.facade';
-import { parseVocabularyIntakePayload } from '../../../../domain/collection-learning-path/vocabulary-intake';
-import type { VocabularyIntakePayload } from '../../../../domain/collection-learning-path/vocabulary-intake';
+import {
+  parseVocabularyIntakePayload,
+  vocabularyIntakeStateLabel,
+} from '../../../../domain/collection-learning-path/vocabulary-intake';
+import type {
+  VocabularyIntakeItem,
+  VocabularyIntakePayload,
+} from '../../../../domain/collection-learning-path/vocabulary-intake';
 import {
   SlideExerciseComponent,
   type MultipleChoiceAnswerEvent,
@@ -27,8 +33,10 @@ import {
   withVocabularyIntakeScore,
 } from './vocabulary-intake-slide.factory';
 
+const CAMBRIDGE_VOCABULARY_PATH_ID = 'cvfi-learning-path';
+
 function errorMessage(error: unknown): string {
-  return error instanceof Error && error.message ? error.message : 'Vocabulary could not be added to Box 1.';
+  return error instanceof Error && error.message ? error.message : 'Vocabulary could not be activated.';
 }
 
 function answerEvent(value: unknown): MultipleChoiceAnswerEvent | null {
@@ -61,10 +69,15 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
 
   readonly payload = signal<VocabularyIntakePayload | null>(null);
   readonly slides = signal<readonly SlideExerciseSlide[]>([]);
+  readonly slideMode = signal(false);
   readonly busy = signal(false);
   readonly error = signal('');
   readonly correctCount = signal(0);
   readonly incorrectCount = signal(0);
+  readonly buttonLabel = computed(() => {
+    const count = this.payload()?.summary.newCount ?? 0;
+    return count > 0 ? `Add ${count} new word${count === 1 ? '' : 's'}` : 'Continue';
+  });
   readonly chromeDefaults = computed<SlideExerciseChromeConfig>(() => {
     if (this.busy()) {
       return { footer: { primary: { disabled: true, loading: true } } };
@@ -83,6 +96,7 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
 
   load(context: ExerciseContext): void {
     this.runtime.set(context);
+    this.slideMode.set(context.pathId === CAMBRIDGE_VOCABULARY_PATH_ID);
     this.busy.set(false);
     this.error.set('');
     this.correctCount.set(0);
@@ -91,12 +105,16 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
     try {
       const payload = parseVocabularyIntakePayload(context.payload);
       this.payload.set(payload);
-      this.slides.set(buildVocabularyIntakeSlides(payload));
+      this.slides.set(this.slideMode() ? buildVocabularyIntakeSlides(payload) : []);
     } catch (error) {
       this.payload.set(null);
       this.slides.set([]);
       this.error.set(errorMessage(error));
     }
+  }
+
+  stateLabel(item: VocabularyIntakeItem): string {
+    return vocabularyIntakeStateLabel(item);
   }
 
   onAction(event: SlideExerciseActionEvent): void {
@@ -108,12 +126,27 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
   async startPractice(): Promise<void> {
     const context = this.runtime();
     const slides = this.slides();
-    if (!context || !slides.length || this.busy()) return;
+    if (!this.slideMode() || !context || !slides.length || this.busy()) return;
     this.busy.set(true);
     this.error.set('');
     try {
       await this.facade.activate(context.pathId, context.lessonId, context.exerciseId);
       this.slideExercise?.goTo(firstVocabularyIntakePracticeSlideId(slides));
+    } catch (error) {
+      this.error.set(errorMessage(error));
+    } finally {
+      this.busy.set(false);
+    }
+  }
+
+  async finish(): Promise<void> {
+    const context = this.runtime();
+    if (this.slideMode() || !context || !this.payload() || this.busy()) return;
+    this.busy.set(true);
+    this.error.set('');
+    try {
+      await this.facade.activate(context.pathId, context.lessonId, context.exerciseId);
+      this.outcome.emit({ kind: 'completed' });
     } catch (error) {
       this.error.set(errorMessage(error));
     } finally {

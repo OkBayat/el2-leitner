@@ -12,6 +12,8 @@ interface RunnerRoute {
   exerciseId: string;
 }
 
+const CAMBRIDGE_VOCABULARY_COLLECTION_ID = 'cambridge-vocabulary-for-ielts';
+
 @Component({
   selector: 'app-learning-path-exercise-runner-page',
   standalone: true,
@@ -31,6 +33,7 @@ export class ExerciseRunnerPageComponent {
   readonly usesSlideExerciseChrome = computed(() => {
     const context = this.facade.context();
     return context?.exercise.type === 'vocabulary.intake'
+      && context.path.collectionId === CAMBRIDGE_VOCABULARY_COLLECTION_ID
       && context.state !== 'locked'
       && context.state !== 'completed';
   });

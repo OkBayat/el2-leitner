@@ -1,13 +1,60 @@
-<section class="intake" data-testid="vocabulary-intake" [attr.aria-busy]="busy()">
-  @if (slides().length) {
-    <app-slide-exercise
-      [slides]="slides()"
-      [defaults]="chromeDefaults()"
-      (close)="cancel()"
-      (action)="onAction($event)"
-      (contentEvent)="onContentEvent($event)"
-      (completed)="complete()"
-    />
+<section
+  class="intake"
+  [class.intake--slide]="slideMode()"
+  data-testid="vocabulary-intake"
+  [attr.aria-busy]="busy()"
+>
+  @if (slideMode()) {
+    @if (slides().length) {
+      <app-slide-exercise
+        [slides]="slides()"
+        [defaults]="chromeDefaults()"
+        (close)="cancel()"
+        (action)="onAction($event)"
+        (contentEvent)="onContentEvent($event)"
+        (completed)="complete()"
+      />
+    } @else {
+      <div class="intake__empty intake__empty--slide" role="alert">
+        <h1>Vocabulary unavailable</h1>
+        <p>{{ error() || 'This exercise could not be prepared.' }}</p>
+      </div>
+    }
+  } @else if (payload(); as data) {
+    <header class="intake__header">
+      <p class="intake__eyebrow">Vocabulary</p>
+      <h1>Meet this lesson's words</h1>
+      <p class="intake__summary">
+        {{ data.summary.total }} words · {{ data.summary.newCount }} new · {{ data.summary.masteredCount }} mastered
+      </p>
+    </header>
+
+    <ul class="intake__list" aria-label="Lesson vocabulary">
+      @for (item of data.items; track item.id) {
+        <li class="word-card">
+          <div class="word-card__heading">
+            <strong>{{ item.term }}</strong>
+            <span class="word-state" [attr.data-state]="item.progress.state">{{ stateLabel(item) }}</span>
+          </div>
+          @if (item.definitions[0]; as definition) {
+            <p class="word-card__definition">{{ definition }}</p>
+          }
+          @if (item.examples[0]; as example) {
+            <p class="word-card__example">{{ example }}</p>
+          }
+        </li>
+      }
+    </ul>
+
+    @if (error()) {
+      <p class="intake__error" role="alert">{{ error() }}</p>
+    }
+
+    <footer class="intake__actions">
+      <button type="button" class="intake__primary" [disabled]="busy()" (click)="finish()">
+        {{ busy() ? 'Saving…' : buttonLabel() }}
+      </button>
+    </footer>
   } @else {
     <div class="intake__empty" role="alert">
       <h1>Vocabulary unavailable</h1>
