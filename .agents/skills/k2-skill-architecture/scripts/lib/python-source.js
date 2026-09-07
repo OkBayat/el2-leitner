@@ -10,7 +10,7 @@ function scanPython(source, maskComments) {
     const current = input[index];
     if (string) {
       output += current;
-      if (current === '\\' && !string.triple && index + 1 < input.length) {
+      if (current === '\\' && index + 1 < input.length) {
         output += input[index + 1];
         index += 1;
       } else if (string.triple && input.slice(index, index + 3) === string.quote.repeat(3)) {

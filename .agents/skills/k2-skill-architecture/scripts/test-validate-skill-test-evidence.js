@@ -232,6 +232,26 @@ function testPythonShebangModificationRequiresTestChange() {
   assert.ok(problemCodes(result).includes('missing_skill_test'));
 }
 
+function testPythonEscapedTripleQuoteContentChangeRequiresTestChange() {
+  const pythonScript = `${root}/scripts/create_worktree.py`;
+  const pythonSource = (comment) => [
+    'VALUE = """prefix ',
+    '\\',
+    `""" # ${comment}"""\n`,
+  ].join('');
+  const change = {
+    basePath: pythonScript,
+    baseSource: pythonSource('old'),
+    path: pythonScript,
+    source: pythonSource('new'),
+    status: 'M',
+  };
+  const result = resultFor([change], {
+    extraFiles: { [pythonScript]: change.source },
+  });
+  assert.ok(problemCodes(result).includes('missing_skill_test'));
+}
+
 const tests = [
   testModifiedBehaviorWithoutAnyTestNeedsChangedTest,
   testUnchangedExistingTestDoesNotSatisfyRule,
@@ -243,6 +263,7 @@ const tests = [
   testModifiedPythonBehaviorRequiresChangedPythonTest,
   testPythonCommentOnlyModificationDoesNotRequireTestChange,
   testPythonShebangModificationRequiresTestChange,
+  testPythonEscapedTripleQuoteContentChangeRequiresTestChange,
 ];
 
 for (const test of tests) test();
