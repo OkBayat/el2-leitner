@@ -16,9 +16,9 @@ export class MySqlLearningPathSourceReferenceQueryRepository extends LearningPat
        WHERE (c.public_id = ? OR c.slug = ?)
          AND c.status = 'published'
          AND c.archived_at IS NULL
-       ORDER BY (c.public_id = ?) DESC, c.id
+       ORDER BY c.id
        LIMIT 2`,
-      [reference, reference, reference],
+      [reference, reference],
     );
     if (!rows.length) return null;
     if (rows.length > 1 && rows[0].id !== rows[1].id) {
