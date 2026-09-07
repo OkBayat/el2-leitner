@@ -7,7 +7,7 @@ import {
 } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
 import { SyncFileManagedLearningPathSources } from "../src/application/collection-learning-path/commands/SyncFileManagedLearningPathSources.js";
 
-const COLLECTION_ID = "cambridge-vocabulary-for-ielts";
+const COLLECTION_REF = "cambridge-vocabulary-for-ielts";
 const PATH_ID = "cvfi-learning-path";
 const SECTION_ID = "section-unit-01";
 
@@ -18,7 +18,7 @@ function rawSource({ lessons, title = "Cambridge Vocabulary for IELTS" } = {}) {
     position: 1,
     source: {
       kind: "collection-section",
-      collectionId: COLLECTION_ID,
+      collectionId: COLLECTION_REF,
       sectionTitle: "Unit 1 — Growing up",
     },
     exercises: [
@@ -30,7 +30,7 @@ function rawSource({ lessons, title = "Cambridge Vocabulary for IELTS" } = {}) {
   return {
     schemaVersion: 1,
     managedIdPrefix: "cvfi-",
-    path: { id: PATH_ID, collectionId: COLLECTION_ID, title, mode: "finite", status: "published" },
+    path: { id: PATH_ID, collectionId: COLLECTION_REF, title, mode: "finite", status: "published" },
     lessons: lessons ?? [defaultLesson],
   };
 }
@@ -90,17 +90,18 @@ class MemoryDefinitions {
 }
 
 class MemorySourceReferences {
-  constructor({ missingCollection = false, missingSection = false } = {}) {
+  constructor({ missingCollection = false, missingSection = false, actualCollectionId = COLLECTION_REF } = {}) {
     this.missingCollection = missingCollection;
     this.missingSection = missingSection;
+    this.actualCollectionId = actualCollectionId;
   }
-  async findCollectionByPublicId(publicId) {
-    if (this.missingCollection || publicId !== COLLECTION_ID) return null;
-    return { id: COLLECTION_ID, title: "Cambridge Vocabulary for IELTS" };
+  async resolveCollection(reference) {
+    if (this.missingCollection || reference !== COLLECTION_REF) return null;
+    return { id: this.actualCollectionId, title: "Cambridge Vocabulary for IELTS" };
   }
   async findCollectionSection({ collectionId, sectionTitle }) {
-    if (this.missingSection || collectionId !== COLLECTION_ID || sectionTitle !== "Unit 1 — Growing up") return null;
-    return { id: SECTION_ID, collectionId: COLLECTION_ID, title: sectionTitle };
+    if (this.missingSection || collectionId !== this.actualCollectionId || sectionTitle !== "Unit 1 — Growing up") return null;
+    return { id: SECTION_ID, collectionId: this.actualCollectionId, title: sectionTitle };
   }
 }
 
@@ -132,7 +133,7 @@ test("file-managed source validates a finite course and preserves declarative or
   assert.deepEqual(definition.lessons[0].exercises.map((exercise) => exercise.position), [10, 20, 30]);
   assert.deepEqual(definition.lessons[0].source, {
     kind: "collection-section",
-    collectionId: COLLECTION_ID,
+    collectionId: COLLECTION_REF,
     sectionTitle: "Unit 1 — Growing up",
   });
 });
@@ -176,6 +177,7 @@ test("sync resolves collection sections, materializes lesson-source scopes, and 
   assert.equal(first.changed, true);
   assert.equal(first.sourcesChanged, 1);
   assert.equal(fixture.store.path.contentVersion, 1);
+  assert.equal(fixture.store.path.collectionId, COLLECTION_REF);
   const lesson = fixture.store.path.lessons[0];
   assert.equal(lesson.sourceKind, "collection-section");
   assert.equal(lesson.sourceRef, SECTION_ID);
@@ -188,6 +190,19 @@ test("sync resolves collection sections, materializes lesson-source scopes, and 
   assert.equal(second.sourcesChanged, 0);
   assert.equal(fixture.store.path.contentVersion, 1);
   assert.equal(fixture.store.mutations.length, mutationCount);
+});
+
+test("sync preserves an existing collection public id when the managed source is found by its stable slug", async () => {
+  const legacyPublicId = "legacy-random-public-id";
+  const fixture = synchronizer({
+    references: new MemorySourceReferences({ actualCollectionId: legacyPublicId }),
+  });
+
+  const result = await fixture.command.execute([parsedSource()]);
+
+  assert.equal(result.changed, true);
+  assert.equal(fixture.store.path.collectionId, legacyPublicId);
+  assert.equal(fixture.store.path.lessons[0].sourceRef, SECTION_ID);
 });
 
 test("source evolution versions changes and soft-retires only ids owned by its prefix", async () => {
