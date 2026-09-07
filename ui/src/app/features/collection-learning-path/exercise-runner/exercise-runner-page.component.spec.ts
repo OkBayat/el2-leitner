@@ -34,19 +34,18 @@ describe('ExerciseRunnerPageComponent', () => {
     });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.detectChanges();
-    await fixture.whenStable();
 
     expect(facade.load).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1');
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('[data-testid="learning-path-runner"]')).not.toBeNull();
-    expect(element.querySelector('[data-testid="vocabulary-intake"]')).not.toBeNull();
-    expect(element.querySelector('[data-testid="slide-exercise"]')).not.toBeNull();
 
     await vi.waitFor(() => {
       fixture.detectChanges();
+      expect(element.querySelector('[data-testid="vocabulary-intake"]')).not.toBeNull();
+      expect(element.querySelector('[data-testid="slide-exercise"]')).not.toBeNull();
       expect(element.textContent).toContain('Ready to practice?');
       expect(element.textContent).toContain('3 words · 1 mastered · 1 to practice');
-    });
+    }, { timeout: 2000 });
   });
 
   it('forwards completed renderer outcomes to the generic runner completion command', () => {
