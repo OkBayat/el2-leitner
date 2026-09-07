@@ -1,0 +1,13 @@
+<section class="exercise-layout" [attr.data-step-kind]="step().kind" data-testid="exercise-layout">
+  @if (showHeader()) {
+    <app-exercise-header [progress]="progress()" (close)="close.emit()" />
+  }
+
+  <main class="exercise-layout__stage">
+    <div class="exercise-layout__content">
+      <ng-content select="[exerciseContent]"></ng-content>
+    </div>
+  </main>
+
+  <ng-content select="[exerciseFooter]"></ng-content>
+</section>

@@ -1,0 +1,35 @@
+<footer class="exercise-footer" [attr.data-tone]="tone()" data-testid="exercise-footer">
+  <div class="exercise-footer__inner">
+    @if (hasFeedback()) {
+      <div class="exercise-footer__feedback" [attr.role]="feedbackRole()" aria-live="polite">
+        @if (tone() !== 'neutral') {
+          <span class="exercise-footer__icon" aria-hidden="true">
+            @switch (tone()) {
+              @case ('success') {
+                <svg width="28" height="28" viewBox="0 0 24 24"><path d="M5 12.5L9.3 17L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              }
+              @case ('information') {
+                <svg width="28" height="28" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 10.5V17M12 7H12.01" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+              }
+              @case ('warning') {
+                <svg width="28" height="28" viewBox="0 0 24 24"><path d="M12 4L21 20H3L12 4Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 9V14M12 17H12.01" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              }
+              @case ('error') {
+                <svg width="28" height="28" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M8.5 8.5L15.5 15.5M15.5 8.5L8.5 15.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+              }
+            }
+          </span>
+        }
+        <div class="exercise-footer__copy">
+          @if (title()) { <strong>{{ title() }}</strong> }
+          @if (detail()) { <span>{{ detail() }}</span> }
+          <ng-content select="[exerciseFeedbackExtra]"></ng-content>
+        </div>
+      </div>
+    }
+
+    <div class="exercise-footer__actions">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,115 @@
+:host {
+  display: inline-block;
+  min-width: 156px;
+}
+
+.exercise-action {
+  width: 100%;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vocora-space-2);
+  padding: 0 var(--vocora-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 0 color-mix(in srgb, currentColor 24%, transparent);
+  transition: transform var(--vocora-motion-fast), box-shadow var(--vocora-motion-fast), background var(--vocora-motion-fast), border-color var(--vocora-motion-fast);
+}
+
+.exercise-action[data-state='secondary'] {
+  border-color: color-mix(in srgb, var(--vocora-action-secondary-foreground) 38%, var(--vocora-border));
+  background: var(--vocora-action-secondary);
+  color: var(--vocora-action-secondary-foreground);
+  box-shadow: 0 2px 0 var(--vocora-border);
+}
+
+.exercise-action[data-state='success'] {
+  background: var(--vocora-success);
+  color: var(--vocora-text-on-primary);
+}
+
+.exercise-action[data-state='information'] {
+  background: var(--vocora-information);
+  color: var(--vocora-text-on-primary);
+}
+
+.exercise-action[data-state='warning'] {
+  border-color: var(--vocora-warning);
+  background: color-mix(in srgb, var(--vocora-warning) 20%, var(--vocora-surface-base));
+  color: var(--vocora-text-primary);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--vocora-warning) 50%, var(--vocora-border));
+}
+
+.exercise-action[data-state='error'] {
+  background: var(--vocora-error);
+  color: var(--vocora-text-on-primary);
+}
+
+.exercise-action[data-state='disabled'] {
+  border-color: var(--vocora-border);
+  background: var(--vocora-surface-subtle);
+  color: var(--vocora-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.exercise-action:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.exercise-action:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.exercise-action[data-state='primary']:hover {
+  background: var(--vocora-action-primary-hover);
+}
+
+.exercise-action:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}
+
+.exercise-action__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--vocora-radius-pill);
+  animation: exercise-action-spin 700ms linear infinite;
+}
+
+@keyframes exercise-action-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .exercise-action {
+    min-height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exercise-action {
+    transition: none;
+  }
+
+  .exercise-action__spinner {
+    animation: none;
+  }
+}
