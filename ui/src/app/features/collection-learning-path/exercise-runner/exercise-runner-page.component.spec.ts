@@ -35,16 +35,18 @@ describe('ExerciseRunnerPageComponent', () => {
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    fixture.detectChanges();
 
     expect(facade.load).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1');
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('[data-testid="learning-path-runner"]')).not.toBeNull();
     expect(element.querySelector('[data-testid="vocabulary-intake"]')).not.toBeNull();
     expect(element.querySelector('[data-testid="slide-exercise"]')).not.toBeNull();
-    expect(element.textContent).toContain('Ready to practice?');
-    expect(element.textContent).toContain('3 words · 1 mastered · 1 to practice');
+
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(element.textContent).toContain('Ready to practice?');
+      expect(element.textContent).toContain('3 words · 1 mastered · 1 to practice');
+    });
   });
 
   it('forwards completed renderer outcomes to the generic runner completion command', () => {
