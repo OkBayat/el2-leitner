@@ -1,28 +1,133 @@
-:host { display: block; }
+:host {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
 
 .exercise-node {
-  width: 100%;
-  min-height: 68px;
+  --activity-face: var(--mat-sys-primary);
+  --activity-ink: var(--mat-sys-on-primary);
+  --node-face: var(--mat-sys-surface-container-highest);
+  --node-side: var(--mat-sys-outline-variant);
+  --node-ink: var(--mat-sys-on-surface-variant);
+  position: relative;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 28px;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 14px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 18px;
+  width: 72px;
+  height: 64px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--node-face);
+  color: var(--node-ink);
+  box-shadow: 0 7px 0 var(--node-side);
+  cursor: pointer;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 180ms ease;
+}
+
+.exercise-node::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 4px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.exercise-node[data-kind='listening'] {
+  --activity-face: var(--mat-sys-tertiary);
+  --activity-ink: var(--mat-sys-on-tertiary);
+}
+
+.exercise-node[data-kind='shadowing'] {
+  --activity-face: var(--mat-sys-secondary);
+  --activity-ink: var(--mat-sys-on-secondary);
+}
+
+.exercise-node[data-state='available'],
+.exercise-node[data-state='in_progress'],
+.exercise-node[data-state='completed'] {
+  --node-face: var(--activity-face);
+  --node-side: color-mix(in srgb, var(--activity-face) 74%, black);
+  --node-ink: var(--activity-ink);
+}
+
+.exercise-node[data-state='locked'] {
+  --node-face: var(--mat-sys-surface-container-highest);
+  --node-side: var(--mat-sys-outline-variant);
+  --node-ink: var(--mat-sys-on-surface-variant);
+}
+
+.exercise-node:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.exercise-node:not(:disabled):active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 var(--node-side);
+}
+
+.exercise-node:disabled {
+  cursor: default;
+}
+
+.exercise-node:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 5px;
+}
+
+.exercise-node__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+}
+
+.exercise-node__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.exercise-node__flag {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  min-width: 64px;
+  transform: translateX(-50%);
+  padding: 7px 10px;
+  border: 2px solid var(--mat-sys-outline-variant);
+  border-bottom-width: 4px;
+  border-radius: 12px;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  text-align: left;
-  cursor: pointer;
-  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-align: center;
+  white-space: nowrap;
 }
-.exercise-node:not(:disabled):hover { transform: translateY(-1px); border-color: var(--mat-sys-primary); background: var(--mat-sys-primary-container); }
-.exercise-node:focus-visible { outline: 3px solid var(--mat-sys-primary); outline-offset: 2px; }
-.exercise-node:disabled { cursor: default; opacity: 0.58; }
-.exercise-node--completed { opacity: 0.72; }
-.exercise-node--active { border-color: var(--mat-sys-primary); background: var(--mat-sys-primary-container); }
-.exercise-node__index { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--mat-sys-surface-container-high); font-weight: 800; }
-.exercise-node__copy { min-width: 0; display: grid; gap: 3px; }
-.exercise-node__copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.exercise-node__copy small { color: var(--mat-sys-on-surface-variant); }
-.exercise-node__marker { font-size: 1.15rem; font-weight: 900; color: var(--mat-sys-primary); text-align: center; }
+
+.exercise-node__flag::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 5px);
+  bottom: -8px;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-right: 2px solid var(--mat-sys-outline-variant);
+  border-bottom: 2px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exercise-node {
+    transition: none;
+  }
+}
