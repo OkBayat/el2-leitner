@@ -1,5 +1,6 @@
 :host { display: block; min-height: 100dvh; background: var(--mat-sys-surface); }
 .runner { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr; }
+.runner--slide { grid-template-rows: 1fr; }
 .runner__topbar { min-height: 72px; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: max(12px, var(--safe-area-top)) max(18px, var(--safe-area-right)) 12px max(18px, var(--safe-area-left)); border-bottom: 1px solid var(--mat-sys-outline-variant); background: var(--mat-sys-surface); }
 .runner__back { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; font-size: 1.4rem; font-weight: 800; }
 .runner__back:hover { background: var(--mat-sys-surface-container-high); }
@@ -9,6 +10,8 @@
 .runner__heading span { color: var(--mat-sys-on-surface-variant); font-size: 0.86rem; }
 .runner__status { padding: 6px 10px; border-radius: 999px; background: var(--mat-sys-surface-container-high); color: var(--mat-sys-on-surface-variant); font-size: 0.8rem; font-weight: 700; }
 .runner__workspace { display: grid; place-items: center; padding: 32px 18px calc(32px + var(--safe-area-bottom)); }
+.runner__workspace--slide { min-height: 100dvh; place-items: stretch; padding: 0; }
+.runner__workspace--slide > app-learning-path-exercise-host { width: 100%; min-height: 100dvh; }
 .runner-card { width: min(620px, 100%); display: grid; justify-items: center; gap: 12px; padding: clamp(28px, 6vw, 54px); border: 1px solid var(--mat-sys-outline-variant); border-radius: 28px; background: var(--mat-sys-surface-container-low); text-align: center; }
 .runner-card h1, .runner-card p { margin: 0; }
 .runner-card p { max-width: 44ch; color: var(--mat-sys-on-surface-variant); }
@@ -21,4 +24,4 @@
 .runner-spinner { width: 24px; height: 24px; border: 3px solid var(--mat-sys-outline-variant); border-top-color: var(--mat-sys-primary); border-radius: 50%; animation: spin 700ms linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .runner-spinner { animation: none; } }
-@media (max-width: 520px) { .runner__topbar { grid-template-columns: 44px minmax(0, 1fr); } .runner__status { display: none; } .runner__workspace { align-items: start; padding-top: 20px; } .runner-card { border-radius: 22px; } }
+@media (max-width: 520px) { .runner__topbar { grid-template-columns: 44px minmax(0, 1fr); } .runner__status { display: none; } .runner__workspace:not(.runner__workspace--slide) { align-items: start; padding-top: 20px; } .runner-card { border-radius: 22px; } }

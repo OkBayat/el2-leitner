@@ -1,18 +1,24 @@
-<main class="runner" data-testid="learning-path-runner">
-  <header class="runner__topbar">
-    <a [routerLink]="backLink()" class="runner__back" aria-label="Back to Learning Path">←</a>
-    @if (facade.context(); as context) {
-      <div class="runner__heading">
-        <strong>{{ context.lesson.title }}</strong>
-        <span>{{ exerciseLabel() }}</span>
-      </div>
-      <span class="runner__status">{{ stateLabel() }}</span>
-    } @else {
-      <div class="runner__heading"><strong>Learning Path</strong><span>Exercise</span></div>
-    }
-  </header>
+<main class="runner" [class.runner--slide]="usesSlideExerciseChrome()" data-testid="learning-path-runner">
+  @if (!usesSlideExerciseChrome()) {
+    <header class="runner__topbar">
+      <a [routerLink]="backLink()" class="runner__back" aria-label="Back to Learning Path">←</a>
+      @if (facade.context(); as context) {
+        <div class="runner__heading">
+          <strong>{{ context.lesson.title }}</strong>
+          <span>{{ exerciseLabel() }}</span>
+        </div>
+        <span class="runner__status">{{ stateLabel() }}</span>
+      } @else {
+        <div class="runner__heading"><strong>Learning Path</strong><span>Exercise</span></div>
+      }
+    </header>
+  }
 
-  <section class="runner__workspace" [attr.aria-busy]="facade.loading()">
+  <section
+    class="runner__workspace"
+    [class.runner__workspace--slide]="usesSlideExerciseChrome()"
+    [attr.aria-busy]="facade.loading()"
+  >
     @if (facade.loading() && !facade.context()) {
       <div class="runner-card" aria-live="polite">
         <span class="runner-spinner" aria-hidden="true"></span>

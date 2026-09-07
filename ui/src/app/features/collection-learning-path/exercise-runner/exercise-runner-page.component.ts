@@ -28,6 +28,12 @@ export class ExerciseRunnerPageComponent {
   private readonly routeState = signal<RunnerRoute | null>(null);
   readonly exerciseLabel = computed(() => this.facade.context() ? exerciseTypeLabel(this.facade.context()!.exercise.type) : 'Exercise');
   readonly stateLabel = computed(() => this.facade.context() ? learningPathStateLabel(this.facade.context()!.state) : '');
+  readonly usesSlideExerciseChrome = computed(() => {
+    const context = this.facade.context();
+    return context?.exercise.type === 'vocabulary.intake'
+      && context.state !== 'locked'
+      && context.state !== 'completed';
+  });
   readonly backLink = computed(() => {
     const collectionId = this.facade.context()?.path.collectionId;
     return collectionId ? ['/library', collectionId, 'learning-path'] : ['/library'];
