@@ -1,18 +1,30 @@
 ---
 name: k2-principles
-description: Use this skill only when the user explicitly invokes k2-principles to select the smallest relevant set of engineering principles for the current task.
+description: Canonically select the smallest relevant set of Vocora engineering principles before a mutation task, load only their references, and return execution to the task's owning workflow.
 ---
 
 # K2 Principles
 
-This skill is explicit-invocation only. Use it only when the user directly asks
-to run or apply `k2-principles`; do not infer or auto-select it from the task
-type, changed files, or mutation intent.
+Use this skill once at the start of a task that will change code, docs, tests,
+configuration, schemas, contracts, workflows, architecture, data models,
+migrations, or agent assets. Its job is to select and load the engineering
+principles that apply.
 
-Its only job is to remind the agent which engineering principles apply. The
-task's primary skill or workflow remains the execution owner.
+The task's primary skill or workflow remains the execution owner.
 
-## Explicit-invocation workflow
+## Canonical ownership
+
+This is the only repository skill that owns general engineering-principle
+guidance.
+
+- Keep detailed general-principle guidance only under
+  `references/principles/` in this skill.
+- Specialized domain, execution, review, and validation skills may remain
+  separate only when they own a concrete workflow, tooling, evidence, or gate.
+  They must defer principle selection to `k2-principles` instead of redefining
+  those principles.
+
+## Start-only workflow
 
 1. Read the accepted task intent and planned change surfaces.
 2. Select the smallest applicable principle set from the table below.
@@ -30,7 +42,7 @@ classify critical paths, request human approval, or own any later task phase.
 
 | Principle | Select when | Reference |
 | --- | --- | --- |
-| `karpathy_guidelines` | Any explicitly-invoked mutation task | `references/principles/karpathy-guidelines.md` |
+| `karpathy_guidelines` | Every mutation task | `references/principles/karpathy-guidelines.md` |
 | `solid` | A responsibility, module, interface, dependency, or ownership boundary changes | `references/principles/solid.md` |
 | `tdd` | Fixing a bug, changing observable behavior, or refactoring behavior-sensitive code | `references/principles/tdd.md` |
 | `ddd` | Changing learning, vocabulary, listening, exercise, learner-progress, study-planning, or other domain rules | `references/principles/ddd.md` |
