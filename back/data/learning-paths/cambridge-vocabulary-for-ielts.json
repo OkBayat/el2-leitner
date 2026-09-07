@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "managedIdPrefix": "cvfi-",
+  "path": {
+    "id": "cvfi-learning-path",
+    "collectionId": "cambridge-vocabulary-for-ielts",
+    "title": "Cambridge Vocabulary for IELTS",
+    "mode": "finite",
+    "status": "published"
+  },
+  "lessons": [
+    {
+      "id": "cvfi-unit-01",
+      "title": "Unit 1 — Growing up",
+      "position": 1,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 1 — Growing up" },
+      "exercises": [
+        { "id": "cvfi-u01-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u01-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u01-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-02",
+      "title": "Unit 2 — Mental and physical development",
+      "position": 2,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 2 — Mental and physical development" },
+      "exercises": [
+        { "id": "cvfi-u02-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u02-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u02-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-03",
+      "title": "Unit 3 — Keeping fit",
+      "position": 3,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 3 — Keeping fit" },
+      "exercises": [
+        { "id": "cvfi-u03-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u03-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u03-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-04",
+      "title": "Unit 4 — Lifestyles",
+      "position": 4,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 4 — Lifestyles" },
+      "exercises": [
+        { "id": "cvfi-u04-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u04-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u04-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-05",
+      "title": "Unit 5 — Student life",
+      "position": 5,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 5 — Student life" },
+      "exercises": [
+        { "id": "cvfi-u05-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u05-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u05-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-06",
+      "title": "Unit 6 — Effective communication",
+      "position": 6,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 6 — Effective communication" },
+      "exercises": [
+        { "id": "cvfi-u06-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u06-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u06-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-07",
+      "title": "Unit 7 — On the move",
+      "position": 7,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 7 — On the move" },
+      "exercises": [
+        { "id": "cvfi-u07-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u07-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u07-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-08",
+      "title": "Unit 8 — Through the ages",
+      "position": 8,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 8 — Through the ages" },
+      "exercises": [
+        { "id": "cvfi-u08-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u08-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u08-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-09",
+      "title": "Unit 9 — The natural world",
+      "position": 9,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 9 — The natural world" },
+      "exercises": [
+        { "id": "cvfi-u09-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u09-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u09-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-10",
+      "title": "Unit 10 — Reaching for the skies",
+      "position": 10,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 10 — Reaching for the skies" },
+      "exercises": [
+        { "id": "cvfi-u10-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u10-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u10-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-11",
+      "title": "Unit 11 — Design and innovation",
+      "position": 11,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 11 — Design and innovation" },
+      "exercises": [
+        { "id": "cvfi-u11-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u11-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u11-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-12",
+      "title": "Unit 12 — Information technology",
+      "position": 12,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 12 — Information technology" },
+      "exercises": [
+        { "id": "cvfi-u12-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u12-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u12-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-13",
+      "title": "Unit 13 — The modern world",
+      "position": 13,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 13 — The modern world" },
+      "exercises": [
+        { "id": "cvfi-u13-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u13-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u13-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-14",
+      "title": "Unit 14 — Urbanisation",
+      "position": 14,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 14 — Urbanisation" },
+      "exercises": [
+        { "id": "cvfi-u14-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u14-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u14-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-15",
+      "title": "Unit 15 — The green revolution",
+      "position": 15,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 15 — The green revolution" },
+      "exercises": [
+        { "id": "cvfi-u15-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u15-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u15-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-16",
+      "title": "Unit 16 — The energy crisis",
+      "position": 16,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 16 — The energy crisis" },
+      "exercises": [
+        { "id": "cvfi-u16-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u16-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u16-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-17",
+      "title": "Unit 17 — Talking business",
+      "position": 17,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 17 — Talking business" },
+      "exercises": [
+        { "id": "cvfi-u17-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u17-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u17-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-18",
+      "title": "Unit 18 — The law",
+      "position": 18,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 18 — The law" },
+      "exercises": [
+        { "id": "cvfi-u18-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u18-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u18-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-19",
+      "title": "Unit 19 — The media",
+      "position": 19,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 19 — The media" },
+      "exercises": [
+        { "id": "cvfi-u19-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u19-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u19-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    },
+    {
+      "id": "cvfi-unit-20",
+      "title": "Unit 20 — The arts",
+      "position": 20,
+      "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 20 — The arts" },
+      "exercises": [
+        { "id": "cvfi-u20-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u20-quick-review", "position": 20, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u20-mastery-check", "position": 30, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+      ]
+    }
+  ]
+}
