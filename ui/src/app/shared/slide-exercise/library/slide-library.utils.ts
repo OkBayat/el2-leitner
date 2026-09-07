@@ -151,7 +151,11 @@ export function answerMatches(
 	value: string,
 	field: Pick<
 		AnswerField,
-		'answers' | 'wordLimit' | 'caseSensitive' | 'punctuationSensitive'
+		| 'answers'
+		| 'wordLimit'
+		| 'caseSensitive'
+		| 'punctuationSensitive'
+		| 'exactSpelling'
 	>,
 ): boolean {
 	if (
@@ -159,9 +163,12 @@ export function answerMatches(
 		(field.wordLimit && wordCount(value) > field.wordLimit)
 	)
 		return false;
-	const actual = normalizeAnswer(value, field);
+	const normalization = field.exactSpelling
+		? { caseSensitive: true, punctuationSensitive: true }
+		: field;
+	const actual = normalizeAnswer(value, normalization);
 	return field.answers.some(
-		(answer) => normalizeAnswer(answer, field) === actual,
+		(answer) => normalizeAnswer(answer, normalization) === actual,
 	);
 }
 

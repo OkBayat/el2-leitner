@@ -54,6 +54,20 @@ export interface SlideTypeData {
 	readonly explanation?: string;
 }
 
+export interface TeachingBlock {
+	readonly kind:
+		'word' | 'comparison' | 'correction' | 'patterns' | 'example' | 'note';
+	readonly title?: string;
+	readonly content: string;
+	readonly secondary?: string;
+}
+
+export interface TeachingCardData extends SlideTypeData {
+	readonly mode: 'word' | 'usage' | 'contrast' | 'rule' | 'warning' | 'tip';
+	readonly title: string;
+	readonly blocks: readonly TeachingBlock[];
+}
+
 export interface SlideOption {
 	readonly id: string;
 	readonly label: string;

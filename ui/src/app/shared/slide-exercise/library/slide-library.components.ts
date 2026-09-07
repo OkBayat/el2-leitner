@@ -36,6 +36,8 @@ import type {
 	SlideStimulus,
 	SpeakingResponseSlideData,
 	StructuredCompletionSlideData,
+	TeachingBlock,
+	TeachingCardData,
 	TruthSlideData,
 	WordFormationSlideData,
 	WritingResponseSlideData,
@@ -333,20 +335,6 @@ export class TruthSlideComponent extends ChoiceSlideComponent {
 	}
 }
 
-interface TeachingBlock {
-	readonly kind:
-		'word' | 'comparison' | 'correction' | 'patterns' | 'example' | 'note';
-	readonly title?: string;
-	readonly content: string;
-	readonly secondary?: string;
-}
-
-interface TeachingCardData extends CommonData {
-	readonly mode: 'word' | 'usage' | 'contrast' | 'rule' | 'warning' | 'tip';
-	readonly title: string;
-	readonly blocks: readonly TeachingBlock[];
-}
-
 @Component({
 	selector: 'app-teaching-card-slide',
 	standalone: true,
@@ -498,6 +486,12 @@ function parseMatching(value: unknown): MatchingSlideData {
 								mat-stroked-button
 								type="button"
 								[attr.data-state]="pairButtonState(pair.id)"
+								[attr.aria-pressed]="
+									selectedLeftId() === pair.id
+								"
+								[attr.aria-label]="
+									matchingLeftAriaLabel(pair.id, pair.left)
+								"
 								[disabled]="isMatched(pair.id)"
 								(click)="selectLeft(pair.id)"
 							>
@@ -511,6 +505,12 @@ function parseMatching(value: unknown): MatchingSlideData {
 								mat-stroked-button
 								type="button"
 								[attr.data-state]="rightButtonState(option.id)"
+								[attr.aria-label]="
+									matchingRightAriaLabel(
+										option.id,
+										option.label
+									)
+								"
 								[disabled]="rightLocked(option.id)"
 								(click)="selectRight(option.id)"
 							>
@@ -575,12 +575,17 @@ export class MatchingSlideComponent
 		if (!pair) return;
 		if ((pair.rightId || pair.id) !== rightId) {
 			this.selectedLeftId.set('');
-			this.wrongPair.set({ leftId, rightId });
-			this.pairFeedback.set('Those items do not match. Try again.');
-			this.events.next({
-				type: 'pair-incorrect',
-				data: { leftId, rightId },
-			});
+			if (this.data().feedbackMode === 'immediate') {
+				this.wrongPair.set({ leftId, rightId });
+				this.pairFeedback.set('Those items do not match. Try again.');
+				this.events.next({
+					type: 'pair-incorrect',
+					data: { leftId, rightId },
+				});
+			} else {
+				this.wrongPair.set(null);
+				this.pairFeedback.set('');
+			}
 			return;
 		}
 		this.matchedPairIds.update((ids) => [...ids, leftId]);
@@ -612,6 +617,19 @@ export class MatchingSlideComponent
 			: this.wrongPair()?.rightId === id
 				? 'incorrect'
 				: 'neutral';
+	}
+	matchingLeftAriaLabel(id: string, label: string): string {
+		const state = this.pairButtonState(id);
+		if (state === 'selected') return `${label}, selected`;
+		if (state === 'correct') return `${label}, matched`;
+		if (state === 'incorrect') return `${label}, incorrect match`;
+		return label;
+	}
+	matchingRightAriaLabel(id: string, label: string): string {
+		const state = this.rightButtonState(id);
+		if (state === 'correct') return `${label}, matched`;
+		if (state === 'incorrect') return `${label}, incorrect match`;
+		return label;
 	}
 	rightLocked(id: string): boolean {
 		return (
@@ -696,6 +714,10 @@ function parseClassification(value: unknown): ClassificationSlideData {
 							mat-stroked-button
 							type="button"
 							[attr.data-state]="itemState(item.id)"
+							[attr.aria-pressed]="selectedItemId() === item.id"
+							[attr.aria-label]="
+								classificationItemAriaLabel(item.id, item.label)
+							"
 							[disabled]="interactionState() !== 'idle'"
 							(click)="selectItem(item.id)"
 						>
@@ -709,6 +731,12 @@ function parseClassification(value: unknown): ClassificationSlideData {
 							mat-stroked-button
 							type="button"
 							class="bucket"
+							[attr.aria-label]="
+								classificationBucketAriaLabel(
+									category.id,
+									category.label
+								)
+							"
 							[disabled]="
 								!selectedItemId() ||
 								interactionState() !== 'idle'
@@ -769,6 +797,36 @@ export class ClassificationSlideComponent
 	}
 	itemState(id: string): string {
 		return this.assignmentState(id);
+	}
+	classificationItemAriaLabel(id: string, label: string): string {
+		const state = this.assignmentState(id);
+		if (state === 'selected') return `${label}, selected`;
+		const assignedCategoryId = this.assignments()[id];
+		const assignedCategory = this.data().categories.find(
+			(category) => category.id === assignedCategoryId,
+		)?.label;
+		if (state === 'assigned')
+			return `${label}, assigned to ${assignedCategory}`;
+		if (state === 'correct')
+			return `${label}, correctly assigned to ${assignedCategory}`;
+		if (state === 'incorrect') {
+			const correctCategoryId = this.data().items.find(
+				(item) => item.id === id,
+			)?.correctCategoryId;
+			const correctCategory = this.data().categories.find(
+				(category) => category.id === correctCategoryId,
+			)?.label;
+			return `${label}, assigned to ${assignedCategory}, incorrect; correct category ${correctCategory}`;
+		}
+		return label;
+	}
+	classificationBucketAriaLabel(categoryId: string, label: string): string {
+		const selectedItem = this.data().items.find(
+			(item) => item.id === this.selectedItemId(),
+		)?.label;
+		return selectedItem
+			? `Assign ${selectedItem} to ${label}`
+			: `Assign selected item to ${label}`;
 	}
 	handleAction(actionId: string): void {
 		if (
@@ -945,6 +1003,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 	);
 	if (
 		fieldIds.length !== blanks.length ||
+		new Set(fieldIds).size !== fieldIds.length ||
 		fieldIds.some((id) => !blanks.some((blank) => blank.id === id))
 	)
 		throw new Error('Cloze placeholders must match answer fields.');
@@ -961,13 +1020,6 @@ function parseCloze(value: unknown): ClozeSlideData {
 	};
 }
 
-const FIELD_TEMPLATE = `
-  @if (content(); as data) { <article class="slide-type" data-testid="field-slide">@if (data.stimulus) { <app-slide-stimulus [stimulus]="data.stimulus" /> }<section class="slide-interaction"><p class="slide-instruction">{{ data.instruction || defaultInstruction }}</p>
-    <div class="field-list">@for (field of fields(); track field.id) { <mat-form-field appearance="outline" [attr.data-state]="fieldState(field)"><mat-label>{{ field.label || field.id }}</mat-label><input matInput [value]="answers()[field.id] || ''" [disabled]="interactionState() !== 'idle'" (input)="setAnswer(field.id, inputFrom($event))" />@if (field.wordLimit) { <mat-hint>Maximum {{ field.wordLimit }} word{{ field.wordLimit === 1 ? '' : 's' }}</mat-hint> }</mat-form-field> }</div>
-    @if (interactionState() !== 'idle' && data.explanation) { <p class="slide-explanation">{{ data.explanation }}</p> }
-  </section></article> }
-`;
-
 abstract class AnswerFieldsSlideBase<
 	TData extends CommonData,
 > extends ScoredSlideBase<TData> {
@@ -976,6 +1028,11 @@ abstract class AnswerFieldsSlideBase<
 	readonly defaultInstruction = 'Complete every field.';
 	inputFrom(event: Event): string {
 		return inputValue(event);
+	}
+	wordLimitLabel(field: AnswerField): string {
+		return field.wordLimit === 1
+			? 'ONE WORD ONLY'
+			: `NO MORE THAN ${field.wordLimit} WORDS`;
 	}
 	setAnswer(id: string, value: string): void {
 		if (this.interactionState() !== 'idle') return;
@@ -1065,8 +1122,13 @@ abstract class AnswerFieldsSlideBase<
 													word
 												}}</mat-option>
 											}
-										</mat-select></mat-form-field
-									>
+										</mat-select>
+										@if (field.wordLimit) {
+											<mat-hint>{{
+												wordLimitLabel(field)
+											}}</mat-hint>
+										}
+									</mat-form-field>
 								} @else {
 									<mat-form-field appearance="outline"
 										><mat-label>{{
@@ -1085,7 +1147,13 @@ abstract class AnswerFieldsSlideBase<
 												)
 											"
 											(focus)="focusBlank(field.id)"
-									/></mat-form-field>
+										/>
+										@if (field.wordLimit) {
+											<mat-hint>{{
+												wordLimitLabel(field)
+											}}</mat-hint>
+										}
+									</mat-form-field>
 								}
 							</span>
 						}
@@ -1192,6 +1260,21 @@ function parseStructured(value: unknown): StructuredCompletionSlideData {
 				};
 			})
 		: undefined;
+	if (layout === 'table' && rows?.length) {
+		const renderedFieldIds = rows.flatMap((row) =>
+			row.cells.flatMap((cell) => (cell.fieldId ? [cell.fieldId] : [])),
+		);
+		const requiredFieldIds = fields.map((field) => field.id);
+		if (
+			renderedFieldIds.length !== requiredFieldIds.length ||
+			new Set(renderedFieldIds).size !== renderedFieldIds.length ||
+			!equalIds(renderedFieldIds, requiredFieldIds)
+		) {
+			throw new Error(
+				'Structured table rows must render every answer field once.',
+			);
+		}
+	}
 	return {
 		...common(source),
 		title: text(source['title']) || undefined,
@@ -1272,7 +1355,17 @@ function parseStructured(value: unknown): StructuredCompletionSlideData {
 																	)
 																)
 															"
-													/></mat-form-field>
+														/>
+														@if (
+															answerField.wordLimit
+														) {
+															<mat-hint>{{
+																wordLimitLabel(
+																	answerField
+																)
+															}}</mat-hint>
+														}
+													</mat-form-field>
 												} @else {
 													{{ cell.text }}
 												}
@@ -1308,7 +1401,13 @@ function parseStructured(value: unknown): StructuredCompletionSlideData {
 											inputFrom($event)
 										)
 									"
-							/></mat-form-field>
+								/>
+								@if (answerField.wordLimit) {
+									<mat-hint>{{
+										wordLimitLabel(answerField)
+									}}</mat-hint>
+								}
+							</mat-form-field>
 						}
 					</div>
 				}
@@ -1501,10 +1600,12 @@ function parseWordFormation(value: unknown): WordFormationSlideData {
 								matInput
 								[value]="answers()[field.id] || ''"
 								[disabled]="interactionState() !== 'idle'"
-								(input)="
-									setAnswer(field.id, inputFrom($event))
-								"
-						/></mat-form-field>
+								(input)="setAnswer(field.id, inputFrom($event))"
+							/>
+							@if (field.wordLimit) {
+								<mat-hint>{{ wordLimitLabel(field) }}</mat-hint>
+							}
+						</mat-form-field>
 					}
 				</div>
 			</section>

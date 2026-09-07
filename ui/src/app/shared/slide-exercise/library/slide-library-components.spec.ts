@@ -15,6 +15,7 @@ import {
 	MatchingSlideComponent,
 	RewriteSlideComponent,
 	SpeakingResponseSlideComponent,
+	StructuredCompletionSlideComponent,
 	WordFormationSlideComponent,
 	WritingResponseSlideComponent,
 } from './slide-library.components';
@@ -154,6 +155,25 @@ describe('reusable slide library behavior', () => {
 		});
 	});
 
+	it('suppresses pair-level error feedback when MatchingSlide feedback is deferred', () => {
+		const component = new MatchingSlideComponent();
+		const events: unknown[] = [];
+		component.event.subscribe((event) => events.push(event));
+		load(component, 'matching', {
+			feedbackMode: 'on-complete',
+			pairs: [
+				{ id: 'make', left: 'make', right: 'a decision' },
+				{ id: 'take', left: 'take', right: 'a risk' },
+			],
+		});
+
+		component.selectLeft('make');
+		component.selectRight('take');
+		expect(component.wrongPair()).toBeNull();
+		expect(component.pairFeedback()).toBe('');
+		expect(events).toEqual([]);
+	});
+
 	it('validates every ClassificationSlide category assignment', () => {
 		const component = new ClassificationSlideComponent();
 		load(component, 'classification', {
@@ -227,6 +247,44 @@ describe('reusable slide library behavior', () => {
 		});
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
+	});
+
+	it('honors exact spelling and rejects unrenderable AnswerField configurations', () => {
+		const component = new ClozeSlideComponent();
+		load(component, 'cloze', {
+			content: '{{term}}',
+			blanks: [
+				{ id: 'term', answers: ['environment'], exactSpelling: true },
+			],
+		});
+		component.setAnswer('term', 'Environment.');
+		component.handleAction('check');
+		expect(component.interactionState()).toBe('answered-incorrect');
+
+		expect(() =>
+			load(new ClozeSlideComponent(), 'cloze', {
+				content: '{{first}} and {{first}}',
+				blanks: [
+					{ id: 'first', answers: ['one'] },
+					{ id: 'second', answers: ['two'] },
+				],
+			}),
+		).toThrow('placeholders');
+
+		expect(() =>
+			load(
+				new StructuredCompletionSlideComponent(),
+				'structured-completion',
+				{
+					layout: 'table',
+					fields: [
+						{ id: 'visible', answers: ['one'] },
+						{ id: 'missing', answers: ['two'] },
+					],
+					rows: [{ id: 'row', cells: [{ fieldId: 'visible' }] }],
+				},
+			),
+		).toThrow('render every answer field once');
 	});
 
 	it('checks only the requested WordFormationSlide forms', () => {

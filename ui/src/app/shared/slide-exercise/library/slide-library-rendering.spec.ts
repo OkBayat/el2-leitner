@@ -8,6 +8,10 @@ import { createDefaultSlideContentRegistry } from '../slide-content-registry';
 import { SlideExerciseComponent } from '../slide-exercise.component';
 import { REUSABLE_SLIDE_FIXTURES } from './slide-library.fixtures';
 import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
+import {
+	ClassificationSlideComponent,
+	MatchingSlideComponent,
+} from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
 	it('constructs and renders every registered reusable slide type from configuration', async () => {
@@ -48,8 +52,66 @@ describe('reusable slide renderer contract', () => {
 				(fixture.nativeElement as HTMLElement).textContent?.trim(),
 				`rendered content for ${type}`,
 			).not.toBe('');
+			if (type === 'cloze') {
+				expect(
+					(fixture.nativeElement as HTMLElement).textContent,
+				).toContain('ONE WORD ONLY');
+				expect(
+					(fixture.nativeElement as HTMLElement).textContent,
+				).toContain('NO MORE THAN 2 WORDS');
+			}
 			fixture.destroy();
 		}
+	});
+
+	it('exposes MatchingSlide and ClassificationSlide interaction states accessibly', () => {
+		const matchingFixture = TestBed.createComponent(MatchingSlideComponent);
+		matchingFixture.componentInstance.load({
+			slideId: 'matching-accessibility',
+			type: 'matching',
+			data: {
+				pairs: [
+					{ id: 'make', left: 'make', right: 'a decision' },
+					{ id: 'take', left: 'take', right: 'a risk' },
+				],
+			},
+		});
+		matchingFixture.componentInstance.selectLeft('make');
+		matchingFixture.detectChanges();
+		const selectedMatch = (
+			matchingFixture.nativeElement as HTMLElement
+		).querySelector('[aria-pressed="true"]');
+		expect(selectedMatch?.getAttribute('aria-label')).toContain('selected');
+
+		const classificationFixture = TestBed.createComponent(
+			ClassificationSlideComponent,
+		);
+		classificationFixture.componentInstance.load({
+			slideId: 'classification-accessibility',
+			type: 'classification',
+			data: {
+				categories: [
+					{ id: 'animal', label: 'Animal' },
+					{ id: 'plant', label: 'Plant' },
+				],
+				items: [
+					{ id: 'paw', label: 'paw', correctCategoryId: 'animal' },
+				],
+			},
+		});
+		classificationFixture.componentInstance.selectItem('paw');
+		classificationFixture.componentInstance.assignSelected('plant');
+		classificationFixture.componentInstance.handleAction('check');
+		classificationFixture.detectChanges();
+		const classifiedItem = (
+			classificationFixture.nativeElement as HTMLElement
+		).querySelector('.chip-list button');
+		expect(classifiedItem?.getAttribute('aria-label')).toContain(
+			'incorrect; correct category Animal',
+		);
+
+		matchingFixture.destroy();
+		classificationFixture.destroy();
 	});
 
 	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {
