@@ -115,5 +115,11 @@ describe("MySqlLearningBootstrapRepository", () => {
     assert.match(wordQuery.sql, /MIN\(ve\.created_at\) AS progress_created_at/u);
     assert.doesNotMatch(wordQuery.sql, /uvp\.created_at/u,
       "bootstrap createdAt must not drift when a progress row is created");
+    assert.match(wordQuery.sql, /LEFT JOIN user_collections uc[\s\S]*uc\.user_id = \?/u,
+      "active subscriptions are one source of globally visible vocabulary");
+    assert.match(wordQuery.sql, /LEFT JOIN user_vocabulary_progress uvp[\s\S]*uvp\.user_id = \?/u,
+      "persisted Leitner progress must be visible without requiring a collection subscription");
+    assert.match(wordQuery.sql, /uc\.user_id IS NOT NULL OR uvp\.user_id IS NOT NULL/u);
+    assert.deepEqual(wordQuery.parameters, [7, 7]);
   });
 });
