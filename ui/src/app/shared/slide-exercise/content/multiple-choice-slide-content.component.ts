@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject } from 'rxjs';
+import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type { SlideContentComponent, SlideContentContext, SlideContentEvent } from '../slide-content-contracts';
@@ -54,6 +55,7 @@ export class MultipleChoiceSlideContentComponent implements SlideContentComponen
   private readonly events = new Subject<SlideContentEvent<MultipleChoiceAnswerEvent>>();
   private readonly speech = inject(SpeechService);
   private readonly store = inject(LearningStoreService);
+  private readonly answerSound = inject(ReviewAnswerSoundService);
   readonly stateChange = this.stateChanges.asObservable();
   readonly event = this.events.asObservable();
   readonly content = signal<MultipleChoiceSlideData>({ prompt: '', options: [], correctOptionId: '' });
@@ -87,6 +89,7 @@ export class MultipleChoiceSlideContentComponent implements SlideContentComponen
     const correct = selectedOptionId === data.correctOptionId;
     const correctLabel = data.options.find((option) => option.id === data.correctOptionId)?.label ?? '';
     this.checked.set(true);
+    this.answerSound.play(correct ? 'correct' : 'incorrect');
     this.stateChanges.next({
       chrome: {
         footer: {
@@ -110,6 +113,7 @@ export class MultipleChoiceSlideContentComponent implements SlideContentComponen
   }
 
   ngOnDestroy(): void {
+    this.answerSound.stop();
     this.speech.cancel();
     this.stateChanges.complete();
     this.events.complete();
