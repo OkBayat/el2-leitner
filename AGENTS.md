@@ -56,6 +56,12 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 - Reuse existing commands and source contracts instead of introducing parallel mechanisms for the same behavior.
 - Preserve backward-compatible public IDs, persisted learner progress, completed attempt snapshots, and existing user-facing behavior unless the task explicitly changes them.
 
+## Frontend styling
+
+- Prefer Bootstrap utility classes whenever they can express layout, spacing, alignment, display, sizing, and similar presentational rules (for example `d-flex`, `justify-content-center`, `align-items-center`, `gap-2`, `pt-5`, and `w-100`).
+- Prefer, in order: Bootstrap utilities, existing shared project styles/components, then custom CSS.
+- Do not add custom CSS when an equivalent Bootstrap utility already exists; keep frontend styling consistent across the application.
+
 ## Testing
 
 Use test-driven development for new deterministic behavior and regression tests for bug fixes.
