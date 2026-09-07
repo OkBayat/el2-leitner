@@ -7,8 +7,14 @@ export interface SlideContentContext<TData = unknown> {
   readonly data: TData;
 }
 
+export interface SlideContentEvent<TData = unknown> {
+  readonly type: string;
+  readonly data?: TData;
+}
+
 export interface SlideContentComponent {
   readonly stateChange?: Observable<SlideExerciseRuntimeState>;
+  readonly event?: Observable<SlideContentEvent>;
   load(context: SlideContentContext): void;
   handleAction?(actionId: string): void;
 }

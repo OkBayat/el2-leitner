@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import type { SlideContentEvent } from './slide-content-contracts';
 import { SlideContentHostComponent } from './slide-content-host.component';
 import { createDefaultSlideContentRegistry, type SlideContentRegistry } from './slide-content-registry';
 import { SlideExerciseActionComponent } from './slide-exercise-action.component';
@@ -19,6 +20,7 @@ import {
   type SlideExerciseActionEvent,
   type SlideExerciseActionView,
   type SlideExerciseChromeConfig,
+  type SlideExerciseContentEvent,
   type SlideExercisePresentation,
   type SlideExerciseRuntimeState,
   type SlideExerciseSlide,
@@ -44,6 +46,7 @@ export class SlideExerciseComponent implements OnChanges {
   @Input() registry: SlideContentRegistry = createDefaultSlideContentRegistry();
   @Output() readonly close = new EventEmitter<void>();
   @Output() readonly action = new EventEmitter<SlideExerciseActionEvent>();
+  @Output() readonly contentEvent = new EventEmitter<SlideExerciseContentEvent>();
   @Output() readonly slideChange = new EventEmitter<SlideExerciseSlideChange>();
   @Output() readonly completed = new EventEmitter<void>();
   @ViewChild(SlideContentHostComponent) private contentHost?: SlideContentHostComponent;
@@ -78,6 +81,12 @@ export class SlideExerciseComponent implements OnChanges {
 
   onContentState(state: SlideExerciseRuntimeState): void {
     this.runtime = state;
+  }
+
+  onContentEvent(event: SlideContentEvent): void {
+    const slide = this.currentSlide;
+    if (!slide) return;
+    this.contentEvent.emit({ slideId: slide.id, type: event.type, data: event.data });
   }
 
   handleAction(view: SlideExerciseActionView, slot: 'primary' | 'secondary'): void {
