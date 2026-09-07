@@ -1,17 +1,19 @@
 <section class="path-header" aria-labelledby="learning-path-title">
   <div class="path-header__copy">
-    <p class="path-header__eyebrow">{{ path().mode === 'rolling' ? 'Rolling course' : 'Course' }}</p>
-    <h1 id="learning-path-title">{{ path().title }}</h1>
-    <div class="path-header__meta">
-      <span class="status-pill">{{ statusLabel() }}</span>
-      <span>{{ summary().completedLessons }} of {{ summary().totalLessons }} lessons complete</span>
+    <div class="path-header__topline">
+      <p class="path-header__eyebrow">{{ path().mode === 'rolling' ? 'Rolling course' : 'Course' }}</p>
+      <span class="path-header__status">{{ statusLabel() }}</span>
     </div>
+    <h1 id="learning-path-title">{{ path().title }}</h1>
+    <p class="path-header__lesson-progress">
+      {{ summary().completedLessons }} of {{ summary().totalLessons }} lessons complete
+    </p>
   </div>
 
   <div class="path-header__progress">
     <div class="progress-copy">
+      <span>Course progress</span>
       <strong>{{ summary().percent }}%</strong>
-      <span>{{ summary().completedRequiredExercises }} of {{ summary().totalRequiredExercises }} required exercises</span>
     </div>
     <div
       class="progress-track"
@@ -23,5 +25,8 @@
     >
       <span class="progress-fill" [style.width.%]="summary().percent"></span>
     </div>
+    <span class="progress-detail">
+      {{ summary().completedRequiredExercises }} of {{ summary().totalRequiredExercises }} required exercises
+    </span>
   </div>
 </section>
