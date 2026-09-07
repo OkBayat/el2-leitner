@@ -14,11 +14,20 @@
   background: var(--vocora-surface-page);
 }
 
+app-slide-exercise-header {
+  grid-row: 1;
+}
+
 .slide-exercise__stage {
+  grid-row: 2;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+app-slide-exercise-footer {
+  grid-row: 3;
 }
 
 .slide-exercise__content {
