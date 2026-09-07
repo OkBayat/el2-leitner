@@ -3,10 +3,12 @@ import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from 
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
 import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
+import {CollectionLearningPathFacade} from '../../application/collection-learning-path/collection-learning-path.facade';
 import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
+import {summarizeLearningPath} from '../../domain/collection-learning-path/learning-path';
 import {calculateStreak, getDueWords, totalStats} from '../../domain/learning/learning-rules';
 import {ShareStoryService} from '../share-story/share-story.service';
 import {NavigationIconComponent, type NavigationIcon} from './navigation-icon.component';
@@ -31,6 +33,7 @@ export class AppShellComponent implements OnInit {
 	readonly store = inject(LearningStoreService);
 	readonly share = inject(ShareStoryService);
 	readonly courses = inject(SelectedCoursesFacade);
+	private readonly learningPath = inject(CollectionLearningPathFacade);
 	private readonly theme = inject(ThemeService);
 	private readonly router = inject(Router);
 	private readonly currentUrl = toSignal(this.router.events.pipe(
@@ -56,6 +59,17 @@ export class AppShellComponent implements OnInit {
 	readonly moreActive = computed(() => {
 		const path = this.currentUrl().split(/[?#]/u)[0];
 		return ['/reports', '/settings', '/overview'].some(route => path === route || path.startsWith(`${route}/`));
+	});
+	readonly currentCourseId = computed(() => {
+		const path = this.currentUrl().split(/[?#]/u)[0];
+		return path.match(/^\/library\/([^/]+)\/learning-path(?:\/|$)/u)?.[1] ?? null;
+	});
+	readonly activeCourseId = computed(() => this.currentCourseId() ?? this.courses.courses()[0]?.id ?? null);
+	readonly currentCourseProgress = computed(() => {
+		const courseId = this.currentCourseId();
+		const view = this.learningPath.view();
+		if (!courseId || !view || view.path.collectionId !== courseId) return null;
+		return summarizeLearningPath(view.lessons);
 	});
 	readonly stats = computed(() => {
 		const state = this.store.state();

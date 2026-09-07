@@ -89,27 +89,47 @@
 	</button>
 </nav>
 
-<mat-menu #courseMenu="matMenu" [overlapTrigger]="false">
+<mat-menu #courseMenu="matMenu" [overlapTrigger]="false" class="course-menu-panel">
 	<div class="course-menu-content" data-testid="course-menu">
-		<div class="course-menu-heading">MY COURSES</div>
 		@if (courses.loading() && !courses.courses().length) {
 			<div class="course-menu-state">Loading courses…</div>
 		} @else {
-			@for (course of courses.courses(); track course.id) {
-				<a mat-menu-item class="course-menu-item" [routerLink]="['/library', course.id, 'learning-path']"
-					[attr.aria-label]="'Open ' + course.title" [attr.data-course-id]="course.id">
-					<app-navigation-icon class="course-menu-icon" name="course" />
-					<span>{{ course.title }}</span>
+			<div class="course-menu-cards" aria-label="My courses">
+				@for (course of courses.courses(); track course.id) {
+					<a mat-menu-item class="course-menu-item" [class.is-active]="activeCourseId() === course.id"
+						[routerLink]="['/library', course.id, 'learning-path']"
+						[attr.aria-current]="activeCourseId() === course.id ? 'page' : null"
+						[attr.aria-label]="'Open ' + course.title" [attr.data-course-id]="course.id">
+						<span class="course-menu-icon-frame" aria-hidden="true">
+							<app-navigation-icon class="course-menu-icon" name="course" />
+						</span>
+						<span class="course-menu-title">{{ course.title }}</span>
+					</a>
+				} @empty {
+					<div class="course-menu-state">No courses selected yet.</div>
+				}
+				<a mat-menu-item class="course-menu-item course-menu-add" routerLink="/library"
+					data-testid="add-course-link" aria-label="Add a course">
+					<span class="course-menu-add-frame" aria-hidden="true">+</span>
+					<span class="course-menu-title">Course</span>
 				</a>
-			} @empty {
-				<div class="course-menu-state">No courses selected yet.</div>
+			</div>
+			@if (currentCourseProgress(); as progress) {
+				<section class="course-menu-progress" data-testid="course-menu-progress">
+					<div class="course-menu-progress-copy">
+						<span>Course progress</span>
+						<strong>{{ progress.percent }}%</strong>
+					</div>
+					<div class="course-menu-progress-track" role="progressbar" aria-label="Required exercise progress"
+						aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progress.percent">
+						<span class="course-menu-progress-fill" [style.width.%]="progress.percent"></span>
+					</div>
+					<span class="course-menu-progress-detail">
+						{{ progress.completedRequiredExercises }} of {{ progress.totalRequiredExercises }} required exercises
+					</span>
+				</section>
 			}
 		}
-		<div class="course-menu-divider" aria-hidden="true"></div>
-		<a mat-menu-item class="course-menu-add" routerLink="/library" data-testid="add-course-link">
-			<span class="course-add-icon" aria-hidden="true">+</span>
-			<span>Add a new course</span>
-		</a>
 	</div>
 </mat-menu>
 

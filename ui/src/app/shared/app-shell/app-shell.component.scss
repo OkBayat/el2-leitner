@@ -1,3 +1,5 @@
+@use './course-menu.component';
+
 :host {
 	--shell-header-height: calc(64px + var(--safe-area-top, 0px));
 	--shell-bottom-height: calc(80px + var(--safe-area-bottom, 0px));
@@ -32,6 +34,8 @@
 	z-index: 30;
 	top: 0;
 	display: grid;
+	width: 100vw;
+	max-width: 100vw;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	align-items: center;
 	height: var(--shell-header-height);
@@ -83,6 +87,8 @@ button.status-item {
 	bottom: 0;
 	inset-inline: 0;
 	display: grid;
+	width: 100vw;
+	max-width: 100vw;
 	grid-template-columns: repeat(6, minmax(0, 1fr));
 	align-items: center;
 	justify-items: center;
@@ -122,60 +128,6 @@ button.status-item {
 a:focus-visible, button:focus-visible {
 	outline: 3px solid var(--vocora-nav-focus);
 	outline-offset: 3px;
-}
-
-.course-menu-content {
-	width: min(300px, calc(100vw - 32px));
-	padding: 4px 0;
-	color: var(--vocora-nav-text);
-}
-.course-menu-heading {
-	padding: 8px 16px 10px;
-	color: var(--vocora-nav-muted);
-	font-size: 12px;
-	font-weight: 800;
-	letter-spacing: .5px;
-}
-.course-menu-state {
-	padding: 14px 16px 16px;
-	color: var(--vocora-nav-muted);
-	font-size: 13px;
-	line-height: 1.4;
-}
-.course-menu-item,
-.course-menu-add {
-	min-height: 56px;
-	color: var(--vocora-nav-text);
-	font-size: 14px;
-	font-weight: 700;
-}
-.course-menu-item:hover,
-.course-menu-add:hover {
-	background: var(--vocora-nav-hover);
-}
-.course-menu-icon {
-	width: 30px;
-	height: 30px;
-	margin-right: 12px;
-	vertical-align: middle;
-}
-.course-menu-divider {
-	margin: 4px 0;
-	border-top: 1px solid var(--vocora-nav-border);
-}
-.course-add-icon {
-	display: inline-grid;
-	width: 28px;
-	height: 28px;
-	place-items: center;
-	margin-right: 12px;
-	border: 2px solid var(--vocora-nav-border);
-	border-radius: 8px;
-	color: var(--vocora-nav-muted);
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 1;
-	vertical-align: middle;
 }
 
 .account-email {
