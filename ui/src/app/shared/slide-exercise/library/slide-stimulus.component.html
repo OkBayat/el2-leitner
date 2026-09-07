@@ -1,0 +1,71 @@
+<aside class="slide-stimulus" [attr.data-stimulus-type]="stimulus.type">
+	@switch (stimulus.type) {
+		@case ('text') {
+			<div
+				class="slide-stimulus__reading"
+				tabindex="0"
+				aria-label="Reading passage"
+			>
+				@if (stimulus.content) {
+					<p>{{ stimulus.content }}</p>
+				}
+				@for (section of stimulus.sections ?? []; track section.id) {
+					<section
+						[attr.aria-labelledby]="
+							'stimulus-section-' + section.id
+						"
+					>
+						<h2 [id]="'stimulus-section-' + section.id">
+							{{ section.title || section.id }}
+						</h2>
+						<p>{{ section.content }}</p>
+					</section>
+				}
+			</div>
+		}
+		@case ('audio') {
+			<app-slide-audio-control
+				[src]="stimulus.src"
+				[maxReplays]="stimulus.maxReplays"
+				[transcript]="stimulus.transcript"
+			/>
+		}
+		@case ('image') {
+			<figure>
+				<img [src]="stimulus.src" [alt]="stimulus.alt" />
+				@if (stimulus.caption) {
+					<figcaption>{{ stimulus.caption }}</figcaption>
+				}
+			</figure>
+		}
+		@case ('chart') {
+			@if (stimulus.imageSrc) {
+				<figure>
+					<img
+						[src]="stimulus.imageSrc"
+						[alt]="stimulus.alt || 'Chart stimulus'"
+					/>
+					@if (stimulus.caption) {
+						<figcaption>{{ stimulus.caption }}</figcaption>
+					}
+				</figure>
+			} @else {
+				<p
+					class="slide-stimulus__placeholder"
+					role="img"
+					[attr.aria-label]="stimulus.alt || 'Chart stimulus'"
+				>
+					Chart preview
+				</p>
+			}
+		}
+		@case ('diagram') {
+			<figure>
+				<img [src]="stimulus.imageSrc" [alt]="stimulus.alt" />
+				@if (stimulus.caption) {
+					<figcaption>{{ stimulus.caption }}</figcaption>
+				}
+			</figure>
+		}
+	}
+</aside>

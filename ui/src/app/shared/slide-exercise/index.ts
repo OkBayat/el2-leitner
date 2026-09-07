@@ -5,4 +5,5 @@ export * from './slide-exercise.component';
 export * from './slide-exercise-header.component';
 export * from './slide-exercise-footer.component';
 export * from './slide-exercise-action.component';
-export * from './content/multiple-choice-slide-content.models';
+export * from './library/slide-library.models';
+export * from './library/slide-library.fixtures';

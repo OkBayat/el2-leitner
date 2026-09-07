@@ -1,7 +1,7 @@
 import type { VocabularyIntakeItem, VocabularyIntakePayload } from '../../../../domain/collection-learning-path/vocabulary-intake';
 import { vocabularyIntakePracticeItems } from '../../../../domain/collection-learning-path/vocabulary-intake';
 import type {
-  MultipleChoiceSlideData,
+  ChoiceSlideData,
   SlideExerciseSlide,
   SlideExerciseSummaryMetric,
 } from '../../../../shared/slide-exercise';
@@ -25,7 +25,7 @@ function definitionPool(payload: VocabularyIntakePayload): readonly string[] {
   return [...new Set(payload.items.map((item) => item.definitions[0]?.trim() ?? '').filter(Boolean))];
 }
 
-function questionData(payload: VocabularyIntakePayload, item: VocabularyIntakeItem): MultipleChoiceSlideData {
+function questionData(payload: VocabularyIntakePayload, item: VocabularyIntakeItem): ChoiceSlideData {
   const correct = firstDefinition(item);
   const distractors = definitionPool(payload).filter((definition) => definition !== correct);
   if (distractors.length < 2) throw new Error('At least three distinct vocabulary definitions are required.');
@@ -39,11 +39,11 @@ function questionData(payload: VocabularyIntakePayload, item: VocabularyIntakeIt
   const correctOptionId = options.find((option) => option.label === correct)?.id ?? '';
   return {
     instruction: 'Choose the correct meaning.',
-    prompt: item.term,
+    mode: 'meaning',
+    question: item.term,
     options,
-    correctOptionId,
-    correctTitle: 'Correct',
-    incorrectTitle: 'Not quite',
+    correctOptionIds: [correctOptionId],
+    speech: { text: item.term, autoplay: true, replay: true },
   };
 }
 
@@ -80,7 +80,7 @@ export function buildVocabularyIntakeSlides(payload: VocabularyIntakePayload): r
   };
   const questions = practiceItems.map((item, index) => ({
     id: `vocabulary-intake-question-${item.id}`,
-    type: 'multiple-choice',
+    type: 'choice',
     data: questionData(payload, item),
     chrome: {
       header: {
@@ -92,7 +92,7 @@ export function buildVocabularyIntakeSlides(payload: VocabularyIntakePayload): r
       },
       footer: { secondary: false },
     },
-  } satisfies SlideExerciseSlide<MultipleChoiceSlideData>));
+  } satisfies SlideExerciseSlide<ChoiceSlideData>));
   const summary: SlideExerciseSlide = {
     id: VOCABULARY_INTAKE_SUMMARY_SLIDE_ID,
     type: 'summary',
@@ -108,7 +108,7 @@ export function buildVocabularyIntakeSlides(payload: VocabularyIntakePayload): r
 }
 
 export function firstVocabularyIntakePracticeSlideId(slides: readonly SlideExerciseSlide[]): string {
-  return slides.find((slide) => slide.type === 'multiple-choice')?.id ?? VOCABULARY_INTAKE_SUMMARY_SLIDE_ID;
+  return slides.find((slide) => slide.type === 'choice')?.id ?? VOCABULARY_INTAKE_SUMMARY_SLIDE_ID;
 }
 
 export function withVocabularyIntakeScore(

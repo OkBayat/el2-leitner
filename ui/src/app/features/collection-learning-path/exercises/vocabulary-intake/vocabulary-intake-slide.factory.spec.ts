@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseVocabularyIntakePayload } from '../../../../domain/collection-learning-path/vocabulary-intake';
-import type { MultipleChoiceSlideData } from '../../../../shared/slide-exercise';
+import type { ChoiceSlideData } from '../../../../shared/slide-exercise';
 import {
   buildVocabularyIntakeSlides,
   firstVocabularyIntakePracticeSlideId,
@@ -24,19 +24,24 @@ describe('vocabulary intake slide factory', () => {
   it('builds intro, only new/Box 1 questions, and a summary', () => {
     const slides = buildVocabularyIntakeSlides(payload);
 
-    expect(slides.map((slide) => slide.type)).toEqual(['message', 'multiple-choice', 'multiple-choice', 'summary']);
+    expect(slides.map((slide) => slide.type)).toEqual(['message', 'choice', 'choice', 'summary']);
     expect(slides[0].chrome?.header?.visible).toBe(false);
     expect(slides[0].chrome?.footer?.primary).toMatchObject({ label: "Let's Go", behavior: 'emit' });
     expect(String((slides[0].data as { body: string }).body)).toContain('5 words · 1 mastered · 2 to practice');
     expect(firstVocabularyIntakePracticeSlideId(slides)).toBe('vocabulary-intake-question-new-1');
 
-    const questions = slides.filter((slide) => slide.type === 'multiple-choice');
-    expect(questions.map((slide) => (slide.data as MultipleChoiceSlideData).prompt)).toEqual(['persistent', 'establish']);
+    const questions = slides.filter((slide) => slide.type === 'choice');
+    expect(questions.map((slide) => (slide.data as ChoiceSlideData).question)).toEqual(['persistent', 'establish']);
     for (const slide of questions) {
-      const data = slide.data as MultipleChoiceSlideData;
+      const data = slide.data as ChoiceSlideData;
       expect(data.options).toHaveLength(3);
       expect(new Set(data.options.map((option) => option.label)).size).toBe(3);
-      expect(data.options.some((option) => option.id === data.correctOptionId)).toBe(true);
+      expect(data.options.some((option) => data.correctOptionIds.includes(option.id))).toBe(true);
+      expect(data.speech).toEqual({
+        text: data.question,
+        autoplay: true,
+        replay: true,
+      });
     }
     expect(questions[0].chrome?.header?.progress?.label).toBe('Word 1 of 2');
     expect(questions[1].chrome?.header?.progress?.label).toBe('Word 2 of 2');

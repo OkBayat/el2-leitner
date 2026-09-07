@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { REUSABLE_SLIDE_TYPES } from './library/slide-library.models';
 import { createDefaultSlideContentRegistry, SlideContentRegistry } from './slide-content-registry';
 
 describe('slide content registry', () => {
@@ -7,11 +8,13 @@ describe('slide content registry', () => {
 
     expect(registry.resolve('message')).toBeDefined();
     expect(registry.resolve('summary')?.chromeDefaults).toEqual({ header: { visible: false } });
-    expect(registry.resolve('multiple-choice')?.chromeDefaults).toEqual({
+    expect(registry.resolve('choice')?.chromeDefaults).toEqual({
       footer: {
         primary: { id: 'check', label: 'Check', behavior: 'content', disabled: true },
       },
     });
+    expect(REUSABLE_SLIDE_TYPES.every((type) => registry.resolve(type))).toBe(true);
+    expect(registry.registeredTypes()).toHaveLength(REUSABLE_SLIDE_TYPES.length + 2);
   });
 
   it('rejects duplicate renderer ownership for the same slide type', () => {

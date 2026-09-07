@@ -15,7 +15,7 @@ describe('slide exercise model', () => {
   it('keeps one ordered slide array without before, practice, summary, or after phases', () => {
     const slides = validateSlideExerciseSlides([
       slide('intro', 'message'),
-      slide('choice', 'multiple-choice'),
+      slide('choice', 'choice'),
       slide('spelling', 'text-input'),
       slide('result', 'summary'),
       slide('reflection', 'message'),
@@ -56,7 +56,7 @@ describe('slide exercise model', () => {
         primary: { id: 'check', label: 'Check', behavior: 'content' },
       },
     };
-    const current = slide('question', 'multiple-choice', {
+    const current = slide('question', 'choice', {
       footer: { primary: { label: 'Check answer' } },
     });
 
@@ -92,7 +92,7 @@ describe('slide exercise model', () => {
 
   it('lets runtime slide content drive feedback and disabled/loading actions after render', () => {
     const presentation = resolveSlideExercisePresentation({
-      slide: slide('answer', 'multiple-choice'),
+      slide: slide('answer', 'choice'),
       index: 0,
       total: 1,
       runtime: {

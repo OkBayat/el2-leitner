@@ -1,0 +1,40 @@
+<main class="showcase" data-testid="slide-showcase">
+	<header class="showcase__header">
+		<div>
+			<p>Development showcase</p>
+			<h1>Reusable slide library</h1>
+			<span
+				>Use the controls, number keys, and Enter to inspect every
+				shared slide family.</span
+			>
+		</div>
+		<button mat-stroked-button type="button" (click)="reset()">
+			Reset current slide
+		</button>
+	</header>
+
+	<nav class="showcase__nav" aria-label="Slide types">
+		@for (slide of slides(); track slide.id) {
+			<button
+				mat-button
+				type="button"
+				[attr.aria-current]="
+					activeSlideId() === slide.id ? 'page' : null
+				"
+				(click)="inspect(slide.id)"
+			>
+				{{ slide.type }}
+			</button>
+		}
+	</nav>
+
+	<p class="showcase__event" aria-live="polite">{{ latestEvent() }}</p>
+
+	<section class="showcase__stage">
+		<app-slide-exercise
+			[slides]="slides()"
+			(slideChange)="onSlideChange($event)"
+			(contentEvent)="onContentEvent($event)"
+		/>
+	</section>
+</main>

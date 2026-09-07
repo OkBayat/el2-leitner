@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 import { VocabularyIntakeFacade } from '../../../../application/collection-learning-path/vocabulary-intake.facade';
-import type { MultipleChoiceSlideData } from '../../../../shared/slide-exercise';
+import type { ChoiceSlideData } from '../../../../shared/slide-exercise';
 import { VocabularyIntakeExerciseComponent } from './vocabulary-intake-exercise.component';
 import { VOCABULARY_INTAKE_SUMMARY_SLIDE_ID } from './vocabulary-intake-slide.factory';
 
@@ -40,7 +40,7 @@ describe('VocabularyIntakeExerciseComponent', () => {
     const slides = component.slides();
     expect(slides[0].chrome?.header?.visible).toBe(false);
     expect((slides[0].data as { body: string }).body).toBe('5 words · 1 mastered · 2 to practice');
-    expect(slides.filter((slide) => slide.type === 'multiple-choice').map((slide) => (slide.data as MultipleChoiceSlideData).prompt))
+    expect(slides.filter((slide) => slide.type === 'choice').map((slide) => (slide.data as ChoiceSlideData).question))
       .toEqual(['persistent', 'establish']);
 
     await component.startPractice();
@@ -59,17 +59,17 @@ describe('VocabularyIntakeExerciseComponent', () => {
     component.onContentEvent({
       slideId: 'vocabulary-intake-question-new-1',
       type: 'answered',
-      data: { selectedOptionId: 'a', correctOptionId: 'a', correct: true },
+      data: { selectedOptionIds: ['a'], correctOptionIds: ['a'], correct: true },
     });
     component.onContentEvent({
       slideId: 'vocabulary-intake-question-new-1',
       type: 'answered',
-      data: { selectedOptionId: 'a', correctOptionId: 'a', correct: true },
+      data: { selectedOptionIds: ['a'], correctOptionIds: ['a'], correct: true },
     });
     component.onContentEvent({
       slideId: 'vocabulary-intake-question-box-1',
       type: 'answered',
-      data: { selectedOptionId: 'b', correctOptionId: 'a', correct: false },
+      data: { selectedOptionIds: ['b'], correctOptionIds: ['a'], correct: false },
     });
 
     expect(component.correctCount()).toBe(1);

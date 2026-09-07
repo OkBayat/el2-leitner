@@ -1,7 +1,9 @@
+import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 
 export const appRoutes: Routes = [
+  { path: 'slide-showcase', canMatch: [() => isDevMode()], loadComponent: () => import('./features/slide-showcase/slide-showcase-page.component').then((m) => m.SlideShowcasePageComponent) },
   { path: 'login', loadComponent: () => import('./features/auth/login-page.component').then((m) => m.LoginPageComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },

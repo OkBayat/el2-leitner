@@ -19,7 +19,6 @@ import type {
 } from '../../../../domain/collection-learning-path/vocabulary-intake';
 import {
   SlideExerciseComponent,
-  type MultipleChoiceAnswerEvent,
   type SlideExerciseActionEvent,
   type SlideExerciseChromeConfig,
   type SlideExerciseContentEvent,
@@ -39,14 +38,21 @@ function errorMessage(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Vocabulary could not be activated.';
 }
 
-function answerEvent(value: unknown): MultipleChoiceAnswerEvent | null {
+interface ChoiceAnswerEvent {
+  readonly selectedOptionIds: readonly string[];
+  readonly correctOptionIds: readonly string[];
+  readonly correct: boolean;
+}
+
+function answerEvent(value: unknown): ChoiceAnswerEvent | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const source = value as Partial<MultipleChoiceAnswerEvent>;
+  const source = value as Partial<ChoiceAnswerEvent>;
   if (typeof source.correct !== 'boolean') return null;
-  if (typeof source.selectedOptionId !== 'string' || typeof source.correctOptionId !== 'string') return null;
+  if (!Array.isArray(source.selectedOptionIds) || !Array.isArray(source.correctOptionIds)) return null;
+  if (source.selectedOptionIds.some((id) => typeof id !== 'string') || source.correctOptionIds.some((id) => typeof id !== 'string')) return null;
   return {
-    selectedOptionId: source.selectedOptionId,
-    correctOptionId: source.correctOptionId,
+    selectedOptionIds: source.selectedOptionIds,
+    correctOptionIds: source.correctOptionIds,
     correct: source.correct,
   };
 }
