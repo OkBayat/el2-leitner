@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-@use './styles/angular-material-defaults' as material-defaults;
 @use './styles/leitner-google-palette' as leitner-google-palette;
 @use './styles/table-design' as table-design;
 @use './styles/navigation-theme' as navigation-theme;
@@ -9,7 +8,6 @@
 
 @include vocora-design-system.apply();
 @include bootstrap-theme.apply();
-@include angular-material-theme.apply();
 
 html {
 	@include mat.theme((
@@ -20,7 +18,6 @@ html {
 		typography: system-ui,
 		density: 0,
 	));
-	@include material-defaults.apply();
 	--safe-area-top: env(safe-area-inset-top, 0px);
 	--safe-area-right: env(safe-area-inset-right, 0px);
 	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -33,6 +30,7 @@ html {
 	direction: ltr;
 }
 
+@include angular-material-theme.apply();
 @include leitner-google-palette.apply();
 @include table-design.apply();
 @include navigation-theme.apply();

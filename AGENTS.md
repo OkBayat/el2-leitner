@@ -58,12 +58,16 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 ## Frontend styling
 
+- Prefer Angular Material components and directives whenever Material provides the standard interactive primitive needed by the UI, including buttons, icon buttons, dialogs/popups, menus, form fields and inputs, selects, checkboxes, radios, tabs, tooltips, snackbars, and progress indicators.
+- Do not hand-roll a replacement for an Angular Material primitive unless Material cannot satisfy a concrete functional or product requirement. Domain-specific composite components should compose Material primitives where applicable.
+- If an Angular Material component needs a project-wide visual change, define the override centrally so every instance inherits the same styling. Do not reskin Material primitives independently in feature or component-local styles.
+- Angular Material system colors must be mapped centrally in `ui/src/styles/_angular-material-theme.scss` to Vocora design-system tokens. Do not introduce raw Material palette colors or component-local color overrides for Material primitives.
 - Prefer Bootstrap utility classes whenever they can express layout, spacing, alignment, display, sizing, color, and similar presentational rules (for example `d-flex`, `justify-content-center`, `align-items-center`, `gap-2`, `pt-5`, `w-100`, `bg-primary`, `text-primary`, and `border-success`).
 - For semantic colors, prefer Bootstrap color utilities such as `bg-primary`, `text-primary`, `border-primary`, `bg-success`, `text-warning`, and `text-danger` instead of hard-coded colors or component-local color helpers.
 - Bootstrap semantic colors must be mapped centrally in `ui/src/styles/_bootstrap-theme.scss` to Vocora design-system tokens. Do not redefine Bootstrap semantic colors in component styles.
-- Keep raw palette values in the Vocora design system; the Bootstrap theme adapter must reference those tokens rather than own duplicate hex/RGB colors.
-- Prefer, in order: Bootstrap utilities, existing shared project styles/components, then custom CSS.
-- Do not add custom CSS when an equivalent Bootstrap utility already exists; keep frontend styling consistent across the application.
+- Keep raw palette values in the Vocora design system; Bootstrap and Angular Material theme adapters must reference those tokens rather than own duplicate hex/RGB colors.
+- Prefer, in order: Angular Material for standard interactive components, Bootstrap utilities for presentational helpers, existing shared project styles/components, then custom CSS or custom UI primitives.
+- Do not add custom CSS when an equivalent Bootstrap utility or centralized Angular Material override already exists; keep frontend styling consistent across the application.
 
 ## Testing
 
