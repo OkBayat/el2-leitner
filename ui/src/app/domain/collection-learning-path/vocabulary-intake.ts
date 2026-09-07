@@ -111,7 +111,7 @@ export function vocabularyIntakeStateLabel(item: VocabularyIntakeItem): string {
 
 export function vocabularyIntakeNeedsPractice(item: VocabularyIntakeItem): boolean {
   if (item.progress.state === 'new') return true;
-  return item.progress.state === 'learning' && item.progress.box <= 1;
+  return item.progress.state === 'learning' && item.progress.box === 1;
 }
 
 export function vocabularyIntakePracticeItems(payload: VocabularyIntakePayload): readonly VocabularyIntakeItem[] {
