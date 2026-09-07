@@ -1,5 +1,8 @@
 'use strict';
 
+const path = require('node:path');
+const { maskPythonComments } = require('./python-source');
+
 function stripComments(source) {
   let output = '';
   let state = 'code';
@@ -63,8 +66,11 @@ function stripComments(source) {
   return output;
 }
 
-function executableShape(source) {
-  return stripComments(source)
+function executableShape(source, filePath) {
+  const withoutComments = path.posix.extname(filePath || '') === '.py'
+    ? maskPythonComments(source)
+    : stripComments(source);
+  return withoutComments
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
@@ -74,7 +80,8 @@ function executableShape(source) {
 function scriptBehaviorChanged(change) {
   if (['A', 'D', 'R'].includes(change.status)) return true;
   if (change.status !== 'M') return false;
-  return executableShape(change.baseSource) !== executableShape(change.source);
+  const filePath = change.path || change.basePath;
+  return executableShape(change.baseSource, filePath) !== executableShape(change.source, filePath);
 }
 
 module.exports = { scriptBehaviorChanged };

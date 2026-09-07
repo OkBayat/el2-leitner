@@ -2,6 +2,7 @@
 
 const path = require('node:path');
 const { maskComments } = require('./comment-mask');
+const { maskPythonComments, pythonStringRanges } = require('./python-source');
 
 const SKILLS_ROOT = '.agents/skills';
 const SHARED_ROOT = `${SKILLS_ROOT}/shared`;
@@ -270,7 +271,8 @@ function privateSkillImports(source, currentSkill, filePath) {
 }
 
 function privateExecutableDependencies(source, currentSkill, filePath) {
-  const executableSource = maskComments(source);
+  const python = path.posix.extname(normalize(filePath)) === '.py';
+  const executableSource = python ? maskPythonComments(source) : maskComments(source);
   const specifiers = new Set(moduleSpecifiers(executableSource));
   const stringTokens = [];
   for (let index = 0; index < executableSource.length; index += 1) {
@@ -392,6 +394,19 @@ function privateExecutableDependencies(source, currentSkill, filePath) {
     const segments = [...match[1].matchAll(/['"]([^'"]*)['"]/g)].map((segment) => segment[1]);
     const target = skillNameForPath(path.posix.normalize(path.posix.join(fromDirectory, ...segments)));
     if (target && target !== currentSkill) found.add(target);
+  }
+  if (python) {
+    const stringRanges = pythonStringRanges(executableSource);
+    const pathlibPattern = /\bPath\(\s*__file__\s*\)(?:\.resolve\(\))?\.parents\[\s*(\d+)\s*\]((?:\s*\/\s*['"][^'"]+['"])+)/g;
+    for (const match of executableSource.matchAll(pathlibPattern)) {
+      if (stringRanges.some((range) => range.start <= match.index && match.index <= range.end)) continue;
+      const parentIndex = Number.parseInt(match[1], 10);
+      let resolved = normalize(filePath);
+      for (let count = 0; count <= parentIndex; count += 1) resolved = path.posix.dirname(resolved);
+      const segments = [...match[2].matchAll(/['"]([^'"]+)['"]/g)].map((segment) => segment[1]);
+      const target = skillNameForPath(path.posix.normalize(path.posix.join(resolved, ...segments)));
+      if (target && target !== currentSkill) found.add(target);
+    }
   }
   return [...found].sort();
 }

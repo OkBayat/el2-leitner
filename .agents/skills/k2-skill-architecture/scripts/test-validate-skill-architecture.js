@@ -186,6 +186,28 @@ function testPrivateImportInTestFails() {
   assert.ok(problemCodes(result).includes('private_skill_dependency'));
 }
 
+function testPythonPathlibPrivateDependencyFails() {
+  const name = 'k2-example';
+  const root = skillRoot(name);
+  const sibling = ['k2', 'other'].join('-');
+  const source = [
+    'from pathlib import Path\n',
+    `target = Path(__file__).resolve().parents[2] / "${sibling}" / "scripts" / "private.py"\n`,
+  ].join('');
+  const files = {
+    [`${root}/SKILL.md`]: skillDocument(name),
+    [`${root}/scripts/command.py`]: source,
+  };
+  const changes = [{
+    baseSource: 'from pathlib import Path\n',
+    path: `${root}/scripts/command.py`,
+    source,
+    status: 'M',
+  }];
+  const result = validate(skillSnapshot(name, files, changes, true));
+  assert.ok(problemCodes(result).includes('private_skill_dependency'));
+}
+
 function testSharedDependencyIsAllowed() {
   const name = 'k2-example';
   const root = skillRoot(name);
@@ -591,6 +613,7 @@ const tests = [
   testPrivateSiblingDependencyFails,
   testPrivateDependencyFixtureInTestIsIgnored,
   testPrivateImportInTestFails,
+  testPythonPathlibPrivateDependencyFails,
   testSharedDependencyIsAllowed,
   testSharedMarkdownReferenceUsesRepositorySnapshot,
   testFlatSharedAdditionFails,

@@ -202,6 +202,21 @@ function testModifiedPythonBehaviorRequiresChangedPythonTest() {
   assert.equal(withChangedTest.ok, true);
 }
 
+function testPythonCommentOnlyModificationDoesNotRequireTestChange() {
+  const pythonScript = `${root}/scripts/create_worktree.py`;
+  const change = {
+    basePath: pythonScript,
+    baseSource: 'VALUE = "# retained"  # old comment\n',
+    path: pythonScript,
+    source: '# new comment\nVALUE = "# retained"\n',
+    status: 'M',
+  };
+  const result = resultFor([change], {
+    extraFiles: { [pythonScript]: change.source },
+  });
+  assert.equal(problemCodes(result).includes('missing_skill_test'), false);
+}
+
 const tests = [
   testModifiedBehaviorWithoutAnyTestNeedsChangedTest,
   testUnchangedExistingTestDoesNotSatisfyRule,
@@ -211,6 +226,7 @@ const tests = [
   testCompleteSkillDeletionWithTestDeletionPasses,
   testDeletedTestDoesNotCoverModifiedBehavior,
   testModifiedPythonBehaviorRequiresChangedPythonTest,
+  testPythonCommentOnlyModificationDoesNotRequireTestChange,
 ];
 
 for (const test of tests) test();
