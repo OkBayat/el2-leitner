@@ -65,9 +65,15 @@ assert.match(composedRegistry, /vocabulary\.intake/u, 'Vocabulary intake must be
 
 const intakeStyles = read('src/app/features/collection-learning-path/exercises/vocabulary-intake/vocabulary-intake-exercise.component.scss');
 assert.doesNotMatch(intakeStyles, /#[0-9a-f]{3,8}/iu, 'Vocabulary intake must use Vocora semantic design tokens instead of raw colors.');
-assert.match(intakeStyles, /--vocora-action-primary/u, 'Vocabulary intake must use the Vocora primary-action token.');
-assert.match(intakeStyles, /--vocora-surface-raised/u, 'Vocabulary intake must use Vocora semantic surfaces.');
-assert.match(intakeStyles, /prefers-reduced-motion/u, 'Vocabulary intake must respect reduced-motion preferences.');
+assert.match(intakeStyles, /--vocora-/u, 'Vocabulary intake must consume Vocora semantic design tokens.');
+
+const slideActionStyles = read('src/app/shared/slide-exercise/slide-exercise-action.component.scss');
+const slideLayoutStyles = read('src/app/shared/slide-exercise/slide-exercise.component.scss');
+const multipleChoiceStyles = read('src/app/shared/slide-exercise/content/multiple-choice-slide-content.component.scss');
+assert.match(slideActionStyles, /--vocora-action-primary/u, 'Slide exercise actions must use the Vocora primary-action token.');
+assert.match(slideLayoutStyles, /--vocora-surface-page/u, 'Slide exercise chrome must use Vocora semantic surfaces.');
+assert.match(slideActionStyles + multipleChoiceStyles, /prefers-reduced-motion/u, 'Slide exercise interactions must respect reduced-motion preferences.');
+assert.doesNotMatch(multipleChoiceStyles, /#[0-9a-f]{3,8}/iu, 'Shared slide question renderers must not introduce raw colors.');
 
 for (const relative of [
   'src/app/features/collection-learning-path/path-page/learning-path-page.component.scss',
