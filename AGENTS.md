@@ -108,6 +108,13 @@ For listening episode work, validation must include the canonical episode valida
 
 Agent skills live under `.agents/skills/<skill-name>/` and follow the K2-style layout used by this project:
 
+Before creating, changing, moving, or deleting a skill or shared skill asset,
+apply `k2-skill-architecture` after the task-start `k2-principles`
+selection. When executable JavaScript or TypeScript under a skill's
+`scripts/**` changes, also apply `k2-skill-script-architecture`, record the
+pre-edit metrics when the file already exists, and run both architecture
+validators before finalizing.
+
 ```text
 .agents/skills/<skill-name>/
 ├── SKILL.md
@@ -128,6 +135,9 @@ Rules for agent skills:
 - Keep scripts standard-library-only when practical and test deterministic behavior in the same skill.
 - New skills must define `Script-owned`, `Agent-owned`, and `No manual fallback` sections.
 - Run the skill-owned validator and tests before finalizing.
+- Run `k2-skill-architecture` validation for every skill change and
+  `k2-skill-script-architecture` validation for executable JavaScript or
+  TypeScript skill-script changes.
 
 ## Skill routing
 
