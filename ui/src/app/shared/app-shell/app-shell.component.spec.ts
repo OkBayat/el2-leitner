@@ -75,6 +75,19 @@ describe('AppShell responsive navigation', () => {
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
 	});
 
+	it('reserves a desktop right rail and mirrors the mobile learning status in it', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		const mobileItems = Array.from(host.querySelectorAll('.mobile-status .status-item'));
+		const desktopItems = Array.from(host.querySelectorAll('[data-testid="desktop-right-rail"] .status-item'));
+		expect(host.querySelector('[data-testid="desktop-workspace"]')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(mobileItems).toHaveLength(4);
+		expect(desktopItems).toHaveLength(4);
+		expect(desktopItems.map(item => item.getAttribute('title'))).toEqual(mobileItems.map(item => item.getAttribute('title')));
+		expect(desktopItems.map(item => item.textContent?.trim())).toEqual(mobileItems.map(item => item.textContent?.trim()));
+	});
+
 	it('keeps the BBC destination directly available instead of hiding it in overflow', async () => {
 		const fixture = await render();
 		expect(fixture.componentInstance.mobileNavItems.some(item => item.path === '/bbc-6-minute-english')).toBe(true);
