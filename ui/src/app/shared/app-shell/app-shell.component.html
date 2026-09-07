@@ -48,9 +48,31 @@
 	</a>
 </header>
 
-<main #mainContent id="main-content" class="content" tabindex="-1">
-	<router-outlet />
-</main>
+<div class="shell-workspace" data-testid="desktop-workspace">
+	<main #mainContent id="main-content" class="content" tabindex="-1">
+		<router-outlet />
+	</main>
+
+	<aside class="desktop-right-rail" data-testid="desktop-right-rail" aria-label="Learning status">
+		<header class="desktop-status">
+			<span class="status-item" role="img" aria-label="Learning English" title="Learning English">
+				<app-navigation-icon name="course" /><span>EN</span>
+			</span>
+			<a class="status-item" routerLink="/reports"
+				[attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'" title="Day streak">
+				<app-navigation-icon name="streak" /><span>{{ formatCount(stats()?.streak) }}</span>
+			</a>
+			<a class="status-item" routerLink="/review"
+				[attr.aria-label]="stats() ? stats()!.due + ' words due for review' : 'Loading due words'" title="Words due for review">
+				<app-navigation-icon name="words" /><span>{{ formatCount(stats()?.due) }}</span>
+			</a>
+			<a class="status-item" routerLink="/words"
+				[attr.aria-label]="stats() ? stats()!.mastered + ' mastered words' : 'Loading mastered words'" title="Mastered words">
+				<app-navigation-icon name="progress" /><span>{{ formatCount(stats()?.mastered) }}</span>
+			</a>
+		</header>
+	</aside>
+</div>
 
 <nav class="mobile-nav" aria-label="Mobile navigation">
 	@for (item of mobileNavItems; track item.path) {
