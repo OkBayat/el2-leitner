@@ -161,7 +161,10 @@ export class MySqlLearningStateRepository {
          LEFT JOIN user_vocabulary_progress uvp
            ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ve.id
          WHERE ve.status = 'active'
-           AND (source.user_id IS NOT NULL OR uvp.user_id IS NOT NULL)
+           AND (
+             source.user_id IS NOT NULL
+             OR (uvp.user_id IS NOT NULL AND uvp.introduced_via = 'learning-path')
+           )
            AND COALESCE(uvp.status, 'active') <> 'excluded'
          GROUP BY ve.id
          ORDER BY source_priority, source_subscribed_at, source_position, ve.id`,
