@@ -1,22 +1,14 @@
 import { ValidationError } from "../errors.js";
 import { classifyVocabularyProgress } from "../learning/VocabularyProgress.js";
+import { parseVocabularyExerciseScope } from "./VocabularyExerciseScope.js";
 
 export const VOCABULARY_QUICK_REVIEW_TYPE = "vocabulary.quick-review";
 export const VOCABULARY_QUICK_REVIEW_SCHEMA_VERSION = 1;
 export const VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY = "vocabulary-quick-review";
 export const VOCABULARY_QUICK_REVIEW_SESSION_MODE = "learning-path.quick-review";
-const SUPPORTED_SCOPE_KIND = "listening-episode";
 
 function invalid(message) {
   throw new ValidationError("INVALID_VOCABULARY_QUICK_REVIEW_DEFINITION", message);
-}
-
-function requiredRef(value) {
-  const ref = String(value ?? "").trim();
-  if (!ref || ref.length > 64) {
-    invalid("vocabulary.quick-review scope.ref must be a valid public id of at most 64 characters.");
-  }
-  return ref;
 }
 
 export function resolveScopedVocabularyPracticeScope(exercise) {
@@ -29,14 +21,10 @@ export function resolveScopedVocabularyPracticeScope(exercise) {
   if (exercise.completionPolicy !== VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY) {
     invalid(`vocabulary.quick-review completionPolicy must be ${VOCABULARY_QUICK_REVIEW_COMPLETION_POLICY}.`);
   }
-  const scope = exercise.config?.scope;
-  if (!scope || typeof scope !== "object" || Array.isArray(scope)) {
-    invalid("vocabulary.quick-review config.scope is required.");
-  }
-  if (scope.kind !== SUPPORTED_SCOPE_KIND) {
-    invalid(`vocabulary.quick-review scope.kind must be ${SUPPORTED_SCOPE_KIND}.`);
-  }
-  return Object.freeze({ kind: SUPPORTED_SCOPE_KIND, ref: requiredRef(scope.ref) });
+  return parseVocabularyExerciseScope(exercise.config?.scope, {
+    code: "INVALID_VOCABULARY_QUICK_REVIEW_DEFINITION",
+    label: "vocabulary.quick-review scope",
+  });
 }
 
 export function createScopedVocabularyPracticePayload(scope, scopedVocabulary = []) {
