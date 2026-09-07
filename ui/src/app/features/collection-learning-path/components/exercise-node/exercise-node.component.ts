@@ -6,6 +6,17 @@ import {
   type LearningPathExerciseView,
 } from '../../../../domain/collection-learning-path/learning-path';
 
+type ExerciseNodeKind = 'vocabulary' | 'listening' | 'shadowing' | 'practice';
+type ExerciseNodeIcon = 'book' | 'review' | 'mastery' | 'headphones' | 'shadowing' | 'practice';
+
+const EXERCISE_NODE_ICONS: Readonly<Record<string, ExerciseNodeIcon>> = {
+  'vocabulary.intake': 'book',
+  'vocabulary.quick-review': 'review',
+  'vocabulary.mastery-check': 'mastery',
+  'listening.ielts': 'headphones',
+  'speaking.shadowing': 'shadowing',
+};
+
 @Component({
   selector: 'app-learning-path-exercise-node',
   standalone: true,
@@ -19,6 +30,19 @@ export class ExerciseNodeComponent {
   readonly actionable = computed(() => canOpenLearningPathExercise(this.exercise()));
   readonly label = computed(() => exerciseTypeLabel(this.exercise().type));
   readonly stateLabel = computed(() => learningPathStateLabel(this.exercise().state));
+  readonly kind = computed<ExerciseNodeKind>(() => {
+    const type = this.exercise().type;
+    if (type.startsWith('vocabulary.')) return 'vocabulary';
+    if (type.startsWith('listening.')) return 'listening';
+    if (type === 'speaking.shadowing') return 'shadowing';
+    return 'practice';
+  });
+  readonly icon = computed<ExerciseNodeIcon>(() => EXERCISE_NODE_ICONS[this.exercise().type] ?? 'practice');
+  readonly actionLabel = computed(() => {
+    if (this.exercise().state === 'in_progress') return 'CONTINUE';
+    if (this.exercise().state === 'available') return 'START';
+    return '';
+  });
 
   open(): void {
     if (this.actionable()) this.activate.emit(this.exercise().id);

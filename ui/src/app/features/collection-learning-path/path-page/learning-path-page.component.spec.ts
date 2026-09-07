@@ -11,26 +11,27 @@ const view: CollectionLearningPathView = { access: { canProgress: true }, resume
 const resume: LearningPathResumeView = { pathId: 'path-1', pathStatus: 'available', resumePoint: { lessonId: 'lesson-1', exerciseId: 'exercise-1' } };
 
 describe('LearningPathPageComponent', () => {
-  it('loads by collection id, renders the path and starts before navigating to the resume point', async () => {
+  it('loads by collection id and starts an available path when its current trail node is opened', async () => {
     const facade = { view: signal(view), resume: signal(resume), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), start: vi.fn().mockImplementation(async () => { facade.resume.set({ ...resume, pathStatus: 'in_progress' }); return true; }) };
     TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: 'collection-1' })) } }] });
     const fixture = TestBed.createComponent(LearningPathPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     expect(facade.load).toHaveBeenCalledWith('collection-1');
     expect(fixture.nativeElement.textContent).toContain('Lesson 1');
+    expect(fixture.nativeElement.querySelector('[data-testid="lesson-trail"]')).not.toBeNull();
     const router = TestBed.inject(Router); vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    await fixture.componentInstance.continuePath();
+    await fixture.componentInstance.openExercise({ lessonId: 'lesson-1', exerciseId: 'exercise-1' });
     expect(facade.start).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/learning-path', 'path-1', 'lessons', 'lesson-1', 'exercises', 'exercise-1']);
   });
 
-  it('shows rolling terminal status without inventing another resume action', async () => {
-    const terminalView: CollectionLearningPathView = { ...view, resumePoint: null, path: { ...view.path, mode: 'rolling', learnerStatus: 'up_to_date' } };
+  it('shows rolling terminal status without rendering a separate continue action', async () => {
+    const terminalView: CollectionLearningPathView = { ...view, resumePoint: null, path: { ...view.path, mode: 'rolling', learnerStatus: 'up_to_date' }, lessons: [{ ...view.lessons[0], state: 'completed', exercises: [{ ...view.lessons[0].exercises[0], state: 'completed' }] }] };
     const facade = { view: signal(terminalView), resume: signal({ pathId: 'path-1', pathStatus: 'up_to_date' as const, resumePoint: null }), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), start: vi.fn() };
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: 'collection-1' })) } }] });
     const fixture = TestBed.createComponent(LearningPathPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
-    const button = (fixture.nativeElement as HTMLElement).querySelector('.primary-action') as HTMLButtonElement;
-    expect(button.textContent).toContain('Up to date');
-    expect(button.disabled).toBe(true);
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Up to date');
+    expect(element.querySelector('.primary-action')).toBeNull();
   });
 });

@@ -3,6 +3,9 @@
 @use './styles/leitner-google-palette' as leitner-google-palette;
 @use './styles/table-design' as table-design;
 @use './styles/navigation-theme' as navigation-theme;
+@use './styles/vocora-design-system' as vocora-design-system;
+
+@include vocora-design-system.apply();
 
 html {
 	@include mat.theme((
