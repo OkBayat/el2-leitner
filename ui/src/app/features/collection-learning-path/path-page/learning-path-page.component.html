@@ -1,6 +1,9 @@
 <main class="learning-path-page" data-testid="collection-learning-path">
   <nav class="learning-path-page__nav" aria-label="Learning Path navigation">
-    <a [routerLink]="['/library', collectionId()]" class="back-link">← Collection</a>
+    <a [routerLink]="['/library', collectionId()]" class="back-link">
+      <span aria-hidden="true">←</span>
+      <span>Collection</span>
+    </a>
   </nav>
 
   @if (facade.loading() && !facade.view()) {
@@ -12,7 +15,7 @@
     <section class="state-card state-card--error" role="alert">
       <h1>Learning Path unavailable</h1>
       <p>{{ facade.error() }}</p>
-      <button type="button" class="primary-action" (click)="retry()">Try again</button>
+      <button type="button" class="retry-action" (click)="retry()">Try again</button>
     </section>
   } @else if (facade.view(); as view) {
     <app-learning-path-progress-header [path]="view.path" [lessons]="view.lessons" />
@@ -23,12 +26,6 @@
         <button type="button" (click)="retry()">Retry</button>
       </div>
     }
-
-    <div class="learning-path-page__actions">
-      <button type="button" class="primary-action" [disabled]="!canContinue()" (click)="continuePath()">
-        @if (facade.starting()) { Starting… } @else { {{ continueLabel() }} }
-      </button>
-    </div>
 
     <section class="lesson-list" aria-label="Course lessons">
       @for (lesson of view.lessons; track lesson.id) {
