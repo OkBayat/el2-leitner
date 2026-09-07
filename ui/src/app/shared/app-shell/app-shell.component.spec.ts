@@ -2,10 +2,12 @@ import {Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {provideRouter, Router} from '@angular/router';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {CollectionLearningPathFacade} from '../../application/collection-learning-path/collection-learning-path.facade';
 import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
+import type {CollectionLearningPathView, LearningPathExerciseView} from '../../domain/collection-learning-path/learning-path';
 import {addDays, createFreshState, localDay} from '../../domain/learning/learning-rules';
 import type {LearningState, LibraryCollection} from '../../domain/learning/models';
 import {ShareStoryService} from '../share-story/share-story.service';
@@ -26,6 +28,59 @@ const bbcCourse: LibraryCollection = {
 	subscribed: true,
 };
 
+const grammarCourse: LibraryCollection = {
+	...bbcCourse,
+	id: 'cambridge-grammar',
+	slug: 'cambridge-grammar',
+	title: 'Cambridge Grammar',
+};
+
+function progressExercise(id: string, state: LearningPathExerciseView['state']): LearningPathExerciseView {
+	return {
+		id,
+		position: Number(id),
+		type: 'vocabulary.quick-review',
+		schemaVersion: 1,
+		required: true,
+		completionPolicy: 'fixture',
+		config: {},
+		state,
+		progress: null,
+	};
+}
+
+function progressView(collectionId: string): CollectionLearningPathView {
+	return {
+		access: {canProgress: true},
+		resumePoint: null,
+		path: {
+			id: `${collectionId}-path`,
+			collectionId,
+			title: 'Fixture course',
+			mode: 'finite',
+			status: 'published',
+			contentVersion: '1',
+			learnerStatus: 'in_progress',
+			progress: null,
+		},
+		lessons: [{
+			id: 'lesson-1',
+			title: 'Lesson 1',
+			position: 1,
+			sourceKind: null,
+			sourceRef: null,
+			state: 'in_progress',
+			progress: null,
+			exercises: [
+				progressExercise('1', 'completed'),
+				progressExercise('2', 'available'),
+				progressExercise('3', 'available'),
+				progressExercise('4', 'available'),
+			],
+		}],
+	};
+}
+
 function fixtureState(): LearningState {
 	const day = localDay();
 	const state = createFreshState([
@@ -43,6 +98,7 @@ function fixtureState(): LearningState {
 describe('AppShell responsive navigation', () => {
 	const state = signal<LearningState | null>(null);
 	const selectedCourses = signal<LibraryCollection[]>([bbcCourse]);
+	const learningPathView = signal<CollectionLearningPathView | null>(null);
 	const coursesLoading = signal(false);
 	const coursesError = signal('');
 	const courseLoad = vi.fn(async () => true);
@@ -59,6 +115,7 @@ describe('AppShell responsive navigation', () => {
 		vi.clearAllMocks();
 		state.set(fixtureState());
 		selectedCourses.set([bbcCourse]);
+		learningPathView.set(null);
 		coursesLoading.set(false);
 		coursesError.set('');
 		await TestBed.configureTestingModule({
@@ -73,6 +130,7 @@ describe('AppShell responsive navigation', () => {
 				{provide: LearningStoreService, useValue: {state, initialize: vi.fn(async () => state()!), update}},
 				{provide: ThemeService, useValue: {apply}},
 				{provide: ShareStoryService, useValue: {open: vi.fn()}},
+				{provide: CollectionLearningPathFacade, useValue: {view: learningPathView}},
 				{provide: SelectedCoursesFacade, useValue: {courses: selectedCourses, loading: coursesLoading, error: coursesError, load: courseLoad}},
 			],
 		}).compileComponents();
@@ -117,6 +175,24 @@ describe('AppShell responsive navigation', () => {
 		expect(host.querySelector('[data-testid="desktop-course-trigger"]')).not.toBeNull();
 		expect(fixture.componentInstance.courses.courses().map(course => course.title)).toEqual(['BBC 6 Minute English']);
 		expect(courseLoad).toHaveBeenCalledTimes(1);
+	});
+
+	it('tracks the current learning-path course and exposes its already-loaded progress only on that route', async () => {
+		selectedCourses.set([bbcCourse, grammarCourse]);
+		learningPathView.set(progressView('cambridge-grammar'));
+		const fixture = await render();
+		const router = TestBed.inject(Router);
+		expect(fixture.componentInstance.activeCourseId()).toBe('bbc-six-minute-english');
+		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
+
+		await router.navigateByUrl('/library/cambridge-grammar/learning-path');
+		fixture.detectChanges();
+		expect(fixture.componentInstance.activeCourseId()).toBe('cambridge-grammar');
+		expect(fixture.componentInstance.currentCourseProgress()?.percent).toBe(25);
+
+		await router.navigateByUrl('/dashboard');
+		fixture.detectChanges();
+		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
 	});
 
 	it('keeps the BBC destination directly available instead of hiding it in overflow', async () => {
