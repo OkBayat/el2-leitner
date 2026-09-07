@@ -1,0 +1,30 @@
+<header class="slide-exercise-header" data-testid="slide-exercise-header">
+  <button class="slide-exercise-header__close" type="button" aria-label="Close exercise" (click)="close.emit()">
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  @if (progress(); as state) {
+    <div class="slide-exercise-header__progress">
+      <div
+        class="slide-exercise-header__track"
+        role="progressbar"
+        aria-label="Exercise progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="progressValue()"
+      >
+        <span class="slide-exercise-header__fill" [style.width.%]="progressValue()"></span>
+      </div>
+      @if (state.label || state.detail) {
+        <div class="slide-exercise-header__copy">
+          @if (state.label) { <strong>{{ state.label }}</strong> }
+          @if (state.detail) { <span>{{ state.detail }}</span> }
+        </div>
+      }
+    </div>
+  } @else {
+    <span class="slide-exercise-header__empty" aria-hidden="true"></span>
+  }
+</header>

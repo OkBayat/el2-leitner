@@ -1,0 +1,7 @@
+@if (content(); as data) {
+  <article class="message-slide" data-testid="message-slide-content">
+    @if (data.eyebrow) { <p class="message-slide__eyebrow">{{ data.eyebrow }}</p> }
+    @if (data.title) { <h1>{{ data.title }}</h1> }
+    @if (data.body) { <p class="message-slide__body">{{ data.body }}</p> }
+  </article>
+}

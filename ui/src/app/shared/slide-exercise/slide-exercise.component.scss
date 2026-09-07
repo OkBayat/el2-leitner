@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--vocora-surface-page);
+  color: var(--vocora-text-primary);
+}
+
+.slide-exercise {
+  height: 100dvh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  background: var(--vocora-surface-page);
+}
+
+.slide-exercise__stage {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.slide-exercise__content {
+  width: min(980px, 100%);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: var(--vocora-space-8) var(--vocora-space-6);
+}
+
+@media (max-width: 600px) {
+  .slide-exercise__content {
+    padding: var(--vocora-space-5) var(--vocora-space-4);
+  }
+}
