@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
+import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type { SlideExerciseRuntimeState } from '../slide-exercise.models';
@@ -20,20 +21,22 @@ const data = {
 function setup() {
   const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
   const store = { state: signal({ settings: { voiceRate: 0.92 } }) };
+  const answerSound = { play: vi.fn(), stop: vi.fn() };
   TestBed.configureTestingModule({
     imports: [MultipleChoiceSlideContentComponent],
     providers: [
       { provide: SpeechService, useValue: speech },
       { provide: LearningStoreService, useValue: store },
+      { provide: ReviewAnswerSoundService, useValue: answerSound },
     ],
   });
   const fixture = TestBed.createComponent(MultipleChoiceSlideContentComponent);
-  return { fixture, component: fixture.componentInstance, speech };
+  return { fixture, component: fixture.componentInstance, speech, answerSound };
 }
 
 describe('MultipleChoiceSlideContentComponent', () => {
   it('enables Check after a selection and emits a correct answer before Continue', () => {
-    const { component } = setup();
+    const { component, answerSound } = setup();
     const states: SlideExerciseRuntimeState[] = [];
     const events: unknown[] = [];
     component.stateChange.subscribe((state) => states.push(state));
@@ -55,6 +58,7 @@ describe('MultipleChoiceSlideContentComponent', () => {
       },
     });
     expect(events).toEqual([{ type: 'answered', data: { selectedOptionId: 'a', correctOptionId: 'a', correct: true } }]);
+    expect(answerSound.play).toHaveBeenCalledWith('correct');
     expect(component.optionState('a')).toBe('correct');
   });
 
@@ -72,7 +76,7 @@ describe('MultipleChoiceSlideContentComponent', () => {
   });
 
   it('shows the correct answer after an incorrect check', () => {
-    const { component } = setup();
+    const { component, answerSound } = setup();
     const states: SlideExerciseRuntimeState[] = [];
     component.stateChange.subscribe((state) => states.push(state));
     component.load({ slideId: 'word-1', type: 'multiple-choice', data });
@@ -85,6 +89,7 @@ describe('MultipleChoiceSlideContentComponent', () => {
       title: 'Not quite',
       detail: 'Correct answer: continuing for a long time',
     });
+    expect(answerSound.play).toHaveBeenCalledWith('incorrect');
     expect(component.optionState('a')).toBe('correct');
     expect(component.optionState('b')).toBe('incorrect');
   });
