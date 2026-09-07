@@ -17,4 +17,5 @@ export interface SlideContentComponent {
   readonly event?: Observable<SlideContentEvent>;
   load(context: SlideContentContext): void;
   handleAction?(actionId: string): void;
+  handleShortcut?(key: string): void;
 }
