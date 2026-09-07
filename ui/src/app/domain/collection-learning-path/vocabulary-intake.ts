@@ -108,3 +108,12 @@ export function vocabularyIntakeStateLabel(item: VocabularyIntakeItem): string {
   if (item.progress.state === 'excluded') return 'Excluded';
   return item.progress.box > 0 ? `Box ${item.progress.box}` : 'Learning';
 }
+
+export function vocabularyIntakeNeedsPractice(item: VocabularyIntakeItem): boolean {
+  if (item.progress.state === 'new') return true;
+  return item.progress.state === 'learning' && item.progress.box <= 1;
+}
+
+export function vocabularyIntakePracticeItems(payload: VocabularyIntakePayload): readonly VocabularyIntakeItem[] {
+  return payload.items.filter(vocabularyIntakeNeedsPractice);
+}

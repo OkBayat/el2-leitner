@@ -55,11 +55,16 @@ export class SlideExerciseComponent implements OnChanges {
   runtime: SlideExerciseRuntimeState = {};
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['slides']) {
-      validateSlideExerciseSlides(this.slides);
-      this.currentIndex = 0;
-      this.runtime = {};
+    if (!changes['slides']) return;
+    const currentSlideId = changes['slides'].firstChange ? '' : this.currentSlide?.id ?? '';
+    validateSlideExerciseSlides(this.slides);
+    const preservedIndex = currentSlideId ? this.slides.findIndex((slide) => slide.id === currentSlideId) : -1;
+    if (preservedIndex >= 0) {
+      this.currentIndex = preservedIndex;
+      return;
     }
+    this.currentIndex = 0;
+    this.runtime = {};
   }
 
   get currentSlide(): SlideExerciseSlide | null {
