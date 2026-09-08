@@ -46,11 +46,14 @@ assert.doesNotMatch(domain + intakeDomain, /@angular\//u, 'Learning Path domain 
 assert.doesNotMatch(domain + intakeDomain, /HttpClient|ApiClientService/u, 'Learning Path domain models must not depend on transport code.');
 
 const routes = read('src/app/app.routes.ts');
-const shellRoute = "path: 'library/:collectionId/learning-path'";
-const runnerRoute = "path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId'";
-assert.ok(routes.includes(shellRoute), 'The collection-scoped Learning Path route is required.');
+const shellRoute = "path: 'learning-paths/:pathId'";
+const runnerRoute = "path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId'";
+const legacyRunnerRoute = "path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId'";
+assert.ok(routes.includes(shellRoute), 'The canonical public-id Learning Path route is required.');
 assert.ok(routes.includes(runnerRoute), 'The full-screen exercise runner route is required.');
 assert.ok(routes.indexOf(runnerRoute) < routes.indexOf("loadComponent: () => import('./shared/app-shell/app-shell.component')"), 'The exercise runner must stay outside AppShell.');
+assert.ok(routes.includes(legacyRunnerRoute), 'The legacy slug route must remain available during migration.');
+assert.match(routes, /legacyLearningPathExerciseRouteGuard/u, 'The legacy slug route must resolve to its canonical numeric URL.');
 
 const pathFacade = read('src/app/application/collection-learning-path/collection-learning-path.facade.ts');
 const runnerFacade = read('src/app/application/collection-learning-path/exercise-runner.facade.ts');

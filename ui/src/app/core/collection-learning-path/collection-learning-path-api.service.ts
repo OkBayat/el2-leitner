@@ -23,12 +23,29 @@ function exercisePath(pathId: string, lessonId: string, exerciseId: string): str
 export class CollectionLearningPathApiService {
   private readonly api = inject(ApiClientService);
 
-  queryLearningPathCollectionIds(): Promise<{ collectionIds: string[] }> {
-    return this.api.get<{ collectionIds: string[] }>('/api/learning-paths/collections');
+  queryLearningPathCollectionIds(): Promise<{
+    collectionIds: string[];
+    learningPaths?: Array<{ collectionId: string; pathId: string }>;
+  }> {
+    return this.api.get('/api/learning-paths/collections');
   }
 
   queryCollectionLearningPath(collectionId: string): Promise<CollectionLearningPathView> {
     return this.api.get<CollectionLearningPathView>(`/api/learning-paths/collections/${segment(collectionId)}`);
+  }
+
+  queryLearningPath(pathId: string): Promise<CollectionLearningPathView> {
+    return this.api.get<CollectionLearningPathView>(`/api/learning-paths/${segment(pathId)}`);
+  }
+
+  resolveLegacyExerciseRoute(
+    pathId: string,
+    lessonId: string,
+    exerciseId: string,
+  ): Promise<{ pathId: string; lessonId: string; exerciseId: string }> {
+    return this.api.get(
+      `/api/learning-paths/legacy/${segment(pathId)}/lessons/${segment(lessonId)}/exercises/${segment(exerciseId)}/route`,
+    );
   }
 
   queryResumePoint(pathId: string): Promise<LearningPathResumeView> {

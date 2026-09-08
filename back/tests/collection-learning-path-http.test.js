@@ -10,12 +10,19 @@ import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from ".
 function createRouterHarness(overrides = {}) {
   const calls = [];
   const queries = {
+    listAvailableCollections: {
+      async execute(userId) {
+        calls.push(["listAvailableCollections", userId]);
+        return [{ collectionId: "collection-1", pathId: "1" }];
+      },
+    },
     getCollectionLearningPath: {
       async execute(userId, collectionId) {
         calls.push(["getCollectionLearningPath", userId, collectionId]);
         return {
           path: {
             id: "path-1",
+            publicId: "1",
             collectionId,
             title: "Fixture path",
             mode: "finite",
@@ -27,6 +34,7 @@ function createRouterHarness(overrides = {}) {
           },
           lessons: [{
             id: "lesson-1",
+            publicId: "5",
             title: "Lesson 1",
             position: 1,
             sourceKind: "fixture",
@@ -36,6 +44,7 @@ function createRouterHarness(overrides = {}) {
             retiredVersion: 9,
             exercises: [{
               id: "exercise-1",
+              publicId: "10",
               position: 1,
               type: "fixture.exercise",
               schemaVersion: 1,
@@ -50,11 +59,18 @@ function createRouterHarness(overrides = {}) {
         };
       },
     },
+    getLearningPath: {
+      async execute(userId, pathId) {
+        calls.push(["getLearningPath", userId, pathId]);
+        return queries.getCollectionLearningPath.execute(userId, "collection-1");
+      },
+    },
     getLearningPathLesson: {
       async execute(userId, pathId, lessonId) {
         calls.push(["getLearningPathLesson", userId, pathId, lessonId]);
         return {
-          id: lessonId,
+          id: "lesson-1",
+          publicId: lessonId,
           title: "Lesson 1",
           position: 1,
           sourceKind: "fixture",
@@ -69,10 +85,11 @@ function createRouterHarness(overrides = {}) {
       async execute(userId, pathId, lessonId, exerciseId) {
         calls.push(["getExerciseContext", userId, pathId, lessonId, exerciseId]);
         return {
-          path: { id: pathId, collectionId: "collection-1", title: "Fixture", mode: "finite", contentVersion: 2 },
-          lesson: { id: lessonId, title: "Lesson 1", position: 1 },
+          path: { id: "path-1", publicId: pathId, collectionId: "collection-1", title: "Fixture", mode: "finite", contentVersion: 2 },
+          lesson: { id: "lesson-1", publicId: lessonId, title: "Lesson 1", position: 1 },
           exercise: {
-            id: exerciseId,
+            id: "exercise-1",
+            publicId: exerciseId,
             position: 1,
             type: "fixture.exercise",
             schemaVersion: 1,
@@ -84,6 +101,12 @@ function createRouterHarness(overrides = {}) {
           state: "available",
           payload: { hydrated: true },
         };
+      },
+    },
+    resolveLegacyLearningPathRoute: {
+      async execute(userId, pathId, lessonId, exerciseId) {
+        calls.push(["resolveLegacyLearningPathRoute", userId, pathId, lessonId, exerciseId]);
+        return { pathId: "1", lessonId: "5", exerciseId: "10" };
       },
     },
     getLearningPathResumePoint: {
@@ -143,9 +166,9 @@ describe("Collection Learning Path HTTP adapter", () => {
     const { app, calls } = createRouterHarness();
 
     await request(app).get("/api/learning-paths/collections/collection-1").expect(200);
-    await request(app).post("/api/learning-paths/path-1/start").send({ userId: "forged-user" }).expect(200);
+    await request(app).post("/api/learning-paths/1/start").send({ userId: "forged-user" }).expect(200);
     await request(app)
-      .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1/start")
+      .post("/api/learning-paths/1/lessons/5/exercises/10/start")
       .send({ userId: "forged-user" })
       .expect(200);
 
@@ -157,15 +180,16 @@ describe("Collection Learning Path HTTP adapter", () => {
     const { app } = createRouterHarness();
 
     await request(app).get("/api/learning-paths/collections/collection-1").expect(200);
-    await request(app).get("/api/learning-paths/path-1/lessons/lesson-1").expect(200);
+    await request(app).get("/api/learning-paths/1").expect(200);
+    await request(app).get("/api/learning-paths/1/lessons/5").expect(200);
     await request(app)
-      .get("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1")
+      .get("/api/learning-paths/1/lessons/5/exercises/10")
       .expect(200, {
         context: {
-          path: { id: "path-1", collectionId: "collection-1", title: "Fixture", mode: "finite", contentVersion: 2 },
-          lesson: { id: "lesson-1", title: "Lesson 1", position: 1 },
+          path: { id: "1", collectionId: "collection-1", title: "Fixture", mode: "finite", contentVersion: 2 },
+          lesson: { id: "5", title: "Lesson 1", position: 1 },
           exercise: {
-            id: "exercise-1",
+            id: "10",
             position: 1,
             type: "fixture.exercise",
             schemaVersion: 1,
@@ -178,15 +202,24 @@ describe("Collection Learning Path HTTP adapter", () => {
           payload: { hydrated: true },
         },
       });
-    await request(app).get("/api/learning-paths/path-1/resume").expect(200);
-    await request(app).post("/api/learning-paths/path-1/start").expect(200);
+    await request(app).get("/api/learning-paths/1/resume").expect(200);
+    await request(app).post("/api/learning-paths/1/start").expect(200);
     await request(app)
-      .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1/start")
+      .post("/api/learning-paths/1/lessons/5/exercises/10/start")
       .expect(200);
     await request(app)
-      .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1/complete")
+      .post("/api/learning-paths/1/lessons/5/exercises/10/complete")
       .send({ outcome: { kind: "completed" } })
       .expect(200);
+  });
+
+  it("discovers canonical path ids alongside the backward-compatible collection list", async () => {
+    const { app } = createRouterHarness();
+
+    await request(app).get("/api/learning-paths/collections").expect(200, {
+      collectionIds: ["collection-1"],
+      learningPaths: [{ collectionId: "collection-1", pathId: "1" }],
+    });
   });
 
   it("maps application views through explicit DTOs and does not leak persistence/content-management fields", async () => {
@@ -198,6 +231,23 @@ describe("Collection Learning Path HTTP adapter", () => {
     assert.equal(response.body.lessons[0].retiredVersion, undefined);
     assert.equal(response.body.lessons[0].exercises[0].introducedVersion, undefined);
     assert.deepEqual(response.body.lessons[0].exercises[0].config, { publicValue: true });
+    assert.deepEqual(
+      [response.body.path.id, response.body.lessons[0].id, response.body.lessons[0].exercises[0].id],
+      ["1", "5", "10"],
+    );
+    assert.equal(response.body.path.sourceId, undefined);
+  });
+
+  it("resolves legacy slug routes to canonical numeric resource ids", async () => {
+    const { app, calls } = createRouterHarness();
+    await request(app)
+      .get("/api/learning-paths/legacy/path-1/lessons/lesson-1/exercises/exercise-1/route")
+      .expect(200, { pathId: "1", lessonId: "5", exerciseId: "10" });
+    await request(app)
+      .get("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1")
+      .expect(200);
+    assert.ok(calls.some((call) => call.join(":")
+      === "getExerciseContext:authenticated-user:path-1:lesson-1:exercise-1"));
   });
 
   it("validates route identifiers and completion outcome envelopes before dispatch", async () => {
@@ -207,12 +257,15 @@ describe("Collection Learning Path HTTP adapter", () => {
       error: { code: "INVALID_LEARNING_PATH_COLLECTION_ID", message: "A valid collection id is required." },
     });
     await request(app)
-      .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1/complete")
+      .post("/api/learning-paths/1/lessons/5/exercises/10/complete")
       .send({ outcome: { kind: "cancelled" } })
       .expect(400, {
         error: { code: "INVALID_LEARNING_PATH_OUTCOME", message: "Only a completed exercise outcome can be submitted." },
       });
     assert.equal(calls.filter(([name]) => name === "completeExercise").length, 0);
+
+    await request(app).get("/api/learning-paths/path-1/resume").expect(200);
+    await request(app).get("/api/learning-paths/18446744073709551616/resume").expect(400);
   });
 
   it("preserves canonical 403, 404, and 409 application errors", async () => {
@@ -229,7 +282,7 @@ describe("Collection Learning Path HTTP adapter", () => {
           getLearningPathResumePoint: { async execute() { throw error; } },
         },
       });
-      const response = await request(app).get("/api/learning-paths/path-1/resume").expect(expectedStatus);
+      const response = await request(app).get("/api/learning-paths/1/resume").expect(expectedStatus);
       assert.equal(response.body.error.code, error.code);
     }
   });

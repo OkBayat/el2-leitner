@@ -43,15 +43,15 @@ it("starts vocabulary spelling for the authenticated learner and selected scope"
   app.use("/api/learning-paths", createCollectionLearningPathRouter({ queries, commands, authenticate }));
 
   await request(app)
-    .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/spelling-1/vocabulary-spelling/start")
+    .post("/api/learning-paths/1/lessons/5/exercises/10/vocabulary-spelling/start")
     .send({ userId: "forged-user", scope: "course" })
     .expect(201);
 
   assert.deepEqual(calls, [{
     userId: "authenticated-user",
-    pathId: "path-1",
-    lessonId: "lesson-1",
-    exerciseId: "spelling-1",
+    pathId: "1",
+    lessonId: "5",
+    exerciseId: "10",
     scope: "course",
   }]);
 });

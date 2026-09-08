@@ -18,29 +18,35 @@ describe('CollectionLearningPathApiService', () => {
   });
 
   it('keeps read operations on query endpoints', async () => {
+    await api.queryLearningPathCollectionIds();
     await api.queryCollectionLearningPath('collection/1');
-    await api.queryResumePoint('path/1');
-    await api.queryExerciseContext('path/1', 'lesson/1', 'exercise/1');
+    await api.queryLearningPath('1');
+    await api.queryResumePoint('1');
+    await api.queryExerciseContext('1', '5', '10');
+    await api.resolveLegacyExerciseRoute('path/1', 'lesson/1', 'exercise/1');
     expect(get.mock.calls.map(([path]) => path)).toEqual([
+      '/api/learning-paths/collections',
       '/api/learning-paths/collections/collection%2F1',
-      '/api/learning-paths/path%2F1/resume',
-      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1',
+      '/api/learning-paths/1',
+      '/api/learning-paths/1/resume',
+      '/api/learning-paths/1/lessons/5/exercises/10',
+      '/api/learning-paths/legacy/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/route',
     ]);
   });
 
   it('keeps generic and type-specific mutations on explicit command endpoints with progress revisions', async () => {
-    await api.commandStartPath('path/1');
-    await api.commandStartExercise('path/1', 'lesson/1', 'exercise/1', 7);
-    await api.commandActivateVocabularyIntake('path/1', 'lesson/1', 'exercise/1');
-    await api.commandStartVocabularySpelling('path/1', 'lesson/1', 'exercise/1', 'course');
-    await api.commandCompleteExercise('path/1', 'lesson/1', 'exercise/1', { kind: 'completed' }, 8);
+    await api.commandStartPath('1');
+    await api.commandStartExercise('1', '5', '10', 7);
+    await api.commandActivateVocabularyIntake('1', '5', '10');
+    await api.commandStartVocabularySpelling('1', '5', '10', 'course');
+    await api.commandCompleteExercise('1', '5', '10', { kind: 'completed' }, 8);
 
     expect(post.mock.calls.map(([path]) => path)).toEqual([
-      '/api/learning-paths/path%2F1/start',
-      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/start',
-      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/vocabulary-intake/activate',
-      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/vocabulary-spelling/start',
-      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/complete',
+      '/api/learning-paths/1/start',
+      '/api/learning-paths/1/lessons/5/exercises/10/start',
+      '/api/learning-paths/1/lessons/5/exercises/10/vocabulary-intake/activate',
+      '/api/learning-paths/1/lessons/5/exercises/10/vocabulary-spelling/start',
+      '/api/learning-paths/1/lessons/5/exercises/10/complete',
     ]);
     expect(post.mock.calls[1]?.[1]).toEqual({ progressRevision: 7 });
     expect(post.mock.calls[3]?.[1]).toEqual({ scope: 'course' });

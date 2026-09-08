@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
-import type { LearningPathExerciseSelection } from '../../../domain/collection-learning-path/learning-path';
+import {
+  isCanonicalLearningPathPublicId,
+  type LearningPathExerciseSelection,
+} from '../../../domain/collection-learning-path/learning-path';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
 
@@ -22,6 +25,7 @@ export class LearningPathPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly collectionId = signal('');
+  readonly pathId = signal('');
   readonly requestedVisibleLessonCount = signal(LESSON_BATCH_SIZE);
   readonly visibleLessonCount = computed(() => {
     const view = this.facade.view();
@@ -48,14 +52,18 @@ export class LearningPathPageComponent {
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const collectionId = params.get('collectionId')?.trim() ?? '';
+      const pathId = params.get('pathId')?.trim() ?? '';
       this.collectionId.set(collectionId);
+      this.pathId.set(pathId);
       this.requestedVisibleLessonCount.set(LESSON_BATCH_SIZE);
-      if (collectionId) void this.facade.load(collectionId);
+      if (pathId) void this.facade.loadByPathId(pathId);
+      else if (collectionId) void this.loadLegacyCollectionRoute(collectionId);
     });
   }
 
   retry(): void {
-    if (this.collectionId()) void this.facade.load(this.collectionId());
+    if (this.pathId()) void this.facade.loadByPathId(this.pathId());
+    else if (this.collectionId()) void this.loadLegacyCollectionRoute(this.collectionId());
   }
 
   showMoreLessons(): void {
@@ -71,6 +79,14 @@ export class LearningPathPageComponent {
       if (this.facade.starting() || !await this.facade.start()) return;
     }
 
-    await this.router.navigate(['/learning-path', path.id, 'lessons', selection.lessonId, 'exercises', selection.exerciseId]);
+    await this.router.navigate(['/learning-paths', path.id, 'lessons', selection.lessonId, 'exercises', selection.exerciseId]);
+  }
+
+  private async loadLegacyCollectionRoute(collectionId: string): Promise<void> {
+    if (!await this.facade.load(collectionId)) return;
+    const publicId = this.facade.view()?.path.id;
+    if (publicId && isCanonicalLearningPathPublicId(publicId)) {
+      await this.router.navigate(['/learning-paths', publicId], { replaceUrl: true });
+    }
   }
 }

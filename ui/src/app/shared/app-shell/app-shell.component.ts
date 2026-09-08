@@ -62,7 +62,11 @@ export class AppShellComponent implements OnInit {
 	});
 	readonly currentCourseId = computed(() => {
 		const path = this.currentUrl().split(/[?#]/u)[0];
-		return path.match(/^\/library\/([^/]+)\/learning-path(?:\/|$)/u)?.[1] ?? null;
+		const legacyCollectionId = path.match(/^\/library\/([^/]+)\/learning-path(?:\/|$)/u)?.[1];
+		if (legacyCollectionId) return legacyCollectionId;
+		const publicPathId = path.match(/^\/learning-paths\/([^/]+)(?:\/|$)/u)?.[1];
+		const view = this.learningPath.view();
+		return publicPathId && view?.path.id === publicPathId ? view.path.collectionId : null;
 	});
 	readonly activeCourseId = computed(() => this.currentCourseId() ?? this.courses.courses()[0]?.id ?? null);
 	readonly currentCourseProgress = computed(() => {

@@ -54,7 +54,7 @@ describe('ExerciseRunnerPageComponent journey continuation', () => {
     button?.click();
 
     expect(router.navigate).toHaveBeenCalledWith([
-      '/learning-path', 'path-1', 'lessons', 'episode-2', 'exercises', 'exercise-2',
+      '/learning-paths', 'path-1', 'lessons', 'episode-2', 'exercises', 'exercise-2',
     ]);
   });
 
@@ -71,6 +71,31 @@ describe('ExerciseRunnerPageComponent journey continuation', () => {
       .find((item) => item.textContent?.trim() === 'Back to course');
     expect(button).toBeTruthy();
     button?.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/library', 'course-1', 'learning-path']);
+  });
+
+  it('returns to the canonical course path when the backend supplied a numeric route id', async () => {
+    TestBed.resetTestingModule();
+    const { facade, fixture } = setup(null, 'up_to_date');
+    facade.context.set({ ...completedContext, path: { ...completedContext.path, id: '1' } });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.continueJourney();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/learning-paths', '1']);
+  });
+
+  it('cancels back through the legacy collection route for an old-backend source id', () => {
+    TestBed.resetTestingModule();
+    const { fixture } = setup(null, 'up_to_date');
+    const router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.componentInstance.onExerciseOutcome({ kind: 'cancelled' });
 
     expect(router.navigate).toHaveBeenCalledWith(['/library', 'course-1', 'learning-path']);
   });

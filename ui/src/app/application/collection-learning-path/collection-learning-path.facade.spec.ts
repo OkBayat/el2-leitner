@@ -15,22 +15,30 @@ const resume: LearningPathResumeView = { pathId: 'path-1', pathStatus: 'availabl
 
 describe('CollectionLearningPathFacade', () => {
   const queryCollectionLearningPath = vi.fn();
+  const queryLearningPath = vi.fn();
   const queryResumePoint = vi.fn();
   const commandStartPath = vi.fn();
   const subscribe = vi.fn();
   let facade: CollectionLearningPathFacade;
 
   beforeEach(() => {
-    for (const fn of [queryCollectionLearningPath, queryResumePoint, commandStartPath, subscribe]) fn.mockReset();
+    for (const fn of [queryCollectionLearningPath, queryLearningPath, queryResumePoint, commandStartPath, subscribe]) fn.mockReset();
     queryCollectionLearningPath.mockResolvedValue(structuredClone(view));
+    queryLearningPath.mockResolvedValue(structuredClone(view));
     queryResumePoint.mockResolvedValue(structuredClone(resume));
     commandStartPath.mockResolvedValue({ ...resume, pathStatus: 'in_progress' });
     TestBed.configureTestingModule({ providers: [
       CollectionLearningPathFacade,
-      { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath, queryResumePoint, commandStartPath } },
+      { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath, queryLearningPath, queryResumePoint, commandStartPath } },
       { provide: LibraryApiService, useValue: { subscribe } },
     ] });
     facade = TestBed.inject(CollectionLearningPathFacade);
+  });
+
+  it('loads a canonical path directly by its public route id', async () => {
+    expect(await facade.loadByPathId('1')).toBe(true);
+    expect(queryLearningPath).toHaveBeenCalledWith('1');
+    expect(queryCollectionLearningPath).not.toHaveBeenCalled();
   });
 
   it('loads the path read model with its server-derived resume point in one query', async () => {

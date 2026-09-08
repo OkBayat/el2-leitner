@@ -35,6 +35,50 @@ export const exerciseId = (value) => identifier(
   "A valid Learning Path exercise id is required.",
 );
 
+const decimalRouteId = /^[0-9]+$/u;
+const canonicalRouteId = /^[1-9][0-9]*$/u;
+
+export function routePublicId(value, codeName, label) {
+  const normalized = typeof value === "string" ? value.trim() : String(value ?? "").trim();
+  const withinUnsignedBigInt = /^[1-9][0-9]{0,19}$/u.test(normalized)
+    && BigInt(normalized) <= 18_446_744_073_709_551_615n;
+  if (!withinUnsignedBigInt) {
+    throw new ValidationError(
+      `INVALID_${codeName}_PUBLIC_ID`,
+      `${label} public id must be a positive decimal integer.`,
+    );
+  }
+  return normalized;
+}
+
+function routeOrLegacyId(value, sourceIdentifier, codeName, label) {
+  const id = sourceIdentifier(value);
+  return decimalRouteId.test(id) ? routePublicId(id, codeName, label) : id;
+}
+
+export const learningPathRouteId = (value) => routeOrLegacyId(
+  value,
+  learningPathId,
+  "LEARNING_PATH",
+  "Learning Path",
+);
+
+export const lessonRouteId = (value) => routeOrLegacyId(
+  value,
+  lessonId,
+  "LEARNING_PATH_LESSON",
+  "Learning Path lesson",
+);
+
+export const exerciseRouteId = (value) => routeOrLegacyId(
+  value,
+  exerciseId,
+  "LEARNING_PATH_EXERCISE",
+  "Learning Path exercise",
+);
+
+export const resourcePublicId = (resource) => String(resource.publicId ?? resource.id);
+
 function ensurePublishedPath(path) {
   if (!path || path.status !== "published" || path.retiredAt != null) {
     throw new NotFoundError("LEARNING_PATH_NOT_FOUND", "Learning Path was not found.");
@@ -43,6 +87,14 @@ function ensurePublishedPath(path) {
 }
 
 export async function loadPathById(definitionReader, rawPathId) {
+  const id = learningPathRouteId(rawPathId);
+  const path = canonicalRouteId.test(id) && typeof definitionReader.findByRoutePublicId === "function"
+    ? await definitionReader.findByRoutePublicId(id)
+    : await definitionReader.findByPublicId(id);
+  return ensurePublishedPath(path);
+}
+
+export async function loadPathBySourceId(definitionReader, rawPathId) {
   const id = learningPathId(rawPathId);
   return ensurePublishedPath(await definitionReader.findByPublicId(id));
 }
@@ -84,7 +136,9 @@ export async function projectedPathForUser({ progressReader, userId, path }) {
 
 export function requireProjectedLesson(projected, rawLessonId) {
   const id = lessonId(rawLessonId);
-  const lesson = findProjectedLesson(projected, id);
+  const lesson = projected.lessons.find(
+    (candidate) => String(candidate.publicId ?? candidate.id) === id,
+  ) ?? findProjectedLesson(projected, id);
   if (!lesson) {
     throw new NotFoundError("LEARNING_PATH_LESSON_NOT_FOUND", "Learning Path lesson was not found.");
   }
@@ -93,7 +147,9 @@ export function requireProjectedLesson(projected, rawLessonId) {
 
 export function requireProjectedExercise(projectedLesson, rawExerciseId) {
   const id = exerciseId(rawExerciseId);
-  const exercise = findProjectedExercise(projectedLesson, id);
+  const exercise = projectedLesson?.exercises.find(
+    (candidate) => String(candidate.publicId ?? candidate.id) === id,
+  ) ?? findProjectedExercise(projectedLesson, id);
   if (!exercise) {
     throw new NotFoundError("LEARNING_PATH_EXERCISE_NOT_FOUND", "Learning Path exercise was not found.");
   }

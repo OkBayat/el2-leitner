@@ -2,7 +2,10 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { LibraryLearningPathJourneyFacade } from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import {
+  LibraryLearningPathJourneyFacade,
+  type LearningPathJourneyDestination,
+} from '../../application/collection-learning-path/library-learning-path-journey.facade';
 import { SelectedCoursesFacade } from '../../application/collection-learning-path/selected-courses.facade';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import type { CollectionLearningPathView } from '../../domain/collection-learning-path/learning-path';
@@ -69,7 +72,7 @@ describe('HomePageComponent', () => {
   const refreshForLocalDay = vi.fn(async () => state()!);
   const loadCourses = vi.fn(async () => true);
   const loadJourneys = vi.fn(async () => true);
-  const enter = vi.fn(async () => ({
+  const enter = vi.fn(async (): Promise<LearningPathJourneyDestination | null> => ({
     kind: 'exercise' as const,
     pathId: 'cambridge-path',
     lessonId: 'lesson-1',
@@ -82,10 +85,11 @@ describe('HomePageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
       providers: [
-        provideRouter([{
-          path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId',
-          component: EmptyPage,
-        }]),
+        provideRouter([
+          { path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId', component: EmptyPage },
+          { path: 'learning-paths/:pathId', component: EmptyPage },
+          { path: 'library/:collectionId/learning-path', component: EmptyPage },
+        ]),
         { provide: LearningStoreService, useValue: { state, initialize, refreshForLocalDay } },
         { provide: SelectedCoursesFacade, useValue: { courses, loading: courseLoading, error: courseError, load: loadCourses } },
         {
@@ -129,7 +133,30 @@ describe('HomePageComponent', () => {
     card?.click();
     await fixture.whenStable();
     expect(enter).toHaveBeenCalledWith(selectedCourse);
-    expect(TestBed.inject(Router).url).toBe('/learning-path/cambridge-path/lessons/lesson-1/exercises/exercise-2');
+    expect(TestBed.inject(Router).url).toBe('/learning-paths/cambridge-path/lessons/lesson-1/exercises/exercise-2');
+  });
+
+  it('opens terminal courses canonically when route ids are available', async () => {
+    enter.mockResolvedValueOnce({
+      kind: 'path', pathId: '42', collectionId: selectedCourse.id,
+    });
+    const fixture = await render();
+    const host: HTMLElement = fixture.nativeElement;
+    host.querySelector<HTMLButtonElement>('[data-testid="home-course-card"]')?.click();
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/learning-paths/42');
+  });
+
+  it('keeps terminal courses on the legacy collection route with an older backend', async () => {
+    enter.mockResolvedValueOnce({
+      kind: 'path', pathId: 'cambridge-path', collectionId: selectedCourse.id,
+    });
+    const fixture = await render();
+    const host: HTMLElement = fixture.nativeElement;
+    host.querySelector<HTMLButtonElement>('[data-testid="home-course-card"]')?.click();
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url)
+      .toBe('/library/cambridge-vocabulary-for-ielts/learning-path');
   });
 
   it('keeps courses usable and reports the review error when state initialization fails', async () => {

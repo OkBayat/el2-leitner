@@ -5,6 +5,8 @@ import type { LibraryCollection } from '../../domain/learning/models';
 
 const INITIAL_COURSE_SLUG = 'bbc-six-minute-english';
 
+export type SelectedCourse = LibraryCollection & { learningPathId: string | null };
+
 function errorMessage(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Courses could not load.';
 }
@@ -15,9 +17,13 @@ function byTitle(left: LibraryCollection, right: LibraryCollection): number {
 
 export function courseMenuCollections(
   collections: readonly LibraryCollection[],
-  learningPathCollectionIds: ReadonlySet<string>,
-): LibraryCollection[] {
-  const courses = collections.filter((collection) => learningPathCollectionIds.has(collection.id));
+  learningPathIds: ReadonlyMap<string, string>,
+  availableCollectionIds: ReadonlySet<string> = new Set(learningPathIds.keys()),
+): SelectedCourse[] {
+  const courses = collections.flatMap((collection) => {
+    if (!availableCollectionIds.has(collection.id) && !learningPathIds.has(collection.id)) return [];
+    return [{ ...collection, learningPathId: learningPathIds.get(collection.id) ?? null }];
+  });
   const selected = courses.filter((collection) => collection.subscribed).sort(byTitle);
   if (selected.length) return selected;
 
@@ -31,7 +37,7 @@ export class SelectedCoursesFacade {
   private readonly learningPaths = inject(CollectionLearningPathApiService);
   private requestVersion = 0;
 
-  readonly courses = signal<LibraryCollection[]>([]);
+  readonly courses = signal<SelectedCourse[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
 
@@ -46,8 +52,14 @@ export class SelectedCoursesFacade {
       ]);
       if (request !== this.requestVersion) return false;
       const collections = result.collections ?? [];
-      const learningPathCollectionIds = new Set(learningPathCollections.collectionIds ?? []);
-      this.courses.set(courseMenuCollections(collections, learningPathCollectionIds));
+      const learningPathIds = new Map(
+        (learningPathCollections.learningPaths ?? []).map((item) => [item.collectionId, item.pathId]),
+      );
+      this.courses.set(courseMenuCollections(
+        collections,
+        learningPathIds,
+        new Set(learningPathCollections.collectionIds ?? []),
+      ));
       return true;
     } catch (error) {
       if (request === this.requestVersion) this.error.set(errorMessage(error));

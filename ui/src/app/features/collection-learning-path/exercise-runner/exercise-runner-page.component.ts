@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
+import { learningPathOverviewRoute } from '../../../domain/collection-learning-path/learning-path';
 import type { ExerciseOutcome } from '../exercises/exercise-runtime/exercise-contracts';
 import { ExerciseHostComponent } from '../exercises/exercise-runtime/exercise-host.component';
 
@@ -52,7 +53,7 @@ export class ExerciseRunnerPageComponent {
     }
     if (outcome.kind === 'cancelled') {
       const context = this.facade.context();
-      if (context) void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
+      if (context) void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
     }
   }
 
@@ -62,10 +63,10 @@ export class ExerciseRunnerPageComponent {
     if (!context) return;
     if (resumePoint) {
       void this.router.navigate([
-        '/learning-path', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
+        '/learning-paths', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
       ]);
       return;
     }
-    void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
+    void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
   }
 }

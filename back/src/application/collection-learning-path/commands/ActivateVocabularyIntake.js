@@ -5,6 +5,7 @@ import {
   isoTimestamp,
   loadPathById,
   projectedPathForUser,
+  resourcePublicId,
   requireProjectedExercise,
   requireProjectedLesson,
 } from "../learningPathSupport.js";
@@ -43,9 +44,9 @@ export class ActivateVocabularyIntake {
     if (exercise.state === "completed") {
       const payload = await loadVocabularyIntakePayload(this.vocabularyIntakeReader, userId, exercise);
       return {
-        pathId: path.id,
-        lessonId: lesson.id,
-        exerciseId: exercise.id,
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
         exerciseStatus: "completed",
         activatedCount: 0,
         revision: null,
@@ -74,9 +75,9 @@ export class ActivateVocabularyIntake {
       );
     }
     return {
-      pathId: path.id,
-      lessonId: lesson.id,
-      exerciseId: exercise.id,
+      pathId: resourcePublicId(path),
+      lessonId: resourcePublicId(lesson),
+      exerciseId: resourcePublicId(exercise),
       exerciseStatus: "in_progress",
       activatedCount: Number(write?.activatedCount ?? 0),
       revision: write?.revision ?? null,

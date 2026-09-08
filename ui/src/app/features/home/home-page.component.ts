@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { LibraryLearningPathJourneyFacade } from '../../application/collection-learning-path/library-learning-path-journey.facade';
 import { SelectedCoursesFacade } from '../../application/collection-learning-path/selected-courses.facade';
 import { LearningStoreService } from '../../core/state/learning-store.service';
+import { learningPathOverviewRoute } from '../../domain/collection-learning-path/learning-path';
 import { buildHomeCourseCard, type HomeCourseCard } from '../../domain/home/home-dashboard';
 import { getDueWords, localDay } from '../../domain/learning/learning-rules';
 import { NavigationIconComponent } from '../../shared/app-shell/navigation-icon.component';
@@ -85,10 +86,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (!destination) return;
     if (destination.kind === 'exercise') {
       await this.router.navigate([
-        '/learning-path', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
       ]);
       return;
     }
-    await this.router.navigate(['/library', destination.collectionId, 'learning-path']);
+    await this.router.navigate(learningPathOverviewRoute(destination.pathId, destination.collectionId));
   }
 }

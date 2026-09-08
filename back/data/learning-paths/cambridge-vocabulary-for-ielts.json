@@ -15,7 +15,7 @@
       "position": 1,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 1 — Growing up" },
       "exercises": [
-        { "id": "cvfi-u01-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u01-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u01-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u01-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u01-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u01-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u01-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -27,7 +27,7 @@
       "position": 2,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 2 — Mental and physical development" },
       "exercises": [
-        { "id": "cvfi-u02-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u02-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u02-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u02-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u02-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u02-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u02-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -39,7 +39,7 @@
       "position": 3,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 3 — Keeping fit" },
       "exercises": [
-        { "id": "cvfi-u03-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u03-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u03-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u03-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u03-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u03-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u03-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -51,7 +51,7 @@
       "position": 4,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 4 — Lifestyles" },
       "exercises": [
-        { "id": "cvfi-u04-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u04-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u04-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u04-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u04-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u04-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u04-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -63,7 +63,7 @@
       "position": 5,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 5 — Student life" },
       "exercises": [
-        { "id": "cvfi-u05-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u05-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u05-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u05-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u05-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u05-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u05-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -75,7 +75,7 @@
       "position": 6,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 6 — Effective communication" },
       "exercises": [
-        { "id": "cvfi-u06-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u06-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u06-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u06-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u06-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u06-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u06-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -87,7 +87,7 @@
       "position": 7,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 7 — On the move" },
       "exercises": [
-        { "id": "cvfi-u07-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u07-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u07-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u07-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u07-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u07-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u07-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -99,7 +99,7 @@
       "position": 8,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 8 — Through the ages" },
       "exercises": [
-        { "id": "cvfi-u08-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u08-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u08-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u08-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u08-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u08-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u08-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -111,7 +111,7 @@
       "position": 9,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 9 — The natural world" },
       "exercises": [
-        { "id": "cvfi-u09-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u09-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u09-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u09-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u09-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u09-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u09-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -123,7 +123,7 @@
       "position": 10,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 10 — Reaching for the skies" },
       "exercises": [
-        { "id": "cvfi-u10-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u10-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u10-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u10-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u10-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u10-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u10-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -135,7 +135,7 @@
       "position": 11,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 11 — Design and innovation" },
       "exercises": [
-        { "id": "cvfi-u11-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u11-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u11-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u11-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u11-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u11-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u11-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -147,7 +147,7 @@
       "position": 12,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 12 — Information technology" },
       "exercises": [
-        { "id": "cvfi-u12-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u12-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u12-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u12-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u12-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u12-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u12-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -159,7 +159,7 @@
       "position": 13,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 13 — The modern world" },
       "exercises": [
-        { "id": "cvfi-u13-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u13-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u13-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u13-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u13-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u13-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u13-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -171,7 +171,7 @@
       "position": 14,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 14 — Urbanisation" },
       "exercises": [
-        { "id": "cvfi-u14-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u14-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u14-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u14-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u14-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u14-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u14-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -183,7 +183,7 @@
       "position": 15,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 15 — The green revolution" },
       "exercises": [
-        { "id": "cvfi-u15-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u15-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u15-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u15-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u15-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u15-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u15-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -195,7 +195,7 @@
       "position": 16,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 16 — The energy crisis" },
       "exercises": [
-        { "id": "cvfi-u16-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u16-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u16-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u16-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u16-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u16-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u16-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -207,7 +207,7 @@
       "position": 17,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 17 — Talking business" },
       "exercises": [
-        { "id": "cvfi-u17-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u17-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u17-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u17-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u17-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u17-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u17-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -219,7 +219,7 @@
       "position": 18,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 18 — The law" },
       "exercises": [
-        { "id": "cvfi-u18-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u18-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u18-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u18-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u18-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u18-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u18-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -231,7 +231,7 @@
       "position": 19,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 19 — The media" },
       "exercises": [
-        { "id": "cvfi-u19-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u19-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u19-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u19-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u19-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u19-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u19-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
@@ -243,7 +243,7 @@
       "position": 20,
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 20 — The arts" },
       "exercises": [
-        { "id": "cvfi-u20-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u20-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
         { "id": "cvfi-u20-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": false, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u20-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u20-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
         { "id": "cvfi-u20-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
         { "id": "cvfi-u20-mastery-check", "position": 40, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }

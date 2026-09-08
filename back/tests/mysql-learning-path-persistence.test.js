@@ -156,3 +156,57 @@ test("migration keeps path structure relational and protects progress-bearing co
   assert.match(migration, /user_learning_path_exercise_progress_exercise_fk[\s\S]*ON DELETE RESTRICT/u);
   assert.doesNotMatch(migration, /DROP TABLE|DROP COLUMN|DELETE FROM/u);
 });
+
+test("route identity migration creates generated immutable numeric ids without rewriting resource keys", async () => {
+  const migration = await readFile(new URL("../database/migrations/020_learning_path_route_public_ids.sql", import.meta.url), "utf8");
+
+  for (const [mappingTable, resourceTable, foreignKey] of [
+    ["learning_path_route_ids", "collection_learning_paths", "learning_path_id"],
+    ["learning_path_lesson_route_ids", "learning_path_lessons", "lesson_id"],
+    ["learning_path_exercise_route_ids", "learning_path_exercises", "exercise_id"],
+  ]) {
+    assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${mappingTable}[\\s\\S]*public_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT`, "u"));
+    assert.match(migration, new RegExp(`UNIQUE KEY ${mappingTable}_resource_unique \\(${foreignKey}\\)`, "u"));
+    assert.match(migration, new RegExp(`INSERT INTO ${mappingTable} \\(${foreignKey}\\)[\\s\\S]*SELECT id FROM ${resourceTable}`, "u"));
+  }
+
+  assert.match(migration, /AFTER INSERT ON collection_learning_paths/u);
+  assert.match(migration, /AFTER INSERT ON learning_path_lessons/u);
+  assert.match(migration, /AFTER INSERT ON learning_path_exercises/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_route_ids/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_lesson_route_ids/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_exercise_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_lesson_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_exercise_route_ids/u);
+  assert.match(migration, /BEFORE INSERT ON learning_path_route_ids/u);
+  assert.match(migration, /SIGNAL SQLSTATE '45000'/u);
+  assert.match(migration, /learning_path_route_identity_complete CHECK \(missing_count = 0\)/u);
+  assert.match(migration, /BEFORE UPDATE ON collection_learning_paths/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_lessons/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_exercises/u);
+  assert.ok(
+    migration.indexOf("AFTER INSERT ON collection_learning_paths")
+      < migration.indexOf("INSERT IGNORE INTO learning_path_route_ids"),
+    "assignment triggers must be installed before backfill",
+  );
+  assert.doesNotMatch(migration, /ALTER TABLE collection_learning_paths[\s\S]*MODIFY COLUMN id|DROP COLUMN|DELETE FROM/u);
+});
+
+test("definition queries resolve canonical route ids while retaining source identity internally", async () => {
+  const pool = new RecordingPool([
+    [[{ id: "source-path", publicId: "1", collectionId: "collection-1", title: "Path", mode: "finite", status: "published", contentVersion: 1 }], []],
+    [[{ id: "source-lesson", publicId: "5", title: "Lesson", position: 1, status: "published", introducedVersion: 1 }], []],
+    [[{ lessonId: "source-lesson", id: "source-exercise", publicId: "10", position: 1, type: "fixture", schemaVersion: 1, required: 1, completionPolicy: "explicit", configJson: {} }], []],
+  ]);
+  const repository = new MySqlLearningPathDefinitionQueryRepository(pool);
+
+  const path = await repository.findByRoutePublicId("1");
+
+  assert.equal(pool.calls[0].parameters[0], "1");
+  assert.match(pool.calls[0].sql, /learning_path_route_ids/u);
+  assert.equal(path.id, "source-path");
+  assert.equal(path.publicId, "1");
+  assert.equal(path.lessons[0].publicId, "5");
+  assert.equal(path.lessons[0].exercises[0].publicId, "10");
+});

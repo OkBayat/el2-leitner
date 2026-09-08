@@ -6,12 +6,12 @@ import { VocabularyIntakeExerciseComponent } from './vocabulary-intake-exercise.
 import { VOCABULARY_INTAKE_SUMMARY_SLIDE_ID } from './vocabulary-intake-slide.factory';
 
 const runtimeContext = {
-  pathId: 'cvfi-learning-path',
-  lessonId: 'cvfi-unit-01',
-  exerciseId: 'cvfi-u01-intake',
+	pathId: '1',
+	lessonId: '5',
+	exerciseId: '10',
   type: 'vocabulary.intake',
   schemaVersion: 1,
-  config: { scope: { kind: 'lesson-source' } },
+	config: { scope: { kind: 'lesson-source' }, presentation: 'slides' },
   payload: {
     scope: { kind: 'collection-section', ref: 'cvfi-unit-01' },
     items: [
@@ -45,7 +45,7 @@ describe('VocabularyIntakeExerciseComponent', () => {
 
     await component.startPractice();
 
-    expect(activate).toHaveBeenCalledWith('cvfi-learning-path', 'cvfi-unit-01', 'cvfi-u01-intake');
+		expect(activate).toHaveBeenCalledWith('1', '5', '10');
     expect(component.error()).toBe('');
   });
 

@@ -108,7 +108,7 @@ describe('Collection Learning Path journey facades', () => {
       ] });
       const facade = TestBed.inject(LibraryLearningPathJourneyFacade);
       await facade.load([course]);
-      expect(await facade.enter(course)).toEqual({ kind: 'path', collectionId: 'course-1' });
+      expect(await facade.enter(course)).toEqual({ kind: 'path', pathId: 'path-1', collectionId: 'course-1' });
       expect(api.commandStartPath).not.toHaveBeenCalled();
     }
   });

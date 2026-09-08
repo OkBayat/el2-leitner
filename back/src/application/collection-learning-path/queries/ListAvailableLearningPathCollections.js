@@ -5,11 +5,11 @@ export class ListAvailableLearningPathCollections {
   }
 
   async execute(userId) {
-    const collectionIds = await this.definitionReader.listActiveCollectionPublicIds();
-    const accessible = await Promise.all(collectionIds.map(async (id) => {
-      const access = await this.accessReader.getForCollection(userId, id);
-      return access?.canRead ? id : null;
+    const routes = await this.definitionReader.listActiveCollectionRoutes();
+    const accessible = await Promise.all(routes.map(async (route) => {
+      const access = await this.accessReader.getForCollection(userId, route.collectionId);
+      return access?.canRead ? route : null;
     }));
-    return accessible.filter((id) => id !== null);
+    return accessible.filter((route) => route !== null);
   }
 }

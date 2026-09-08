@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   canOpenLearningPathExercise,
   exerciseTypeLabel,
+  learningPathOverviewRoute,
   summarizeLearningPath,
   type LearningPathLessonView,
 } from './learning-path';
@@ -49,5 +50,11 @@ describe('Collection Learning Path UI domain', () => {
     expect(exerciseTypeLabel('slide-base')).toBe('Spelling practice');
     expect(exerciseTypeLabel('listening.ielts')).toBe('IELTS listening');
     expect(exerciseTypeLabel('custom.future-drill')).toBe('Future drill');
+  });
+
+  it('uses canonical overviews only for confirmed numeric ids during mixed deployments', () => {
+    expect(learningPathOverviewRoute('1', 'course-1')).toEqual(['/learning-paths', '1']);
+    expect(learningPathOverviewRoute('source-path', 'course-1'))
+      .toEqual(['/library', 'course-1', 'learning-path']);
   });
 });

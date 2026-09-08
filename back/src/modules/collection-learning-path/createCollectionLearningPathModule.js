@@ -9,11 +9,13 @@ import { GetCollectionLearningPath } from "../../application/collection-learning
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
 import { GetIeltsListeningExerciseContext } from "../../application/collection-learning-path/queries/GetIeltsListeningExerciseContext.js";
 import { GetLearningPathLesson } from "../../application/collection-learning-path/queries/GetLearningPathLesson.js";
+import { GetLearningPath } from "../../application/collection-learning-path/queries/GetLearningPath.js";
 import { GetLearningPathResumePoint } from "../../application/collection-learning-path/queries/GetLearningPathResumePoint.js";
 import { GetScopedVocabularyQuickReviewContext } from "../../application/collection-learning-path/queries/GetScopedVocabularyQuickReviewContext.js";
 import { GetVocabularyIntakeContext } from "../../application/collection-learning-path/queries/GetVocabularyIntakeContext.js";
 import { GetVocabularyMasteryCheckContext } from "../../application/collection-learning-path/queries/GetVocabularyMasteryCheckContext.js";
 import { ListAvailableLearningPathCollections } from "../../application/collection-learning-path/queries/ListAvailableLearningPathCollections.js";
+import { ResolveLegacyLearningPathRoute } from "../../application/collection-learning-path/queries/ResolveLegacyLearningPathRoute.js";
 import { VerifyIeltsListeningCompletion } from "../../application/collection-learning-path/queries/VerifyIeltsListeningCompletion.js";
 import { VerifyScopedVocabularyQuickReviewCompletion } from "../../application/collection-learning-path/queries/VerifyScopedVocabularyQuickReviewCompletion.js";
 import { VerifyShadowingExerciseCompletion } from "../../application/collection-learning-path/queries/VerifyShadowingExerciseCompletion.js";
@@ -160,9 +162,11 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
   const queries = {
     listAvailableCollections: new ListAvailableLearningPathCollections(dependencies),
     getCollectionLearningPath: new GetCollectionLearningPath(dependencies),
+    getLearningPath: new GetLearningPath(dependencies),
     getLearningPathLesson: new GetLearningPathLesson(dependencies),
     getExerciseContext: new GetExerciseContext(dependencies),
     getLearningPathResumePoint: new GetLearningPathResumePoint(dependencies),
+    resolveLegacyLearningPathRoute: new ResolveLegacyLearningPathRoute(dependencies),
   };
   const commands = {
     startLearningPath: new StartLearningPath(dependencies),

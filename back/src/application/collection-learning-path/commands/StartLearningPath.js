@@ -5,6 +5,7 @@ import {
   loadPathById,
   progressRevision,
   projectedPathForUser,
+  resourcePublicId,
 } from "../learningPathSupport.js";
 
 export class StartLearningPath {
@@ -45,7 +46,7 @@ export class StartLearningPath {
 
     const refreshed = await projectedPathForUser({ progressReader: this.progressReader, userId, path });
     return {
-      pathId: path.id,
+      pathId: resourcePublicId(path),
       pathStatus: refreshed.projected.path.learnerStatus,
       resumePoint: findLearningPathResumePoint(refreshed.projected),
       progressRevision: progressRevision(refreshed.progress),

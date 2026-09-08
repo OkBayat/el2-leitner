@@ -16,9 +16,14 @@ function resumePointDto(resumePoint) {
   };
 }
 
+function identityDto(resource) {
+  if (resource.publicId == null) return { id: resource.id };
+  return { id: String(resource.publicId) };
+}
+
 export function exerciseDto(exercise) {
   return {
-    id: exercise.id,
+    ...identityDto(exercise),
     position: exercise.position,
     type: exercise.type,
     schemaVersion: exercise.schemaVersion,
@@ -32,7 +37,7 @@ export function exerciseDto(exercise) {
 
 export function lessonDto(lesson) {
   return {
-    id: lesson.id,
+    ...identityDto(lesson),
     title: lesson.title,
     position: lesson.position,
     sourceKind: lesson.sourceKind ?? null,
@@ -45,7 +50,7 @@ export function lessonDto(lesson) {
 
 export function pathDto(path) {
   return {
-    id: path.id,
+    ...identityDto(path),
     collectionId: path.collectionId,
     title: path.title,
     mode: path.mode,
@@ -73,7 +78,7 @@ export function exerciseContextDto(context) {
   const progressRevision = context.path.progress?.revision;
   return {
     path: {
-      id: context.path.id,
+      ...identityDto(context.path),
       collectionId: context.path.collectionId,
       title: context.path.title,
       mode: context.path.mode,
@@ -81,12 +86,12 @@ export function exerciseContextDto(context) {
       ...(progressRevision == null ? {} : { progressRevision: Number(progressRevision) }),
     },
     lesson: {
-      id: context.lesson.id,
+      ...identityDto(context.lesson),
       title: context.lesson.title,
       position: context.lesson.position,
     },
     exercise: {
-      id: context.exercise.id,
+      ...identityDto(context.exercise),
       position: context.exercise.position,
       type: context.exercise.type,
       schemaVersion: context.exercise.schemaVersion,

@@ -9,9 +9,9 @@ import type { ExerciseContextView } from '../../../domain/collection-learning-pa
 import { ExerciseRunnerPageComponent } from './exercise-runner-page.component';
 
 const context: ExerciseContextView = {
-  path: { id: 'cvfi-learning-path', collectionId: 'cambridge-vocabulary-for-ielts-intermediate', title: 'Course', mode: 'finite', contentVersion: 'v1' },
-  lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
-  exercise: { id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } } },
+  path: { id: '1', collectionId: 'cambridge-vocabulary-for-ielts-intermediate', title: 'Course', mode: 'finite', contentVersion: 'v1' },
+  lesson: { id: '5', title: 'Lesson 1', position: 1 },
+  exercise: { id: '10', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true, completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' }, presentation: 'slides' } },
   progress: null,
   state: 'in_progress',
   payload: {
@@ -30,12 +30,12 @@ describe('ExerciseRunnerPageComponent', () => {
     const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({
       imports: [ExerciseRunnerPageComponent],
-      providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn().mockResolvedValue({ activatedCount: 1 }) } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'cvfi-learning-path', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } }],
+      providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn().mockResolvedValue({ activatedCount: 1 }) } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }],
     });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.detectChanges();
 
-    expect(facade.load).toHaveBeenCalledWith('cvfi-learning-path', 'lesson-1', 'exercise-1');
+    expect(facade.load).toHaveBeenCalledWith('1', '5', '10');
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('[data-testid="learning-path-runner"]')).not.toBeNull();
     expect(element.querySelector('.runner__topbar')).toBeNull();
@@ -51,7 +51,7 @@ describe('ExerciseRunnerPageComponent', () => {
 
   it('forwards completed renderer outcomes to the generic runner completion command', () => {
     const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
-    TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'cvfi-learning-path', lessonId: 'lesson-1', exerciseId: 'exercise-1' })) } }] });
+    TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }] });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     fixture.componentInstance.onExerciseOutcome({ kind: 'completed' });
     expect(facade.complete).toHaveBeenCalledWith({ kind: 'completed' });

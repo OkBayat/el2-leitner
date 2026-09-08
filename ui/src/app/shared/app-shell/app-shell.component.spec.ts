@@ -3,20 +3,20 @@ import {TestBed} from '@angular/core/testing';
 import {provideRouter, Router} from '@angular/router';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {CollectionLearningPathFacade} from '../../application/collection-learning-path/collection-learning-path.facade';
-import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
+import {SelectedCoursesFacade, type SelectedCourse} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
 import type {CollectionLearningPathView, LearningPathExerciseView} from '../../domain/collection-learning-path/learning-path';
 import {addDays, createFreshState, localDay} from '../../domain/learning/learning-rules';
-import type {LearningState, LibraryCollection} from '../../domain/learning/models';
+import type {LearningState} from '../../domain/learning/models';
 import {ShareStoryService} from '../share-story/share-story.service';
 import {AppShellComponent} from './app-shell.component';
 
 @Component({template: ''})
 class EmptyPage {}
 
-const bbcCourse: LibraryCollection = {
+const bbcCourse: SelectedCourse = {
 	id: 'bbc-six-minute-english',
 	slug: 'bbc-six-minute-english',
 	title: 'BBC 6 Minute English',
@@ -26,13 +26,15 @@ const bbcCourse: LibraryCollection = {
 	contentVersion: 1,
 	wordCount: 0,
 	subscribed: true,
+	learningPathId: '1',
 };
 
-const grammarCourse: LibraryCollection = {
+const grammarCourse: SelectedCourse = {
 	...bbcCourse,
 	id: 'cambridge-grammar',
 	slug: 'cambridge-grammar',
 	title: 'Cambridge Grammar',
+	learningPathId: '2',
 };
 
 function progressExercise(id: string, state: LearningPathExerciseView['state']): LearningPathExerciseView {
@@ -49,12 +51,12 @@ function progressExercise(id: string, state: LearningPathExerciseView['state']):
 	};
 }
 
-function progressView(collectionId: string): CollectionLearningPathView {
+function progressView(collectionId: string, pathId = `${collectionId}-path`): CollectionLearningPathView {
 	return {
 		access: {canProgress: true},
 		resumePoint: null,
 		path: {
-			id: `${collectionId}-path`,
+			id: pathId,
 			collectionId,
 			title: 'Fixture course',
 			mode: 'finite',
@@ -97,7 +99,7 @@ function fixtureState(): LearningState {
 
 describe('AppShell responsive navigation', () => {
 	const state = signal<LearningState | null>(null);
-	const selectedCourses = signal<LibraryCollection[]>([bbcCourse]);
+	const selectedCourses = signal<SelectedCourse[]>([bbcCourse]);
 	const learningPathView = signal<CollectionLearningPathView | null>(null);
 	const coursesLoading = signal(false);
 	const coursesError = signal('');
@@ -127,6 +129,7 @@ describe('AppShell responsive navigation', () => {
 				provideRouter([
 					{path: 'dashboard', component: EmptyPage}, {path: 'settings', component: EmptyPage},
 					{path: 'library/:id', component: EmptyPage}, {path: 'library/:collectionId/learning-path', component: EmptyPage},
+					{path: 'learning-paths/:pathId', component: EmptyPage},
 					{path: 'reports', component: EmptyPage},
 				]),
 				{provide: AuthService, useValue: {user: signal({id: 'fixture', email: 'learner@example.test'}), logout}},
@@ -212,13 +215,13 @@ describe('AppShell responsive navigation', () => {
 
 	it('tracks the current learning-path course and exposes its already-loaded progress only on that route', async () => {
 		selectedCourses.set([bbcCourse, grammarCourse]);
-		learningPathView.set(progressView('cambridge-grammar'));
+		learningPathView.set(progressView('cambridge-grammar', '2'));
 		const fixture = await render();
 		const router = TestBed.inject(Router);
 		expect(fixture.componentInstance.activeCourseId()).toBe('bbc-six-minute-english');
 		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
 
-		await router.navigateByUrl('/library/cambridge-grammar/learning-path');
+		await router.navigateByUrl('/learning-paths/2');
 		fixture.detectChanges();
 		expect(fixture.componentInstance.activeCourseId()).toBe('cambridge-grammar');
 		expect(fixture.componentInstance.currentCourseProgress()?.percent).toBe(25);

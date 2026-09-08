@@ -4,8 +4,11 @@ import { ValidationError } from "../../../domain/errors.js";
 import {
   collectionId,
   exerciseId,
+  exerciseRouteId,
   learningPathId,
+  learningPathRouteId,
   lessonId,
+  lessonRouteId,
 } from "../../../application/collection-learning-path/learningPathSupport.js";
 import {
   collectionLearningPathDto,
@@ -33,8 +36,11 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.use(authenticate);
 
   router.get("/collections", async (req, res) => {
-    const collectionIds = await queries.listAvailableCollections.execute(req.auth.userId);
-    res.status(200).json({ collectionIds });
+    const learningPaths = await queries.listAvailableCollections.execute(req.auth.userId);
+    res.status(200).json({
+      collectionIds: learningPaths.map((item) => item.collectionId),
+      learningPaths,
+    });
   });
 
   router.get("/collections/:collectionId", async (req, res) => {
@@ -45,11 +51,29 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
     res.status(200).json(collectionLearningPathDto(result));
   });
 
-  router.get("/:pathId/lessons/:lessonId", async (req, res) => {
-    const result = await queries.getLearningPathLesson.execute(
+  router.get("/legacy/:pathId/lessons/:lessonId/exercises/:exerciseId/route", async (req, res) => {
+    const result = await queries.resolveLegacyLearningPathRoute.execute(
       req.auth.userId,
       learningPathId(req.params.pathId),
       lessonId(req.params.lessonId),
+      exerciseId(req.params.exerciseId),
+    );
+    res.status(200).json(result);
+  });
+
+  router.get("/:pathId", async (req, res) => {
+    const result = await queries.getLearningPath.execute(
+      req.auth.userId,
+      learningPathRouteId(req.params.pathId),
+    );
+    res.status(200).json(collectionLearningPathDto(result));
+  });
+
+  router.get("/:pathId/lessons/:lessonId", async (req, res) => {
+    const result = await queries.getLearningPathLesson.execute(
+      req.auth.userId,
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
     );
     res.status(200).json({ lesson: lessonDto(result) });
   });
@@ -57,9 +81,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.get("/:pathId/lessons/:lessonId/exercises/:exerciseId", async (req, res) => {
     const result = await queries.getExerciseContext.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
     );
     res.status(200).json({ context: exerciseContextDto(result) });
   });
@@ -67,7 +91,7 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.get("/:pathId/resume", async (req, res) => {
     const result = await queries.getLearningPathResumePoint.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
+      learningPathRouteId(req.params.pathId),
     );
     res.status(200).json(result);
   });
@@ -75,7 +99,7 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/start", async (req, res) => {
     const result = await commands.startLearningPath.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
+      learningPathRouteId(req.params.pathId),
     );
     res.status(200).json(result);
   });
@@ -83,9 +107,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/start", async (req, res) => {
     const result = await commands.startExercise.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
       req.body?.progressRevision,
     );
     res.status(200).json(result);
@@ -94,9 +118,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/vocabulary-intake/activate", async (req, res) => {
     const result = await commands.activateVocabularyIntake.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
     );
     res.status(200).json(result);
   });
@@ -104,9 +128,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/vocabulary-mastery-check/start", async (req, res) => {
     const result = await commands.startVocabularyMasteryCheck.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
     );
     res.status(200).json(result);
   });
@@ -114,9 +138,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/vocabulary-spelling/start", async (req, res) => {
     const result = await commands.startVocabularySpelling.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
       req.body?.scope,
     );
     res.status(201).json(result);
@@ -125,9 +149,9 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/complete", async (req, res) => {
     const result = await commands.completeExercise.execute(
       req.auth.userId,
-      learningPathId(req.params.pathId),
-      lessonId(req.params.lessonId),
-      exerciseId(req.params.exerciseId),
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+      exerciseRouteId(req.params.exerciseId),
       completionOutcome(req.body?.outcome),
       req.body?.progressRevision,
     );

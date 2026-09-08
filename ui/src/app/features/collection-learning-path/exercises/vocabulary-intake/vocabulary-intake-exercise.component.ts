@@ -32,7 +32,7 @@ import {
   withVocabularyIntakeScore,
 } from './vocabulary-intake-slide.factory';
 
-const CAMBRIDGE_VOCABULARY_PATH_ID = 'cvfi-learning-path';
+const SLIDE_PRESENTATION = 'slides';
 
 function errorMessage(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Vocabulary could not be activated.';
@@ -102,7 +102,7 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
 
   load(context: ExerciseContext): void {
     this.runtime.set(context);
-    this.slideMode.set(context.pathId === CAMBRIDGE_VOCABULARY_PATH_ID);
+		this.slideMode.set(context.config['presentation'] === SLIDE_PRESENTATION);
     this.busy.set(false);
     this.error.set('');
     this.correctCount.set(0);

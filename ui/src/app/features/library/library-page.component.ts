@@ -17,6 +17,7 @@ import {SelectedCoursesFacade} from '../../application/collection-learning-path/
 import {LibraryApiService} from '../../core/library/library-api.service';
 import {
   learningPathPrimaryAction,
+  learningPathOverviewRoute,
   summarizeLearningPath,
   type CollectionLearningPathView,
 } from '../../domain/collection-learning-path/learning-path';
@@ -116,11 +117,14 @@ export class LibraryPageComponent implements OnInit {
     await this.selectedCourses.load();
     if (destination.kind === 'exercise') {
       await this.router.navigate([
-        '/learning-path', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
       ]);
       return;
     }
-    await this.router.navigate(['/library', destination.collectionId, 'learning-path']);
+    const path = this.learningPaths.viewFor(destination.collectionId)?.path;
+    await this.router.navigate(path
+      ? learningPathOverviewRoute(path.id, destination.collectionId)
+      : ['/library', destination.collectionId, 'learning-path']);
   }
 
   async toggle(collection: LibraryCollection): Promise<void> {
