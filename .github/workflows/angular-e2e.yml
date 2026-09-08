@@ -2,9 +2,25 @@ name: Angular E2E
 
 on:
   pull_request:
+    paths:
+      - 'back/**'
+      - 'ui/**'
+      - 'speech/**'
+      - '.dockerignore'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/angular-e2e.yml'
   push:
     branches:
       - main
+    paths:
+      - 'back/**'
+      - 'ui/**'
+      - 'speech/**'
+      - '.dockerignore'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/angular-e2e.yml'
 
 permissions:
   contents: read

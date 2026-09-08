@@ -6,9 +6,11 @@ import { config as loadEnvironment } from "dotenv";
 import mysql from "mysql2/promise";
 
 import { SyncCollectionSources } from "../src/application/library/SyncCollectionSources.js";
+import { parseFileManagedLearningPathSource } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
 import { LegacyNumberedVocabularyFileParser } from "../src/domain/library/LegacyNumberedVocabularyFileParser.js";
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import { loadCollectionSources } from "../src/infrastructure/content/loadCollectionSources.js";
+import { loadLearningPathSources } from "../src/infrastructure/content/loadLearningPathSources.js";
 import { loadListeningEpisodeSources } from "../src/infrastructure/content/loadListeningEpisodeSources.js";
 import { SyncListeningEpisodeSources } from "../src/application/listening-practice/SyncListeningEpisodeSources.js";
 import { MySqlListeningEpisodeSourceRepository } from "../src/infrastructure/persistence/mysql/MySqlListeningEpisodeSourceRepository.js";
@@ -18,6 +20,8 @@ import { repairHistoricalBoxFiveProgress } from "../src/infrastructure/persisten
 import { repairLegacyAliasProgress } from "../src/infrastructure/persistence/mysql/repairLegacyAliasProgress.js";
 import { seedBuiltInLibrary } from "../src/infrastructure/persistence/mysql/seedBuiltInLibrary.js";
 import { seedSentencePractice } from "../src/infrastructure/persistence/mysql/seedSentencePractice.js";
+import { createBbcCourseSourceSynchronizer } from "../src/modules/collection-learning-path/createBbcCourseSourceSynchronizer.js";
+import { createFileManagedLearningPathSourceSynchronizer } from "../src/modules/collection-learning-path/createFileManagedLearningPathSourceSynchronizer.js";
 
 const DEFAULT_RETRIES = 30;
 const DEFAULT_RETRY_DELAY_MS = 2_000;
@@ -26,6 +30,7 @@ const APPLICATION_USER_HOST = "%";
 const MIGRATIONS_DIRECTORY = new URL("../database/migrations/", import.meta.url);
 const IELTS_SOURCE = new URL("../../ui/data/IELTS_Listening_Core_1500.md", import.meta.url);
 const COLLECTIONS_DIRECTORY = new URL("../data/collections/", import.meta.url);
+const LEARNING_PATHS_DIRECTORY = new URL("../data/learning-paths/", import.meta.url);
 
 for (const environmentFile of [
   new URL("../.env", import.meta.url),
@@ -197,6 +202,20 @@ async function setupDatabase() {
       console.info(`Archived ${collectionSyncResult.archivedCount} removed file-managed collection(s).`);
     }
 
+    // File-managed Learning Paths intentionally resolve references only after the
+    // collection catalog has synchronized, so source files never store database ids.
+    const learningPathSources = await loadLearningPathSources(
+      LEARNING_PATHS_DIRECTORY,
+      parseFileManagedLearningPathSource
+    );
+    const learningPathSyncResult = await createFileManagedLearningPathSourceSynchronizer(applicationPool)
+      .execute(learningPathSources);
+    if (learningPathSyncResult.changed) {
+      console.info(
+        `Synchronized ${learningPathSyncResult.sourcesChanged}/${learningPathSyncResult.sourceCount} file-managed Learning Path(s).`
+      );
+    }
+
     const listeningSources = await loadListeningEpisodeSources();
     const listeningSeedResult = await new SyncListeningEpisodeSources({
       listeningEpisodeSourceRepository: new MySqlListeningEpisodeSourceRepository(applicationPool)
@@ -204,6 +223,13 @@ async function setupDatabase() {
     if (listeningSeedResult.changed || listeningSeedResult.changedCollections) {
       console.info(
         `Seeded ${listeningSeedResult.lessonCount} BBC listening lesson(s) with ${listeningSeedResult.testCount} test(s) and ${listeningSeedResult.questionCount} question(s).`
+      );
+    }
+
+    const bbcCourseSyncResult = await createBbcCourseSourceSynchronizer(applicationPool).execute(listeningSources);
+    if (bbcCourseSyncResult.changed) {
+      console.info(
+        `Synchronized BBC 6 Minute English Learning Path at content version ${bbcCourseSyncResult.contentVersion}.`
       );
     }
 

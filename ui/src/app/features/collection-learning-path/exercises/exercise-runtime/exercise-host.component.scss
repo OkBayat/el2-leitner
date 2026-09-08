@@ -1,0 +1,47 @@
+:host,
+.exercise-host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.exercise-host__load-error {
+  display: grid;
+  justify-items: center;
+  gap: var(--vocora-space-3);
+  padding: var(--vocora-space-6) var(--vocora-space-4);
+  border: 1px solid var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-surface-raised);
+  text-align: center;
+}
+
+.exercise-host__load-error h2,
+.exercise-host__load-error p {
+  margin: 0;
+}
+
+.exercise-host__load-error p {
+  color: var(--vocora-text-secondary);
+}
+
+.exercise-host__load-error button {
+  min-height: var(--vocora-touch-target-min);
+  padding: 0 var(--vocora-space-4);
+  border: 0;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.exercise-host__load-error button:hover {
+  background: var(--vocora-action-primary-hover);
+}
+
+.exercise-host__load-error button:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}

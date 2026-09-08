@@ -2,11 +2,16 @@ node_modules/
 .DS_Store
 *.log
 *.mp3
+back/data/tts-cache/
 .env
 coverage/
 .nyc_output/
 ui/dist/
 ui/.angular/
+.angular/
+.idea/
+ui/.nvmrc
+ui/proxy.conf.json
 ui/playwright-report/
 ui/test-results/
 
@@ -20,3 +25,6 @@ back/data/listening/episodes/**/*.zip
 # Local Python tooling caches
 **/__pycache__/
 *.pyc
+
+# Repository-owned linked worktrees created by k2-worktree-first
+.worktrees/

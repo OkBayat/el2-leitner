@@ -5,6 +5,10 @@ import { ValidationError } from "../domain/errors.js";
 const DEFAULT_LISTENING_AUDIO_DIRECTORY = fileURLToPath(
   new URL("../../data/listening/audio/", import.meta.url)
 );
+const DEFAULT_TTS_CACHE_DIRECTORY = fileURLToPath(
+  new URL("../../data/tts-cache/", import.meta.url)
+);
+const DEFAULT_TTS_VOICES = ["af_bella", "af_heart", "af_sky", "bf_emma"];
 
 function numberFromEnv(value, fallback, name) {
   const parsed = Number(value ?? fallback);
@@ -24,6 +28,17 @@ function emailListFromEnv(value) {
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean))];
+}
+
+function ttsVoiceListFromEnv(value) {
+  const voices = [...new Set(String(value || DEFAULT_TTS_VOICES.join(","))
+    .split(",")
+    .map((voice) => voice.trim().toLowerCase())
+    .filter(Boolean))];
+  if (voices.length === 0) {
+    throw new ValidationError("INVALID_CONFIGURATION", "TTS_ALLOWED_VOICES must not be empty.");
+  }
+  return voices;
 }
 
 export function loadConfig(env = process.env) {
@@ -50,11 +65,50 @@ export function loadConfig(env = process.env) {
     );
   }
 
+  const ttsAllowedVoices = ttsVoiceListFromEnv(env.TTS_ALLOWED_VOICES);
+  const ttsDefaultVoice = (env.TTS_DEFAULT_VOICE || "af_heart").trim().toLowerCase();
+  if (!ttsAllowedVoices.includes(ttsDefaultVoice)) {
+    throw new ValidationError(
+      "INVALID_CONFIGURATION",
+      "TTS_DEFAULT_VOICE must be included in TTS_ALLOWED_VOICES."
+    );
+  }
+  const ttsDefaultSpeed = numberFromEnv(env.TTS_DEFAULT_SPEED, 1, "TTS_DEFAULT_SPEED");
+  if (ttsDefaultSpeed < 0.25 || ttsDefaultSpeed > 4) {
+    throw new ValidationError("INVALID_CONFIGURATION", "TTS_DEFAULT_SPEED must be from 0.25 to 4.");
+  }
+  const ttsDefaultFormat = (env.TTS_DEFAULT_FORMAT || "mp3").trim().toLowerCase();
+  if (!["flac", "mp3", "opus", "wav"].includes(ttsDefaultFormat)) {
+    throw new ValidationError("INVALID_CONFIGURATION", "TTS_DEFAULT_FORMAT is not supported.");
+  }
+  const ttsMaxTextLength = numberFromEnv(env.TTS_MAX_TEXT_LENGTH, 5000, "TTS_MAX_TEXT_LENGTH");
+  if (!Number.isSafeInteger(ttsMaxTextLength)) {
+    throw new ValidationError("INVALID_CONFIGURATION", "TTS_MAX_TEXT_LENGTH must be an integer.");
+  }
+  const ttsProviderUrl = env.KOKORO_TTS_URL?.trim() || "";
+  if (ttsProviderUrl && !/^https?:\/\//u.test(ttsProviderUrl)) {
+    throw new ValidationError("INVALID_CONFIGURATION", "KOKORO_TTS_URL must be an HTTP(S) URL.");
+  }
+
   return {
     nodeEnv,
     port: numberFromEnv(env.PORT, 3000, "PORT"),
     trustProxy: booleanFromEnv(env.TRUST_PROXY),
     shadowing: { url: env.SHADOWING_SPEECH_URL?.trim() || "" },
+    tts: {
+      providerUrl: ttsProviderUrl,
+      cacheDirectory: env.TTS_CACHE_DIRECTORY?.trim()
+        ? path.resolve(env.TTS_CACHE_DIRECTORY.trim())
+        : DEFAULT_TTS_CACHE_DIRECTORY,
+      allowedVoices: ttsAllowedVoices,
+      defaultVoice: ttsDefaultVoice,
+      defaultSpeed: ttsDefaultSpeed,
+      defaultFormat: ttsDefaultFormat,
+      requestTimeoutMs: numberFromEnv(env.TTS_REQUEST_TIMEOUT_MS, 120_000, "TTS_REQUEST_TIMEOUT_MS"),
+      maxTextLength: ttsMaxTextLength,
+      model: env.KOKORO_TTS_MODEL?.trim() || "kokoro",
+      modelVersion: env.TTS_MODEL_VERSION?.trim() || "kokoro-v1.0@kokoro-fastapi-v0.8.2"
+    },
     database: {
       host: env.DB_HOST ?? "127.0.0.1",
       port: numberFromEnv(env.DB_PORT, 3306, "DB_PORT"),

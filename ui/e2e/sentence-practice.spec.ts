@@ -6,10 +6,14 @@ async function authenticate(page: Page): Promise<void> {
 	await page.goto('/register');
 	await page.getByLabel('Email').fill(`e2e-sentence-${Date.now()}@example.com`);
 	await page.getByLabel('Password').fill(PASSWORD);
+	const dailyActivation = page.waitForResponse((response) =>
+		response.request().method() === 'POST'
+		&& response.url().includes('/api/learning/vocabulary-activation-batches')
+		&& response.ok()
+	);
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
-	await page.getByTestId('home-box-one').click();
-	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
+	await dailyActivation;
 }
 
 async function learningState(page: Page): Promise<any> {
@@ -18,6 +22,20 @@ async function learningState(page: Page): Promise<any> {
 		if (!response.ok) throw new Error(`State request failed with ${response.status}`);
 		return response.json();
 	});
+}
+
+function learningWordProgress(words: any[]): unknown[] {
+	return (words ?? []).map((word) => ({
+		id: word.id,
+		attempts: word.attempts ?? 0,
+		correct: word.correct ?? 0,
+		mistakes: word.mistakes ?? 0,
+		currentStreak: word.currentStreak ?? 0,
+		lastReviewed: word.lastReviewed ?? null,
+		lastPromotedDay: word.lastPromotedDay ?? null,
+		blockedUntil: word.blockedUntil ?? null,
+		masteredAt: word.masteredAt ?? null,
+	}));
 }
 
 async function browserLocalDay(page: Page): Promise<string> {
@@ -115,7 +133,7 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	const deckResponsePromise = page.waitForResponse((response) =>
 		response.url().includes('/api/learning/sentence-practice?house=1') && response.status() === 200
 	);
-	await page.getByTestId('start-sentence-practice').click();
+	await page.goto('/sentence?house=1');
 	const deckResponse = await deckResponsePromise;
 	const deckUrl = deckResponse.url();
 	const deck = await page.evaluate(async (url) => {
@@ -184,9 +202,9 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	await answerCurrentCard(page, 4);
 
 	const stateAfter = await learningState(page);
-	// The top-level state revision can advance when unrelated settings defaults are persisted.
-	// Assert the learning-progress fields that Sentence Practice must leave untouched instead.
-	expect(stateAfter.state.words).toEqual(stateBefore.state.words);
+	// State normalization may materialize default word metadata while this exercise runs.
+	// Compare only the learner-progress fields Sentence Practice is allowed to leave untouched.
+	expect(learningWordProgress(stateAfter.state.words)).toEqual(learningWordProgress(stateBefore.state.words));
 	expect(stateAfter.state.history).toEqual(stateBefore.state.history);
 
 	const beforeDaily = stateBefore.state.daily?.[localDay] ?? {

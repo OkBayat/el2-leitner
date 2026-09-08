@@ -65,11 +65,27 @@ export class LearningStoreService {
   readonly writeBlocked = this.writeBlockedSignal.asReadonly();
   readonly ready = computed(() => Boolean(this.stateSignal()));
 
-  initialize(): Promise<LearningState> { this.initializePromise ??= this.load(); return this.initializePromise; }
+  initialize(): Promise<LearningState> {
+    if (!this.initializePromise) {
+      const attempt = this.load();
+      this.initializePromise = attempt;
+      void attempt.catch(() => {
+        if (this.initializePromise === attempt) this.initializePromise = null;
+      });
+    }
+    return this.initializePromise;
+  }
 
   async refreshCanonical(): Promise<LearningState> {
     if (!this.stateSignal()) await this.initialize();
     const state = await this.reloadCanonicalBootstrap();
+    this.stateSignal.set(state);
+    return state;
+  }
+
+  async refreshForLocalDay(day = localDay()): Promise<LearningState> {
+    if (!this.stateSignal()) return this.initialize();
+    const state = await this.activateDailyWords(await this.reloadCanonicalBootstrap(), day);
     this.stateSignal.set(state);
     return state;
   }
@@ -102,15 +118,19 @@ export class LearningStoreService {
         }
       }
 
-      const daily = ensureDailyWords(state, localDay());
-      state = daily.state;
-      if (daily.activated.length) {
-        const revision = await this.vocabularyApi.activateBatch(this.revisionSignal(), daily.activated.map((word) => word.id), localDay(), 'daily');
-        this.revisionSignal.set(revision);
-      }
+      state = await this.activateDailyWords(state, localDay());
       this.stateSignal.set(state);
       return state;
     } finally { this.loadingSignal.set(false); }
+  }
+
+  private async activateDailyWords(state: LearningState, day: string): Promise<LearningState> {
+    const daily = ensureDailyWords(state, day);
+    if (daily.activated.length) {
+      const revision = await this.vocabularyApi.activateBatch(this.revisionSignal(), daily.activated.map((word) => word.id), day, 'daily');
+      this.revisionSignal.set(revision);
+    }
+    return daily.state;
   }
 
   private async reloadCanonicalBootstrap(): Promise<LearningState> {

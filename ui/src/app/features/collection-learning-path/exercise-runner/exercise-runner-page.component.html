@@ -1,0 +1,39 @@
+<main class="runner" data-testid="learning-path-runner" [attr.aria-busy]="facade.loading()">
+  @if (facade.loading() && !facade.context()) {
+    <section class="runner__workspace">
+      <div class="runner-card" aria-live="polite">
+        <span class="runner-spinner" aria-hidden="true"></span>
+        <h1>Preparing exercise…</h1>
+      </div>
+    </section>
+  } @else if (facade.error() && !facade.context()) {
+    <section class="runner__workspace">
+      <div class="runner-card runner-card--error" role="alert">
+        <h1>Exercise unavailable</h1>
+        <p>{{ facade.error() }}</p>
+        <button type="button" (click)="retry()">Try again</button>
+      </div>
+    </section>
+  } @else if (facade.context(); as context) {
+    @if (context.state === 'locked') {
+      <section class="runner__workspace">
+        <div class="runner-card">
+          <span class="runner-card__marker" aria-hidden="true">·</span>
+          <h1>This exercise is locked</h1>
+          <p>Complete the required exercises before this one to continue.</p>
+        </div>
+      </section>
+    } @else if (context.state !== 'completed') {
+      <section class="runner__exercise">
+        @if (facade.error()) {
+          <div class="runner-inline-error" role="status">{{ facade.error() }} <button type="button" (click)="retry()">Retry</button></div>
+        }
+        <app-learning-path-exercise-host
+          [context]="context"
+          (engaged)="onExerciseEngaged()"
+          (outcome)="onExerciseOutcome($event)"
+        />
+      </section>
+    }
+  }
+</main>

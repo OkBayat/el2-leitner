@@ -35,12 +35,33 @@
       <mat-card-content class="collection-content">
         <div class="collection-heading"><h2>{{ collection.title }}</h2>@if(collection.subscribed){<span class="added-status">✓ Added</span>}</div>
         <p class="collection-description">{{ collection.description || 'A vocabulary collection for your learning journey.' }}</p>
-        <div class="collection-progress-copy"><span>{{ collection.wordCount }} words</span><strong>{{ progress(collection).percent }}% in Leitner</strong></div>
-        <mat-progress-bar mode="determinate" [value]="progress(collection).percent" />
+        @if (learningPathFor(collection); as pathView) {
+          @let summary = pathSummary(pathView.lessons);
+          <div class="collection-progress-copy">
+            <span>{{ summary.completedLessons }} of {{ summary.totalLessons }} lessons</span>
+            <strong>{{ summary.percent }}% complete</strong>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="summary.percent" />
+        } @else {
+          <div class="collection-progress-copy"><span>{{ collection.wordCount }} words</span><strong>{{ progress(collection).percent }}% in Leitner</strong></div>
+          <mat-progress-bar mode="determinate" [value]="progress(collection).percent" />
+        }
       </mat-card-content>
       <mat-card-actions class="collection-actions">
         <button mat-stroked-button (click)="open(collection)">View details</button>
-        @if(collection.subscribed){<button mat-button class="remove-action" (click)="toggle(collection)">Remove</button>} @else {<button mat-flat-button (click)="toggle(collection)">Add to box</button>}
+        @if (learningPathFor(collection); as pathView) {
+          <button
+            mat-flat-button
+            data-testid="library-learning-path-action"
+            [disabled]="learningPaths.enteringId() === collection.id"
+            (click)="enterLearningPath(collection)"
+          >
+            @if (learningPaths.enteringId() === collection.id) { Opening… } @else { {{ pathAction(pathView).label }} }
+          </button>
+          @if(collection.subscribed){<button mat-button class="remove-action" (click)="toggle(collection)">Remove</button>}
+        } @else {
+          @if(collection.subscribed){<button mat-button class="remove-action" (click)="toggle(collection)">Remove</button>} @else {<button mat-flat-button (click)="toggle(collection)">Add to box</button>}
+        }
       </mat-card-actions>
     </mat-card>
   </ng-template>

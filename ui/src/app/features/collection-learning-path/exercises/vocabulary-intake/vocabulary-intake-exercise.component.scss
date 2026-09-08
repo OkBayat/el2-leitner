@@ -1,0 +1,165 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.intake {
+  display: grid;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  gap: var(--vocora-space-6);
+  color: var(--vocora-text-primary);
+}
+
+.intake--slide {
+  width: 100%;
+  min-height: 100dvh;
+  gap: 0;
+  background: var(--vocora-surface-page);
+}
+
+.intake__header {
+  display: grid;
+  gap: var(--vocora-space-2);
+}
+
+.intake__eyebrow,
+.intake__summary,
+.word-card__definition,
+.word-card__example,
+.intake__error,
+.intake__empty p {
+  margin: 0;
+}
+
+.intake__eyebrow {
+  color: var(--vocora-activity-vocabulary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.intake h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 1.75rem);
+  line-height: 1.3;
+}
+
+.intake__summary,
+.word-card__definition,
+.word-card__example,
+.intake__empty p {
+  color: var(--vocora-text-secondary);
+}
+
+.intake__list {
+  display: grid;
+  gap: var(--vocora-space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.word-card {
+  display: grid;
+  gap: var(--vocora-space-2);
+  padding: var(--vocora-space-4);
+  border: 1px solid var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-surface-raised);
+}
+
+.word-card__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vocora-space-3);
+}
+
+.word-card__heading strong {
+  min-width: 0;
+  font-size: 1.125rem;
+  overflow-wrap: anywhere;
+}
+
+.word-state {
+  flex: 0 0 auto;
+  padding: var(--vocora-space-1) var(--vocora-space-3);
+  border: 1px solid currentColor;
+  border-radius: var(--vocora-radius-pill);
+  background: var(--vocora-surface-subtle);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.word-state[data-state='new'] { color: var(--vocora-not-started); }
+.word-state[data-state='learning'] { color: var(--vocora-leitner-active); }
+.word-state[data-state='mastered'] { color: var(--vocora-mastered); }
+.word-state[data-state='excluded'] { color: var(--vocora-disabled); }
+
+.word-card__example {
+  padding-inline-start: var(--vocora-space-3);
+  border-inline-start: 2px solid var(--vocora-border);
+  font-style: italic;
+}
+
+.intake__error {
+  color: var(--vocora-error);
+  font-weight: 600;
+}
+
+.intake__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.intake__primary {
+  min-width: 180px;
+  min-height: var(--vocora-touch-target-min);
+  padding: var(--vocora-space-3) var(--vocora-space-5);
+  border: 0;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--vocora-motion-fast) ease;
+}
+
+.intake__primary:hover:not(:disabled) { background: var(--vocora-action-primary-hover); }
+.intake__primary:focus-visible { outline: 3px solid var(--vocora-focus-ring); outline-offset: 2px; }
+.intake__primary:disabled { cursor: not-allowed; opacity: 0.62; }
+
+.intake__empty {
+  display: grid;
+  gap: var(--vocora-space-2);
+  padding: var(--vocora-space-6);
+  border: 1px solid var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-surface-raised);
+}
+
+.intake__empty--slide {
+  width: min(560px, calc(100% - (2 * var(--vocora-space-4))));
+  min-height: 100dvh;
+  margin: 0 auto;
+  place-content: center;
+  text-align: center;
+  border: 0;
+  background: transparent;
+}
+
+.intake__empty--slide p { color: var(--vocora-error); }
+
+@media (min-width: 720px) {
+  .word-card { padding: var(--vocora-space-5); }
+}
+
+@media (max-width: 480px) {
+  .intake__actions,
+  .intake__primary { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intake__primary { transition: none; }
+}

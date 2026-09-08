@@ -1,0 +1,113 @@
+name: Learning Path persistence integration
+
+on:
+  pull_request:
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/collection-learning-path/**'
+      - 'back/src/application/learning/GetLeitnerHouse.js'
+      - 'back/src/domain/collection-learning-path/**'
+      - 'back/src/domain/learning/**'
+      - 'back/src/domain/errors.js'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
+      - 'back/src/infrastructure/integration/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/createPool.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js'
+      - 'back/src/interfaces/http/collection-learning-path/**'
+      - 'back/src/modules/**'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*learning-path*'
+      - '.github/workflows/learning-path-persistence-integration.yml'
+  push:
+    branches: [main, learning-path]
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/collection-learning-path/**'
+      - 'back/src/application/learning/GetLeitnerHouse.js'
+      - 'back/src/domain/collection-learning-path/**'
+      - 'back/src/domain/learning/**'
+      - 'back/src/domain/errors.js'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
+      - 'back/src/infrastructure/integration/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/createPool.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlLearningStateRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js'
+      - 'back/src/infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js'
+      - 'back/src/interfaces/http/collection-learning-path/**'
+      - 'back/src/modules/**'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*learning-path*'
+      - '.github/workflows/learning-path-persistence-integration.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mysql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: vocora_learning_path_ci
+          MYSQL_USER: vocora_ci
+          MYSQL_PASSWORD: integration-only-password
+          MYSQL_ROOT_PASSWORD: integration-only-root
+          MYSQL_ROOT_HOST: '%'
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping --host=127.0.0.1 --user=root --password=integration-only-root --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    env:
+      NODE_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: vocora_learning_path_ci
+      DB_USER: vocora_ci
+      DB_PASSWORD: integration-only-password
+      DB_ADMIN_USER: root
+      DB_ADMIN_PASSWORD: integration-only-root
+      JWT_SECRET: integration-only-secret-at-least-thirty-two-characters
+      LEARNING_PATH_MYSQL_INTEGRATION: '1'
+    defaults:
+      run:
+        working-directory: back
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+          cache: npm
+          cache-dependency-path: back/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run db:setup
+      - run: >-
+          node --test
+          tests/mysql-learning-path-persistence.test.js
+          tests/mysql-learning-path-vocabulary-intake.test.js
+          tests/integration/collection-learning-path-persistence.mysql.test.js
+          tests/integration/collection-learning-path-vocabulary-intake.mysql.test.js
+          tests/integration/collection-learning-path-vocabulary-mastery-check.mysql.test.js
+          tests/integration/learning-path-progress-cas.mysql.test.js
+      - run: npm run db:verify

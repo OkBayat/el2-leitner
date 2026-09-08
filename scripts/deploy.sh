@@ -7,7 +7,8 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 docker compose build app db-setup speech
 docker compose up -d --wait mysql
 docker compose run --rm --no-deps db-setup
-# The app is deployed with --no-deps, so explicitly start its speech companion.
+# The app is deployed with --no-deps, so explicitly start its companion services.
 docker compose up -d --wait speech
+docker compose up -d --wait kokoro
 docker compose up -d --no-deps --force-recreate app
 docker compose up -d --no-deps phpmyadmin

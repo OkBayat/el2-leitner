@@ -1,0 +1,38 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="error-correction-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Correct the error.' }}
+			</p>
+			@if (data.category) {
+				<span class="mode-label">{{ data.category }}</span>
+			}
+			<blockquote><span>Original</span>{{ data.original }}</blockquote>
+			<mat-form-field
+				appearance="outline"
+				[attr.data-state]="correctionState()"
+				><mat-label>Your correction</mat-label
+				><textarea
+					matInput
+					rows="3"
+					[value]="correction()"
+					[disabled]="interactionState() !== 'idle'"
+					(input)="setCorrection(inputFrom($event))"
+				></textarea>
+			</mat-form-field>
+			<div
+				class="answer-review"
+				[class.answer-review--hidden]="interactionState() === 'idle'"
+			>
+				<strong>Correct answer</strong>
+				<p>{{ data.answers[0] }}</p>
+				@if (data.explanation) {
+					<p>{{ data.explanation }}</p>
+				}
+			</div>
+		</section>
+	</article>
+}

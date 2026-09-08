@@ -1,0 +1,110 @@
+@mixin apply() {
+	.mat-mdc-unelevated-button.vocora-action-button {
+		--mat-button-filled-container-color: var(
+			--vocora-component-action-background,
+			var(--vocora-action-primary)
+		);
+		--mat-button-filled-label-text-color: var(
+			--vocora-component-action-foreground,
+			var(--vocora-action-primary-foreground)
+		);
+		--mat-button-filled-disabled-container-color: var(
+			--vocora-component-action-background,
+			var(--vocora-surface-subtle)
+		);
+		--mat-button-filled-disabled-label-text-color: var(
+			--vocora-component-action-foreground,
+			var(--vocora-text-disabled)
+		);
+		height: 52px;
+		min-height: 52px;
+		padding-inline: var(--vocora-space-6);
+		border: 1px solid var(--vocora-component-action-border, transparent);
+		border-radius: var(--vocora-radius-md);
+		background: var(
+			--vocora-component-action-background,
+			var(--vocora-action-primary)
+		);
+		color: var(
+			--vocora-component-action-foreground,
+			var(--vocora-action-primary-foreground)
+		);
+		font-size: 14px;
+		line-height: 20px;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		box-shadow: 0 4px 0
+			var(
+				--vocora-component-action-edge,
+				var(--vocora-action-primary-edge)
+			);
+		transition:
+			transform var(--vocora-motion-fast),
+			box-shadow var(--vocora-motion-fast),
+			background var(--vocora-motion-fast),
+			border-color var(--vocora-motion-fast);
+	}
+
+	@media (hover: hover) {
+		.mat-mdc-unelevated-button.vocora-action-button:not(:disabled):hover {
+			--mat-button-filled-container-color: var(
+				--vocora-component-action-hover,
+				var(--vocora-action-primary-hover)
+			);
+			background: var(
+				--vocora-component-action-hover,
+				var(--vocora-action-primary-hover)
+			);
+			transform: translateY(-1px);
+		}
+	}
+
+	.mat-mdc-unelevated-button.vocora-action-button:not(:disabled):active {
+		box-shadow: 0 1px 0
+			var(
+				--vocora-component-action-edge,
+				var(--vocora-action-primary-edge)
+			);
+		transform: translateY(3px);
+	}
+
+	.mat-mdc-unelevated-button.vocora-action-button:focus-visible,
+	.mat-mdc-icon-button.vocora-secondary-icon-action:focus-visible {
+		outline: 3px solid var(--vocora-focus-ring);
+		outline-offset: 3px;
+	}
+
+	.mat-mdc-icon-button.vocora-secondary-icon-action {
+		--mat-icon-button-icon-color: var(--vocora-action-secondary-foreground);
+		--mat-icon-button-state-layer-color: var(
+			--vocora-action-secondary-foreground
+		);
+		--mat-icon-button-ripple-color: color-mix(
+			in srgb,
+			var(--vocora-action-secondary-foreground) 12%,
+			transparent
+		);
+		width: 52px;
+		height: 52px;
+		display: inline-grid;
+		place-items: center;
+		padding: 0;
+		border: 1px solid
+			color-mix(
+				in srgb,
+				var(--vocora-action-secondary-foreground) 38%,
+				var(--vocora-border)
+			);
+		border-radius: var(--vocora-radius-md);
+		background: var(--vocora-action-secondary);
+		color: var(--vocora-action-secondary-foreground);
+		box-shadow: 0 2px 0 var(--vocora-border);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mat-mdc-unelevated-button.vocora-action-button {
+			transition: none;
+		}
+	}
+}

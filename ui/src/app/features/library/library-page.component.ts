@@ -12,7 +12,15 @@ import {MatInputModule} from '@angular/material/input';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {LibraryApiService} from '../../core/library/library-api.service';
+import {
+  learningPathPrimaryAction,
+  learningPathOverviewRoute,
+  summarizeLearningPath,
+  type CollectionLearningPathView,
+} from '../../domain/collection-learning-path/learning-path';
 import {LibraryCollection} from '../../domain/learning/models';
 import {normalizeAnswer} from '../../domain/learning/learning-rules';
 import {
@@ -36,7 +44,9 @@ export class LibraryPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialogs = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
+  private readonly selectedCourses = inject(SelectedCoursesFacade);
   private readonly missingCoverSlugs = signal<ReadonlySet<string>>(new Set());
+  readonly learningPaths = inject(LibraryLearningPathJourneyFacade);
 
   readonly collections = signal<LibraryCollection[]>([]);
   readonly canManage = signal(false);
@@ -63,6 +73,8 @@ export class LibraryPageComponent implements OnInit {
   readonly level = libraryLevel;
   readonly progress = libraryProgress;
   readonly kindLabel = libraryKindLabel;
+  readonly pathSummary = summarizeLearningPath;
+  readonly pathAction = (view: CollectionLearningPathView) => learningPathPrimaryAction(view.path.learnerStatus);
 
   async ngOnInit(): Promise<void> {
     await this.load();
@@ -70,8 +82,14 @@ export class LibraryPageComponent implements OnInit {
 
   async load(): Promise<void> {
     const result = await this.api.list();
-    this.collections.set(result.collections || []);
+    const collections = result.collections || [];
+    await this.learningPaths.load(collections);
+    this.collections.set(collections);
     this.canManage.set(Boolean(result.capabilities?.canManage));
+  }
+
+  learningPathFor(collection: LibraryCollection): CollectionLearningPathView | null {
+    return this.learningPaths.viewFor(collection.id);
   }
 
   coverUrl(collection: LibraryCollection): string {
@@ -90,10 +108,30 @@ export class LibraryPageComponent implements OnInit {
     void this.router.navigate(['/library', collection.id]);
   }
 
+  async enterLearningPath(collection: LibraryCollection): Promise<void> {
+    const destination = await this.learningPaths.enter(collection);
+    if (!destination) {
+      if (this.learningPaths.error()) this.snack.open(this.learningPaths.error(), 'OK', {duration: 3000});
+      return;
+    }
+    await this.selectedCourses.load();
+    if (destination.kind === 'exercise') {
+      await this.router.navigate([
+        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+      ]);
+      return;
+    }
+    const path = this.learningPaths.viewFor(destination.collectionId)?.path;
+    await this.router.navigate(path
+      ? learningPathOverviewRoute(path.id, destination.collectionId)
+      : ['/library', destination.collectionId, 'learning-path']);
+  }
+
   async toggle(collection: LibraryCollection): Promise<void> {
     if (collection.subscribed) await this.api.unsubscribe(collection.id);
     else await this.api.subscribe(collection.id);
     await this.load();
+    await this.selectedCourses.load();
   }
 
   async createCollection(): Promise<void> {

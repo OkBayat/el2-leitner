@@ -1,0 +1,88 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="speaking-response-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Record your response.' }}
+			</p>
+			<h1>{{ data.prompt }}</h1>
+			@if (data.promptBullets?.length) {
+				<ul>
+					@for (bullet of data.promptBullets; track bullet) {
+						<li>{{ bullet }}</li>
+					}
+				</ul>
+			}
+			@if (data.targetVocabulary?.length) {
+				<mat-chip-set aria-label="Target vocabulary">
+					@for (word of data.targetVocabulary; track word) {
+						<mat-chip>{{ word }}</mat-chip>
+					}
+				</mat-chip-set>
+			}
+			@if (prepRemaining() > 0) {
+				<p class="timer" aria-live="polite">
+					Preparation: {{ prepRemaining() }}s
+				</p>
+			}
+			@if (speakingRemaining() > 0 && recordingState() === 'recording') {
+				<p class="timer" aria-live="polite">
+					Speaking: {{ speakingRemaining() }}s
+				</p>
+			}
+			@if (data.notesEnabled) {
+				<mat-form-field appearance="outline"
+					><mat-label>Notes</mat-label
+					><textarea
+						matInput
+						rows="2"
+						[value]="notes()"
+						(input)="notes.set(inputFrom($event))"
+					></textarea>
+				</mat-form-field>
+			}
+			<div class="recording-controls">
+				@if (recordingState() !== 'recording') {
+					<button
+						mat-stroked-button
+						type="button"
+						[disabled]="
+							recordingState() === 'requesting' || !supported
+						"
+						aria-label="Start recording"
+						(click)="startRecording()"
+					>
+						{{
+							recordingState() === 'recorded'
+								? 'Record again'
+								: 'Record response'
+						}}
+					</button>
+				} @else {
+					<button
+						mat-flat-button
+						type="button"
+						aria-label="Stop recording"
+						(click)="stopRecording()"
+					>
+						Stop recording
+					</button>
+				}
+				@if (recordingUrl()) {
+					<audio
+						controls
+						[src]="recordingUrl()"
+						aria-label="Recorded response playback"
+					></audio>
+				}
+			</div>
+			@if (recordingError()) {
+				<p class="inline-error" role="alert">
+					{{ recordingError() }}
+				</p>
+			}
+		</section>
+	</article>
+}

@@ -1,0 +1,50 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="matching-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Match the items.' }}
+			</p>
+			<div class="matching-grid">
+				<div class="matching-column" aria-label="Items to match">
+					@for (pair of data.pairs; track pair.id) {
+						<button
+							mat-stroked-button
+							type="button"
+							[attr.data-state]="pairButtonState(pair.id)"
+							[attr.aria-pressed]="selectedLeftId() === pair.id"
+							[attr.aria-label]="
+								matchingLeftAriaLabel(pair.id, pair.left)
+							"
+							[disabled]="isMatched(pair.id)"
+							(click)="selectLeft(pair.id)"
+						>
+							{{ pair.left }}
+						</button>
+					}
+				</div>
+				<div class="matching-column" aria-label="Possible matches">
+					@for (option of rightOptions(); track option.id) {
+						<button
+							mat-stroked-button
+							type="button"
+							[attr.data-state]="rightButtonState(option.id)"
+							[attr.aria-label]="
+								matchingRightAriaLabel(option.id, option.label)
+							"
+							[disabled]="rightLocked(option.id)"
+							(click)="selectRight(option.id)"
+						>
+							{{ option.label }}
+						</button>
+					}
+				</div>
+			</div>
+			<p class="feedback-reserve" aria-live="polite">
+				{{ pairFeedback() }}
+			</p>
+		</section>
+	</article>
+}

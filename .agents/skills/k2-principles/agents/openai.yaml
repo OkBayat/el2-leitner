@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Principles"
+  short_description: "Select canonical Vocora engineering principles at task start"
+  default_prompt: "Use canonical $k2-principles once before every mutation task. Select the smallest relevant principle set, read only those references, state why each applies, and return execution to the owning workflow."

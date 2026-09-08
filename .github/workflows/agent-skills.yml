@@ -5,13 +5,16 @@ on:
     paths:
       - 'AGENTS.md'
       - '.agents/**'
+      - 'okf/**'
       - '.github/workflows/agent-skills.yml'
   push:
     branches:
-      - feature/agent-guides-bbc-bundle-skill
+      - main
+      - learning-path
     paths:
       - 'AGENTS.md'
       - '.agents/**'
+      - 'okf/**'
       - '.github/workflows/agent-skills.yml'
 
 permissions:
@@ -22,12 +25,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate skill architecture
+        if: github.event_name == 'pull_request'
+        run: |
+          node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}"
+      - name: Validate OKF bundle
+        run: python3 .agents/skills/k2-okf-update/scripts/validate_okf.py
+      - name: Run OKF validator tests
+        run: python3 .agents/skills/k2-okf-update/scripts/test_validate_okf.py
       - name: Validate BBC bundle skill architecture
-        run: python3 .agents/skills/vocora-bbc-listening-bundles/scripts/validate-skill.py
+        run: python3 .agents/skills/k2-bbc-listening-bundles/scripts/validate-skill.py
       - name: Run BBC bundle skill tests
         run: |
-          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-bundle-request.py
-          python3 .agents/skills/vocora-bbc-listening-bundles/scripts/test-validate-skill.py
+          python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-bundle-request.py
+          python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-validate-skill.py
+      - name: Validate changed skill architecture
+        if: github.event_name == 'pull_request'
+        run: node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js --base "${{ github.event.pull_request.base.sha }}" --head HEAD
+      - name: Validate lesson exercise design skill architecture
+        run: python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-skill.py
+      - name: Run lesson exercise design skill tests
+        run: |
+          python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-lesson-plan.py
+          python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-skill.py

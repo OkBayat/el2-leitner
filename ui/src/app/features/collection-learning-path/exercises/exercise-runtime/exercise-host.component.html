@@ -1,0 +1,20 @@
+<div
+  class="exercise-host"
+  data-testid="learning-path-exercise-host"
+  [attr.aria-busy]="rendererLoading"
+  (input)="onInteraction()"
+  (change)="onInteraction()"
+  (pointerdown)="onClick($event)"
+  (click)="onClick($event)"
+>
+  <ng-template #outlet></ng-template>
+  @if (unsupportedType) {
+    <app-unsupported-exercise [type]="unsupportedType" />
+  } @else if (rendererLoadFailed) {
+    <section class="exercise-host__load-error" role="alert">
+      <h2>Exercise could not load</h2>
+      <p>Your saved progress was not changed.</p>
+      <button type="button" (click)="retryRenderer()">Try again</button>
+    </section>
+  }
+</div>

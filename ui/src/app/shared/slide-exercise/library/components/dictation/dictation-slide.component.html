@@ -1,0 +1,51 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="dictation-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Listen and type what you hear.' }}
+			</p>
+			@if (data.audio) {
+				<app-slide-audio-control
+					[src]="data.audio"
+					[maxReplays]="data.maxReplays"
+					buttonLabel="Play audio"
+					playLabel="Play dictation audio"
+					audioLabel="Dictation audio"
+					(replayCountChange)="replayCount.set($event)"
+				/>
+			} @else if (data.speech?.replay) {
+				<button
+					mat-stroked-button
+					type="button"
+					[disabled]="!canReplay()"
+					aria-label="Play dictation pronunciation"
+					(click)="playSpeech()"
+				>
+					Play pronunciation
+				</button>
+			}
+			<mat-form-field
+				appearance="outline"
+				[attr.data-state]="answerState()"
+				><mat-label>Your answer</mat-label
+				><input
+					matInput
+					[value]="answer()"
+					[disabled]="interactionState() !== 'idle'"
+					(input)="setAnswer(inputFrom($event))"
+			/></mat-form-field>
+			<div
+				class="answer-review"
+				[class.answer-review--hidden]="
+					interactionState() !== 'answered-incorrect'
+				"
+			>
+				<strong>Answer</strong>
+				<p>{{ data.answer }}</p>
+			</div>
+		</section>
+	</article>
+}

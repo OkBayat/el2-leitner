@@ -29,6 +29,7 @@ WORKDIR /app
 COPY --chown=node:node back ./back
 COPY --from=ui-build --chown=node:node /app/ui/dist/browser ./ui
 COPY --from=backend-dependencies /app/back/node_modules ./back/node_modules
+RUN mkdir -p /app/back/data/tts-cache && chown node:node /app/back/data/tts-cache
 WORKDIR /app/back
 USER node
 EXPOSE 3000

@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Skill Architecture"
+  short_description: "Keep Vocora skills deterministic and phase-aware."
+  default_prompt: "Use $k2-skill-architecture before creating or changing Vocora skills or shared skill assets; keep ownership explicit, classify workflows as simple or phased, make repeatable transitions script-owned, lazy-load phase context and modules, and validate the result before finishing."

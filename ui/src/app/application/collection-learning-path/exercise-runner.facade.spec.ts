@@ -1,0 +1,170 @@
+import { TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { ApiError } from '../../core/http/api-client.service';
+import { LearningStoreService } from '../../core/state/learning-store.service';
+import type { ExerciseContextView } from '../../domain/collection-learning-path/learning-path';
+import { ExerciseRunnerFacade } from './exercise-runner.facade';
+
+function context(state: ExerciseContextView['state'], progressRevision = 0): ExerciseContextView {
+  return {
+    path: { id: 'path-1', collectionId: 'collection-1', title: 'Course', mode: 'finite', contentVersion: 'v1', progressRevision },
+    lesson: { id: 'lesson-1', title: 'Lesson 1', position: 1 },
+    exercise: {
+      id: 'exercise-1', position: 1, type: 'vocabulary.intake', schemaVersion: 1, required: true,
+      completionPolicy: 'vocabulary-intake', config: { scope: { kind: 'listening-episode', ref: 'episode-1' } },
+    },
+    progress: null, state, payload: null,
+  };
+}
+
+function quickReviewContext(state: ExerciseContextView['state']): ExerciseContextView {
+  const value = context(state);
+  return {
+    ...value,
+    exercise: {
+      ...value.exercise,
+      type: 'vocabulary.quick-review',
+      completionPolicy: 'vocabulary-quick-review',
+    },
+    payload: {
+      scope: { kind: 'listening-episode', ref: 'episode-1' },
+      items: [{ id: 'word-1', term: 'at ease' }],
+      summary: { eligibleCount: 1, box: 1 },
+    },
+  } as ExerciseContextView;
+}
+
+describe('ExerciseRunnerFacade', () => {
+  const queryExerciseContext = vi.fn();
+  const commandStartExercise = vi.fn();
+  const commandCompleteExercise = vi.fn();
+  const refreshAfterSubscriptionChange = vi.fn();
+  let facade: ExerciseRunnerFacade;
+
+  beforeEach(() => {
+    queryExerciseContext.mockReset();
+    commandStartExercise.mockReset();
+    commandCompleteExercise.mockReset();
+    refreshAfterSubscriptionChange.mockReset();
+    commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress', progressRevision: 1 });
+    commandCompleteExercise.mockResolvedValue({});
+    refreshAfterSubscriptionChange.mockResolvedValue({});
+    TestBed.configureTestingModule({
+      providers: [
+        ExerciseRunnerFacade,
+        {
+          provide: CollectionLearningPathApiService,
+          useValue: { queryExerciseContext, commandStartExercise, commandCompleteExercise },
+        },
+        { provide: LearningStoreService, useValue: { refreshAfterSubscriptionChange } },
+      ],
+    });
+    facade = TestBed.inject(ExerciseRunnerFacade);
+  });
+
+  it('does not start an available exercise merely by opening it', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).not.toHaveBeenCalled();
+    expect(queryExerciseContext).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.state).toBe('available');
+  });
+
+  it('starts an available exercise on the first meaningful learner interaction', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+
+    expect(await facade.start()).toBe(true);
+
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 4);
+    expect(commandStartExercise).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts before completing when the completion action is the first interaction', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 6));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(true);
+
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 4);
+    expect(commandCompleteExercise).toHaveBeenCalledWith(
+      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' }, 1,
+    );
+  });
+
+  it('reconciles canonical global Leitner state before exposing scoped quick review', async () => {
+    queryExerciseContext.mockResolvedValueOnce(quickReviewContext('in_progress'));
+
+    expect(await facade.load('path-1', 'lesson-1', 'quick-review-1')).toBe(true);
+
+    expect(refreshAfterSubscriptionChange).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.exercise.type).toBe('vocabulary.quick-review');
+  });
+
+  it('does not mutate locked exercises', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('locked'));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    expect(commandStartExercise).not.toHaveBeenCalled();
+    expect(facade.context()?.state).toBe('locked');
+  });
+
+  it('starts a fresh practice run for a completed repeatable exercise', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 6));
+
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 6);
+    expect(queryExerciseContext).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.state).toBe('in_progress');
+  });
+
+  it('keeps a completed one-time exercise closed', async () => {
+    const oneTime = context('completed', 6);
+    oneTime.exercise.config = { ...oneTime.exercise.config, repeatable: false };
+    queryExerciseContext.mockResolvedValueOnce(oneTime);
+
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).not.toHaveBeenCalled();
+    expect(facade.context()?.state).toBe('completed');
+  });
+
+  it('submits a completed outcome with the loaded revision and reloads server-authoritative completion', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 8));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 9));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(true);
+
+    expect(commandCompleteExercise).toHaveBeenCalledWith(
+      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' }, 8,
+    );
+    expect(facade.context()?.state).toBe('completed');
+  });
+
+  it('restores authoritative state after a stale concurrent-tab mutation', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 3));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    commandCompleteExercise.mockRejectedValueOnce(new ApiError(
+      'Learning Path progress changed in another tab or request. Refresh and retry.',
+      409,
+      'LEARNING_PATH_PROGRESS_STALE',
+    ));
+    queryExerciseContext.mockResolvedValueOnce(context('in_progress', 4));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(false);
+    expect(facade.context()?.path.progressRevision).toBe(4);
+    expect(facade.error()).toContain('latest saved state has been restored');
+  });
+
+  it('surfaces a recoverable network-specific error without inventing progress', async () => {
+    queryExerciseContext.mockRejectedValueOnce(new ApiError('network unavailable', 0, 'API_ERROR'));
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(false);
+    expect(facade.context()).toBeNull();
+    expect(facade.error()).toContain('saved progress is safe');
+    expect(facade.loading()).toBe(false);
+  });
+});

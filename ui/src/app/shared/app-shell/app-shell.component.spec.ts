@@ -2,9 +2,12 @@ import {Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {provideRouter, Router} from '@angular/router';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {CollectionLearningPathFacade} from '../../application/collection-learning-path/collection-learning-path.facade';
+import {SelectedCoursesFacade, type SelectedCourse} from '../../application/collection-learning-path/selected-courses.facade';
 import {AuthService} from '../../core/auth/auth.service';
 import {LearningStoreService} from '../../core/state/learning-store.service';
 import {ThemeService} from '../../core/theme/theme.service';
+import type {CollectionLearningPathView, LearningPathExerciseView} from '../../domain/collection-learning-path/learning-path';
 import {addDays, createFreshState, localDay} from '../../domain/learning/learning-rules';
 import type {LearningState} from '../../domain/learning/models';
 import {ShareStoryService} from '../share-story/share-story.service';
@@ -12,6 +15,73 @@ import {AppShellComponent} from './app-shell.component';
 
 @Component({template: ''})
 class EmptyPage {}
+
+const bbcCourse: SelectedCourse = {
+	id: 'bbc-six-minute-english',
+	slug: 'bbc-six-minute-english',
+	title: 'BBC 6 Minute English',
+	kind: 'course',
+	visibility: 'public',
+	status: 'published',
+	contentVersion: 1,
+	wordCount: 0,
+	subscribed: true,
+	learningPathId: '1',
+};
+
+const grammarCourse: SelectedCourse = {
+	...bbcCourse,
+	id: 'cambridge-grammar',
+	slug: 'cambridge-grammar',
+	title: 'Cambridge Grammar',
+	learningPathId: '2',
+};
+
+function progressExercise(id: string, state: LearningPathExerciseView['state']): LearningPathExerciseView {
+	return {
+		id,
+		position: Number(id),
+		type: 'vocabulary.quick-review',
+		schemaVersion: 1,
+		required: true,
+		completionPolicy: 'fixture',
+		config: {},
+		state,
+		progress: null,
+	};
+}
+
+function progressView(collectionId: string, pathId = `${collectionId}-path`): CollectionLearningPathView {
+	return {
+		access: {canProgress: true},
+		resumePoint: null,
+		path: {
+			id: pathId,
+			collectionId,
+			title: 'Fixture course',
+			mode: 'finite',
+			status: 'published',
+			contentVersion: '1',
+			learnerStatus: 'in_progress',
+			progress: null,
+		},
+		lessons: [{
+			id: 'lesson-1',
+			title: 'Lesson 1',
+			position: 1,
+			sourceKind: null,
+			sourceRef: null,
+			state: 'in_progress',
+			progress: null,
+			exercises: [
+				progressExercise('1', 'completed'),
+				progressExercise('2', 'available'),
+				progressExercise('3', 'available'),
+				progressExercise('4', 'available'),
+			],
+		}],
+	};
+}
 
 function fixtureState(): LearningState {
 	const day = localDay();
@@ -29,7 +99,13 @@ function fixtureState(): LearningState {
 
 describe('AppShell responsive navigation', () => {
 	const state = signal<LearningState | null>(null);
+	const selectedCourses = signal<SelectedCourse[]>([bbcCourse]);
+	const learningPathView = signal<CollectionLearningPathView | null>(null);
+	const coursesLoading = signal(false);
+	const coursesError = signal('');
+	const courseLoad = vi.fn(async () => true);
 	const apply = vi.fn();
+	const initialize = vi.fn(async () => state()!);
 	const logout = vi.fn(async () => undefined);
 	const update = vi.fn(async (mutator: (draft: LearningState) => void) => {
 		const draft = structuredClone(state()!);
@@ -40,18 +116,28 @@ describe('AppShell responsive navigation', () => {
 
 	beforeEach(async () => {
 		vi.clearAllMocks();
+		initialize.mockReset();
+		initialize.mockImplementation(async () => state()!);
 		state.set(fixtureState());
+		selectedCourses.set([bbcCourse]);
+		learningPathView.set(null);
+		coursesLoading.set(false);
+		coursesError.set('');
 		await TestBed.configureTestingModule({
 			imports: [AppShellComponent],
 			providers: [
 				provideRouter([
 					{path: 'dashboard', component: EmptyPage}, {path: 'settings', component: EmptyPage},
-					{path: 'library/:id', component: EmptyPage}, {path: 'reports', component: EmptyPage},
+					{path: 'library/:id', component: EmptyPage}, {path: 'library/:collectionId/learning-path', component: EmptyPage},
+					{path: 'learning-paths/:pathId', component: EmptyPage},
+					{path: 'reports', component: EmptyPage},
 				]),
 				{provide: AuthService, useValue: {user: signal({id: 'fixture', email: 'learner@example.test'}), logout}},
-				{provide: LearningStoreService, useValue: {state, initialize: vi.fn(async () => state()!), update}},
+				{provide: LearningStoreService, useValue: {state, initialize, update}},
 				{provide: ThemeService, useValue: {apply}},
 				{provide: ShareStoryService, useValue: {open: vi.fn()}},
+				{provide: CollectionLearningPathFacade, useValue: {view: learningPathView}},
+				{provide: SelectedCoursesFacade, useValue: {courses: selectedCourses, loading: coursesLoading, error: coursesError, load: courseLoad}},
 			],
 		}).compileComponents();
 	});
@@ -64,15 +150,86 @@ describe('AppShell responsive navigation', () => {
 		return fixture;
 	}
 
-	it('replaces desktop toolbar/tabs with seven sidebar destinations and a six-target mobile dock', async () => {
+	it('uses the shared status and navigation chrome on the dashboard', async () => {
 		const fixture = await render();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('.topbar, .product-tabs')).toBeNull();
 		expect(host.querySelectorAll('.sidebar-links a')).toHaveLength(7);
 		expect(host.querySelectorAll('.mobile-nav a')).toHaveLength(5);
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
-		expect(host.querySelector('.mobile-status')).not.toBeNull();
+		expect(host.querySelectorAll('.mobile-status .status-item')).toHaveLength(4);
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(host.querySelector('.sidebar-summary')).not.toBeNull();
+		expect(host.querySelector('.shell-workspace.is-dashboard')).toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
+	});
+
+	it('keeps status chrome available away from the focused dashboard', async () => {
+		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
+		const host: HTMLElement = fixture.nativeElement;
+		const mobileItems = Array.from(host.querySelectorAll('.mobile-status .status-item'));
+		const desktopItems = Array.from(host.querySelectorAll('[data-testid="desktop-right-rail"] .status-item'));
+		expect(host.querySelector('[data-testid="desktop-workspace"]')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(mobileItems).toHaveLength(4);
+		expect(desktopItems).toHaveLength(4);
+		expect(desktopItems.map(item => item.getAttribute('title'))).toEqual(mobileItems.map(item => item.getAttribute('title')));
+		expect(desktopItems.map(item => item.textContent?.trim())).toEqual(mobileItems.map(item => item.textContent?.trim()));
+	});
+
+	it('labels the mobile dock Home, Courses and Leitner in the requested order', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		const labels = Array.from(host.querySelectorAll('.mobile-nav .mobile-nav-label'))
+			.map(item => item.textContent?.trim());
+		expect(labels.slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
+	});
+
+	it('survives bootstrap failure and applies the stored theme after state recovers', async () => {
+		state.set(null);
+		initialize.mockRejectedValueOnce(new Error('temporarily offline'));
+		const fixture = await render();
+		expect(apply).not.toHaveBeenCalled();
+
+		const recovered = fixtureState();
+		recovered.settings.theme = 'dark';
+		state.set(recovered);
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		expect(apply).toHaveBeenLastCalledWith('dark');
+	});
+
+	it('turns the course flag into the same course-menu trigger on mobile and desktop', async () => {
+		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
+		const host: HTMLElement = fixture.nativeElement;
+		expect(host.querySelector('[data-testid="mobile-course-trigger"]')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-course-trigger"]')).not.toBeNull();
+		expect(fixture.componentInstance.courses.courses().map(course => course.title)).toEqual(['BBC 6 Minute English']);
+		expect(courseLoad).toHaveBeenCalledTimes(1);
+	});
+
+	it('tracks the current learning-path course and exposes its already-loaded progress only on that route', async () => {
+		selectedCourses.set([bbcCourse, grammarCourse]);
+		learningPathView.set(progressView('cambridge-grammar', '2'));
+		const fixture = await render();
+		const router = TestBed.inject(Router);
+		expect(fixture.componentInstance.activeCourseId()).toBeNull();
+		expect(fixture.nativeElement.querySelector('.course-menu-item.is-active')).toBeNull();
+		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
+
+		await router.navigateByUrl('/learning-paths/2');
+		fixture.detectChanges();
+		expect(fixture.componentInstance.activeCourseId()).toBe('cambridge-grammar');
+		expect(fixture.componentInstance.currentCourseProgress()?.percent).toBe(25);
+
+		await router.navigateByUrl('/dashboard');
+		fixture.detectChanges();
+		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
 	});
 
 	it('keeps the BBC destination directly available instead of hiding it in overflow', async () => {

@@ -1,8 +1,14 @@
 @use '@angular/material' as mat;
-@use './styles/angular-material-defaults' as material-defaults;
 @use './styles/leitner-google-palette' as leitner-google-palette;
 @use './styles/table-design' as table-design;
 @use './styles/navigation-theme' as navigation-theme;
+@use './styles/vocora-design-system' as vocora-design-system;
+@use './styles/bootstrap-theme' as bootstrap-theme;
+@use './styles/angular-material-theme' as angular-material-theme;
+@use './styles/angular-material-components' as angular-material-components;
+
+@include vocora-design-system.apply();
+@include bootstrap-theme.apply();
 
 html {
 	@include mat.theme((
@@ -13,7 +19,6 @@ html {
 		typography: system-ui,
 		density: 0,
 	));
-	@include material-defaults.apply();
 	--safe-area-top: env(safe-area-inset-top, 0px);
 	--safe-area-right: env(safe-area-inset-right, 0px);
 	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -26,6 +31,8 @@ html {
 	direction: ltr;
 }
 
+@include angular-material-theme.apply();
+@include angular-material-components.apply();
 @include leitner-google-palette.apply();
 @include table-design.apply();
 @include navigation-theme.apply();
@@ -80,4 +87,35 @@ a {
 
 .mat-mdc-dialog-container {
 	--mat-dialog-container-shape: 28px;
+}
+
+.mat-mdc-menu-panel.course-menu-panel {
+	width: min(720px, calc(100vw - 16px));
+	min-width: min(720px, calc(100vw - 16px));
+	max-width: min(720px, calc(100vw - 16px));
+	border: 2px solid var(--vocora-nav-border);
+	border-radius: 0 0 18px 18px;
+	background: var(--vocora-nav-surface);
+	box-shadow: 0 14px 28px color-mix(in srgb, var(--mat-sys-shadow) 18%, transparent);
+}
+
+.mat-mdc-menu-panel.course-menu-panel .mat-mdc-menu-content {
+	padding: 0;
+}
+
+@media (max-width: 767px) {
+	.cdk-overlay-pane:has(.course-menu-panel) {
+		left: 0 !important;
+		right: auto !important;
+		width: 100vw !important;
+		max-width: 100vw !important;
+	}
+
+	.mat-mdc-menu-panel.course-menu-panel {
+		width: 100% !important;
+		min-width: 100% !important;
+		max-width: 100% !important;
+		border-inline: 0;
+		border-radius: 0 0 18px 18px;
+	}
 }

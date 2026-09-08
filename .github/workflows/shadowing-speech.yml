@@ -2,8 +2,14 @@ name: Shadowing speech
 
 on:
   pull_request:
+    paths:
+      - 'speech/**'
+      - '.github/workflows/shadowing-speech.yml'
   push:
     branches: [main]
+    paths:
+      - 'speech/**'
+      - '.github/workflows/shadowing-speech.yml'
 
 permissions:
   contents: read

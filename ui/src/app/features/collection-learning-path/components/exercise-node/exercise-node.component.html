@@ -1,0 +1,51 @@
+<button
+  type="button"
+  class="exercise-node"
+  [disabled]="!actionable()"
+  [attr.data-state]="exercise().state"
+  [attr.data-kind]="kind()"
+  [attr.data-exercise-type]="exercise().type"
+  [attr.aria-label]="label() + ', ' + stateLabel() + (accessibleActionLabel() ? ', ' + accessibleActionLabel() : '') + (exercise().required ? '' : ', Optional')"
+  (click)="open()"
+>
+  <span class="exercise-node__icon" aria-hidden="true">
+    @switch (icon()) {
+        @case ('book') {
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 5.8c2.8-.9 5.2-.2 8 1.5v12c-2.8-1.7-5.2-2.4-8-1.5v-12Zm16 0c-2.8-.9-5.2-.2-8 1.5v12c2.8-1.7 5.2-2.4 8-1.5v-12Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+          </svg>
+        }
+        @case ('review') {
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M6.3 8.1A7 7 0 0 1 18.7 10M18 5.7l1 4.5-4.5 1M17.7 15.9A7 7 0 0 1 5.3 14M6 18.3l-1-4.5 4.5-1" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        }
+        @case ('mastery') {
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M8 4h8v3.2a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2.2" />
+            <path d="M8 6H4.8v1.2A4.8 4.8 0 0 0 9.6 12M16 6h3.2v1.2a4.8 4.8 0 0 1-4.8 4.8M12 11.2V17m-4 3h8M9 17h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        }
+        @case ('headphones') {
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 13v-1a7 7 0 0 1 14 0v1M5 13H3.8A1.8 1.8 0 0 0 2 14.8v2.4A1.8 1.8 0 0 0 3.8 19H6v-6H5Zm14 0h1.2a1.8 1.8 0 0 1 1.8 1.8v2.4a1.8 1.8 0 0 1-1.8 1.8H18v-6h1Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+          </svg>
+        }
+        @case ('shadowing') {
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="8" y="3" width="8" height="12" rx="4" stroke="currentColor" stroke-width="2.2" />
+            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-3 0h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+        }
+        @default {
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="m12 3 2.5 5.1 5.6.8-4 4 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-4 5.6-.8L12 3Z" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round" />
+          </svg>
+        }
+    }
+  </span>
+
+  @if (actionLabel()) {
+    <span class="exercise-node__flag" aria-hidden="true">{{ actionLabel() }}</span>
+  }
+</button>

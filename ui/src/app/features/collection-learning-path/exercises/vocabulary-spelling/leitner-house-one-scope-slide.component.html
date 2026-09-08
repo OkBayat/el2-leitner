@@ -1,0 +1,24 @@
+<section class="scope-slide d-grid gap-4" data-testid="leitner-house-one-scope-slide">
+  <p class="scope-slide__eyebrow mb-0">House 1 spelling</p>
+  <h1 class="mb-0">Which House 1 words do you want to practise?</h1>
+  <mat-radio-group
+    class="d-grid gap-3"
+    aria-label="Spelling word scope"
+    [value]="selected()"
+    [disabled]="busy()"
+    (change)="select($event.value)"
+  >
+    <mat-radio-button class="w-100 p-3 border rounded" value="course">
+      <span class="d-grid gap-1">
+        <strong>This course only</strong>
+        <span class="scope-slide__option-detail small">Practise House 1 words from this course.</span>
+      </span>
+    </mat-radio-button>
+    <mat-radio-button class="w-100 p-3 border rounded" value="all">
+      <span class="d-grid gap-1">
+        <strong>All House 1 words</strong>
+        <span class="scope-slide__option-detail small">Practise every word currently in your first Leitner house.</span>
+      </span>
+    </mat-radio-button>
+  </mat-radio-group>
+</section>

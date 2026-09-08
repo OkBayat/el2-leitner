@@ -1,0 +1,32 @@
+<section class="path-header" aria-labelledby="learning-path-title">
+  <div class="path-header__copy">
+    <div class="path-header__topline">
+      <p class="path-header__eyebrow">{{ path().mode === 'rolling' ? 'Rolling course' : 'Course' }}</p>
+      <span class="path-header__status">{{ statusLabel() }}</span>
+    </div>
+    <h1 id="learning-path-title">{{ path().title }}</h1>
+    <p class="path-header__lesson-progress">
+      {{ summary().completedLessons }} of {{ summary().totalLessons }} lessons complete
+    </p>
+  </div>
+
+  <div class="path-header__progress">
+    <div class="progress-copy">
+      <span>Course progress</span>
+      <strong>{{ summary().percent }}%</strong>
+    </div>
+    <div
+      class="progress-track"
+      role="progressbar"
+      aria-label="Required exercise progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="summary().percent"
+    >
+      <span class="progress-fill" [style.width.%]="summary().percent"></span>
+    </div>
+    <span class="progress-detail">
+      {{ summary().completedRequiredExercises }} of {{ summary().totalRequiredExercises }} required exercises
+    </span>
+  </div>
+</section>

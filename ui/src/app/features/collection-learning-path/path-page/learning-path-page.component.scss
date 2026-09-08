@@ -1,0 +1,150 @@
+:host {
+  display: block;
+}
+
+.learning-path-page {
+  width: min(100%, 600px);
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+  color: var(--vocora-text-primary);
+}
+
+.learning-path-page__nav {
+  margin-bottom: 12px;
+}
+
+.back-link {
+  display: inline-flex;
+  min-height: var(--vocora-touch-target-min);
+  align-items: center;
+  gap: var(--vocora-space-2);
+  padding: 0 4px;
+  color: var(--vocora-text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.back-link:hover {
+  color: var(--vocora-action-primary);
+}
+
+.lesson-list {
+  display: grid;
+  gap: 0;
+  margin-top: var(--vocora-space-5);
+}
+
+.lesson-pagination {
+  display: grid;
+  justify-items: center;
+  gap: var(--vocora-space-2);
+  margin-top: var(--vocora-space-6);
+  color: var(--vocora-text-secondary);
+  font-size: 13px;
+}
+
+.load-more-lessons {
+  min-height: var(--vocora-touch-target-min);
+  padding: 0 var(--vocora-space-5);
+  border: 0;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.load-more-lessons:hover {
+  background: var(--vocora-action-primary-hover);
+}
+
+.inline-error {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--vocora-space-3);
+  align-items: center;
+  margin-top: var(--vocora-space-4);
+  padding: var(--vocora-space-3) 14px;
+  border: 1px solid var(--vocora-error);
+  border-radius: var(--vocora-radius-md);
+  color: var(--vocora-error);
+  background: color-mix(in srgb, var(--vocora-error) 10%, var(--vocora-surface-raised));
+}
+
+.inline-error button,
+.retry-action {
+  min-height: var(--vocora-touch-target-min);
+  padding: 0 var(--vocora-space-4);
+  border: 0;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-action-primary);
+  color: var(--vocora-text-on-primary);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.inline-error button:hover,
+.retry-action:hover {
+  background: var(--vocora-action-primary-hover);
+}
+
+.state-card {
+  display: grid;
+  justify-items: center;
+  gap: var(--vocora-space-3);
+  margin-top: var(--vocora-space-10);
+  padding: var(--vocora-space-8) var(--vocora-space-5);
+  border: 1px solid var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-surface-raised);
+  text-align: center;
+}
+
+.state-card h1,
+.state-card h2,
+.state-card p {
+  margin: 0;
+}
+
+.state-card p {
+  color: var(--vocora-text-secondary);
+}
+
+.loading-dot {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--vocora-border);
+  border-top-color: var(--vocora-action-primary);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 420px) {
+  .learning-path-page {
+    padding-inline: 10px;
+    padding-top: 10px;
+  }
+
+  .load-more-lessons {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot {
+    animation: none;
+  }
+}

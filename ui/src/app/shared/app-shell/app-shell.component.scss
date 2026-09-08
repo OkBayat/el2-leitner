@@ -1,3 +1,5 @@
+@use './course-menu.component';
+
 :host {
 	--shell-header-height: calc(64px + var(--safe-area-top, 0px));
 	--shell-bottom-height: calc(80px + var(--safe-area-bottom, 0px));
@@ -8,7 +10,8 @@
 	color: var(--vocora-nav-text);
 }
 
-.desktop-sidebar {
+.desktop-sidebar,
+.desktop-right-rail {
 	display: none;
 }
 
@@ -31,6 +34,8 @@
 	z-index: 30;
 	top: 0;
 	display: grid;
+	width: 100vw;
+	max-width: 100vw;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	align-items: center;
 	height: var(--shell-header-height);
@@ -51,8 +56,21 @@
 	text-decoration: none;
 	font-variant-numeric: tabular-nums;
 }
+button.status-item {
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	font-family: inherit;
+	cursor: pointer;
+}
 .status-item app-navigation-icon { width: 28px; height: 28px; flex: 0 0 28px; }
 .status-item span { white-space: nowrap; }
+.course-trigger:hover, a.status-item:hover { background: var(--vocora-nav-hover); }
+
+.shell-workspace {
+	min-width: 0;
+}
 
 .content {
 	width: min(1280px, 100%);
@@ -69,6 +87,8 @@
 	bottom: 0;
 	inset-inline: 0;
 	display: grid;
+	width: 100vw;
+	max-width: 100vw;
 	grid-template-columns: repeat(6, minmax(0, 1fr));
 	align-items: center;
 	justify-items: center;
@@ -78,11 +98,14 @@
 	background: var(--vocora-nav-surface);
 }
 .mobile-nav a, .mobile-nav button {
-	display: grid;
+	display: flex;
 	width: min(52px, 100%);
 	min-width: 44px;
-	height: 52px;
-	place-items: center;
+	height: 58px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
 	padding: 4px;
 	border: 2px solid transparent;
 	border-radius: 12px;
@@ -92,13 +115,22 @@
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
 }
-.mobile-nav app-navigation-icon { width: 34px; height: 34px; }
+.mobile-nav app-navigation-icon { width: 30px; height: 30px; }
+.mobile-nav-label {
+	max-width: 100%;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .mobile-nav .active-mobile, .sidebar-link.is-active {
 	border-color: var(--vocora-nav-active-border);
 	background: var(--vocora-nav-active-surface);
 	color: var(--vocora-nav-active-text);
 }
-.mobile-nav a:hover, .mobile-nav button:hover, .sidebar-link:hover, a.status-item:hover {
+.mobile-nav a:hover, .mobile-nav button:hover, .sidebar-link:hover {
 	background: var(--vocora-nav-hover);
 }
 .mobile-nav .active-mobile:hover, .sidebar-link.is-active:hover { background: var(--vocora-nav-active-surface); }
@@ -201,6 +233,35 @@ a:focus-visible, button:focus-visible {
 	.content { padding: 28px max(24px, var(--safe-area-right, 0px)) 56px 24px; }
 }
 
+@media (min-width: 1024px) {
+	.shell-workspace {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) clamp(220px, 20vw, 320px);
+		gap: 24px;
+		width: min(1440px, 100%);
+		margin: 0 auto;
+		padding: 28px 24px 56px;
+	}
+	.content {
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	.desktop-right-rail {
+		display: block;
+		min-width: 0;
+	}
+	.desktop-status {
+		position: sticky;
+		top: calc(24px + var(--safe-area-top, 0px));
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		align-items: center;
+		min-height: 56px;
+		background: var(--vocora-nav-surface);
+	}
+}
+
 @media (min-width: 1100px) {
 	:host { --shell-sidebar-width: 232px; }
 	.desktop-sidebar { padding-right: 16px; padding-left: calc(16px + var(--safe-area-left, 0px)); }
@@ -208,7 +269,6 @@ a:focus-visible, button:focus-visible {
 	.brand { justify-content: flex-start; padding-left: 12px; }
 	.sidebar-link { justify-content: flex-start; padding-inline: 12px; }
 	.sidebar-summary { justify-content: flex-start; padding-inline: 12px; }
-	.content { padding-inline: 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

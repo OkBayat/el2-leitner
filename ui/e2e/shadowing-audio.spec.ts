@@ -5,6 +5,20 @@ import { join } from 'node:path';
 
 const audioPath = join(tmpdir(), 'vocora-shadowing-ci-silence.wav');
 
+function learningWordProgress(words: any[]): unknown[] {
+  return (words ?? []).map((word) => ({
+    id: word.id,
+    attempts: word.attempts ?? 0,
+    correct: word.correct ?? 0,
+    mistakes: word.mistakes ?? 0,
+    currentStreak: word.currentStreak ?? 0,
+    lastReviewed: word.lastReviewed ?? null,
+    lastPromotedDay: word.lastPromotedDay ?? null,
+    blockedUntil: word.blockedUntil ?? null,
+    masteredAt: word.masteredAt ?? null,
+  }));
+}
+
 async function writeSilenceAudio(): Promise<void> {
   const sampleRate = 44_100;
   const channels = 2;
@@ -90,12 +104,16 @@ test('native AudioWorklet and real speech API handle silence without changing le
     await page.goto('/register');
     await page.getByLabel('Email').fill(`e2e-shadowing-native-${Date.now()}@example.com`);
     await page.getByLabel('Password').fill('password123');
+    const dailyActivation = page.waitForResponse((response) =>
+      response.request().method() === 'POST'
+      && response.url().includes('/api/learning/vocabulary-activation-batches')
+      && response.ok()
+    );
     await page.getByRole('button', { name: 'Create account' }).click();
     await expect(page).toHaveURL(/\/dashboard$/u);
-    await page.getByTestId('home-shadowing').click();
-    await expect(page.getByTestId('start-shadowing')).toBeVisible();
+    await dailyActivation;
     const before = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
-    await page.getByTestId('start-shadowing').click();
+    await page.goto('/shadowing');
     await expect(page.getByTestId('shadowing-session')).toBeVisible();
     await expect(page.getByTestId('shadowing-sentence')).not.toHaveText('');
 
@@ -109,9 +127,9 @@ test('native AudioWorklet and real speech API handle silence without changing le
     expect(await page.evaluate(() => (window as any).__shadowingMicrophone.tracks.map((track: MediaStreamTrack) => track.readyState))).toEqual(['ended']);
 
     const after = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
-    // The top-level revision may advance when unrelated settings defaults are persisted after registration.
-    // Shadowing silence must leave the actual learning-progress fields unchanged.
-    expect(after.state.words).toEqual(before.state.words);
+    // State normalization may materialize default word metadata while this exercise runs.
+    // Silence must not change the learner-progress fields owned by Shadowing.
+    expect(learningWordProgress(after.state.words)).toEqual(learningWordProgress(before.state.words));
     expect(after.state.history).toEqual(before.state.history);
     expect(after.state.daily).toEqual(before.state.daily);
     await page.getByRole('button', { name: 'Exit shadowing', exact: true }).click();

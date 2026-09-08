@@ -1,0 +1,69 @@
+<section class="pwa-status-stack" aria-live="polite" aria-atomic="true">
+	@if (!connectivity.online()) {
+		<div class="pwa-status offline" role="status" data-testid="offline-status">
+			<span class="status-mark" aria-hidden="true">!</span>
+			<div>
+				<strong>You're offline</strong>
+				<small>Vocora will reconnect automatically. Account changes need an internet connection.</small>
+			</div>
+		</div>
+	}
+
+	@if (updates.updateReady()) {
+		<div class="pwa-status update" role="status" data-testid="pwa-update-ready">
+			<span class="status-mark" aria-hidden="true">↻</span>
+			<div>
+				<strong>A new Vocora version is ready</strong>
+				<small>Reload once to switch to the updated app files.</small>
+			</div>
+			<div class="status-actions">
+				<button type="button" (click)="updates.dismissUpdate()">Later</button>
+				<button class="primary" type="button" [disabled]="updates.activating()" (click)="updates.reloadForUpdate()">
+					{{ updates.activating() ? 'Updating…' : 'Reload' }}
+				</button>
+			</div>
+		</div>
+	}
+
+	@if (showInstallSuggestion()) {
+		<div class="pwa-status install" role="status" data-testid="pwa-install-suggestion">
+			<span class="status-mark" aria-hidden="true">＋</span>
+			<div>
+				<strong>Install Vocora on this device</strong>
+				@switch (install.mode()) {
+					@case ('prompt') {
+						<small>Add Vocora to your device for quicker access and a standalone app experience.</small>
+					}
+					@case ('ios-safari') {
+						<small>In Safari, tap Share → Add to Home Screen → Open as Web App → Add.</small>
+					}
+					@case ('ios-browser') {
+						<small>Open Vocora in Safari, then use Share → Add to Home Screen.</small>
+					}
+					@default {
+						<small>Open your browser menu and choose Install app or Add to Home screen.</small>
+					}
+				}
+			</div>
+			<div class="status-actions">
+				<button type="button" (click)="dismissInstall()">Later</button>
+				@if (install.mode() === 'prompt') {
+					<button class="primary" type="button" [disabled]="installing()" (click)="requestInstall()">
+						{{ installing() ? 'Opening…' : 'Install' }}
+					</button>
+				}
+			</div>
+		</div>
+	}
+
+	@if (updates.errorMessage()) {
+		<div class="pwa-status error" role="alert" data-testid="pwa-update-error">
+			<span class="status-mark" aria-hidden="true">!</span>
+			<div>
+				<strong>App support needs attention</strong>
+				<small>{{ updates.errorMessage() }}</small>
+			</div>
+			<button type="button" (click)="updates.clearError()">Dismiss</button>
+		</div>
+	}
+</section>

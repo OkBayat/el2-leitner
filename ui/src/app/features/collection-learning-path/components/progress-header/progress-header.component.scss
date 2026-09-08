@@ -1,0 +1,100 @@
+:host {
+  display: block;
+}
+
+.path-header {
+  display: grid;
+  gap: var(--vocora-space-5);
+  padding: 4px 4px var(--vocora-space-6);
+  border-bottom: 1px solid var(--vocora-border);
+}
+
+.path-header__copy {
+  min-width: 0;
+}
+
+.path-header__topline,
+.progress-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vocora-space-3);
+}
+
+.path-header__eyebrow,
+.path-header__lesson-progress {
+  margin: 0;
+  color: var(--vocora-text-secondary);
+}
+
+.path-header__eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.path-header__status {
+  padding: 5px 9px;
+  border-radius: var(--vocora-radius-pill);
+  background: var(--vocora-action-secondary);
+  color: var(--vocora-action-secondary-foreground);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+h1 {
+  margin: var(--vocora-space-2) 0 0;
+  color: var(--vocora-text-primary);
+  font-size: clamp(24px, 6vw, 30px);
+  line-height: 1.15;
+}
+
+.path-header__lesson-progress {
+  margin-top: var(--vocora-space-2);
+  font-size: 14px;
+}
+
+.path-header__progress {
+  display: grid;
+  gap: var(--vocora-space-2);
+}
+
+.progress-copy {
+  color: var(--vocora-text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.progress-copy strong {
+  color: var(--vocora-text-primary);
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: var(--vocora-radius-pill);
+  background: var(--vocora-surface-subtle);
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--vocora-action-primary);
+  transition: width var(--vocora-motion-normal) ease;
+}
+
+.progress-detail {
+  color: var(--vocora-text-secondary);
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill {
+    transition: none;
+  }
+}

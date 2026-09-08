@@ -1,0 +1,16 @@
+export { ChoiceSlideComponent } from './components/choice/choice-slide.component';
+export { TruthSlideComponent } from './components/truth/truth-slide.component';
+export { TeachingCardSlideComponent } from './components/teaching-card/teaching-card-slide.component';
+export { MatchingSlideComponent } from './components/matching/matching-slide.component';
+export { ClassificationSlideComponent } from './components/classification/classification-slide.component';
+export { OrderingSlideComponent } from './components/ordering/ordering-slide.component';
+export { ClozeSlideComponent } from './components/cloze/cloze-slide.component';
+export { StructuredCompletionSlideComponent } from './components/structured-completion/structured-completion-slide.component';
+export { ShortAnswerSlideComponent } from './components/short-answer/short-answer-slide.component';
+export { WordFormationSlideComponent } from './components/word-formation/word-formation-slide.component';
+export { ErrorCorrectionSlideComponent } from './components/error-correction/error-correction-slide.component';
+export { RewriteSlideComponent } from './components/rewrite/rewrite-slide.component';
+export { PronunciationSlideComponent } from './components/pronunciation/pronunciation-slide.component';
+export { DictationSlideComponent } from './components/dictation/dictation-slide.component';
+export { SpeakingResponseSlideComponent } from './components/speaking-response/speaking-response-slide.component';
+export { WritingResponseSlideComponent } from './components/writing-response/writing-response-slide.component';

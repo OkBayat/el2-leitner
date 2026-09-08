@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Skill Script Architecture"
+  short_description: "Keep Vocora skill scripts modular and bounded."
+  default_prompt: "Use $k2-skill-script-architecture whenever creating or changing executable code under .agents/skills/**/scripts/**; enforce cohesive module boundaries and validate touched legacy scripts before finishing."

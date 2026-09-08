@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Worktree First"
+  short_description: "Explicit-only named Vocora worktree bootstrap."
+  default_prompt: "Use $k2-worktree-first to create a named Vocora worktree for this task."

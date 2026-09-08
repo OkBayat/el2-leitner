@@ -77,6 +77,19 @@ export function createApiRouter({
     res.status(200).json({ user: req.auth.user });
   });
 
+  router.post("/tts/speech", authenticate, async (req, res, next) => {
+    const audio = await useCases.synthesizeSpeech.execute(req.body ?? {});
+    res.type(audio.contentType);
+    res.set("X-Vocora-TTS-Cache", audio.cacheStatus);
+    res.sendFile(
+      audio.filePath,
+      { acceptRanges: true, cacheControl: false, lastModified: false },
+      (error) => {
+        if (error && !res.headersSent) next(error);
+      }
+    );
+  });
+
   router.get("/listening/bbc/lessons", authenticate, async (req, res) => {
     const result = await useCases.listListeningLessons.execute(req.auth.userId);
     res.status(200).json(result);

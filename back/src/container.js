@@ -41,6 +41,10 @@ import { MySqlVocabularyActivationRepository } from "./infrastructure/persistenc
 import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
+import { createCollectionLearningPathModule } from "./modules/collection-learning-path/createCollectionLearningPathModule.js";
+import { SynthesizeSpeech } from "./application/text-to-speech/SynthesizeSpeech.js";
+import { FileTtsAudioCache } from "./infrastructure/text-to-speech/FileTtsAudioCache.js";
+import { KokoroTtsClient } from "./infrastructure/text-to-speech/KokoroTtsClient.js";
 
 export function createContainer({ pool, config, adapters = {} }) {
   const userRepository = adapters.userRepository ?? new MySqlUserRepository(pool);
@@ -74,6 +78,14 @@ export function createContainer({ pool, config, adapters = {} }) {
     adapters.libraryAdminPolicy ?? new LibraryAdminPolicy(config.library?.adminEmails || []);
   const vocabularyFileParser = adapters.vocabularyFileParser ?? new VocabularyFileParser();
   const getSentencePracticeCards = new GetSentencePracticeCards({ sentencePracticeRepository });
+  const collectionLearningPath = createCollectionLearningPathModule({ pool, adapters });
+  const ttsAudioCache = adapters.ttsAudioCache ?? new FileTtsAudioCache({
+    directory: config.tts.cacheDirectory
+  });
+  const ttsProvider = adapters.ttsProvider ?? new KokoroTtsClient({
+    baseUrl: config.tts.providerUrl,
+    timeoutMs: config.tts.requestTimeoutMs
+  });
 
   return {
     tokenService,
@@ -81,7 +93,21 @@ export function createContainer({ pool, config, adapters = {} }) {
     authRateLimit: config.auth.rateLimit,
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
+    collectionLearningPath,
     useCases: {
+      synthesizeSpeech: new SynthesizeSpeech({
+        audioCache: ttsAudioCache,
+        ttsProvider,
+        requestOptions: {
+          allowedVoices: config.tts.allowedVoices,
+          defaultVoice: config.tts.defaultVoice,
+          defaultSpeed: config.tts.defaultSpeed,
+          defaultFormat: config.tts.defaultFormat,
+          maxTextLength: config.tts.maxTextLength,
+          model: config.tts.model,
+          modelVersion: config.tts.modelVersion
+        }
+      }),
       getLearningTimeline: new GetLearningTimeline({
         timelineRepository: adapters.timelineRepository ?? new MySqlLearningTimelineRepository(pool)
       }),

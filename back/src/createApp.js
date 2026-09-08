@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from "helmet";
 import { createApiRouter } from "./interfaces/http/apiRouter.js";
+import { createAuthMiddleware } from "./interfaces/http/authMiddleware.js";
 import { createShadowingRouter } from "./interfaces/http/shadowingRouter.js";
 import { createErrorHandler } from "./interfaces/http/errorHandler.js";
 
@@ -102,6 +103,22 @@ export function createApp({
   app.use(express.json({ limit: "10mb", strict: true }));
   app.use(cookieParser());
   app.use("/api/shadowing", createShadowingRouter(container));
+
+  // Production containers always expose the Learning Path module through
+  // createContainer(). Some focused HTTP unit tests intentionally supply a
+  // smaller hand-built container; keep those adapters composable without
+  // weakening production wiring.
+  if (container.collectionLearningPath) {
+    const authenticate = createAuthMiddleware({
+      tokenService: container.tokenService,
+      getCurrentUser: container.useCases.getCurrentUser,
+      cookieName: container.authCookie.name
+    });
+    app.use(
+      "/api/learning-paths",
+      container.collectionLearningPath.createHttpRouter({ authenticate })
+    );
+  }
 
   app.use(
     "/api",

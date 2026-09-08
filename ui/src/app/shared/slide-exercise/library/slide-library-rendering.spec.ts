@@ -1,0 +1,328 @@
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { describe, expect, it, vi } from 'vitest';
+import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
+import { SpeechService } from '../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../core/state/learning-store.service';
+import { createDefaultSlideContentRegistry } from '../slide-content-registry';
+import { SlideExerciseComponent } from '../slide-exercise.component';
+import { REUSABLE_SLIDE_FIXTURES } from './slide-library.fixtures';
+import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
+import {
+	ClassificationSlideComponent,
+	ClozeSlideComponent,
+	MatchingSlideComponent,
+} from './slide-library.components';
+
+describe('reusable slide renderer contract', () => {
+	it('constructs and renders every registered reusable slide type from configuration', async () => {
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal(null) },
+				},
+			],
+		});
+		const registry = createDefaultSlideContentRegistry();
+
+		for (const type of REUSABLE_SLIDE_TYPES) {
+			const slide = REUSABLE_SLIDE_FIXTURES.find(
+				(candidate) => candidate.type === type,
+			);
+			const renderer = registry.resolve(type);
+			expect(slide, `fixture for ${type}`).toBeDefined();
+			expect(renderer, `renderer for ${type}`).toBeDefined();
+			const component = await renderer!.loadComponent();
+			const fixture = TestBed.createComponent(component);
+			fixture.componentInstance.load({
+				slideId: slide!.id,
+				type,
+				data: slide!.data,
+			});
+			fixture.detectChanges();
+			expect(
+				(fixture.nativeElement as HTMLElement).textContent?.trim(),
+				`rendered content for ${type}`,
+			).not.toBe('');
+			if (type === 'cloze') {
+				const clozeInput = (
+					fixture.nativeElement as HTMLElement
+				).querySelector('textarea.cloze-input');
+				expect(clozeInput).not.toBeNull();
+				expect(clozeInput?.classList).not.toContain(
+					'mat-mdc-input-element',
+				);
+				expect(clozeInput?.closest('mat-form-field')).toBeNull();
+				expect(clozeInput?.getAttribute('rows')).toBe('1');
+				for (const [name, value] of Object.entries({
+					autocomplete: 'off',
+					autocapitalize: 'none',
+					autocorrect: 'off',
+					spellcheck: 'false',
+				})) {
+					expect(clozeInput?.getAttribute(name)).toBe(value);
+				}
+				expect(
+					(fixture.nativeElement as HTMLElement).querySelector(
+						'input.cloze-input',
+					),
+				).toBeNull();
+				expect(
+					(fixture.nativeElement as HTMLElement).querySelector(
+						'.cloze-input-measure',
+					),
+				).not.toBeNull();
+				expect(
+					(fixture.nativeElement as HTMLElement).textContent,
+				).toContain('ONE WORD ONLY');
+				expect(
+					(fixture.nativeElement as HTMLElement).textContent,
+				).toContain('NO MORE THAN 2 WORDS');
+			}
+			fixture.destroy();
+		}
+	});
+
+	it('exposes MatchingSlide and ClassificationSlide interaction states accessibly', () => {
+		const matchingFixture = TestBed.createComponent(MatchingSlideComponent);
+		matchingFixture.componentInstance.load({
+			slideId: 'matching-accessibility',
+			type: 'matching',
+			data: {
+				pairs: [
+					{ id: 'make', left: 'make', right: 'a decision' },
+					{ id: 'take', left: 'take', right: 'a risk' },
+				],
+			},
+		});
+		matchingFixture.componentInstance.selectLeft('make');
+		matchingFixture.detectChanges();
+		const selectedMatch = (
+			matchingFixture.nativeElement as HTMLElement
+		).querySelector('[aria-pressed="true"]');
+		expect(selectedMatch?.getAttribute('aria-label')).toContain('selected');
+
+		const classificationFixture = TestBed.createComponent(
+			ClassificationSlideComponent,
+		);
+		classificationFixture.componentInstance.load({
+			slideId: 'classification-accessibility',
+			type: 'classification',
+			data: {
+				categories: [
+					{ id: 'animal', label: 'Animal' },
+					{ id: 'plant', label: 'Plant' },
+				],
+				items: [
+					{ id: 'paw', label: 'paw', correctCategoryId: 'animal' },
+				],
+			},
+		});
+		classificationFixture.componentInstance.selectItem('paw');
+		classificationFixture.componentInstance.assignSelected('plant');
+		classificationFixture.componentInstance.handleAction('check');
+		classificationFixture.detectChanges();
+		const classifiedItem = (
+			classificationFixture.nativeElement as HTMLElement
+		).querySelector('.chip-list button');
+		expect(classifiedItem?.getAttribute('aria-label')).toContain(
+			'incorrect; correct category Animal',
+		);
+
+		matchingFixture.destroy();
+		classificationFixture.destroy();
+	});
+
+	it('renders select-mode ClozeSlide answers as numbered choice cards', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'select-cloze',
+			type: 'cloze',
+			data: {
+				content: 'If it gets worse, they {{result}}.',
+				inputMode: 'select',
+				wordBank: [
+					'will live forever',
+					'will be happy',
+					"won't do well",
+				],
+				blanks: [{ id: 'result', answers: ["won't do well"] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('mat-select')).toBeNull();
+		expect(element.querySelector('textarea.cloze-input')).toBeNull();
+		expect(
+			element
+				.querySelector('.cloze-choice-blank')
+				?.getAttribute('aria-pressed'),
+		).toBe('false');
+		const choices = element.querySelectorAll(
+			'.cloze-choice-grid .choice-option',
+		);
+		expect(choices).toHaveLength(3);
+		expect(
+			choices[0]?.querySelector('.choice-option__number')?.textContent,
+		).toContain('1');
+
+		(choices[2] as HTMLButtonElement).click();
+		fixture.detectChanges();
+		expect(choices[2]?.getAttribute('data-state')).toBe('selected');
+		expect(choices[2]?.getAttribute('aria-checked')).toBe('true');
+		expect(
+			element
+				.querySelector('.cloze-choice-blank')
+				?.getAttribute('aria-pressed'),
+		).toBe('true');
+		expect(
+			element.querySelector('.cloze-choice-blank')?.textContent,
+		).toContain("won't do well");
+		fixture.destroy();
+	});
+
+	it('keeps free-text cloze answers single-line when text is pasted', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'text-cloze',
+			type: 'cloze',
+			data: {
+				content: 'Use {{source}} today.',
+				blanks: [{ id: 'source', answers: ['renewable energy'] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea.cloze-input',
+		) as HTMLTextAreaElement;
+		textarea.value = 'renewable\nenergy';
+		textarea.dispatchEvent(new Event('input'));
+
+		expect(fixture.componentInstance.answers()['source']).toBe('renewable energy');
+	});
+
+	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {
+		TestBed.configureTestingModule({
+			imports: [SlideExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal(null) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		const slide = REUSABLE_SLIDE_FIXTURES.find(
+			(candidate) => candidate.type === 'choice',
+		)!;
+		fixture.componentRef.setInput('slides', [slide]);
+		fixture.detectChanges();
+		await vi.waitFor(() => {
+			fixture.detectChanges();
+			expect(
+				(fixture.nativeElement as HTMLElement).querySelector(
+					'[data-testid="choice-slide"]',
+				),
+			).not.toBeNull();
+		});
+
+		const preventNumber = vi.fn();
+		fixture.componentInstance.handleKeyboard({
+			key: '1',
+			preventDefault: preventNumber,
+		} as unknown as KeyboardEvent);
+		fixture.detectChanges();
+		expect(
+			(fixture.nativeElement as HTMLElement).querySelector(
+				'[data-state="selected"]',
+			)?.textContent,
+		).toContain('enviroment');
+
+		const preventEnter = vi.fn();
+		fixture.componentInstance.handleKeyboard({
+			key: 'Enter',
+			preventDefault: preventEnter,
+		} as unknown as KeyboardEvent);
+		fixture.detectChanges();
+		expect(preventEnter).toHaveBeenCalledOnce();
+		expect(
+			(fixture.nativeElement as HTMLElement).querySelector(
+				'[data-state="incorrect"]',
+			)?.textContent,
+		).toContain('enviroment');
+		expect(
+			(fixture.nativeElement as HTMLElement).querySelector(
+				'[data-state="correct"]',
+			)?.textContent,
+		).toContain('environment');
+		expect(
+			(fixture.nativeElement as HTMLElement)
+				.querySelector('[data-state="incorrect"]')
+				?.getAttribute('aria-label'),
+		).toContain('your answer, incorrect');
+		expect(
+			(fixture.nativeElement as HTMLElement)
+				.querySelector('[data-state="correct"]')
+				?.getAttribute('aria-label'),
+		).toContain('correct answer');
+		expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+			'Correct answer: environment',
+		);
+		fixture.destroy();
+	});
+
+	it('captures the initial Submit action for a model-only RewriteSlide', async () => {
+		TestBed.configureTestingModule({ imports: [SlideExerciseComponent] });
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		fixture.componentRef.setInput('slides', [
+			{
+				id: 'rewrite-model',
+				type: 'rewrite',
+				data: {
+					original: 'People use less energy now.',
+					modelAnswer: 'Less energy is used now.',
+				},
+			},
+		]);
+		fixture.detectChanges();
+		await vi.waitFor(() => {
+			fixture.detectChanges();
+			expect(
+				fixture.componentInstance.presentation?.footer.primary?.label,
+			).toBe('Submit');
+		});
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea',
+		) as HTMLTextAreaElement;
+		textarea.value = 'Energy use has fallen.';
+		textarea.dispatchEvent(new Event('input'));
+		fixture.detectChanges();
+		expect(
+			fixture.componentInstance.presentation?.footer.primary,
+		).toMatchObject({
+			id: 'submit',
+			disabled: false,
+		});
+		fixture.destroy();
+	});
+});

@@ -1,0 +1,76 @@
+@mixin apply() {
+  :root {
+    --mat-sys-primary: var(--vocora-action-primary);
+    --mat-sys-on-primary: var(--vocora-action-primary-foreground);
+    --mat-sys-primary-container: var(--vocora-action-secondary);
+    --mat-sys-on-primary-container: var(--vocora-action-secondary-foreground);
+    --mat-sys-primary-fixed: var(--vocora-action-secondary);
+    --mat-sys-on-primary-fixed: var(--vocora-action-secondary-foreground);
+    --mat-sys-on-primary-fixed-variant: var(--vocora-action-primary-hover);
+    --mat-sys-primary-fixed-dim: var(--vocora-brand-mint);
+    --mat-sys-inverse-primary: var(--vocora-action-primary);
+
+    --mat-sys-secondary: var(--vocora-action-secondary-foreground);
+    --mat-sys-on-secondary: var(--vocora-text-on-primary);
+    --mat-sys-secondary-container: var(--vocora-action-secondary);
+    --mat-sys-on-secondary-container: var(--vocora-action-secondary-foreground);
+    --mat-sys-secondary-fixed: var(--vocora-action-secondary);
+    --mat-sys-on-secondary-fixed: var(--vocora-action-secondary-foreground);
+    --mat-sys-on-secondary-fixed-variant: var(--vocora-text-secondary);
+    --mat-sys-secondary-fixed-dim: var(--vocora-brand-mint);
+
+    --mat-sys-tertiary: var(--vocora-information);
+    --mat-sys-on-tertiary: var(--vocora-information-foreground);
+    --mat-sys-tertiary-container: var(--vocora-surface-subtle);
+    --mat-sys-on-tertiary-container: var(--vocora-information);
+    --mat-sys-tertiary-fixed: var(--vocora-surface-subtle);
+    --mat-sys-on-tertiary-fixed: var(--vocora-information);
+    --mat-sys-on-tertiary-fixed-variant: var(--vocora-information);
+    --mat-sys-tertiary-fixed-dim: var(--vocora-leitner-active);
+
+    --mat-sys-error: var(--vocora-error);
+    --mat-sys-on-error: var(--vocora-error-foreground);
+    --mat-sys-error-container: var(--vocora-error-surface);
+    --mat-sys-on-error-container: var(--vocora-error-foreground);
+
+    --mat-sys-surface: var(--vocora-surface-page);
+    --mat-sys-on-surface: var(--vocora-text-primary);
+    --mat-sys-on-surface-variant: var(--vocora-text-secondary);
+    --mat-sys-surface-bright: var(--vocora-surface-base);
+    --mat-sys-surface-container: var(--vocora-surface-raised);
+    --mat-sys-surface-container-high: var(--vocora-surface-subtle);
+    --mat-sys-surface-container-highest: var(--vocora-surface-subtle);
+    --mat-sys-surface-container-low: var(--vocora-surface-base);
+    --mat-sys-surface-container-lowest: var(--vocora-surface-base);
+    --mat-sys-surface-dim: var(--vocora-surface-subtle);
+    --mat-sys-surface-tint: var(--vocora-action-primary);
+    --mat-sys-surface-variant: var(--vocora-surface-subtle);
+    --mat-sys-inverse-surface: var(--vocora-text-primary);
+    --mat-sys-inverse-on-surface: var(--vocora-surface-base);
+
+    --mat-sys-background: var(--vocora-surface-page);
+    --mat-sys-on-background: var(--vocora-text-primary);
+    --mat-sys-neutral-variant20: var(--vocora-text-secondary);
+    --mat-sys-neutral10: var(--vocora-text-primary);
+    --mat-sys-outline: var(--vocora-border);
+    --mat-sys-outline-variant: var(--vocora-border);
+    --mat-sys-scrim: var(--vocora-neutral-black);
+    --mat-sys-shadow: var(--vocora-neutral-black);
+  }
+
+  .mat-mdc-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+  }
+
+  .mat-mdc-icon-button .mat-mdc-button-touch-target,
+  .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+  .mat-mdc-icon-button .mat-icon,
+  .mat-mdc-icon-button svg {
+    display: block;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+}

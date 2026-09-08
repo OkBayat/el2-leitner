@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 
 @Component({
   selector: 'app-shadowing-page',
+  standalone: true,
   imports: [MatButtonModule, MatCardModule, MatProgressBarModule],
   providers: [ShadowingSessionService, PcmRecorderService],
   templateUrl: './shadowing-page.component.html',
@@ -21,8 +22,19 @@ export class ShadowingPageComponent implements OnInit, OnDestroy {
   readonly session = inject(ShadowingSessionService);
   readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+
+  @Input() embedded = false;
+  @Output() readonly completed = new EventEmitter<string>();
+  @Output() readonly cancelled = new EventEmitter<void>();
+
   ngOnInit(): void { void this.session.load(); }
   ngOnDestroy(): void { this.session.dispose(); }
+
+  async finish(): Promise<void> {
+    if (this.session.counts().completedCount <= 0) return;
+    const sessionId = await this.session.complete();
+    if (sessionId && this.embedded) this.completed.emit(sessionId);
+  }
 
   async exit(): Promise<void> {
     this.session.pause();
@@ -31,7 +43,19 @@ export class ShadowingPageComponent implements OnInit, OnDestroy {
     }).afterClosed());
     if (!confirmed) return;
     await this.session.complete();
+    if (this.embedded) {
+      this.cancelled.emit();
+      return;
+    }
     await this.router.navigateByUrl('/dashboard');
+  }
+
+  back(): void {
+    if (this.embedded) {
+      this.cancelled.emit();
+      return;
+    }
+    void this.router.navigateByUrl('/dashboard');
   }
 
   @HostListener('document:visibilitychange')
