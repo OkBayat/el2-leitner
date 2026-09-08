@@ -14,6 +14,7 @@ as the authority.
 * [Project Index](project/index.md) - Project concept directory index.
 * [Repository Source Of Truth](project/repository-source-of-truth.md) - Canonical source locations and architecture boundaries for Vocora.
 * [Reusable Slide Interactions](project/reusable-slide-interactions.md) - Selection, modes, composition, and assessment boundaries for reusable slide families.
+* [Vocora Domain Boundaries](/project/vocora-domain-boundaries.md) - Product-domain boundaries for learning delivery, Leitner retention, progress, gamification, and social features.
 
 # Rules
 
