@@ -169,6 +169,7 @@ The first exercise must use:
 ```
 
 Its `source_target_ids` must equal the complete `leitner_eligible` target set and must not include non-Leitner source targets.
+Its `extension_ids` must be empty so the fixed intake scope cannot be widened by Vocora-only additions.
 
 Its slides should provide supported vocabulary review. Under the current placeholder contract, include at least one `choice` slide for meaning/recognition unless the final runtime contract later defines a different canonical intake renderer.
 
@@ -188,6 +189,7 @@ It must:
 
 - depend on exercise 1;
 - target exactly the same `leitner_eligible` source-target scope as exercise 1;
+- keep `extension_ids` empty;
 - include at least one `dictation` slide;
 - require typed word or phrase production for the main scope, even if occasional spelling-choice scaffolding is also present.
 

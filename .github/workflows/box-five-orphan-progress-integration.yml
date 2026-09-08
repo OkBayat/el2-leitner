@@ -3,8 +3,10 @@ name: Box Five Orphan Progress Integration
 on:
   pull_request:
     paths:
+      - 'back/data/collections/**'
       - 'back/src/application/learning/**'
       - 'back/src/domain/learning/**'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
       - 'back/src/infrastructure/persistence/mysql/*Learning*.js'
       - 'back/src/infrastructure/persistence/mysql/*Review*.js'
       - 'back/src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js'
@@ -25,8 +27,10 @@ on:
       - main
       - agent/**
     paths:
+      - 'back/data/collections/**'
       - 'back/src/application/learning/**'
       - 'back/src/domain/learning/**'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
       - 'back/src/infrastructure/persistence/mysql/*Learning*.js'
       - 'back/src/infrastructure/persistence/mysql/*Review*.js'
       - 'back/src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js'

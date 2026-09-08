@@ -252,6 +252,28 @@ class LessonPlanValidatorTests(unittest.TestCase):
         errors = MODULE.validate_plan(plan)
         self.assertTrue(any("must target exactly the leitner_eligible scope" in error for error in errors))
 
+    def test_source_targets_and_extensions_must_use_disjoint_ids(self) -> None:
+        plan = valid_plan()
+        plan["coverage"]["vocora_extensions"] = [{
+            "id": "target-001",
+            "reason": "Collides with a source target.",
+        }]
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("source target and extension IDs must be disjoint" in error for error in errors))
+
+    def test_fixed_openings_reject_extension_targets(self) -> None:
+        plan = valid_plan()
+        plan["coverage"]["vocora_extensions"] = [{
+            "id": "extension-001",
+            "reason": "A declared transfer target.",
+        }]
+        for exercise in plan["exercises"]:
+            exercise["extension_ids"] = ["extension-001"]
+            exercise["slides"][0]["target_ids"].append("extension-001")
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("vocabulary_intake must not target Vocora extensions" in error for error in errors))
+        self.assertTrue(any("spelling_dictation must not target Vocora extensions" in error for error in errors))
+
     def test_malformed_fixed_opening_targets_return_validation_errors(self) -> None:
         plan = valid_plan()
         plan["exercises"][0]["source_target_ids"] = [{"id": "target-001"}]

@@ -205,6 +205,12 @@ def validate_plan(plan: Any) -> list[str]:
         if extension_id:
             extension_ids.append(extension_id)
     duplicate_check(extension_ids, "coverage.vocora_extensions[].id", errors)
+    namespace_collisions = sorted(set(extension_ids) & set(target_ids))
+    if namespace_collisions:
+        errors.append(
+            "source target and extension IDs must be disjoint; collisions: "
+            f"{', '.join(namespace_collisions)}"
+        )
     known_targets = set(target_ids) | set(extension_ids)
 
     exercises = arr(root.get("exercises"), "exercises", errors)
@@ -366,6 +372,8 @@ def validate_plan(plan: Any) -> list[str]:
             )
         if first_targets - leitner_ids:
             errors.append("vocabulary_intake must target exactly the leitner_eligible scope")
+        if valid_string_set(first.get("extension_ids")):
+            errors.append("vocabulary_intake must not target Vocora extensions")
         if first.get("slides") and not any(isinstance(slide, dict) and slide.get("type") == "choice" for slide in first["slides"]):
             errors.append("vocabulary_intake must include at least one choice slide under the placeholder contract")
 
@@ -381,6 +389,8 @@ def validate_plan(plan: Any) -> list[str]:
             )
         if second_targets - leitner_ids:
             errors.append("spelling_dictation must target exactly the leitner_eligible scope")
+        if valid_string_set(second.get("extension_ids")):
+            errors.append("spelling_dictation must not target Vocora extensions")
         prereqs = second.get("prerequisites", []) if isinstance(second.get("prerequisites"), list) else []
         if first.get("id") and not any(isinstance(item, dict) and item.get("exercise_id") == first.get("id") for item in prereqs):
             errors.append("spelling_dictation must depend on the vocabulary_intake exercise")

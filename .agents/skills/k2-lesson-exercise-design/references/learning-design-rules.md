@@ -287,4 +287,4 @@ Every exercise must include:
 - `evidence.research_principle_ids` for applicable learning principles;
 - `evidence.sequence_reason` explaining why the exercise sits at that point in the path.
 
-The coverage audit must partition the lesson's source target IDs into covered and uncovered sets. An uncovered target is allowed only when the final plan is `blocked` or explicitly warns that the omission is intentional and authorized.
+The coverage audit must partition the lesson's source target IDs into covered and uncovered sets. Any uncovered target requires `validation.status: blocked` and an explicit blocker that records why the target cannot be covered; a warning or authorization alone is not sufficient.
