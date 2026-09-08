@@ -99,7 +99,7 @@
 			<div class="course-menu-cards" aria-label="My courses">
 				@for (course of courses.courses(); track course.id) {
 					<a mat-menu-item class="course-menu-item" [class.is-active]="activeCourseId() === course.id"
-						[routerLink]="['/learning-paths', course.learningPathId]"
+						[routerLink]="course.learningPathId ? ['/learning-paths', course.learningPathId] : ['/library', course.id, 'learning-path']"
 						[attr.aria-current]="activeCourseId() === course.id ? 'page' : null"
 						[attr.aria-label]="'Open ' + course.title" [attr.data-course-id]="course.id">
 						<span class="course-menu-icon-frame" aria-hidden="true">

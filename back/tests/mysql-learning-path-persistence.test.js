@@ -165,7 +165,7 @@ test("route identity migration creates generated immutable numeric ids without r
     ["learning_path_lesson_route_ids", "learning_path_lessons", "lesson_id"],
     ["learning_path_exercise_route_ids", "learning_path_exercises", "exercise_id"],
   ]) {
-    assert.match(migration, new RegExp(`CREATE TABLE ${mappingTable}[\\s\\S]*public_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT`, "u"));
+    assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${mappingTable}[\\s\\S]*public_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT`, "u"));
     assert.match(migration, new RegExp(`UNIQUE KEY ${mappingTable}_resource_unique \\(${foreignKey}\\)`, "u"));
     assert.match(migration, new RegExp(`INSERT INTO ${mappingTable} \\(${foreignKey}\\)[\\s\\S]*SELECT id FROM ${resourceTable}`, "u"));
   }
@@ -176,6 +176,20 @@ test("route identity migration creates generated immutable numeric ids without r
   assert.match(migration, /BEFORE UPDATE ON learning_path_route_ids/u);
   assert.match(migration, /BEFORE UPDATE ON learning_path_lesson_route_ids/u);
   assert.match(migration, /BEFORE UPDATE ON learning_path_exercise_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_lesson_route_ids/u);
+  assert.match(migration, /BEFORE DELETE ON learning_path_exercise_route_ids/u);
+  assert.match(migration, /BEFORE INSERT ON learning_path_route_ids/u);
+  assert.match(migration, /SIGNAL SQLSTATE '45000'/u);
+  assert.match(migration, /learning_path_route_identity_complete CHECK \(missing_count = 0\)/u);
+  assert.match(migration, /BEFORE UPDATE ON collection_learning_paths/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_lessons/u);
+  assert.match(migration, /BEFORE UPDATE ON learning_path_exercises/u);
+  assert.ok(
+    migration.indexOf("AFTER INSERT ON collection_learning_paths")
+      < migration.indexOf("INSERT IGNORE INTO learning_path_route_ids"),
+    "assignment triggers must be installed before backfill",
+  );
   assert.doesNotMatch(migration, /ALTER TABLE collection_learning_paths[\s\S]*MODIFY COLUMN id|DROP COLUMN|DELETE FROM/u);
 });
 

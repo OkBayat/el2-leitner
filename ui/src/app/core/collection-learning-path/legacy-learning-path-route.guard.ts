@@ -5,11 +5,16 @@ import { CollectionLearningPathApiService } from './collection-learning-path-api
 export const legacyLearningPathExerciseRouteGuard: CanActivateFn = async (route) => {
   const api = inject(CollectionLearningPathApiService);
   const router = inject(Router);
+  const legacy = {
+    pathId: route.paramMap.get('pathId') ?? '',
+    lessonId: route.paramMap.get('lessonId') ?? '',
+    exerciseId: route.paramMap.get('exerciseId') ?? '',
+  };
   const canonical = await api.resolveLegacyExerciseRoute(
-    route.paramMap.get('pathId') ?? '',
-    route.paramMap.get('lessonId') ?? '',
-    route.paramMap.get('exerciseId') ?? '',
-  );
+    legacy.pathId,
+    legacy.lessonId,
+    legacy.exerciseId,
+  ).catch(() => legacy);
   return router.createUrlTree([
     '/learning-paths', canonical.pathId,
     'lessons', canonical.lessonId,

@@ -35,6 +35,8 @@ not copied as a complete API framework.
 * Return canonical resource identities even when an alias is accepted during a
   migration.
 * Keep identifiers stable across API and product evolution.
+* Roll out incompatible-looking contract changes with an expand-and-contract
+  compatibility window so old clients keep working with the new server.
 
 Vocora adopts those principles for addressability and stability. It does not
 adopt Google's entire `name`-field or RPC method convention because the current
@@ -80,24 +82,32 @@ UUIDs. UUID conversion would rewrite mature foreign-key and progress boundaries
 without improving URL stability or privacy. Separation, not UUID syntax, is the
 required property.
 
-The database backfills mapping rows for existing resources, allocates new IDs
-with `AUTO_INCREMENT` after resource insertion, enforces one mapping per
-resource, and prevents mapping updates. Numeric IDs are not authorization:
-every lookup remains authenticated and resource-scoped.
+The database installs assignment triggers before backfill, fills missing
+mappings with conflict-safe inserts, verifies that no resource is unmapped,
+and allocates future IDs with `AUTO_INCREMENT`. Mapping rows reject explicit ID
+assignment, update, and deletion. Parent bindings are also immutable because a
+child's parent is part of its complete canonical name; a real move creates a
+new resource while the old identity is retained or retired. Numeric IDs are not
+authorization: every lookup remains authenticated and resource-scoped.
 
 # Migration
 
 Migration `020_learning_path_route_public_ids.sql` adds and backfills route-ID
 mapping tables without changing internal keys, source IDs, learner progress, or
-content rows. Existing resources receive IDs in internal creation order; future
-IDs increase independently for paths, lessons, and exercises.
+content rows. Its DDL and triggers are idempotent so setup can restart after a
+partially applied MySQL DDL batch. Existing resources receive IDs in internal
+creation order; future IDs increase independently for paths, lessons, and
+exercises.
 
 New navigation and API calls use canonical numeric IDs. Existing singular
 slug-based exercise URLs remain a temporary compatibility alias: the frontend
 calls an authenticated legacy resolver, verifies the path/lesson/exercise
 hierarchy, and replaces the browser URL with the canonical numeric URL. Existing
 `/library/{collectionId}/learning-path` links similarly load once and replace
-the URL with `/learning-paths/{pathPublicId}`. Compatibility aliases return
+the URL with `/learning-paths/{pathPublicId}`. During the expand-and-contract
+rollout, existing API endpoints accept legacy nonnumeric source IDs for cached
+clients, and the new UI falls back to the legacy collection route when an older
+backend has not returned canonical path IDs yet. Compatibility aliases return
 canonical IDs and must not become a second permanent identity system.
 
 Bookmarks and analytics should store the canonical URL after redirect. Route
@@ -110,5 +120,6 @@ versions change. Retired resources keep their mapping so IDs are never reused.
 [2] [Google API Design Guide: Resource names](https://cloud.google.com/apis/design/resource_names)
 [3] [AIP-121: Resource-oriented design](https://google.aip.dev/121)
 [4] [AIP-122: Resource names](https://google.aip.dev/122)
-[5] [Collection Learning Path architecture](../../docs/COLLECTION_LEARNING_PATH.md)
-[6] [Route identity migration](../../back/database/migrations/020_learning_path_route_public_ids.sql)
+[5] [AIP-180: Backwards compatibility](https://google.aip.dev/180)
+[6] [Collection Learning Path architecture](../../docs/COLLECTION_LEARNING_PATH.md)
+[7] [Route identity migration](../../back/database/migrations/020_learning_path_route_public_ids.sql)

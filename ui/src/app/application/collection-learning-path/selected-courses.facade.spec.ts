@@ -105,4 +105,12 @@ describe('SelectedCoursesFacade', () => {
     expect(facade.error()).toBe('offline');
     expect(facade.loading()).toBe(false);
   });
+
+  it('keeps course navigation available while an older backend returns only collection ids', async () => {
+    queryLearningPathCollectionIds.mockResolvedValue({ collectionIds: ['bbc-six-minute-english'] });
+
+    expect(await facade.load()).toBe(true);
+    expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
+      .toEqual([{ id: 'bbc-six-minute-english', pathId: null }]);
+  });
 });

@@ -37,4 +37,28 @@ describe('legacyLearningPathExerciseRouteGuard', () => {
       '/learning-paths/1/lessons/5/exercises/10',
     );
   });
+
+  it('uses the existing source-id API route while an older backend has no resolver endpoint', async () => {
+    const resolveLegacyExerciseRoute = vi.fn().mockRejectedValue(new Error('Not found'));
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        { provide: CollectionLearningPathApiService, useValue: { resolveLegacyExerciseRoute } },
+      ],
+    });
+    const route = {
+      paramMap: convertToParamMap({
+        pathId: 'source-path',
+        lessonId: 'source-lesson',
+        exerciseId: 'source-exercise',
+      }),
+    };
+
+    const result = await TestBed.runInInjectionContext(() =>
+      legacyLearningPathExerciseRouteGuard(route as never, {} as never) as Promise<unknown>);
+
+    expect(TestBed.inject(Router).serializeUrl(result as never)).toBe(
+      '/learning-paths/source-path/lessons/source-lesson/exercises/source-exercise',
+    );
+  });
 });

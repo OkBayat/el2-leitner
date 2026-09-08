@@ -55,6 +55,17 @@ describe("Learning Path route identity", () => {
     assert.deepEqual(view.resumePoint, { lessonId: "5", exerciseId: "10" });
   });
 
+  it("temporarily accepts a legacy source id on existing API application paths", async () => {
+    const definitionReader = {
+      async findByRoutePublicId() { return null; },
+      async findByPublicId(id) { return id === "source-path" ? structuredClone(path) : null; },
+    };
+    const view = await new GetLearningPath({ definitionReader, progressReader, accessReader })
+      .execute("user-1", "source-path");
+
+    assert.equal(view.path.publicId, "1");
+  });
+
   it("maps a complete legacy source hierarchy to one canonical route", async () => {
     const definitionReader = {
       async findByPublicId(id) { return id === "source-path" ? structuredClone(path) : null; },

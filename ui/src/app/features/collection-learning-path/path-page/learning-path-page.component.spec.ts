@@ -12,6 +12,20 @@ const resume: LearningPathResumeView = { pathId: 'path-1', pathStatus: 'availabl
 
 describe('LearningPathPageComponent', () => {
   it('replaces the legacy collection route with the canonical public-id route', async () => {
+    const numericView = { ...view, path: { ...view.path, id: '1' } };
+    const facade = { view: signal(numericView), resume: signal(resume), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), loadByPathId: vi.fn(), start: vi.fn() };
+    TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: 'collection-1' })) } }] });
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const fixture = TestBed.createComponent(LearningPathPageComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(facade.load).toHaveBeenCalledWith('collection-1');
+    expect(navigate).toHaveBeenCalledWith(['/learning-paths', '1'], { replaceUrl: true });
+  });
+
+  it('keeps the legacy collection route while an older backend still returns source ids', async () => {
     const facade = { view: signal(view), resume: signal(resume), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), loadByPathId: vi.fn(), start: vi.fn() };
     TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: 'collection-1' })) } }] });
     const router = TestBed.inject(Router);
@@ -21,7 +35,7 @@ describe('LearningPathPageComponent', () => {
     await fixture.whenStable();
 
     expect(facade.load).toHaveBeenCalledWith('collection-1');
-    expect(navigate).toHaveBeenCalledWith(['/learning-paths', 'path-1'], { replaceUrl: true });
+    expect(navigate).not.toHaveBeenCalled();
   });
 
   it('loads by public path id and starts an available path when its current trail node is opened', async () => {

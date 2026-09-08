@@ -7,6 +7,7 @@ import { LessonNodeComponent } from '../components/lesson-node/lesson-node.compo
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
 
 const LESSON_BATCH_SIZE = 40;
+const CANONICAL_PUBLIC_ID = /^[1-9][0-9]*$/u;
 
 @Component({
   selector: 'app-learning-path-page',
@@ -82,6 +83,8 @@ export class LearningPathPageComponent {
   private async loadLegacyCollectionRoute(collectionId: string): Promise<void> {
     if (!await this.facade.load(collectionId)) return;
     const publicId = this.facade.view()?.path.id;
-    if (publicId) await this.router.navigate(['/learning-paths', publicId], { replaceUrl: true });
+    if (publicId && CANONICAL_PUBLIC_ID.test(publicId)) {
+      await this.router.navigate(['/learning-paths', publicId], { replaceUrl: true });
+    }
   }
 }

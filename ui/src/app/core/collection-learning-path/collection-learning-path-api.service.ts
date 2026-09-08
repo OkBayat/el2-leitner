@@ -25,7 +25,7 @@ export class CollectionLearningPathApiService {
 
   queryLearningPathCollectionIds(): Promise<{
     collectionIds: string[];
-    learningPaths: Array<{ collectionId: string; pathId: string }>;
+    learningPaths?: Array<{ collectionId: string; pathId: string }>;
   }> {
     return this.api.get('/api/learning-paths/collections');
   }

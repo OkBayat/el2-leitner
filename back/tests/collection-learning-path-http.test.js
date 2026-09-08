@@ -239,10 +239,15 @@ describe("Collection Learning Path HTTP adapter", () => {
   });
 
   it("resolves legacy slug routes to canonical numeric resource ids", async () => {
-    const { app } = createRouterHarness();
+    const { app, calls } = createRouterHarness();
     await request(app)
       .get("/api/learning-paths/legacy/path-1/lessons/lesson-1/exercises/exercise-1/route")
       .expect(200, { pathId: "1", lessonId: "5", exerciseId: "10" });
+    await request(app)
+      .get("/api/learning-paths/path-1/lessons/lesson-1/exercises/exercise-1")
+      .expect(200);
+    assert.ok(calls.some((call) => call.join(":")
+      === "getExerciseContext:authenticated-user:path-1:lesson-1:exercise-1"));
   });
 
   it("validates route identifiers and completion outcome envelopes before dispatch", async () => {
@@ -259,12 +264,7 @@ describe("Collection Learning Path HTTP adapter", () => {
       });
     assert.equal(calls.filter(([name]) => name === "completeExercise").length, 0);
 
-    await request(app).get("/api/learning-paths/path-1/resume").expect(400, {
-      error: {
-        code: "INVALID_LEARNING_PATH_PUBLIC_ID",
-        message: "Learning Path public id must be a positive decimal integer.",
-      },
-    });
+    await request(app).get("/api/learning-paths/path-1/resume").expect(200);
     await request(app).get("/api/learning-paths/18446744073709551616/resume").expect(400);
   });
 

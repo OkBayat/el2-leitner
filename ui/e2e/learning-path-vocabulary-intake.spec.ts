@@ -19,7 +19,7 @@ function context(state: 'available' | 'in_progress' | 'completed', newCount: num
         schemaVersion: 1,
         required: true,
         completionPolicy: 'vocabulary-intake',
-        config: { scope: { kind: 'lesson-source' } },
+        config: { scope: { kind: 'lesson-source' }, presentation: 'slides' },
       },
       progress: state === 'available' ? null : {
         status: state === 'completed' ? 'completed' : 'in_progress',
@@ -95,11 +95,11 @@ async function mockIntake(page: Page) {
     state = 'completed';
     await route.fulfill({ json: {
       pathId, lessonId, exerciseId, exerciseStatus: 'completed', lessonStatus: 'in_progress',
-      pathStatus: 'in_progress', resumePoint: { lessonId, exerciseId: 'cvfi-u01-quick-review' }, progressRevision: 1,
+      pathStatus: 'in_progress', resumePoint: { lessonId, exerciseId: '2' }, progressRevision: 1,
     } });
   });
   await page.route(`**/api/learning-paths/${pathId}/resume`, (route) => route.fulfill({ json: {
-    pathId, pathStatus: 'in_progress', resumePoint: { lessonId, exerciseId: 'cvfi-u01-quick-review' }, progressRevision: 1,
+    pathId, pathStatus: 'in_progress', resumePoint: { lessonId, exerciseId: '2' }, progressRevision: 1,
   } }));
   return commands;
 }

@@ -80,22 +80,7 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
         await pool.execute(`DELETE FROM user_learning_path_lesson_progress WHERE user_id IN (${placeholders})`, users);
         await pool.execute(`DELETE FROM user_learning_path_progress WHERE user_id IN (${placeholders})`, users);
       }
-      await pool.execute(
-        "DELETE er FROM learning_path_exercise_route_ids er JOIN learning_path_exercises e ON e.id = er.exercise_id WHERE e.public_id = ?",
-        [ids.exercise],
-      );
-      await pool.execute(
-        "DELETE lr FROM learning_path_lesson_route_ids lr JOIN learning_path_lessons l ON l.id = lr.lesson_id WHERE l.public_id = ?",
-        [ids.lesson],
-      );
-      await pool.execute(
-        "DELETE pr FROM learning_path_route_ids pr JOIN collection_learning_paths p ON p.id = pr.learning_path_id WHERE p.public_id IN (?, ?)",
-        [ids.path, ids.rollbackPath],
-      );
-      await pool.execute("DELETE FROM learning_path_exercises WHERE public_id = ?", [ids.exercise]);
-      await pool.execute("DELETE FROM learning_path_lessons WHERE public_id = ?", [ids.lesson]);
-      await pool.execute("DELETE FROM collection_learning_paths WHERE public_id IN (?, ?)", [ids.path, ids.rollbackPath]);
-      await pool.execute("DELETE FROM collections WHERE public_id = ?", [ids.collection]);
+      // Route identities are append-only. Random content fixtures remain only in the dedicated _ci database.
       for (const userId of users) await pool.execute("DELETE FROM users WHERE id = ?", [userId]);
     } finally {
       await pool.end();
@@ -156,6 +141,38 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
       lessonSlug: "episode-fixture",
       testId: "test-1",
     });
+  });
+
+  await t.test("route ids and hierarchical parent bindings reject mutation at the database boundary", async () => {
+    const read = await definitionQueries.findByPublicId(ids.path);
+    await assert.rejects(
+      pool.execute("UPDATE learning_path_route_ids SET public_id = public_id WHERE public_id = ?", [read.publicId]),
+      (error) => error?.sqlMessage === "Learning Path route identities are immutable.",
+    );
+    await assert.rejects(
+      pool.execute("DELETE FROM learning_path_lesson_route_ids WHERE public_id = ?", [read.lessons[0].publicId]),
+      (error) => error?.sqlMessage === "Learning Path lesson route identities are append-only.",
+    );
+    await assert.rejects(
+      pool.execute(
+        `INSERT INTO learning_path_exercise_route_ids (public_id, exercise_id)
+         SELECT 18446744073709551614, id FROM learning_path_exercises WHERE public_id = ?`,
+        [ids.exercise],
+      ),
+      (error) => error?.code === "ER_BAD_NULL_ERROR",
+    );
+    await assert.rejects(
+      pool.execute("UPDATE collection_learning_paths SET collection_id = collection_id + 1 WHERE public_id = ?", [ids.path]),
+      (error) => error?.code === "ER_BAD_NULL_ERROR",
+    );
+    await assert.rejects(
+      pool.execute("UPDATE learning_path_lessons SET learning_path_id = learning_path_id + 1 WHERE public_id = ?", [ids.lesson]),
+      (error) => error?.code === "ER_BAD_NULL_ERROR",
+    );
+    await assert.rejects(
+      pool.execute("UPDATE learning_path_exercises SET lesson_id = lesson_id + 1 WHERE public_id = ?", [ids.exercise]),
+      (error) => error?.code === "ER_BAD_NULL_ERROR",
+    );
   });
 
   await t.test("progress writes remain scoped to the authenticated learner identity", async () => {

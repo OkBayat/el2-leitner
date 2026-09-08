@@ -35,6 +35,9 @@ export const exerciseId = (value) => identifier(
   "A valid Learning Path exercise id is required.",
 );
 
+const decimalRouteId = /^[0-9]+$/u;
+const canonicalRouteId = /^[1-9][0-9]*$/u;
+
 export function routePublicId(value, codeName, label) {
   const normalized = typeof value === "string" ? value.trim() : String(value ?? "").trim();
   const withinUnsignedBigInt = /^[1-9][0-9]{0,19}$/u.test(normalized)
@@ -48,6 +51,32 @@ export function routePublicId(value, codeName, label) {
   return normalized;
 }
 
+function routeOrLegacyId(value, sourceIdentifier, codeName, label) {
+  const id = sourceIdentifier(value);
+  return decimalRouteId.test(id) ? routePublicId(id, codeName, label) : id;
+}
+
+export const learningPathRouteId = (value) => routeOrLegacyId(
+  value,
+  learningPathId,
+  "LEARNING_PATH",
+  "Learning Path",
+);
+
+export const lessonRouteId = (value) => routeOrLegacyId(
+  value,
+  lessonId,
+  "LEARNING_PATH_LESSON",
+  "Learning Path lesson",
+);
+
+export const exerciseRouteId = (value) => routeOrLegacyId(
+  value,
+  exerciseId,
+  "LEARNING_PATH_EXERCISE",
+  "Learning Path exercise",
+);
+
 export const resourcePublicId = (resource) => String(resource.publicId ?? resource.id);
 
 function ensurePublishedPath(path) {
@@ -58,8 +87,8 @@ function ensurePublishedPath(path) {
 }
 
 export async function loadPathById(definitionReader, rawPathId) {
-  const id = learningPathId(rawPathId);
-  const path = typeof definitionReader.findByRoutePublicId === "function"
+  const id = learningPathRouteId(rawPathId);
+  const path = canonicalRouteId.test(id) && typeof definitionReader.findByRoutePublicId === "function"
     ? await definitionReader.findByRoutePublicId(id)
     : await definitionReader.findByPublicId(id);
   return ensurePublishedPath(path);

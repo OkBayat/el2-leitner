@@ -538,8 +538,10 @@ prefixes:
 
 Once assigned, a path, lesson, or exercise route ID never changes and is never
 recycled. A title, display-name, ordering, or content-version change does not
-change the route. Legacy slug routes may resolve and redirect during migration,
-but responses and newly generated links use the canonical numeric identity.
+change the route. A resource also cannot move to another route parent; model a
+real move as a new resource and retire the old identity. Legacy slug routes and
+API identifiers may resolve during the expand-and-contract migration, but
+responses and newly generated links use the canonical numeric identity.
 
 ### Ordering
 
