@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Lesson Exercise Design"
+  short_description: "Design evidence-backed vocabulary lesson paths."
+  default_prompt: "Use $k2-lesson-exercise-design. Audit the specified vocabulary-led lesson or supplied lesson content, preserve source truth, build a prerequisite-aware learning path with vocabulary intake and spelling/dictation as the fixed first two exercises, then derive only the later objectives the lesson actually needs. Mix reusable slide interactions by cognitive purpose, separate research findings from Vocora design synthesis, include source and research evidence for every exercise and prerequisite edge, close the source-target coverage audit, and return one canonical JSON lesson-plan object. While the slide data contract is provisional, use only the skill's placeholder slide envelope and do not invent runtime component fields."

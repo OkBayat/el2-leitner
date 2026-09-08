@@ -2,10 +2,26 @@ name: Test
 
 on:
   pull_request:
+    paths:
+      - 'back/**'
+      - 'ui/**'
+      - 'speech/**'
+      - '.dockerignore'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/test.yml'
   push:
     branches:
       - main
       - agent/**
+    paths:
+      - 'back/**'
+      - 'ui/**'
+      - 'speech/**'
+      - '.dockerignore'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/test.yml'
 
 permissions:
   contents: read

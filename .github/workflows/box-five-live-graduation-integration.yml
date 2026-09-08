@@ -2,10 +2,50 @@ name: Box Five Live Graduation Integration
 
 on:
   pull_request:
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/learning/**'
+      - 'back/src/domain/learning/**'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
+      - 'back/src/infrastructure/persistence/mysql/*Learning*.js'
+      - 'back/src/infrastructure/persistence/mysql/*Review*.js'
+      - 'back/src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/interfaces/http/apiRouter.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/Dockerfile'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/box-five-live-graduation-integration.yml'
   push:
     branches:
       - main
       - agent/**
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/learning/**'
+      - 'back/src/domain/learning/**'
+      - 'back/src/domain/library/VocabularyNormalizer.js'
+      - 'back/src/infrastructure/persistence/mysql/*Learning*.js'
+      - 'back/src/infrastructure/persistence/mysql/*Review*.js'
+      - 'back/src/infrastructure/persistence/mysql/repairHistoricalBoxFiveProgress.js'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/interfaces/http/apiRouter.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/Dockerfile'
+      - '.env.example'
+      - 'docker-compose.yml'
+      - '.github/workflows/box-five-live-graduation-integration.yml'
 
 permissions:
   contents: read

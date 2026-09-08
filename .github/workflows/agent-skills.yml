@@ -9,7 +9,8 @@ on:
       - '.github/workflows/agent-skills.yml'
   push:
     branches:
-      - feature/agent-guides-bbc-bundle-skill
+      - main
+      - learning-path
     paths:
       - 'AGENTS.md'
       - '.agents/**'
@@ -45,3 +46,12 @@ jobs:
         run: |
           python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-bundle-request.py
           python3 .agents/skills/k2-bbc-listening-bundles/scripts/test-validate-skill.py
+      - name: Validate changed skill architecture
+        if: github.event_name == 'pull_request'
+        run: node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js --base "${{ github.event.pull_request.base.sha }}" --head HEAD
+      - name: Validate lesson exercise design skill architecture
+        run: python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-skill.py
+      - name: Run lesson exercise design skill tests
+        run: |
+          python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-lesson-plan.py
+          python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-skill.py
