@@ -3,8 +3,6 @@ import { CollectionLearningPathApiService } from '../../core/collection-learning
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 
-const INITIAL_COURSE_SLUG = 'bbc-six-minute-english';
-
 export type SelectedCourse = LibraryCollection & { learningPathId: string | null };
 
 function errorMessage(error: unknown): string {
@@ -24,11 +22,7 @@ export function courseMenuCollections(
     if (!availableCollectionIds.has(collection.id) && !learningPathIds.has(collection.id)) return [];
     return [{ ...collection, learningPathId: learningPathIds.get(collection.id) ?? null }];
   });
-  const selected = courses.filter((collection) => collection.subscribed).sort(byTitle);
-  if (selected.length) return selected;
-
-  const initialCourse = courses.find((collection) => collection.slug === INITIAL_COURSE_SLUG);
-  return initialCourse ? [initialCourse] : [];
+  return courses.filter((collection) => collection.subscribed).sort(byTitle);
 }
 
 @Injectable({ providedIn: 'root' })
