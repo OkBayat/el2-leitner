@@ -63,9 +63,13 @@ describe('LibraryPageComponent', () => {
   ]);
   const list = vi.fn();
   const navigate = vi.fn();
+  const loadCatalog = vi.fn(async () => true);
+  const journeyError = signal('');
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    journeyError.set('');
+    loadCatalog.mockResolvedValue(true);
     list.mockResolvedValue({collections: all, capabilities: {canManage: false}});
     await TestBed.configureTestingModule({
       imports: [LibraryPageComponent],
@@ -77,8 +81,8 @@ describe('LibraryPageComponent', () => {
           useValue: {
             loading: signal(false),
             enteringId: signal<string | null>(null),
-            error: signal(''),
-            load: vi.fn(async () => true),
+            error: journeyError,
+            loadCatalog,
             viewFor: (id: string) => views.get(id) ?? null,
           },
         },
@@ -143,6 +147,23 @@ describe('LibraryPageComponent', () => {
     ]);
   });
 
+  it('keeps an enrolled course after its vocabulary is removed from Leitner', async () => {
+    const fixture = await render();
+    list.mockResolvedValueOnce({
+      collections: all.map((item) => item.id === zetaCourse.id ? {...item, subscribed: false} : item),
+      capabilities: {canManage: false},
+    });
+
+    await fixture.componentInstance.load();
+    fixture.detectChanges();
+
+    expect(itemNames(fixture.nativeElement, 'library-my-items')).toEqual([
+      'Alpha Course Vocabulary',
+      'Beta Collection',
+      'Zeta Course',
+    ]);
+  });
+
   it('opens course and collection items in the existing detail route', async () => {
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
@@ -153,5 +174,18 @@ describe('LibraryPageComponent', () => {
     item?.click();
 
     expect(navigate).toHaveBeenCalledWith(['/library', alphaCourse.id]);
+  });
+
+  it('shows a retry action when known courses fail to load', async () => {
+    journeyError.set('Some courses could not load. Open a course to try again.');
+    loadCatalog.mockResolvedValue(false);
+    const fixture = await render();
+    const host: HTMLElement = fixture.nativeElement;
+
+    expect(host.querySelector('[role="alert"]')?.textContent).toContain('Some courses could not load');
+    host.querySelector<HTMLButtonElement>('[data-testid="course-load-retry"]')?.click();
+    await fixture.whenStable();
+
+    expect(loadCatalog).toHaveBeenCalledTimes(3);
   });
 });

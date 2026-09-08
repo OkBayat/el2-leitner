@@ -70,7 +70,7 @@ describe('LibraryDetailPageComponent', () => {
   };
   const navigate = vi.fn();
   const loadSelectedCourses = vi.fn(async () => true);
-  const loadPaths = vi.fn(async () => true);
+  const loadCatalog = vi.fn(async () => true);
   const enter = vi.fn();
   let activeCourse: CollectionLearningPathView | null = null;
 
@@ -92,7 +92,7 @@ describe('LibraryDetailPageComponent', () => {
           useValue: {
             enteringId: signal<string | null>(null),
             error: signal(''),
-            load: loadPaths,
+            loadCatalog,
             enter,
             viewFor: () => activeCourse,
           },

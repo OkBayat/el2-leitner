@@ -41,32 +41,48 @@ function pathView(collectionId: string): CollectionLearningPathView {
 
 describe('LibraryLearningPathJourneyFacade', () => {
   const queryCollectionLearningPath = vi.fn();
+  const queryLearningPathCollectionIds = vi.fn();
   let facade: LibraryLearningPathJourneyFacade;
 
   beforeEach(() => {
     queryCollectionLearningPath.mockReset();
+    queryLearningPathCollectionIds.mockReset();
     TestBed.configureTestingModule({ providers: [
       LibraryLearningPathJourneyFacade,
-      { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath } },
+      {
+        provide: CollectionLearningPathApiService,
+        useValue: {queryCollectionLearningPath, queryLearningPathCollectionIds},
+      },
       { provide: LibraryApiService, useValue: { subscribe: vi.fn() } },
     ] });
     facade = TestBed.inject(LibraryLearningPathJourneyFacade);
   });
 
-  it('discovers Learning Paths by collection identity instead of collection kind', async () => {
+  it('uses the course catalog to avoid probing standalone collections', async () => {
     const cambridge = collection();
     const unrelatedBook = collection({ id: 'other-book', slug: 'other-book', title: 'Other book' });
-    queryCollectionLearningPath.mockImplementation(async (collectionId: string) => {
-      if (collectionId === cambridge.id) return pathView(collectionId);
-      throw new Error('Learning Path not found');
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: [cambridge.id],
+      learningPaths: [{collectionId: cambridge.id, pathId: 'cvfi-learning-path'}],
     });
+    queryCollectionLearningPath.mockResolvedValue(pathView(cambridge.id));
 
-    expect(await facade.load([cambridge, unrelatedBook])).toBe(false);
+    expect(await facade.loadCatalog([cambridge, unrelatedBook])).toBe(true);
 
     expect(queryCollectionLearningPath).toHaveBeenCalledWith(cambridge.id);
-    expect(queryCollectionLearningPath).toHaveBeenCalledWith(unrelatedBook.id);
+    expect(queryCollectionLearningPath).not.toHaveBeenCalledWith(unrelatedBook.id);
     expect(facade.viewFor(cambridge.id)?.path.id).toBe('cvfi-learning-path');
     expect(facade.viewFor(unrelatedBook.id)).toBeNull();
+    expect(facade.error()).toBe('');
+  });
+
+  it('reports a real course detail failure after catalog discovery', async () => {
+    const cambridge = collection();
+    queryLearningPathCollectionIds.mockResolvedValue({collectionIds: [cambridge.id]});
+    queryCollectionLearningPath.mockRejectedValue(new Error('offline'));
+
+    expect(await facade.loadCatalog([cambridge])).toBe(false);
+    expect(facade.viewFor(cambridge.id)).toBeNull();
     expect(facade.error()).toContain('Some courses could not load');
   });
 

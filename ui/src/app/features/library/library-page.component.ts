@@ -50,9 +50,9 @@ export class LibraryPageComponent implements OnInit {
     return course ? [{collection, title: course.path.title}] : [];
   })));
   readonly myItems = computed<PersonalLibraryItem[]>(() => this.allCollections().flatMap((collection) => {
-    if (!collection.subscribed) return [];
     const course = this.learningPaths.viewFor(collection.id);
     const enrolled = course && course.path.learnerStatus !== 'available';
+    if (!enrolled && !collection.subscribed) return [];
     const kind: PersonalLibraryItem['kind'] = enrolled ? 'course' : 'collection';
     return [{
       collection,
@@ -68,7 +68,7 @@ export class LibraryPageComponent implements OnInit {
   async load(): Promise<void> {
     const result = await this.api.list();
     const collections = result.collections || [];
-    await this.learningPaths.load(collections);
+    await this.learningPaths.loadCatalog(collections);
     this.collections.set(collections);
     this.canManage.set(Boolean(result.capabilities?.canManage));
   }

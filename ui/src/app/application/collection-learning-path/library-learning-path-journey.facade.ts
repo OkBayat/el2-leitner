@@ -42,21 +42,32 @@ export class LibraryLearningPathJourneyFacade {
     this.loading.set(true);
     this.error.set('');
     try {
-      const results = await Promise.all(collections.map(async (collection) => {
-        try {
-          return [collection.id, await this.api.queryCollectionLearningPath(collection.id)] as const;
-        } catch {
-          return null;
-        }
-      }));
+      return await this.loadKnownCourses(request, collections);
+    } finally {
+      if (request === this.requestVersion) this.loading.set(false);
+    }
+  }
+
+  async loadCatalog(collections: readonly Pick<LibraryCollection, 'id'>[]): Promise<boolean> {
+    const request = ++this.requestVersion;
+    this.loading.set(true);
+    this.error.set('');
+    try {
+      const catalog = await this.api.queryLearningPathCollectionIds();
       if (request !== this.requestVersion) return false;
-      const available = results.filter((result): result is readonly [string, CollectionLearningPathView] => result !== null);
-      this.views.set(new Map(available));
-      if (available.length !== results.length) {
-        this.error.set('Some courses could not load. Open a course to try again.');
-        return false;
+      const courseIds = new Set(
+        catalog.learningPaths?.map((item) => item.collectionId) ?? catalog.collectionIds ?? [],
+      );
+      return await this.loadKnownCourses(
+        request,
+        collections.filter((collection) => courseIds.has(collection.id)),
+      );
+    } catch {
+      if (request === this.requestVersion) {
+        this.views.set(new Map());
+        this.error.set('Courses could not load. Try again.');
       }
-      return true;
+      return false;
     } finally {
       if (request === this.requestVersion) this.loading.set(false);
     }
@@ -121,5 +132,28 @@ export class LibraryLearningPathJourneyFacade {
     const current = await this.api.queryCollectionLearningPath(collectionId);
     this.views.update((views) => new Map(views).set(collectionId, current));
     return current;
+  }
+
+  private async loadKnownCourses(
+    request: number,
+    collections: readonly Pick<LibraryCollection, 'id'>[],
+  ): Promise<boolean> {
+    const results = await Promise.all(collections.map(async (collection) => {
+      try {
+        return [collection.id, await this.api.queryCollectionLearningPath(collection.id)] as const;
+      } catch {
+        return null;
+      }
+    }));
+    if (request !== this.requestVersion) return false;
+    const available = results.filter(
+      (result): result is readonly [string, CollectionLearningPathView] => result !== null,
+    );
+    this.views.set(new Map(available));
+    if (available.length !== results.length) {
+      this.error.set('Some courses could not load. Open a course to try again.');
+      return false;
+    }
+    return true;
   }
 }

@@ -178,7 +178,7 @@ export class LibraryDetailPageComponent implements OnInit {
     const result = await this.api.get(id);
     this.collection.set(result.collection);
     this.canManage.set(Boolean(result.capabilities?.canManage));
-    await this.learningPaths.load([result.collection]);
+    await this.learningPaths.loadCatalog([result.collection]);
   }
 
   private async reload(): Promise<void> {

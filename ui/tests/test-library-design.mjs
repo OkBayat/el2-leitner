@@ -32,9 +32,9 @@ assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must retain the d
 
 assert.match(pageStyles, /grid-template-columns:\s*minmax\(0, 1fr\)/u, 'Library must begin with a one-column mobile layout.');
 assert.match(pageStyles, /min-height:\s*56px/u, 'Library items must have large touch targets.');
-assert.match(pageStyles, /var\(--vocora-surface-base\)/u, 'Library items must use design-system surfaces.');
-assert.match(pageStyles, /var\(--vocora-text-primary\)/u, 'Library items must use theme-aware text tokens.');
-assert.match(pageStyles, /var\(--vocora-focus-ring\)/u, 'Library items must preserve visible focus in both themes.');
+assert.match(pageHtml, /mat-stroked-button/u, 'Library items must use the standard outlined Material button variant.');
+assert.match(pageHtml, /w-100 d-flex justify-content-start align-items-center text-start text-truncate/u, 'Library item layout must use Bootstrap utilities.');
+assert.doesNotMatch(pageStyles, /\.library-item:hover|\.library-item:focus-visible/u, 'Feature styles must not reskin Material hover or focus states.');
 assert.match(pageStyles, /@media \(min-width:\s*720px\)/u, 'Library layout must be mobile-first.');
 
 assert.match(detailPage, /data-testid="library-detail-page"/u, 'Collection details need a stable page locator.');

@@ -135,6 +135,10 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
       subscribed,
     }],
   } }));
+  await page.route('**/api/learning-paths/collections', (route) => route.fulfill({json: {
+    collectionIds: [collectionId],
+    learningPaths: [{collectionId, pathId}],
+  }}));
   await page.route(`**/api/library/${collectionId}`, (route) => route.fulfill({ json: {
     collection: {
       id: collectionId,
@@ -174,14 +178,13 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   await page.goto('/library');
   await expect(page.getByRole('heading', {name: 'All Courses'})).toBeVisible();
   const courseItem = page.getByTestId('library-all-courses').getByRole('button', {name: 'BBC 6 Minute English'});
-  const lightBackground = await courseItem.evaluate((element) => getComputedStyle(element).backgroundColor);
+  const lightColor = await courseItem.evaluate((element) => getComputedStyle(element).color);
   expect((await courseItem.boundingBox())?.height).toBeGreaterThanOrEqual(44);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
-  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).backgroundColor))
-    .not.toBe(lightBackground);
+  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).color)).not.toBe(lightColor);
   await courseItem.focus();
-  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+  await expect(courseItem).toBeFocused();
   await courseItem.click();
   await expect(page.getByTestId('library-detail-page')).toBeVisible();
   await expect(page.getByTestId('leitner-only-action')).toContainText('Add to Leitner Only');
