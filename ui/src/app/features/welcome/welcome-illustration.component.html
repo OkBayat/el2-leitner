@@ -1,0 +1,146 @@
+@switch (kind()) {
+  @case ('welcome') {
+    <svg
+      viewBox="0 0 320 240"
+      role="img"
+      aria-label="A welcoming path leading toward a goal"
+    >
+      <circle class="soft" cx="160" cy="120" r="96" />
+      <path
+        class="route"
+        d="M66 177c42-7 43-52 77-54 30-2 33 30 62 22 25-7 21-41 49-57"
+      />
+      <circle class="accent" cx="66" cy="177" r="12" />
+      <path class="flag" d="M251 42v56M252 44h43l-13 17 13 17h-43" />
+      <path
+        class="bird"
+        d="M119 78c13-20 48-24 67-4 11 12 12 31 3 45-9 13-24 20-41 17-8 12-20 19-37 20 8-9 12-18 12-27-20-17-21-35-4-51Z"
+      />
+      <circle class="eye" cx="168" cy="83" r="5" />
+      <path class="beak" d="m186 91 22 8-21 11" />
+    </svg>
+  }
+  @case ('daily') {
+    <svg viewBox="0 0 320 240" role="img" aria-label="A calm daily study plan">
+      <circle class="soft" cx="160" cy="120" r="96" />
+      <rect
+        class="surface line"
+        x="66"
+        y="54"
+        width="188"
+        height="142"
+        rx="22"
+      />
+      <path class="line" d="M66 92h188M108 42v30M212 42v30" />
+      <rect class="soft" x="88" y="112" width="40" height="40" rx="10" />
+      <rect class="soft" x="140" y="112" width="40" height="40" rx="10" />
+      <rect class="soft" x="192" y="112" width="40" height="40" rx="10" />
+      <path class="check" d="m96 132 8 8 16-18M148 132l8 8 16-18" />
+      <circle class="orange" cx="212" cy="132" r="8" />
+      <path class="accent-stroke" d="M103 172h114" />
+    </svg>
+  }
+  @case ('learning') {
+    <svg
+      viewBox="0 0 320 240"
+      role="img"
+      aria-label="Guided lessons with interactive exercises"
+    >
+      <circle class="soft" cx="160" cy="120" r="96" />
+      <rect
+        class="surface line"
+        x="63"
+        y="76"
+        width="120"
+        height="116"
+        rx="18"
+      />
+      <rect
+        class="surface line"
+        x="137"
+        y="48"
+        width="120"
+        height="116"
+        rx="18"
+      />
+      <path class="accent-stroke" d="M160 78h74M160 100h52" />
+      <circle class="accent" cx="197" cy="133" r="21" />
+      <path class="play" d="m190 121 18 12-18 12Z" />
+      <path class="line" d="M84 107h58M84 129h40M84 160h74" />
+      <circle class="orange" cx="90" cy="89" r="8" />
+      <path class="route" d="M75 58c32-27 57-22 76-6" />
+    </svg>
+  }
+  @case ('leitner') {
+    <svg
+      viewBox="0 0 320 240"
+      role="img"
+      aria-label="Words moving through the Leitner memory boxes"
+    >
+      <circle class="soft" cx="160" cy="120" r="96" />
+      <path
+        class="route"
+        d="M54 79c39-36 77-35 107-13M164 183c44 12 78-2 102-34"
+      />
+      <path class="arrow" d="m151 54 13 13-17 6M256 137l12 12-16 8" />
+      <rect
+        class="surface line"
+        x="51"
+        y="112"
+        width="62"
+        height="78"
+        rx="12"
+      />
+      <rect
+        class="surface line"
+        x="127"
+        y="91"
+        width="62"
+        height="99"
+        rx="12"
+      />
+      <rect
+        class="surface line"
+        x="203"
+        y="66"
+        width="62"
+        height="124"
+        rx="12"
+      />
+      <text class="number" x="82" y="158">1</text>
+      <text class="number" x="158" y="147">2</text>
+      <text class="number" x="234" y="133">5</text>
+      <path class="accent-stroke" d="M66 174h32M142 174h32M218 174h32" />
+    </svg>
+  }
+  @case ('ready') {
+    <svg
+      viewBox="0 0 320 240"
+      role="img"
+      aria-label="A ready collection of 1,500 IELTS words"
+    >
+      <circle class="soft" cx="160" cy="120" r="96" />
+      <rect
+        class="surface line tilted-left"
+        x="62"
+        y="66"
+        width="110"
+        height="140"
+        rx="18"
+      />
+      <rect
+        class="surface line tilted-right"
+        x="148"
+        y="59"
+        width="110"
+        height="140"
+        rx="18"
+      />
+      <path class="accent-stroke" d="M171 92h62M171 115h45M171 162h62" />
+      <text class="ielts" x="171" y="146">IELTS</text>
+      <circle class="accent" cx="105" cy="110" r="30" />
+      <path class="spark" d="M73 52v20M63 62h20M248 42v22M237 53h22" />
+      <text class="count" x="105" y="117">1,500</text>
+    </svg>
+  }
+}

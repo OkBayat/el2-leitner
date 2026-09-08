@@ -7,6 +7,7 @@ export const appRoutes: Routes = [
   { path: 'slide-showcase', canMatch: [() => isDevMode()], loadComponent: () => import('./features/slide-showcase/slide-showcase-page.component').then((m) => m.SlideShowcasePageComponent) },
   { path: 'login', loadComponent: () => import('./features/auth/login-page.component').then((m) => m.LoginPageComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
+  { path: 'welcome', canActivate: [authGuard], loadComponent: () => import('./features/welcome/welcome-page.component').then((m) => m.WelcomePageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
   { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },

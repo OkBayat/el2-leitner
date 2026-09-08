@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { finishNewLearnerWelcome, waitForDailyActivation } from './support/new-learner';
 
 const ADMIN_EMAIL = 'e2e-admin@example.com';
 const ADMIN_PASSWORD = 'password123';
@@ -9,7 +10,7 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
   await page.getByLabel('Password').fill(ADMIN_PASSWORD);
   await page.getByRole('button', { name: 'Create account' }).click();
 
-  const registered = await page.waitForURL(/\/dashboard$/u, { timeout: 4_000 })
+  const registered = await page.waitForURL(/\/(?:welcome|dashboard)$/u, { timeout: 4_000 })
     .then(() => true)
     .catch(() => false);
   if (!registered) {
@@ -18,10 +19,40 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
+  } else if (/\/welcome$/u.test(page.url())) {
+    await finishNewLearnerWelcome(page);
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
 }
+
+test('a new learner sees the welcome tour before reaching home', async ({ page }) => {
+  await page.goto('/register');
+  await page.getByLabel('Email').fill(`e2e-welcome-${Date.now()}@example.com`);
+  await page.getByLabel('Password').fill(ADMIN_PASSWORD);
+  await page.getByRole('button', { name: 'Create account' }).click();
+
+  await expect(page).toHaveURL(/\/welcome$/u);
+  await expect(page.getByRole('heading', { name: 'Build the English you need for IELTS' })).toBeVisible();
+  await expect(page.getByTestId('welcome-step')).toHaveCount(5);
+
+  for (let step = 1; step < 5; step += 1) {
+    await page.getByRole('button', { name: 'Next' }).click();
+  }
+
+  await expect(page.getByRole('heading', { name: 'Your daily IELTS vocabulary is set up' })).toBeVisible();
+  await expect(page.getByText(/1,500 IELTS words/u)).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 700 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.locator('html').evaluate((element) => element.setAttribute('data-theme', 'dark'));
+  await expect(page.locator('app-welcome-page')).toHaveCSS('background-color', 'rgb(15, 22, 17)');
+  const dailyActivation = waitForDailyActivation(page);
+  await page.getByRole('button', { name: 'Go to home' }).click();
+  await dailyActivation;
+
+  await expect(page).toHaveURL(/\/dashboard$/u);
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
+});
 
 async function dueTerms(page: Page, minimum = 1): Promise<string[]> {
   let terms: string[] = [];

@@ -26,6 +26,7 @@ for (const required of [
   'src/app/domain/learning/learning-rules.ts', 'src/app/domain/remediation/remediation.ts',
   'src/app/application/review/review-session.service.ts',
   'src/app/features/auth/login-page.component.ts', 'src/app/features/auth/register-page.component.ts',
+  'src/app/features/welcome/welcome-page.component.ts',
   'src/app/features/dashboard/dashboard-page.component.ts', 'src/app/features/review/review-page.component.ts',
   'src/app/features/review/review-page.component.html', 'src/app/features/review/review-page.component.scss',
   'src/app/features/review/review-answer-field.ts', 'src/app/features/review/review-answer-field.spec.ts',
@@ -47,7 +48,7 @@ assert.match(pkg.scripts.e2e, /playwright test/u);
 assert.match(pkg.scripts['build:production'], /ng build/u);
 
 const routes = read('src/app/app.routes.ts');
-for (const route of ['login', 'register', 'dashboard', 'review', 'words', 'reports', 'settings', 'library', 'leitner-house/:house']) {
+for (const route of ['login', 'register', 'welcome', 'dashboard', 'review', 'words', 'reports', 'settings', 'library', 'leitner-house/:house']) {
   assert.ok(routes.includes(`path: '${route}'`), `Route ${route} must exist.`);
 }
 assert.match(routes, /\{ path: 'review', canActivate: \[authGuard\], loadComponent:/u, 'Review must remain authenticated while living outside the application shell.');

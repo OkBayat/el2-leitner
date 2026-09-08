@@ -1,4 +1,5 @@
 import {expect, test, type Locator, type Page} from '@playwright/test';
+import {finishNewLearnerWelcome} from './support/new-learner';
 
 const PASSWORD = 'password123';
 let accountCounter = 0;
@@ -9,7 +10,7 @@ async function authenticate(page: Page): Promise<void> {
 	await page.getByLabel('Email').fill(`e2e-charts-${Date.now()}-${accountCounter}@example.com`);
 	await page.getByLabel('Password').fill(PASSWORD);
 	await page.getByRole('button', {name: 'Create account'}).click();
-	await expect(page).toHaveURL(/\/dashboard$/u);
+	await finishNewLearnerWelcome(page);
 	await expect(page.getByRole('heading', {name: 'Today', exact: true})).toBeVisible({timeout: 10_000});
 }
 

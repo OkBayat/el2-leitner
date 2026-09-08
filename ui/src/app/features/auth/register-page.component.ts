@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +19,7 @@ import { ApiError } from '../../core/http/api-client.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterPageComponent {
-  private readonly auth=inject(AuthService); private readonly route=inject(ActivatedRoute); private readonly router=inject(Router); readonly loading=signal(false); readonly error=signal('');
+  private readonly auth=inject(AuthService); private readonly router=inject(Router); readonly loading=signal(false); readonly error=signal('');
   readonly form=new FormGroup({email:new FormControl('',{nonNullable:true,validators:[Validators.required,Validators.email]}),password:new FormControl('',{nonNullable:true,validators:[Validators.required,Validators.minLength(8)]})});
-  async submit():Promise<void>{this.error.set('');if(this.form.invalid){this.error.set('Use a valid email and a password of at least 8 characters.');return;}this.loading.set(true);try{await this.auth.register(this.form.controls.email.value,this.form.controls.password.value);await this.router.navigateByUrl(this.auth.safeReturnTo(this.route.snapshot.queryParamMap.get('returnTo')));}catch(error){this.error.set(error instanceof ApiError?error.message:'Registration failed.');}finally{this.loading.set(false);}}
+  async submit():Promise<void>{this.error.set('');if(this.form.invalid){this.error.set('Use a valid email and a password of at least 8 characters.');return;}this.loading.set(true);try{await this.auth.register(this.form.controls.email.value,this.form.controls.password.value);await this.router.navigateByUrl('/welcome');}catch(error){this.error.set(error instanceof ApiError?error.message:'Registration failed.');}finally{this.loading.set(false);}}
 }

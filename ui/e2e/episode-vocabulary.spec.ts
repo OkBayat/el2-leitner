@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { finishNewLearnerWelcome } from './support/new-learner';
 
 test('episode cover, levels and vocabulary connect to Leitner without activating unrelated words', async ({ page }) => {
   await page.addInitScript(() => {
@@ -12,7 +13,7 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await page.getByLabel('Email').fill(`e2e-episode-${Date.now()}@example.com`);
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page).toHaveURL(/\/dashboard$/u);
+  await finishNewLearnerWelcome(page);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page.locator('[data-testid="start-review"], [data-testid="practice-words"]')).toBeVisible({ timeout: 10_000 });
   await page.locator('.desktop-sidebar').getByRole('link', { name: 'BBC 6 Minute English' }).click();
