@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { parseSlideSequenceExerciseSlides } from './slide-sequence-exercise';
+import {
+  parseSlideSequenceExercise,
+  parseSlideSequenceExerciseSlides,
+} from './slide-sequence-exercise';
 
 describe('slide sequence exercise definition', () => {
   it('parses one ordered mixed-slide deck', () => {
@@ -29,5 +32,18 @@ describe('slide sequence exercise definition', () => {
     expect(() => parseSlideSequenceExerciseSlides({
       slides: [{ id: 'practice', type: 'choice' }],
     })).toThrow(/terminal/iu);
+  });
+
+  it('enables incorrect-answer remediation only when explicitly configured', () => {
+    const config = {
+      retryIncorrect: true,
+      slides: [
+        { id: 'practice', type: 'choice' },
+        { id: 'summary', type: 'summary', terminal: true },
+      ],
+    };
+
+    expect(parseSlideSequenceExercise(config).retryIncorrect).toBe(true);
+    expect(parseSlideSequenceExercise({ ...config, retryIncorrect: false }).retryIncorrect).toBe(false);
   });
 });

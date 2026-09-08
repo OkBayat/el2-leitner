@@ -32,7 +32,7 @@ export class SpeechService {
   private playbackSequence = 0;
   private readonly fallbackTimers = new Set<ReturnType<typeof setTimeout>>();
 
-  speak(text: string, rate = 0.85, observer?: SpeechPlaybackObserver): boolean {
+  speak(text: string, rate = 0.85, observer?: SpeechPlaybackObserver, voiceIndex = 0): boolean {
     if (!('speechSynthesis' in globalThis) || !('SpeechSynthesisUtterance' in globalThis)) return false;
     this.cancel();
     const playbackSequence = ++this.playbackSequence;
@@ -40,7 +40,11 @@ export class SpeechService {
     utterance.lang = 'en-GB';
     utterance.rate = clamp(rate, 0.45, 1.2);
     const voices = globalThis.speechSynthesis.getVoices();
-    utterance.voice = voices.find((voice) => /^en-GB/iu.test(voice.lang)) || voices.find((voice) => /^en/iu.test(voice.lang)) || null;
+    const britishEnglishVoices = voices.filter((voice) => /^en-GB/iu.test(voice.lang));
+    const otherEnglishVoices = voices.filter((voice) => /^en/iu.test(voice.lang) && !/^en-GB/iu.test(voice.lang));
+    const englishVoices = [...britishEnglishVoices, ...otherEnglishVoices];
+    const normalizedVoiceIndex = Number.isSafeInteger(voiceIndex) && voiceIndex >= 0 ? voiceIndex : 0;
+    utterance.voice = englishVoices.length > 0 ? englishVoices[normalizedVoiceIndex % englishVoices.length] : null;
 
     const words = speechWordRanges(text);
     let nativeBoundarySeen = false;

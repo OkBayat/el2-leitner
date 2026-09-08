@@ -65,4 +65,47 @@ describe('SlidesSequenceExerciseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Exercise unavailable');
     expect(fixture.componentInstance.slides()).toEqual([]);
   });
+
+  it('requeues an incorrectly answered scored slide before the terminal summary', () => {
+    TestBed.configureTestingModule({ imports: [SlidesSequenceExerciseComponent] });
+    const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+    fixture.componentInstance.load({
+      ...context,
+      config: { ...context.config, retryIncorrect: true },
+    });
+    fixture.detectChanges();
+    const slideExercise = fixture.debugElement.query(
+      By.directive(SlideExerciseComponent),
+    ).componentInstance as SlideExerciseComponent;
+
+    fixture.componentInstance.onContentEvent({
+      slideId: 'intro',
+      type: 'answered',
+      data: { correct: false },
+    });
+
+    expect(slideExercise.deck.map((slide) => slide.id)).toEqual([
+      'intro',
+      'intro-retry-1',
+      'summary',
+    ]);
+    expect(slideExercise.deck[1]).toEqual(expect.objectContaining({
+      rootSlideId: 'intro',
+      retryNumber: 1,
+      terminal: false,
+    }));
+
+    slideExercise.next();
+    fixture.componentInstance.onContentEvent({
+      slideId: 'intro-retry-1',
+      type: 'answered',
+      data: { correct: false },
+    });
+    expect(slideExercise.deck.map((slide) => slide.id)).toEqual([
+      'intro',
+      'intro-retry-1',
+      'intro-retry-2',
+      'summary',
+    ]);
+  });
 });

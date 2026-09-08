@@ -13,12 +13,12 @@ class FakeUtterance {
   constructor(readonly text: string) {}
 }
 
-function installSpeechSynthesis(): { utterance: () => FakeUtterance } {
+function installSpeechSynthesis(voices: SpeechSynthesisVoice[] = []): { utterance: () => FakeUtterance } {
   let latest: FakeUtterance | null = null;
   vi.stubGlobal('SpeechSynthesisUtterance', FakeUtterance);
   vi.stubGlobal('speechSynthesis', {
     cancel: vi.fn(),
-    getVoices: vi.fn(() => []),
+    getVoices: vi.fn(() => voices),
     speak: vi.fn((utterance: FakeUtterance) => { latest = utterance; }),
   });
   return {
@@ -104,5 +104,15 @@ describe('SpeechService playback events', () => {
 
     expect(firstBoundary).not.toHaveBeenCalled();
     expect(secondBoundary).toHaveBeenCalledWith(7, 8);
+  });
+
+  it('selects a deterministic English voice for dialogue turns', () => {
+    const voices = [{ lang: 'en-US' } as SpeechSynthesisVoice, { lang: 'en-GB' } as SpeechSynthesisVoice];
+    const speech = installSpeechSynthesis(voices);
+    const service = new SpeechService();
+
+    service.speak('Second speaker', 0.85, undefined, 1);
+
+    expect(speech.utterance().voice).toBe(voices[0]);
   });
 });

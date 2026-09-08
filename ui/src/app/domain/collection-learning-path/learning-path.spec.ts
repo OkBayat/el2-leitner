@@ -50,6 +50,9 @@ describe('Collection Learning Path UI domain', () => {
     expect(exerciseTypeLabel('slide-base')).toBe('Spelling practice');
     expect(exerciseTypeLabel('listening.ielts')).toBe('IELTS listening');
     expect(exerciseTypeLabel('custom.future-drill')).toBe('Future drill');
+    expect(exerciseTypeLabel('slides.sequence', { title: 'Relationship collocations' }))
+      .toBe('Relationship collocations');
+    expect(exerciseTypeLabel('slides.sequence', { title: '   ' })).toBe('Slide sequence');
   });
 
   it('uses canonical overviews only for confirmed numeric ids during mixed deployments', () => {

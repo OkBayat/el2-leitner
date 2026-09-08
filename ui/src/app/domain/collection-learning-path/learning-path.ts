@@ -184,7 +184,14 @@ const EXERCISE_LABELS: Readonly<Record<string, string>> = {
   'speaking.shadowing': 'Shadowing',
 };
 
-export function exerciseTypeLabel(type: string): string {
+export function exerciseTypeLabel(
+  type: string,
+  config: Readonly<Record<string, unknown>> = {},
+): string {
+  const configuredTitle = config['title'];
+  if (typeof configuredTitle === 'string' && configuredTitle.trim()) {
+    return configuredTitle.trim();
+  }
   const known = EXERCISE_LABELS[type];
   if (known) return known;
   const leaf = type.split('.').filter(Boolean).at(-1) || 'Exercise';

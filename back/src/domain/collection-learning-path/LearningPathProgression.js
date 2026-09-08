@@ -55,7 +55,8 @@ export function projectLearningPathProgress(path, progress = EMPTY_PROGRESS) {
   for (const lesson of lessons) {
     lessonCompletion.set(
       String(lesson.id),
-      requiredExercisesComplete(lesson.exercises, maps.exercises),
+      maps.lessons.get(String(lesson.id))?.status === "completed"
+        || requiredExercisesComplete(lesson.exercises, maps.exercises),
     );
   }
 

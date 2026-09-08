@@ -9,15 +9,20 @@ export interface SlideSequenceExerciseSlide {
   readonly itemId?: string;
 }
 
+export interface SlideSequenceExerciseDefinition {
+  readonly slides: readonly SlideSequenceExerciseSlide[];
+  readonly retryIncorrect: boolean;
+}
+
 function record(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value)
     ? value as Record<string, unknown>
     : null;
 }
 
-export function parseSlideSequenceExerciseSlides(
+export function parseSlideSequenceExercise(
   configValue: unknown,
-): readonly SlideSequenceExerciseSlide[] {
+): SlideSequenceExerciseDefinition {
   const config = record(configValue);
   if (!config || !Array.isArray(config['slides']) || config['slides'].length === 0) {
     throw new Error('Slide sequence exercise slides are unavailable.');
@@ -49,5 +54,14 @@ export function parseSlideSequenceExerciseSlides(
   if (terminalSlides.length !== 1 || slides.at(-1)?.terminal !== true) {
     throw new Error('Slide sequence exercise requires exactly one terminal last slide.');
   }
-  return slides;
+  return {
+    slides,
+    retryIncorrect: config['retryIncorrect'] === true,
+  };
+}
+
+export function parseSlideSequenceExerciseSlides(
+  configValue: unknown,
+): readonly SlideSequenceExerciseSlide[] {
+  return parseSlideSequenceExercise(configValue).slides;
 }

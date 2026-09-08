@@ -284,6 +284,18 @@ The definition stores references, not copied listening answer keys or duplicated
 
 Every exercise type owns validation of its own `config` and `schemaVersion`.
 
+### Slide-sequence definitions
+
+`slides.sequence` composes an ordered deck from the shared slide interaction library. Its configuration may include:
+
+- `title`: a learner-facing exercise label; when absent, the UI uses the generic type label;
+- `retryIncorrect`: an opt-in mastery loop that requeues each incorrectly answered scored slide before the terminal summary;
+- `slides`: the ordered deck with exactly one terminal final slide.
+
+The retry loop requires eventual correct retrieval for scored training slides. Submitted speaking and writing responses provide production evidence but are not auto-scored. A formative, original IELTS-style slide sequence is not an authoritative `listening.ielts` attempt; official listening exercises continue to reference the server-graded listening domain and never copy its answer keys into Learning Path configuration.
+
+Reusable slide stimuli also support an inline `dialogue` with at least two ordered `{ speaker, text, voiceIndex }` turns and an optional positive `maxReplays` limit. The browser synthesizes each turn with a deterministic English voice, so original formative dialogues need no committed audio binary. Use ordinary `speech` data for isolated word or phrase dictation; use `dialogue` when speaker changes and turn order carry meaning.
+
 ## 10. Exercise runtime contract
 
 Exercise implementations share an external lifecycle while remaining internally independent.

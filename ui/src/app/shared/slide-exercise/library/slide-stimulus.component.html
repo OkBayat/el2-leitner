@@ -30,6 +30,12 @@
 				[transcript]="stimulus.transcript"
 			/>
 		}
+		@case ('dialogue') {
+			<app-slide-dialogue-control
+				[turns]="stimulus.turns"
+				[maxReplays]="stimulus.maxReplays"
+			/>
+		}
 		@case ('image') {
 			<figure>
 				<img [src]="stimulus.src" [alt]="stimulus.alt" />
