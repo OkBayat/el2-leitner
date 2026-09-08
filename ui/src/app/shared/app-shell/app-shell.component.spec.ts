@@ -103,6 +103,7 @@ describe('AppShell responsive navigation', () => {
 	const coursesError = signal('');
 	const courseLoad = vi.fn(async () => true);
 	const apply = vi.fn();
+	const initialize = vi.fn(async () => state()!);
 	const logout = vi.fn(async () => undefined);
 	const update = vi.fn(async (mutator: (draft: LearningState) => void) => {
 		const draft = structuredClone(state()!);
@@ -113,6 +114,8 @@ describe('AppShell responsive navigation', () => {
 
 	beforeEach(async () => {
 		vi.clearAllMocks();
+		initialize.mockReset();
+		initialize.mockImplementation(async () => state()!);
 		state.set(fixtureState());
 		selectedCourses.set([bbcCourse]);
 		learningPathView.set(null);
@@ -127,7 +130,7 @@ describe('AppShell responsive navigation', () => {
 					{path: 'reports', component: EmptyPage},
 				]),
 				{provide: AuthService, useValue: {user: signal({id: 'fixture', email: 'learner@example.test'}), logout}},
-				{provide: LearningStoreService, useValue: {state, initialize: vi.fn(async () => state()!), update}},
+				{provide: LearningStoreService, useValue: {state, initialize, update}},
 				{provide: ThemeService, useValue: {apply}},
 				{provide: ShareStoryService, useValue: {open: vi.fn()}},
 				{provide: CollectionLearningPathFacade, useValue: {view: learningPathView}},
@@ -179,6 +182,21 @@ describe('AppShell responsive navigation', () => {
 		const labels = Array.from(host.querySelectorAll('.mobile-nav .mobile-nav-label'))
 			.map(item => item.textContent?.trim());
 		expect(labels.slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
+	});
+
+	it('survives bootstrap failure and applies the stored theme after state recovers', async () => {
+		state.set(null);
+		initialize.mockRejectedValueOnce(new Error('temporarily offline'));
+		const fixture = await render();
+		expect(apply).not.toHaveBeenCalled();
+
+		const recovered = fixtureState();
+		recovered.settings.theme = 'dark';
+		state.set(recovered);
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		expect(apply).toHaveBeenLastCalledWith('dark');
 	});
 
 	it('turns the course flag into the same course-menu trigger on mobile and desktop', async () => {

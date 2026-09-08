@@ -37,7 +37,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await this.load();
-    this.scheduleRollover();
+    if (!this.destroyed) this.scheduleRollover();
   }
 
   ngOnDestroy(): void {
@@ -68,7 +68,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.rolloverTimer = setTimeout(async () => {
       if (this.destroyed) return;
       this.today.set(localDay());
-      await this.load(true);
+      this.reviewError.set('');
+      try {
+        await this.store.refreshForLocalDay(this.today());
+      } catch {
+        this.reviewError.set("Today's review could not load. Try again.");
+      }
       if (!this.destroyed) this.scheduleRollover();
     }, Math.max(1, nextDay.getTime() - now.getTime()));
   }

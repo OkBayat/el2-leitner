@@ -67,6 +67,7 @@ describe('HomePageComponent', () => {
   const journeyError = signal('');
   const initialize = vi.fn(async () => state()!);
   const refreshCanonical = vi.fn(async () => state()!);
+  const refreshForLocalDay = vi.fn(async () => state()!);
   const loadCourses = vi.fn(async () => true);
   const loadJourneys = vi.fn(async () => true);
   const enter = vi.fn(async () => ({
@@ -86,7 +87,7 @@ describe('HomePageComponent', () => {
           path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId',
           component: EmptyPage,
         }]),
-        { provide: LearningStoreService, useValue: { state, initialize, refreshCanonical } },
+        { provide: LearningStoreService, useValue: { state, initialize, refreshCanonical, refreshForLocalDay } },
         { provide: SelectedCoursesFacade, useValue: { courses, loading: courseLoading, error: courseError, load: loadCourses } },
         {
           provide: LibraryLearningPathJourneyFacade,
@@ -161,8 +162,28 @@ describe('HomePageComponent', () => {
       await vi.advanceTimersByTimeAsync(100);
 
       expect(fixture.componentInstance.today()).toBe('2026-09-09');
-      expect(refreshCanonical).toHaveBeenCalledTimes(1);
+      expect(refreshForLocalDay).toHaveBeenCalledWith('2026-09-09');
       fixture.destroy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not retain a destroyed dashboard when its initial load finishes late', async () => {
+    vi.useFakeTimers();
+    let resolveInitialization!: (value: LearningState) => void;
+    initialize.mockReturnValueOnce(new Promise((resolve) => { resolveInitialization = resolve; }));
+    try {
+      const fixture = TestBed.createComponent(HomePageComponent);
+      fixture.detectChanges();
+      fixture.destroy();
+      resolveInitialization(state()!);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000);
+
+      expect(refreshForLocalDay).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }

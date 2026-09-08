@@ -20,7 +20,7 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
     await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
-  await expect(page.getByText("Today's plan")).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
 }
 
 async function dueTerms(page: Page, minimum = 1): Promise<string[]> {

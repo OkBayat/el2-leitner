@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, computed, inject, type OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, computed, effect, inject, type OnInit} from '@angular/core';
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
@@ -84,10 +84,16 @@ export class AppShellComponent implements OnInit {
 		} : null;
 	});
 
-	async ngOnInit(): Promise<void> {
+	constructor() {
+		effect(() => {
+			const state = this.store.state();
+			if (state) this.theme.apply(state.settings.theme);
+		});
+	}
+
+	ngOnInit(): void {
 		void this.courses.load();
-		const state = await this.store.initialize();
-		this.theme.apply(state.settings.theme);
+		void this.store.initialize().catch(() => undefined);
 	}
 
 	formatCount(value: number | null | undefined): string {
