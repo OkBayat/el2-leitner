@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { parseFileManagedLearningPathSource } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
@@ -6,6 +7,7 @@ import { projectLearningPathProgress } from "../src/domain/collection-learning-p
 import { loadLearningPathSources } from "../src/infrastructure/content/loadLearningPathSources.js";
 
 const SOURCES = new URL("../data/learning-paths/", import.meta.url);
+const VOCABULARY_SOURCE = new URL("../data/collections/cambridge-vocabulary-for-ielts.md", import.meta.url);
 
 const TEACHING_BLOCK_KINDS = new Set(["word", "comparison", "correction", "patterns", "example", "note"]);
 
@@ -26,7 +28,9 @@ function assertReusableSlide(slide) {
   assert.ok(nonEmpty(slide.id));
   assert.ok(slide.data && typeof slide.data === "object" && !Array.isArray(slide.data), `${slide.id} requires data`);
   const data = slide.data;
-  if (slide.type === "teaching-card") {
+  if (slide.type === "lesson-vocabulary-scope") {
+    assert.ok(["dictation", "meaning-choice"].includes(data.generatedSlide?.type));
+  } else if (slide.type === "teaching-card") {
     assert.ok(nonEmpty(data.title));
     assert.ok(Array.isArray(data.blocks) && data.blocks.length > 0);
     assert.ok(data.blocks.every((block) => TEACHING_BLOCK_KINDS.has(block.kind) && nonEmpty(block.content)));
@@ -131,17 +135,22 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
     Array.from({ length: 14 }, (_, index) => (index + 1) * 10));
   assert.ok(unitOne.exercises.every((exercise) => exercise.required));
   assert.equal(unitOne.exercises[0].type, "vocabulary.intake");
-  assert.equal(unitOne.exercises[1].type, "slide-base");
-  assert.equal(unitOne.exercises[2].type, "vocabulary.quick-review");
-  assert.equal(unitOne.exercises[13].type, "vocabulary.mastery-check");
-  for (const exercise of unitOne.exercises.slice(3, 13)) {
+  for (const exercise of unitOne.exercises.slice(1)) {
     assert.equal(exercise.type, "slides.sequence");
-    assert.equal(exercise.completionPolicy, "explicit");
+    assert.equal(exercise.completionPolicy, "slide-sequence");
     assert.equal(exercise.config.retryIncorrect, true);
-    assert.ok(exercise.config.slides.length >= 3);
+    assert.ok(exercise.config.slides.length >= 2);
     assert.equal(exercise.config.slides.at(-1).type, "summary");
     assert.equal(exercise.config.slides.at(-1).terminal, true);
   }
+  assert.deepEqual(unitOne.exercises[1].config.scope, { kind: "lesson-source" });
+  assert.equal(unitOne.exercises[1].config.slides[0].data.generatedSlide.type, "dictation");
+  assert.deepEqual(unitOne.exercises[2].config.slides.map((slide) => slide.type), [
+    "teaching-card", "lesson-vocabulary-scope", "matching", "choice", "cloze", "short-answer", "classification", "rewrite", "summary",
+  ]);
+  assert.deepEqual(unitOne.exercises[2].config.scope, { kind: "lesson-source" });
+  assert.deepEqual(unitOne.exercises[13].config.scope, { kind: "lesson-source" });
+  assert.equal(unitOne.exercises[13].config.slides[1].data.generatedSlide.type, "meaning-choice");
   for (const lesson of remainingUnits) {
     assert.equal(lesson.exercises.length, 4);
     assert.deepEqual(lesson.exercises.map((exercise) => exercise.position), [10, 20, 30, 40]);
@@ -179,8 +188,9 @@ test("Cambridge Unit 1 expansion does not revoke previously completed learner pr
     path: { status: "completed" },
     lessons: definition.lessons.map((lesson) => ({ lessonId: lesson.id, status: "completed" })),
     exercises: definition.lessons.flatMap((lesson) => lesson.exercises
-      .filter((exercise) => ["vocabulary.intake", "vocabulary.quick-review", "vocabulary.mastery-check"]
-        .includes(exercise.type))
+      .filter((exercise) => exercise.id.endsWith("-intake")
+        || exercise.id.endsWith("-quick-review")
+        || exercise.id.endsWith("-mastery-check"))
       .map((exercise) => ({ exerciseId: exercise.id, status: "completed" }))),
   };
 
@@ -199,6 +209,7 @@ test("Cambridge Unit 1 slide decks and synthetic dialogue stimuli are production
   assert.ok(definition);
   const unitOne = definition.lessons[0];
   const sequences = unitOne.exercises.filter((exercise) => exercise.type === "slides.sequence");
+  assert.equal(sequences.flatMap((exercise) => exercise.config.slides).length, 91);
   const slideIds = sequences.flatMap((exercise) => exercise.config.slides.map((slide) => slide.id));
   assert.equal(new Set(slideIds).size, slideIds.length);
   for (const exercise of sequences) {
@@ -215,4 +226,13 @@ test("Cambridge Unit 1 slide decks and synthetic dialogue stimuli are production
   assert.equal(dialogues.length, 5);
   assert.ok(dialogues.some((dialogue) => dialogue.turns.length === 4));
   assert.ok(dialogues.some((dialogue) => dialogue.turns.length >= 10 && dialogue.maxReplays === 1));
+
+  const collection = await readFile(VOCABULARY_SOURCE, "utf8");
+  const unitOneSection = collection.match(/## Unit 1 — Growing up(?<content>[\s\S]*?)\n## Unit 2 —/u)?.groups?.content ?? "";
+  const unitOneTerms = [...unitOneSection.matchAll(/^-(?:\s+)(?<term>.+)$/gmu)].map((match) => match.groups.term.trim());
+  assert.equal(unitOneTerms.length, 51);
+  assert.equal(new Set(unitOneTerms).size, 51);
+  assert.ok([unitOne.exercises[1], unitOne.exercises[2], unitOne.exercises[13]].every((exercise) =>
+    exercise.config.scope.kind === "lesson-source"
+    && exercise.config.slides.some((slide) => slide.type === "lesson-vocabulary-scope")));
 });

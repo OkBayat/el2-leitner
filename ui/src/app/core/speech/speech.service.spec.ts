@@ -4,6 +4,7 @@ import { SpeechService } from './speech.service';
 class FakeUtterance {
   lang = '';
   rate = 1;
+  pitch = 1;
   voice: SpeechSynthesisVoice | null = null;
   onstart: ((event: unknown) => void) | null = null;
   onboundary: ((event: { name: string; charIndex: number; charLength: number }) => void) | null = null;
@@ -107,12 +108,49 @@ describe('SpeechService playback events', () => {
   });
 
   it('selects a deterministic English voice for dialogue turns', () => {
-    const voices = [{ lang: 'en-US' } as SpeechSynthesisVoice, { lang: 'en-GB' } as SpeechSynthesisVoice];
+    const voices = [
+      { lang: 'en-US', name: 'US', voiceURI: 'us' } as SpeechSynthesisVoice,
+      { lang: 'en-GB', name: 'GB', voiceURI: 'gb' } as SpeechSynthesisVoice,
+    ];
     const speech = installSpeechSynthesis(voices);
     const service = new SpeechService();
 
     service.speak('Second speaker', 0.85, undefined, 1);
 
     expect(speech.utterance().voice).toBe(voices[0]);
+    expect(speech.utterance().pitch).toBe(1.1);
+  });
+
+  it('uses deterministic pitch when browser voices are initially unavailable', () => {
+    const speech = installSpeechSynthesis([]);
+    const service = new SpeechService();
+
+    service.speak('Third speaker', 0.85, undefined, 2);
+
+    expect(speech.utterance().voice).toBeNull();
+    expect(speech.utterance().pitch).toBe(1);
+  });
+
+  it('reports synthesis errors without treating a failed turn as completed', () => {
+    const speech = installSpeechSynthesis();
+    const onEnd = vi.fn();
+    const onError = vi.fn();
+    const service = new SpeechService();
+
+    service.speak('Failed turn', 0.85, { onEnd, onError });
+    speech.utterance().onerror?.({});
+
+    expect(onError).toHaveBeenCalledOnce();
+    expect(onEnd).not.toHaveBeenCalled();
+  });
+
+  it('returns false when the browser rejects synthesis synchronously', () => {
+    installSpeechSynthesis();
+    vi.mocked(globalThis.speechSynthesis.speak).mockImplementation(() => {
+      throw new Error('voice unavailable');
+    });
+    const service = new SpeechService();
+
+    expect(service.speak('Failed turn')).toBe(false);
   });
 });

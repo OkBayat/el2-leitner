@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { describe, expect, it, vi } from 'vitest';
+import { ReviewAnswerSoundService } from '../../../../core/sound/review-answer-sound.service';
 import { SlideExerciseComponent } from '../../../../shared/slide-exercise';
 import type { ExerciseContext } from '../exercise-runtime/exercise-contracts';
 import { SlidesSequenceExerciseComponent } from './slides-sequence-exercise.component';
@@ -11,12 +12,12 @@ const context: ExerciseContext = {
   exerciseId: 'exercise-1',
   type: 'slides.sequence',
   schemaVersion: 1,
-  completionPolicy: 'explicit',
+  completionPolicy: 'slide-sequence',
   config: {
     slides: [
       {
         id: 'intro',
-        type: 'message',
+        type: 'teaching-card',
         data: { title: 'Ready?', body: 'Work through the slides.' },
       },
       {
@@ -53,7 +54,10 @@ describe('SlidesSequenceExerciseComponent', () => {
     slideExercise.next();
     fixture.componentInstance.finish('summary');
     expect(outcomes).toHaveBeenCalledOnce();
-    expect(outcomes).toHaveBeenCalledWith({ kind: 'completed' });
+    expect(outcomes).toHaveBeenCalledWith({
+      kind: 'completed',
+      evidence: { schemaVersion: 1, results: [] },
+    });
   });
 
   it('fails closed when the deck is invalid', () => {
@@ -107,5 +111,41 @@ describe('SlidesSequenceExerciseComponent', () => {
       'intro-retry-2',
       'summary',
     ]);
+  });
+
+  it('emits bounded result evidence from the completed deck', () => {
+    TestBed.configureTestingModule({
+      imports: [SlidesSequenceExerciseComponent],
+      providers: [{ provide: ReviewAnswerSoundService, useValue: { play: vi.fn(), stop: vi.fn() } }],
+    });
+    const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+    const outcomes = vi.fn();
+    fixture.componentInstance.outcome.subscribe(outcomes);
+    fixture.componentInstance.load({
+      ...context,
+      config: {
+        retryIncorrect: true,
+        slides: [
+          { id: 'choice', type: 'choice', data: {} },
+          { id: 'summary', type: 'summary', terminal: true, data: {} },
+        ],
+      },
+    });
+    fixture.detectChanges();
+    const slideExercise = fixture.debugElement.query(
+      By.directive(SlideExerciseComponent),
+    ).componentInstance as SlideExerciseComponent;
+
+    slideExercise.onContentEvent({ type: 'answered', data: { correct: true } });
+    slideExercise.next();
+    fixture.componentInstance.finish('summary');
+
+    expect(outcomes).toHaveBeenCalledWith({
+      kind: 'completed',
+      evidence: {
+        schemaVersion: 1,
+        results: [{ rootSlideId: 'choice', slideType: 'choice', itemId: undefined, status: 'correct' }],
+      },
+    });
   });
 });

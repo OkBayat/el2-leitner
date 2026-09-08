@@ -99,4 +99,37 @@ describe('SlideDialogueControlComponent', () => {
 		expect(speech.cancel).toHaveBeenCalled();
 		expect(speech.speak).toHaveBeenCalledTimes(1);
 	});
+
+	it('refunds a failed play and lets the learner retry a one-play dialogue', () => {
+		let failTurn: (() => void) | undefined;
+		const speech = {
+			speak: vi.fn((_text: string, _rate: number, observer: { onError?: () => void }) => {
+				failTurn = () => observer.onError?.();
+				return true;
+			}),
+			cancel: vi.fn(),
+		};
+		TestBed.configureTestingModule({
+			imports: [SlideDialogueControlComponent],
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{ provide: LearningStoreService, useValue: { state: () => null } },
+			],
+		});
+		const fixture = TestBed.createComponent(SlideDialogueControlComponent);
+		fixture.componentRef.setInput('turns', [
+			{ speaker: 'A', text: 'First turn.' },
+			{ speaker: 'B', text: 'Second turn.' },
+		]);
+		fixture.componentRef.setInput('maxReplays', 1);
+		fixture.detectChanges();
+
+		fixture.componentInstance.play();
+		expect(fixture.componentInstance.replayCount()).toBe(1);
+		failTurn?.();
+
+		expect(fixture.componentInstance.replayCount()).toBe(0);
+		expect(fixture.componentInstance.canReplay()).toBe(true);
+		expect(fixture.componentInstance.error()).toContain('failed');
+	});
 });

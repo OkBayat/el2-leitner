@@ -2,6 +2,8 @@
   @if (slides().length) {
     <app-slide-exercise
       [slides]="slides()"
+      [registry]="registry"
+      [environment]="runtime()"
       (close)="cancel()"
       (action)="onAction($event)"
       (contentEvent)="onContentEvent($event)"

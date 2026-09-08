@@ -33,6 +33,9 @@ import type { DialogueStimulusTurn } from './slide-library.models';
 			@if (maxReplays) {
 				<span>{{ replayCount() }} of {{ maxReplays }} plays used</span>
 			}
+			@if (error()) {
+				<span role="alert">{{ error() }}</span>
+			}
 		</div>
 	`,
 	styles: [
@@ -63,6 +66,8 @@ export class SlideDialogueControlComponent implements OnDestroy {
 	readonly replayCount = signal(0);
 	readonly playing = signal(false);
 	readonly currentSpeaker = signal('');
+	readonly error = signal('');
+	private currentPlayCounted = false;
 
 	canReplay(): boolean {
 		return !this.maxReplays || this.replayCount() < this.maxReplays;
@@ -70,7 +75,8 @@ export class SlideDialogueControlComponent implements OnDestroy {
 
 	play(): void {
 		if (this.playing() || !this.canReplay() || !this.turns.length) return;
-		this.replayCount.update((count) => count + 1);
+		this.error.set('');
+		this.currentPlayCounted = false;
 		this.playing.set(true);
 		this.playTurn(0);
 	}
@@ -84,6 +90,7 @@ export class SlideDialogueControlComponent implements OnDestroy {
 		if (!turn) {
 			this.playing.set(false);
 			this.currentSpeaker.set('');
+			this.currentPlayCounted = false;
 			return;
 		}
 		this.currentSpeaker.set(turn.speaker);
@@ -98,10 +105,28 @@ export class SlideDialogueControlComponent implements OnDestroy {
 						250,
 					);
 				},
+				onError: () => this.fail(),
 			},
 			turn.voiceIndex ?? index,
 		);
-		if (!started) this.stop();
+		if (!started) {
+			this.fail();
+			return;
+		}
+		if (!this.playing()) return;
+		if (index === 0) {
+			this.replayCount.update((count) => count + 1);
+			this.currentPlayCounted = true;
+		}
+	}
+
+	private fail(): void {
+		if (this.currentPlayCounted) {
+			this.replayCount.update((count) => Math.max(0, count - 1));
+		}
+		this.currentPlayCounted = false;
+		this.stop();
+		this.error.set('Dialogue playback failed. Please try again.');
 	}
 
 	private stop(): void {

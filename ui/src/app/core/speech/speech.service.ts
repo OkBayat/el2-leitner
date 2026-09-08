@@ -5,6 +5,7 @@ export interface SpeechPlaybackObserver {
   onStart?: () => void;
   onWordBoundary?: (charIndex: number, charLength: number) => void;
   onEnd?: () => void;
+  onError?: () => void;
 }
 
 interface SpeechWordRange {
@@ -39,11 +40,16 @@ export class SpeechService {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-GB';
     utterance.rate = clamp(rate, 0.45, 1.2);
-    const voices = globalThis.speechSynthesis.getVoices();
-    const britishEnglishVoices = voices.filter((voice) => /^en-GB/iu.test(voice.lang));
-    const otherEnglishVoices = voices.filter((voice) => /^en/iu.test(voice.lang) && !/^en-GB/iu.test(voice.lang));
-    const englishVoices = [...britishEnglishVoices, ...otherEnglishVoices];
     const normalizedVoiceIndex = Number.isSafeInteger(voiceIndex) && voiceIndex >= 0 ? voiceIndex : 0;
+    utterance.pitch = [0.9, 1.1, 1, 1.2][normalizedVoiceIndex % 4];
+    const voices = globalThis.speechSynthesis.getVoices();
+    const englishVoices = voices
+      .filter((voice) => /^en/iu.test(voice.lang))
+      .sort((left, right) => {
+        const leftKey = `${/^en-GB/iu.test(left.lang) ? 0 : 1}|${left.lang}|${left.name}|${left.voiceURI}`;
+        const rightKey = `${/^en-GB/iu.test(right.lang) ? 0 : 1}|${right.lang}|${right.name}|${right.voiceURI}`;
+        return leftKey.localeCompare(rightKey, 'en');
+      });
     utterance.voice = englishVoices.length > 0 ? englishVoices[normalizedVoiceIndex % englishVoices.length] : null;
 
     const words = speechWordRanges(text);
@@ -89,10 +95,21 @@ export class SpeechService {
       this.playbackSequence += 1;
     };
     utterance.onend = finishPlayback;
-    utterance.onerror = finishPlayback;
+    utterance.onerror = () => {
+      if (!isCurrentPlayback()) return;
+      this.clearFallbackTimers();
+      observer?.onError?.();
+      this.playbackSequence += 1;
+    };
 
-    globalThis.speechSynthesis.speak(utterance);
-    return true;
+    try {
+      globalThis.speechSynthesis.speak(utterance);
+      return true;
+    } catch {
+      if (playbackSequence === this.playbackSequence) this.playbackSequence += 1;
+      this.clearFallbackTimers();
+      return false;
+    }
   }
 
   cancel(): void {

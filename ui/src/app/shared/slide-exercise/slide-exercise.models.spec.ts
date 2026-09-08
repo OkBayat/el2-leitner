@@ -116,9 +116,9 @@ describe('slide exercise model', () => {
 
   it('aggregates first, all, and latest attempts by root slide identity', () => {
     const results = [
-      { slideId: 'word-1', rootSlideId: 'word-1', slideType: 'dictation', data: { correct: true } },
-      { slideId: 'word-2', rootSlideId: 'word-2', slideType: 'dictation', data: { correct: false } },
-      { slideId: 'word-2-retry', rootSlideId: 'word-2', slideType: 'dictation', data: { correct: true } },
+      { slideId: 'word-1', rootSlideId: 'word-1', slideType: 'dictation', eventType: 'answered' as const, data: { correct: true } },
+      { slideId: 'word-2', rootSlideId: 'word-2', slideType: 'dictation', eventType: 'answered' as const, data: { correct: false } },
+      { slideId: 'word-2-retry', rootSlideId: 'word-2', slideType: 'dictation', eventType: 'answered' as const, data: { correct: true } },
     ];
 
     expect(aggregateSlideExerciseResults(results, 'first-attempts')).toEqual({ correct: 1, mistakes: 1, total: 2, accuracy: 50 });

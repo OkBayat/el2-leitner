@@ -16,15 +16,38 @@
       "source": { "kind": "collection-section", "collectionId": "cambridge-vocabulary-for-ielts", "sectionTitle": "Unit 1 — Growing up" },
       "exercises": [
         { "id": "cvfi-u01-intake", "position": 10, "type": "vocabulary.intake", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-intake", "config": { "scope": { "kind": "lesson-source" }, "presentation": "slides" } },
-        { "id": "cvfi-u01-spelling", "position": 20, "type": "slide-base", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-spelling", "config": { "slides": [{ "id": "cvfi-u01-spelling-scope", "type": "leitner-house-one-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u01-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Practice finished", "subtitle": "Your House 1 spelling results." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
-        { "id": "cvfi-u01-quick-review", "position": 30, "type": "vocabulary.quick-review", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-quick-review", "config": { "scope": { "kind": "lesson-source" } } },
+        { "id": "cvfi-u01-spelling", "position": 20, "type": "slides.sequence", "schemaVersion": 1, "required": true, "completionPolicy": "slide-sequence", "config": { "title": "Complete Unit 1 spelling", "retryIncorrect": true, "scope": { "kind": "lesson-source" }, "slides": [{ "id": "cvfi-u01-spelling-scope", "type": "lesson-vocabulary-scope", "data": { "generatedSlide": { "type": "dictation" } } }, { "id": "cvfi-u01-spelling-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Spelling complete", "title": "Every Unit 1 target has been tested", "subtitle": "Incorrect spellings were repeated until correct." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } } ] } },
+        {
+          "id": "cvfi-u01-quick-review",
+          "position": 30,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Meaning in context",
+            "retryIncorrect": true,
+            "scope": { "kind": "lesson-source" },
+            "slides": [
+              { "id": "cvfi-u01-quick-review-strategy", "type": "teaching-card", "data": { "mode": "tip", "title": "Retrieve meaning before studying details", "blocks": [{ "kind": "note", "content": "Use the sentence, grammar, and nearby collocations to retrieve the target. Every missed item will return before the summary." }] } },
+              { "id": "cvfi-u01-quick-review-vocabulary", "type": "lesson-vocabulary-scope", "data": { "generatedSlide": { "type": "meaning-choice" } } },
+              { "id": "cvfi-u01-quick-review-definitions", "type": "matching", "data": { "instruction": "Match each target to its meaning.", "mode": "definition", "shuffleRight": true, "pairs": [{ "id": "adolescence", "left": "adolescence", "right": "the stage between childhood and adulthood" }, { "id": "temperament", "left": "temperament", "right": "a person's natural emotional character" }, { "id": "upbringing", "left": "upbringing", "right": "the way a child is cared for and taught" }, { "id": "ties", "left": "ties", "right": "strong connections between people or groups" }, { "id": "rivalry", "left": "rivalry", "right": "competition between people or groups" }, { "id": "instinct", "left": "instinct", "right": "a natural feeling that prompts action" }] } },
+              { "id": "cvfi-u01-quick-review-nurture", "type": "choice", "data": { "mode": "best-word", "question": "Good teachers ___ children's talents through patient encouragement.", "options": [{ "id": "nurture", "label": "nurture" }, { "id": "endure", "label": "endure" }, { "id": "inherit", "label": "inherit" }, { "id": "adopt", "label": "adopt" }], "correctOptionIds": ["nurture"], "explanation": "Nurture means to care for and encourage development." } },
+              { "id": "cvfi-u01-quick-review-context", "type": "cloze", "data": { "instruction": "Complete the connected description without a word bank.", "content": "During {{childhood}}, frequent {{interaction}} with a supportive {{sibling}} helped Amir {{develop}} a calm {{character}}. Their friendship continued into {{adulthood}}.", "inputMode": "text", "blanks": [{ "id": "childhood", "answers": ["childhood"] }, { "id": "interaction", "answers": ["interaction"] }, { "id": "sibling", "answers": ["sibling"] }, { "id": "develop", "answers": ["develop"] }, { "id": "character", "answers": ["character"] }, { "id": "adulthood", "answers": ["adulthood"] }] } },
+              { "id": "cvfi-u01-quick-review-bond", "type": "short-answer", "data": { "question": "Which Unit 1 noun means a strong emotional connection between people?", "answers": ["bond"], "exactSpelling": true } },
+              { "id": "cvfi-u01-quick-review-groups", "type": "classification", "data": { "instruction": "Classify each target by its main job.", "mode": "custom", "categories": [{ "id": "period", "label": "Life period" }, { "id": "person", "label": "Person" }, { "id": "connection", "label": "Connection" }], "items": [{ "id": "childhood", "label": "childhood", "correctCategoryId": "period" }, { "id": "adolescence", "label": "adolescence", "correctCategoryId": "period" }, { "id": "teenager", "label": "teenager", "correctCategoryId": "person" }, { "id": "parent", "label": "parent", "correctCategoryId": "person" }, { "id": "friendship", "label": "friendship", "correctCategoryId": "connection" }, { "id": "relationship", "label": "relationship", "correctCategoryId": "connection" }] } },
+              { "id": "cvfi-u01-quick-review-common", "type": "rewrite", "data": { "instruction": "Rewrite with the Unit 1 chunk.", "mode": "target-vocabulary", "original": "My cousin and I share several interests.", "requiredFragments": ["have", "in common"], "modelAnswer": "My cousin and I have several interests in common." } },
+              { "id": "cvfi-u01-quick-review-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Context review complete", "title": "You can retrieve Unit 1 meanings from context", "subtitle": "Next, deepen form, usage, and collocation knowledge." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } }
+            ]
+          }
+        },
         {
           "id": "cvfi-u01-word-building",
           "position": 40,
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Word families and word building",
@@ -45,7 +68,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Relation vs relationship",
@@ -65,7 +88,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Relationship collocations",
@@ -85,7 +108,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Family chunks and descriptions",
@@ -106,7 +129,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Early relationships in context",
@@ -127,7 +150,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Aural word and chunk recognition",
@@ -150,7 +173,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Guided relationship listening",
@@ -171,7 +194,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "Speak and write about growing up",
@@ -192,7 +215,7 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "IELTS Listening Section 1 mechanics",
@@ -216,18 +239,43 @@
           "type": "slides.sequence",
           "schemaVersion": 1,
           "required": true,
-          "completionPolicy": "explicit",
+          "completionPolicy": "slide-sequence",
           "config": {
             "retryIncorrect": true,
             "title": "IELTS-style Section 1 simulation",
             "slides": [
               { "id": "cvfi-u01-listening-simulation-instructions", "type": "teaching-card", "data": { "mode": "tip", "title": "Meadow Childcare Centre enrolment", "blocks": [{ "kind": "note", "content": "Complete all ten fields. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer." }, { "kind": "note", "title": "Simulation rule", "content": "Play the recording once for simulation conditions. Do not check individual answers until the whole form is complete." }, { "kind": "note", "content": "This is an original Vocora simulation, not the Cambridge test recording." }] } },
-              { "id": "cvfi-u01-listening-simulation-form", "type": "structured-completion", "data": { "instruction": "Listen once and complete the enrolment form.", "stimulus": { "type": "dialogue", "maxReplays": 1, "turns": [{ "speaker": "Receptionist", "text": "Good morning, Meadow Childcare Centre. How can I help?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Hello. I would like to enrol my daughter, Priya Shah. Priya is spelled P R I Y A, and Shah is S H A H.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Thank you. How old is Priya, and what is her date of birth?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "She is four. Her birthday is the twelfth of February.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "And what is your home address?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Twenty-seven Cedar Lane. Cedar is C E D A R.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Who should we contact if you are unavailable?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Her aunt, Leila Shah.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Is there anything about Priya's development that we should know?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "She sometimes becomes upset when I leave at drop-off, but she can already dress herself.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Which days do you need, and when will you collect her?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Wednesday and Friday, please. I will collect her at five fifteen in the afternoon.", "voiceIndex": 1 }] }, "title": "Meadow Childcare Centre — Enrolment form", "layout": "form", "fields": [{ "id": "name", "label": "1. Child's full name", "answers": ["Priya Shah"], "wordLimit": 3 }, { "id": "age", "label": "2. Age", "answers": ["4", "four"], "wordLimit": 1 }, { "id": "birth", "label": "3. Date of birth", "answers": ["12 February", "12th February", "February 12", "February 12th"], "wordLimit": 3 }, { "id": "address", "label": "4. Home address", "answers": ["27 Cedar Lane", "twenty-seven Cedar Lane"], "wordLimit": 3 }, { "id": "contact", "label": "5. Emergency contact relationship", "answers": ["aunt", "her aunt"], "wordLimit": 2 }, { "id": "concern", "label": "6. Concern at arrival", "answers": ["drop-off", "drop off"], "wordLimit": 2 }, { "id": "skill", "label": "7. Independent skill", "answers": ["dress herself"], "wordLimit": 2 }, { "id": "day-one", "label": "8. First requested day", "answers": ["Wednesday"], "wordLimit": 1 }, { "id": "day-two", "label": "9. Second requested day", "answers": ["Friday"], "wordLimit": 1 }, { "id": "time", "label": "10. Collection time", "answers": ["5:15", "5.15", "5:15 pm", "5.15 pm", "five fifteen"], "wordLimit": 2 }] } },
+              { "id": "cvfi-u01-listening-simulation-form", "type": "structured-completion", "data": { "instruction": "Listen once and complete the enrolment form.", "stimulus": { "type": "dialogue", "maxReplays": 1, "turns": [{ "speaker": "Receptionist", "text": "Good morning, Meadow Childcare Centre. How can I help?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Hello. I would like to enrol my daughter, Priya Shah. Priya is spelled P R I Y A, and Shah is S H A H.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Thank you. How old is Priya, and what is her date of birth?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "She is four. Her birthday is the twelfth of February.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "And what is your home address?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Twenty-seven Cedar Lane. Cedar is C E D A R.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Who should we contact if you are unavailable?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Her aunt, Leila Shah.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Is there anything about Priya's development that we should know?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "She sometimes becomes upset when I leave at drop-off, but she can already dress herself.", "voiceIndex": 1 }, { "speaker": "Receptionist", "text": "Which days do you need, and when will you collect her?", "voiceIndex": 0 }, { "speaker": "Parent", "text": "Wednesday and Friday, please. I will collect her at five fifteen in the afternoon.", "voiceIndex": 1 }] }, "title": "Meadow Childcare Centre — Enrolment form", "layout": "form", "fields": [{ "id": "name", "label": "1. Child's full name", "answers": ["Priya Shah"], "wordLimit": 3 }, { "id": "age", "label": "2. Age", "answers": ["4", "four"], "wordLimit": 1 }, { "id": "birth", "label": "3. Date of birth", "answers": ["12 February", "12th February", "February 12", "February 12th"], "wordLimit": 3 }, { "id": "address", "label": "4. Home address", "answers": ["27 Cedar Lane", "twenty-seven Cedar Lane"], "wordLimit": 3 }, { "id": "contact", "label": "5. Emergency contact relationship", "answers": ["aunt", "her aunt"], "wordLimit": 2 }, { "id": "concern", "label": "6. Concern", "answers": ["upset", "becomes upset", "drop-off", "drop off"], "wordLimit": 2 }, { "id": "skill", "label": "7. Independent skill", "answers": ["dress herself"], "wordLimit": 2 }, { "id": "day-one", "label": "8. First requested day", "answers": ["Wednesday"], "wordLimit": 1 }, { "id": "day-two", "label": "9. Second requested day", "answers": ["Friday"], "wordLimit": 1 }, { "id": "time", "label": "10. Collection time", "answers": ["5:15", "5.15", "5:15 pm", "5.15 pm", "five fifteen"], "wordLimit": 2 }] } },
               { "id": "cvfi-u01-listening-simulation-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Simulation complete", "title": "You completed a ten-field Section 1 form", "subtitle": "Finish with cumulative vocabulary retrieval." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } }
             ]
           }
         },
-        { "id": "cvfi-u01-mastery-check", "position": 140, "type": "vocabulary.mastery-check", "schemaVersion": 1, "required": true, "completionPolicy": "vocabulary-mastery-check", "config": { "scope": { "kind": "lesson-source" } } }
+        {
+          "id": "cvfi-u01-mastery-check",
+          "position": 140,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Complete Unit 1 mastery check",
+            "retryIncorrect": true,
+            "scope": { "kind": "lesson-source" },
+            "slides": [
+              { "id": "cvfi-u01-mastery-check-instructions", "type": "teaching-card", "data": { "mode": "tip", "title": "Cumulative no-skip check", "blocks": [{ "kind": "note", "content": "First retrieve the meaning of every Unit 1 source target. Then apply the lesson's word-building, usage, collocation, comprehension, listening, and IELTS mechanics." }] } },
+              { "id": "cvfi-u01-mastery-check-vocabulary", "type": "lesson-vocabulary-scope", "data": { "generatedSlide": { "type": "meaning-choice" } } },
+              { "id": "cvfi-u01-mastery-check-forms", "type": "word-formation", "data": { "instruction": "Complete the word families.", "mode": "family", "baseWord": "relate / interact", "fields": [{ "id": "relationship", "label": "personal-connection noun", "answers": ["relationship"] }, { "id": "relative", "label": "family-member noun", "answers": ["relative"] }, { "id": "interaction", "label": "interact noun", "answers": ["interaction"] }] } },
+              { "id": "cvfi-u01-mastery-check-accuracy", "type": "error-correction", "data": { "instruction": "Correct both connection-language errors.", "mode": "sentence-correction", "category": "word choice and preposition", "original": "My relation with my tutor improved in relation of the new project.", "answers": ["My relationship with my tutor improved in relation to the new project."] } },
+              { "id": "cvfi-u01-mastery-check-collocations", "type": "cloze", "data": { "instruction": "Retrieve the complete relationship chunks.", "content": "The mentor {{established}} a successful working {{relationship}} with the teenager. They had several interests {{common}}, so a close {{bond}} developed.", "inputMode": "text", "blanks": [{ "id": "established", "answers": ["established", "developed", "built", "formed"] }, { "id": "relationship", "answers": ["relationship"] }, { "id": "common", "answers": ["in common"], "wordLimit": 2 }, { "id": "bond", "answers": ["bond", "connection"] }] } },
+              { "id": "cvfi-u01-mastery-check-family", "type": "matching", "data": { "instruction": "Match each family chunk to its precise use.", "mode": "term-example", "shuffleRight": true, "pairs": [{ "id": "immediate", "left": "immediate family", "right": "parents, children, and siblings" }, { "id": "extended", "left": "extended family", "right": "aunts, uncles, cousins, and wider relatives" }, { "id": "maternal", "left": "maternal instinct", "right": "a natural urge to care for a child" }, { "id": "rivalry", "left": "sibling rivalry", "right": "competition between brothers or sisters" }, { "id": "upbringing", "left": "stable upbringing", "right": "secure and consistent care while growing up" }] } },
+              { "id": "cvfi-u01-mastery-check-reading", "type": "truth", "data": { "instruction": "Decide from the text only.", "stimulus": { "type": "text", "content": "Although Lina and her brother argued during adolescence, their parents encouraged calm interaction instead of removing every conflict. By adulthood, the siblings had established a close and rewarding relationship." }, "mode": "true-false-not-given", "statement": "The siblings' relationship became stronger over time.", "correctOptionId": "true", "explanation": "The contrast moves from adolescent conflict to a close relationship in adulthood." } },
+              { "id": "cvfi-u01-mastery-check-listening", "type": "dictation", "data": { "instruction": "Type the complete family-development phrase.", "mode": "phrase", "speech": { "text": "a stable upbringing", "autoplay": true, "replay": true }, "answer": "a stable upbringing", "maxReplays": 2 } },
+              { "id": "cvfi-u01-mastery-check-transfer", "type": "rewrite", "data": { "instruction": "Express the same idea with two Unit 1 chunks.", "mode": "target-vocabulary", "original": "Her grandmother was directly involved in raising her safely.", "requiredFragments": ["active role", "stable upbringing"], "modelAnswer": "Her grandmother played an active role in giving her a stable upbringing." } },
+              { "id": "cvfi-u01-mastery-check-ielts", "type": "choice", "data": { "mode": "single", "question": "The instruction says NO MORE THAN TWO WORDS AND/OR A NUMBER. Which form answer is valid?", "options": [{ "id": "a", "label": "at four o'clock" }, { "id": "b", "label": "4:00" }, { "id": "c", "label": "the time is four" }], "correctOptionIds": ["b"], "explanation": "4:00 is one number and stays within the limit." } },
+              { "id": "cvfi-u01-mastery-check-summary", "type": "summary", "terminal": true, "data": { "aggregationMode": "first-attempts", "eyebrow": "Unit 1 complete", "title": "You demonstrated cumulative Unit 1 mastery", "subtitle": "Every source target and every major lesson skill has been checked." }, "chrome": { "footer": { "primary": { "id": "finish", "label": "Finish", "behavior": "emit" }, "secondary": false } } }
+            ]
+          }
+        }
       ]
     },
     {
