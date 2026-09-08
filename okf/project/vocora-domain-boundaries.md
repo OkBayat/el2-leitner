@@ -41,12 +41,18 @@ The Leitner system is a separate retention domain. Its initial study items are
 vocabulary and collocations, and it may train several aspects of the same item
 without owning lesson completion.
 
-For the current Leitner progression, the decisive promotion evidence is
-spelling through dictation: the learner hears the word or collocation and writes
-it. Correct sound-to-written-form recall moves the item forward according to the
-Leitner rules; an incorrect response moves it backward according to those rules.
-Meaning practice can accompany the review flow, but semantic recognition is not
-currently the promotion gate.
+The intended Leitner promotion rule is spelling through dictation: the learner
+hears the word or collocation and writes it. The scheduled review and dedicated
+vocabulary-spelling flows follow this rule; correct sound-to-written-form recall
+moves an eligible item forward, while an incorrect response returns it to House
+1 under the current transition rules.
+
+Two current self-report flows do not yet provide that evidence. The scoped
+quick-review and mastery-check interfaces show the term and submit `Remembered`
+or `Needs work` into the shared review pipeline. In particular, quick review can
+promote an eligible fresh House 1 item without collected spelling evidence.
+Treat this as an implementation gap to close, not as a domain rule that semantic
+recognition is a valid promotion gate.
 
 This separation is intentional: learning-path progress answers "what learning
 content has the learner completed?" while Leitner state answers "what retained
@@ -123,3 +129,6 @@ explicit and durable.
 [1] Product/domain discussion with the project owner, 2026-09-08 (current task scope).
 [2] [Reusable Slide Interactions](/project/reusable-slide-interactions.md)
 [3] [Repository Source Of Truth](/project/repository-source-of-truth.md)
+[4] [Leitner transition rules](../../ui/src/app/domain/learning/learning-rules.ts)
+[5] [Scoped quick-review adapter](../../ui/src/app/features/collection-learning-path/exercises/scoped-vocabulary-practice/scoped-vocabulary-practice-exercise.component.ts)
+[6] [Mastery-check adapter](../../ui/src/app/features/collection-learning-path/exercises/vocabulary-mastery-check/vocabulary-mastery-check-exercise.component.ts)
