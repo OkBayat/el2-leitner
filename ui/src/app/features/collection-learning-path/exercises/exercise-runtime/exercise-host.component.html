@@ -4,6 +4,7 @@
   [attr.aria-busy]="rendererLoading"
   (input)="onInteraction()"
   (change)="onInteraction()"
+  (pointerdown)="onClick($event)"
   (click)="onClick($event)"
 >
   <ng-template #outlet></ng-template>

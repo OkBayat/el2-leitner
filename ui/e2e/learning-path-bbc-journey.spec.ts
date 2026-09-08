@@ -162,7 +162,7 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
   await expect(page.getByRole('heading', { name: "Meet this lesson's words" })).toBeVisible();
-  expect(writes).toEqual(['subscribe', 'start-path', 'start-exercise']);
+  expect(writes).toEqual(['subscribe', 'start-path']);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
@@ -191,7 +191,7 @@ test('rolling BBC course exposes a ready lesson trail node when a newly synchron
   await expect(page).toHaveURL(`/learning-paths/${pathId}`);
   const pathStatus = page.locator('.path-header__status');
   await expect(pathStatus).toHaveText('Up to date');
-  await expect(page.getByRole('button', { name: 'Vocabulary intake, Completed' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Vocabulary intake, Completed, Practice again' })).toBeEnabled();
   await expect(page.getByText('BBC episode 1')).toBeVisible();
 
   currentView = pathView({

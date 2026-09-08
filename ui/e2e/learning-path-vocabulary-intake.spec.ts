@@ -247,7 +247,8 @@ test('Cambridge vocabulary intake runs as a slide quiz for new and Box 1 words',
   await expect(summary).toContainText('1');
   await page.getByRole('button', { name: 'Finish' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Exercise completed' })).toBeVisible();
+  await expect(page).toHaveURL(`/learning-paths/${pathId}`);
+  await expect(page.getByRole('heading', { name: 'Exercise completed' })).toHaveCount(0);
   expect(commands.map((command) => command.path)).toEqual([
     `${contextPath}/start`,
     `${contextPath}/vocabulary-intake/activate`,

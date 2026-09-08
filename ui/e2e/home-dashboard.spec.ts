@@ -213,7 +213,7 @@ for (const theme of ['light', 'dark'] as const) {
 			if (viewport.width === 390) {
 				await american.click();
 				await expect(page).toHaveURL(
-					/\/learning-paths\/american-english-file-3-path\/lessons\/american-english-file-3-lesson\/exercises\/american-english-file-3-exercise$/u,
+					/\/library\/american-english-file-3\/learning-path$/u,
 				);
 			}
 			expect(control.writes).toEqual([]);
