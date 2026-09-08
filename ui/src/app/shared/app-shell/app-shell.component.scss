@@ -98,11 +98,14 @@ button.status-item {
 	background: var(--vocora-nav-surface);
 }
 .mobile-nav a, .mobile-nav button {
-	display: grid;
+	display: flex;
 	width: min(52px, 100%);
 	min-width: 44px;
-	height: 52px;
-	place-items: center;
+	height: 58px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
 	padding: 4px;
 	border: 2px solid transparent;
 	border-radius: 12px;
@@ -112,7 +115,16 @@ button.status-item {
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
 }
-.mobile-nav app-navigation-icon { width: 34px; height: 34px; }
+.mobile-nav app-navigation-icon { width: 30px; height: 30px; }
+.mobile-nav-label {
+	max-width: 100%;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 12px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .mobile-nav .active-mobile, .sidebar-link.is-active {
 	border-color: var(--vocora-nav-active-border);
 	background: var(--vocora-nav-active-surface);

@@ -1,192 +1,59 @@
-import { A11yModule } from '@angular/cdk/a11y';
-import { CdkOverlayOrigin, Overlay, OverlayModule, type ConnectedPosition, type ConnectedOverlayPositionChange } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, type OnDestroy, type OnInit, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { HomeTimelineService } from '../../application/home/home-timeline.service';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatRippleModule } from '@angular/material/core';
+import { Router, RouterLink } from '@angular/router';
+import { LibraryLearningPathJourneyFacade } from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import { SelectedCoursesFacade } from '../../application/collection-learning-path/selected-courses.facade';
 import { LearningStoreService } from '../../core/state/learning-store.service';
-import { type ListeningRingSegment, type PathDay, type PathStep, buildDailyPath, listeningRingSegments } from '../../domain/home/daily-path';
-import { localDay } from '../../domain/learning/learning-rules';
-import { BookWagonComponent, PathIconComponent } from './home-artwork.component';
-
-interface PathSelection { day: PathDay; step: PathStep | null; origin: CdkOverlayOrigin; }
+import { buildHomeCourseCard, type HomeCourseCard } from '../../domain/home/home-dashboard';
+import { getDueWords, localDay } from '../../domain/learning/learning-rules';
+import { NavigationIconComponent } from '../../shared/app-shell/navigation-icon.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, OverlayModule, A11yModule, PathIconComponent, BookWagonComponent],
-  providers: [HomeTimelineService],
+  imports: [MatButtonModule, MatCardModule, MatRippleModule, NavigationIconComponent, RouterLink],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit, OnDestroy {
-  readonly timeline = inject(HomeTimelineService);
-  private readonly learningStore = inject(LearningStoreService);
-  private readonly injector = inject(Injector);
-  readonly scrollStrategy = inject(Overlay).scrollStrategies.close();
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  readonly days = computed(() => buildDailyPath(
-    this.timeline.days(),
-    this.timeline.today(),
-    this.learningStore.state()?.settings.dailyListeningGoal,
+export class HomePageComponent implements OnInit {
+  readonly store = inject(LearningStoreService);
+  readonly selectedCourses = inject(SelectedCoursesFacade);
+  readonly journeys = inject(LibraryLearningPathJourneyFacade);
+  private readonly router = inject(Router);
+
+  readonly reviewCompleted = computed(() => {
+    const state = this.store.state();
+    return state ? getDueWords(state).length === 0 : false;
+  });
+  readonly courseCards = computed(() => this.selectedCourses.courses().map((collection) =>
+    buildHomeCourseCard(collection, this.journeys.viewFor(collection.id), localDay()),
   ));
-  readonly selection = signal<PathSelection | null>(null);
-  readonly todayVisible = signal(true);
-  readonly popoverAbove = signal(false);
-  readonly arrowX = signal<number | null>(null);
-  readonly popoverOrigin = signal({ x: 0, y: 0, width: 0, height: 0 });
-  readonly positions: ConnectedPosition[] = [
-    { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 16 },
-    { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -16 },
-  ];
-  @ViewChild('popup') private popup?: ElementRef<HTMLElement>;
-  private historyObserver?: IntersectionObserver;
-  private todayObserver?: IntersectionObserver;
-  private rolloverTimer?: ReturnType<typeof setTimeout>;
-  private destroyed = false;
-  private observersReady = false;
 
   async ngOnInit(): Promise<void> {
-    void this.learningStore.initialize().catch(() => undefined);
-    await this.refresh(true);
+    await this.load();
   }
 
-  ngOnDestroy(): void {
-    this.destroyed = true;
-    this.historyObserver?.disconnect(); this.todayObserver?.disconnect();
-    clearTimeout(this.rolloverTimer);
+  async load(): Promise<void> {
+    await Promise.all([
+      this.store.initialize(),
+      this.selectedCourses.load(),
+    ]);
+    await this.journeys.load(this.selectedCourses.courses());
   }
 
-  async refresh(jump = false): Promise<void> {
-    const previousDay = this.timeline.today();
-    const loaded = await this.timeline.refresh();
-    if (this.destroyed) return;
-    if (loaded) {
-      afterNextRender({ write: () => {
-        if (jump || previousDay !== this.timeline.today()) this.goToToday(false);
-        this.observeHistory();
-        this.observeToday();
-      } }, { injector: this.injector });
+  async openCourse(card: HomeCourseCard): Promise<void> {
+    const collection = this.selectedCourses.courses().find((candidate) => candidate.id === card.collectionId);
+    if (!collection) return;
+    const destination = await this.journeys.enter(collection);
+    if (!destination) return;
+    if (destination.kind === 'exercise') {
+      await this.router.navigate([
+        '/learning-path', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+      ]);
+      return;
     }
-    this.scheduleRollover();
-  }
-
-  async loadOlder(): Promise<void> {
-    const anchor = this.host.nativeElement.querySelector<HTMLElement>('.path-day');
-    const anchorTop = anchor ? anchor.getBoundingClientRect().top + window.scrollY : 0;
-    if (!await this.timeline.loadOlder() || this.destroyed || !anchor) return;
-    afterNextRender({
-      earlyRead: () => anchor.getBoundingClientRect().top + window.scrollY - anchorTop,
-      write: delta => window.scrollBy({ top: delta, behavior: 'instant' }),
-    }, { injector: this.injector });
-  }
-
-  goToToday(smooth = true): void {
-    const section = this.host.nativeElement.querySelector<HTMLElement>(`[data-day="${this.timeline.today()}"]`);
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    section?.scrollIntoView({ block: 'start', behavior: smooth && !reduced ? 'smooth' : 'instant' });
-  }
-
-  open(day: PathDay, step: PathStep | null, origin: CdkOverlayOrigin): void {
-    if (day.future || step?.id.startsWith('reserved')) return;
-    const previous = this.selection();
-    if (previous?.origin === origin) { this.close(); return; }
-    this.updatePopoverOrigin(origin);
-    this.arrowX.set(null); this.popoverAbove.set(false);
-    this.selection.set({ day, step, origin });
-  }
-
-  @HostListener('window:resize')
-  onResize(): void {
-    const selected = this.selection();
-    if (selected) this.updatePopoverOrigin(selected.origin);
-  }
-
-  private updatePopoverOrigin(origin: CdkOverlayOrigin): void {
-    const rect = origin.elementRef.nativeElement.getBoundingClientRect();
-    const width = Math.min(310, window.innerWidth - 32);
-    const center = rect.left + rect.width / 2;
-    const left = Math.max(16, Math.min(center - width / 2, window.innerWidth - width - 16));
-    // Use a bounded point rather than a post-position transform. This keeps the
-    // entire panel inside narrow viewports while its arrow follows the real trigger.
-    this.popoverOrigin.set({ x: left + width / 2, y: rect.top, width: 0, height: rect.height });
-  }
-
-  close(): void { this.selection.set(null); }
-  onOverlayKey(event: KeyboardEvent): void { if (event.key === 'Escape') { event.preventDefault(); this.close(); } }
-
-  positionPopover(event: ConnectedOverlayPositionChange): void {
-    this.popoverAbove.set(event.connectionPair.overlayY === 'bottom');
-    afterNextRender({ read: () => {
-      const selected = this.selection();
-      const panel = this.popup?.nativeElement;
-      if (!selected || !panel) return;
-      const origin = selected.origin.elementRef.nativeElement.getBoundingClientRect();
-      const rect = panel.getBoundingClientRect();
-      this.arrowX.set(Math.max(24, Math.min(rect.width - 24, origin.left + origin.width / 2 - rect.left)));
-    } }, { injector: this.injector });
-  }
-
-  listeningSegments(step: PathStep): ListeningRingSegment[] {
-    return listeningRingSegments(step.listeningProgress);
-  }
-
-  listeningSegmentDash(step: PathStep): string {
-    const count = Math.max(1, this.listeningSegments(step).length);
-    // Round stroke caps visually consume part of each SVG gap. Give the common
-    // 3/4-part goals a clearly visible break, then taper the gap for dense rings.
-    const gap = count <= 4 ? 6 : count <= 6 ? 3.5 : 2;
-    const segment = Math.max(1, (100 / count) - gap);
-    return `${segment} ${100 - segment}`;
-  }
-
-  listeningSegmentRotation(index: number, count: number): number {
-    return count > 0 ? (360 / count) * index : 0;
-  }
-
-  statusLabel(step: PathStep): string {
-    if (step.id === 'listening' && step.listeningProgress) {
-      const { completed, total } = step.listeningProgress;
-      return completed >= total
-        ? `Daily goal complete, ${completed} listening practices completed`
-        : `${completed} of ${total} listening practices complete`;
-    }
-    if (step.status === 'in-progress') return `In progress, ${step.progress ?? 0}% complete`;
-    return { practiced: 'Practised', available: 'Not practised', upcoming: 'Upcoming', planned: 'Coming soon' }[step.status];
-  }
-
-  @HostListener('window:focus')
-  @HostListener('window:online')
-  onReturn(): void { if (!document.hidden && !this.destroyed) void this.refresh(); }
-
-  @HostListener('document:visibilitychange')
-  onVisibility(): void { if (!document.hidden) this.onReturn(); }
-
-  private observeHistory(): void {
-    if (this.observersReady || typeof IntersectionObserver === 'undefined') return;
-    const sentinel = this.host.nativeElement.querySelector('.history-sentinel');
-    if (!sentinel) return;
-    this.observersReady = true;
-    this.historyObserver = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting) && this.timeline.nextBefore() && !this.timeline.historyError()) void this.loadOlder();
-    }, { rootMargin: '180px 0px 0px' });
-    this.historyObserver.observe(sentinel);
-  }
-
-  private observeToday(): void {
-    this.todayObserver?.disconnect();
-    if (typeof IntersectionObserver === 'undefined') return;
-    const section = this.host.nativeElement.querySelector(`[data-day="${this.timeline.today()}"]`);
-    if (!section) return;
-    this.todayObserver = new IntersectionObserver(entries => this.todayVisible.set(entries.some(entry => entry.isIntersecting)));
-    this.todayObserver.observe(section);
-  }
-
-  private scheduleRollover(): void {
-    clearTimeout(this.rolloverTimer);
-    const now = new Date();
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const delay = this.timeline.today() && this.timeline.today() !== localDay(now)
-      ? 30_000 : midnight.valueOf() - now.valueOf() + 250;
-    this.rolloverTimer = setTimeout(() => { if (!this.destroyed) void this.refresh(true); }, delay);
+    await this.router.navigate(['/library', destination.collectionId, 'learning-path']);
   }
 }

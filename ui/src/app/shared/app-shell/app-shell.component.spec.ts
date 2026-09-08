@@ -144,19 +144,23 @@ describe('AppShell responsive navigation', () => {
 		return fixture;
 	}
 
-	it('replaces desktop toolbar/tabs with seven sidebar destinations and a six-target mobile dock', async () => {
+	it('keeps the dashboard single-purpose with no status strip or desktop stats rail', async () => {
 		const fixture = await render();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('.topbar, .product-tabs')).toBeNull();
 		expect(host.querySelectorAll('.sidebar-links a')).toHaveLength(7);
 		expect(host.querySelectorAll('.mobile-nav a')).toHaveLength(5);
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
-		expect(host.querySelector('.mobile-status')).not.toBeNull();
+		expect(host.querySelector('.mobile-status')).toBeNull();
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).toBeNull();
+		expect(host.querySelector('.sidebar-summary')).toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
 	});
 
-	it('reserves a desktop right rail and mirrors the mobile learning status in it', async () => {
+	it('keeps status chrome available away from the focused dashboard', async () => {
 		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
 		const host: HTMLElement = fixture.nativeElement;
 		const mobileItems = Array.from(host.querySelectorAll('.mobile-status .status-item'));
 		const desktopItems = Array.from(host.querySelectorAll('[data-testid="desktop-right-rail"] .status-item'));
@@ -168,8 +172,18 @@ describe('AppShell responsive navigation', () => {
 		expect(desktopItems.map(item => item.textContent?.trim())).toEqual(mobileItems.map(item => item.textContent?.trim()));
 	});
 
+	it('labels the mobile dock Home, Courses and Leitner in the requested order', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		const labels = Array.from(host.querySelectorAll('.mobile-nav .mobile-nav-label'))
+			.map(item => item.textContent?.trim());
+		expect(labels.slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
+	});
+
 	it('turns the course flag into the same course-menu trigger on mobile and desktop', async () => {
 		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('[data-testid="mobile-course-trigger"]')).not.toBeNull();
 		expect(host.querySelector('[data-testid="desktop-course-trigger"]')).not.toBeNull();

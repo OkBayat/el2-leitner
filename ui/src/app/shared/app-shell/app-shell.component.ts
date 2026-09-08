@@ -47,15 +47,19 @@ export class AppShellComponent implements OnInit {
 
 	readonly navItems = [
 		{path: '/dashboard', label: 'Home', accessibleLabel: 'Home', icon: 'home', mobile: true},
+		{path: '/library', label: 'Courses', accessibleLabel: 'Courses', icon: 'library', mobile: true},
+		{path: '/review', label: 'Leitner', accessibleLabel: 'Leitner review', icon: 'review', mobile: true},
 		{path: '/bbc-6-minute-english', label: 'Listening', accessibleLabel: 'BBC 6 Minute English', icon: 'listening', mobile: true},
-		{path: '/review', label: "Today's Review", accessibleLabel: "Today's Review", icon: 'review', mobile: true},
 		{path: '/words', label: 'Words', accessibleLabel: 'Words', icon: 'words', mobile: true},
-		{path: '/library', label: 'Library', accessibleLabel: 'Library', icon: 'library', mobile: true},
 		{path: '/reports', label: 'Progress', accessibleLabel: 'Progress', icon: 'progress', mobile: false},
 		{path: '/settings', label: 'Settings', accessibleLabel: 'Settings', icon: 'settings', mobile: false},
 	] as const satisfies readonly NavigationItem[];
 	readonly mobileNavItems = this.navItems.filter(item => item.mobile);
 	readonly overflowNavItems = this.navItems.filter(item => !item.mobile);
+	readonly dashboardFocused = computed(() => {
+		const path = this.currentUrl().split(/[?#]/u)[0];
+		return path === '/' || path === '/dashboard';
+	});
 	readonly moreActive = computed(() => {
 		const path = this.currentUrl().split(/[?#]/u)[0];
 		return ['/reports', '/settings', '/overview'].some(route => path === route || path.startsWith(`${route}/`));

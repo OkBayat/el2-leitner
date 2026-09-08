@@ -24,12 +24,15 @@
 			<span class="sidebar-label">More</span>
 		</button>
 	</nav>
-	<div class="sidebar-summary" [attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'">
-		<app-navigation-icon name="streak" />
-		<span class="sidebar-label">{{ formatCount(stats()?.streak) }} day streak</span>
-	</div>
+	@if (!dashboardFocused()) {
+		<div class="sidebar-summary" [attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'">
+			<app-navigation-icon name="streak" />
+			<span class="sidebar-label">{{ formatCount(stats()?.streak) }} day streak</span>
+		</div>
+	}
 </aside>
 
+@if (!dashboardFocused()) {
 <header class="mobile-status" aria-label="Learning status">
 	<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
 		aria-label="Open my courses" title="My courses" data-testid="mobile-course-trigger">
@@ -48,12 +51,14 @@
 		<app-navigation-icon name="progress" /><span>{{ formatCount(stats()?.mastered) }}</span>
 	</a>
 </header>
+}
 
-<div class="shell-workspace" data-testid="desktop-workspace">
+<div class="shell-workspace" [class.is-dashboard]="dashboardFocused()" data-testid="desktop-workspace">
 	<main #mainContent id="main-content" class="content" tabindex="-1">
 		<router-outlet />
 	</main>
 
+	@if (!dashboardFocused()) {
 	<aside class="desktop-right-rail" data-testid="desktop-right-rail" aria-label="Learning status">
 		<header class="desktop-status">
 			<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
@@ -74,6 +79,7 @@
 			</a>
 		</header>
 	</aside>
+	}
 </div>
 
 <nav class="mobile-nav" aria-label="Mobile navigation">
@@ -81,11 +87,13 @@
 		<a [routerLink]="item.path" routerLinkActive="active-mobile" ariaCurrentWhenActive="page"
 			[attr.aria-label]="item.accessibleLabel" [title]="item.accessibleLabel">
 			<app-navigation-icon [name]="item.icon" />
+			<span class="mobile-nav-label">{{ item.label }}</span>
 		</a>
 	}
 	<button type="button" [matMenuTriggerFor]="moreMenu" [class.active-mobile]="moreActive()"
 		aria-label="More navigation and account" title="More" data-testid="mobile-more">
 		<app-navigation-icon name="account" />
+		<span class="mobile-nav-label">More</span>
 	</button>
 </nav>
 
