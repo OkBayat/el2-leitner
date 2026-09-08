@@ -11,6 +11,7 @@ import {
   loadPathById,
   progressRevision,
   projectedPathForUser,
+  resourcePublicId,
   requireProjectedExercise,
   requireProjectedLesson,
 } from "../learningPathSupport.js";
@@ -84,9 +85,9 @@ export class CompleteExercise {
 
     if (exercise.state === "completed") {
       return {
-        pathId: path.id,
-        lessonId: lesson.id,
-        exerciseId: exercise.id,
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
         exerciseStatus: "completed",
         lessonStatus: lesson.state,
         pathStatus: current.projected.path.learnerStatus,
@@ -161,9 +162,9 @@ export class CompleteExercise {
     });
 
     return {
-      pathId: path.id,
-      lessonId: lesson.id,
-      exerciseId: exercise.id,
+      pathId: resourcePublicId(path),
+      lessonId: resourcePublicId(lesson),
+      exerciseId: resourcePublicId(exercise),
       exerciseStatus: nextExercise.state,
       lessonStatus,
       pathStatus,

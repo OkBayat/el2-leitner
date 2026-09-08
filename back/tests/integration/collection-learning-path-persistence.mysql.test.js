@@ -80,6 +80,18 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
         await pool.execute(`DELETE FROM user_learning_path_lesson_progress WHERE user_id IN (${placeholders})`, users);
         await pool.execute(`DELETE FROM user_learning_path_progress WHERE user_id IN (${placeholders})`, users);
       }
+      await pool.execute(
+        "DELETE er FROM learning_path_exercise_route_ids er JOIN learning_path_exercises e ON e.id = er.exercise_id WHERE e.public_id = ?",
+        [ids.exercise],
+      );
+      await pool.execute(
+        "DELETE lr FROM learning_path_lesson_route_ids lr JOIN learning_path_lessons l ON l.id = lr.lesson_id WHERE l.public_id = ?",
+        [ids.lesson],
+      );
+      await pool.execute(
+        "DELETE pr FROM learning_path_route_ids pr JOIN collection_learning_paths p ON p.id = pr.learning_path_id WHERE p.public_id IN (?, ?)",
+        [ids.path, ids.rollbackPath],
+      );
       await pool.execute("DELETE FROM learning_path_exercises WHERE public_id = ?", [ids.exercise]);
       await pool.execute("DELETE FROM learning_path_lessons WHERE public_id = ?", [ids.lesson]);
       await pool.execute("DELETE FROM collection_learning_paths WHERE public_id IN (?, ?)", [ids.path, ids.rollbackPath]);
@@ -132,9 +144,14 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
     );
 
     const read = await definitionQueries.findActiveByCollectionPublicId(ids.collection);
+    assert.match(read.publicId, /^[1-9][0-9]*$/u);
     assert.equal(read.id, ids.path);
     assert.equal(read.contentVersion, 1);
     assert.equal(read.lessons[0].id, ids.lesson);
+    assert.match(read.lessons[0].publicId, /^[1-9][0-9]*$/u);
+    assert.match(read.lessons[0].exercises[0].publicId, /^[1-9][0-9]*$/u);
+    const byRouteId = await definitionQueries.findByRoutePublicId(read.publicId);
+    assert.equal(byRouteId.id, ids.path);
     assert.deepEqual(read.lessons[0].exercises[0].config, {
       lessonSlug: "episode-fixture",
       testId: "test-1",
@@ -186,6 +203,7 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
   });
 
   await t.test("content updates preserve identity and existing learner progress", async () => {
+    const before = await definitionQueries.findByPublicId(ids.path);
     await transactions.execute(async (connection) => {
       await definitions.upsertPath(pathDefinition(ids, { title: "Updated path", contentVersion: 2, sourceHash: "b".repeat(64) }), { connection });
       await definitions.upsertLesson(ids.path, lessonDefinition(ids, { title: "Updated episode", position: 2 }), { connection });
@@ -193,6 +211,9 @@ test("Collection Learning Path persistence is transactional, idempotent, and use
     });
 
     const read = await definitionQueries.findByPublicId(ids.path);
+    assert.equal(read.publicId, before.publicId);
+    assert.equal(read.lessons[0].publicId, before.lessons[0].publicId);
+    assert.equal(read.lessons[0].exercises[0].publicId, before.lessons[0].exercises[0].publicId);
     assert.equal(read.title, "Updated path");
     assert.equal(read.contentVersion, 2);
     assert.equal(read.lessons[0].position, 2);

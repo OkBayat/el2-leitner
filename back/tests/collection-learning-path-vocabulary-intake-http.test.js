@@ -42,15 +42,15 @@ it("vocabulary intake activation is an authenticated type-specific Learning Path
   app.use("/api/learning-paths", createCollectionLearningPathRouter({ queries, commands, authenticate }));
 
   const response = await request(app)
-    .post("/api/learning-paths/path-1/lessons/lesson-1/exercises/intake-1/vocabulary-intake/activate")
+    .post("/api/learning-paths/1/lessons/5/exercises/10/vocabulary-intake/activate")
     .send({ userId: "forged-user" })
     .expect(200);
 
   assert.equal(response.body.activatedCount, 2);
   assert.deepEqual(calls, [{
     userId: "authenticated-user",
-    pathId: "path-1",
-    lessonId: "lesson-1",
-    exerciseId: "intake-1",
+    pathId: "1",
+    lessonId: "5",
+    exerciseId: "10",
   }]);
 });

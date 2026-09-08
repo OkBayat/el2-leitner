@@ -4,11 +4,11 @@ import { createFreshState } from '../src/app/domain/learning/learning-rules';
 test.use({ timezoneId: 'UTC', reducedMotion: 'reduce' });
 
 const collectionId = 'bbc-six-minute-english';
-const pathId = 'bbc-six-minute-english-learning-path';
-const episodeOne = 'bbc-6-minute-english-260618';
-const episodeTwo = 'bbc-6-minute-english-260625';
-const intakeOne = `bbc6-${episodeOne}-vocab-intake`;
-const intakeTwo = `bbc6-${episodeTwo}-vocab-intake`;
+const pathId = '1';
+const episodeOne = '1';
+const episodeTwo = '2';
+const intakeOne = '1';
+const intakeTwo = '2';
 
 function exercise(id: string, state: 'available' | 'in_progress' | 'completed') {
   return {
@@ -159,7 +159,7 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
   await page.getByTestId('library-learning-path-action').click();
 
-  await expect(page).toHaveURL(new RegExp(`/learning-path/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
+  await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
   await expect(page.getByRole('heading', { name: "Meet this lesson's words" })).toBeVisible();
   expect(writes).toEqual(['subscribe', 'start-path', 'start-exercise']);
@@ -179,6 +179,7 @@ test('rolling BBC course exposes a ready lesson trail node when a newly synchron
   });
 
   await page.route(`**/api/learning-paths/collections/${collectionId}`, (route) => route.fulfill({ json: currentView }));
+  await page.route(`**/api/learning-paths/${pathId}`, (route) => route.fulfill({ json: currentView }));
   const secondContextPath = `/api/learning-paths/${pathId}/lessons/${episodeTwo}/exercises/${intakeTwo}`;
   await page.route(`**${secondContextPath}`, (route) => route.fulfill({ json: intakeContext(episodeTwo, intakeTwo, exerciseState) }));
   await page.route(`**${secondContextPath}/start`, async (route) => {
@@ -187,6 +188,7 @@ test('rolling BBC course exposes a ready lesson trail node when a newly synchron
   });
 
   await page.goto(`/library/${collectionId}/learning-path`);
+  await expect(page).toHaveURL(`/learning-paths/${pathId}`);
   const pathStatus = page.locator('.path-header__status');
   await expect(pathStatus).toHaveText('Up to date');
   await expect(page.getByRole('button', { name: 'Vocabulary intake, Completed' })).toBeDisabled();
@@ -211,5 +213,5 @@ test('rolling BBC course exposes a ready lesson trail node when a newly synchron
   await expect(readyNode).toBeEnabled();
   await expect(readyNode.locator('.exercise-node__flag')).toHaveText('START');
   await readyNode.click();
-  await expect(page).toHaveURL(new RegExp(`/learning-path/${pathId}/lessons/${episodeTwo}/exercises/${intakeTwo}$`, 'u'));
+  await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeTwo}/exercises/${intakeTwo}$`, 'u'));
 });

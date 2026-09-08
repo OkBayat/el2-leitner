@@ -2,9 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 
 test.use({ timezoneId: 'UTC', reducedMotion: 'reduce' });
 
-const pathId = 'cvfi-learning-path';
-const lessonId = 'cvfi-unit-01';
-const exerciseId = 'cvfi-u01-intake';
+const pathId = '1';
+const lessonId = '1';
+const exerciseId = '1';
 const contextPath = `/api/learning-paths/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`;
 
 function context(state: 'available' | 'in_progress' | 'completed', newCount: number) {
@@ -108,7 +108,7 @@ test('slide exercise desktop shell owns the viewport and constrains exercise chr
   await page.setViewportSize({ width: 1440, height: 900 });
   await mockIntake(page);
 
-  await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
+  await page.goto(`/learning-paths/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
   await expect(page.getByTestId('slide-exercise')).toBeVisible();
   await expect(page.getByTestId('message-slide-content')).toBeVisible();
   await expect(page.locator('.runner__topbar')).toHaveCount(0);
@@ -185,7 +185,7 @@ test('desktop slide stage scrolls with the mouse wheel while the footer stays vi
   await page.setViewportSize({ width: 1200, height: 360 });
   await mockIntake(page);
 
-  await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
+  await page.goto(`/learning-paths/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
   await page.getByRole('button', { name: "Let's Go" }).click();
   await expect(page.getByRole('heading', { name: 'persistent' })).toBeVisible();
 
@@ -210,7 +210,7 @@ test('Cambridge vocabulary intake runs as a slide quiz for new and Box 1 words',
   page.on('pageerror', (error) => errors.push(error.message));
   const commands = await mockIntake(page);
 
-  await page.goto(`/learning-path/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
+  await page.goto(`/learning-paths/${pathId}/lessons/${lessonId}/exercises/${exerciseId}`);
 
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
   await expect(page.getByRole('progressbar')).toHaveCount(0);

@@ -123,7 +123,12 @@ export function findLearningPathResumePoint(projectedPath) {
     const exercise = lesson.exercises.find(
       (candidate) => candidate.state === "available" || candidate.state === "in_progress",
     );
-    if (exercise) return { lessonId: lesson.id, exerciseId: exercise.id };
+    if (exercise) {
+      return {
+        lessonId: String(lesson.publicId ?? lesson.id),
+        exerciseId: String(exercise.publicId ?? exercise.id),
+      };
+    }
   }
   return null;
 }

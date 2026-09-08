@@ -241,7 +241,7 @@ Conceptual shape:
 
 ```ts
 interface ExerciseDefinition<TConfig = unknown> {
-  id: string;                 // stable public id
+  id: string;                 // decimal public route id in API views
   lessonId: string;
   position: number;
   type: string;               // namespaced stable type
@@ -518,11 +518,28 @@ Do not store general course structure as a giant opaque JSON document.
 
 ## 17. Identity, versioning, publication, and retirement
 
-Stable public IDs are mandatory.
+Stable public IDs are mandatory. The durable decision and evidence are recorded
+in [Vocora URL Identity and Resource Naming Convention](../okf/project/vocora-url-identity-and-resource-naming.md).
 
 ### Identity
 
-Once a published path, lesson, or exercise has learner progress, do not recycle its public ID for different content.
+The internal relational key, source-owned content ID, and public route ID are
+separate concepts. Existing internal `BIGINT` keys and source IDs remain
+authoritative for joins and file synchronization. Database-generated numeric
+route IDs are exposed to browsers and API consumers as decimal strings.
+
+Canonical routes use plural resource collections without redundant type
+prefixes:
+
+```text
+/learning-paths/1
+/learning-paths/1/lessons/5/exercises/10
+```
+
+Once assigned, a path, lesson, or exercise route ID never changes and is never
+recycled. A title, display-name, ordering, or content-version change does not
+change the route. Legacy slug routes may resolve and redirect during migration,
+but responses and newly generated links use the canonical numeric identity.
 
 ### Ordering
 

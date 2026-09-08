@@ -1,6 +1,7 @@
 import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { legacyLearningPathExerciseRouteGuard } from './core/collection-learning-path/legacy-learning-path-route.guard';
 
 export const appRoutes: Routes = [
   { path: 'slide-showcase', canMatch: [() => isDevMode()], loadComponent: () => import('./features/slide-showcase/slide-showcase-page.component').then((m) => m.SlideShowcasePageComponent) },
@@ -11,7 +12,8 @@ export const appRoutes: Routes = [
   { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },
   { path: 'shadowing', canActivate: [authGuard], loadComponent: () => import('./features/shadowing-practice/shadowing-page.component').then((m) => m.ShadowingPageComponent) },
   { path: 'bbc-6-minute-english/:lessonSlug/tests/:testId/practice', canActivate: [authGuard], loadComponent: () => import('./features/bbc-listening/bbc-listening-practice-page.component').then((m) => m.BbcListeningPracticePageComponent) },
-  { path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId', canActivate: [authGuard], loadComponent: () => import('./features/collection-learning-path/exercise-runner/exercise-runner-page.component').then((m) => m.ExerciseRunnerPageComponent) },
+  { path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId', canActivate: [authGuard], loadComponent: () => import('./features/collection-learning-path/exercise-runner/exercise-runner-page.component').then((m) => m.ExerciseRunnerPageComponent) },
+  { path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId', canActivate: [authGuard, legacyLearningPathExerciseRouteGuard], loadComponent: () => import('./features/collection-learning-path/exercise-runner/exercise-runner-page.component').then((m) => m.ExerciseRunnerPageComponent) },
   {
     path: '',
     canActivate: [authGuard],
@@ -22,6 +24,7 @@ export const appRoutes: Routes = [
       { path: 'words', loadComponent: () => import('./features/words/words-page.component').then((m) => m.WordsPageComponent) },
       { path: 'reports', loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent) },
       { path: 'settings', loadComponent: () => import('./features/settings/settings-page.component').then((m) => m.SettingsPageComponent) },
+      { path: 'learning-paths/:pathId', loadComponent: () => import('./features/collection-learning-path/path-page/learning-path-page.component').then((m) => m.LearningPathPageComponent) },
       { path: 'library/:collectionId/learning-path', loadComponent: () => import('./features/collection-learning-path/path-page/learning-path-page.component').then((m) => m.LearningPathPageComponent) },
       { path: 'library/:id', loadComponent: () => import('./features/library/library-detail-page.component').then((m) => m.LibraryDetailPageComponent) },
       { path: 'library', loadComponent: () => import('./features/library/library-page.component').then((m) => m.LibraryPageComponent) },

@@ -35,7 +35,7 @@ function largeCambridgeView(): CollectionLearningPathView {
     access: { canProgress: true },
     resumePoint: { lessonId: 'unit-1', exerciseId: 'unit-1-intake' },
     path: {
-      id: 'cambridge-vocabulary-for-ielts-learning-path',
+      id: '1',
       collectionId: 'cambridge-vocabulary-for-ielts',
       title: 'Cambridge Vocabulary for IELTS',
       mode: 'finite',
@@ -58,6 +58,7 @@ describe('LearningPathPageComponent hardening', () => {
       starting: signal(false),
       error: signal(''),
       load: vi.fn().mockResolvedValue(true),
+      loadByPathId: vi.fn().mockResolvedValue(true),
       start: vi.fn().mockResolvedValue(true),
     };
     TestBed.configureTestingModule({
@@ -65,7 +66,7 @@ describe('LearningPathPageComponent hardening', () => {
       providers: [
         provideRouter([]),
         { provide: CollectionLearningPathFacade, useValue: facade },
-        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ collectionId: view.path.collectionId })) } },
+        { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: view.path.id })) } },
       ],
     });
 

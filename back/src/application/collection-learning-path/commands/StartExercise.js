@@ -7,6 +7,7 @@ import {
   loadPathById,
   progressRevision,
   projectedPathForUser,
+  resourcePublicId,
   requireProjectedExercise,
   requireProjectedLesson,
 } from "../learningPathSupport.js";
@@ -38,18 +39,18 @@ export class StartExercise {
 
     if (exercise.state === "completed") {
       return {
-        pathId: path.id,
-        lessonId: lesson.id,
-        exerciseId: exercise.id,
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
         exerciseStatus: "completed",
         progressRevision: currentRevision,
       };
     }
     if (exercise.progress?.status === "in_progress") {
       return {
-        pathId: path.id,
-        lessonId: lesson.id,
-        exerciseId: exercise.id,
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
         exerciseStatus: "in_progress",
         progressRevision: currentRevision,
       };
@@ -102,9 +103,9 @@ export class StartExercise {
     });
 
     return {
-      pathId: path.id,
-      lessonId: lesson.id,
-      exerciseId: exercise.id,
+      pathId: resourcePublicId(path),
+      lessonId: resourcePublicId(lesson),
+      exerciseId: resourcePublicId(exercise),
       exerciseStatus: "in_progress",
       progressRevision: expectedRevision + 1,
     };

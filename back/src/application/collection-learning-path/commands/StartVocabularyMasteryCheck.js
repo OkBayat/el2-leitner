@@ -7,6 +7,7 @@ import {
   ensureLearningPathProgressAccess,
   loadPathById,
   projectedPathForUser,
+  resourcePublicId,
   requireProjectedExercise,
   requireProjectedLesson,
 } from "../learningPathSupport.js";
@@ -67,9 +68,9 @@ export class StartVocabularyMasteryCheck {
     };
     if (orderedItems.length === 0) {
       return {
-        pathId: path.id,
-        lessonId: lesson.id,
-        exerciseId: exercise.id,
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
         session: null,
         payload,
       };
@@ -84,9 +85,9 @@ export class StartVocabularyMasteryCheck {
     });
 
     return {
-      pathId: path.id,
-      lessonId: lesson.id,
-      exerciseId: exercise.id,
+      pathId: resourcePublicId(path),
+      lessonId: resourcePublicId(lesson),
+      exerciseId: resourcePublicId(exercise),
       session,
       payload,
     };

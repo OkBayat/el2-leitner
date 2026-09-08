@@ -52,7 +52,7 @@ export class ExerciseRunnerPageComponent {
     }
     if (outcome.kind === 'cancelled') {
       const context = this.facade.context();
-      if (context) void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
+      if (context) void this.router.navigate(['/learning-paths', context.path.id]);
     }
   }
 
@@ -62,10 +62,10 @@ export class ExerciseRunnerPageComponent {
     if (!context) return;
     if (resumePoint) {
       void this.router.navigate([
-        '/learning-path', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
+        '/learning-paths', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
       ]);
       return;
     }
-    void this.router.navigate(['/library', context.path.collectionId, 'learning-path']);
+    void this.router.navigate(['/learning-paths', context.path.id]);
   }
 }

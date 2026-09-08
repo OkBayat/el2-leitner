@@ -54,7 +54,7 @@ describe('ExerciseRunnerPageComponent journey continuation', () => {
     button?.click();
 
     expect(router.navigate).toHaveBeenCalledWith([
-      '/learning-path', 'path-1', 'lessons', 'episode-2', 'exercises', 'exercise-2',
+      '/learning-paths', 'path-1', 'lessons', 'episode-2', 'exercises', 'exercise-2',
     ]);
   });
 
@@ -72,6 +72,6 @@ describe('ExerciseRunnerPageComponent journey continuation', () => {
     expect(button).toBeTruthy();
     button?.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/library', 'course-1', 'learning-path']);
+    expect(router.navigate).toHaveBeenCalledWith(['/learning-paths', 'path-1']);
   });
 });

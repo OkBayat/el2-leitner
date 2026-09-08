@@ -116,11 +116,12 @@ export class LibraryPageComponent implements OnInit {
     await this.selectedCourses.load();
     if (destination.kind === 'exercise') {
       await this.router.navigate([
-        '/learning-path', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
       ]);
       return;
     }
-    await this.router.navigate(['/library', destination.collectionId, 'learning-path']);
+    const path = this.learningPaths.viewFor(destination.collectionId)?.path;
+    await this.router.navigate(path ? ['/learning-paths', path.id] : ['/library', destination.collectionId, 'learning-path']);
   }
 
   async toggle(collection: LibraryCollection): Promise<void> {

@@ -28,11 +28,19 @@ export class CollectionLearningPathFacade {
   readonly error = signal('');
 
   async load(collectionId: string): Promise<boolean> {
+    return this.loadView(() => this.api.queryCollectionLearningPath(collectionId));
+  }
+
+  async loadByPathId(pathId: string): Promise<boolean> {
+    return this.loadView(() => this.api.queryLearningPath(pathId));
+  }
+
+  private async loadView(query: () => Promise<CollectionLearningPathView>): Promise<boolean> {
     const request = ++this.requestVersion;
     this.loading.set(true);
     this.error.set('');
     try {
-      const view = await this.api.queryCollectionLearningPath(collectionId);
+      const view = await query();
       if (request !== this.requestVersion) return false;
       this.view.set(view);
       this.resume.set(resumeFromView(view));

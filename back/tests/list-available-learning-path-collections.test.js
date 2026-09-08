@@ -6,8 +6,12 @@ import { ListAvailableLearningPathCollections } from "../src/application/collect
 describe("ListAvailableLearningPathCollections", () => {
   it("returns only collections whose Learning Paths are readable by the user", async () => {
     const definitionReader = {
-      async listActiveCollectionPublicIds() {
-        return ["bbc-six-minute-english", "private-course", "cambridge-vocabulary-for-ielts"];
+      async listActiveCollectionRoutes() {
+        return [
+          { collectionId: "bbc-six-minute-english", pathId: "1" },
+          { collectionId: "private-course", pathId: "2" },
+          { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3" },
+        ];
       },
     };
     const accessReader = {
@@ -19,7 +23,10 @@ describe("ListAvailableLearningPathCollections", () => {
 
     assert.deepEqual(
       await query.execute("user-1"),
-      ["bbc-six-minute-english", "cambridge-vocabulary-for-ielts"],
+      [
+        { collectionId: "bbc-six-minute-english", pathId: "1" },
+        { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3" },
+      ],
     );
   });
 });

@@ -11,6 +11,7 @@ import {
   ensureLearningPathProgressAccess,
   loadPathById,
   projectedPathForUser,
+  resourcePublicId,
   requireProjectedExercise,
   requireProjectedLesson,
 } from "../learningPathSupport.js";
@@ -68,9 +69,9 @@ export class StartVocabularySpelling {
       summary: { box: 1, eligibleCount: items.length },
     };
     const response = {
-      pathId: context.path.id,
-      lessonId: context.lesson.id,
-      exerciseId: context.exercise.id,
+      pathId: resourcePublicId(context.path),
+      lessonId: resourcePublicId(context.lesson),
+      exerciseId: resourcePublicId(context.exercise),
       payload,
     };
     if (!items.length) return { ...response, session: null };
