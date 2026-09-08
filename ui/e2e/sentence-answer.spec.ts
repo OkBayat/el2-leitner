@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
+import { finishNewLearnerWelcome } from './support/new-learner';
 
 const deck = {
 	practice: { mode: 'sentence', house: 1, retryGap: 3 },
@@ -36,7 +37,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
 			await page.getByLabel('Email').fill(`e2e-cloze-${viewport.width}-${Date.now()}@example.com`);
 			await page.getByLabel('Password').fill('password123');
 			await page.getByRole('button', { name: 'Create account' }).click();
-			await expect(page).toHaveURL(/\/dashboard$/u);
+			await finishNewLearnerWelcome(page);
 			await page.goto('/sentence?house=1');
 
 			const field = page.getByTestId('sentence-answer-input');

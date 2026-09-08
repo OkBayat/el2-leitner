@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { finishNewLearnerWelcome } from './support/new-learner';
 
 const sentence = 'My name is Sara.';
 function assessment(count: number) {
@@ -51,7 +52,7 @@ async function setup(page: Page, denied = false) {
   await page.getByLabel('Email').fill(`e2e-shadowing-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`);
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Create account' }).click();
-  await expect(page).toHaveURL(/\/dashboard$/u);
+  await finishNewLearnerWelcome(page);
   await page.goto('/shadowing');
   await expect(page.getByTestId('shadowing-session')).toBeVisible();
 }

@@ -1,15 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
+import { finishNewLearnerWelcome, waitForDailyActivation } from './support/new-learner';
 
 const ADMIN_EMAIL = 'e2e-admin@example.com';
 const ADMIN_PASSWORD = 'password123';
-
-function waitForDailyActivation(page: Page) {
-  return page.waitForResponse((response) => (
-    response.request().method() === 'POST'
-    && new URL(response.url()).pathname === '/api/learning/vocabulary-activation-batches'
-    && response.ok()
-  ));
-}
 
 async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
   await page.goto('/register');
@@ -27,9 +20,7 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
     await page.getByLabel('Password').fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
   } else if (/\/welcome$/u.test(page.url())) {
-    const dailyActivation = waitForDailyActivation(page);
-    await page.getByRole('button', { name: 'Skip tour' }).click();
-    await dailyActivation;
+    await finishNewLearnerWelcome(page);
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
