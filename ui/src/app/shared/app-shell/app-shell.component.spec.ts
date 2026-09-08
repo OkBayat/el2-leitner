@@ -147,7 +147,7 @@ describe('AppShell responsive navigation', () => {
 		return fixture;
 	}
 
-	it('keeps the dashboard single-purpose with no status strip or desktop stats rail', async () => {
+	it('keeps mobile focused while restoring the persistent desktop shell on the dashboard', async () => {
 		const fixture = await render();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('.topbar, .product-tabs')).toBeNull();
@@ -155,9 +155,9 @@ describe('AppShell responsive navigation', () => {
 		expect(host.querySelectorAll('.mobile-nav a')).toHaveLength(5);
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
 		expect(host.querySelector('.mobile-status')).toBeNull();
-		expect(host.querySelector('[data-testid="desktop-right-rail"]')).toBeNull();
-		expect(host.querySelector('.sidebar-summary')).toBeNull();
-		expect(host.querySelector('.shell-workspace.is-dashboard')).not.toBeNull();
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(host.querySelector('.sidebar-summary')).not.toBeNull();
+		expect(host.querySelector('.shell-workspace.is-dashboard')).toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
 	});
 

@@ -51,7 +51,10 @@ for (const theme of ['light', 'dark'] as const) {
 				await expect(sidebar).toBeVisible();
 				await expect(dock).toBeHidden();
 				await expect(page.locator('.mobile-status')).toHaveCount(0);
-				await expect(page.locator('[data-testid="desktop-right-rail"], .sidebar-summary')).toHaveCount(0);
+				await expect(page.locator('.sidebar-summary')).toBeVisible();
+				const rightRail = page.getByTestId('desktop-right-rail');
+				if (width >= 1024) await expect(rightRail).toBeVisible();
+				else await expect(rightRail).toBeHidden();
 				const sidebarBox = (await sidebar.boundingBox())!;
 				expect(sidebarBox.x).toBe(0);
 				expect((await page.locator('#main-content').boundingBox())!.x).toBeGreaterThanOrEqual(sidebarBox.width);
@@ -81,6 +84,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await page.screenshot({path: testInfo.outputPath(`navigation-${theme}-${width}.png`)});
 			await page.evaluate(() => scrollBy({top: 400, behavior: 'instant'}));
 			await expect(width >= 768 ? sidebar : dock).toBeInViewport();
+			if (width >= 1024) await expect(page.locator('.desktop-status')).toBeInViewport();
 			if (width < 768) await expect(dock).toBeInViewport();
 			expect(writes).toEqual([]);
 			expect(errors).toEqual([]);

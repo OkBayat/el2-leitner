@@ -24,12 +24,10 @@
 			<span class="sidebar-label">More</span>
 		</button>
 	</nav>
-	@if (!dashboardFocused()) {
-		<div class="sidebar-summary" [attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'">
-			<app-navigation-icon name="streak" />
-			<span class="sidebar-label">{{ formatCount(stats()?.streak) }} day streak</span>
-		</div>
-	}
+	<div class="sidebar-summary" [attr.aria-label]="stats() ? stats()!.streak + ' day streak' : 'Loading streak'">
+		<app-navigation-icon name="streak" />
+		<span class="sidebar-label">{{ formatCount(stats()?.streak) }} day streak</span>
+	</div>
 </aside>
 
 @if (!dashboardFocused()) {
@@ -53,12 +51,11 @@
 </header>
 }
 
-<div class="shell-workspace" [class.is-dashboard]="dashboardFocused()" data-testid="desktop-workspace">
+<div class="shell-workspace" data-testid="desktop-workspace">
 	<main #mainContent id="main-content" class="content" tabindex="-1">
 		<router-outlet />
 	</main>
 
-	@if (!dashboardFocused()) {
 	<aside class="desktop-right-rail" data-testid="desktop-right-rail" aria-label="Learning status">
 		<header class="desktop-status">
 			<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
@@ -79,7 +76,6 @@
 			</a>
 		</header>
 	</aside>
-	}
 </div>
 
 <nav class="mobile-nav" aria-label="Mobile navigation">
