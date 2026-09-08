@@ -2,6 +2,7 @@
 
 ## 2026-09-08
 
+* **Creation**: Added [Vocora Text-to-Speech](project/vocora-text-to-speech.md) with the shared backend endpoint, binary client-consumption contract, content-addressed cache ownership, and isolated automatic deployment behavior.
 * **Decision**: Added [Vocora URL Identity and Resource Naming Convention](project/vocora-url-identity-and-resource-naming.md) with the canonical numeric route hierarchy, database identity separation, external design evidence, and compatibility migration.
 * **Initialization**: Created the root OKF bundle with project, rules, playbooks, and maintenance sections.
 * **Creation**: Added [Repository Source Of Truth](project/repository-source-of-truth.md) as the initial sample project knowledge concept.
