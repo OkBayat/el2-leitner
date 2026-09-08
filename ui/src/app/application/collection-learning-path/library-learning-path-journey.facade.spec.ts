@@ -80,7 +80,9 @@ describe('LibraryLearningPathJourneyFacade', () => {
       .mockResolvedValueOnce(completed);
 
     expect(await facade.load([cambridge])).toBe(false);
-    expect(await facade.enter(cambridge)).toEqual({ kind: 'path', collectionId: cambridge.id });
+    expect(await facade.enter(cambridge)).toEqual({
+      kind: 'path', pathId: 'cvfi-learning-path', collectionId: cambridge.id,
+    });
     expect(queryCollectionLearningPath).toHaveBeenCalledTimes(2);
     expect(facade.viewFor(cambridge.id)).toBe(completed);
     expect(facade.error()).toBe('');

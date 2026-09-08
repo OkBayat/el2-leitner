@@ -6,7 +6,7 @@ import type { CollectionLearningPathView, LearningPathResumePoint } from '../../
 
 export type LearningPathJourneyDestination =
   | { kind: 'exercise'; pathId: string; lessonId: string; exerciseId: string }
-  | { kind: 'path'; collectionId: string };
+  | { kind: 'path'; pathId: string; collectionId: string };
 
 function errorMessage(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Course could not open.';
@@ -73,7 +73,7 @@ export class LibraryLearningPathJourneyFacade {
       }
       const { path } = current;
       if (path.learnerStatus === 'completed' || path.learnerStatus === 'up_to_date') {
-        return { kind: 'path', collectionId: collection.id };
+        return { kind: 'path', pathId: path.id, collectionId: collection.id };
       }
 
       if (!current.access.canProgress) {
@@ -90,7 +90,7 @@ export class LibraryLearningPathJourneyFacade {
 
       return resumePoint
         ? exerciseDestination(path.id, resumePoint)
-        : { kind: 'path', collectionId: collection.id };
+        : { kind: 'path', pathId: path.id, collectionId: collection.id };
     } catch (error) {
       this.error.set(errorMessage(error));
       return null;
