@@ -6,8 +6,14 @@ async function authenticate(page: Page): Promise<void> {
 	await page.goto('/register');
 	await page.getByLabel('Email').fill(`e2e-sentence-${Date.now()}@example.com`);
 	await page.getByLabel('Password').fill(PASSWORD);
+	const dailyActivation = page.waitForResponse((response) =>
+		response.request().method() === 'POST'
+		&& response.url().includes('/api/learning/vocabulary-activation-batches')
+		&& response.ok()
+	);
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
+	await dailyActivation;
 }
 
 async function learningState(page: Page): Promise<any> {

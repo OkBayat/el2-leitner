@@ -104,8 +104,14 @@ test('native AudioWorklet and real speech API handle silence without changing le
     await page.goto('/register');
     await page.getByLabel('Email').fill(`e2e-shadowing-native-${Date.now()}@example.com`);
     await page.getByLabel('Password').fill('password123');
+    const dailyActivation = page.waitForResponse((response) =>
+      response.request().method() === 'POST'
+      && response.url().includes('/api/learning/vocabulary-activation-batches')
+      && response.ok()
+    );
     await page.getByRole('button', { name: 'Create account' }).click();
     await expect(page).toHaveURL(/\/dashboard$/u);
+    await dailyActivation;
     const before = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
     await page.goto('/shadowing');
     await expect(page.getByTestId('shadowing-session')).toBeVisible();
