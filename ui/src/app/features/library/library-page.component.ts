@@ -46,17 +46,17 @@ export class LibraryPageComponent implements OnInit {
   readonly canManage = signal(false);
   readonly allCollections = computed(() => alphabetical(this.collections()));
   readonly allCourses = computed<LibraryCourseItem[]>(() => alphabetical(this.collections().flatMap((collection) => {
-    const course = this.learningPaths.viewFor(collection.id);
-    return course ? [{collection, title: course.path.title}] : [];
+    const course = this.learningPaths.courseSummaryFor(collection.id);
+    return course ? [{collection, title: course.title}] : [];
   })));
   readonly myItems = computed<PersonalLibraryItem[]>(() => this.allCollections().flatMap((collection) => {
-    const course = this.learningPaths.viewFor(collection.id);
-    const enrolled = course && course.path.learnerStatus !== 'available';
+    const course = this.learningPaths.courseSummaryFor(collection.id);
+    const enrolled = Boolean(course?.enrolled);
     if (!enrolled && !collection.subscribed) return [];
     const kind: PersonalLibraryItem['kind'] = enrolled ? 'course' : 'collection';
     return [{
       collection,
-      title: enrolled ? course.path.title : collection.title,
+      title: enrolled ? course!.title : collection.title,
       kind,
     }];
   }).sort((left, right) => left.title.localeCompare(right.title)));

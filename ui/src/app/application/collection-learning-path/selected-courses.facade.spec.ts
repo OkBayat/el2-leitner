@@ -31,7 +31,10 @@ describe('SelectedCoursesFacade', () => {
     list.mockResolvedValue({ collections: [collection()] });
     queryLearningPathCollectionIds.mockResolvedValue({
       collectionIds: ['bbc-six-minute-english'],
-      learningPaths: [{ collectionId: 'bbc-six-minute-english', pathId: '1' }],
+      learningPaths: [{
+        collectionId: 'bbc-six-minute-english', pathId: '1', title: 'BBC 6 Minute English',
+        learnerStatus: 'in_progress', enrolled: true,
+      }],
     });
     TestBed.configureTestingModule({ providers: [
       SelectedCoursesFacade,
@@ -41,7 +44,7 @@ describe('SelectedCoursesFacade', () => {
     facade = TestBed.inject(SelectedCoursesFacade);
   });
 
-  it('keeps subscribed Learning Path collections regardless of library kind', () => {
+  it('keeps enrolled courses regardless of vocabulary subscription or library kind', () => {
     const cambridge = collection({
       id: 'cambridge-vocabulary-for-ielts',
       slug: 'cambridge-vocabulary-for-ielts',
@@ -53,6 +56,7 @@ describe('SelectedCoursesFacade', () => {
     const result = courseMenuCollections(
       [collection({ subscribed: false }), cambridge, unrelated],
       new Map([['bbc-six-minute-english', '1'], [cambridge.id, '2']]),
+      new Set([cambridge.id]),
     );
 
     expect(result.map((course) => course.id)).toEqual([cambridge.id]);
@@ -65,6 +69,7 @@ describe('SelectedCoursesFacade', () => {
         collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'book', subscribed: true }),
       ],
       new Map([['bbc-six-minute-english', '1']]),
+      new Set(),
     );
 
     expect(result).toEqual([]);
@@ -83,8 +88,8 @@ describe('SelectedCoursesFacade', () => {
     queryLearningPathCollectionIds.mockResolvedValue({
       collectionIds: ['bbc-six-minute-english', cambridge.id],
       learningPaths: [
-        { collectionId: 'bbc-six-minute-english', pathId: '1' },
-        { collectionId: cambridge.id, pathId: '2' },
+        { collectionId: 'bbc-six-minute-english', pathId: '1', title: 'BBC 6 Minute English', learnerStatus: 'available', enrolled: false },
+        { collectionId: cambridge.id, pathId: '2', title: cambridge.title, learnerStatus: 'in_progress', enrolled: true },
       ],
     });
 

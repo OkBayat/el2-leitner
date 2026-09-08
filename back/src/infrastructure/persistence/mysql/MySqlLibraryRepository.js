@@ -96,6 +96,8 @@ export class MySqlLibraryRepository {
        LEFT JOIN user_vocabulary_progress uvp
          ON uvp.user_id = ? AND uvp.vocabulary_entry_id = ce.vocabulary_entry_id
        WHERE (${includeManaged ? "1 = 1" : "c.archived_at IS NULL"})
+         AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.metadata_json, '$.sourceFile')), '')
+           NOT LIKE 'listening/episodes/%'
          AND ((c.visibility = 'public' AND c.status = 'published') OR c.owner_user_id = ? ${managedClause})
        GROUP BY c.id, uc.status, uc.last_seen_version
        ORDER BY c.is_default DESC, c.published_at DESC, c.created_at DESC`,
@@ -121,6 +123,8 @@ export class MySqlLibraryRepository {
        FROM collections c
        LEFT JOIN user_collections uc ON uc.collection_id = c.id AND uc.user_id = ?
        WHERE (c.public_id = ? OR c.slug = ?)
+         AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.metadata_json, '$.sourceFile')), '')
+           NOT LIKE 'listening/episodes/%'
          AND ((c.visibility IN ('public', 'unlisted') AND c.status = 'published') OR c.owner_user_id = ? ${managedClause})
        LIMIT 1`,
       [userId, userId, collectionId, collectionId, userId]

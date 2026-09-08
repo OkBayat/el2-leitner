@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import { LibraryApiService } from '../../core/library/library-api.service';
 import type { CollectionLearningPathView, LearningPathResumeView } from '../../domain/collection-learning-path/learning-path';
 import { CollectionLearningPathFacade } from './collection-learning-path.facade';
 
@@ -18,11 +17,10 @@ describe('CollectionLearningPathFacade', () => {
   const queryLearningPath = vi.fn();
   const queryResumePoint = vi.fn();
   const commandStartPath = vi.fn();
-  const subscribe = vi.fn();
   let facade: CollectionLearningPathFacade;
 
   beforeEach(() => {
-    for (const fn of [queryCollectionLearningPath, queryLearningPath, queryResumePoint, commandStartPath, subscribe]) fn.mockReset();
+    for (const fn of [queryCollectionLearningPath, queryLearningPath, queryResumePoint, commandStartPath]) fn.mockReset();
     queryCollectionLearningPath.mockResolvedValue(structuredClone(view));
     queryLearningPath.mockResolvedValue(structuredClone(view));
     queryResumePoint.mockResolvedValue(structuredClone(resume));
@@ -30,7 +28,6 @@ describe('CollectionLearningPathFacade', () => {
     TestBed.configureTestingModule({ providers: [
       CollectionLearningPathFacade,
       { provide: CollectionLearningPathApiService, useValue: { queryCollectionLearningPath, queryLearningPath, queryResumePoint, commandStartPath } },
-      { provide: LibraryApiService, useValue: { subscribe } },
     ] });
     facade = TestBed.inject(CollectionLearningPathFacade);
   });
@@ -53,7 +50,6 @@ describe('CollectionLearningPathFacade', () => {
     await facade.load('collection-1');
     queryCollectionLearningPath.mockResolvedValueOnce({ ...structuredClone(view), path: { ...view.path, learnerStatus: 'in_progress' } });
     expect(await facade.start()).toBe(true);
-    expect(subscribe).not.toHaveBeenCalled();
     expect(commandStartPath).toHaveBeenCalledWith('path-1');
     expect(facade.view()?.path.learnerStatus).toBe('in_progress');
     expect(facade.resume()?.pathStatus).toBe('in_progress');

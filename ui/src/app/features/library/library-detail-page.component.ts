@@ -54,7 +54,12 @@ import {
           </div>
 
           <div class="learning-actions" data-testid="library-detail-actions">
-            @if (course(); as courseView) {
+            @if (learningPaths.error()) {
+              <div class="action-option" role="alert">
+                <p>{{ learningPaths.error() }}</p>
+                <button mat-stroked-button data-testid="course-detail-retry" (click)="reload()">Retry</button>
+              </div>
+            } @else if (course(); as courseView) {
               <div class="action-option">
                 <button
                   mat-flat-button
@@ -65,6 +70,11 @@ import {
                   @if (learningPaths.enteringId() === c.id) { Opening… } @else { {{ courseActionLabel(courseView.path.learnerStatus) }} }
                 </button>
                 <p>Start this course to follow a structured learning path with lessons, exercises, and progress tracking.</p>
+                @if (courseView.path.learnerStatus !== 'available') {
+                  <button mat-stroked-button data-testid="remove-course-action" (click)="removeCourse()">
+                    Remove Course
+                  </button>
+                }
               </div>
               <div class="action-option">
                 <button mat-stroked-button data-testid="leitner-only-action" (click)="toggleSubscription()">
@@ -72,7 +82,7 @@ import {
                 </button>
                 <p>{{ leitnerDescription(c, true) }}</p>
               </div>
-            } @else {
+            } @else if (learningPaths.catalogReady()) {
               <div class="action-option">
                 <button mat-flat-button data-testid="leitner-only-action" (click)="toggleSubscription()">
                   {{ leitnerActionLabel(c) }}
@@ -174,14 +184,17 @@ export class LibraryDetailPageComponent implements OnInit {
     await this.load(id);
   }
 
-  private async load(id: string): Promise<void> {
+  async load(id: string): Promise<void> {
     const result = await this.api.get(id);
     this.collection.set(result.collection);
     this.canManage.set(Boolean(result.capabilities?.canManage));
-    await this.learningPaths.loadCatalog([result.collection]);
+    const catalogLoaded = await this.learningPaths.loadCatalog([result.collection]);
+    if (catalogLoaded && this.learningPaths.courseSummaryFor(result.collection.id)) {
+      await this.learningPaths.load([result.collection]);
+    }
   }
 
-  private async reload(): Promise<void> {
+  async reload(): Promise<void> {
     const current = this.collection();
     if (!current) return;
     await this.load(current.id);
@@ -239,6 +252,24 @@ export class LibraryDetailPageComponent implements OnInit {
     await this.router.navigate(path
       ? learningPathOverviewRoute(path.id, destination.collectionId)
       : ['/library', destination.collectionId, 'learning-path']);
+  }
+
+  async removeCourse(): Promise<void> {
+    const current = this.collection();
+    const course = this.course();
+    if (!current || !course) return;
+    const confirmed = await firstValueFrom(this.dialogs.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Remove course',
+        message: 'Remove this course and its saved course progress? Your Leitner vocabulary will not change.',
+        confirmLabel: 'Remove Course',
+        danger: true,
+      },
+    }).afterClosed());
+    if (!confirmed) return;
+    if (!await this.learningPaths.removeEnrollment(course.path.id)) return;
+    await this.reload();
+    await this.selectedCourses.load();
   }
 
   async editCollection(): Promise<void> {

@@ -4,6 +4,7 @@ import { ActivateVocabularyIntake } from "../../application/collection-learning-
 import { CompleteExercise } from "../../application/collection-learning-path/commands/CompleteExercise.js";
 import { StartExercise } from "../../application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../../application/collection-learning-path/commands/StartLearningPath.js";
+import { RemoveLearningPathEnrollment } from "../../application/collection-learning-path/commands/RemoveLearningPathEnrollment.js";
 import { StartVocabularyMasteryCheck } from "../../application/collection-learning-path/commands/StartVocabularyMasteryCheck.js";
 import { StartVocabularySpelling } from "../../application/collection-learning-path/commands/StartVocabularySpelling.js";
 import { UploadSlideSequenceRecording } from "../../application/collection-learning-path/commands/UploadSlideSequenceRecording.js";
@@ -53,6 +54,7 @@ import { MySqlListeningPracticeRepository } from "../../infrastructure/persisten
 import { MySqlPracticeSessionRepository } from "../../infrastructure/persistence/mysql/MySqlPracticeSessionRepository.js";
 import { MySqlVocabularyActivationRepository } from "../../infrastructure/persistence/mysql/MySqlVocabularyActivationRepository.js";
 import { MySqlLearningPathAccessQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
+import { MySqlLearningPathCatalogQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathCatalogQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathMasteryCheckEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathMasteryCheckEvidenceQueryRepository.js";
 import { MySqlLearningPathMasteryCheckSessionCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathMasteryCheckSessionCommandRepository.js";
@@ -77,6 +79,8 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? new MySqlLearningPathProgressCommandRepository(pool);
   const accessReader = adapters.learningPathAccessReader
     ?? new MySqlLearningPathAccessQueryRepository(pool);
+  const catalogReader = adapters.learningPathCatalogReader
+    ?? new MySqlLearningPathCatalogQueryRepository(pool);
   const transactionManager = adapters.learningPathTransactionManager
     ?? new MySqlLearningPathTransactionManager(pool);
   const vocabularyIntakeReader = adapters.learningPathVocabularyIntakeReader
@@ -165,6 +169,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     progressReader,
     progressWriter,
     accessReader,
+    catalogReader,
     transactionManager,
     exerciseRuntime,
     vocabularyIntakeReader,
@@ -193,6 +198,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
   };
   const commands = {
     startLearningPath: new StartLearningPath(dependencies),
+    removeLearningPathEnrollment: new RemoveLearningPathEnrollment(dependencies),
     startExercise: new StartExercise(dependencies),
     activateVocabularyIntake: new ActivateVocabularyIntake(dependencies),
     startVocabularyMasteryCheck: new StartVocabularyMasteryCheck(dependencies),

@@ -17,6 +17,32 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
     this.pool = pool;
   }
 
+  async removePathProgress(userId, pathPublicId, options = {}) {
+    const db = executor(this.pool, options);
+    await db.execute(
+      `DELETE ue FROM user_learning_path_exercise_progress ue
+       JOIN learning_path_exercises e ON e.id = ue.exercise_id
+       JOIN learning_path_lessons l ON l.id = e.lesson_id
+       JOIN collection_learning_paths p ON p.id = l.learning_path_id
+       WHERE ue.user_id = ? AND p.public_id = ?`,
+      [userId, pathPublicId],
+    );
+    await db.execute(
+      `DELETE ul FROM user_learning_path_lesson_progress ul
+       JOIN learning_path_lessons l ON l.id = ul.lesson_id
+       JOIN collection_learning_paths p ON p.id = l.learning_path_id
+       WHERE ul.user_id = ? AND p.public_id = ?`,
+      [userId, pathPublicId],
+    );
+    const [result] = await db.execute(
+      `DELETE up FROM user_learning_path_progress up
+       JOIN collection_learning_paths p ON p.id = up.learning_path_id
+       WHERE up.user_id = ? AND p.public_id = ?`,
+      [userId, pathPublicId],
+    );
+    return { changed: result.affectedRows > 0 };
+  }
+
   async upsertPathProgress(progress, options = {}) {
     const db = executor(this.pool, options);
     const expectedRevision = progress.expectedRevision;

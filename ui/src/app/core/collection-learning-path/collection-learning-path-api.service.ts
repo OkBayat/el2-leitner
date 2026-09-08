@@ -12,6 +12,14 @@ import type { VocabularyMasteryCheckStartView } from '../../domain/collection-le
 import type { VocabularySpellingScope, VocabularySpellingStartView } from '../../domain/collection-learning-path/vocabulary-spelling-practice';
 import { ApiClientService } from '../http/api-client.service';
 
+export interface LearningPathCatalogItem {
+  collectionId: string;
+  pathId: string;
+  title: string;
+  learnerStatus: 'available' | 'in_progress' | 'completed' | 'up_to_date';
+  enrolled: boolean;
+}
+
 function segment(value: string): string {
   return encodeURIComponent(value);
 }
@@ -26,7 +34,7 @@ export class CollectionLearningPathApiService {
 
   queryLearningPathCollectionIds(): Promise<{
     collectionIds: string[];
-    learningPaths?: Array<{ collectionId: string; pathId: string }>;
+    learningPaths?: LearningPathCatalogItem[];
   }> {
     return this.api.get('/api/learning-paths/collections');
   }
@@ -60,6 +68,12 @@ export class CollectionLearningPathApiService {
 
   commandStartPath(pathId: string): Promise<LearningPathResumeView> {
     return this.api.post<LearningPathResumeView>(`/api/learning-paths/${segment(pathId)}/start`);
+  }
+
+  commandRemovePathEnrollment(pathId: string): Promise<{pathId: string; removed: boolean}> {
+    return this.api.delete<{pathId: string; removed: boolean}>(
+      `/api/learning-paths/${segment(pathId)}/enrollment`,
+    );
   }
 
   commandStartExercise(pathId: string, lessonId: string, exerciseId: string, progressRevision = 0): Promise<LearningPathExerciseStartView> {

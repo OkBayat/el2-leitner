@@ -16,13 +16,13 @@ function byTitle(left: LibraryCollection, right: LibraryCollection): number {
 export function courseMenuCollections(
   collections: readonly LibraryCollection[],
   learningPathIds: ReadonlyMap<string, string>,
-  availableCollectionIds: ReadonlySet<string> = new Set(learningPathIds.keys()),
+  enrolledCollectionIds: ReadonlySet<string> = new Set(),
 ): SelectedCourse[] {
   const courses = collections.flatMap((collection) => {
-    if (!availableCollectionIds.has(collection.id) && !learningPathIds.has(collection.id)) return [];
+    if (!enrolledCollectionIds.has(collection.id)) return [];
     return [{ ...collection, learningPathId: learningPathIds.get(collection.id) ?? null }];
   });
-  return courses.filter((collection) => collection.subscribed).sort(byTitle);
+  return courses.sort(byTitle);
 }
 
 @Injectable({ providedIn: 'root' })
@@ -49,10 +49,15 @@ export class SelectedCoursesFacade {
       const learningPathIds = new Map(
         (learningPathCollections.learningPaths ?? []).map((item) => [item.collectionId, item.pathId]),
       );
+      const enrolledCollectionIds = new Set(
+        learningPathCollections.learningPaths
+          ? learningPathCollections.learningPaths.filter((item) => item.enrolled).map((item) => item.collectionId)
+          : collections.filter((item) => item.subscribed).map((item) => item.id),
+      );
       this.courses.set(courseMenuCollections(
         collections,
         learningPathIds,
-        new Set(learningPathCollections.collectionIds ?? []),
+        enrolledCollectionIds,
       ));
       return true;
     } catch (error) {

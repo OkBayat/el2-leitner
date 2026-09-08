@@ -107,7 +107,7 @@ async function mockShell(page: Page) {
   await page.route('**/api/state**', (route) => route.fulfill({ json: { state, revision: 1 } }));
 }
 
-test('Library Start course enrolls and opens the server-authoritative BBC resume exercise', async ({ page }) => {
+test('Library Start course enrolls independently and opens the server-authoritative BBC resume exercise', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockShell(page);
   const writes: string[] = [];
@@ -137,7 +137,13 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   } }));
   await page.route('**/api/learning-paths/collections', (route) => route.fulfill({json: {
     collectionIds: [collectionId],
-    learningPaths: [{collectionId, pathId}],
+    learningPaths: [{
+      collectionId,
+      pathId,
+      title: 'BBC 6 Minute English',
+      learnerStatus: currentView.path.learnerStatus,
+      enrolled: currentView.path.learnerStatus !== 'available',
+    }],
   }}));
   await page.route(`**/api/library/${collectionId}`, (route) => route.fulfill({ json: {
     collection: {
@@ -193,7 +199,7 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
   await expect(page.getByRole('heading', { name: "Meet this lesson's words" })).toBeVisible();
-  expect(writes).toEqual(['subscribe', 'start-path']);
+  expect(writes).toEqual(['start-path']);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { CompleteExercise } from "../src/application/collection-learning-path/commands/CompleteExercise.js";
 import { StartExercise } from "../src/application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../src/application/collection-learning-path/commands/StartLearningPath.js";
+import { RemoveLearningPathEnrollment } from "../src/application/collection-learning-path/commands/RemoveLearningPathEnrollment.js";
 import { ExerciseRuntimeRegistry } from "../src/application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../src/application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../src/application/collection-learning-path/queries/GetExerciseContext.js";
@@ -168,6 +169,11 @@ class ProgressStoreFake {
     else record.exercises.push(next);
     return { changed: true };
   }
+
+  async removePathProgress(userId, pathId) {
+    this.writeCalls.push(["remove-path", {userId, pathId}]);
+    return {changed: this.byUserAndPath.delete(this.key(userId, pathId))};
+  }
 }
 
 class TransactionManagerFake {
@@ -215,6 +221,7 @@ function createHarness({ path = pathDefinition(), access, runtime, clock = () =>
     },
     commands: {
       startPath: new StartLearningPath(dependencies),
+      removePath: new RemoveLearningPathEnrollment(dependencies),
       startExercise: new StartExercise(dependencies),
       completeExercise: new CompleteExercise(dependencies),
     },
@@ -262,13 +269,22 @@ describe("Collection Learning Path application CQRS", () => {
     assert.ok(writes.every(([, progress]) => progress.lastSeenContentVersion === 3));
   });
 
-  it("refuses learner progress writes when the collection is readable but not active for progress", async () => {
+  it("starts a readable course without implicitly requiring a Leitner subscription", async () => {
     const harness = createHarness({ access: { canRead: true, canProgress: false } });
-    await assert.rejects(
-      harness.commands.startPath.execute("user-1", "path-1"),
-      (error) => error?.code === "LEARNING_PATH_PROGRESS_FORBIDDEN" && error?.statusCode === 403,
-    );
-    assert.equal(harness.progressStore.writeCalls.length, 0);
+    const result = await harness.commands.startPath.execute("user-1", "path-1");
+    assert.equal(result.pathStatus, "in_progress");
+    assert.equal(harness.progressStore.writeCalls[0][0], "path");
+  });
+
+  it("removes course enrollment independently and makes the path available again", async () => {
+    const harness = createHarness({ access: { canRead: true, canProgress: false } });
+    await harness.commands.startPath.execute("user-1", "path-1");
+
+    assert.deepEqual(await harness.commands.removePath.execute("user-1", "path-1"), {
+      pathId: "path-1",
+      removed: true,
+    });
+    assert.equal((await harness.queries.collection.execute("user-1", "collection-1")).path.learnerStatus, "available");
   });
 
   it("starts only available exercises and writes path, lesson, and exercise progress transactionally", async () => {

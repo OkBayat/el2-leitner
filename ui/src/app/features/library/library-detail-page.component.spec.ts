@@ -3,6 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {of} from 'rxjs';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
 import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
@@ -71,13 +72,19 @@ describe('LibraryDetailPageComponent', () => {
   const navigate = vi.fn();
   const loadSelectedCourses = vi.fn(async () => true);
   const loadCatalog = vi.fn(async () => true);
+  const loadCourse = vi.fn(async () => true);
+  const removeEnrollment = vi.fn(async () => true);
   const enter = vi.fn();
+  const journeyError = signal('');
+  const catalogReady = signal(true);
   let activeCourse: CollectionLearningPathView | null = null;
 
   beforeEach(async () => {
     vi.clearAllMocks();
     for (const mock of Object.values(api)) mock.mockReset();
     activeCourse = null;
+    journeyError.set('');
+    catalogReady.set(true);
     await TestBed.configureTestingModule({
       imports: [LibraryDetailPageComponent],
       providers: [
@@ -91,9 +98,19 @@ describe('LibraryDetailPageComponent', () => {
           provide: LibraryLearningPathJourneyFacade,
           useValue: {
             enteringId: signal<string | null>(null),
-            error: signal(''),
+            error: journeyError,
+            catalogReady,
             loadCatalog,
+            load: loadCourse,
             enter,
+            removeEnrollment,
+            courseSummaryFor: () => activeCourse ? {
+              collectionId: activeCourse.path.collectionId,
+              pathId: activeCourse.path.id,
+              title: activeCourse.path.title,
+              learnerStatus: activeCourse.path.learnerStatus,
+              enrolled: activeCourse.path.learnerStatus !== 'available',
+            } : null,
             viewFor: () => activeCourse,
           },
         },
@@ -177,6 +194,48 @@ describe('LibraryDetailPageComponent', () => {
     await fixture.whenStable();
 
     expect(api.unsubscribe).toHaveBeenCalledWith(item.id);
+    expect(loadSelectedCourses).toHaveBeenCalled();
+  });
+
+  it('fails closed and retries when course discovery fails', async () => {
+    const item = collection();
+    loadCatalog.mockImplementationOnce(async () => {
+      catalogReady.set(false);
+      journeyError.set('Courses could not load. Try again.');
+      return false;
+    }).mockImplementationOnce(async () => {
+      journeyError.set('');
+      catalogReady.set(true);
+      return true;
+    });
+    const fixture = await render(item);
+    const host: HTMLElement = fixture.nativeElement;
+
+    expect(host.querySelector('[role="alert"]')?.textContent).toContain('Courses could not load');
+    expect(host.querySelector('[data-testid="leitner-only-action"]')).toBeNull();
+
+    host.querySelector<HTMLButtonElement>('[data-testid="course-detail-retry"]')?.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(loadCatalog).toHaveBeenCalledTimes(2);
+    expect(host.querySelector('[data-testid="leitner-only-action"]')).not.toBeNull();
+  });
+
+  it('removes course enrollment without changing its Leitner subscription', async () => {
+    const item = collection({subscribed: true});
+    activeCourse = courseView(item);
+    activeCourse.path.learnerStatus = 'in_progress';
+    const dialog = TestBed.inject(MatDialog);
+    vi.mocked(dialog.open).mockReturnValue({afterClosed: () => of(true)} as never);
+    const fixture = await render(item);
+    const host: HTMLElement = fixture.nativeElement;
+
+    host.querySelector<HTMLButtonElement>('[data-testid="remove-course-action"]')?.click();
+    await fixture.whenStable();
+
+    expect(removeEnrollment).toHaveBeenCalledWith('path-1');
+    expect(api.unsubscribe).not.toHaveBeenCalled();
     expect(loadSelectedCourses).toHaveBeenCalled();
   });
 });

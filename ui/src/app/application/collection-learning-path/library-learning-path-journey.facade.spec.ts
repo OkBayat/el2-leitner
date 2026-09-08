@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import { LibraryApiService } from '../../core/library/library-api.service';
 import type { CollectionLearningPathView } from '../../domain/collection-learning-path/learning-path';
 import type { LibraryCollection } from '../../domain/learning/models';
 import { LibraryLearningPathJourneyFacade } from './library-learning-path-journey.facade';
@@ -42,48 +41,83 @@ function pathView(collectionId: string): CollectionLearningPathView {
 describe('LibraryLearningPathJourneyFacade', () => {
   const queryCollectionLearningPath = vi.fn();
   const queryLearningPathCollectionIds = vi.fn();
+  const commandRemovePathEnrollment = vi.fn();
+  const commandStartPath = vi.fn();
   let facade: LibraryLearningPathJourneyFacade;
 
   beforeEach(() => {
     queryCollectionLearningPath.mockReset();
     queryLearningPathCollectionIds.mockReset();
+    commandRemovePathEnrollment.mockReset();
+    commandStartPath.mockReset();
     TestBed.configureTestingModule({ providers: [
       LibraryLearningPathJourneyFacade,
       {
         provide: CollectionLearningPathApiService,
-        useValue: {queryCollectionLearningPath, queryLearningPathCollectionIds},
+        useValue: {
+          queryCollectionLearningPath,
+          queryLearningPathCollectionIds,
+          commandRemovePathEnrollment,
+          commandStartPath,
+        },
       },
-      { provide: LibraryApiService, useValue: { subscribe: vi.fn() } },
     ] });
     facade = TestBed.inject(LibraryLearningPathJourneyFacade);
   });
 
-  it('uses the course catalog to avoid probing standalone collections', async () => {
+  it('uses one course catalog projection without loading per-course details', async () => {
     const cambridge = collection();
     const unrelatedBook = collection({ id: 'other-book', slug: 'other-book', title: 'Other book' });
     queryLearningPathCollectionIds.mockResolvedValue({
       collectionIds: [cambridge.id],
-      learningPaths: [{collectionId: cambridge.id, pathId: 'cvfi-learning-path'}],
+      learningPaths: [{
+        collectionId: cambridge.id,
+        pathId: 'cvfi-learning-path',
+        title: 'Cambridge Vocabulary for IELTS',
+        learnerStatus: 'available',
+        enrolled: false,
+      }],
     });
-    queryCollectionLearningPath.mockResolvedValue(pathView(cambridge.id));
 
     expect(await facade.loadCatalog([cambridge, unrelatedBook])).toBe(true);
 
-    expect(queryCollectionLearningPath).toHaveBeenCalledWith(cambridge.id);
-    expect(queryCollectionLearningPath).not.toHaveBeenCalledWith(unrelatedBook.id);
-    expect(facade.viewFor(cambridge.id)?.path.id).toBe('cvfi-learning-path');
-    expect(facade.viewFor(unrelatedBook.id)).toBeNull();
+    expect(queryCollectionLearningPath).not.toHaveBeenCalled();
+    expect(facade.courseSummaryFor(cambridge.id)?.pathId).toBe('cvfi-learning-path');
+    expect(facade.courseSummaryFor(unrelatedBook.id)).toBeNull();
+    expect(facade.catalogReady()).toBe(true);
     expect(facade.error()).toBe('');
   });
 
-  it('reports a real course detail failure after catalog discovery', async () => {
+  it('fails closed when course catalog discovery fails', async () => {
     const cambridge = collection();
-    queryLearningPathCollectionIds.mockResolvedValue({collectionIds: [cambridge.id]});
-    queryCollectionLearningPath.mockRejectedValue(new Error('offline'));
+    queryLearningPathCollectionIds.mockRejectedValue(new Error('offline'));
 
     expect(await facade.loadCatalog([cambridge])).toBe(false);
-    expect(facade.viewFor(cambridge.id)).toBeNull();
-    expect(facade.error()).toContain('Some courses could not load');
+    expect(facade.courseSummaryFor(cambridge.id)).toBeNull();
+    expect(facade.catalogReady()).toBe(false);
+    expect(facade.error()).toContain('Courses could not load');
+  });
+
+  it('keeps catalog loading to one request for hundreds of courses', async () => {
+    const collections = Array.from({length: 250}, (_, index) => collection({
+      id: `course-${index}`,
+      slug: `course-${index}`,
+      title: `Course ${index}`,
+    }));
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: collections.map((item) => item.id),
+      learningPaths: collections.map((item, index) => ({
+        collectionId: item.id,
+        pathId: String(index + 1),
+        title: item.title,
+        learnerStatus: 'available',
+        enrolled: false,
+      })),
+    });
+
+    expect(await facade.loadCatalog(collections)).toBe(true);
+    expect(queryLearningPathCollectionIds).toHaveBeenCalledTimes(1);
+    expect(queryCollectionLearningPath).not.toHaveBeenCalled();
   });
 
   it('retries a missing course view when the learner opens its card', async () => {
@@ -113,5 +147,31 @@ describe('LibraryLearningPathJourneyFacade', () => {
     });
 
     expect(facade.viewFor(cambridge.id)?.path.learnerStatus).toBe('available');
+  });
+
+  it('starts an available course without subscribing its vocabulary collection', async () => {
+    const cambridge = collection();
+    queryCollectionLearningPath.mockResolvedValueOnce(pathView(cambridge.id));
+    commandStartPath.mockResolvedValueOnce({
+      pathId: 'cvfi-learning-path',
+      pathStatus: 'in_progress',
+      resumePoint: {lessonId: 'lesson-1', exerciseId: 'exercise-1'},
+    });
+
+    expect(await facade.enter(cambridge)).toEqual({
+      kind: 'exercise',
+      pathId: 'cvfi-learning-path',
+      lessonId: 'lesson-1',
+      exerciseId: 'exercise-1',
+    });
+    expect(commandStartPath).toHaveBeenCalledWith('cvfi-learning-path');
+  });
+
+  it('removes course enrollment through the dedicated course command', async () => {
+    commandRemovePathEnrollment.mockResolvedValue({pathId: 'cvfi-learning-path', removed: true});
+
+    expect(await facade.removeEnrollment('cvfi-learning-path')).toBe(true);
+
+    expect(commandRemovePathEnrollment).toHaveBeenCalledWith('cvfi-learning-path');
   });
 });

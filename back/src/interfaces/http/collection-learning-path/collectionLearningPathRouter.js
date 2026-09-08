@@ -104,6 +104,14 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
     res.status(200).json(result);
   });
 
+  router.delete("/:pathId/enrollment", async (req, res) => {
+    const result = await commands.removeLearningPathEnrollment.execute(
+      req.auth.userId,
+      learningPathRouteId(req.params.pathId),
+    );
+    res.status(200).json(result);
+  });
+
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/start", async (req, res) => {
     const result = await commands.startExercise.execute(
       req.auth.userId,

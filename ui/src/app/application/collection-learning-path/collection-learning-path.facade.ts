@@ -1,6 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import { LibraryApiService } from '../../core/library/library-api.service';
 import type { CollectionLearningPathView, LearningPathResumeView } from '../../domain/collection-learning-path/learning-path';
 
 function message(error: unknown, fallback: string): string {
@@ -18,7 +17,6 @@ function resumeFromView(view: CollectionLearningPathView): LearningPathResumeVie
 @Injectable({ providedIn: 'root' })
 export class CollectionLearningPathFacade {
   private readonly api = inject(CollectionLearningPathApiService);
-  private readonly library = inject(LibraryApiService);
   private requestVersion = 0;
 
   readonly view = signal<CollectionLearningPathView | null>(null);
@@ -60,9 +58,6 @@ export class CollectionLearningPathFacade {
     this.starting.set(true);
     this.error.set('');
     try {
-      if (!current.access.canProgress) {
-        await this.library.subscribe(path.collectionId);
-      }
       const resume = await this.api.commandStartPath(path.id);
       const refreshed = await this.api.queryCollectionLearningPath(path.collectionId);
       if (this.view()?.path.id !== path.id) return false;

@@ -108,6 +108,29 @@ describe("MySqlLibraryRepository collection Leitner progress", () => {
     assert.match(pool.calls[0].sql, /uvp\.status = 'active'/u);
     assert.match(pool.calls[0].sql, /uvp\.introduced_on IS NOT NULL/u);
     assert.match(pool.calls[0].sql, /uvp\.mastered_at IS NOT NULL/u);
+    assert.match(
+      pool.calls[0].sql,
+      /JSON_EXTRACT\(c\.metadata_json, '\$\.sourceFile'\).*NOT LIKE 'listening\/episodes\/%'/su,
+    );
     assert.deepEqual(pool.calls[0].parameters, ["user-1", "user-1", "user-1"]);
+  });
+
+  it("keeps episode-owned vocabulary collections out of Library list and detail queries", async () => {
+    const pool = new QueryPool([]);
+    const repository = new MySqlLibraryRepository(pool);
+
+    await repository.listForUser("user-1");
+    await assert.rejects(
+      repository.getForUser("episode-collection", "user-1"),
+      (error) => error?.code === "COLLECTION_NOT_FOUND",
+    );
+
+    assert.equal(pool.calls.length, 2);
+    for (const call of pool.calls) {
+      assert.match(
+        call.sql,
+        /JSON_EXTRACT\(c\.metadata_json, '\$\.sourceFile'\).*NOT LIKE 'listening\/episodes\/%'/su,
+      );
+    }
   });
 });

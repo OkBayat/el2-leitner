@@ -61,6 +61,13 @@ describe('LibraryPageComponent', () => {
     [charlieCourse.id, courseView(charlieCourse, 'available', 'Charlie Course')],
     [zetaCourse.id, courseView(zetaCourse, 'in_progress', 'Zeta Course')],
   ]);
+  const summaries = new Map(Array.from(views.entries()).map(([id, view]) => [id, {
+    collectionId: id,
+    pathId: view.path.id,
+    title: view.path.title,
+    learnerStatus: view.path.learnerStatus,
+    enrolled: view.path.learnerStatus !== 'available',
+  }]));
   const list = vi.fn();
   const navigate = vi.fn();
   const loadCatalog = vi.fn(async () => true);
@@ -83,7 +90,7 @@ describe('LibraryPageComponent', () => {
             enteringId: signal<string | null>(null),
             error: journeyError,
             loadCatalog,
-            viewFor: (id: string) => views.get(id) ?? null,
+            courseSummaryFor: (id: string) => summaries.get(id) ?? null,
           },
         },
         {provide: SelectedCoursesFacade, useValue: {load: vi.fn(async () => true)}},

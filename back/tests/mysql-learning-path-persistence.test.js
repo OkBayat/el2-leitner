@@ -3,12 +3,14 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { LearningPathDefinitionReader } from "../src/application/collection-learning-path/ports/LearningPathDefinitionReader.js";
+import { LearningPathCatalogReader } from "../src/application/collection-learning-path/ports/LearningPathCatalogReader.js";
 import { LearningPathDefinitionWriter } from "../src/application/collection-learning-path/ports/LearningPathDefinitionWriter.js";
 import { LearningPathProgressReader } from "../src/application/collection-learning-path/ports/LearningPathProgressReader.js";
 import { LearningPathProgressWriter } from "../src/application/collection-learning-path/ports/LearningPathProgressWriter.js";
 import { LearningPathRecordingArtifactRepository } from "../src/application/collection-learning-path/ports/LearningPathRecordingArtifactRepository.js";
 import { LearningPathTransactionManager } from "../src/application/collection-learning-path/ports/LearningPathTransactionManager.js";
 import { MySqlLearningPathDefinitionCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionCommandRepository.js";
+import { MySqlLearningPathCatalogQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathCatalogQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
@@ -48,11 +50,50 @@ class RecordingPool {
 test("Learning Path persistence adapters implement segregated application ports", () => {
   const pool = new RecordingPool();
   assert.ok(new MySqlLearningPathDefinitionQueryRepository(pool) instanceof LearningPathDefinitionReader);
+  assert.ok(new MySqlLearningPathCatalogQueryRepository(pool) instanceof LearningPathCatalogReader);
   assert.ok(new MySqlLearningPathDefinitionCommandRepository(pool) instanceof LearningPathDefinitionWriter);
   assert.ok(new MySqlLearningPathProgressQueryRepository(pool) instanceof LearningPathProgressReader);
   assert.ok(new MySqlLearningPathProgressCommandRepository(pool) instanceof LearningPathProgressWriter);
   assert.ok(new MySqlLearningPathRecordingArtifactRepository(pool) instanceof LearningPathRecordingArtifactRepository);
   assert.ok(new MySqlLearningPathTransactionManager(new ConnectionPool(new TransactionConnection())) instanceof LearningPathTransactionManager);
+});
+
+test("course catalog projection loads titles and enrollment state in one bounded query", async () => {
+  const pool = new RecordingPool([[[{
+    collectionId: "collection-1",
+    pathId: 8,
+    title: "Course 1",
+    learnerStatus: "in_progress",
+    enrolled: 1,
+  }], []]]);
+  const repository = new MySqlLearningPathCatalogQueryRepository(pool);
+
+  assert.deepEqual(await repository.listAvailableForUser("user-7"), [{
+    collectionId: "collection-1",
+    pathId: "8",
+    title: "Course 1",
+    learnerStatus: "in_progress",
+    enrolled: true,
+  }]);
+  assert.equal(pool.calls.length, 1);
+  assert.deepEqual(pool.calls[0].parameters, ["user-7", "user-7"]);
+  assert.match(pool.calls[0].sql, /LEFT JOIN user_learning_path_progress/u);
+});
+
+test("course removal clears only the authenticated learner's path-owned progress", async () => {
+  const pool = new RecordingPool([
+    [{affectedRows: 2}, []],
+    [{affectedRows: 1}, []],
+    [{affectedRows: 1}, []],
+  ]);
+  const repository = new MySqlLearningPathProgressCommandRepository(pool);
+
+  assert.deepEqual(await repository.removePathProgress("user-7", "path-9"), {changed: true});
+  assert.equal(pool.calls.length, 3);
+  assert.ok(pool.calls.every((call) => call.parameters[0] === "user-7" && call.parameters[1] === "path-9"));
+  assert.match(pool.calls[0].sql, /user_learning_path_exercise_progress/u);
+  assert.match(pool.calls[1].sql, /user_learning_path_lesson_progress/u);
+  assert.match(pool.calls[2].sql, /user_learning_path_progress/u);
 });
 
 test("recording artifact migration stores owner-bound audio evidence without destructive changes", async () => {
