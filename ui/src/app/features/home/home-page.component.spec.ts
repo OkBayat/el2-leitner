@@ -66,7 +66,6 @@ describe('HomePageComponent', () => {
   const enteringId = signal<string | null>(null);
   const journeyError = signal('');
   const initialize = vi.fn(async () => state()!);
-  const refreshCanonical = vi.fn(async () => state()!);
   const refreshForLocalDay = vi.fn(async () => state()!);
   const loadCourses = vi.fn(async () => true);
   const loadJourneys = vi.fn(async () => true);
@@ -87,7 +86,7 @@ describe('HomePageComponent', () => {
           path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId',
           component: EmptyPage,
         }]),
-        { provide: LearningStoreService, useValue: { state, initialize, refreshCanonical, refreshForLocalDay } },
+        { provide: LearningStoreService, useValue: { state, initialize, refreshForLocalDay } },
         { provide: SelectedCoursesFacade, useValue: { courses, loading: courseLoading, error: courseError, load: loadCourses } },
         {
           provide: LibraryLearningPathJourneyFacade,
@@ -184,6 +183,41 @@ describe('HomePageComponent', () => {
       await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000);
 
       expect(refreshForLocalDay).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('retries a failed midnight refresh through daily activation before clearing the error', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-08T23:59:59.900Z'));
+    state.set(stateWithDueReview(false));
+    refreshForLocalDay.mockRejectedValueOnce(new Error('temporarily offline'));
+    try {
+      const fixture = TestBed.createComponent(HomePageComponent);
+      fixture.detectChanges();
+      await Promise.resolve();
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(100);
+      fixture.detectChanges();
+      expect(fixture.componentInstance.reviewError()).toContain("Today's review could not load");
+
+      refreshForLocalDay.mockImplementationOnce(async () => {
+        const recovered = stateWithDueReview(true);
+        state.set(recovered);
+        return recovered;
+      });
+      const host: HTMLElement = fixture.nativeElement;
+      host.querySelector<HTMLButtonElement>('[data-testid="review-load-error"] + button')?.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      fixture.detectChanges();
+
+      expect(refreshForLocalDay).toHaveBeenLastCalledWith('2026-09-09');
+      expect(fixture.componentInstance.reviewError()).toBe('');
+      expect(fixture.componentInstance.reviewCompleted()).toBe(false);
+      expect(fixture.nativeElement.querySelector('[data-testid="start-review"]')).not.toBeNull();
+      fixture.destroy();
     } finally {
       vi.useRealTimers();
     }

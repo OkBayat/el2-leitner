@@ -47,8 +47,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   async load(refreshState = false): Promise<void> {
     this.reviewError.set('');
-    const stateRequest = refreshState && this.store.state()
-      ? this.store.refreshCanonical()
+    const stateRequest = refreshState
+      ? this.store.refreshForLocalDay(this.today())
       : this.store.initialize();
     const [stateResult] = await Promise.allSettled([
       stateRequest,
