@@ -96,7 +96,6 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 				footer: {
 					primary: {
 						id: "start-vocabulary-scope",
-						label: "Let's go",
 						behavior: "content",
 						disabled: false,
 					},

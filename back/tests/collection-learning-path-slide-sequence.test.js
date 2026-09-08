@@ -41,6 +41,32 @@ function outcome(results) {
   return { kind: "completed", evidence: { schemaVersion: 1, results } };
 }
 
+function vocabularyScopeData(generatedSlide) {
+  return {
+    intro: {
+      eyebrow: "Complete lesson vocabulary",
+      title: "{{total}} lesson targets",
+      description: "Every source item will be tested.",
+    },
+    generatedSlide,
+  };
+}
+
+function vocabularyScopeChrome(label = "Start lesson vocabulary") {
+  return {
+    header: { visible: false },
+    footer: {
+      primary: {
+        id: "start-vocabulary-scope",
+        label,
+        behavior: "content",
+        disabled: false,
+      },
+      secondary: false,
+    },
+  };
+}
+
 function verify(definition, result, vocabulary = []) {
   return verifySlideSequenceCompletion(definition, result, vocabulary, {
     userId: "user-1",
@@ -165,7 +191,19 @@ describe("slide-sequence completion evidence", () => {
         retryIncorrect: true,
         scope: { kind: "collection-section", ref: "unit-1" },
         slides: [
-          { id: "scope", type: "lesson-vocabulary-scope", data: { generatedSlide: { type: "dictation" } } },
+          {
+            id: "scope",
+            type: "lesson-vocabulary-scope",
+            chrome: vocabularyScopeChrome(),
+            data: vocabularyScopeData({
+              type: "dictation",
+              instruction: "Listen and type every target exactly.",
+              mode: "word",
+              speech: { autoplay: true, replay: true },
+              caseSensitive: false,
+              punctuationSensitive: false,
+            }),
+          },
           { id: "summary", type: "summary", terminal: true, data: {} },
         ],
       },
@@ -205,6 +243,68 @@ describe("slide-sequence completion evidence", () => {
     });
   });
 
+  it("uses JSON-owned dictation normalization when grading generated vocabulary slides", () => {
+    const definition = exercise({
+      config: {
+        scope: { kind: "collection-section", ref: "lesson-7" },
+        slides: [
+          {
+            id: "scope",
+            type: "lesson-vocabulary-scope",
+            chrome: vocabularyScopeChrome("Start exact-form practice"),
+            data: vocabularyScopeData({
+              type: "dictation",
+              instruction: "Type the target exactly.",
+              mode: "phrase",
+              speech: { autoplay: false, replay: true },
+              caseSensitive: true,
+              punctuationSensitive: true,
+            }),
+          },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+    const vocabulary = [
+      { vocabularyId: "word-1", term: "Travel light.", definitions: ["take little luggage"] },
+    ];
+
+    assert.equal(verify(definition, outcome([{
+      rootSlideId: "scope-word-1",
+      slideType: "dictation",
+      itemId: "word-1",
+      eventType: "answered",
+      data: { answer: "travel light" },
+    }]), vocabulary), false);
+    assert.deepEqual(verify(definition, outcome([{
+      rootSlideId: "scope-word-1",
+      slideType: "dictation",
+      itemId: "word-1",
+      eventType: "answered",
+      data: { answer: "Travel light." },
+    }]), vocabulary), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:1",
+    });
+  });
+
+  it("rejects vocabulary generators whose learner-facing configuration is missing", () => {
+    const definition = exercise({
+      config: {
+        scope: { kind: "collection-section", ref: "lesson-7" },
+        slides: [
+          { id: "scope", type: "lesson-vocabulary-scope", data: { generatedSlide: { type: "dictation" } } },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+
+    assert.throws(
+      () => verify(definition, outcome([])),
+      /intro eyebrow is required/,
+    );
+  });
+
   it("hydrates scoped vocabulary and verifies against a fresh server-side scope read", async () => {
     const vocabulary = [
       { vocabularyId: "word-1", term: "childhood", definitions: ["the period when a person is a child"] },
@@ -213,7 +313,18 @@ describe("slide-sequence completion evidence", () => {
       config: {
         scope: { kind: "collection-section", ref: "unit-1" },
         slides: [
-          { id: "scope", type: "lesson-vocabulary-scope", data: { generatedSlide: { type: "meaning-choice" } } },
+          {
+            id: "scope",
+            type: "lesson-vocabulary-scope",
+            chrome: vocabularyScopeChrome("Start meaning review"),
+            data: vocabularyScopeData({
+              type: "meaning-choice",
+              instruction: "Choose the target that matches the definition.",
+              mode: "meaning",
+              optionCount: 4,
+              explanationTemplate: "{{term}}: {{definition}}",
+            }),
+          },
           { id: "summary", type: "summary", terminal: true, data: {} },
         ],
       },

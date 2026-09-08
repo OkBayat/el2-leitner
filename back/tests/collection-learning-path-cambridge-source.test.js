@@ -29,7 +29,26 @@ function assertReusableSlide(slide) {
   assert.ok(slide.data && typeof slide.data === "object" && !Array.isArray(slide.data), `${slide.id} requires data`);
   const data = slide.data;
   if (slide.type === "lesson-vocabulary-scope") {
-    assert.ok(["dictation", "meaning-choice"].includes(data.generatedSlide?.type));
+    assert.ok(nonEmpty(data.intro?.eyebrow));
+    assert.ok(nonEmpty(data.intro?.title));
+    assert.ok(nonEmpty(data.intro?.description));
+    assert.equal(slide.chrome?.footer?.primary?.id, "start-vocabulary-scope");
+    assert.ok(nonEmpty(slide.chrome?.footer?.primary?.label));
+    assert.equal(slide.chrome?.footer?.primary?.behavior, "content");
+    const generated = data.generatedSlide;
+    assert.ok(["dictation", "meaning-choice"].includes(generated?.type));
+    assert.ok(nonEmpty(generated.instruction));
+    if (generated.type === "dictation") {
+      assert.ok(["word", "phrase", "sentence"].includes(generated.mode));
+      assert.equal(typeof generated.speech?.autoplay, "boolean");
+      assert.equal(typeof generated.speech?.replay, "boolean");
+      assert.equal(typeof generated.caseSensitive, "boolean");
+      assert.equal(typeof generated.punctuationSensitive, "boolean");
+    } else {
+      assert.equal(generated.mode, "meaning");
+      assert.ok(Number.isSafeInteger(generated.optionCount) && generated.optionCount >= 2);
+      assert.ok(nonEmpty(generated.explanationTemplate));
+    }
   } else if (slide.type === "teaching-card") {
     assert.ok(nonEmpty(data.title));
     assert.ok(Array.isArray(data.blocks) && data.blocks.length > 0);

@@ -29,6 +29,54 @@ function identifier(value, label) {
   return normalized;
 }
 
+function requiredString(source, key, label) {
+  const value = String(source?.[key] ?? "").trim();
+  if (!value) invalid(`${label} is required.`);
+  return value;
+}
+
+function requiredBoolean(source, key, label) {
+  if (typeof source?.[key] !== "boolean") invalid(`${label} must be a boolean.`);
+  return source[key];
+}
+
+function generatedVocabularyConfig(scopeSlide) {
+  const intro = record(scopeSlide.data.intro);
+  requiredString(intro, "eyebrow", "Lesson vocabulary intro eyebrow");
+  requiredString(intro, "title", "Lesson vocabulary intro title");
+  requiredString(intro, "description", "Lesson vocabulary intro description");
+
+  const primary = record(record(record(scopeSlide.chrome)?.footer)?.primary);
+  if (requiredString(primary, "id", "Lesson vocabulary primary action id") !== "start-vocabulary-scope"
+    || requiredString(primary, "behavior", "Lesson vocabulary primary action behavior") !== "content") {
+    invalid("Lesson vocabulary primary action must start the generated scope.");
+  }
+  requiredString(primary, "label", "Lesson vocabulary primary action label");
+
+  const generated = record(scopeSlide.data.generatedSlide);
+  const type = requiredString(generated, "type", "Lesson vocabulary generated slide type");
+  requiredString(generated, "instruction", "Lesson vocabulary generated slide instruction");
+  if (type === "dictation") {
+    if (!new Set(["word", "phrase", "sentence"]).has(requiredString(generated, "mode", "Generated dictation mode"))) {
+      invalid("Generated dictation mode is unsupported.");
+    }
+    const speech = record(generated.speech);
+    requiredBoolean(speech, "autoplay", "Generated dictation speech autoplay");
+    requiredBoolean(speech, "replay", "Generated dictation speech replay");
+    requiredBoolean(generated, "caseSensitive", "Generated dictation caseSensitive");
+    requiredBoolean(generated, "punctuationSensitive", "Generated dictation punctuationSensitive");
+  } else if (type === "meaning-choice") {
+    if (requiredString(generated, "mode", "Generated meaning choice mode") !== "meaning") {
+      invalid("Generated meaning choice mode is unsupported.");
+    }
+    if (!Number.isSafeInteger(generated.optionCount) || generated.optionCount < 2) {
+      invalid("Generated meaning choice optionCount must be an integer of at least two.");
+    }
+    requiredString(generated, "explanationTemplate", "Generated meaning choice explanationTemplate");
+  }
+  return { type, generated };
+}
+
 function strings(value) {
   return Array.isArray(value) ? value.map((item) => String(item ?? "").trim()).filter(Boolean) : [];
 }
@@ -172,6 +220,7 @@ export function resolveSlideSequenceDefinition(exercise) {
       type: identifier(slide.type, "slide type"),
       terminal: slide.terminal === true,
       data: record(slide.data) ?? {},
+      chrome: record(slide.chrome),
     };
   });
   if (new Set(slides.map((slide) => slide.id)).size !== slides.length) invalid("slides.sequence slide ids must be unique.");
@@ -190,10 +239,11 @@ export function resolveSlideSequenceDefinition(exercise) {
   }
   let generated = null;
   if (scopeSlides[0]) {
-    const generatedType = String(record(scopeSlides[0].data.generatedSlide)?.type ?? "").trim();
+    const generatedConfig = generatedVocabularyConfig(scopeSlides[0]);
+    const generatedType = generatedConfig.type;
     const slideType = GENERATED_TYPES.get(generatedType);
     if (!slideType) invalid("Unsupported lesson vocabulary generated slide type.");
-    generated = { scopeSlideId: scopeSlides[0].id, generatedType, slideType };
+    generated = { scopeSlideId: scopeSlides[0].id, generatedType, slideType, config: generatedConfig.generated };
   }
   return { slides, scope, generated };
 }
@@ -274,8 +324,8 @@ export function verifySlideSequenceCompletion(exercise, outcome, scopedVocabular
     const correct = definition.generated.generatedType === "dictation"
       ? answerMatches(result.data.answer, {
           answers: [item.term],
-          caseSensitive: false,
-          punctuationSensitive: false,
+          caseSensitive: definition.generated.config.caseSensitive,
+          punctuationSensitive: definition.generated.config.punctuationSensitive,
         })
       : equalIds(result.data.selectedOptionIds, [item.id]);
     if (correct) satisfiedItems.add(result.itemId);
