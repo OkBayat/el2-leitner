@@ -135,6 +135,22 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
       subscribed,
     }],
   } }));
+  await page.route(`**/api/library/${collectionId}`, (route) => route.fulfill({ json: {
+    collection: {
+      id: collectionId,
+      slug: collectionId,
+      title: 'BBC 6 Minute English',
+      description: 'Rolling listening course',
+      kind: 'course',
+      visibility: 'public',
+      status: 'published',
+      contentVersion: 1,
+      wordCount: 0,
+      subscribed,
+      entries: [],
+    },
+    capabilities: {canManage: false},
+  } }));
   await page.route(`**/api/library/${collectionId}/subscription`, async (route) => {
     writes.push('subscribe');
     subscribed = true;
@@ -156,8 +172,20 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   });
 
   await page.goto('/library');
-  await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
-  await page.getByTestId('library-learning-path-action').click();
+  await expect(page.getByRole('heading', {name: 'All Courses'})).toBeVisible();
+  const courseItem = page.getByTestId('library-all-courses').getByRole('button', {name: 'BBC 6 Minute English'});
+  const lightBackground = await courseItem.evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect((await courseItem.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .not.toBe(lightBackground);
+  await courseItem.focus();
+  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+  await courseItem.click();
+  await expect(page.getByTestId('library-detail-page')).toBeVisible();
+  await expect(page.getByTestId('leitner-only-action')).toContainText('Add to Leitner Only');
+  await page.getByTestId('start-course-action').click();
 
   await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();

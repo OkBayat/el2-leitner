@@ -12,67 +12,48 @@ const pageHtml = read('src/app/features/library/library-page.component.html');
 const pageStyles = read('src/app/features/library/library-page.component.scss');
 const detailPage = read('src/app/features/library/library-detail-page.component.ts');
 const routes = read('src/app/app.routes.ts');
-const coverHelper = read('src/app/features/library/library-cover.ts');
-const coverSpec = read('src/app/features/library/library-cover.spec.ts');
-const coverReadme = read('assets/library/covers/README.md');
 
 assert.match(pageTs, /templateUrl:\s*'library-page\.component\.html'/u, 'Library markup must have a dedicated template owner.');
 assert.match(pageTs, /styleUrl:\s*'library-page\.component\.scss'/u, 'Library styling must have a dedicated stylesheet owner.');
-assert.match(pageHtml, /data-testid="library-added-card-grid"/u, 'Added collections need their own stable grid.');
-assert.match(pageHtml, /data-testid="library-available-card-grid"/u, 'Available collections need their own stable grid.');
-assert.match(pageHtml, />My collections</u, 'Subscribed collections must be grouped first.');
-assert.match(pageHtml, />Available collections</u, 'Unsubscribed collections must be grouped separately.');
-assert.match(pageHtml, /data-testid="library-collection-cover"/u, 'Every collection card must expose the cover region.');
-assert.match(pageHtml, /\[src\]="coverUrl\(collection\)"/u, 'Collection cover images must come from the stable cover helper.');
-assert.match(pageHtml, /\(error\)="markCoverMissing\(collection\.slug\)"/u, 'Missing cover assets must fall back without rendering a broken image.');
-assert.match(pageHtml, /class="cover-fallback"/u, 'A CSS-designed fallback must always sit underneath the optional image.');
-assert.doesNotMatch(pageHtml, /cover-monogram/u, 'Fallback covers must stay decorative without generated initials.');
-assert.match(pageHtml, /class="cover-badge"/u, 'The compact collection type and level must live on the cover instead of a dense subtitle row.');
-assert.doesNotMatch(pageHtml, /version\s*\{\{/u, 'Collection version metadata must not clutter the browsing card.');
-assert.doesNotMatch(pageHtml, /class="stats"/u, 'The old three-card statistics strip must not return to the Library page.');
-assert.match(pageHtml, />View details</u, 'Collection cards must navigate to a dedicated details page.');
-assert.doesNotMatch(pageHtml, /cover-edit|Edit collection/u, 'Admin editing must not live on the browsing cards.');
-assert.match(pageTs, /router\.navigate\(\['\/library', collection\.id\]\)/u, 'View details must navigate to the collection route instead of opening the legacy detail popup.');
+assert.equal((pageHtml.match(/data-testid="library-section"/gu) ?? []).length, 3, 'Library must have exactly three content sections.');
+for (const heading of ['My Courses and Collections', 'All Courses', 'All Collections']) {
+  assert.ok(pageHtml.includes(`>${heading}</h2>`), `Library must include the ${heading} section.`);
+}
+assert.match(pageHtml, /data-testid="library-my-items"/u, 'Active courses and Leitner collections need a stable list.');
+assert.match(pageHtml, /data-testid="library-all-courses"/u, 'All courses need a stable list.');
+assert.match(pageHtml, /data-testid="library-all-collections"/u, 'All collections need a stable list.');
+assert.doesNotMatch(pageHtml, /mat-form-field|mat-select|Search|Filter/u, 'Library must not add search or filter controls.');
+assert.doesNotMatch(pageHtml, /description|wordCount|mat-progress-bar|progress|tag/u, 'Library items must contain names only.');
+assert.match(pageTs, /localeCompare/u, 'Library lists must use alphabetical ordering.');
+assert.match(pageTs, /router\.navigate\(\['\/library', collection\.id\]\)/u, 'Every item must open the existing detail route.');
 assert.match(pageTs, /dialogs\.open\(CollectionEditorComponent/u, 'Creating a collection must keep using the collection editor.');
 assert.match(pageTs, /api\.create\(value\)/u, 'The New collection action must still persist the new collection.');
-assert.match(pageTs, /router\.navigate\(\['\/library', result\.collection\.id\]\)/u, 'A newly created collection should open in its details page.');
-assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must own a dedicated collection details route.');
+assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must retain the dedicated details route.');
+
+assert.match(pageStyles, /grid-template-columns:\s*minmax\(0, 1fr\)/u, 'Library must begin with a one-column mobile layout.');
+assert.match(pageStyles, /min-height:\s*56px/u, 'Library items must have large touch targets.');
+assert.match(pageStyles, /var\(--vocora-surface-base\)/u, 'Library items must use design-system surfaces.');
+assert.match(pageStyles, /var\(--vocora-text-primary\)/u, 'Library items must use theme-aware text tokens.');
+assert.match(pageStyles, /var\(--vocora-focus-ring\)/u, 'Library items must preserve visible focus in both themes.');
+assert.match(pageStyles, /@media \(min-width:\s*720px\)/u, 'Library layout must be mobile-first.');
 
 assert.match(detailPage, /data-testid="library-detail-page"/u, 'Collection details need a stable page locator.');
 assert.match(detailPage, /← Back to library/u, 'Collection details must expose an explicit return action.');
-assert.match(detailPage, /mat-chip>\{\{ kindLabel\(c\.kind\) \}\}<\/mat-chip>/u, 'Details must keep the collection type metadata from the former popup.');
-assert.match(detailPage, /mat-chip>\{\{ level\(c\) \}\}<\/mat-chip>/u, 'Details must keep the CEFR metadata from the former popup.');
-assert.match(detailPage, /mat-chip>\{\{ c\.status \}\}<\/mat-chip>/u, 'Details must keep collection status metadata from the former popup.');
-assert.match(detailPage, /version \{\{ c\.contentVersion \}\}/u, 'Details must keep collection version metadata from the former popup.');
-assert.match(detailPage, /Remove from box' : 'Add to box/u, 'Details must preserve subscription controls.');
+assert.match(detailPage, /mat-chip>\{\{ kindLabel\(c\.kind\) \}\}<\/mat-chip>/u, 'Details must retain collection type metadata.');
+assert.match(detailPage, /mat-chip>\{\{ level\(c\) \}\}<\/mat-chip>/u, 'Details must retain CEFR metadata.');
+assert.match(detailPage, /version \{\{ c\.contentVersion \}\}/u, 'Details must retain version metadata.');
+assert.match(detailPage, /'Start Course'/u, 'Course details must expose the explicit Start Course copy.');
+assert.match(detailPage, /'Add to Leitner Only'/u, 'Details must expose the explicit Leitner-only copy.');
+assert.match(detailPage, /This will not start the course or add it to your learning path\./u, 'Course actions must explain independent Leitner behavior.');
 for (const action of ['Edit collection', 'Import file', 'Add word']) {
-  assert.ok(detailPage.includes(`>${action}</button>`), `Details must preserve the ${action} action from the former popup.`);
+  assert.ok(detailPage.includes(`>${action}</button>`), `Details must preserve the ${action} action.`);
 }
 assert.match(detailPage, /LibraryEntryDialogComponent/u, 'Details must preserve add/edit-word dialogs.');
 assert.match(detailPage, /api\.updateEntry/u, 'Details must preserve word editing.');
 assert.match(detailPage, /api\.addEntry/u, 'Details must preserve adding individual words.');
 assert.match(detailPage, /ConfirmDialogComponent/u, 'Details must preserve delete confirmation.');
 assert.match(detailPage, /api\.removeEntry/u, 'Details must preserve deleting words.');
-assert.match(detailPage, /matColumnDef="term"/u, 'Details must preserve the word column from the popup table.');
-assert.match(detailPage, /matColumnDef="section"/u, 'Details must preserve the section column from the popup table.');
-assert.match(detailPage, /editEntry\(entry\)/u, 'Each manageable word must retain its edit action.');
-assert.match(detailPage, /removeEntry\(entry\)/u, 'Each manageable word must retain its delete action.');
+assert.match(detailPage, /matColumnDef="term"/u, 'Details must preserve the word column.');
+assert.match(detailPage, /matColumnDef="section"/u, 'Details must preserve the section column.');
 
-assert.match(coverHelper, /assets\/library\/covers/u, 'Library covers must live under the documented assets directory.');
-assert.match(coverHelper, /encodeURIComponent\(slug\)/u, 'The unique collection slug must be safely encoded into the asset filename.');
-assert.match(coverHelper, /\.webp/u, 'Library covers must use one predictable WebP filename convention.');
-assert.match(coverSpec, /business-vocabulary-in-use-elementary\.webp/u, 'Unit coverage must lock the slug-based naming convention.');
-assert.match(coverSpec, /\.\.%2Fprivate%20cover/u, 'Unit coverage must prevent path traversal through collection slugs.');
-
-assert.match(pageStyles, /\.collection-cover\s*\{/u, 'Library cards must reserve a dedicated visual cover area.');
-assert.match(pageStyles, /radial-gradient|linear-gradient/u, 'The missing-image state must be intentionally designed in CSS.');
-assert.match(pageStyles, /object-fit:\s*cover/u, 'Uploaded collection artwork must crop consistently inside the card cover.');
-assert.match(pageStyles, /-webkit-line-clamp:\s*3/u, 'Long descriptions must stay compact instead of stretching cards vertically.');
-assert.match(pageStyles, /grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/u, 'Wide screens must preserve a clean three-column Library grid.');
-assert.match(pageStyles, /@media \(max-width:\s*760px\)[\s\S]*grid-template-columns:\s*1fr/u, 'Library cards and filters must collapse cleanly on phones.');
-
-assert.match(coverReadme, /<collection\.slug>\.webp/u, 'The assets directory must document the exact filename contract.');
-assert.match(coverReadme, /1200 × 675/u, 'The cover documentation must state the recommended image size.');
-assert.match(coverReadme, /CSS-designed fallback/u, 'The cover documentation must explain the no-image behavior.');
-
-console.log('Library cover-card and full-detail-page design contract passed.');
+console.log('Library catalog and detail-action design contract passed.');

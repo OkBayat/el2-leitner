@@ -211,7 +211,7 @@ test('English LTR Angular app preserves the complete learner and library flow', 
 
   await page.goto('/library');
   await expect(page.getByRole('heading', { name: 'Library' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'View details' }).first()).toBeVisible();
+  await expect(page.getByTestId('library-all-collections').getByTestId('library-item').first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'New collection' })).toBeVisible();
   await page.getByRole('button', { name: 'New collection' }).click();
   const collectionTitle = `Angular E2E Collection ${Date.now()}`;
