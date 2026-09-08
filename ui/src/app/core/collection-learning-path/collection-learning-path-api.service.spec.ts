@@ -39,6 +39,8 @@ describe('CollectionLearningPathApiService', () => {
     await api.commandStartExercise('1', '5', '10', 7);
     await api.commandActivateVocabularyIntake('1', '5', '10');
     await api.commandStartVocabularySpelling('1', '5', '10', 'course');
+    const recording = new Blob(['recording'], { type: 'audio/webm' });
+    await api.commandUploadSlideSequenceRecording('1', '5', '10', 'speaking/1', recording);
     await api.commandCompleteExercise('1', '5', '10', { kind: 'completed' }, 8);
 
     expect(post.mock.calls.map(([path]) => path)).toEqual([
@@ -46,10 +48,16 @@ describe('CollectionLearningPathApiService', () => {
       '/api/learning-paths/1/lessons/5/exercises/10/start',
       '/api/learning-paths/1/lessons/5/exercises/10/vocabulary-intake/activate',
       '/api/learning-paths/1/lessons/5/exercises/10/vocabulary-spelling/start',
+      '/api/learning-paths/1/lessons/5/exercises/10/slides/speaking%2F1/recordings',
       '/api/learning-paths/1/lessons/5/exercises/10/complete',
     ]);
     expect(post.mock.calls[1]?.[1]).toEqual({ progressRevision: 7 });
     expect(post.mock.calls[3]?.[1]).toEqual({ scope: 'course' });
+    expect(post.mock.calls[4]).toEqual([
+      '/api/learning-paths/1/lessons/5/exercises/10/slides/speaking%2F1/recordings',
+      recording,
+      { 'Content-Type': 'audio/webm' },
+    ]);
     expect(post.mock.calls.at(-1)?.[1]).toEqual({ outcome: { kind: 'completed' }, progressRevision: 8 });
   });
 });

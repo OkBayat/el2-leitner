@@ -86,10 +86,14 @@ function gradeConfiguredResult(slide, resultData) {
     return equalIds(resultData.selectedOptionIds, [data.correctOptionId]);
   }
   if (slide.type === "matching") {
-    const pairIds = Array.isArray(data.pairs)
-      ? data.pairs.map((candidate) => String(record(candidate)?.id ?? "").trim()).filter(Boolean)
-      : [];
-    return pairIds.length > 0 && equalIds(resultData.matchedPairIds, pairIds);
+    const assignments = record(resultData.assignments);
+    const pairs = Array.isArray(data.pairs) ? data.pairs : [];
+    return Boolean(assignments) && pairs.length > 0 && pairs.every((candidate) => {
+      const pair = record(candidate);
+      const id = String(pair?.id ?? "").trim();
+      const rightId = String(pair?.rightId ?? id).trim();
+      return Boolean(id && rightId) && assignments[id] === rightId;
+    });
   }
   if (slide.type === "classification") {
     const assignments = record(resultData.assignments);
@@ -133,10 +137,16 @@ function gradeConfiguredResult(slide, resultData) {
   return false;
 }
 
-function verifySubmission(slide, resultData) {
+function verifySubmission(slide, resultData, context) {
   if (slide.type === "speaking-response") {
-    const recordingUrl = String(resultData.recordingUrl ?? "").trim();
-    return recordingUrl.length <= 2_048 && /^(blob:|data:audio\/)/iu.test(recordingUrl);
+    const artifactId = String(resultData.recordingArtifactId ?? "").trim();
+    const artifact = context.recordingArtifacts?.get(artifactId);
+    return Boolean(artifactId && artifact)
+      && String(artifact.userId) === String(context.userId)
+      && String(artifact.exerciseId) === String(context.exerciseId)
+      && new Date(artifact.exerciseStartedAt).getTime() === new Date(context.exerciseStartedAt).getTime()
+      && artifact.slideId === slide.id
+      && Number(artifact.byteSize) >= 256;
   }
   const response = String(resultData.response ?? "").trim();
   return response.length > 0 && response.length <= 20_000;
@@ -232,7 +242,7 @@ function completionResults(outcome) {
   return results;
 }
 
-export function verifySlideSequenceCompletion(exercise, outcome, scopedVocabulary = []) {
+export function verifySlideSequenceCompletion(exercise, outcome, scopedVocabulary = [], context = {}) {
   const definition = resolveSlideSequenceDefinition(exercise);
   const results = completionResults(outcome);
   if (!results) return false;
@@ -251,7 +261,7 @@ export function verifySlideSequenceCompletion(exercise, outcome, scopedVocabular
       if (result.itemId || result.slideType !== expected.type) return false;
       const submitted = isSubmittedSlide(expected);
       if (result.eventType !== (submitted ? "submitted" : "answered")) return false;
-      if (submitted ? verifySubmission(expected, result.data) : gradeConfiguredResult(expected, result.data)) {
+      if (submitted ? verifySubmission(expected, result.data, context) : gradeConfiguredResult(expected, result.data)) {
         satisfiedStatic.add(result.rootSlideId);
       }
       continue;

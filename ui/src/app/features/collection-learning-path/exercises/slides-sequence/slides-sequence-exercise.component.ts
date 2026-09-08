@@ -4,14 +4,17 @@ import {
 	EventEmitter,
 	Output,
 	ViewChild,
+	inject,
 	signal,
 } from "@angular/core";
+import { CollectionLearningPathApiService } from "../../../../core/collection-learning-path/collection-learning-path-api.service";
 import { parseSlideSequenceExercise } from "../../../../domain/collection-learning-path/slide-sequence-exercise";
 import {
 	createDefaultSlideContentRegistry,
 	SlideExerciseComponent,
 	type SlideExerciseActionEvent,
 	type SlideExerciseContentEvent,
+	type SlideExerciseResult,
 	type SlideExerciseSlide,
 } from "../../../../shared/slide-exercise";
 import { LessonVocabularyScopeSlideComponent } from "./lesson-vocabulary-scope-slide.component";
@@ -49,7 +52,7 @@ function learnerResponse(
 	if (slideType === "classification")
 		return { assignments: data["assignments"] };
 	if (slideType === "matching")
-		return { matchedPairIds: data["matchedPairIds"] };
+		return { assignments: data["assignments"] };
 	if (
 		slideType === "cloze" ||
 		slideType === "structured-completion" ||
@@ -65,8 +68,6 @@ function learnerResponse(
 		return { response: data["response"] };
 	if (slideType === "ordering")
 		return { orderedItemIds: data["orderedItemIds"] };
-	if (slideType === "speaking-response")
-		return { recordingUrl: data["recordingUrl"] };
 	return null;
 }
 
@@ -79,6 +80,7 @@ function learnerResponse(
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlidesSequenceExerciseComponent implements ExerciseComponent {
+	private readonly api = inject(CollectionLearningPathApiService);
 	@Output() readonly outcome = new EventEmitter<ExerciseOutcome>();
 	@ViewChild(SlideExerciseComponent)
 	private slideExercise?: SlideExerciseComponent;
@@ -107,6 +109,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 	})();
 	readonly error = signal("");
 	private readonly completed = signal(false);
+	private readonly finishing = signal(false);
 	private retryIncorrect = false;
 	private readonly sourceSlides = new Map<string, SlideExerciseSlide>();
 	private readonly retryCounts = new Map<string, number>();
@@ -115,6 +118,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		this.runtime.set(context);
 		this.error.set("");
 		this.completed.set(false);
+		this.finishing.set(false);
 		this.retryIncorrect = false;
 		this.sourceSlides.clear();
 		this.retryCounts.clear();
@@ -135,7 +139,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 	}
 
 	onAction(event: SlideExerciseActionEvent): void {
-		if (event.actionId === "finish") this.finish(event.slideId);
+		if (event.actionId === "finish") void this.finish(event.slideId);
 	}
 
 	onContentEvent(event: SlideExerciseContentEvent): void {
@@ -173,8 +177,10 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		});
 	}
 
-	finish(slideId = this.slideExercise?.currentSlide?.id ?? ""): void {
-		if (this.completed()) return;
+	async finish(
+		slideId = this.slideExercise?.currentSlide?.id ?? "",
+	): Promise<void> {
+		if (this.completed() || this.finishing()) return;
 		const terminal = this.slides().at(-1);
 		if (
 			!terminal?.terminal ||
@@ -182,27 +188,71 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 			this.slideExercise?.currentSlide?.id !== slideId
 		)
 			return;
-		const results = this.slideExercise.deckController
-			.results()
-			.flatMap((result) => {
-				const data = learnerResponse(result.slideType, result.data);
-				return data
-					? [
-							{
-								rootSlideId: result.rootSlideId,
-								slideType: result.slideType,
-								itemId: result.itemId,
-								eventType: result.eventType,
-								data,
-							},
-						]
-					: [];
+		this.finishing.set(true);
+		this.error.set("");
+		try {
+			const results = (
+				await Promise.all(
+					this.slideExercise.deckController
+						.results()
+						.map((result) => this.evidenceResult(result)),
+				)
+			).filter((result) => result !== null);
+			this.completed.set(true);
+			this.outcome.emit({
+				kind: "completed",
+				evidence: { schemaVersion: 1, results },
 			});
-		this.completed.set(true);
-		this.outcome.emit({
-			kind: "completed",
-			evidence: { schemaVersion: 1, results },
-		});
+		} catch (error) {
+			this.error.set(
+				message(error) ||
+					"The speaking recording could not be saved. Try again.",
+			);
+		} finally {
+			this.finishing.set(false);
+		}
+	}
+
+	private async evidenceResult(result: SlideExerciseResult): Promise<{
+		rootSlideId: string;
+		slideType: string;
+		itemId: string | undefined;
+		eventType: "answered" | "submitted";
+		data: Record<string, unknown>;
+	} | null> {
+		if (result.slideType === "speaking-response") {
+			const recordingUrl = String(record(result.data)?.["recordingUrl"] ?? "").trim();
+			if (!recordingUrl) throw new Error("A speaking recording is missing.");
+			const response = await fetch(recordingUrl);
+			if (!response.ok) throw new Error("The speaking recording could not be read.");
+			const recording = await response.blob();
+			const runtime = this.runtime();
+			if (!runtime) throw new Error("The exercise context is unavailable.");
+			const artifact = await this.api.commandUploadSlideSequenceRecording(
+				runtime.pathId,
+				runtime.lessonId,
+				runtime.exerciseId,
+				result.rootSlideId,
+				recording,
+			);
+			return {
+				rootSlideId: result.rootSlideId,
+				slideType: result.slideType,
+				itemId: result.itemId,
+				eventType: result.eventType,
+				data: { recordingArtifactId: artifact.artifactId },
+			};
+		}
+		const data = learnerResponse(result.slideType, result.data);
+		return data
+			? {
+					rootSlideId: result.rootSlideId,
+					slideType: result.slideType,
+					itemId: result.itemId,
+					eventType: result.eventType,
+					data,
+				}
+			: null;
 	}
 
 	cancel(): void {

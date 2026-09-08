@@ -145,13 +145,14 @@ describe('reusable slide library behavior', () => {
 		component.selectLeft('make');
 		component.selectRight('make');
 		expect(component.matchedPairIds()).toEqual(['make']);
+		expect(component.matchedAssignments()).toEqual({ make: 'make' });
 		expect(component.interactionState()).toBe('idle');
 		component.selectLeft('take');
 		component.selectRight('take');
 		expect(component.interactionState()).toBe('answered-correct');
 		expect(events.at(-1)).toMatchObject({
 			type: 'answered',
-			data: { correct: true },
+			data: { correct: true, assignments: { make: 'make', take: 'take' } },
 		});
 	});
 

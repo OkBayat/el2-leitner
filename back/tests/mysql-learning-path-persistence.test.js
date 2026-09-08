@@ -6,11 +6,13 @@ import { LearningPathDefinitionReader } from "../src/application/collection-lear
 import { LearningPathDefinitionWriter } from "../src/application/collection-learning-path/ports/LearningPathDefinitionWriter.js";
 import { LearningPathProgressReader } from "../src/application/collection-learning-path/ports/LearningPathProgressReader.js";
 import { LearningPathProgressWriter } from "../src/application/collection-learning-path/ports/LearningPathProgressWriter.js";
+import { LearningPathRecordingArtifactRepository } from "../src/application/collection-learning-path/ports/LearningPathRecordingArtifactRepository.js";
 import { LearningPathTransactionManager } from "../src/application/collection-learning-path/ports/LearningPathTransactionManager.js";
 import { MySqlLearningPathDefinitionCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionCommandRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
+import { MySqlLearningPathRecordingArtifactRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathRecordingArtifactRepository.js";
 import { MySqlLearningPathTransactionManager } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathTransactionManager.js";
 
 class TransactionConnection {
@@ -49,7 +51,19 @@ test("Learning Path persistence adapters implement segregated application ports"
   assert.ok(new MySqlLearningPathDefinitionCommandRepository(pool) instanceof LearningPathDefinitionWriter);
   assert.ok(new MySqlLearningPathProgressQueryRepository(pool) instanceof LearningPathProgressReader);
   assert.ok(new MySqlLearningPathProgressCommandRepository(pool) instanceof LearningPathProgressWriter);
+  assert.ok(new MySqlLearningPathRecordingArtifactRepository(pool) instanceof LearningPathRecordingArtifactRepository);
   assert.ok(new MySqlLearningPathTransactionManager(new ConnectionPool(new TransactionConnection())) instanceof LearningPathTransactionManager);
+});
+
+test("recording artifact migration stores owner-bound audio evidence without destructive changes", async () => {
+  const migration = await readFile(new URL("../database/migrations/021_learning_path_recording_artifacts.sql", import.meta.url), "utf8");
+
+  assert.match(migration, /CREATE TABLE IF NOT EXISTS learning_path_recording_artifacts/u);
+  assert.match(migration, /audio_data MEDIUMBLOB NOT NULL/u);
+  assert.match(migration, /sha256 CHAR\(64\) NOT NULL/u);
+  assert.match(migration, /FOREIGN KEY \(user_id\) REFERENCES users \(id\)[\s\S]*ON DELETE CASCADE/u);
+  assert.match(migration, /FOREIGN KEY \(exercise_id\) REFERENCES learning_path_exercises \(id\)[\s\S]*ON DELETE CASCADE/u);
+  assert.doesNotMatch(migration, /DROP TABLE|DROP COLUMN|DELETE FROM/u);
 });
 
 test("Learning Path transaction manager commits successful work and releases the connection", async () => {

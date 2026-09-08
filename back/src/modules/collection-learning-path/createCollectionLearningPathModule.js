@@ -1,9 +1,12 @@
+import { createHash, randomUUID } from "node:crypto";
+
 import { ActivateVocabularyIntake } from "../../application/collection-learning-path/commands/ActivateVocabularyIntake.js";
 import { CompleteExercise } from "../../application/collection-learning-path/commands/CompleteExercise.js";
 import { StartExercise } from "../../application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../../application/collection-learning-path/commands/StartLearningPath.js";
 import { StartVocabularyMasteryCheck } from "../../application/collection-learning-path/commands/StartVocabularyMasteryCheck.js";
 import { StartVocabularySpelling } from "../../application/collection-learning-path/commands/StartVocabularySpelling.js";
+import { UploadSlideSequenceRecording } from "../../application/collection-learning-path/commands/UploadSlideSequenceRecording.js";
 import { createDefaultExerciseRuntimeRegistry } from "../../application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../../application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../../application/collection-learning-path/queries/GetExerciseContext.js";
@@ -56,6 +59,7 @@ import { MySqlLearningPathMasteryCheckSessionCommandRepository } from "../../inf
 import { MySqlLearningPathProgressCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
 import { MySqlLearningPathQuickReviewEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathQuickReviewEvidenceQueryRepository.js";
+import { MySqlLearningPathRecordingArtifactRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathRecordingArtifactRepository.js";
 import { MySqlLearningPathShadowingEvidenceQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathShadowingEvidenceQueryRepository.js";
 import { MySqlLearningPathTransactionManager } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathTransactionManager.js";
 import { MySqlLearningPathVocabularyIntakeCommandRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathVocabularyIntakeCommandRepository.js";
@@ -105,7 +109,12 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     ?? new MySqlListeningPracticeRepository(pool);
   const ieltsListeningReader = adapters.learningPathIeltsListeningReader
     ?? new ListeningPracticeLearningPathAdapter({ listeningPracticeRepository });
+  const recordingArtifactRepository = adapters.learningPathRecordingArtifactRepository
+    ?? new MySqlLearningPathRecordingArtifactRepository(pool);
   const clock = adapters.learningPathClock ?? (() => new Date());
+  const idFactory = adapters.learningPathIdFactory ?? randomUUID;
+  const hashFactory = adapters.learningPathRecordingHashFactory
+    ?? ((bytes) => createHash("sha256").update(bytes).digest("hex"));
 
   const getVocabularyIntakeContext = new GetVocabularyIntakeContext({ vocabularyIntakeReader });
   const verifyVocabularyIntakeCompletion = new VerifyVocabularyIntakeCompletion({ vocabularyIntakeReader });
@@ -127,7 +136,10 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
   const verifyIeltsListeningCompletion = new VerifyIeltsListeningCompletion({ ieltsListeningReader });
   const verifyShadowingExerciseCompletion = new VerifyShadowingExerciseCompletion({ shadowingEvidenceReader });
   const getSlideSequenceExerciseContext = new GetSlideSequenceExerciseContext({ vocabularyReader: vocabularyIntakeReader });
-  const verifySlideSequenceCompletion = new VerifySlideSequenceCompletion({ vocabularyReader: vocabularyIntakeReader });
+  const verifySlideSequenceCompletion = new VerifySlideSequenceCompletion({
+    vocabularyReader: vocabularyIntakeReader,
+    recordingArtifactRepository,
+  });
   const exerciseRuntime = adapters.learningPathExerciseRuntime
     ?? createDefaultExerciseRuntimeRegistry({
       contextHydrators: {
@@ -166,6 +178,7 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     spellingSessionWriter,
     ieltsListeningReader,
     shadowingEvidenceReader,
+    recordingArtifactRepository,
     clock,
   };
 
@@ -186,6 +199,12 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
     startVocabularySpelling: new StartVocabularySpelling({
       ...dependencies,
       practiceSessionWriter: spellingSessionWriter,
+    }),
+    uploadSlideSequenceRecording: new UploadSlideSequenceRecording({
+      ...dependencies,
+      recordingArtifactRepository,
+      idFactory,
+      hashFactory,
     }),
     completeExercise: new CompleteExercise(dependencies),
   };

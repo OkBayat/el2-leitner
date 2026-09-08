@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CollectionLearningPathApiService } from "../../../../core/collection-learning-path/collection-learning-path-api.service";
 import { ReviewAnswerSoundService } from "../../../../core/sound/review-answer-sound.service";
 import { SlideExerciseComponent } from "../../../../shared/slide-exercise";
 import type { ExerciseContext } from "../exercise-runtime/exercise-contracts";
@@ -32,7 +33,26 @@ const context: ExerciseContext = {
 };
 
 describe("SlidesSequenceExerciseComponent", () => {
-	it("renders configured slides and completes only from the terminal slide", () => {
+	const uploadRecording = vi.fn();
+
+	beforeEach(() => {
+		uploadRecording.mockReset();
+		uploadRecording.mockResolvedValue({ artifactId: "recording-1" });
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: CollectionLearningPathApiService,
+					useValue: {
+						commandUploadSlideSequenceRecording: uploadRecording,
+					},
+				},
+			],
+		});
+	});
+
+	afterEach(() => vi.unstubAllGlobals());
+
+	it("renders configured slides and completes only from the terminal slide", async () => {
 		TestBed.configureTestingModule({
 			imports: [SlidesSequenceExerciseComponent],
 		});
@@ -53,7 +73,7 @@ describe("SlidesSequenceExerciseComponent", () => {
 			fixture.componentInstance.slides().map((slide) => slide.id),
 		).toEqual(["intro", "summary"]);
 
-		fixture.componentInstance.finish();
+		await fixture.componentInstance.finish();
 		expect(outcomes).not.toHaveBeenCalled();
 
 		const slideExercise = fixture.debugElement.query(
@@ -62,7 +82,7 @@ describe("SlidesSequenceExerciseComponent", () => {
 		slideExercise.next();
 		expect(outcomes).not.toHaveBeenCalled();
 		slideExercise.next();
-		fixture.componentInstance.finish("summary");
+		await fixture.componentInstance.finish("summary");
 		expect(outcomes).toHaveBeenCalledOnce();
 		expect(outcomes).toHaveBeenCalledWith({
 			kind: "completed",
@@ -135,7 +155,7 @@ describe("SlidesSequenceExerciseComponent", () => {
 		]);
 	});
 
-	it("emits bounded result evidence from the completed deck", () => {
+	it("emits bounded result evidence from the completed deck", async () => {
 		TestBed.configureTestingModule({
 			imports: [SlidesSequenceExerciseComponent],
 			providers: [
@@ -179,7 +199,7 @@ describe("SlidesSequenceExerciseComponent", () => {
 			},
 		});
 		slideExercise.next();
-		fixture.componentInstance.finish("summary");
+		await fixture.componentInstance.finish("summary");
 
 		expect(outcomes).toHaveBeenCalledWith({
 			kind: "completed",
@@ -192,6 +212,68 @@ describe("SlidesSequenceExerciseComponent", () => {
 						itemId: undefined,
 						eventType: "answered",
 						data: { selectedOptionIds: ["correct"] },
+					},
+				],
+			},
+		});
+	});
+
+	it("uploads a real speaking blob and emits only the server-issued artifact reference", async () => {
+		vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+			ok: true,
+			blob: async () => new Blob([new Uint8Array(512)], { type: "audio/webm" }),
+		}));
+		TestBed.configureTestingModule({
+			imports: [SlidesSequenceExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		const outcomes = vi.fn();
+		fixture.componentInstance.outcome.subscribe(outcomes);
+		fixture.componentInstance.load({
+			...context,
+			config: {
+				slides: [
+					{ id: "speaking", type: "speaking-response", data: {} },
+					{ id: "summary", type: "summary", terminal: true, data: {} },
+				],
+			},
+		});
+		fixture.detectChanges();
+		const slideExercise = fixture.debugElement.query(
+			By.directive(SlideExerciseComponent),
+		).componentInstance as SlideExerciseComponent;
+		slideExercise.onContentEvent({
+			type: "submitted",
+			data: { recordingUrl: "blob:local-recording" },
+		});
+		slideExercise.next();
+
+		await fixture.componentInstance.finish("summary");
+
+		expect(uploadRecording).toHaveBeenCalledWith(
+			"path-1",
+			"lesson-1",
+			"exercise-1",
+			"speaking",
+			expect.any(Blob),
+		);
+		expect(outcomes).toHaveBeenCalledWith({
+			kind: "completed",
+			evidence: {
+				schemaVersion: 1,
+				results: [
+					{
+						rootSlideId: "speaking",
+						slideType: "speaking-response",
+						itemId: undefined,
+						eventType: "submitted",
+						data: { recordingArtifactId: "recording-1" },
 					},
 				],
 			},

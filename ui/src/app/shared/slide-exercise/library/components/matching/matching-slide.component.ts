@@ -74,6 +74,7 @@ export class MatchingSlideComponent
 {
 	readonly selectedLeftId = signal('');
 	readonly matchedPairIds = signal<readonly string[]>([]);
+	readonly matchedAssignments = signal<Readonly<Record<string, string>>>({});
 	readonly pairFeedback = signal('');
 	readonly wrongPair = signal<{
 		readonly leftId: string;
@@ -85,6 +86,7 @@ export class MatchingSlideComponent
 		this.begin(context.slideId, data);
 		this.selectedLeftId.set('');
 		this.matchedPairIds.set([]);
+		this.matchedAssignments.set({});
 		this.pairFeedback.set('');
 		this.wrongPair.set(null);
 		const unique = [
@@ -129,6 +131,10 @@ export class MatchingSlideComponent
 			return;
 		}
 		this.matchedPairIds.update((ids) => [...ids, leftId]);
+		this.matchedAssignments.update((assignments) => ({
+			...assignments,
+			[leftId]: rightId,
+		}));
 		this.selectedLeftId.set('');
 		this.wrongPair.set(null);
 		this.pairFeedback.set('Pair matched.');
@@ -137,6 +143,7 @@ export class MatchingSlideComponent
 			this.finish(true, {
 				correct: true,
 				matchedPairIds: this.matchedPairIds(),
+				assignments: this.matchedAssignments(),
 			});
 	}
 	isMatched(id: string): boolean {
