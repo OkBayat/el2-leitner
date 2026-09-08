@@ -18,7 +18,15 @@ function exercise(overrides = {}) {
       retryIncorrect: true,
       slides: [
         { id: "intro", type: "teaching-card", data: {} },
-        { id: "choice", type: "choice", data: {} },
+        {
+          id: "choice",
+          type: "choice",
+          data: {
+            question: "Choose the answer.",
+            options: [{ id: "wrong", label: "Wrong" }, { id: "correct", label: "Correct" }],
+            correctOptionIds: ["correct"],
+          },
+        },
         { id: "speaking", type: "speaking-response", data: {} },
         { id: "summary", type: "summary", terminal: true, data: {} },
       ],
@@ -37,16 +45,99 @@ describe("slide-sequence completion evidence", () => {
 
     assert.equal(verifySlideSequenceCompletion(definition, { kind: "completed" }), false);
     assert.equal(verifySlideSequenceCompletion(definition, outcome([
-      { rootSlideId: "choice", slideType: "choice", status: "incorrect" },
-      { rootSlideId: "speaking", slideType: "speaking-response", status: "submitted" },
+      { rootSlideId: "choice", slideType: "choice", eventType: "answered", data: { selectedOptionIds: ["wrong"] } },
+      {
+        rootSlideId: "speaking",
+        slideType: "speaking-response",
+        eventType: "submitted",
+        data: { recordingUrl: "blob:recording" },
+      },
     ])), false);
     assert.deepEqual(verifySlideSequenceCompletion(definition, outcome([
-      { rootSlideId: "choice", slideType: "choice", status: "incorrect" },
-      { rootSlideId: "choice", slideType: "choice", status: "correct" },
-      { rootSlideId: "speaking", slideType: "speaking-response", status: "submitted" },
+      { rootSlideId: "choice", slideType: "choice", eventType: "answered", data: { selectedOptionIds: ["wrong"] } },
+      { rootSlideId: "choice", slideType: "choice", eventType: "answered", data: { selectedOptionIds: ["correct"] } },
+      {
+        rootSlideId: "speaking",
+        slideType: "speaking-response",
+        eventType: "submitted",
+        data: { recordingUrl: "blob:recording" },
+      },
     ])), {
       evidenceType: "slide-sequence",
       evidenceRef: "exercise:sequence-1:slides:2",
+    });
+  });
+
+  it("regrades learner answers instead of trusting client correctness claims", () => {
+    const definition = exercise();
+
+    assert.equal(verifySlideSequenceCompletion(definition, outcome([
+      {
+        rootSlideId: "choice",
+        slideType: "choice",
+        eventType: "answered",
+        data: { selectedOptionIds: ["wrong"], correct: true, correctOptionIds: ["wrong"] },
+      },
+      {
+        rootSlideId: "speaking",
+        slideType: "speaking-response",
+        eventType: "submitted",
+        data: { recordingUrl: "blob:recording" },
+      },
+    ])), false);
+  });
+
+  it("grades every supported scored and production response from server-owned slide data", () => {
+    const slides = [
+      { id: "choice", type: "choice", data: { correctOptionIds: ["b"] } },
+      { id: "truth", type: "truth", data: { correctOptionId: "true" } },
+      { id: "matching", type: "matching", data: { pairs: [{ id: "p1" }, { id: "p2" }] } },
+      {
+        id: "classification",
+        type: "classification",
+        data: { items: [{ id: "i1", correctCategoryId: "c1" }, { id: "i2", correctCategoryId: "c2" }] },
+      },
+      { id: "cloze", type: "cloze", data: { blanks: [{ id: "blank", answers: ["bond"] }] } },
+      {
+        id: "structured",
+        type: "structured-completion",
+        data: { fields: [{ id: "field", answers: ["adulthood"], wordLimit: 1 }] },
+      },
+      {
+        id: "formation",
+        type: "word-formation",
+        data: { fields: [{ id: "field", answers: ["interaction"], exactSpelling: true }] },
+      },
+      { id: "short", type: "short-answer", data: { answers: ["sibling"] } },
+      { id: "dictation", type: "dictation", data: { answer: "maternal", caseSensitive: false } },
+      { id: "correction", type: "error-correction", data: { answers: ["I resemble my father."] } },
+      { id: "rewrite", type: "rewrite", data: { requiredFragments: ["have", "in common"] } },
+      { id: "ordering", type: "ordering", data: { correctOrderIds: ["first", "second"] } },
+      { id: "writing", type: "writing-response", data: {} },
+      { id: "speaking", type: "speaking-response", data: {} },
+      { id: "summary", type: "summary", terminal: true, data: {} },
+    ];
+    const definition = exercise({ config: { slides } });
+    const results = [
+      ["choice", "choice", "answered", { selectedOptionIds: ["b"] }],
+      ["truth", "truth", "answered", { selectedOptionIds: ["true"] }],
+      ["matching", "matching", "answered", { matchedPairIds: ["p2", "p1"] }],
+      ["classification", "classification", "answered", { assignments: { i1: "c1", i2: "c2" } }],
+      ["cloze", "cloze", "answered", { answers: { blank: "Bond." } }],
+      ["structured", "structured-completion", "answered", { answers: { field: "adulthood" } }],
+      ["formation", "word-formation", "answered", { answers: { field: "interaction" } }],
+      ["short", "short-answer", "answered", { answer: "Sibling" }],
+      ["dictation", "dictation", "answered", { answer: "Maternal" }],
+      ["correction", "error-correction", "answered", { correction: "I resemble my father" }],
+      ["rewrite", "rewrite", "answered", { response: "We have several traits in common." }],
+      ["ordering", "ordering", "answered", { orderedItemIds: ["first", "second"] }],
+      ["writing", "writing-response", "submitted", { response: "My family shaped my upbringing." }],
+      ["speaking", "speaking-response", "submitted", { recordingUrl: "blob:recording" }],
+    ].map(([rootSlideId, slideType, eventType, data]) => ({ rootSlideId, slideType, eventType, data }));
+
+    assert.deepEqual(verifySlideSequenceCompletion(definition, outcome(results)), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:14",
     });
   });
 
@@ -67,11 +158,29 @@ describe("slide-sequence completion evidence", () => {
     ];
 
     assert.equal(verifySlideSequenceCompletion(definition, outcome([
-      { rootSlideId: "scope-word-1", slideType: "dictation", itemId: "word-1", status: "correct" },
+      {
+        rootSlideId: "scope-word-1",
+        slideType: "dictation",
+        itemId: "word-1",
+        eventType: "answered",
+        data: { answer: "childhood" },
+      },
     ]), vocabulary), false);
     assert.deepEqual(verifySlideSequenceCompletion(definition, outcome([
-      { rootSlideId: "scope-word-1", slideType: "dictation", itemId: "word-1", status: "correct" },
-      { rootSlideId: "scope-word-2", slideType: "dictation", itemId: "word-2", status: "correct" },
+      {
+        rootSlideId: "scope-word-1",
+        slideType: "dictation",
+        itemId: "word-1",
+        eventType: "answered",
+        data: { answer: "childhood" },
+      },
+      {
+        rootSlideId: "scope-word-2",
+        slideType: "dictation",
+        itemId: "word-2",
+        eventType: "answered",
+        data: { answer: "adulthood" },
+      },
     ]), vocabulary), {
       evidenceType: "slide-sequence",
       evidenceRef: "exercise:sequence-1:slides:2",
@@ -101,7 +210,13 @@ describe("slide-sequence completion evidence", () => {
       userId: "user-1",
       exercise: scopedExercise,
       outcome: outcome([
-        { rootSlideId: "scope-word-1", slideType: "choice", itemId: "word-1", status: "correct" },
+        {
+          rootSlideId: "scope-word-1",
+          slideType: "choice",
+          itemId: "word-1",
+          eventType: "answered",
+          data: { selectedOptionIds: ["word-1"] },
+        },
       ]),
     }), {
       evidenceType: "slide-sequence",

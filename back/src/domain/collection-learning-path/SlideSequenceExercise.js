@@ -12,6 +12,8 @@ const GENERATED_TYPES = new Map([
 ]);
 const UNSCORED_TYPES = new Set(["message", "teaching-card", "summary", LESSON_VOCABULARY_SCOPE_SLIDE_TYPE]);
 const SUBMITTED_TYPES = new Set(["speaking-response", "writing-response"]);
+const ANSWER_FIELD_TYPES = new Set(["cloze", "structured-completion", "word-formation"]);
+const MAX_EVIDENCE_BYTES = 256_000;
 
 function invalid(message) {
   throw new ValidationError("INVALID_SLIDE_SEQUENCE_DEFINITION", message);
@@ -25,6 +27,119 @@ function identifier(value, label) {
   const normalized = String(value ?? "").trim();
   if (!normalized || normalized.length > 160) invalid(`${label} must be a valid public id.`);
   return normalized;
+}
+
+function strings(value) {
+  return Array.isArray(value) ? value.map((item) => String(item ?? "").trim()).filter(Boolean) : [];
+}
+
+function wordCount(value) {
+  const normalized = String(value ?? "").trim();
+  return normalized ? normalized.split(/\s+/u).length : 0;
+}
+
+function normalizeAnswer(value, field = {}) {
+  let normalized = String(value ?? "").trim().replace(/\s+/gu, " ");
+  if (field.punctuationSensitive !== true) normalized = normalized.replace(/[.,!?;:]+$/gu, "").trim();
+  if (field.caseSensitive !== true) normalized = normalized.toLocaleLowerCase("en");
+  return normalized;
+}
+
+function answerMatches(value, field) {
+  if (!String(value ?? "").trim() || (field.wordLimit && wordCount(value) > field.wordLimit)) return false;
+  const normalization = field.exactSpelling === true
+    ? { caseSensitive: true, punctuationSensitive: true }
+    : field;
+  const actual = normalizeAnswer(value, normalization);
+  return strings(field.answers).some((answer) => normalizeAnswer(answer, normalization) === actual);
+}
+
+function equalIds(actual, expected) {
+  const normalizedActual = strings(actual);
+  const normalizedExpected = strings(expected);
+  return normalizedActual.length === normalizedExpected.length
+    && new Set(normalizedActual).size === normalizedActual.length
+    && normalizedActual.every((id) => normalizedExpected.includes(id));
+}
+
+function isSubmittedSlide(slide) {
+  if (SUBMITTED_TYPES.has(slide.type)) return true;
+  return slide.type === "rewrite"
+    && strings(slide.data.acceptedAnswers).length === 0
+    && strings(slide.data.requiredFragments).length === 0;
+}
+
+function gradeAnswerFields(data, fieldKey, resultData) {
+  const answers = record(resultData.answers);
+  const fields = Array.isArray(data[fieldKey]) ? data[fieldKey] : [];
+  return Boolean(answers) && fields.length > 0 && fields.every((candidate) => {
+    const field = record(candidate);
+    const id = String(field?.id ?? "").trim();
+    return Boolean(id) && answerMatches(answers[id], field);
+  });
+}
+
+function gradeConfiguredResult(slide, resultData) {
+  const data = slide.data;
+  if (slide.type === "choice") return equalIds(resultData.selectedOptionIds, data.correctOptionIds);
+  if (slide.type === "truth" || slide.type === "pronunciation") {
+    return equalIds(resultData.selectedOptionIds, [data.correctOptionId]);
+  }
+  if (slide.type === "matching") {
+    const pairIds = Array.isArray(data.pairs)
+      ? data.pairs.map((candidate) => String(record(candidate)?.id ?? "").trim()).filter(Boolean)
+      : [];
+    return pairIds.length > 0 && equalIds(resultData.matchedPairIds, pairIds);
+  }
+  if (slide.type === "classification") {
+    const assignments = record(resultData.assignments);
+    const items = Array.isArray(data.items) ? data.items : [];
+    return Boolean(assignments) && items.length > 0 && items.every((candidate) => {
+      const item = record(candidate);
+      const id = String(item?.id ?? "").trim();
+      const expected = String(item?.correctCategoryId ?? "").trim();
+      return Boolean(id && expected) && assignments[id] === expected;
+    });
+  }
+  if (slide.type === "cloze") return gradeAnswerFields(data, "blanks", resultData);
+  if (ANSWER_FIELD_TYPES.has(slide.type)) return gradeAnswerFields(data, "fields", resultData);
+  if (slide.type === "short-answer") {
+    return answerMatches(resultData.answer, {
+      answers: data.answers,
+      caseSensitive: data.exactSpelling === true,
+      punctuationSensitive: data.exactSpelling === true,
+    });
+  }
+  if (slide.type === "dictation") {
+    return answerMatches(resultData.answer, {
+      answers: [data.answer, ...strings(data.acceptedAnswers)],
+      caseSensitive: data.caseSensitive !== false,
+      punctuationSensitive: data.punctuationSensitive === true,
+    });
+  }
+  if (slide.type === "error-correction") {
+    return answerMatches(resultData.correction, { answers: data.answers });
+  }
+  if (slide.type === "rewrite") {
+    const response = normalizeAnswer(resultData.response);
+    return Boolean(response) && (
+      strings(data.acceptedAnswers).some((answer) => normalizeAnswer(answer) === response)
+      || (strings(data.requiredFragments).length > 0
+        && strings(data.requiredFragments).every((fragment) => response.includes(normalizeAnswer(fragment))))
+    );
+  }
+  if (slide.type === "ordering") return equalIds(resultData.orderedItemIds, data.correctOrderIds)
+    && strings(resultData.orderedItemIds).every((id, index) => id === strings(data.correctOrderIds)[index]);
+  return false;
+}
+
+function verifySubmission(slide, resultData) {
+  if (slide.type === "speaking-response") {
+    const recordingUrl = String(resultData.recordingUrl ?? "").trim();
+    return recordingUrl.length <= 2_048 && /^(blob:|data:audio\/)/iu.test(recordingUrl);
+  }
+  const response = String(resultData.response ?? "").trim();
+  return response.length > 0 && response.length <= 20_000;
 }
 
 export function resolveSlideSequenceDefinition(exercise) {
@@ -97,16 +212,22 @@ function completionResults(outcome) {
   const evidence = record(outcome?.evidence);
   if (!evidence || Number(evidence.schemaVersion) !== 1 || !Array.isArray(evidence.results)) return null;
   if (evidence.results.length > 1000) return null;
+  try {
+    if (JSON.stringify(evidence.results).length > MAX_EVIDENCE_BYTES) return null;
+  } catch {
+    return null;
+  }
   const results = [];
   for (const candidate of evidence.results) {
     const result = record(candidate);
     const rootSlideId = String(result?.rootSlideId ?? "").trim();
     const slideType = String(result?.slideType ?? "").trim();
     const itemId = String(result?.itemId ?? "").trim() || null;
-    const status = String(result?.status ?? "").trim();
+    const eventType = String(result?.eventType ?? "").trim();
+    const data = record(result?.data);
     if (!rootSlideId || rootSlideId.length > 160 || !slideType || slideType.length > 96
-      || !new Set(["correct", "incorrect", "submitted"]).has(status)) return null;
-    results.push({ rootSlideId, slideType, itemId, status });
+      || !new Set(["answered", "submitted"]).has(eventType) || !data) return null;
+    results.push({ rootSlideId, slideType, itemId, eventType, data });
   }
   return results;
 }
@@ -118,26 +239,36 @@ export function verifySlideSequenceCompletion(exercise, outcome, scopedVocabular
   const expectedStatic = new Map();
   for (const slide of definition.slides) {
     if (UNSCORED_TYPES.has(slide.type)) continue;
-    expectedStatic.set(slide.id, {
-      slideType: slide.type,
-      requiredStatus: SUBMITTED_TYPES.has(slide.type) ? "submitted" : "correct",
-    });
+    expectedStatic.set(slide.id, slide);
   }
   const payload = createSlideSequenceVocabularyPayload(definition.scope, scopedVocabulary);
-  const expectedItems = new Set(payload.items.map((item) => item.id));
+  const expectedItems = new Map(payload.items.map((item) => [item.id, item]));
   const satisfiedStatic = new Set();
   const satisfiedItems = new Set();
   for (const result of results) {
     const expected = expectedStatic.get(result.rootSlideId);
     if (expected) {
-      if (result.itemId || result.slideType !== expected.slideType) return false;
-      if (result.status === expected.requiredStatus) satisfiedStatic.add(result.rootSlideId);
+      if (result.itemId || result.slideType !== expected.type) return false;
+      const submitted = isSubmittedSlide(expected);
+      if (result.eventType !== (submitted ? "submitted" : "answered")) return false;
+      if (submitted ? verifySubmission(expected, result.data) : gradeConfiguredResult(expected, result.data)) {
+        satisfiedStatic.add(result.rootSlideId);
+      }
       continue;
     }
     if (!definition.generated || !result.itemId || !expectedItems.has(result.itemId)) return false;
     if (result.slideType !== definition.generated.slideType
       || result.rootSlideId !== `${definition.generated.scopeSlideId}-${result.itemId}`) return false;
-    if (result.status === "correct") satisfiedItems.add(result.itemId);
+    if (result.eventType !== "answered") return false;
+    const item = expectedItems.get(result.itemId);
+    const correct = definition.generated.generatedType === "dictation"
+      ? answerMatches(result.data.answer, {
+          answers: [item.term],
+          caseSensitive: false,
+          punctuationSensitive: false,
+        })
+      : equalIds(result.data.selectedOptionIds, [item.id]);
+    if (correct) satisfiedItems.add(result.itemId);
   }
   if (satisfiedStatic.size !== expectedStatic.size || satisfiedItems.size !== expectedItems.size) return false;
   if (definition.scope && expectedItems.size === 0) return false;

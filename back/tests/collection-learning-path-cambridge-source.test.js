@@ -223,6 +223,8 @@ test("Cambridge Unit 1 slide decks and synthetic dialogue stimuli are production
     .flatMap((exercise) => exercise.config.slides)
     .map((slide) => slide.data.stimulus)
     .filter((stimulus) => stimulus?.type === "dialogue");
+  assert.ok(sequences.flatMap((exercise) => exercise.config.slides).every((slide) =>
+    !nonEmpty(slide.data.audio) && slide.data.stimulus?.type !== "audio"));
   assert.equal(dialogues.length, 5);
   assert.ok(dialogues.some((dialogue) => dialogue.turns.length === 4));
   assert.ok(dialogues.some((dialogue) => dialogue.turns.length >= 10 && dialogue.maxReplays === 1));
