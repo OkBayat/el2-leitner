@@ -10,7 +10,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type {
@@ -181,7 +180,6 @@ export class ChoiceSlideComponent
 	extends ScoredSlideBase<ChoiceSlideData>
 	implements SlideContentComponent, OnDestroy
 {
-	private readonly answerSound = inject(ReviewAnswerSoundService);
 	private readonly speech = inject(SpeechService);
 	private readonly store = inject(LearningStoreService);
 	readonly selectedOptionIds = signal<readonly string[]>([]);
@@ -265,7 +263,6 @@ export class ChoiceSlideComponent
 			: [`Correct answer: ${correctLabels}`, this.data().explanation]
 					.filter(Boolean)
 					.join(' ');
-		this.answerSound.play(correct ? 'correct' : 'incorrect');
 		this.finish(
 			correct,
 			{ selectedOptionIds, correctOptionIds, correct },
@@ -274,7 +271,6 @@ export class ChoiceSlideComponent
 	}
 
 	ngOnDestroy(): void {
-		this.answerSound.stop();
 		this.speech.cancel();
 		this.destroy();
 	}
