@@ -277,7 +277,7 @@ describe("Collection Learning Path HTTP adapter", () => {
 
   it("preserves canonical 403, 404, and 409 application errors", async () => {
     const cases = [
-      [new ForbiddenError("LEARNING_PATH_PROGRESS_FORBIDDEN", "Add this collection before starting its Learning Path."), 403],
+      [new ForbiddenError("LEARNING_PATH_PROGRESS_FORBIDDEN", "Start this course before opening its exercises."), 403],
       [new NotFoundError("LEARNING_PATH_NOT_FOUND", "Learning Path was not found."), 404],
       [new ConflictError("LEARNING_PATH_EXERCISE_LOCKED", "Exercise prerequisites are not complete."), 409],
       [new ValidationError("INVALID_LEARNING_PATH_ID", "A valid Learning Path id is required."), 400],
