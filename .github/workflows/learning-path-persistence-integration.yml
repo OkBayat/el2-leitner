@@ -2,8 +2,52 @@ name: Learning Path persistence integration
 
 on:
   pull_request:
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/collection-learning-path/**'
+      - 'back/src/domain/collection-learning-path/**'
+      - 'back/src/infrastructure/integration/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/interfaces/http/collection-learning-path/**'
+      - 'back/src/modules/**'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*learning-path*'
+      - 'ui/src/app/**/collection-learning-path/**'
+      - 'ui/src/app/shared/slide-exercise/**'
+      - 'ui/e2e/learning-path-*.spec.ts'
+      - 'ui/package*.json'
+      - 'ui/angular.json'
+      - '.github/workflows/learning-path-persistence-integration.yml'
   push:
     branches: [main, learning-path]
+    paths:
+      - 'back/data/collections/**'
+      - 'back/src/application/collection-learning-path/**'
+      - 'back/src/domain/collection-learning-path/**'
+      - 'back/src/infrastructure/integration/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/interfaces/http/collection-learning-path/**'
+      - 'back/src/modules/**'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*learning-path*'
+      - 'ui/src/app/**/collection-learning-path/**'
+      - 'ui/src/app/shared/slide-exercise/**'
+      - 'ui/e2e/learning-path-*.spec.ts'
+      - 'ui/package*.json'
+      - 'ui/angular.json'
+      - '.github/workflows/learning-path-persistence-integration.yml'
 
 permissions:
   contents: read

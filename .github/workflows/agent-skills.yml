@@ -9,7 +9,8 @@ on:
       - '.github/workflows/agent-skills.yml'
   push:
     branches:
-      - feature/agent-guides-bbc-bundle-skill
+      - main
+      - learning-path
     paths:
       - 'AGENTS.md'
       - '.agents/**'

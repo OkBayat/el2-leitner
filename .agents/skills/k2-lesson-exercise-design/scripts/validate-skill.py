@@ -84,6 +84,8 @@ def validate(repo_root: Path) -> dict:
         "multidimensional_vocabulary",
         "collocation_learning",
         "lexical_listening_support",
+        "spoken_word_recognition",
+        "pre_listening_support_limits",
         "productive_involvement",
     ):
         if principle not in learning_rules:

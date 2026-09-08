@@ -17,6 +17,28 @@ ALLOWED_SLIDE_TYPES = {
 }
 EVIDENCE_KINDS = {"research", "design_synthesis", "source_rule"}
 VALIDATION_STATUSES = {"ready", "blocked"}
+ROOT_FIELDS = {"schema_version", "lesson", "design", "evidence_catalog", "exercises", "coverage", "validation"}
+LESSON_FIELDS = {"id", "title", "source", "learning_goals", "content_inventory", "content_gaps"}
+SOURCE_FIELDS = {"kind", "reference", "section"}
+INVENTORY_FIELDS = {"targets", "assets"}
+TARGET_FIELDS = {"id", "kind", "label", "source_ref", "leitner_eligible"}
+ASSET_FIELDS = {"id", "kind", "source_ref", "available"}
+DESIGN_FIELDS = {"sequence_strategy", "research_principles", "notes"}
+EVIDENCE_FIELDS = {"id", "kind", "citation", "claim"}
+COVERAGE_FIELDS = {"source_target_ids", "covered_target_ids", "uncovered_target_ids", "vocora_extensions"}
+EXTENSION_FIELDS = {"id", "reason"}
+EXERCISE_FIELDS = {
+    "id", "position", "exercise_type", "title", "objective", "required", "prerequisites",
+    "source_target_ids", "extension_ids", "evidence", "completion", "slides",
+}
+EXERCISE_EVIDENCE_FIELDS = {"source_refs", "research_principle_ids", "sequence_reason"}
+COMPLETION_FIELDS = {"evidence", "mastery_gate"}
+PREREQUISITE_FIELDS = {"exercise_id", "reason"}
+SLIDE_FIELDS = {"id", "type", "purpose", "target_ids", "contract_status", "data"}
+SLIDE_DATA_FIELDS = {
+    "_placeholder", "instruction_intent", "prompt_or_stimulus", "expected_response", "feedback_intent",
+}
+VALIDATION_FIELDS = {"status", "warnings", "blockers"}
 
 
 def obj(value: Any, path: str, errors: list[str]) -> dict[str, Any]:
@@ -50,24 +72,41 @@ def duplicate_check(values: list[str], path: str, errors: list[str]) -> None:
         errors.append(f"{path} contains duplicate values: {', '.join(duplicates)}")
 
 
+def unknown_check(value: dict[str, Any], allowed: set[str], path: str, errors: list[str]) -> None:
+    for field in sorted(set(value) - allowed):
+        errors.append(f"{path} has unexpected field: {field}")
+
+
+def valid_string_set(value: Any) -> set[str]:
+    if not isinstance(value, list):
+        return set()
+    return {item.strip() for item in value if isinstance(item, str) and item.strip()}
+
+
 def validate_plan(plan: Any) -> list[str]:
     errors: list[str] = []
     root = obj(plan, "$", errors)
+    unknown_check(root, ROOT_FIELDS, "$", errors)
     if root.get("schema_version") != SCHEMA_VERSION:
         errors.append(f"schema_version must equal {SCHEMA_VERSION}")
 
     lesson = obj(root.get("lesson"), "lesson", errors)
+    unknown_check(lesson, LESSON_FIELDS, "lesson", errors)
     text(lesson.get("id"), "lesson.id", errors)
     text(lesson.get("title"), "lesson.title", errors)
     source = obj(lesson.get("source"), "lesson.source", errors)
+    unknown_check(source, SOURCE_FIELDS, "lesson.source", errors)
     text(source.get("kind"), "lesson.source.kind", errors)
     text(source.get("reference"), "lesson.source.reference", errors)
     if source.get("section") is not None and not isinstance(source.get("section"), str):
         errors.append("lesson.source.section must be a string or null")
-    strings(lesson.get("learning_goals"), "lesson.learning_goals", errors)
-    strings(lesson.get("content_gaps"), "lesson.content_gaps", errors)
+    learning_goals = strings(lesson.get("learning_goals"), "lesson.learning_goals", errors)
+    if not learning_goals:
+        errors.append("lesson.learning_goals must contain at least one goal")
+    content_gaps = strings(lesson.get("content_gaps"), "lesson.content_gaps", errors)
 
     inventory = obj(lesson.get("content_inventory"), "lesson.content_inventory", errors)
+    unknown_check(inventory, INVENTORY_FIELDS, "lesson.content_inventory", errors)
     targets = arr(inventory.get("targets"), "lesson.content_inventory.targets", errors)
     assets = arr(inventory.get("assets"), "lesson.content_inventory.assets", errors)
     if not targets:
@@ -78,6 +117,7 @@ def validate_plan(plan: Any) -> list[str]:
     for i, raw in enumerate(targets):
         path = f"lesson.content_inventory.targets[{i}]"
         target = obj(raw, path, errors)
+        unknown_check(target, TARGET_FIELDS, path, errors)
         target_id = text(target.get("id"), f"{path}.id", errors)
         text(target.get("kind"), f"{path}.kind", errors)
         text(target.get("label"), f"{path}.label", errors)
@@ -97,6 +137,7 @@ def validate_plan(plan: Any) -> list[str]:
     for i, raw in enumerate(assets):
         path = f"lesson.content_inventory.assets[{i}]"
         asset = obj(raw, path, errors)
+        unknown_check(asset, ASSET_FIELDS, path, errors)
         asset_id = text(asset.get("id"), f"{path}.id", errors)
         text(asset.get("kind"), f"{path}.kind", errors)
         text(asset.get("source_ref"), f"{path}.source_ref", errors)
@@ -107,8 +148,12 @@ def validate_plan(plan: Any) -> list[str]:
     duplicate_check(asset_ids, "lesson.content_inventory.assets[].id", errors)
 
     design = obj(root.get("design"), "design", errors)
+    unknown_check(design, DESIGN_FIELDS, "design", errors)
     text(design.get("sequence_strategy"), "design.sequence_strategy", errors)
     design_principles = strings(design.get("research_principles"), "design.research_principles", errors)
+    duplicate_check(design_principles, "design.research_principles", errors)
+    if not design_principles:
+        errors.append("design.research_principles must contain at least one research principle")
     strings(design.get("notes"), "design.notes", errors)
 
     catalog = arr(root.get("evidence_catalog"), "evidence_catalog", errors)
@@ -117,6 +162,7 @@ def validate_plan(plan: Any) -> list[str]:
     for i, raw in enumerate(catalog):
         path = f"evidence_catalog[{i}]"
         evidence = obj(raw, path, errors)
+        unknown_check(evidence, EVIDENCE_FIELDS, path, errors)
         evidence_id = text(evidence.get("id"), f"{path}.id", errors)
         kind = text(evidence.get("kind"), f"{path}.kind", errors)
         if kind and kind not in EVIDENCE_KINDS:
@@ -135,6 +181,7 @@ def validate_plan(plan: Any) -> list[str]:
             errors.append(f"design.research_principles must reference research evidence: {principle}")
 
     coverage = obj(root.get("coverage"), "coverage", errors)
+    unknown_check(coverage, COVERAGE_FIELDS, "coverage", errors)
     coverage_source = strings(coverage.get("source_target_ids"), "coverage.source_target_ids", errors)
     covered = strings(coverage.get("covered_target_ids"), "coverage.covered_target_ids", errors)
     uncovered = strings(coverage.get("uncovered_target_ids"), "coverage.uncovered_target_ids", errors)
@@ -152,6 +199,7 @@ def validate_plan(plan: Any) -> list[str]:
     for i, raw in enumerate(extensions):
         path = f"coverage.vocora_extensions[{i}]"
         extension = obj(raw, path, errors)
+        unknown_check(extension, EXTENSION_FIELDS, path, errors)
         extension_id = text(extension.get("id"), f"{path}.id", errors)
         text(extension.get("reason"), f"{path}.reason", errors)
         if extension_id:
@@ -172,6 +220,7 @@ def validate_plan(plan: Any) -> list[str]:
     for i, raw in enumerate(exercises):
         path = f"exercises[{i}]"
         exercise = obj(raw, path, errors)
+        unknown_check(exercise, EXERCISE_FIELDS, path, errors)
         normalized.append(exercise)
         exercise_id = text(exercise.get("id"), f"{path}.id", errors)
         if exercise_id:
@@ -189,6 +238,8 @@ def validate_plan(plan: Any) -> list[str]:
 
         source_ids = strings(exercise.get("source_target_ids"), f"{path}.source_target_ids", errors)
         ext_ids = strings(exercise.get("extension_ids"), f"{path}.extension_ids", errors)
+        duplicate_check(source_ids, f"{path}.source_target_ids", errors)
+        duplicate_check(ext_ids, f"{path}.extension_ids", errors)
         for target_id in source_ids:
             if target_id not in target_ids:
                 errors.append(f"{path}.source_target_ids references unknown source target: {target_id}")
@@ -201,10 +252,14 @@ def validate_plan(plan: Any) -> list[str]:
             errors.append(f"{path} must target source content or a declared Vocora extension")
 
         evidence = obj(exercise.get("evidence"), f"{path}.evidence", errors)
+        unknown_check(evidence, EXERCISE_EVIDENCE_FIELDS, f"{path}.evidence", errors)
         source_refs = strings(evidence.get("source_refs"), f"{path}.evidence.source_refs", errors)
         if not source_refs:
             errors.append(f"{path}.evidence.source_refs must contain at least one source reference")
         research_ids = strings(evidence.get("research_principle_ids"), f"{path}.evidence.research_principle_ids", errors)
+        duplicate_check(research_ids, f"{path}.evidence.research_principle_ids", errors)
+        if not research_ids:
+            errors.append(f"{path}.evidence.research_principle_ids must contain at least one research principle")
         for research_id in research_ids:
             if research_id not in evidence_set:
                 errors.append(f"{path}.evidence references unknown evidence id: {research_id}")
@@ -213,6 +268,7 @@ def validate_plan(plan: Any) -> list[str]:
         text(evidence.get("sequence_reason"), f"{path}.evidence.sequence_reason", errors)
 
         completion = obj(exercise.get("completion"), f"{path}.completion", errors)
+        unknown_check(completion, COMPLETION_FIELDS, f"{path}.completion", errors)
         text(completion.get("evidence"), f"{path}.completion.evidence", errors)
         gate = completion.get("mastery_gate")
         if gate is not None and (not isinstance(gate, str) or not gate.strip()):
@@ -222,15 +278,18 @@ def validate_plan(plan: Any) -> list[str]:
         for j, raw_prereq in enumerate(prereqs):
             prereq_path = f"{path}.prerequisites[{j}]"
             prereq = obj(raw_prereq, prereq_path, errors)
+            unknown_check(prereq, PREREQUISITE_FIELDS, prereq_path, errors)
             text(prereq.get("exercise_id"), f"{prereq_path}.exercise_id", errors)
             text(prereq.get("reason"), f"{prereq_path}.reason", errors)
 
         slides = arr(exercise.get("slides"), f"{path}.slides", errors)
         if not slides:
             errors.append(f"{path}.slides must contain at least one slide")
+        slide_target_union: set[str] = set()
         for j, raw_slide in enumerate(slides):
             slide_path = f"{path}.slides[{j}]"
             slide = obj(raw_slide, slide_path, errors)
+            unknown_check(slide, SLIDE_FIELDS, slide_path, errors)
             slide_id = text(slide.get("id"), f"{slide_path}.id", errors)
             if slide_id:
                 slide_ids.append(slide_id)
@@ -239,20 +298,34 @@ def validate_plan(plan: Any) -> list[str]:
                 errors.append(f"{slide_path}.type must be one of: {', '.join(sorted(ALLOWED_SLIDE_TYPES))}")
             text(slide.get("purpose"), f"{slide_path}.purpose", errors)
             slide_targets = strings(slide.get("target_ids"), f"{slide_path}.target_ids", errors)
+            duplicate_check(slide_targets, f"{slide_path}.target_ids", errors)
             if not slide_targets:
                 errors.append(f"{slide_path}.target_ids must contain at least one target")
             for target_id in slide_targets:
                 if target_id not in known_targets:
                     errors.append(f"{slide_path}.target_ids references unknown target: {target_id}")
+                else:
+                    slide_target_union.add(target_id)
             if slide.get("contract_status") != "placeholder":
                 errors.append(f"{slide_path}.contract_status must equal placeholder")
             else:
                 placeholder_seen = True
             data = obj(slide.get("data"), f"{slide_path}.data", errors)
+            unknown_check(data, SLIDE_DATA_FIELDS, f"{slide_path}.data", errors)
             if data.get("_placeholder") is not True:
                 errors.append(f"{slide_path}.data._placeholder must equal true")
             for field in ("instruction_intent", "prompt_or_stimulus", "expected_response", "feedback_intent"):
                 text(data.get(field), f"{slide_path}.data.{field}", errors)
+
+        declared_targets = set(source_ids) | set(ext_ids)
+        missing_slide_targets = sorted(declared_targets - slide_target_union)
+        undeclared_slide_targets = sorted(slide_target_union - declared_targets)
+        if missing_slide_targets:
+            errors.append(f"{path}.slides do not cover declared targets: {', '.join(missing_slide_targets)}")
+        if undeclared_slide_targets:
+            errors.append(
+                f"{path}.slides reference undeclared exercise targets: {', '.join(undeclared_slide_targets)}"
+            )
 
     duplicate_check(exercise_ids, "exercises[].id", errors)
     duplicate_check(slide_ids, "exercises[].slides[].id", errors)
@@ -262,7 +335,11 @@ def validate_plan(plan: Any) -> list[str]:
         if any(left >= right for left, right in zip(positions, positions[1:])):
             errors.append("exercise positions must be strictly increasing in array order")
 
-    index_by_id = {exercise_id: i for i, exercise_id in enumerate(exercise_ids)}
+    index_by_id = {
+        exercise.get("id").strip(): i
+        for i, exercise in enumerate(normalized)
+        if isinstance(exercise.get("id"), str) and exercise.get("id").strip()
+    }
     for i, exercise in enumerate(normalized):
         for prereq in exercise.get("prerequisites", []) if isinstance(exercise.get("prerequisites"), list) else []:
             if not isinstance(prereq, dict) or not isinstance(prereq.get("exercise_id"), str):
@@ -281,9 +358,14 @@ def validate_plan(plan: Any) -> list[str]:
             errors.append("the first exercise must have exercise_type vocabulary_intake")
         if first.get("prerequisites"):
             errors.append("the vocabulary_intake exercise must not have prerequisites")
-        first_targets = set(first.get("source_target_ids", [])) if isinstance(first.get("source_target_ids"), list) else set()
+        first_targets = valid_string_set(first.get("source_target_ids"))
         if not leitner_ids.issubset(first_targets):
-            errors.append(f"vocabulary_intake must cover all leitner_eligible targets; missing: {', '.join(sorted(leitner_ids - first_targets))}")
+            errors.append(
+                "vocabulary_intake must cover all leitner_eligible targets; missing: "
+                f"{', '.join(sorted(leitner_ids - first_targets))}"
+            )
+        if first_targets - leitner_ids:
+            errors.append("vocabulary_intake must target exactly the leitner_eligible scope")
         if first.get("slides") and not any(isinstance(slide, dict) and slide.get("type") == "choice" for slide in first["slides"]):
             errors.append("vocabulary_intake must include at least one choice slide under the placeholder contract")
 
@@ -291,9 +373,14 @@ def validate_plan(plan: Any) -> list[str]:
         first, second = normalized[0], normalized[1]
         if second.get("exercise_type") != "spelling_dictation":
             errors.append("the second exercise must have exercise_type spelling_dictation")
-        second_targets = set(second.get("source_target_ids", [])) if isinstance(second.get("source_target_ids"), list) else set()
+        second_targets = valid_string_set(second.get("source_target_ids"))
         if not leitner_ids.issubset(second_targets):
-            errors.append(f"spelling_dictation must cover all leitner_eligible targets; missing: {', '.join(sorted(leitner_ids - second_targets))}")
+            errors.append(
+                "spelling_dictation must cover all leitner_eligible targets; missing: "
+                f"{', '.join(sorted(leitner_ids - second_targets))}"
+            )
+        if second_targets - leitner_ids:
+            errors.append("spelling_dictation must target exactly the leitner_eligible scope")
         prereqs = second.get("prerequisites", []) if isinstance(second.get("prerequisites"), list) else []
         if first.get("id") and not any(isinstance(item, dict) and item.get("exercise_id") == first.get("id") for item in prereqs):
             errors.append("spelling_dictation must depend on the vocabulary_intake exercise")
@@ -304,6 +391,7 @@ def validate_plan(plan: Any) -> list[str]:
         errors.append("coverage.covered_target_ids must exactly match source targets referenced by exercises")
 
     validation = obj(root.get("validation"), "validation", errors)
+    unknown_check(validation, VALIDATION_FIELDS, "validation", errors)
     status = text(validation.get("status"), "validation.status", errors)
     if status and status not in VALIDATION_STATUSES:
         errors.append(f"validation.status must be one of: {', '.join(sorted(VALIDATION_STATUSES))}")
@@ -311,6 +399,8 @@ def validate_plan(plan: Any) -> list[str]:
     blockers = strings(validation.get("blockers"), "validation.blockers", errors)
     if status == "ready" and uncovered:
         errors.append("validation.status ready requires no uncovered source targets")
+    if status == "ready" and content_gaps:
+        errors.append("validation.status ready requires no content gaps")
     if status == "ready" and blockers:
         errors.append("validation.status ready requires no blockers")
     if status == "blocked" and not blockers:

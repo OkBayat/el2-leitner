@@ -4,6 +4,8 @@ Load this reference only after the lesson target inventory and prerequisite-awar
 
 The default response from `k2-lesson-exercise-design` is one JSON object following this contract. New agent-facing fields use `snake_case`.
 
+The validator is fail-closed: every object accepts only the fields documented in this contract. Put commentary in the declared notes, evidence, warning, or blocker fields instead of adding ad hoc keys.
+
 ## Root envelope
 
 ```json
@@ -77,6 +79,7 @@ Rules:
 ```
 
 `research_principles` is a lesson-level summary. Exercise-level evidence still lists the principles actually used by each exercise.
+It must contain at least one research ID, contain no duplicates, and reference only `research` entries in `evidence_catalog`.
 
 ## `evidence_catalog`
 
@@ -149,7 +152,9 @@ Rules:
 - every exercise contains at least one slide;
 - `source_target_ids` reference lesson target IDs;
 - `extension_ids` reference `coverage.vocora_extensions` IDs;
+- the union of slide `target_ids` must exactly cover the declared `source_target_ids` and `extension_ids` for that exercise;
 - every research principle ID must exist in `evidence_catalog`;
+- every exercise must cite at least one applicable research principle;
 - `mastery_gate` may be `null` unless an explicit course/product contract defines one.
 
 ### Fixed exercise 1
@@ -163,7 +168,7 @@ The first exercise must use:
 }
 ```
 
-It must cover every target where `leitner_eligible` is `true`.
+Its `source_target_ids` must equal the complete `leitner_eligible` target set and must not include non-Leitner source targets.
 
 Its slides should provide supported vocabulary review. Under the current placeholder contract, include at least one `choice` slide for meaning/recognition unless the final runtime contract later defines a different canonical intake renderer.
 
@@ -182,7 +187,7 @@ The second exercise must use:
 It must:
 
 - depend on exercise 1;
-- cover the same `leitner_eligible` target scope;
+- target exactly the same `leitner_eligible` source-target scope as exercise 1;
 - include at least one `dictation` slide;
 - require typed word or phrase production for the main scope, even if occasional spelling-choice scaffolding is also present.
 
@@ -280,6 +285,7 @@ Allowed status values:
 `ready` requires:
 
 - no blockers;
+- no declared source `content_gaps`;
 - no uncovered source targets;
 - a structurally valid exercise graph;
 - the fixed opening exercises;

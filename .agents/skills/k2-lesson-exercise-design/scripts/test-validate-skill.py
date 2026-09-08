@@ -56,6 +56,17 @@ class SkillValidatorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "placeholder contract token"):
             MODULE.validate(root)
 
+    def test_requires_spoken_word_recognition_evidence(self) -> None:
+        temporary, root = self.make_repo()
+        self.addCleanup(temporary.cleanup)
+        reference = root / ".agents" / "skills" / MODULE.SKILL_NAME / "references" / "learning-design-rules.md"
+        reference.write_text(
+            reference.read_text(encoding="utf-8").replace("spoken_word_recognition", "removed_principle"),
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(ValueError, "spoken_word_recognition"):
+            MODULE.validate(root)
+
 
 if __name__ == "__main__":
     unittest.main()

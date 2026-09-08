@@ -1,8 +1,46 @@
 name: Listening episode integration
 on:
   pull_request:
+    paths:
+      - 'back/data/listening/**'
+      - 'back/src/application/listening-practice/**'
+      - 'back/src/domain/listening-practice/**'
+      - 'back/src/infrastructure/content/**'
+      - 'back/src/infrastructure/persistence/mysql/MySqlListening*.js'
+      - 'back/src/interfaces/http/resolveListeningAsset.js'
+      - 'back/src/interfaces/http/apiRouter.js'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/manage-listening-episode.py'
+      - 'back/scripts/validate-listening-lessons.js'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*listening*'
+      - '.github/workflows/listening-episode-integration.yml'
   push:
     branches: [main]
+    paths:
+      - 'back/data/listening/**'
+      - 'back/src/application/listening-practice/**'
+      - 'back/src/domain/listening-practice/**'
+      - 'back/src/infrastructure/content/**'
+      - 'back/src/infrastructure/persistence/mysql/MySqlListening*.js'
+      - 'back/src/interfaces/http/resolveListeningAsset.js'
+      - 'back/src/interfaces/http/apiRouter.js'
+      - 'back/src/container.js'
+      - 'back/src/createApp.js'
+      - 'back/src/config/**'
+      - 'back/database/**'
+      - 'back/scripts/manage-listening-episode.py'
+      - 'back/scripts/validate-listening-lessons.js'
+      - 'back/scripts/setup-database.js'
+      - 'back/scripts/verify-database.js'
+      - 'back/package*.json'
+      - 'back/tests/**/*listening*'
+      - '.github/workflows/listening-episode-integration.yml'
 permissions:
   contents: read
 jobs:

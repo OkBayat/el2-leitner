@@ -182,6 +182,82 @@ class LessonPlanValidatorTests(unittest.TestCase):
         errors = MODULE.validate_plan(plan)
         self.assertTrue(any("placeholder" in error for error in errors))
 
+    def test_rejects_unknown_root_and_placeholder_data_fields(self) -> None:
+        plan = valid_plan()
+        plan["runtime_config"] = {}
+        plan["exercises"][0]["slides"][0]["data"]["correct_option_ids"] = ["answer"]
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("unexpected field: runtime_config" in error for error in errors))
+        self.assertTrue(any("unexpected field: correct_option_ids" in error for error in errors))
+
+    def test_requires_declared_exercise_targets_to_be_covered_by_its_slides(self) -> None:
+        plan = valid_plan()
+        second_target = {
+            "id": "target-002",
+            "kind": "vocabulary",
+            "label": "second example",
+            "source_ref": "Unit 1 vocabulary list",
+            "leitner_eligible": True,
+        }
+        plan["lesson"]["content_inventory"]["targets"].append(second_target)
+        plan["coverage"]["source_target_ids"].append("target-002")
+        plan["coverage"]["covered_target_ids"].append("target-002")
+        for exercise in plan["exercises"]:
+            exercise["source_target_ids"].append("target-002")
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("slides do not cover declared targets: target-002" in error for error in errors))
+
+    def test_rejects_slide_targets_outside_the_exercise_scope(self) -> None:
+        plan = valid_plan()
+        plan["coverage"]["vocora_extensions"] = [{
+            "id": "extension-001",
+            "reason": "A declared transfer target.",
+        }]
+        plan["exercises"][0]["slides"][0]["target_ids"].append("extension-001")
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("slides reference undeclared exercise targets: extension-001" in error for error in errors))
+
+    def test_ready_plan_rejects_declared_content_gaps(self) -> None:
+        plan = valid_plan()
+        plan["lesson"]["content_gaps"] = ["The source audio is unavailable."]
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("ready requires no content gaps" in error for error in errors))
+
+    def test_requires_learning_goals_and_research_principles(self) -> None:
+        plan = valid_plan()
+        plan["lesson"]["learning_goals"] = []
+        plan["design"]["research_principles"] = []
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("learning_goals must contain at least one goal" in error for error in errors))
+        self.assertTrue(any("research_principles must contain at least one" in error for error in errors))
+
+    def test_fixed_openings_reject_non_leitner_targets(self) -> None:
+        plan = valid_plan()
+        plan["lesson"]["content_inventory"]["targets"].append({
+            "id": "target-002",
+            "kind": "reading_comprehension",
+            "label": "Passage detail",
+            "source_ref": "Unit 1 reading",
+            "leitner_eligible": False,
+        })
+        plan["coverage"]["source_target_ids"].append("target-002")
+        plan["coverage"]["covered_target_ids"].append("target-002")
+        for index, exercise in enumerate(plan["exercises"]):
+            exercise["source_target_ids"].append("target-002")
+            exercise["slides"].append(slide(
+                f"unit-01-e0{index + 1}-s02",
+                "choice" if index == 0 else "dictation",
+                "target-002",
+            ))
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("must target exactly the leitner_eligible scope" in error for error in errors))
+
+    def test_malformed_fixed_opening_targets_return_validation_errors(self) -> None:
+        plan = valid_plan()
+        plan["exercises"][0]["source_target_ids"] = [{"id": "target-001"}]
+        errors = MODULE.validate_plan(plan)
+        self.assertTrue(any("source_target_ids[0] must be a non-empty string" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()

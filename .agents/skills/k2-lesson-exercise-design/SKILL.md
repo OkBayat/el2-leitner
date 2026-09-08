@@ -1,11 +1,11 @@
 ---
 name: k2-lesson-exercise-design
-description: Design a source-grounded, evidence-backed Vocora lesson learning path as one canonical lesson object whose exercises contain ordered slide arrays. Use when a lesson or lesson content is supplied and an agent must derive prerequisites, sequence exercises, author slide-level plans, and validate full source coverage.
+description: Design a source-grounded, evidence-backed Vocora vocabulary-led lesson learning path as one canonical lesson object whose exercises contain ordered slide arrays. Use when vocabulary-led lesson content is supplied and an agent must derive prerequisites, sequence exercises, author slide-level plans, and validate full source coverage.
 ---
 
 # K2 Lesson Exercise Design
 
-Use this skill when the caller identifies a language lesson, lesson section, or lesson content and wants a complete Vocora learning-path design rather than a single isolated question or UI implementation.
+Use this skill when the caller identifies a vocabulary-led language lesson, lesson section, or lesson content and wants a complete Vocora learning-path design rather than a single isolated question or UI implementation. Route lessons without an identifiable vocabulary scope elsewhere; the fixed opening contract in this skill is intentionally vocabulary-specific.
 
 The default deliverable is one canonical JSON object with lesson metadata, an ordered `exercises` array, and a `slides` array inside every exercise.
 
@@ -49,7 +49,7 @@ When the task also asks to implement application behavior, return the completed 
 6. **Prerequisites must be explicit and forward-building.** Every prerequisite must refer to an earlier exercise and state why the earlier capability is needed.
 7. **Exercise objective is not slide type.** A collocation, reading, listening, morphology, speaking, or mastery exercise may combine several slide types. Never reduce an exercise to one interaction pattern merely because a component exists.
 8. **Use progressive retrieval.** Within and across exercises, normally move from supported recognition to cued recall, then freer recall, integrated comprehension, production, and transfer when the lesson supports those stages.
-9. **Prepare before integrated listening.** Teach or retrieve prerequisite vocabulary, collocations, usage, and relevant aural forms before a listening task that depends on them. Add an aural-recognition bridge when printed knowledge alone is insufficient.
+9. **Prepare before integrated listening.** Teach or retrieve prerequisite vocabulary, collocations, usage, and relevant aural forms before a listening task that depends on them. Treat that ordering as a Vocora prerequisite decision, not a causal claim from correlational research. Add an aural-recognition bridge when the source task depends on recognizing learned forms in speech.
 10. **Do not reveal assessment answers while preparing.** Preparation may teach prerequisite language and task mechanics, but must not disclose the answer-bearing information of a later comprehension or exam simulation.
 11. **Use real dialogue evidence for dialogue listening.** TTS may support pronunciation, word recognition, or phrase dictation. Do not treat synthetic single-word pronunciation as a substitute for a natural multi-speaker listening passage.
 12. **Production follows sufficient input and retrieval.** Speaking and writing should reuse already introduced target language rather than introduce a new lexical burden.
@@ -132,7 +132,7 @@ Before returning the plan:
 Write the object to a temporary JSON file and run:
 
 ```bash
-python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-lesson-plan.py \
+rtk python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-lesson-plan.py \
   --input <lesson-plan.json>
 ```
 
@@ -169,9 +169,9 @@ Missing final slide-component configuration is not a reason to invent fields. Us
 Run the focused tests and skill-owned validator from the repository root:
 
 ```bash
-python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-lesson-plan.py
-python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-skill.py
-python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-skill.py
+rtk python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-lesson-plan.py
+rtk python3 .agents/skills/k2-lesson-exercise-design/scripts/test-validate-skill.py
+rtk python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-skill.py
 ```
 
 For every change to this skill, also run the repository-owned `k2-skill-architecture` validator required by `AGENTS.md`.

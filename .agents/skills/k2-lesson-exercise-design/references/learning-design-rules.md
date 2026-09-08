@@ -6,7 +6,7 @@ Load this reference only after the lesson source has been audited and before dec
 
 These rules combine published learning research with Vocora's self-study product requirements.
 
-The cited studies support individual principles such as retrieval practice, spacing, productive vocabulary learning, collocation learning, and the importance of vocabulary knowledge for listening. They do **not** experimentally validate one universal Vocora exercise sequence. The final sequence for a lesson is a design synthesis built from these principles plus the lesson's actual prerequisite graph.
+The cited studies support individual principles such as retrieval practice, spacing, productive vocabulary learning, collocation learning, and relationships between lexical knowledge and listening performance. Correlational or predictive listening studies do not establish that a particular teaching sequence causes better comprehension. The cited studies do **not** experimentally validate one universal Vocora exercise sequence. The final sequence for a lesson is a design synthesis built from these principles plus the lesson's actual prerequisite graph.
 
 Use the stable IDs below in the plan's `evidence_catalog` and in each exercise's `research_principle_ids`.
 
@@ -50,7 +50,23 @@ Use the stable IDs below in the plan's `evidence_catalog` and in each exercise's
 
 **Supported claim:** breadth and depth of vocabulary knowledge are strongly related to advanced L2 listening comprehension and predicted substantial listening-score variance in the reported study.
 
-**Design consequence:** do not place an integrated listening task before the vocabulary, lexical chunks, and relevant aural forms that the learner needs to parse it. Vocabulary preparation is a prerequisite, not a substitute for listening practice, so include an aural bridge and guided comprehension before full simulation when needed.
+**Design consequence:** use lexical coverage to audit whether a listening task assumes language the learner has not encountered. This association does not by itself prove a causal teaching order; the source-specific prerequisite graph must justify any reordering.
+
+### `spoken_word_recognition`
+
+**Evidence:** Matthews, J., & Cheng, J. (2015). *Recognition of High Frequency Words from Speech as a Predictor of L2 Listening Comprehension*. System, 52, 1-13. DOI: `10.1016/j.system.2015.04.015`.
+
+**Supported claim:** among 167 tertiary-level Chinese learners of English, recognition of high-frequency words from speech correlated strongly with listening comprehension; recognition of words from the third-thousand frequency level alone predicted 52% of the observed listening-score variance.
+
+**Design consequence:** distinguish printed recognition from spoken-word recognition. An aural bridge is a Vocora design inference when the source task depends on recognizing learned forms in speech; this predictive study does not show that the intervention itself causes better comprehension.
+
+### `pre_listening_support_limits`
+
+**Evidence:** Chang, A. C.-S. (2007). *The Impact of Vocabulary Preparation on L2 Listening Comprehension, Confidence and Strategy Use*. System, 35(4), 534-550. DOI: `10.1016/j.system.2007.06.003`.
+
+**Supported claim:** longer preparation was associated with higher vocabulary and listening scores, but statistically significant group differences were found only for vocabulary knowledge, not listening comprehension; vocabulary preparation also improved confidence.
+
+**Design consequence:** vocabulary preparation is not a substitute for direct listening practice. Keep guided comprehension and full listening performance in the path when the lesson requires them.
 
 ### `productive_involvement`
 
@@ -148,6 +164,8 @@ Teach prerequisite language before the passage when self-study comprehension wou
 Use before integrated listening when the learner may know an item in print but still fail to segment or identify it in speech.
 
 Suitable work includes phrase dictation, listen-and-identify, sound/word discrimination, and short local audio cues.
+
+Use `spoken_word_recognition` for the distinction between printed and aural lexical knowledge. Use `pre_listening_support_limits` to avoid claiming that vocabulary preparation alone produces listening comprehension.
 
 ### 7. Guided listening
 
