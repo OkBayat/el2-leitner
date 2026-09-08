@@ -29,6 +29,8 @@ async function mockNavigation(page: Page, theme: 'light' | 'dark' = 'light') {
 		today, nextBefore: null, limitedHistory: false,
 		days: [{day: today, activities: ['vocabulary'], boxOnePracticed: false}],
 	}}));
+	await page.route(/\/api\/library$/u, route => route.fulfill({json: {collections: []}}));
+	await page.route(/\/api\/learning-paths\/collections$/u, route => route.fulfill({json: {collectionIds: []}}));
 	return {writes};
 }
 
@@ -41,28 +43,28 @@ for (const theme of ['light', 'dark'] as const) {
 			const {writes} = await mockNavigation(page, theme);
 			await page.goto('/dashboard');
 			await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
-			await expect(page.getByRole('heading', {name: "Today's plan"})).toBeInViewport();
+			await expect(page.getByRole('heading', {name: 'Today', exact: true})).toBeInViewport();
 			await expect(page.locator('.topbar, .product-tabs')).toHaveCount(0);
 			const sidebar = page.locator('.desktop-sidebar');
 			const dock = page.getByRole('navigation', {name: 'Mobile navigation'});
 			if (width >= 768) {
 				await expect(sidebar).toBeVisible();
 				await expect(dock).toBeHidden();
-				await expect(page.locator('.mobile-status')).toBeHidden();
+				await expect(page.locator('.mobile-status')).toHaveCount(0);
+				await expect(page.locator('[data-testid="desktop-right-rail"], .sidebar-summary')).toHaveCount(0);
 				const sidebarBox = (await sidebar.boundingBox())!;
 				expect(sidebarBox.x).toBe(0);
-				expect((await page.locator('main').boundingBox())!.x).toBeGreaterThanOrEqual(sidebarBox.width);
+				expect((await page.locator('#main-content').boundingBox())!.x).toBeGreaterThanOrEqual(sidebarBox.width);
 				await expect(sidebar.getByRole('link', {name: 'Home', exact: true})).toHaveAttribute('aria-current', 'page');
-				const heading = page.locator('.is-today > .day-heading');
-				expect((await heading.boundingBox())!.y).toBeLessThan(40);
+				const heading = page.locator('.home-heading');
+				expect((await heading.boundingBox())!.y).toBeLessThan(64);
 			} else {
 				await expect(sidebar).toBeHidden();
-				await expect(page.locator('.mobile-status')).toBeVisible();
+				await expect(page.locator('.mobile-status')).toHaveCount(0);
 				await expect(dock).toBeVisible();
 				await expect(dock.locator('a, button')).toHaveCount(6);
 				await expect(dock.getByRole('link', {name: 'Home', exact: true})).toHaveAttribute('aria-current', 'page');
-				await expect(page.locator('.mobile-status').getByRole('link', {name: '1 words due for review'})).toBeVisible();
-				await expect(page.locator('.mobile-status').getByRole('link', {name: '1 mastered words'})).toBeVisible();
+				expect((await dock.locator('.mobile-nav-label').allTextContents()).slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
 				const box = (await dock.boundingBox())!;
 				expect(box.x).toBe(0);
 				expect(box.width).toBe(width);
@@ -79,7 +81,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await page.screenshot({path: testInfo.outputPath(`navigation-${theme}-${width}.png`)});
 			await page.evaluate(() => scrollBy({top: 400, behavior: 'instant'}));
 			await expect(width >= 768 ? sidebar : dock).toBeInViewport();
-			if (width < 768) await expect(page.locator('.mobile-status')).toBeInViewport();
+			if (width < 768) await expect(dock).toBeInViewport();
 			expect(writes).toEqual([]);
 			expect(errors).toEqual([]);
 		});
@@ -125,7 +127,7 @@ test('desktop keyboard navigation skips chrome and menus close when their trigge
 	await skip.focus();
 	await expect(skip).toBeFocused();
 	await page.keyboard.press('Enter');
-	await expect(page.locator('main')).toBeFocused();
+	await expect(page.locator('#main-content')).toBeFocused();
 	const more = page.getByTestId('desktop-more');
 	await more.focus();
 	await page.keyboard.press('Enter');
@@ -137,26 +139,22 @@ test('desktop keyboard navigation skips chrome and menus close when their trigge
 	await expect(page.getByRole('menu')).toBeVisible();
 });
 
-test('PWA safe areas and the bottom of the timeline stay clear of the fixed dock', async ({page}) => {
+test('PWA safe areas and the bottom of the dashboard stay clear of the fixed dock', async ({page}) => {
 	await page.setViewportSize({width: 390, height: 844});
 	await mockNavigation(page);
 	await page.goto('/dashboard');
-	await expect(page.getByRole('heading', {name: "Today's plan"})).toBeVisible();
+	await expect(page.getByRole('heading', {name: 'Today', exact: true})).toBeVisible();
 	await page.evaluate(() => {
 		for (const [side, value] of Object.entries({top: '20px', bottom: '34px', left: '12px', right: '12px'})) {
 			document.documentElement.style.setProperty(`--safe-area-${side}`, value);
 		}
 	});
-	await expect(page.locator('.mobile-status')).toHaveCSS('height', '84px');
+	await expect(page.locator('.mobile-status')).toHaveCount(0);
 	const dock = page.locator('.mobile-nav');
 	await expect(dock).toHaveCSS('height', '114px');
 	await page.evaluate(() => scrollTo({top: document.documentElement.scrollHeight, behavior: 'instant'}));
 	const dockBox = (await dock.boundingBox())!;
-	const finalDay = (await page.locator('.path-day').last().boundingBox())!;
-	expect(finalDay.y + finalDay.height).toBeLessThan(dockBox.y);
+	const finalContent = (await page.locator('.course-empty').boundingBox())!;
+	expect(finalContent.y + finalContent.height).toBeLessThan(dockBox.y);
 	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-	const todayButton = page.getByRole('button', {name: 'Back to today'});
-	await expect(todayButton).toBeVisible();
-	const buttonBox = (await todayButton.boundingBox())!;
-	expect(buttonBox.y + buttonBox.height).toBeLessThan(dockBox.y);
 });

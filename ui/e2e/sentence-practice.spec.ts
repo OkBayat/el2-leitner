@@ -6,16 +6,8 @@ async function authenticate(page: Page): Promise<void> {
 	await page.goto('/register');
 	await page.getByLabel('Email').fill(`e2e-sentence-${Date.now()}@example.com`);
 	await page.getByLabel('Password').fill(PASSWORD);
-	const dailyActivation = page.waitForResponse((response) =>
-		response.request().method() === 'POST'
-		&& response.url().includes('/api/learning/vocabulary-activation-batches')
-		&& response.ok()
-	);
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
-	await dailyActivation;
-	await page.getByTestId('home-box-one').click();
-	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
 }
 
 async function learningState(page: Page): Promise<any> {
@@ -135,7 +127,7 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	const deckResponsePromise = page.waitForResponse((response) =>
 		response.url().includes('/api/learning/sentence-practice?house=1') && response.status() === 200
 	);
-	await page.getByTestId('start-sentence-practice').click();
+	await page.goto('/sentence?house=1');
 	const deckResponse = await deckResponsePromise;
 	const deckUrl = deckResponse.url();
 	const deck = await page.evaluate(async (url) => {

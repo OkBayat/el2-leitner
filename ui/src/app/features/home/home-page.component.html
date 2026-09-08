@@ -9,7 +9,12 @@
     <mat-card class="review-card" appearance="outlined" data-testid="daily-review-card">
       <div class="review-copy">
         <h2 id="daily-review-heading">Leitner Review</h2>
-        @if (store.state()) {
+        @if (reviewError()) {
+          <p class="review-state review-error" data-testid="review-load-error" role="alert">
+            {{ reviewError() }}
+          </p>
+          <button mat-stroked-button type="button" (click)="load(true)">Try again</button>
+        } @else if (store.state()) {
           @if (reviewCompleted()) {
             <p class="review-state is-complete">
               <span class="state-check" aria-hidden="true">✓</span>

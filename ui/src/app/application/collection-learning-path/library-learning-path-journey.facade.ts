@@ -49,7 +49,12 @@ export class LibraryLearningPathJourneyFacade {
         }
       }));
       if (request !== this.requestVersion) return false;
-      this.views.set(new Map(results.filter((result): result is readonly [string, CollectionLearningPathView] => result !== null)));
+      const available = results.filter((result): result is readonly [string, CollectionLearningPathView] => result !== null);
+      this.views.set(new Map(available));
+      if (available.length !== results.length) {
+        this.error.set('Some courses could not load. Open a course to try again.');
+        return false;
+      }
       return true;
     } finally {
       if (request === this.requestVersion) this.loading.set(false);
@@ -57,11 +62,15 @@ export class LibraryLearningPathJourneyFacade {
   }
 
   async enter(collection: Pick<LibraryCollection, 'id'>): Promise<LearningPathJourneyDestination | null> {
-    const current = this.viewFor(collection.id);
-    if (!current || this.enteringId()) return null;
+    if (this.enteringId()) return null;
     this.enteringId.set(collection.id);
     this.error.set('');
     try {
+      let current = this.viewFor(collection.id);
+      if (!current) {
+        current = await this.api.queryCollectionLearningPath(collection.id);
+        this.views.update((views) => new Map(views).set(collection.id, current!));
+      }
       const { path } = current;
       if (path.learnerStatus === 'completed' || path.learnerStatus === 'up_to_date') {
         return { kind: 'path', collectionId: collection.id };

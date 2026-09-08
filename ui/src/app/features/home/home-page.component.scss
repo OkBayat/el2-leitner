@@ -81,6 +81,10 @@
   font-weight: 600;
 }
 
+.review-state.review-error {
+  color: var(--vocora-error);
+}
+
 .state-check {
   margin-right: var(--vocora-space-1);
 }

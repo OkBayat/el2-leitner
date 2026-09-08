@@ -65,7 +65,16 @@ export class LearningStoreService {
   readonly writeBlocked = this.writeBlockedSignal.asReadonly();
   readonly ready = computed(() => Boolean(this.stateSignal()));
 
-  initialize(): Promise<LearningState> { this.initializePromise ??= this.load(); return this.initializePromise; }
+  initialize(): Promise<LearningState> {
+    if (!this.initializePromise) {
+      const attempt = this.load();
+      this.initializePromise = attempt;
+      void attempt.catch(() => {
+        if (this.initializePromise === attempt) this.initializePromise = null;
+      });
+    }
+    return this.initializePromise;
+  }
 
   async refreshCanonical(): Promise<LearningState> {
     if (!this.stateSignal()) await this.initialize();

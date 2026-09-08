@@ -154,6 +154,7 @@ describe('AppShell responsive navigation', () => {
 		expect(host.querySelector('.mobile-status')).toBeNull();
 		expect(host.querySelector('[data-testid="desktop-right-rail"]')).toBeNull();
 		expect(host.querySelector('.sidebar-summary')).toBeNull();
+		expect(host.querySelector('.shell-workspace.is-dashboard')).not.toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
 	});
 

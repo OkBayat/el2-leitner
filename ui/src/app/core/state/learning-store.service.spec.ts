@@ -211,6 +211,25 @@ describe('LearningStoreService regressions', () => {
     expect(store.state()?.words[0].id).toBe('db-inland');
     expect(store.revision()).toBe(7);
   });
+
+  it('allows initialization to be retried after a transient bootstrap failure', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([]);
+    const api = {
+      get: vi.fn()
+        .mockRejectedValueOnce(new Error('temporarily offline'))
+        .mockResolvedValueOnce({ state: canonical, revision: 3 }),
+      put: vi.fn(),
+    };
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn(),
+    });
+
+    await expect(store.initialize()).rejects.toThrow('temporarily offline');
+    await expect(store.initialize()).resolves.toBeTruthy();
+    expect(api.get).toHaveBeenCalledTimes(2);
+    expect(store.revision()).toBe(3);
+  });
 });
 describe('Explicit subscription reconciliation', () => {
   it('accepts a newer canonical subscription revision without relaxing normal save checks', async () => {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -17,30 +17,60 @@ import { NavigationIconComponent } from '../../shared/app-shell/navigation-icon.
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, OnDestroy {
   readonly store = inject(LearningStoreService);
   readonly selectedCourses = inject(SelectedCoursesFacade);
   readonly journeys = inject(LibraryLearningPathJourneyFacade);
   private readonly router = inject(Router);
+  private rolloverTimer?: ReturnType<typeof setTimeout>;
+  private destroyed = false;
 
+  readonly today = signal(localDay());
+  readonly reviewError = signal('');
   readonly reviewCompleted = computed(() => {
     const state = this.store.state();
-    return state ? getDueWords(state).length === 0 : false;
+    return state ? getDueWords(state, this.today()).length === 0 : false;
   });
   readonly courseCards = computed(() => this.selectedCourses.courses().map((collection) =>
-    buildHomeCourseCard(collection, this.journeys.viewFor(collection.id), localDay()),
+    buildHomeCourseCard(collection, this.journeys.viewFor(collection.id), this.today()),
   ));
 
   async ngOnInit(): Promise<void> {
     await this.load();
+    this.scheduleRollover();
   }
 
-  async load(): Promise<void> {
-    await Promise.all([
-      this.store.initialize(),
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    clearTimeout(this.rolloverTimer);
+  }
+
+  async load(refreshState = false): Promise<void> {
+    this.reviewError.set('');
+    const stateRequest = refreshState && this.store.state()
+      ? this.store.refreshCanonical()
+      : this.store.initialize();
+    const [stateResult] = await Promise.allSettled([
+      stateRequest,
       this.selectedCourses.load(),
     ]);
+    if (stateResult.status === 'rejected') {
+      this.reviewError.set("Today's review could not load. Try again.");
+    }
     await this.journeys.load(this.selectedCourses.courses());
+  }
+
+  private scheduleRollover(): void {
+    clearTimeout(this.rolloverTimer);
+    const now = new Date();
+    const nextDay = new Date(now);
+    nextDay.setHours(24, 0, 0, 0);
+    this.rolloverTimer = setTimeout(async () => {
+      if (this.destroyed) return;
+      this.today.set(localDay());
+      await this.load(true);
+      if (!this.destroyed) this.scheduleRollover();
+    }, Math.max(1, nextDay.getTime() - now.getTime()));
   }
 
   async openCourse(card: HomeCourseCard): Promise<void> {

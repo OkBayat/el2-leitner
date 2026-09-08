@@ -10,7 +10,7 @@ async function authenticate(page: Page): Promise<void> {
 	await page.getByLabel('Password').fill(PASSWORD);
 	await page.getByRole('button', {name: 'Create account'}).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
-	await expect(page.getByText("Today's plan")).toBeVisible({timeout: 10_000});
+	await expect(page.getByRole('heading', {name: 'Today', exact: true})).toBeVisible({timeout: 10_000});
 }
 
 async function expectRenderedCanvas(chart: Locator): Promise<void> {
@@ -42,7 +42,7 @@ async function expectRenderedCanvas(chart: Locator): Promise<void> {
 
 test('learning overview preserves Leitner coverage and 14-day activity with Chart.js canvases', async ({page}) => {
 	await authenticate(page);
-	await page.getByRole('link', {name: 'Open learning overview'}).click();
+	await page.goto('/overview');
 	await expect(page).toHaveURL(/\/overview$/u);
 	await expect(page.getByText('14-day activity')).toBeVisible();
 	await expect(page.locator('app-learning-chart')).toHaveCount(2);

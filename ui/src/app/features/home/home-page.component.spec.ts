@@ -65,6 +65,8 @@ describe('HomePageComponent', () => {
   const courseError = signal('');
   const enteringId = signal<string | null>(null);
   const journeyError = signal('');
+  const initialize = vi.fn(async () => state()!);
+  const refreshCanonical = vi.fn(async () => state()!);
   const loadCourses = vi.fn(async () => true);
   const loadJourneys = vi.fn(async () => true);
   const enter = vi.fn(async () => ({
@@ -84,7 +86,7 @@ describe('HomePageComponent', () => {
           path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId',
           component: EmptyPage,
         }]),
-        { provide: LearningStoreService, useValue: { state, initialize: vi.fn(async () => state()!) } },
+        { provide: LearningStoreService, useValue: { state, initialize, refreshCanonical } },
         { provide: SelectedCoursesFacade, useValue: { courses, loading: courseLoading, error: courseError, load: loadCourses } },
         {
           provide: LibraryLearningPathJourneyFacade,
@@ -128,5 +130,41 @@ describe('HomePageComponent', () => {
     await fixture.whenStable();
     expect(enter).toHaveBeenCalledWith(selectedCourse);
     expect(TestBed.inject(Router).url).toBe('/learning-path/cambridge-path/lessons/lesson-1/exercises/exercise-2');
+  });
+
+  it('keeps courses usable and reports the review error when state initialization fails', async () => {
+    state.set(null);
+    initialize.mockRejectedValueOnce(new Error('offline'));
+
+    const fixture = await render();
+    const host: HTMLElement = fixture.nativeElement;
+
+    expect(fixture.componentInstance.reviewError()).toContain("Today's review could not load");
+    fixture.detectChanges();
+    expect(host.querySelector('[data-testid="review-load-error"]')).not.toBeNull();
+    expect(loadCourses).toHaveBeenCalledTimes(1);
+    expect(loadJourneys).toHaveBeenCalledWith([selectedCourse]);
+    expect(host.querySelector('[data-testid="home-course-card"]')).not.toBeNull();
+  });
+
+  it('refreshes review and exercise-day status after local midnight', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-08T23:59:59.900Z'));
+    try {
+      state.set(stateWithDueReview(true));
+      const fixture = TestBed.createComponent(HomePageComponent);
+      fixture.detectChanges();
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(fixture.componentInstance.today()).toBe('2026-09-08');
+
+      await vi.advanceTimersByTimeAsync(100);
+
+      expect(fixture.componentInstance.today()).toBe('2026-09-09');
+      expect(refreshCanonical).toHaveBeenCalledTimes(1);
+      fixture.destroy();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
