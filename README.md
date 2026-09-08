@@ -197,6 +197,12 @@ Express فایل‌های `ui/` و API را از یک origin ارائه می‌�
 
 UI هنگام save پاسخ‌ها `X-Vocora-Session-Id` می‌فرستد تا eventهای جدید به session صحیح متصل شوند. همچنین cursor تاریخچهٔ persistشده همراه save ارسال می‌شود تا repository فقط review eventهای جدید را append کند و برای هر پاسخ کل history را دوباره پردازش نکند.
 
+## Self-hosted text-to-speech
+
+Vocora provides authenticated, lazy Kokoro speech generation with a persistent
+content-addressed filesystem cache. See [docs/TTS.md](docs/TTS.md) for Docker,
+configuration, endpoint, cache-key, voice, and verification details.
+
 ## تست‌ها
 
 ```bash

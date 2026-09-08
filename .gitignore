@@ -2,6 +2,7 @@ node_modules/
 .DS_Store
 *.log
 *.mp3
+back/data/tts-cache/
 .env
 coverage/
 .nyc_output/
