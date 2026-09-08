@@ -19,7 +19,17 @@
     [attr.aria-labelledby]="'welcome-title-' + currentIndex()"
   >
     <div class="illustration-panel">
-      <app-welcome-illustration [kind]="slide().illustration" />
+      <img
+        class="welcome-illustration"
+        data-testid="welcome-illustration"
+        [src]="slide().illustrationSrc"
+        [alt]="slide().illustrationAlt"
+        width="500"
+        height="375"
+        loading="eager"
+        decoding="async"
+        draggable="false"
+      />
     </div>
 
     <div class="welcome-copy" aria-live="polite">

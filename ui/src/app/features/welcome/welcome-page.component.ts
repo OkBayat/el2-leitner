@@ -11,22 +11,19 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  WelcomeIllustrationComponent,
-  type WelcomeIllustration,
-} from './welcome-illustration.component';
 
 interface WelcomeSlide {
   readonly eyebrow: string;
   readonly title: string;
   readonly description: string;
   readonly detail: string;
-  readonly illustration: WelcomeIllustration;
+  readonly illustrationSrc: string;
+  readonly illustrationAlt: string;
 }
 
 @Component({
   selector: 'app-welcome-page',
-  imports: [MatButtonModule, WelcomeIllustrationComponent],
+  imports: [MatButtonModule],
   templateUrl: './welcome-page.component.html',
   styleUrl: './welcome-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +41,9 @@ export class WelcomePageComponent implements AfterViewInit {
         'Vocora brings vocabulary, guided lessons, listening, and review into one calm place.',
       detail:
         'A little focused practice each day becomes progress you can see.',
-      illustration: 'welcome',
+      illustrationSrc: '/assets/welcome/welcome-illustration-1.jpg',
+      illustrationAlt:
+        'Vocora mascot following a path toward a learning goal',
     },
     {
       eyebrow: 'Your daily plan',
@@ -52,7 +51,8 @@ export class WelcomePageComponent implements AfterViewInit {
       description:
         'Home keeps your next review and active course together, so you can start without planning a study session.',
       detail: 'Short, consistent sessions keep the workload realistic.',
-      illustration: 'daily',
+      illustrationSrc: '/assets/welcome/welcome-illustration-2.jpg',
+      illustrationAlt: 'Vocora mascot checking a daily study plan',
     },
     {
       eyebrow: 'Guided learning',
@@ -61,7 +61,9 @@ export class WelcomePageComponent implements AfterViewInit {
         'Learning Paths turn course material into clear lessons and interactive exercises.',
       detail:
         'Listening and focused practice help you use new language, not just recognise it.',
-      illustration: 'learning',
+      illustrationSrc: '/assets/welcome/welcome-illustration-3.jpg',
+      illustrationAlt:
+        'Vocora mascot studying with interactive audio and video lessons',
     },
     {
       eyebrow: 'Remember for longer',
@@ -70,7 +72,8 @@ export class WelcomePageComponent implements AfterViewInit {
         'Words return when they need attention. Correct answers move forward; mistakes get focused practice.',
       detail:
         'You spend more time on what is difficult and less on what is already familiar.',
-      illustration: 'leitner',
+      illustrationSrc: '/assets/welcome/welcome-illustration-4.jpg',
+      illustrationAlt: 'Vocora mascot moving word cards through Leitner boxes',
     },
     {
       eyebrow: 'Ready from day one',
@@ -79,7 +82,9 @@ export class WelcomePageComponent implements AfterViewInit {
         'We added 1,500 IELTS words by default for your daily Leitner practice.',
       detail:
         'Vocora introduces a manageable number each day and keeps the rest ready for later.',
-      illustration: 'ready',
+      illustrationSrc: '/assets/welcome/welcome-illustration-5.jpg',
+      illustrationAlt:
+        'Vocora mascot with a ready collection of 1,500 IELTS words',
     },
   ];
 

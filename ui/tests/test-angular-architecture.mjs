@@ -36,8 +36,23 @@ for (const required of [
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
   'src/app/shared/share-story/share-story.service.ts', 'src/app/shared/share-story/share-story-dialog.component.ts',
-  'e2e/vocora.spec.ts', 'playwright.config.ts', 'tools/ci-vocabulary.mjs'
+  'e2e/vocora.spec.ts', 'playwright.config.ts', 'tools/ci-vocabulary.mjs',
+  'assets/welcome/welcome-illustration-1.jpg', 'assets/welcome/welcome-illustration-2.jpg',
+  'assets/welcome/welcome-illustration-3.jpg', 'assets/welcome/welcome-illustration-4.jpg',
+  'assets/welcome/welcome-illustration-5.jpg'
 ]) assert.ok(exists(required), `${required} is required by the Angular migration.`);
+
+for (const removedWelcomeSvgComponent of [
+  'src/app/features/welcome/welcome-illustration.component.ts',
+  'src/app/features/welcome/welcome-illustration.component.html',
+  'src/app/features/welcome/welcome-illustration.component.scss',
+]) {
+  assert.equal(
+    exists(removedWelcomeSvgComponent),
+    false,
+    `${removedWelcomeSvgComponent} must not remain after the welcome image migration.`,
+  );
+}
 
 const pkg = JSON.parse(read('package.json'));
 assert.equal(pkg.dependencies['@angular/material'], '22.1.4');

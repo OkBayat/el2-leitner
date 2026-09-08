@@ -28,6 +28,26 @@ describe('WelcomePageComponent', () => {
     expect(host.querySelector('[aria-current="step"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="welcome-back"]')).toBeNull();
     expect(document.activeElement).toBe(heading);
+
+    const illustrationSources: string[] = [];
+    for (let index = 0; index < fixture.componentInstance.slides.length; index += 1) {
+      fixture.detectChanges();
+      const illustration = host.querySelector<HTMLImageElement>(
+        '[data-testid="welcome-illustration"]',
+      );
+      illustrationSources.push(illustration?.getAttribute('src') ?? '');
+      expect(illustration?.getAttribute('alt')).not.toBe('');
+      fixture.componentInstance.next();
+    }
+
+    expect(illustrationSources).toEqual([
+      '/assets/welcome/welcome-illustration-1.jpg',
+      '/assets/welcome/welcome-illustration-2.jpg',
+      '/assets/welcome/welcome-illustration-3.jpg',
+      '/assets/welcome/welcome-illustration-4.jpg',
+      '/assets/welcome/welcome-illustration-5.jpg',
+    ]);
+    expect(host.querySelector('app-welcome-illustration')).toBeNull();
   });
 
   it('supports forward, backward, and keyboard navigation', async () => {
