@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, raw } from "express";
 
 import { ValidationError } from "../../../domain/errors.js";
 import {
@@ -145,6 +145,22 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
     );
     res.status(201).json(result);
   });
+
+  router.post(
+    "/:pathId/lessons/:lessonId/exercises/:exerciseId/slides/:slideId/recordings",
+    raw({ type: ["audio/mp4", "audio/ogg", "audio/wav", "audio/webm"], limit: "2mb" }),
+    async (req, res) => {
+      const result = await commands.uploadSlideSequenceRecording.execute(
+        req.auth.userId,
+        learningPathRouteId(req.params.pathId),
+        lessonRouteId(req.params.lessonId),
+        exerciseRouteId(req.params.exerciseId),
+        req.params.slideId,
+        { mimeType: req.get("Content-Type"), bytes: req.body },
+      );
+      res.status(201).json(result);
+    },
+  );
 
   router.post("/:pathId/lessons/:lessonId/exercises/:exerciseId/complete", async (req, res) => {
     const result = await commands.completeExercise.execute(

@@ -54,6 +54,7 @@ export interface SlideExerciseResult<TData = unknown> {
   readonly slideId: string;
   readonly rootSlideId: string;
   readonly slideType: string;
+  readonly eventType: 'answered' | 'submitted';
   readonly itemId?: string;
   readonly data?: TData;
 }

@@ -181,6 +181,32 @@ describe("Collection Learning Path hardening", () => {
     assert.deepEqual(findLearningPathResumePoint(projected), { lessonId: "unit-2", exerciseId: "unit-2-intake" });
   });
 
+  it("keeps a completed lesson complete when a later content version adds a required exercise", () => {
+    const path = pathDefinition([
+      lesson("unit-1", 1, [
+        exercise("original-required", 1),
+        exercise("new-required", 2),
+      ]),
+    ]);
+    const projected = projectLearningPathProgress(path, {
+      path: {
+        status: "completed",
+        startedAt: NOW,
+        completedAt: NOW,
+        lastActivityAt: NOW,
+        lastSeenContentVersion: 1,
+        revision: 4,
+      },
+      lessons: [{ lessonId: "unit-1", status: "completed", startedAt: NOW, completedAt: NOW, lastActivityAt: NOW }],
+      exercises: [{ exerciseId: "original-required", status: "completed", startedAt: NOW, completedAt: NOW, lastActivityAt: NOW }],
+    });
+
+    assert.equal(projected.lessons[0].state, "completed");
+    assert.equal(projected.path.learnerStatus, "completed");
+    assert.equal(projected.lessons[0].exercises[1].state, "available");
+    assert.equal(findLearningPathResumePoint(projected), null);
+  });
+
   it("projects a 350-lesson path without changing deterministic ordering or resume semantics", () => {
     const lessons = Array.from({ length: 350 }, (_, index) => lesson(
       `unit-${String(index + 1).padStart(3, "0")}`,

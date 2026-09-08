@@ -103,6 +103,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
         slideId: slide.id,
         rootSlideId: slide.rootSlideId?.trim() || slide.id,
         slideType: slide.type,
+        eventType: event.type,
         itemId: slide.itemId,
         data: event.data,
       });

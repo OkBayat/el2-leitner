@@ -107,6 +107,31 @@ export function parseStimulus(value: unknown): SlideStimulus | undefined {
 					: undefined,
 		};
 	}
+	if (type === 'dialogue') {
+		if (!Array.isArray(source['turns']) || source['turns'].length < 2)
+			throw new Error('Dialogue stimulus requires at least two turns.');
+		const turns = source['turns'].map((candidate, index) => {
+			const turn = record(candidate, 'dialogue turn');
+			const voiceIndex = Number(turn['voiceIndex']);
+			return {
+				speaker: requiredText(turn['speaker'], 'Dialogue speaker'),
+				text: requiredText(turn['text'], 'Dialogue text'),
+				voiceIndex:
+					Number.isSafeInteger(voiceIndex) && voiceIndex >= 0
+						? voiceIndex
+						: index,
+			};
+		});
+		const maxReplays = Number(source['maxReplays']);
+		return {
+			type,
+			turns,
+			maxReplays:
+				Number.isInteger(maxReplays) && maxReplays > 0
+					? maxReplays
+					: undefined,
+		};
+	}
 	if (type === 'image')
 		return {
 			type,

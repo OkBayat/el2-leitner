@@ -60,8 +60,8 @@ describe('SlideBaseExerciseSessionService', () => {
   it('opens one server-snapshotted spelling session and completes it from slide results', async () => {
     const items = await service.startVocabularySpelling(context, 'course');
     const outcome = await service.complete('vocabulary-spelling', [
-      { slideId: 'slide-1', rootSlideId: 'slide-1', slideType: 'dictation', itemId: 'word-1', data: { answer: 'alpha', correct: true } },
-      { slideId: 'slide-2', rootSlideId: 'slide-2', slideType: 'dictation', itemId: 'word-2', data: { answer: 'bet', correct: false } },
+      { slideId: 'slide-1', rootSlideId: 'slide-1', slideType: 'dictation', eventType: 'answered', itemId: 'word-1', data: { answer: 'alpha', correct: true } },
+      { slideId: 'slide-2', rootSlideId: 'slide-2', slideType: 'dictation', eventType: 'answered', itemId: 'word-2', data: { answer: 'bet', correct: false } },
     ]);
 
     expect(items.map((item) => item.id)).toEqual(['word-1', 'word-2']);
@@ -101,8 +101,8 @@ describe('SlideBaseExerciseSessionService', () => {
       currentId = currentId === 'word-1' ? 'word-2' : null;
     });
     const results = [
-      { slideId: 'slide-1', rootSlideId: 'slide-1', slideType: 'dictation', itemId: 'word-1', data: { answer: 'alpha', correct: true } },
-      { slideId: 'slide-2', rootSlideId: 'slide-2', slideType: 'dictation', itemId: 'word-2', data: { answer: 'bet', correct: false } },
+      { slideId: 'slide-1', rootSlideId: 'slide-1', slideType: 'dictation', eventType: 'answered' as const, itemId: 'word-1', data: { answer: 'alpha', correct: true } },
+      { slideId: 'slide-2', rootSlideId: 'slide-2', slideType: 'dictation', eventType: 'answered' as const, itemId: 'word-2', data: { answer: 'bet', correct: false } },
     ];
     await service.startVocabularySpelling(context, 'course');
 

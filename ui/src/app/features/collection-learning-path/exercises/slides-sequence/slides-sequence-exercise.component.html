@@ -1,9 +1,15 @@
 <section class="slides-sequence-exercise" data-testid="slides-sequence-exercise">
   @if (slides().length) {
+    @if (error()) {
+      <p class="alert alert-danger" role="alert">{{ error() }}</p>
+    }
     <app-slide-exercise
       [slides]="slides()"
+      [registry]="registry"
+      [environment]="runtime()"
       (close)="cancel()"
       (action)="onAction($event)"
+      (contentEvent)="onContentEvent($event)"
       (completed)="finish()"
     />
   } @else {

@@ -97,6 +97,20 @@ export class CollectionLearningPathApiService {
     );
   }
 
+  commandUploadSlideSequenceRecording(
+    pathId: string,
+    lessonId: string,
+    exerciseId: string,
+    slideId: string,
+    recording: Blob,
+  ): Promise<{ artifactId: string }> {
+    return this.api.post<{ artifactId: string }>(
+      `${exercisePath(pathId, lessonId, exerciseId)}/slides/${segment(slideId)}/recordings`,
+      recording,
+      { 'Content-Type': recording.type || 'audio/webm' },
+    );
+  }
+
   commandCompleteExercise(
     pathId: string,
     lessonId: string,

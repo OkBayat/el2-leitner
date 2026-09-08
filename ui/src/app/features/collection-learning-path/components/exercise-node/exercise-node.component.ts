@@ -28,7 +28,10 @@ export class ExerciseNodeComponent {
   readonly exercise = input.required<LearningPathExerciseView>();
   readonly activate = output<string>();
   readonly actionable = computed(() => canOpenLearningPathExercise(this.exercise()));
-  readonly label = computed(() => exerciseTypeLabel(this.exercise().type));
+  readonly label = computed(() => exerciseTypeLabel(
+    this.exercise().type,
+    this.exercise().config,
+  ));
   readonly stateLabel = computed(() => learningPathStateLabel(this.exercise().state));
   readonly kind = computed<ExerciseNodeKind>(() => {
     const type = this.exercise().type;

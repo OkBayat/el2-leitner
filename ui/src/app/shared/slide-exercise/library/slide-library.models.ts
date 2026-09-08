@@ -20,6 +20,18 @@ export interface AudioStimulus {
 	readonly maxReplays?: number;
 }
 
+export interface DialogueStimulusTurn {
+	readonly speaker: string;
+	readonly text: string;
+	readonly voiceIndex?: number;
+}
+
+export interface DialogueStimulus {
+	readonly type: 'dialogue';
+	readonly turns: readonly DialogueStimulusTurn[];
+	readonly maxReplays?: number;
+}
+
 export interface ImageStimulus {
 	readonly type: 'image';
 	readonly src: string;
@@ -44,6 +56,7 @@ export interface DiagramStimulus {
 export type SlideStimulus =
 	| TextStimulus
 	| AudioStimulus
+	| DialogueStimulus
 	| ImageStimulus
 	| ChartStimulus
 	| DiagramStimulus;
