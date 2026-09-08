@@ -1,0 +1,102 @@
+:host {
+  display: block;
+  width: min(100%, 360px);
+  color: var(--vocora-text-primary);
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.soft {
+  fill: var(--vocora-action-secondary);
+}
+.surface {
+  fill: var(--vocora-surface-raised);
+}
+.accent {
+  fill: var(--vocora-action-primary);
+}
+.orange {
+  fill: var(--vocora-brand-orange);
+}
+.eye {
+  fill: var(--vocora-text-primary);
+}
+
+.line,
+.route,
+.flag,
+.bird,
+.beak,
+.check,
+.accent-stroke,
+.arrow,
+.spark {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.line,
+.flag,
+.bird {
+  stroke: var(--vocora-text-primary);
+  stroke-width: 6;
+}
+
+.route {
+  stroke: var(--vocora-brand-teal);
+  stroke-width: 5;
+  stroke-dasharray: 10 13;
+}
+
+.beak,
+.check,
+.arrow,
+.spark {
+  stroke: var(--vocora-brand-orange);
+  stroke-width: 6;
+}
+
+.accent-stroke {
+  stroke: var(--vocora-action-primary);
+  stroke-width: 7;
+}
+
+.play {
+  fill: var(--vocora-text-on-primary);
+}
+
+.number,
+.count,
+.ielts {
+  fill: var(--vocora-text-primary);
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.number {
+  font-size: 28px;
+}
+.count {
+  fill: var(--vocora-text-on-primary);
+  font-size: 18px;
+}
+.ielts {
+  font-size: 17px;
+}
+
+.tilted-left {
+  transform: rotate(-7deg);
+  transform-origin: 117px 136px;
+}
+
+.tilted-right {
+  transform: rotate(7deg);
+  transform-origin: 203px 129px;
+}
