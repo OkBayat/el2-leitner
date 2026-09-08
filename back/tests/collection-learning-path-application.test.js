@@ -284,6 +284,16 @@ describe("Collection Learning Path application CQRS", () => {
     assert.equal(harness.progressStore.writeCalls[0][0], "path");
   });
 
+  it("does not let a Leitner-only learner deep-link into course progression", async () => {
+    const harness = createHarness({ access: { canRead: true, canProgress: false } });
+
+    await assert.rejects(
+      harness.commands.startExercise.execute("user-1", "path-1", "lesson-1", "exercise-1"),
+      (error) => error?.code === "LEARNING_PATH_PROGRESS_FORBIDDEN" && error?.statusCode === 403,
+    );
+    assert.deepEqual(harness.progressStore.writeCalls, []);
+  });
+
   it("removes course enrollment independently and makes the path available again", async () => {
     const harness = createHarness({ access: { canRead: true, canProgress: false } });
     await harness.commands.startPath.execute("user-1", "path-1");

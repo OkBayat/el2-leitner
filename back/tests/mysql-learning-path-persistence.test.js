@@ -10,6 +10,7 @@ import { LearningPathProgressWriter } from "../src/application/collection-learni
 import { LearningPathRecordingArtifactRepository } from "../src/application/collection-learning-path/ports/LearningPathRecordingArtifactRepository.js";
 import { LearningPathTransactionManager } from "../src/application/collection-learning-path/ports/LearningPathTransactionManager.js";
 import { MySqlLearningPathDefinitionCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionCommandRepository.js";
+import { MySqlLearningPathAccessQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
 import { MySqlLearningPathCatalogQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathCatalogQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
@@ -78,6 +79,37 @@ test("course catalog projection loads titles and enrollment state in one bounded
   assert.equal(pool.calls.length, 1);
   assert.deepEqual(pool.calls[0].parameters, ["user-7", "user-7"]);
   assert.match(pool.calls[0].sql, /LEFT JOIN user_learning_path_progress/u);
+});
+
+test("Learning Path progression requires active course enrollment independently of Leitner subscription", async () => {
+  const subscribedOnly = {
+    ownerUserId: null,
+    visibility: "public",
+    status: "published",
+    archivedAt: null,
+    subscriptionStatus: "active",
+    enrolled: 0,
+  };
+  const pool = new RecordingPool([
+    [[subscribedOnly], []],
+    [[{ ...subscribedOnly, enrolled: 1 }], []],
+    [[subscribedOnly], []],
+  ]);
+  const repository = new MySqlLearningPathAccessQueryRepository(pool);
+
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: false,
+  });
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: true,
+  });
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: false,
+  });
+  assert.ok(pool.calls.every((call) => /up\.enrollment_status = 'active'/u.test(call.sql)));
 });
 
 test("course removal soft-removes enrollment without deleting learner progress", async () => {
