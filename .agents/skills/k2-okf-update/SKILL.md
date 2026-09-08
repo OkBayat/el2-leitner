@@ -81,7 +81,7 @@ Stop and report instead of writing OKF when:
 - `scripts/test_validate_okf.py` verifies the validator's stable acceptance and
   rejection behavior.
 
-### Agent-owned
+### Codex-owned
 
 - Interpret the requested evidence scope.
 - Decide whether information is durable, supported, and worth recording.
