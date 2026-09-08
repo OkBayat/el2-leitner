@@ -1,9 +1,9 @@
 ---
 name: k2-okf-update
-description: Update the Vocora root OKF knowledge bundle from durable project learning. Use only when the user explicitly asks to add, refresh, or review project knowledge in OKF, especially from the current session or a specified scope.
+description: Update the K2 OKF knowledge bundle in Vocora from durable project learning. Use only when the user explicitly asks to add, refresh, or review project knowledge in OKF, especially from the current session or a specified scope.
 ---
 
-# Vocora OKF Update
+# K2 OKF Update
 
 ## Overview
 

@@ -84,7 +84,7 @@ def validate(root: Path) -> dict:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Validate the Vocora root OKF bundle.')
+    parser = argparse.ArgumentParser(description='Validate the K2 OKF bundle.')
     parser.add_argument('--root', default='.', help='Repository root. Defaults to the current directory.')
     return parser.parse_args()
 

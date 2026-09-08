@@ -2,9 +2,9 @@
 okf_version: "0.1"
 ---
 
-# Vocora Knowledge Bundle
+# K2 OKF Knowledge Bundle
 
-This bundle stores curated, durable project knowledge for Vocora in Open
+This K2 OKF bundle stores curated, durable project knowledge for Vocora in Open
 Knowledge Format. Use it for progressive disclosure before broad project
 exploration, while keeping repository source and explicit project documentation
 as the authority.
@@ -25,7 +25,7 @@ as the authority.
 # Maintenance
 
 * [Maintenance Index](maintenance/index.md) - OKF maintenance directory index.
-* [OKF Maintenance](maintenance/okf-maintenance.md) - How the Vocora knowledge bundle should be updated and reviewed.
+* [OKF Maintenance](maintenance/okf-maintenance.md) - How the K2 OKF knowledge bundle should be updated and reviewed.
 
 # Logs / Reserved Files
 

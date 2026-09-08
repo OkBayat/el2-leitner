@@ -1,12 +1,12 @@
 ---
 type: Playbook
 title: OKF Maintenance
-description: Update Vocora OKF through small evidence-backed changes.
+description: Update K2 OKF through small evidence-backed changes.
 tags: [okf, maintenance, review]
 timestamp: 2026-09-08T04:00:00Z
 ---
 
-Vocora OKF updates should be small, durable, and evidence-backed.
+K2 OKF updates should be small, durable, and evidence-backed.
 
 # Rules
 

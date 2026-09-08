@@ -34,6 +34,16 @@ class ValidateOkfTests(unittest.TestCase):
             '---\ntype: Concept\ntitle: Example\n---\n\nExample knowledge.\n',
         )
 
+    def test_help_uses_k2_okf_name(self):
+        completed = subprocess.run(
+            [sys.executable, str(SCRIPT), '--help'],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, completed.returncode)
+        self.assertIn('Validate the K2 OKF bundle.', completed.stdout)
+
     def test_accepts_valid_bundle(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

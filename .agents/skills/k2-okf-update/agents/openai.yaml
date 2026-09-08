@@ -1,4 +1,4 @@
 interface:
-  display_name: "Vocora OKF Update"
-  short_description: "Update Vocora OKF knowledge through reviewable changes."
-  default_prompt: "Update the Vocora OKF bundle from the current session's durable project learning."
+  display_name: "K2 OKF Update"
+  short_description: "Update K2 OKF knowledge through reviewable changes."
+  default_prompt: "Update the K2 OKF bundle from the current session's durable Vocora project learning."

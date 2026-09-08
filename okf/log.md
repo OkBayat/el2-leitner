@@ -1,4 +1,4 @@
-# Vocora Knowledge Bundle Update Log
+# K2 OKF Knowledge Bundle Update Log
 
 ## 2026-09-08
 
