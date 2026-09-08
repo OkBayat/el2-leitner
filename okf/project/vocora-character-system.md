@@ -134,8 +134,9 @@ This creates three durable rules:
 # Visual and Voice Language
 
 Vocora's cast is stylized but more adult in proportion than a chibi system.
-Faces remain simple, while eyes and rounded geometry must not imitate
-Duolingo's signature character construction.
+Faces remain simple, with eyes approximately `30-40%` smaller than the
+Duolingo-inspired comparison in the source brief. Rounded geometry must not
+imitate Duolingo's signature character construction.
 
 * Every character needs a recognizable silhouette at approximately `48-64px`.
 * One primary accent color identifies each character; shared brand tokens remain
@@ -184,7 +185,7 @@ reward state, or content-generation mechanism changes.
 
 # Citations
 
-[1] [PR #129: Vocora character-system knowledge](https://github.com/OkBayat/vocora/pull/129)
+[1] Product character-system brief supplied by the project owner, 2026-09-08 (current task scope).
 [2] [Duolingo: Building character](https://blog.duolingo.com/building-character/)
 [3] [Duolingo: Giving our characters a voice](https://blog.duolingo.com/character-voices/)
 [4] [Duolingo: The stories behind its female characters](https://blog.duolingo.com/duolingo-female-character-origin-stories/)
