@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'back/src/application/learning/GetLearningTimeline.js'
+      - 'back/src/domain/errors.js'
       - 'back/src/domain/learning/LearningTimeline.js'
       - 'back/src/infrastructure/persistence/mysql/createPool.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlLearningTimelineRepository.js'
@@ -28,6 +29,7 @@ on:
     branches: [main]
     paths:
       - 'back/src/application/learning/GetLearningTimeline.js'
+      - 'back/src/domain/errors.js'
       - 'back/src/domain/learning/LearningTimeline.js'
       - 'back/src/infrastructure/persistence/mysql/createPool.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlLearningTimelineRepository.js'
