@@ -8,6 +8,11 @@ export function createLearningPathExerciseRegistry(): ExerciseRegistry {
       .then((module) => module.VocabularyIntakeExerciseComponent),
   });
   registry.register({
+    type: 'slides.sequence',
+    loadComponent: () => import('../slides-sequence/slides-sequence-exercise.component')
+      .then((module) => module.SlidesSequenceExerciseComponent),
+  });
+  registry.register({
     type: 'slide-base',
     loadComponent: () => import('../slide-base/slide-base-exercise.component')
       .then((module) => module.SlideBaseExerciseComponent),
