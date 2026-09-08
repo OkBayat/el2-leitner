@@ -42,7 +42,7 @@ export class MySqlLearningPathProgressCommandRepository extends LearningPathProg
          FROM collection_learning_paths p
          WHERE p.public_id = ?
          ON DUPLICATE KEY UPDATE
-           status = IF(enrollment_status = 'removed', status, VALUES(status)),
+           status = IF(enrollment_status = 'removed', user_learning_path_progress.status, VALUES(status)),
            started_at = LEAST(started_at, VALUES(started_at)),
            completed_at = IF(enrollment_status = 'removed', completed_at, VALUES(completed_at)),
            last_activity_at = IF(enrollment_status = 'removed', last_activity_at, GREATEST(last_activity_at, VALUES(last_activity_at))),

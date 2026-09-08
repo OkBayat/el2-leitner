@@ -226,6 +226,7 @@ test("progress persistence converts application ISO timestamps before handing th
   });
 
   const parameters = pool.calls[0].parameters;
+  assert.match(pool.calls[0].sql, /user_learning_path_progress\.status/u);
   assert.ok(parameters[2] instanceof Date);
   assert.equal(parameters[2].toISOString(), startedAt);
   assert.equal(parameters[3], null);
