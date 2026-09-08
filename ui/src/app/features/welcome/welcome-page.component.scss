@@ -31,10 +31,23 @@
   min-height: var(--vocora-touch-target-min);
 }
 
-.welcome-header img {
+.welcome-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--vocora-space-3);
+}
+
+.welcome-brand img {
   display: block;
-  width: 148px;
+  width: 48px;
   height: auto;
+}
+
+.welcome-brand span {
+  color: var(--vocora-brand-green-strong);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .welcome-slide {
@@ -175,8 +188,8 @@ p {
     gap: var(--vocora-space-4);
   }
 
-  .welcome-header img {
-    width: 132px;
+  .welcome-brand img {
+    width: 44px;
   }
 
   .welcome-slide {

@@ -185,14 +185,15 @@ a:focus-visible, button:focus-visible {
 		gap: 8px;
 		margin-bottom: 24px;
 		border-radius: 12px;
-		color: var(--vocora-nav-brand);
+		color: var(--vocora-brand-green-strong);
 		text-transform: lowercase;
 		font-size: 30px;
 		font-weight: 850;
 		letter-spacing: -1px;
 		text-decoration: none;
 	}
-	.brand img { display: block; border-radius: 10px; object-fit: contain; }
+	.brand img { display: block; width: 40px; height: auto; object-fit: contain; }
+	.brand .sidebar-label { color: var(--vocora-brand-green-strong); }
 	.sidebar-label { display: none; }
 	.sidebar-links { display: grid; gap: 8px; }
 	.sidebar-link {

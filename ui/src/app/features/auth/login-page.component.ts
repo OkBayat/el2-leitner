@@ -15,7 +15,10 @@ import { ApiError } from '../../core/http/api-client.service';
   template: `
     <main class="auth-page">
       <mat-card class="auth-card" appearance="outlined">
-        <img src="/assets/vocora-logo.png" alt="Vocora" width="185" height="46">
+        <div class="auth-brand">
+          <img src="/assets/vocora-logo.svg" alt="" width="48" height="38">
+          <span>Vocora</span>
+        </div>
         <mat-card-header><mat-card-title>Welcome back 👋</mat-card-title><mat-card-subtitle>Sign in to continue your practice.</mat-card-subtitle></mat-card-header>
         <mat-card-content>
           <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
@@ -31,7 +34,7 @@ import { ApiError } from '../../core/http/api-client.service';
     </main>
   `,
   styles: [`
-    :host{display:block;min-height:100dvh}.auth-page{min-height:100dvh;display:grid;grid-template-columns:minmax(320px,480px) 1fr}.auth-card{margin:auto 40px;width:min(100% - 40px,420px);padding:28px;border-radius:28px}.auth-card>img{margin-bottom:28px}.auth-form{display:grid;gap:8px;margin-top:24px}.auth-form>button{min-height:48px}.error{padding:12px;border-radius:12px;background:var(--mat-sys-error-container);color:var(--mat-sys-on-error-container)}.auth-visual{display:grid;place-content:center;padding:8vw;background:var(--mat-sys-primary-container);color:var(--mat-sys-on-primary-container)}.auth-visual h1{max-width:650px;font-size:clamp(34px,5vw,64px);line-height:1.25}@media(max-width:760px){.auth-page{grid-template-columns:1fr}.auth-visual{display:none}}
+    :host{display:block;min-height:100dvh}.auth-page{min-height:100dvh;display:grid;grid-template-columns:minmax(320px,480px) 1fr}.auth-card{margin:auto 40px;width:min(100% - 40px,420px);padding:28px;border-radius:28px}.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.auth-brand img{display:block;width:48px;height:auto}.auth-brand span{color:var(--vocora-brand-green-strong);font-size:28px;font-weight:800;letter-spacing:-.5px}.auth-form{display:grid;gap:8px;margin-top:24px}.auth-form>button{min-height:48px}.error{padding:12px;border-radius:12px;background:var(--mat-sys-error-container);color:var(--mat-sys-on-error-container)}.auth-visual{display:grid;place-content:center;padding:8vw;background:var(--mat-sys-primary-container);color:var(--mat-sys-on-primary-container)}.auth-visual h1{max-width:650px;font-size:clamp(34px,5vw,64px);line-height:1.25}@media(max-width:760px){.auth-page{grid-template-columns:1fr}.auth-visual{display:none}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

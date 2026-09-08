@@ -15,12 +15,19 @@
 .home-brand,
 .section-label {
   display: block;
-  color: var(--vocora-text-secondary);
   font-size: 12px;
   font-weight: 650;
   letter-spacing: .09em;
   line-height: 18px;
   text-transform: uppercase;
+}
+
+.home-brand {
+  color: var(--vocora-brand-green-strong);
+}
+
+.section-label {
+  color: var(--vocora-text-secondary);
 }
 
 .home-heading h1 {

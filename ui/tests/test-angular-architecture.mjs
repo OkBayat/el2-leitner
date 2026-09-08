@@ -81,6 +81,31 @@ const bootstrapCss = 'node_modules/bootstrap/dist/css/bootstrap.min.css';
 assert.ok(build.options.styles.includes(bootstrapCss), 'Bootstrap CSS must be loaded globally by Angular.');
 assert.ok(build.options.styles.indexOf(bootstrapCss) < build.options.styles.indexOf('src/styles.scss'), 'Project styles must load after Bootstrap so application overrides keep precedence.');
 
+assert.ok(exists('assets/vocora-logo.svg'), 'The canonical Vocora SVG logo asset must exist.');
+for (const legacyLogo of ['assets/vocora-logo.png', 'assets/vocora-icon.png']) {
+  assert.equal(exists(legacyLogo), false, `${legacyLogo} must not remain after the logo replacement.`);
+}
+const brandTemplates = [
+  read('src/app/features/auth/login-page.component.ts'),
+  read('src/app/features/auth/register-page.component.ts'),
+  read('src/app/features/welcome/welcome-page.component.html'),
+  read('src/app/shared/app-shell/app-shell.component.html'),
+];
+for (const template of brandTemplates) {
+  assert.match(template, /\/assets\/vocora-logo\.svg/u, 'Every visible logo surface must use the canonical SVG asset.');
+  assert.match(template, />Vocora</u, 'Every logo lockup must include the visible Vocora name.');
+}
+const brandStyles = [
+  read('src/app/features/auth/login-page.component.ts'),
+  read('src/app/features/auth/register-page.component.ts'),
+  read('src/app/features/welcome/welcome-page.component.scss'),
+  read('src/app/shared/app-shell/app-shell.component.scss'),
+  read('src/app/features/home/home-page.component.scss'),
+];
+for (const styles of brandStyles) {
+  assert.match(styles, /--vocora-brand-green-strong/u, 'Visible Vocora names must use the accessible green brand token.');
+}
+
 const theme = read('src/styles.scss');
 assert.match(theme, /@use ['"]@angular\/material['"] as mat/u);
 assert.match(theme, /@include mat\.theme/u);
