@@ -1,0 +1,43 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="rewrite-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Rewrite the sentence.' }}
+			</p>
+			<blockquote>{{ data.original }}</blockquote>
+			@if (data.targetWords?.length) {
+				<mat-chip-set aria-label="Target words">
+					@for (word of data.targetWords; track word) {
+						<mat-chip>{{ word }}</mat-chip>
+					}
+				</mat-chip-set>
+			}
+			<mat-form-field
+				appearance="outline"
+				[attr.data-state]="responseState()"
+				><mat-label>Your rewrite</mat-label
+				><textarea
+					matInput
+					rows="3"
+					[value]="response()"
+					[disabled]="interactionState() !== 'idle'"
+					(input)="setResponse(inputFrom($event))"
+				></textarea>
+			</mat-form-field>
+			@if (data.modelAnswer) {
+				<div
+					class="answer-review"
+					[class.answer-review--hidden]="
+						interactionState() === 'idle'
+					"
+				>
+					<strong>Model answer</strong>
+					<p>{{ data.modelAnswer }}</p>
+				</div>
+			}
+		</section>
+	</article>
+}

@@ -1,0 +1,51 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="classification-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Place each item in a category.' }}
+			</p>
+			<div class="chip-list" aria-label="Items to classify">
+				@for (item of data.items; track item.id) {
+					<button
+						mat-stroked-button
+						type="button"
+						[attr.data-state]="itemState(item.id)"
+						[attr.aria-pressed]="selectedItemId() === item.id"
+						[attr.aria-label]="
+							classificationItemAriaLabel(item.id, item.label)
+						"
+						[disabled]="interactionState() !== 'idle'"
+						(click)="selectItem(item.id)"
+					>
+						{{ item.label }}
+					</button>
+				}
+			</div>
+			<div class="bucket-grid">
+				@for (category of data.categories; track category.id) {
+					<button
+						mat-stroked-button
+						type="button"
+						class="bucket"
+						[attr.aria-label]="
+							classificationBucketAriaLabel(
+								category.id,
+								category.label
+							)
+						"
+						[disabled]="
+							!selectedItemId() || interactionState() !== 'idle'
+						"
+						(click)="assignSelected(category.id)"
+					>
+						<strong>{{ category.label }}</strong
+						><span>{{ assignedLabels(category.id) }}</span>
+					</button>
+				}
+			</div>
+		</section>
+	</article>
+}

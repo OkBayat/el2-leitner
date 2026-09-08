@@ -1,0 +1,31 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="teaching-card-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Learn' }}
+			</p>
+			<h1>{{ data.title }}</h1>
+			<div class="teaching-grid">
+				@for (block of data.blocks; track $index) {
+					<section
+						class="teaching-block"
+						[attr.data-kind]="block.kind"
+					>
+						@if (block.title) {
+							<h2>{{ block.title }}</h2>
+						}
+						<p>{{ block.content }}</p>
+						@if (block.secondary) {
+							<p class="text-secondary">
+								{{ block.secondary }}
+							</p>
+						}
+					</section>
+				}
+			</div>
+		</section>
+	</article>
+}

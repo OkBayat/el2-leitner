@@ -1,0 +1,15 @@
+<section class="slides-sequence-exercise" data-testid="slides-sequence-exercise">
+  @if (slides().length) {
+    <app-slide-exercise
+      [slides]="slides()"
+      (close)="cancel()"
+      (action)="onAction($event)"
+      (completed)="finish()"
+    />
+  } @else {
+    <div class="slides-sequence-exercise__error" role="alert">
+      <h1>Exercise unavailable</h1>
+      <p>{{ error() || 'This slide sequence could not be prepared.' }}</p>
+    </div>
+  }
+</section>

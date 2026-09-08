@@ -1,0 +1,31 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="short-answer-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Write a short answer.' }}
+			</p>
+			<h1>{{ data.question }}</h1>
+			<div class="hint-row">
+				@if (data.firstLetterHint) {
+					<span>Starts with {{ data.firstLetterHint }}</span>
+				}
+				@if (data.characterCount) {
+					<span>{{ data.characterCount }} characters</span>
+				}
+			</div>
+			<mat-form-field
+				appearance="outline"
+				[attr.data-state]="answerState()"
+				><mat-label>Answer</mat-label
+				><input
+					matInput
+					[value]="answer()"
+					[disabled]="interactionState() !== 'idle'"
+					(input)="setAnswer(inputFrom($event))"
+			/></mat-form-field>
+		</section>
+	</article>
+}

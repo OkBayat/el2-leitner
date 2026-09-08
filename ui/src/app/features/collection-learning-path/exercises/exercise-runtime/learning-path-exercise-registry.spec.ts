@@ -6,6 +6,7 @@ describe('Learning Path exercise registry composition', () => {
     const registry = createLearningPathExerciseRegistry();
     const cases = [
       ['vocabulary.intake', 'VocabularyIntakeExerciseComponent'],
+      ['slides.sequence', 'SlidesSequenceExerciseComponent'],
       ['slide-base', 'SlideBaseExerciseComponent'],
       ['vocabulary.quick-review', 'ScopedVocabularyPracticeExerciseComponent'],
       ['vocabulary.mastery-check', 'VocabularyMasteryCheckExerciseComponent'],

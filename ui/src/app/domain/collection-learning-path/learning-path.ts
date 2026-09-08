@@ -166,6 +166,7 @@ export function learningPathPrimaryAction(status: LearningPathLearnerStatus): Le
 
 const EXERCISE_LABELS: Readonly<Record<string, string>> = {
   'vocabulary.intake': 'Vocabulary intake',
+  'slides.sequence': 'Slide sequence',
   'slide-base': 'Spelling practice',
   'vocabulary.quick-review': 'Quick vocabulary review',
   'vocabulary.mastery-check': 'Vocabulary mastery check',
