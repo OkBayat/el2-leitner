@@ -61,11 +61,28 @@ describe('LibraryLearningPathJourneyFacade', () => {
       throw new Error('Learning Path not found');
     });
 
-    expect(await facade.load([cambridge, unrelatedBook])).toBe(true);
+    expect(await facade.load([cambridge, unrelatedBook])).toBe(false);
 
     expect(queryCollectionLearningPath).toHaveBeenCalledWith(cambridge.id);
     expect(queryCollectionLearningPath).toHaveBeenCalledWith(unrelatedBook.id);
     expect(facade.viewFor(cambridge.id)?.path.id).toBe('cvfi-learning-path');
     expect(facade.viewFor(unrelatedBook.id)).toBeNull();
+    expect(facade.error()).toContain('Some courses could not load');
+  });
+
+  it('retries a missing course view when the learner opens its card', async () => {
+    const cambridge = collection();
+    const completed = pathView(cambridge.id);
+    completed.access.canProgress = true;
+    completed.path.learnerStatus = 'completed';
+    queryCollectionLearningPath
+      .mockRejectedValueOnce(new Error('temporarily unavailable'))
+      .mockResolvedValueOnce(completed);
+
+    expect(await facade.load([cambridge])).toBe(false);
+    expect(await facade.enter(cambridge)).toEqual({ kind: 'path', collectionId: cambridge.id });
+    expect(queryCollectionLearningPath).toHaveBeenCalledTimes(2);
+    expect(facade.viewFor(cambridge.id)).toBe(completed);
+    expect(facade.error()).toBe('');
   });
 });

@@ -4,7 +4,7 @@ import { LearningStoreService } from './learning-store.service';
 import { ApiClientService } from '../http/api-client.service';
 import { CatalogService } from '../catalog/catalog.service';
 import { VocabularyApiService } from '../learning/vocabulary-api.service';
-import { createFreshState } from '../../domain/learning/learning-rules';
+import { createFreshState, getDueWords } from '../../domain/learning/learning-rules';
 
 function setup(api: any, catalog: any, vocabulary: any) {
   TestBed.configureTestingModule({ providers: [
@@ -210,6 +210,48 @@ describe('LearningStoreService regressions', () => {
     expect(refreshed.words[0].id).toBe('db-inland');
     expect(store.state()?.words[0].id).toBe('db-inland');
     expect(store.revision()).toBe(7);
+  });
+
+  it('allows initialization to be retried after a transient bootstrap failure', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([]);
+    const api = {
+      get: vi.fn()
+        .mockRejectedValueOnce(new Error('temporarily offline'))
+        .mockResolvedValueOnce({ state: canonical, revision: 3 }),
+      put: vi.fn(),
+    };
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch: vi.fn(), activate: vi.fn(), update: vi.fn(),
+    });
+
+    await expect(store.initialize()).rejects.toThrow('temporarily offline');
+    await expect(store.initialize()).resolves.toBeTruthy();
+    expect(api.get).toHaveBeenCalledTimes(2);
+    expect(store.revision()).toBe(3);
+  });
+
+  it('activates and persists the new local day queue after a midnight refresh', async () => {
+    localStorage.clear();
+    const canonical = createFreshState([{ id: 'new-day-word', term: 'morning' }]);
+    canonical.settings.dailyNew = 1;
+    const api = {
+      get: vi.fn().mockResolvedValue({ state: canonical, revision: 7 }),
+      put: vi.fn(),
+    };
+    const activateBatch = vi.fn().mockResolvedValue(8);
+    const store = setup(api, { loadCoreVocabulary: vi.fn() }, {
+      activateBatch, activate: vi.fn(), update: vi.fn(),
+    });
+    store.replaceLocal(createFreshState([]), 7);
+
+    const refreshed = await store.refreshForLocalDay('2026-09-09');
+
+    expect(api.get).toHaveBeenCalledWith('/api/state?view=bootstrap');
+    expect(activateBatch).toHaveBeenCalledWith(7, ['new-day-word'], '2026-09-09', 'daily');
+    expect(refreshed.words[0]).toEqual(expect.objectContaining({ box: 1, due: '2026-09-09', introducedOn: '2026-09-09' }));
+    expect(getDueWords(refreshed, '2026-09-09').map((word) => word.id)).toEqual(['new-day-word']);
+    expect(store.revision()).toBe(8);
   });
 });
 describe('Explicit subscription reconciliation', () => {

@@ -1,159 +1,89 @@
-<div class="home-path" data-testid="home-path" [attr.aria-busy]="timeline.loading()">
-  <h1 class="visually-hidden">Your daily learning path</h1>
-  <p class="visually-hidden">Scroll up for earlier days. Colored steps have recorded practice. Gray steps have not been practised.</p>
+<main class="home-dashboard" data-testid="home-dashboard">
+  <header class="home-heading">
+    <span class="home-brand">Vocora</span>
+    <h1>Today</h1>
+  </header>
 
-  @if (timeline.error()) {
-    <div class="path-notice" role="alert">
-      <p>{{ timeline.error() }}</p>
-      <button type="button" (click)="refresh(!timeline.today())" [disabled]="timeline.loading()">Try again</button>
-    </div>
-  }
-  @if (!timeline.today() && timeline.loading()) {
-    <div class="path-loading" role="status"><span></span><span></span><span></span><p>Loading your path…</p></div>
-  }
-
-  <div class="history-sentinel" aria-hidden="true"></div>
-  @if (timeline.nextBefore() || timeline.historyError()) {
-    <div class="history-control">
-      @if (timeline.historyError()) { <p role="alert">{{ timeline.historyError() }}</p> }
-      <button type="button" (click)="loadOlder()" [disabled]="timeline.loadingOlder() || timeline.loading()">
-        {{ timeline.loadingOlder() ? 'Loading earlier days…' : 'Earlier days' }} <span aria-hidden="true">↑</span>
-      </button>
-    </div>
-  }
-  @if (timeline.limitedHistory()) {
-    <p class="history-note">Some older multi-day sessions do not have a daily breakdown.</p>
-  }
-
-  @for (day of days(); track day.day) {
-    <section class="path-day" [attr.data-day]="day.day" [attr.data-palette]="day.palette"
-      [class.is-today]="day.today" [class.is-future]="day.future" [class.is-mirrored]="day.mirrored"
-      [attr.aria-labelledby]="'day-title-' + day.day">
-      <header class="day-heading">
-        <div>
-          @if (day.today || day.future) { <span class="day-date">{{ day.dateLabel }}</span> }
-          <h2 [id]="'day-title-' + day.day">{{ day.title }}</h2>
-        </div>
-        @if (day.today) {
-          <a class="overview-link" routerLink="/overview" aria-label="Open learning overview" title="Learning overview">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V12m7 7V5m7 14V9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-          </a>
-        }
-      </header>
-      <div class="day-trail">
-        <ol class="path-steps" [attr.aria-label]="day.dateLabel + ' activities'">
-          @for (step of day.steps; track step.id) {
-            <li class="step-row">
-              <button type="button" class="path-node" cdkOverlayOrigin #origin="cdkOverlayOrigin"
-                [attr.data-activity]="step.id" [attr.data-status]="step.status"
-                [attr.data-testid]="day.today ? (step.id === 'shadowing' ? 'home-shadowing' : step.id === 'listening' ? 'home-listening' : null) : null"
-                [attr.data-listening-completed]="step.id === 'listening' ? step.listeningProgress?.completed : null"
-                [attr.data-listening-goal]="step.id === 'listening' ? step.listeningProgress?.total : null"
-                [class.is-practiced]="step.status === 'practiced'" [class.is-in-progress]="step.status === 'in-progress'"
-                [class.is-legendary]="step.legendary"
-                [class.is-current]="step.current" [class.is-reserved]="step.id.startsWith('reserved')"
-                [disabled]="day.future || step.id.startsWith('reserved')"
-                [attr.aria-label]="step.label + ' — ' + statusLabel(step) + ' — ' + day.dateLabel"
-                [attr.aria-current]="step.current ? 'step' : null"
-                [attr.aria-expanded]="selection()?.origin === origin" aria-haspopup="dialog"
-                (click)="open(day, step, origin)">
-                @if (step.id === 'listening' && step.listeningProgress) {
-                  <svg class="node-progress-ring node-listening-ring" viewBox="0 0 96 96" aria-hidden="true">
-                    @for (segment of listeningSegments(step); track segment.index) {
-                      <circle class="node-progress-segment" [class.is-complete]="segment.state === 'complete'"
-                        [class.is-legendary]="segment.state === 'legendary'" cx="48" cy="48" r="42" pathLength="100"
-                        [attr.stroke-dasharray]="listeningSegmentDash(step)"
-                        [attr.transform]="'rotate(' + listeningSegmentRotation(segment.index, listeningSegments(step).length) + ' 48 48)'" />
-                    }
-                  </svg>
-                } @else if (step.status === 'in-progress' && step.progress !== null) {
-                  <svg class="node-progress-ring" viewBox="0 0 96 96" aria-hidden="true">
-                    <circle class="node-progress-track" cx="48" cy="48" r="42" pathLength="100" />
-                    <circle class="node-progress-value" cx="48" cy="48" r="42" pathLength="100"
-                      [attr.stroke-dasharray]="(step.progress ?? 0) + ' ' + (100 - (step.progress ?? 0))" />
-                  </svg>
-                }
-                @if (!step.id.startsWith('reserved')) { <app-path-icon [kind]="step.id" /> }
-                @if (step.status === 'practiced' && step.id !== 'listening') {
-                  <span class="node-check" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                }
-                @if (step.current) {
-                  <span class="start-flag" aria-hidden="true">{{ step.status === 'in-progress' ? 'CONTINUE' : 'START' }}</span>
-                }
-              </button>
-            </li>
-          }
-        </ol>
-        <button type="button" class="book-wagon" cdkOverlayOrigin #wagon="cdkOverlayOrigin"
-          [class.is-quiet]="!day.boxOnePracticed" [disabled]="day.future"
-          [attr.data-testid]="day.today ? 'home-box-one' : null"
-          [attr.aria-label]="'Box 1 practice — ' + day.dateLabel" aria-haspopup="dialog"
-          [attr.aria-expanded]="selection()?.origin === wagon" (click)="open(day, null, wagon)">
-          <app-book-wagon />
-          <span class="wagon-label">BOX 1</span>
-        </button>
-      </div>
-    </section>
-  }
-  @if (timeline.today() && !todayVisible()) {
-    <button type="button" class="back-today" aria-label="Back to today" (click)="goToToday()">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-      <span>Today</span>
-    </button>
-  }
-</div>
-
-@if (selection(); as selected) {
-  <!-- The bounded origin and panel width reserve horizontal gutters without a second viewport reduction. -->
-  <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="popoverOrigin()"
-    [cdkConnectedOverlayOpen]="true" [cdkConnectedOverlayPositions]="positions"
-    [cdkConnectedOverlayScrollStrategy]="scrollStrategy" (detach)="close()"
-    [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-    cdkConnectedOverlayWidth="min(310px, calc(100vw - 32px))" [cdkConnectedOverlayFlexibleDimensions]="false"
-    [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="0"
-    (backdropClick)="close()" (overlayKeydown)="onOverlayKey($event)" (positionChange)="positionPopover($event)">
-    <div #popup class="path-popover" [class.is-above]="popoverAbove()" [class.is-legendary]="selected.step?.legendary"
-      [style.--arrow-x.px]="arrowX()" role="dialog" aria-modal="true" aria-labelledby="home-popup-title"
-      cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
-      <button type="button" class="close-popover" aria-label="Close practice options" (click)="close()">×</button>
-      @if (selected.step; as step) {
-        @if (selected.day.today && step.id === 'listening' && step.listeningProgress; as progress) {
-          @if (step.legendary) {
-            <span class="popover-kicker">Legendary</span>
-            <h3 id="home-popup-title">{{ step.label }}</h3>
-            <p>Daily goal complete · {{ progress.completed }} of {{ progress.total }}</p>
-            <a class="popover-action is-legendary" [routerLink]="step.route" data-testid="start-listening" (click)="close()">Legendary practice</a>
-          } @else {
-            <span class="popover-kicker">Start practice {{ progress.completed + 1 }} of {{ progress.total }}</span>
-            <h3 id="home-popup-title">{{ step.label }}</h3>
-            <p>{{ progress.completed ? 'Keep your daily listening goal moving.' : 'Start today’s listening practice.' }}</p>
-            <a class="popover-action" [routerLink]="step.route" data-testid="start-listening" (click)="close()">
-              {{ progress.completed ? 'Practise again' : 'Start' }}
+  <section class="review-section" aria-labelledby="daily-review-heading">
+    <p class="section-label">Today's Review</p>
+    <mat-card class="review-card" appearance="outlined" data-testid="daily-review-card">
+      <div class="review-copy">
+        <h2 id="daily-review-heading">Leitner Review</h2>
+        @if (reviewError()) {
+          <p class="review-state review-error" data-testid="review-load-error" role="alert">
+            {{ reviewError() }}
+          </p>
+          <button mat-stroked-button type="button" (click)="load(true)">Try again</button>
+        } @else if (store.state()) {
+          @if (reviewCompleted()) {
+            <p class="review-state is-complete">
+              <span class="state-check" aria-hidden="true">✓</span>
+              Today's review completed
+            </p>
+            <a mat-flat-button routerLink="/review" [queryParams]="{ mode: 'box1' }" data-testid="practice-words">
+              Practice Words
             </a>
+          } @else {
+            <p class="review-state">Your daily review is ready</p>
+            <a mat-flat-button routerLink="/review" data-testid="start-review">Start Review</a>
           }
         } @else {
-          <h3 id="home-popup-title">{{ step.label }}</h3>
-          @if (!step.route) {
-            <p>Reading practice is coming soon.</p>
-          } @else {
-            @if (step.status === 'practiced') {
-              <p>Practised · {{ selected.day.dateLabel }}</p>
-            } @else if (step.status === 'in-progress') {
-              <p>In progress · {{ selected.day.dateLabel }}</p>
-            } @else {
-              <p>No practice recorded · {{ selected.day.dateLabel }}</p>
-            }
-            <a class="popover-action" [routerLink]="step.route" [attr.data-testid]="step.id === 'shadowing' ? 'start-shadowing' : null" (click)="close()">
-              {{ step.status === 'practiced' ? 'Practise again' : step.status === 'in-progress' ? 'Continue' : selected.day.today ? 'Start' : 'Practise today' }}
-            </a>
-          }
+          <p class="review-state" role="status">Loading today's review…</p>
         }
-      } @else {
-        <h3 id="home-popup-title">Box 1 practice</h3>
-        <p>Choose how to practise.</p>
-        <a class="popover-action" routerLink="/review" [queryParams]="{ mode: 'box1' }" (click)="close()">Word by word</a>
-        <a class="popover-action is-secondary" data-testid="start-sentence-practice" routerLink="/sentence" [queryParams]="{ house: 1 }" (click)="close()">Sentence by sentence</a>
+      </div>
+      <div class="review-illustration" aria-hidden="true">
+        <app-navigation-icon name="review" />
+      </div>
+    </mat-card>
+  </section>
+
+  <section class="courses-section" aria-labelledby="your-courses-heading">
+    <h2 id="your-courses-heading">Your Courses</h2>
+
+    @if (selectedCourses.error()) {
+      <div class="course-notice" role="alert">
+        <span>{{ selectedCourses.error() }}</span>
+        <button mat-button type="button" (click)="load()">Try again</button>
+      </div>
+    }
+
+    <div class="course-list" [attr.aria-busy]="selectedCourses.loading() || journeys.loading()">
+      @for (course of courseCards(); track course.collectionId) {
+        <button
+          matRipple
+          type="button"
+          class="course-card"
+          data-testid="home-course-card"
+          [class.is-not-practiced]="!course.practicedToday"
+          [attr.aria-busy]="journeys.enteringId() === course.collectionId"
+          [attr.aria-label]="'Open ' + course.title + ', ' + course.lessonTitle + ', ' + (course.practicedToday ? 'Done' : 'Not practiced')"
+          (click)="openCourse(course)"
+        >
+          <span class="course-icon" aria-hidden="true">
+            <app-navigation-icon [name]="course.icon" />
+          </span>
+          <span class="course-copy">
+            <strong>{{ course.title }}</strong>
+            <span>{{ course.lessonTitle }}</span>
+          </span>
+          <span class="course-status" data-testid="home-course-status" [class.is-done]="course.practicedToday">
+            @if (course.practicedToday) { <span aria-hidden="true">✓</span> Done } @else { Not practiced }
+          </span>
+        </button>
+      } @empty {
+        @if (selectedCourses.loading()) {
+          <p class="course-empty" role="status">Loading your courses…</p>
+        } @else if (!selectedCourses.error()) {
+          <div class="course-empty">
+            <p>No courses selected yet.</p>
+            <a mat-button routerLink="/library">Choose a course</a>
+          </div>
+        }
       }
     </div>
-  </ng-template>
-}
+
+    @if (journeys.error()) {
+      <p class="course-error" role="alert">{{ journeys.error() }}</p>
+    }
+  </section>
+</main>

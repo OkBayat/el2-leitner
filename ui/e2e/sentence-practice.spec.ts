@@ -14,8 +14,6 @@ async function authenticate(page: Page): Promise<void> {
 	await page.getByRole('button', { name: 'Create account' }).click();
 	await expect(page).toHaveURL(/\/dashboard$/u);
 	await dailyActivation;
-	await page.getByTestId('home-box-one').click();
-	await expect(page.getByTestId('start-sentence-practice')).toBeVisible({ timeout: 10_000 });
 }
 
 async function learningState(page: Page): Promise<any> {
@@ -135,7 +133,7 @@ test('Sentence Practice counts daily practice while keeping Leitner progress iso
 	const deckResponsePromise = page.waitForResponse((response) =>
 		response.url().includes('/api/learning/sentence-practice?house=1') && response.status() === 200
 	);
-	await page.getByTestId('start-sentence-practice').click();
+	await page.goto('/sentence?house=1');
 	const deckResponse = await deckResponsePromise;
 	const deckUrl = deckResponse.url();
 	const deck = await page.evaluate(async (url) => {

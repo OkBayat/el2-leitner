@@ -20,7 +20,7 @@ async function authenticate(page: Page, email = ADMIN_EMAIL): Promise<void> {
     await page.getByRole('button', { name: 'Sign in to Vocora' }).click();
   }
   await expect(page).toHaveURL(/\/dashboard$/u);
-  await expect(page.getByText("Today's plan")).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
 }
 
 async function dueTerms(page: Page, minimum = 1): Promise<string[]> {
@@ -104,9 +104,9 @@ test('English LTR Angular app preserves the complete learner and library flow', 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.getByText('Vocora', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("Today's plan")).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Open learning overview' }).click();
+  await page.goto('/overview');
   await expect(page).toHaveURL(/\/overview$/u);
   const houseStatus = page.getByTestId('house-status');
   await expect(houseStatus).toBeVisible();

@@ -81,11 +81,13 @@
 		<a [routerLink]="item.path" routerLinkActive="active-mobile" ariaCurrentWhenActive="page"
 			[attr.aria-label]="item.accessibleLabel" [title]="item.accessibleLabel">
 			<app-navigation-icon [name]="item.icon" />
+			<span class="mobile-nav-label">{{ item.label }}</span>
 		</a>
 	}
 	<button type="button" [matMenuTriggerFor]="moreMenu" [class.active-mobile]="moreActive()"
 		aria-label="More navigation and account" title="More" data-testid="mobile-more">
 		<app-navigation-icon name="account" />
+		<span class="mobile-nav-label">More</span>
 	</button>
 </nav>
 

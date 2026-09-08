@@ -112,10 +112,8 @@ test('native AudioWorklet and real speech API handle silence without changing le
     await page.getByRole('button', { name: 'Create account' }).click();
     await expect(page).toHaveURL(/\/dashboard$/u);
     await dailyActivation;
-    await page.getByTestId('home-shadowing').click();
-    await expect(page.getByTestId('start-shadowing')).toBeVisible();
     const before = await page.evaluate(async () => (await fetch('/api/state', { credentials: 'include' })).json());
-    await page.getByTestId('start-shadowing').click();
+    await page.goto('/shadowing');
     await expect(page.getByTestId('shadowing-session')).toBeVisible();
     await expect(page.getByTestId('shadowing-sentence')).not.toHaveText('');
 

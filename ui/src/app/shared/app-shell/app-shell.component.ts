@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, computed, inject, type OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, QueryList, ViewChild, ViewChildren, computed, effect, inject, type OnInit} from '@angular/core';
 import {NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
@@ -47,10 +47,10 @@ export class AppShellComponent implements OnInit {
 
 	readonly navItems = [
 		{path: '/dashboard', label: 'Home', accessibleLabel: 'Home', icon: 'home', mobile: true},
+		{path: '/library', label: 'Courses', accessibleLabel: 'Courses', icon: 'library', mobile: true},
+		{path: '/review', label: 'Leitner', accessibleLabel: 'Leitner review', icon: 'review', mobile: true},
 		{path: '/bbc-6-minute-english', label: 'Listening', accessibleLabel: 'BBC 6 Minute English', icon: 'listening', mobile: true},
-		{path: '/review', label: "Today's Review", accessibleLabel: "Today's Review", icon: 'review', mobile: true},
 		{path: '/words', label: 'Words', accessibleLabel: 'Words', icon: 'words', mobile: true},
-		{path: '/library', label: 'Library', accessibleLabel: 'Library', icon: 'library', mobile: true},
 		{path: '/reports', label: 'Progress', accessibleLabel: 'Progress', icon: 'progress', mobile: false},
 		{path: '/settings', label: 'Settings', accessibleLabel: 'Settings', icon: 'settings', mobile: false},
 	] as const satisfies readonly NavigationItem[];
@@ -80,10 +80,16 @@ export class AppShellComponent implements OnInit {
 		} : null;
 	});
 
-	async ngOnInit(): Promise<void> {
+	constructor() {
+		effect(() => {
+			const state = this.store.state();
+			if (state) this.theme.apply(state.settings.theme);
+		});
+	}
+
+	ngOnInit(): void {
 		void this.courses.load();
-		const state = await this.store.initialize();
-		this.theme.apply(state.settings.theme);
+		void this.store.initialize().catch(() => undefined);
 	}
 
 	formatCount(value: number | null | undefined): string {

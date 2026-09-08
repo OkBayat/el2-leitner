@@ -1,4 +1,4 @@
-name: Home timeline integration
+name: Home dashboard and timeline integration
 on:
   pull_request:
     paths:
@@ -19,7 +19,7 @@ on:
       - 'back/tests/**/*timeline*'
       - 'back/tests/shadowing-persistence.test.js'
       - 'ui/src/**'
-      - 'ui/e2e/home-timeline.spec.ts'
+      - 'ui/e2e/home-dashboard.spec.ts'
       - 'ui/package*.json'
       - 'ui/angular.json'
       - 'ui/playwright.config.ts'
@@ -45,7 +45,7 @@ on:
       - 'back/tests/**/*timeline*'
       - 'back/tests/shadowing-persistence.test.js'
       - 'ui/src/**'
-      - 'ui/e2e/home-timeline.spec.ts'
+      - 'ui/e2e/home-dashboard.spec.ts'
       - 'ui/package*.json'
       - 'ui/angular.json'
       - 'ui/playwright.config.ts'
@@ -110,7 +110,7 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: Serve the Angular application for isolated timeline browser checks
+      - name: Serve the Angular application for isolated dashboard browser checks
         run: |
           npx ng serve --host 127.0.0.1 --port 3000 > home-server.log 2>&1 &
           for attempt in {1..60}; do
@@ -121,12 +121,12 @@ jobs:
           done
           cat home-server.log
           exit 1
-      - run: npx playwright test e2e/home-timeline.spec.ts --reporter=list
-      - name: Upload timeline screenshots and browser diagnostics
+      - run: npx playwright test e2e/home-dashboard.spec.ts --reporter=list
+      - name: Upload dashboard screenshots and browser diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: home-path-browser
+          name: home-dashboard-browser
           path: |
             ui/test-results
             ui/home-server.log

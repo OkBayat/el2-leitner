@@ -103,6 +103,7 @@ describe('AppShell responsive navigation', () => {
 	const coursesError = signal('');
 	const courseLoad = vi.fn(async () => true);
 	const apply = vi.fn();
+	const initialize = vi.fn(async () => state()!);
 	const logout = vi.fn(async () => undefined);
 	const update = vi.fn(async (mutator: (draft: LearningState) => void) => {
 		const draft = structuredClone(state()!);
@@ -113,6 +114,8 @@ describe('AppShell responsive navigation', () => {
 
 	beforeEach(async () => {
 		vi.clearAllMocks();
+		initialize.mockReset();
+		initialize.mockImplementation(async () => state()!);
 		state.set(fixtureState());
 		selectedCourses.set([bbcCourse]);
 		learningPathView.set(null);
@@ -127,7 +130,7 @@ describe('AppShell responsive navigation', () => {
 					{path: 'reports', component: EmptyPage},
 				]),
 				{provide: AuthService, useValue: {user: signal({id: 'fixture', email: 'learner@example.test'}), logout}},
-				{provide: LearningStoreService, useValue: {state, initialize: vi.fn(async () => state()!), update}},
+				{provide: LearningStoreService, useValue: {state, initialize, update}},
 				{provide: ThemeService, useValue: {apply}},
 				{provide: ShareStoryService, useValue: {open: vi.fn()}},
 				{provide: CollectionLearningPathFacade, useValue: {view: learningPathView}},
@@ -144,19 +147,24 @@ describe('AppShell responsive navigation', () => {
 		return fixture;
 	}
 
-	it('replaces desktop toolbar/tabs with seven sidebar destinations and a six-target mobile dock', async () => {
+	it('uses the shared status and navigation chrome on the dashboard', async () => {
 		const fixture = await render();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('.topbar, .product-tabs')).toBeNull();
 		expect(host.querySelectorAll('.sidebar-links a')).toHaveLength(7);
 		expect(host.querySelectorAll('.mobile-nav a')).toHaveLength(5);
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
-		expect(host.querySelector('.mobile-status')).not.toBeNull();
+		expect(host.querySelectorAll('.mobile-status .status-item')).toHaveLength(4);
+		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
+		expect(host.querySelector('.sidebar-summary')).not.toBeNull();
+		expect(host.querySelector('.shell-workspace.is-dashboard')).toBeNull();
 		expect(host.querySelectorAll('.mobile-nav svg')).toHaveLength(6);
 	});
 
-	it('reserves a desktop right rail and mirrors the mobile learning status in it', async () => {
+	it('keeps status chrome available away from the focused dashboard', async () => {
 		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
 		const host: HTMLElement = fixture.nativeElement;
 		const mobileItems = Array.from(host.querySelectorAll('.mobile-status .status-item'));
 		const desktopItems = Array.from(host.querySelectorAll('[data-testid="desktop-right-rail"] .status-item'));
@@ -168,8 +176,33 @@ describe('AppShell responsive navigation', () => {
 		expect(desktopItems.map(item => item.textContent?.trim())).toEqual(mobileItems.map(item => item.textContent?.trim()));
 	});
 
+	it('labels the mobile dock Home, Courses and Leitner in the requested order', async () => {
+		const fixture = await render();
+		const host: HTMLElement = fixture.nativeElement;
+		const labels = Array.from(host.querySelectorAll('.mobile-nav .mobile-nav-label'))
+			.map(item => item.textContent?.trim());
+		expect(labels.slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
+	});
+
+	it('survives bootstrap failure and applies the stored theme after state recovers', async () => {
+		state.set(null);
+		initialize.mockRejectedValueOnce(new Error('temporarily offline'));
+		const fixture = await render();
+		expect(apply).not.toHaveBeenCalled();
+
+		const recovered = fixtureState();
+		recovered.settings.theme = 'dark';
+		state.set(recovered);
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		expect(apply).toHaveBeenLastCalledWith('dark');
+	});
+
 	it('turns the course flag into the same course-menu trigger on mobile and desktop', async () => {
 		const fixture = await render();
+		await TestBed.inject(Router).navigateByUrl('/settings');
+		fixture.detectChanges();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('[data-testid="mobile-course-trigger"]')).not.toBeNull();
 		expect(host.querySelector('[data-testid="desktop-course-trigger"]')).not.toBeNull();
