@@ -58,7 +58,7 @@ describe('SelectedCoursesFacade', () => {
     expect(result.map((course) => course.id)).toEqual([cambridge.id]);
   });
 
-  it('shows BBC 6 Minute English as the initial course while no Learning Path is selected', () => {
+  it('shows no courses while no Learning Path is selected', () => {
     const result = courseMenuCollections(
       [
         collection({ subscribed: false }),
@@ -67,7 +67,7 @@ describe('SelectedCoursesFacade', () => {
       new Map([['bbc-six-minute-english', '1']]),
     );
 
-    expect(result.map((course) => course.title)).toEqual(['BBC 6 Minute English']);
+    expect(result).toEqual([]);
   });
 
   it('loads My Courses from one Learning Path discovery request instead of probing every collection', async () => {
