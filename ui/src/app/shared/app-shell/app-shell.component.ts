@@ -56,10 +56,6 @@ export class AppShellComponent implements OnInit {
 	] as const satisfies readonly NavigationItem[];
 	readonly mobileNavItems = this.navItems.filter(item => item.mobile);
 	readonly overflowNavItems = this.navItems.filter(item => !item.mobile);
-	readonly dashboardFocused = computed(() => {
-		const path = this.currentUrl().split(/[?#]/u)[0];
-		return path === '/' || path === '/dashboard';
-	});
 	readonly moreActive = computed(() => {
 		const path = this.currentUrl().split(/[?#]/u)[0];
 		return ['/reports', '/settings', '/overview'].some(route => path === route || path.startsWith(`${route}/`));

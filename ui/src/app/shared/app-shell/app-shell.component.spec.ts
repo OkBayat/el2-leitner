@@ -147,14 +147,14 @@ describe('AppShell responsive navigation', () => {
 		return fixture;
 	}
 
-	it('keeps mobile focused while restoring the persistent desktop shell on the dashboard', async () => {
+	it('uses the shared status and navigation chrome on the dashboard', async () => {
 		const fixture = await render();
 		const host: HTMLElement = fixture.nativeElement;
 		expect(host.querySelector('.topbar, .product-tabs')).toBeNull();
 		expect(host.querySelectorAll('.sidebar-links a')).toHaveLength(7);
 		expect(host.querySelectorAll('.mobile-nav a')).toHaveLength(5);
 		expect(host.querySelectorAll('.mobile-nav button')).toHaveLength(1);
-		expect(host.querySelector('.mobile-status')).toBeNull();
+		expect(host.querySelectorAll('.mobile-status .status-item')).toHaveLength(4);
 		expect(host.querySelector('[data-testid="desktop-right-rail"]')).not.toBeNull();
 		expect(host.querySelector('.sidebar-summary')).not.toBeNull();
 		expect(host.querySelector('.shell-workspace.is-dashboard')).toBeNull();

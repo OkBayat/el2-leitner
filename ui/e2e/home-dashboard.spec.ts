@@ -184,7 +184,6 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(american.getByTestId('home-course-status')).toContainText('Not practiced');
 			await expect(bbc.getByTestId('home-course-status')).toContainText('Done');
 			await expect(american).toBeEnabled();
-			await expect(page.locator('.mobile-status')).toHaveCount(0);
 			await expect(dashboard).not.toContainText(/XP|Streak|Mistakes|Achievement|%/u);
 
 			const dashboardBox = (await dashboard.boundingBox())!;
@@ -195,12 +194,14 @@ for (const theme of ['light', 'dark'] as const) {
 				name: 'Mobile navigation',
 			});
 			if (viewport.width < 768) {
+				await expect(page.locator('.mobile-status')).toBeVisible();
 				await expect(page.getByTestId('desktop-right-rail')).toBeHidden();
 				await expect(page.locator('.sidebar-summary')).toBeHidden();
 				await expect(dock).toBeVisible();
 				const labels = await dock.locator('.mobile-nav-label').allTextContents();
 				expect(labels.slice(0, 3)).toEqual(['Home', 'Courses', 'Leitner']);
 			} else {
+				await expect(page.locator('.mobile-status')).toBeHidden();
 				await expect(page.getByTestId('desktop-right-rail')).toBeVisible();
 				await expect(page.locator('.sidebar-summary')).toBeVisible();
 				await expect(dock).toBeHidden();

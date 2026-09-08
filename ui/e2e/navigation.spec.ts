@@ -50,7 +50,7 @@ for (const theme of ['light', 'dark'] as const) {
 			if (width >= 768) {
 				await expect(sidebar).toBeVisible();
 				await expect(dock).toBeHidden();
-				await expect(page.locator('.mobile-status')).toHaveCount(0);
+				await expect(page.locator('.mobile-status')).toBeHidden();
 				await expect(page.locator('.sidebar-summary')).toBeVisible();
 				const rightRail = page.getByTestId('desktop-right-rail');
 				if (width >= 1024) await expect(rightRail).toBeVisible();
@@ -63,7 +63,7 @@ for (const theme of ['light', 'dark'] as const) {
 				expect((await heading.boundingBox())!.y).toBeLessThan(64);
 			} else {
 				await expect(sidebar).toBeHidden();
-				await expect(page.locator('.mobile-status')).toHaveCount(0);
+				await expect(page.locator('.mobile-status')).toBeVisible();
 				await expect(dock).toBeVisible();
 				await expect(dock.locator('a, button')).toHaveCount(6);
 				await expect(dock.getByRole('link', {name: 'Home', exact: true})).toHaveAttribute('aria-current', 'page');
@@ -153,7 +153,7 @@ test('PWA safe areas and the bottom of the dashboard stay clear of the fixed doc
 			document.documentElement.style.setProperty(`--safe-area-${side}`, value);
 		}
 	});
-	await expect(page.locator('.mobile-status')).toHaveCount(0);
+	await expect(page.locator('.mobile-status')).toBeVisible();
 	const dock = page.locator('.mobile-nav');
 	await expect(dock).toHaveCSS('height', '114px');
 	await page.evaluate(() => scrollTo({top: document.documentElement.scrollHeight, behavior: 'instant'}));

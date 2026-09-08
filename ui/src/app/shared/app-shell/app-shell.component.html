@@ -30,7 +30,6 @@
 	</div>
 </aside>
 
-@if (!dashboardFocused()) {
 <header class="mobile-status" aria-label="Learning status">
 	<button class="status-item course-trigger" type="button" [matMenuTriggerFor]="courseMenu"
 		aria-label="Open my courses" title="My courses" data-testid="mobile-course-trigger">
@@ -49,7 +48,6 @@
 		<app-navigation-icon name="progress" /><span>{{ formatCount(stats()?.mastered) }}</span>
 	</a>
 </header>
-}
 
 <div class="shell-workspace" data-testid="desktop-workspace">
 	<main #mainContent id="main-content" class="content" tabindex="-1">
