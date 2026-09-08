@@ -30,6 +30,7 @@
         }
         <app-learning-path-exercise-host
           [context]="context"
+          (engaged)="onExerciseEngaged()"
           (outcome)="onExerciseOutcome($event)"
         />
       </section>

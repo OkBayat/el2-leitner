@@ -63,13 +63,36 @@ describe('ExerciseRunnerFacade', () => {
     facade = TestBed.inject(ExerciseRunnerFacade);
   });
 
-  it('starts an available exercise with the authoritative revision then reloads context', async () => {
-    queryExerciseContext.mockResolvedValueOnce(context('available', 4)).mockResolvedValueOnce(context('in_progress', 5));
+  it('does not start an available exercise merely by opening it', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
     expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).not.toHaveBeenCalled();
+    expect(queryExerciseContext).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.state).toBe('available');
+  });
+
+  it('starts an available exercise on the first meaningful learner interaction', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+
+    expect(await facade.start()).toBe(true);
+
     expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 4);
-    expect(queryExerciseContext).toHaveBeenCalledTimes(2);
-    expect(facade.context()?.state).toBe('in_progress');
-    expect(facade.context()?.path.progressRevision).toBe(5);
+    expect(commandStartExercise).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts before completing when the completion action is the first interaction', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('available', 4));
+    await facade.load('path-1', 'lesson-1', 'exercise-1');
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 6));
+
+    expect(await facade.complete({ kind: 'completed' })).toBe(true);
+
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 4);
+    expect(commandCompleteExercise).toHaveBeenCalledWith(
+      'path-1', 'lesson-1', 'exercise-1', { kind: 'completed' }, 1,
+    );
   });
 
   it('reconciles canonical global Leitner state before exposing scoped quick review', async () => {

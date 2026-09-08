@@ -103,7 +103,7 @@ export class ClozeSlideComponent
 	}
 	override setAnswer(id: string, value: string): void {
 		this.activeBlankId.set(id);
-		super.setAnswer(id, value);
+		super.setAnswer(id, value.replace(/[\r\n]+/g, ' '));
 	}
 	focusBlank(id: string): void {
 		if (this.interactionState() !== 'idle') return;

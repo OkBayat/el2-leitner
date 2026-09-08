@@ -191,6 +191,27 @@ describe('reusable slide renderer contract', () => {
 		fixture.destroy();
 	});
 
+	it('keeps free-text cloze answers single-line when text is pasted', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'text-cloze',
+			type: 'cloze',
+			data: {
+				content: 'Use {{source}} today.',
+				blanks: [{ id: 'source', answers: ['renewable energy'] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea.cloze-input',
+		) as HTMLTextAreaElement;
+		textarea.value = 'renewable\nenergy';
+		textarea.dispatchEvent(new Event('input'));
+
+		expect(fixture.componentInstance.answers()['source']).toBe('renewable energy');
+	});
+
 	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {
 		TestBed.configureTestingModule({
 			imports: [SlideExerciseComponent],

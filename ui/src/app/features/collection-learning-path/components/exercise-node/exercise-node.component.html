@@ -5,7 +5,7 @@
   [attr.data-state]="exercise().state"
   [attr.data-kind]="kind()"
   [attr.data-exercise-type]="exercise().type"
-  [attr.aria-label]="label() + ', ' + stateLabel() + (actionLabel() ? ', ' + actionLabel() : '') + (exercise().required ? '' : ', Optional')"
+  [attr.aria-label]="label() + ', ' + stateLabel() + (accessibleActionLabel() ? ', ' + accessibleActionLabel() : '') + (exercise().required ? '' : ', Optional')"
   (click)="open()"
 >
   <span class="exercise-node__icon" aria-hidden="true">

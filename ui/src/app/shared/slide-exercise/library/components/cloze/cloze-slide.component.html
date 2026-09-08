@@ -79,6 +79,7 @@
 									(input)="
 										setAnswer(field.id, inputFrom($event))
 									"
+									(keydown.enter)="$event.preventDefault()"
 									(focus)="focusBlank(field.id)"
 								></textarea>
 								@if (field.wordLimit) {

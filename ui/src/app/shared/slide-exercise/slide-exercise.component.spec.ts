@@ -224,6 +224,9 @@ describe("SlideExerciseComponent", () => {
 				".slide-exercise-action--guide-return",
 			)?.textContent,
 		).toContain("Back to exercise");
+		expect(
+			fixture.nativeElement.querySelector('[role="progressbar"]'),
+		).toBeNull();
 	});
 
 	it("maps Enter to the current primary action", () => {

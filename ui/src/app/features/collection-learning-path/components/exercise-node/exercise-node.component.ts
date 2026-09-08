@@ -49,6 +49,11 @@ export class ExerciseNodeComponent {
     if (this.exercise().state === 'available' && this.showStart()) return 'START';
     return '';
   });
+  readonly accessibleActionLabel = computed(() => {
+    const visible = this.actionLabel();
+    if (visible) return visible;
+    return this.exercise().state === 'completed' && this.actionable() ? 'Practice again' : '';
+  });
 
   open(): void {
     if (this.actionable()) this.activate.emit(this.exercise().id);

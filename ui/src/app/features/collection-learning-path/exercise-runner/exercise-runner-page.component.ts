@@ -58,6 +58,10 @@ export class ExerciseRunnerPageComponent {
     }
   }
 
+  onExerciseEngaged(): void {
+    void this.facade.start();
+  }
+
   private async loadExercise(state: RunnerRoute): Promise<void> {
     if (await this.facade.load(state.pathId, state.lessonId, state.exerciseId)
       && this.facade.context()?.state === 'completed') {

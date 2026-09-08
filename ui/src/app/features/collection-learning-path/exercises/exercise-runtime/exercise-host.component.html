@@ -1,4 +1,11 @@
-<div class="exercise-host" data-testid="learning-path-exercise-host" [attr.aria-busy]="rendererLoading">
+<div
+  class="exercise-host"
+  data-testid="learning-path-exercise-host"
+  [attr.aria-busy]="rendererLoading"
+  (input)="onInteraction()"
+  (change)="onInteraction()"
+  (click)="onClick($event)"
+>
   <ng-template #outlet></ng-template>
   @if (unsupportedType) {
     <app-unsupported-exercise [type]="unsupportedType" />

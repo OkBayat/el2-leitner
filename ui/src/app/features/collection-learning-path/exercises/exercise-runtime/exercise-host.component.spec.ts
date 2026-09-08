@@ -52,4 +52,23 @@ describe('ExerciseHostComponent', () => {
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('future.exercise');
   });
+
+  it('reports a button interaction as engagement', async () => {
+    TestBed.configureTestingModule({
+      imports: [ExerciseHostComponent],
+      providers: [{ provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }],
+    });
+    const fixture = TestBed.createComponent(ExerciseHostComponent);
+    fixture.componentRef.setInput('context', context());
+    const engaged = vi.fn();
+    fixture.componentInstance.engaged.subscribe(engaged);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    fixture.detectChanges();
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.intake__primary')?.click();
+
+    expect(engaged).toHaveBeenCalledTimes(1);
+  });
 });

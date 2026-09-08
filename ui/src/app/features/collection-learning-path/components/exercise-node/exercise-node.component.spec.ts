@@ -43,6 +43,7 @@ describe('ExerciseNodeComponent', () => {
     expect(button.disabled).toBe(false);
     expect(button.querySelector('.exercise-node__flag')).toBeNull();
     expect(button.querySelector('path')?.getAttribute('d')).toContain('M4 5.8');
+    expect(button.getAttribute('aria-label')).toContain('Practice again');
 
     fixture.componentRef.setInput('exercise', {
       ...exercise,

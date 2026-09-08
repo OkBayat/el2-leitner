@@ -50,7 +50,7 @@ describe('ExerciseRunnerPageComponent', () => {
   });
 
   it('returns to the learning path immediately after successful completion', async () => {
-    const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
+    const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), start: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }] });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
     const router = TestBed.inject(Router);
@@ -60,5 +60,15 @@ describe('ExerciseRunnerPageComponent', () => {
 
     expect(facade.complete).toHaveBeenCalledWith({ kind: 'completed' });
     expect(router.navigate).toHaveBeenCalledWith(['/learning-paths', '1']);
+  });
+
+  it('persists an available exercise only after the host reports engagement', async () => {
+    const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), start: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
+    TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }] });
+    const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
+
+    fixture.componentInstance.onExerciseEngaged();
+
+    expect(facade.start).toHaveBeenCalledTimes(1);
   });
 });

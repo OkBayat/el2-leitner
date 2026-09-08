@@ -44,6 +44,7 @@ function runtimeContext(context: ExerciseContextView): ExerciseContext {
 })
 export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) context!: ExerciseContextView;
+  @Output() readonly engaged = new EventEmitter<void>();
   @Output() readonly outcome = new EventEmitter<ExerciseOutcome>();
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
 
@@ -73,6 +74,20 @@ export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
 
   retryRenderer(): void {
     void this.render();
+  }
+
+  onInteraction(): void {
+    this.engaged.emit();
+  }
+
+  onClick(event: MouseEvent): void {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const control = target.closest('button, [role="button"]');
+    if (!control || control.matches(
+      '.slide-exercise-header__close, .slide-exercise__guide-action, .slide-exercise-action--guide-return',
+    )) return;
+    this.onInteraction();
   }
 
   private async render(): Promise<void> {

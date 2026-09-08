@@ -8,7 +8,7 @@
 		>
 			@if (view.header.visible) {
 				<app-slide-exercise-header
-					[progress]="view.header.progress"
+					[progress]="guideSlide ? null : view.header.progress"
 					(close)="handleClose()"
 				/>
 			}
