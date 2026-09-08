@@ -2,6 +2,7 @@ import {
   VOCABULARY_MASTERY_CHECK_SESSION_MODE,
   createVocabularyMasteryCheckSessionMetadata,
 } from "../../../domain/collection-learning-path/VocabularyMasteryCheck.js";
+import { isLearningPathExerciseRepeatable } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import { ConflictError } from "../../../domain/errors.js";
 import {
   ensureLearningPathProgressAccess,
@@ -52,7 +53,9 @@ export class StartVocabularyMasteryCheck {
         "Exercise prerequisites are not complete.",
       );
     }
-    if (exercise.progress?.status !== "in_progress") {
+    const repeatedPractice = exercise.state === "completed"
+      && isLearningPathExerciseRepeatable(exercise);
+    if (!repeatedPractice && exercise.progress?.status !== "in_progress") {
       throw new ConflictError(
         "LEARNING_PATH_EXERCISE_NOT_STARTED",
         "Start the exercise before starting its mastery check.",

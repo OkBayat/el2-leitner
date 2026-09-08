@@ -1,6 +1,7 @@
 import { ConflictError, ValidationError } from "../../../domain/errors.js";
 import { resolveSlideSequenceDefinition, SLIDE_SEQUENCE_TYPE } from "../../../domain/collection-learning-path/SlideSequenceExercise.js";
 import { validateSlideSequenceRecording } from "../../../domain/collection-learning-path/SlideSequenceRecording.js";
+import { isLearningPathExerciseRepeatable } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import {
   ensureLearningPathProgressAccess,
   loadPathById,
@@ -42,7 +43,10 @@ export class UploadSlideSequenceRecording {
     const current = await projectedPathForUser({ progressReader: this.progressReader, userId, path });
     const lesson = requireProjectedLesson(current.projected, lessonId);
     const exercise = requireProjectedExercise(lesson, exerciseId);
-    if (exercise.state === "locked" || exercise.progress?.status !== "in_progress") {
+    const repeatedPractice = exercise.state === "completed"
+      && isLearningPathExerciseRepeatable(exercise);
+    if (exercise.state === "locked"
+      || (!repeatedPractice && exercise.progress?.status !== "in_progress")) {
       throw new ConflictError(
         "LEARNING_PATH_EXERCISE_NOT_STARTED",
         "Start the exercise before uploading a speaking recording.",

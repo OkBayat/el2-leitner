@@ -68,6 +68,9 @@ function parseExercise(raw, managedIdPrefix, lessonId) {
   const type = text(source.type, `exercise.type for ${id}`, 96);
   const completionPolicy = text(source.completionPolicy, `exercise.completionPolicy for ${id}`, 96);
   const config = jsonObject(source.config ?? {}, `exercise.config for ${id}`);
+  if (config.repeatable !== undefined && typeof config.repeatable !== "boolean") {
+    invalid(`exercise.config.repeatable for ${id} must be a boolean.`);
+  }
   if (config.scope?.kind === LESSON_SOURCE_SCOPE_KIND) {
     const scopeKeys = Object.keys(config.scope);
     if (scopeKeys.length !== 1) invalid(`exercise.config.scope for ${id} must use only kind=lesson-source.`);

@@ -37,7 +37,6 @@ function quickReviewContext(state: ExerciseContextView['state']): ExerciseContex
 
 describe('ExerciseRunnerFacade', () => {
   const queryExerciseContext = vi.fn();
-  const queryResumePoint = vi.fn();
   const commandStartExercise = vi.fn();
   const commandCompleteExercise = vi.fn();
   const refreshAfterSubscriptionChange = vi.fn();
@@ -45,23 +44,18 @@ describe('ExerciseRunnerFacade', () => {
 
   beforeEach(() => {
     queryExerciseContext.mockReset();
-    queryResumePoint.mockReset();
     commandStartExercise.mockReset();
     commandCompleteExercise.mockReset();
     refreshAfterSubscriptionChange.mockReset();
-    queryResumePoint.mockResolvedValue({ pathId: 'path-1', pathStatus: 'in_progress', resumePoint: null, progressRevision: 0 });
     commandStartExercise.mockResolvedValue({ exerciseStatus: 'in_progress', progressRevision: 1 });
-    commandCompleteExercise.mockResolvedValue({
-      pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1', exerciseStatus: 'completed',
-      lessonStatus: 'completed', pathStatus: 'completed', resumePoint: null, progressRevision: 2,
-    });
+    commandCompleteExercise.mockResolvedValue({});
     refreshAfterSubscriptionChange.mockResolvedValue({});
     TestBed.configureTestingModule({
       providers: [
         ExerciseRunnerFacade,
         {
           provide: CollectionLearningPathApiService,
-          useValue: { queryExerciseContext, queryResumePoint, commandStartExercise, commandCompleteExercise },
+          useValue: { queryExerciseContext, commandStartExercise, commandCompleteExercise },
         },
         { provide: LearningStoreService, useValue: { refreshAfterSubscriptionChange } },
       ],
@@ -87,11 +81,32 @@ describe('ExerciseRunnerFacade', () => {
     expect(facade.context()?.exercise.type).toBe('vocabulary.quick-review');
   });
 
-  it('does not mutate locked or already-completed exercises', async () => {
+  it('does not mutate locked exercises', async () => {
     queryExerciseContext.mockResolvedValueOnce(context('locked'));
     await facade.load('path-1', 'lesson-1', 'exercise-1');
     expect(commandStartExercise).not.toHaveBeenCalled();
     expect(facade.context()?.state).toBe('locked');
+  });
+
+  it('starts a fresh practice run for a completed repeatable exercise', async () => {
+    queryExerciseContext.mockResolvedValueOnce(context('completed', 6));
+
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).toHaveBeenCalledWith('path-1', 'lesson-1', 'exercise-1', 6);
+    expect(queryExerciseContext).toHaveBeenCalledTimes(1);
+    expect(facade.context()?.state).toBe('in_progress');
+  });
+
+  it('keeps a completed one-time exercise closed', async () => {
+    const oneTime = context('completed', 6);
+    oneTime.exercise.config = { ...oneTime.exercise.config, repeatable: false };
+    queryExerciseContext.mockResolvedValueOnce(oneTime);
+
+    expect(await facade.load('path-1', 'lesson-1', 'exercise-1')).toBe(true);
+
+    expect(commandStartExercise).not.toHaveBeenCalled();
+    expect(facade.context()?.state).toBe('completed');
   });
 
   it('submits a completed outcome with the loaded revision and reloads server-authoritative completion', async () => {

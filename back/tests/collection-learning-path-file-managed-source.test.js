@@ -138,6 +138,20 @@ test("file-managed source validates a finite course and preserves declarative or
   });
 });
 
+test("file-managed source accepts only boolean repeatable exercise config", () => {
+  const oneTimeSource = rawSource();
+  oneTimeSource.lessons[0].exercises[0].config.repeatable = false;
+  const definition = parseFileManagedLearningPathSource(oneTimeSource);
+  assert.equal(definition.lessons[0].exercises[0].config.repeatable, false);
+
+  const invalidSource = rawSource();
+  invalidSource.lessons[0].exercises[0].config.repeatable = "false";
+  assert.throws(
+    () => parseFileManagedLearningPathSource(invalidSource),
+    /exercise\.config\.repeatable.*boolean/iu,
+  );
+});
+
 test("file-managed source rejects unstable identities, duplicate positions, and cross-collection references", () => {
   assert.throws(() => parseFileManagedLearningPathSource(rawSource({ lessons: [{
     ...rawSource().lessons[0], id: "unit-without-managed-prefix",

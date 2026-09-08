@@ -5,21 +5,11 @@
   [attr.data-state]="exercise().state"
   [attr.data-kind]="kind()"
   [attr.data-exercise-type]="exercise().type"
-  [attr.aria-label]="label() + ', ' + stateLabel() + (exercise().required ? '' : ', Optional')"
+  [attr.aria-label]="label() + ', ' + stateLabel() + (actionLabel() ? ', ' + actionLabel() : '') + (exercise().required ? '' : ', Optional')"
   (click)="open()"
 >
   <span class="exercise-node__icon" aria-hidden="true">
-    @if (exercise().state === 'completed') {
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="m5 12.5 4.2 4.2L19 7" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    } @else if (exercise().state === 'locked') {
-      <svg viewBox="0 0 24 24" fill="none">
-        <rect x="5.5" y="10" width="13" height="10" rx="2.5" stroke="currentColor" stroke-width="2.4" />
-        <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
-      </svg>
-    } @else {
-      @switch (icon()) {
+    @switch (icon()) {
         @case ('book') {
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M4 5.8c2.8-.9 5.2-.2 8 1.5v12c-2.8-1.7-5.2-2.4-8-1.5v-12Zm16 0c-2.8-.9-5.2-.2-8 1.5v12c2.8-1.7 5.2-2.4 8-1.5v-12Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
@@ -52,7 +42,6 @@
             <path d="m12 3 2.5 5.1 5.6.8-4 4 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-4 5.6-.8L12 3Z" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round" />
           </svg>
         }
-      }
     }
   </span>
 

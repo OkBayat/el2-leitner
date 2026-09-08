@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   canOpenLearningPathExercise,
   exerciseTypeLabel,
+  learningPathStartExerciseId,
   learningPathOverviewRoute,
   summarizeLearningPath,
   type LearningPathLessonView,
@@ -37,11 +38,47 @@ describe('Collection Learning Path UI domain', () => {
     });
   });
 
+  it('preserves completed progress for a legacy repeated run state', () => {
+    const repeated = structuredClone(lessons);
+    repeated[0].exercises[0].state = 'in_progress';
+    repeated[0].exercises[0].progress = {
+      status: 'in_progress',
+      startedAt: '2026-09-08T10:00:00.000Z',
+      completedAt: '2026-09-07T10:00:00.000Z',
+      lastActivityAt: '2026-09-08T10:00:00.000Z',
+    };
+
+    expect(summarizeLearningPath(repeated).completedRequiredExercises).toBe(1);
+  });
+
   it('opens only actionable exercises', () => {
     expect(canOpenLearningPathExercise(lessons[1].exercises[0])).toBe(true);
     expect(canOpenLearningPathExercise({ ...lessons[1].exercises[0], state: 'available' })).toBe(true);
     expect(canOpenLearningPathExercise({ ...lessons[1].exercises[0], state: 'locked' })).toBe(false);
-    expect(canOpenLearningPathExercise({ ...lessons[1].exercises[0], state: 'completed' })).toBe(false);
+    expect(canOpenLearningPathExercise({ ...lessons[1].exercises[0], state: 'completed' })).toBe(true);
+    expect(canOpenLearningPathExercise({
+      ...lessons[1].exercises[0],
+      state: 'completed',
+      config: { repeatable: false },
+    })).toBe(false);
+  });
+
+  it('selects one start label only when no unfinished exercise needs continue', () => {
+    expect(learningPathStartExerciseId(lessons)).toBeNull();
+
+    const ready = structuredClone(lessons);
+    ready[1].exercises[0].state = 'completed';
+    ready[1].exercises[1].state = 'available';
+    expect(learningPathStartExerciseId(ready)).toBe('exercise-4');
+
+    ready[1].exercises[0].state = 'in_progress';
+    ready[1].exercises[0].progress = {
+      status: 'in_progress',
+      startedAt: '2026-09-08T10:00:00.000Z',
+      completedAt: '2026-09-07T10:00:00.000Z',
+      lastActivityAt: '2026-09-08T10:00:00.000Z',
+    };
+    expect(learningPathStartExerciseId(ready)).toBe('exercise-4');
   });
 
   it('provides stable human labels without coupling the shell to a renderer registry', () => {

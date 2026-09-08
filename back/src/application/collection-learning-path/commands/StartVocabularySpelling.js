@@ -6,6 +6,7 @@ import {
   resolveVocabularySpellingDefinition,
   vocabularySpellingItemsForScope,
 } from "../../../domain/collection-learning-path/VocabularySpellingPractice.js";
+import { isLearningPathExerciseRepeatable } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import { ConflictError, ValidationError } from "../../../domain/errors.js";
 import {
   ensureLearningPathProgressAccess,
@@ -25,7 +26,9 @@ async function loadStartedExercise({ definitionReader, progressReader, accessRea
   if (exercise.state === "locked") {
     throw new ConflictError("LEARNING_PATH_EXERCISE_LOCKED", "Exercise prerequisites are not complete.");
   }
-  if (exercise.progress?.status !== "in_progress") {
+  const repeatedPractice = exercise.state === "completed"
+    && isLearningPathExerciseRepeatable(exercise);
+  if (!repeatedPractice && exercise.progress?.status !== "in_progress") {
     throw new ConflictError(
       "LEARNING_PATH_EXERCISE_NOT_STARTED",
       "Start the exercise before starting its spelling practice.",

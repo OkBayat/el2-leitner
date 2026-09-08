@@ -18,16 +18,26 @@ html[data-theme='light'] {
   --vocora-text-on-primary: #ffffff;
   --vocora-text-on-strong: #ffffff;
 
-  --vocora-action-primary: #258a49;
-  --vocora-action-primary-hover: #176437;
+  --vocora-action-primary: #58cc02;
+  --vocora-action-primary-hover: #58a700;
+  --vocora-action-primary-edge: #58a700;
+  --vocora-action-primary-foreground: #173500;
   --vocora-action-secondary: #effbf3;
   --vocora-action-secondary-foreground: #176437;
   --vocora-focus-ring: #086f6b;
 
-  --vocora-success: #258a49;
-  --vocora-information: #2563eb;
+  --vocora-success: #58cc02;
+  --vocora-success-surface: #d7ffb8;
+  --vocora-success-foreground: #335f00;
+  --vocora-information: #1cb0f6;
+  --vocora-information-border: #84d8ff;
+  --vocora-information-surface: #ddf4ff;
+  --vocora-information-foreground: #063f5c;
   --vocora-warning: #e99a00;
-  --vocora-error: #d83a3a;
+  --vocora-error: #ff4b4b;
+  --vocora-error-edge: #ea2b2b;
+  --vocora-error-surface: #ffdfe0;
+  --vocora-error-foreground: #4a0000;
 
   --vocora-mastered: #258a49;
   --vocora-leitner-active: #2563eb;
@@ -65,16 +75,26 @@ html[data-theme='dark'] {
   --vocora-text-on-primary: #08130b;
   --vocora-text-on-strong: #f6fff8;
 
-  --vocora-action-primary: #65d780;
-  --vocora-action-primary-hover: #7de392;
+  --vocora-action-primary: #72d72b;
+  --vocora-action-primary-hover: #83e640;
+  --vocora-action-primary-edge: #489b0c;
+  --vocora-action-primary-foreground: #0f2900;
   --vocora-action-secondary: #274b35;
   --vocora-action-secondary-foreground: #ddf7e5;
   --vocora-focus-ring: #42bdb4;
 
-  --vocora-success: #65d780;
-  --vocora-information: #6ea8fe;
+  --vocora-success: #72d72b;
+  --vocora-success-surface: #294217;
+  --vocora-success-foreground: #d7ffb8;
+  --vocora-information: #49c0f8;
+  --vocora-information-border: #2879a0;
+  --vocora-information-surface: #17384a;
+  --vocora-information-foreground: #c8ecff;
   --vocora-warning: #ffc45a;
-  --vocora-error: #ff7b7b;
+  --vocora-error: #ff6b6b;
+  --vocora-error-edge: #cf3c3c;
+  --vocora-error-surface: #4a2023;
+  --vocora-error-foreground: #ffd5d5;
 
   --vocora-mastered: #65d780;
   --vocora-leitner-active: #6ea8fe;

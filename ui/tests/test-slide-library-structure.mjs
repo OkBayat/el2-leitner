@@ -25,6 +25,14 @@ const componentTypes = [
 ];
 const barrelPath = join(libraryRoot, 'slide-library.components.ts');
 const barrel = readFileSync(barrelPath, 'utf8');
+const sharedStyles = readFileSync(
+	join(libraryRoot, 'slide-library.component.scss'),
+	'utf8',
+);
+const clozeTemplate = readFileSync(
+	join(libraryRoot, 'components', 'cloze', 'cloze-slide.component.html'),
+	'utf8',
+);
 
 assert.doesNotMatch(
 	barrel,
@@ -63,5 +71,64 @@ for (const type of componentTypes) {
 		`${type} must remain exported from the public component barrel.`,
 	);
 }
+
+assert.match(
+	sharedStyles,
+	/\[data-state='selected'\][\s\S]*var\(--vocora-information-border\)/u,
+);
+assert.match(
+	sharedStyles,
+	/\[data-state='selected'\][\s\S]*var\(--vocora-information-surface\)/u,
+);
+assert.match(
+	sharedStyles,
+	/\[data-state='selected'\][\s\S]*\.choice-option__number/u,
+);
+assert.match(sharedStyles, /\.choice-option\s*\{[\s\S]*min-height:\s*60px;/u);
+assert.match(
+	sharedStyles,
+	/\.choice-option\[data-state='selected'\][\s\S]*box-shadow:[^;]*var\(--vocora-information-border\)/u,
+);
+assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
+assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
+assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);
+for (const attribute of [
+	'rows="1"',
+	'autocomplete="off"',
+	'autocapitalize="none"',
+	'autocorrect="off"',
+	'spellcheck="false"',
+]) {
+	assert.match(clozeTemplate, new RegExp(attribute, 'u'));
+}
+assert.match(clozeTemplate, /class="cloze-input-measure"/u);
+assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
+assert.doesNotMatch(clozeTemplate, /<mat-select/u);
+assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
+assert.match(clozeTemplate, /class="choice-option"/u);
+assert.match(
+	sharedStyles,
+	/\.cloze-input,\s*\.cloze-choice-blank\s*\{[\s\S]*border-bottom:[^;]*var\(--vocora-border\)/u,
+);
+assert.match(
+	sharedStyles,
+	/\.cloze-input:focus[\s\S]*var\(--vocora-information\)/u,
+);
+assert.match(
+	sharedStyles,
+	/\.cloze-input\s*\{[\s\S]*resize:\s*none;[\s\S]*overflow:\s*hidden;/u,
+);
+assert.match(
+	sharedStyles,
+	/\.inline-field--text:has\(\.cloze-input\)\s*\{[\s\S]*display:\s*inline-grid;/u,
+);
+assert.match(
+	sharedStyles,
+	/\.cloze-input-measure\s*\{[\s\S]*white-space:\s*pre;[\s\S]*visibility:\s*hidden;/u,
+);
+assert.match(
+	sharedStyles,
+	/\.cloze-input\s*\{[\s\S]*position:\s*absolute;[\s\S]*width:\s*100%;/u,
+);
 
 console.log('Reusable slide component structure contract passed.');

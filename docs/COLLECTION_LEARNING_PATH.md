@@ -223,6 +223,14 @@ vocabulary.quick-review
 
 Some future lightweight exercises may legitimately use an explicit completion command if their policy has no stronger evidence source.
 
+Completed exercises are repeatable by default. Opening a repeat is a transient
+practice run and does not change the saved exercise progress from `completed`
+to `in_progress`; leaving immediately therefore cannot create a false Continue
+state. A repeated completion is still verified by the exercise completion
+policy while the original lesson/path completion remains unchanged. Set
+`config.repeatable` to `false` only for an exercise that must become unavailable
+after its first completion.
+
 ### Lesson completion
 
 The UI never sends a trusted `complete lesson` assertion. The backend derives lesson completion after required exercise completion.
@@ -249,6 +257,15 @@ interface ExerciseDefinition<TConfig = unknown> {
   required: boolean;
   completionPolicy: string;
   config: TConfig;
+}
+```
+
+All exercise config objects may use the following shared option in addition to
+their type-specific fields:
+
+```ts
+interface SharedExerciseConfig {
+  repeatable?: boolean; // Defaults to true. False allows only one completion.
 }
 ```
 
@@ -858,7 +875,7 @@ The architecture intentionally does not lock choices that can be decided after t
 - exact visual design of each lesson node;
 - exact number and UX of rapid vocabulary drill variants;
 - scoring thresholds for future mastery revalidation;
-- whether every future exercise permits retakes and how attempts are summarized;
+- how repeated exercise attempts are summarized beyond preserving the original completion;
 - whether optional exercises contribute to future gamification;
 - future branching/prerequisite graphs;
 - future teacher/admin authoring UI.

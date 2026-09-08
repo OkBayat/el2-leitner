@@ -8,6 +8,10 @@ coverage/
 .nyc_output/
 ui/dist/
 ui/.angular/
+.angular/
+.idea/
+ui/.nvmrc
+ui/proxy.conf.json
 ui/playwright-report/
 ui/test-results/
 

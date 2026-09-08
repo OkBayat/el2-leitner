@@ -5,9 +5,6 @@ import {
 	signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -20,6 +17,7 @@ import {
 	stringMode,
 } from '../../slide-library.component-support';
 import {
+	answerMatches,
 	answerFields,
 	record,
 	requiredText,
@@ -68,13 +66,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 @Component({
 	selector: 'app-cloze-slide',
 	standalone: true,
-	imports: [
-		MatButtonModule,
-		MatFormFieldModule,
-		MatInputModule,
-		MatSelectModule,
-		SlideStimulusComponent,
-	],
+	imports: [MatButtonModule, SlideStimulusComponent],
 	templateUrl: './cloze-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -93,7 +85,9 @@ export class ClozeSlideComponent
 		this.begin(context.slideId, data);
 		this.answers.set({});
 		this.segments.set(clozeSegments(data.content));
-		this.activeBlankId.set(data.blanks[0]?.id ?? '');
+		this.activeBlankId.set(
+			data.inputMode === 'select' ? '' : (data.blanks[0]?.id ?? ''),
+		);
 	}
 	blank(id: string | undefined): AnswerField | undefined {
 		return this.data().blanks.find((field) => field.id === id);
@@ -102,12 +96,47 @@ export class ClozeSlideComponent
 		const field = this.blank(id);
 		return field ? this.fieldState(field) : 'neutral';
 	}
+	blankSize(field: AnswerField): number {
+		const currentLength = this.answers()[field.id]?.length ?? 0;
+		const answerLength = Math.max(0, ...field.answers.map((answer) => answer.length));
+		return Math.min(24, Math.max(4, currentLength, answerLength) + 1);
+	}
 	override setAnswer(id: string, value: string): void {
 		this.activeBlankId.set(id);
 		super.setAnswer(id, value);
 	}
 	focusBlank(id: string): void {
+		if (this.interactionState() !== 'idle') return;
 		this.activeBlankId.set(id);
+	}
+	selectChoice(word: string): void {
+		const field =
+			this.blank(this.activeBlankId()) ?? this.data().blanks[0];
+		if (
+			!field ||
+			this.interactionState() !== 'idle' ||
+			!this.data().wordBank?.includes(word)
+		)
+			return;
+		this.setAnswer(field.id, word);
+	}
+	choiceState(
+		word: string,
+	): 'neutral' | 'selected' | 'correct' | 'incorrect' {
+		const field = this.blank(this.activeBlankId());
+		if (!field) return 'neutral';
+		const selected = this.answers()[field.id] === word;
+		if (this.interactionState() === 'idle')
+			return selected ? 'selected' : 'neutral';
+		if (answerMatches(word, field)) return 'correct';
+		return selected ? 'incorrect' : 'neutral';
+	}
+	choiceAriaLabel(word: string, index: number): string {
+		const prefix = `${index + 1}. ${word}`;
+		const state = this.choiceState(word);
+		if (state === 'correct') return `${prefix}, correct answer`;
+		if (state === 'incorrect') return `${prefix}, your answer, incorrect`;
+		return prefix;
 	}
 	useWord(word: string): void {
 		const blanks = this.data().blanks;

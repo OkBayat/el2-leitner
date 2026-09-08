@@ -1,7 +1,7 @@
 @mixin apply() {
   :root {
     --mat-sys-primary: var(--vocora-action-primary);
-    --mat-sys-on-primary: var(--vocora-text-on-primary);
+    --mat-sys-on-primary: var(--vocora-action-primary-foreground);
     --mat-sys-primary-container: var(--vocora-action-secondary);
     --mat-sys-on-primary-container: var(--vocora-action-secondary-foreground);
     --mat-sys-primary-fixed: var(--vocora-action-secondary);
@@ -20,7 +20,7 @@
     --mat-sys-secondary-fixed-dim: var(--vocora-brand-mint);
 
     --mat-sys-tertiary: var(--vocora-information);
-    --mat-sys-on-tertiary: var(--vocora-text-on-primary);
+    --mat-sys-on-tertiary: var(--vocora-information-foreground);
     --mat-sys-tertiary-container: var(--vocora-surface-subtle);
     --mat-sys-on-tertiary-container: var(--vocora-information);
     --mat-sys-tertiary-fixed: var(--vocora-surface-subtle);
@@ -29,9 +29,9 @@
     --mat-sys-tertiary-fixed-dim: var(--vocora-leitner-active);
 
     --mat-sys-error: var(--vocora-error);
-    --mat-sys-on-error: var(--vocora-text-on-primary);
-    --mat-sys-error-container: var(--vocora-surface-subtle);
-    --mat-sys-on-error-container: var(--vocora-error);
+    --mat-sys-on-error: var(--vocora-error-foreground);
+    --mat-sys-error-container: var(--vocora-error-surface);
+    --mat-sys-on-error-container: var(--vocora-error-foreground);
 
     --mat-sys-surface: var(--vocora-surface-page);
     --mat-sys-on-surface: var(--vocora-text-primary);

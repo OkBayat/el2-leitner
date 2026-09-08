@@ -1,4 +1,5 @@
 import { ConflictError } from "../../../domain/errors.js";
+import { isLearningPathExerciseRepeatable } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import {
   ensureLearningPathProgressAccess,
   ensureProgressMutationAccepted,
@@ -42,7 +43,7 @@ export class StartExercise {
         pathId: resourcePublicId(path),
         lessonId: resourcePublicId(lesson),
         exerciseId: resourcePublicId(exercise),
-        exerciseStatus: "completed",
+        exerciseStatus: isLearningPathExerciseRepeatable(exercise) ? "in_progress" : "completed",
         progressRevision: currentRevision,
       };
     }

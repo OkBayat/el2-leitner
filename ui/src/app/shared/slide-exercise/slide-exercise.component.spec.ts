@@ -1,151 +1,407 @@
-import { SimpleChange } from '@angular/core';
-import { describe, expect, it, vi } from 'vitest';
-import { ReviewAnswerSoundService } from '../../core/sound/review-answer-sound.service';
-import { SlideExerciseComponent } from './slide-exercise.component';
-import type { SlideExerciseSlide } from './slide-exercise.models';
+import { SimpleChange } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
+import { MatIconRegistry } from "@angular/material/icon";
+import { DomSanitizer } from "@angular/platform-browser";
+import { describe, expect, it, vi } from "vitest";
+import { ReviewAnswerSoundService } from "../../core/sound/review-answer-sound.service";
+import { SlideExerciseComponent } from "./slide-exercise.component";
+import type { SlideExerciseSlide } from "./slide-exercise.models";
 
-function slide(id: string, type = 'message'): SlideExerciseSlide {
-  return { id, type, data: {} };
+function slide(id: string, type = "message"): SlideExerciseSlide {
+	return { id, type, data: {} };
 }
 
 function createComponent(): {
-  component: SlideExerciseComponent;
-  answerSound: { play: ReturnType<typeof vi.fn>; stop: ReturnType<typeof vi.fn> };
+	component: SlideExerciseComponent;
+	answerSound: {
+		play: ReturnType<typeof vi.fn>;
+		stop: ReturnType<typeof vi.fn>;
+	};
 } {
-  const answerSound = { play: vi.fn(), stop: vi.fn() };
-  return {
-    component: new SlideExerciseComponent(answerSound as unknown as ReviewAnswerSoundService),
-    answerSound,
-  };
+	const answerSound = { play: vi.fn(), stop: vi.fn() };
+	const iconRegistry = { addSvgIconLiteral: vi.fn() };
+	const sanitizer = { bypassSecurityTrustHtml: vi.fn((value) => value) };
+	return {
+		component: new SlideExerciseComponent(
+			answerSound as unknown as ReviewAnswerSoundService,
+			iconRegistry as unknown as MatIconRegistry,
+			sanitizer as unknown as DomSanitizer,
+		),
+		answerSound,
+	};
 }
 
-describe('SlideExerciseComponent', () => {
-  it('preserves the active slide and renderer state when another slide configuration changes', () => {
-    const { component } = createComponent();
-    const initial = [slide('intro'), slide('question', 'choice'), slide('summary', 'summary')];
-    component.slides = initial;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
-    component.goTo('question');
-    component.runtime = { chrome: { footer: { tone: 'success' } } };
+describe("SlideExerciseComponent", () => {
+	it("preserves the active slide and renderer state when another slide configuration changes", () => {
+		const { component } = createComponent();
+		const initial = [
+			slide("intro"),
+			slide("question", "choice"),
+			slide("summary", "summary"),
+		];
+		component.slides = initial;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, initial, true),
+		});
+		component.goTo("question");
+		component.runtime = { chrome: { footer: { tone: "success" } } };
 
-    const updated = [initial[0], initial[1], { ...initial[2], data: { score: 1 } }];
-    component.slides = updated;
-    component.ngOnChanges({ slides: new SimpleChange(initial, updated, false) });
+		const updated = [
+			initial[0],
+			initial[1],
+			{ ...initial[2], data: { score: 1 } },
+		];
+		component.slides = updated;
+		component.ngOnChanges({
+			slides: new SimpleChange(initial, updated, false),
+		});
 
-    expect(component.currentSlide?.id).toBe('question');
-    expect(component.runtime).toEqual({ chrome: { footer: { tone: 'success' } } });
-  });
+		expect(component.currentSlide?.id).toBe("question");
+		expect(component.runtime).toEqual({
+			chrome: { footer: { tone: "success" } },
+		});
+	});
 
-  it('maps Enter to the current primary action', () => {
-    const { component } = createComponent();
-    const slides: SlideExerciseSlide[] = [{
-      id: 'question',
-      type: 'message',
-      data: {},
-      chrome: {
-        footer: {
-          primary: { id: 'check', label: 'Check', behavior: 'emit' },
-        },
-      },
-    }];
-    component.slides = slides;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, slides, true) });
-    const actions: unknown[] = [];
-    component.action.subscribe((action) => actions.push(action));
-    const preventDefault = vi.fn();
+	it("opens a first teaching slide as a guide without leaving or resetting the active slide", () => {
+		const { component } = createComponent();
+		const slides = [
+			slide("guide", "teaching-card"),
+			slide("question", "choice"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+		component.goTo("question");
+		component.runtime = {
+			chrome: { footer: { primary: { disabled: false } } },
+		};
+		const changes: unknown[] = [];
+		component.slideChange.subscribe((change) => changes.push(change));
 
-    component.handleKeyboard({ key: 'Enter', preventDefault } as unknown as KeyboardEvent);
+		expect(component.guideAvailable).toBe(true);
+		component.openGuide();
 
-    expect(preventDefault).toHaveBeenCalledTimes(1);
-    expect(actions).toEqual([{ slideId: 'question', actionId: 'check', behavior: 'emit', slot: 'primary' }]);
-  });
+		expect(component.guideSlide?.id).toBe("guide");
+		expect(component.currentSlide?.id).toBe("question");
+		expect(component.runtime).toEqual({
+			chrome: { footer: { primary: { disabled: false } } },
+		});
+		expect(changes).toEqual([]);
 
-  it('lets a slide insert generated slides while keeping terminal slides last', () => {
-    const { component } = createComponent();
-    const initial: SlideExerciseSlide[] = [
-      slide('scope', 'leitner-house-one-scope'),
-      { ...slide('summary', 'summary'), terminal: true },
-    ];
-    component.slides = initial;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+		component.closeGuide();
 
-    component.insertSlides({
-      anchorId: 'scope',
-      gap: 0,
-      slides: [slide('word-1', 'dictation'), slide('word-2', 'dictation')],
-    });
+		expect(component.guideSlide).toBeNull();
+		expect(component.currentSlide?.id).toBe("question");
+	});
 
-    expect(component.deck.map((item) => item.id)).toEqual(['scope', 'word-1', 'word-2', 'summary']);
-    expect(component.currentSlide?.id).toBe('scope');
-  });
+	it("does not offer a guide when the first slide is not a teaching card", () => {
+		const { component } = createComponent();
+		const slides = [slide("intro"), slide("question", "choice")];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+		component.goTo("question");
 
-  it('schedules a retry after a gap and clamps it before the terminal slide', () => {
-    const { component } = createComponent();
-    const initial: SlideExerciseSlide[] = [
-      slide('word-1', 'dictation'),
-      { ...slide('summary', 'summary'), terminal: true },
-    ];
-    component.slides = initial;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+		expect(component.guideAvailable).toBe(false);
+		component.openGuide();
 
-    component.insertSlides({
-      anchorId: 'word-1',
-      gap: 3,
-      slides: [{ ...slide('word-1-retry', 'dictation'), rootSlideId: 'word-1', retryNumber: 1 }],
-    });
+		expect(component.guideSlide).toBeNull();
+		expect(component.currentSlide?.id).toBe("question");
+	});
 
-    expect(component.deck.map((item) => item.id)).toEqual(['word-1', 'word-1-retry', 'summary']);
-  });
+	it("excludes the leading guide from exercise progress", () => {
+		const { component } = createComponent();
+		const slides = [
+			slide("guide", "teaching-card"),
+			slide("question-1", "choice"),
+			slide("question-2", "choice"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
 
-  it('lets a slide copy itself after three intervening slides through the public deck API', () => {
-    const { component } = createComponent();
-    const initial: SlideExerciseSlide[] = [
-      slide('word-1', 'dictation'),
-      slide('word-2', 'dictation'),
-      slide('word-3', 'dictation'),
-      slide('word-4', 'dictation'),
-      slide('word-5', 'dictation'),
-      { ...slide('summary', 'summary'), terminal: true },
-    ];
-    component.slides = initial;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+		expect(component.presentation?.header.progress).toBeNull();
 
-    component.deckController.insertSlides({
-      anchorId: 'word-1',
-      gap: 3,
-      slides: [{ ...initial[0], id: 'word-1-retry', rootSlideId: 'word-1', retryNumber: 1 }],
-    });
+		component.goTo("question-1");
+		expect(component.presentation?.header.progress).toEqual({
+			value: 50,
+			label: "1 of 2",
+		});
 
-    expect(component.deck.map((item) => item.id)).toEqual([
-      'word-1', 'word-2', 'word-3', 'word-4', 'word-1-retry', 'word-5', 'summary',
-    ]);
-  });
+		component.goTo("question-2");
+		expect(component.presentation?.header.progress).toEqual({
+			value: 100,
+			label: "2 of 2",
+		});
+	});
 
-  it('plays answer feedback once for each scored slide event', () => {
-    const { component, answerSound } = createComponent();
-    const slides = [
-      slide('choice', 'choice'),
-      slide('writing', 'writing-response'),
-      slide('dictation', 'dictation'),
-    ];
-    component.slides = slides;
-    component.ngOnChanges({ slides: new SimpleChange(undefined, slides, true) });
+	it("maps Enter to returning from the guide before the active slide action", () => {
+		const { component } = createComponent();
+		const slides = [
+			slide("guide", "teaching-card"),
+			slide("question", "choice"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+		component.goTo("question");
+		component.openGuide();
+		const actions: unknown[] = [];
+		component.action.subscribe((action) => actions.push(action));
+		const preventDefault = vi.fn();
 
-    component.onContentEvent({ type: 'answered', data: { correct: true } });
-    component.onContentEvent({ type: 'answered', data: { correct: true } });
-    component.next();
-    component.onContentEvent({ type: 'submitted', data: { correct: false } });
-    component.next();
-    component.onContentEvent({ type: 'answered', data: { correct: false } });
+		component.handleKeyboard({
+			key: "Enter",
+			preventDefault,
+		} as unknown as KeyboardEvent);
 
-    expect(answerSound.play.mock.calls).toEqual([['correct'], ['incorrect']]);
-  });
+		expect(preventDefault).toHaveBeenCalledTimes(1);
+		expect(component.guideSlide).toBeNull();
+		expect(actions).toEqual([]);
+	});
 
-  it('stops answer feedback audio when the exercise is destroyed', () => {
-    const { component, answerSound } = createComponent();
+	it("renders the guide icon beside the primary action and a single return action while reading it", () => {
+		TestBed.configureTestingModule({
+			imports: [SlideExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		const slides = [slide("guide", "teaching-card"), slide("question")];
+		fixture.componentRef.setInput("slides", slides);
+		fixture.detectChanges();
+		fixture.componentInstance.goTo("question");
+		fixture.detectChanges();
 
-    component.ngOnDestroy();
+		const guideAction = fixture.nativeElement.querySelector(
+			".slide-exercise__guide-action",
+		);
+		const primaryAction = fixture.nativeElement.querySelector(
+			".slide-exercise-action--primary",
+		);
+		expect(guideAction?.getAttribute("aria-label")).toBe(
+			"Open the exercise guide",
+		);
+		expect(guideAction?.classList).toContain("mat-mdc-icon-button");
+		expect(guideAction?.classList).toContain(
+			"vocora-secondary-icon-action",
+		);
+		const guideIcon = guideAction?.querySelector("mat-icon");
+		expect(guideIcon?.getAttribute("svgicon")).toBe(
+			"exercise-guide-lightbulb",
+		);
+		expect(guideIcon?.classList).not.toContain(
+			"slide-exercise__guide-icon",
+		);
+		expect(guideAction?.querySelector("svg")).not.toBeNull();
+		expect(guideAction?.classList).toContain(
+			"slide-exercise__guide-action--split-start",
+		);
+		expect(primaryAction?.classList).toContain(
+			"slide-exercise-action--split-end",
+		);
+		expect(primaryAction?.querySelector("button")?.classList).toContain(
+			"mat-mdc-unelevated-button",
+		);
 
-    expect(answerSound.stop).toHaveBeenCalledOnce();
-  });
+		guideAction.click();
+		fixture.detectChanges();
+
+		expect(fixture.componentInstance.currentSlide?.id).toBe("question");
+		expect(
+			fixture.nativeElement.querySelector('[data-guide-open="true"]'),
+		).not.toBeNull();
+		expect(
+			fixture.nativeElement.querySelector(
+				".slide-exercise-action--guide-return",
+			)?.textContent,
+		).toContain("Back to exercise");
+	});
+
+	it("maps Enter to the current primary action", () => {
+		const { component } = createComponent();
+		const slides: SlideExerciseSlide[] = [
+			{
+				id: "question",
+				type: "message",
+				data: {},
+				chrome: {
+					footer: {
+						primary: {
+							id: "check",
+							label: "Check",
+							behavior: "emit",
+						},
+					},
+				},
+			},
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+		const actions: unknown[] = [];
+		component.action.subscribe((action) => actions.push(action));
+		const preventDefault = vi.fn();
+
+		component.handleKeyboard({
+			key: "Enter",
+			preventDefault,
+		} as unknown as KeyboardEvent);
+
+		expect(preventDefault).toHaveBeenCalledTimes(1);
+		expect(actions).toEqual([
+			{
+				slideId: "question",
+				actionId: "check",
+				behavior: "emit",
+				slot: "primary",
+			},
+		]);
+	});
+
+	it("lets a slide insert generated slides while keeping terminal slides last", () => {
+		const { component } = createComponent();
+		const initial: SlideExerciseSlide[] = [
+			slide("scope", "leitner-house-one-scope"),
+			{ ...slide("summary", "summary"), terminal: true },
+		];
+		component.slides = initial;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, initial, true),
+		});
+
+		component.insertSlides({
+			anchorId: "scope",
+			gap: 0,
+			slides: [
+				slide("word-1", "dictation"),
+				slide("word-2", "dictation"),
+			],
+		});
+
+		expect(component.deck.map((item) => item.id)).toEqual([
+			"scope",
+			"word-1",
+			"word-2",
+			"summary",
+		]);
+		expect(component.currentSlide?.id).toBe("scope");
+	});
+
+	it("schedules a retry after a gap and clamps it before the terminal slide", () => {
+		const { component } = createComponent();
+		const initial: SlideExerciseSlide[] = [
+			slide("word-1", "dictation"),
+			{ ...slide("summary", "summary"), terminal: true },
+		];
+		component.slides = initial;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, initial, true),
+		});
+
+		component.insertSlides({
+			anchorId: "word-1",
+			gap: 3,
+			slides: [
+				{
+					...slide("word-1-retry", "dictation"),
+					rootSlideId: "word-1",
+					retryNumber: 1,
+				},
+			],
+		});
+
+		expect(component.deck.map((item) => item.id)).toEqual([
+			"word-1",
+			"word-1-retry",
+			"summary",
+		]);
+	});
+
+	it("lets a slide copy itself after three intervening slides through the public deck API", () => {
+		const { component } = createComponent();
+		const initial: SlideExerciseSlide[] = [
+			slide("word-1", "dictation"),
+			slide("word-2", "dictation"),
+			slide("word-3", "dictation"),
+			slide("word-4", "dictation"),
+			slide("word-5", "dictation"),
+			{ ...slide("summary", "summary"), terminal: true },
+		];
+		component.slides = initial;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, initial, true),
+		});
+
+		component.deckController.insertSlides({
+			anchorId: "word-1",
+			gap: 3,
+			slides: [
+				{
+					...initial[0],
+					id: "word-1-retry",
+					rootSlideId: "word-1",
+					retryNumber: 1,
+				},
+			],
+		});
+
+		expect(component.deck.map((item) => item.id)).toEqual([
+			"word-1",
+			"word-2",
+			"word-3",
+			"word-4",
+			"word-1-retry",
+			"word-5",
+			"summary",
+		]);
+	});
+
+	it("plays answer feedback once for each scored slide event", () => {
+		const { component, answerSound } = createComponent();
+		const slides = [
+			slide("choice", "choice"),
+			slide("writing", "writing-response"),
+			slide("dictation", "dictation"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+
+		component.onContentEvent({ type: "answered", data: { correct: true } });
+		component.onContentEvent({ type: "answered", data: { correct: true } });
+		component.next();
+		component.onContentEvent({
+			type: "submitted",
+			data: { correct: false },
+		});
+		component.next();
+		component.onContentEvent({
+			type: "answered",
+			data: { correct: false },
+		});
+
+		expect(answerSound.play.mock.calls).toEqual([
+			["correct"],
+			["incorrect"],
+		]);
+	});
+
+	it("stops answer feedback audio when the exercise is destroyed", () => {
+		const { component, answerSound } = createComponent();
+
+		component.ngOnDestroy();
+
+		expect(answerSound.stop).toHaveBeenCalledOnce();
+	});
 });

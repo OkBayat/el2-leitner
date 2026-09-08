@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
@@ -49,11 +49,16 @@ describe('ExerciseRunnerPageComponent', () => {
     }, { timeout: 2000 });
   });
 
-  it('forwards completed renderer outcomes to the generic runner completion command', () => {
+  it('returns to the learning path immediately after successful completion', async () => {
     const facade = { context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), complete: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({ imports: [ExerciseRunnerPageComponent], providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate: vi.fn() } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }] });
     const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
-    fixture.componentInstance.onExerciseOutcome({ kind: 'completed' });
+    const router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    await fixture.componentInstance.onExerciseOutcome({ kind: 'completed' });
+
     expect(facade.complete).toHaveBeenCalledWith({ kind: 'completed' });
+    expect(router.navigate).toHaveBeenCalledWith(['/learning-paths', '1']);
   });
 });

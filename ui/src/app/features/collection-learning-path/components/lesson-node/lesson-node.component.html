@@ -16,7 +16,11 @@
     <ol class="lesson__exercises" [attr.aria-label]="lesson().title + ' exercises'">
       @for (exercise of lesson().exercises; track exercise.id) {
         <li class="lesson__exercise-row">
-          <app-learning-path-exercise-node [exercise]="exercise" (activate)="select($event)" />
+          <app-learning-path-exercise-node
+            [exercise]="exercise"
+            [showStart]="exercise.id === startExerciseId()"
+            (activate)="select($event)"
+          />
         </li>
       } @empty {
         <li class="lesson__empty">No published exercises yet.</li>

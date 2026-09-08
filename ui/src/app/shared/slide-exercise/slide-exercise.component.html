@@ -1,49 +1,117 @@
 @if (currentSlide; as slide) {
-  @if (presentation; as view) {
-    <section class="slide-exercise" [attr.data-slide-type]="slide.type" data-testid="slide-exercise">
-      @if (view.header.visible) {
-        <app-slide-exercise-header [progress]="view.header.progress" (close)="close.emit()" />
-      }
+	@if (presentation; as view) {
+		<section
+			class="slide-exercise"
+			[attr.data-slide-type]="guideSlide?.type || slide.type"
+			[attr.data-guide-open]="guideSlide ? 'true' : null"
+			data-testid="slide-exercise"
+		>
+			@if (view.header.visible) {
+				<app-slide-exercise-header
+					[progress]="view.header.progress"
+					(close)="handleClose()"
+				/>
+			}
 
-      <main class="slide-exercise__stage">
-        <div class="slide-exercise__content">
-          <app-slide-content-host
-            [slide]="slide"
-            [registry]="registry"
-            [deck]="deckController"
-            [environment]="environment"
-            (stateChange)="onContentState($event)"
-            (event)="onContentEvent($event)"
-          />
-        </div>
-      </main>
+			<main class="slide-exercise__stage">
+				<div
+					class="slide-exercise__content"
+					[hidden]="guideSlide !== null"
+				>
+					<app-slide-content-host
+						[slide]="slide"
+						[registry]="registry"
+						[deck]="deckController"
+						[environment]="environment"
+						(stateChange)="onContentState($event)"
+						(event)="onContentEvent($event)"
+					/>
+				</div>
+				@if (guideSlide; as guide) {
+					<div
+						class="slide-exercise__content slide-exercise__content--guide"
+					>
+						<app-slide-content-host
+							[slide]="guide"
+							[registry]="registry"
+							[deck]="deckController"
+							[environment]="environment"
+						/>
+					</div>
+				}
+			</main>
 
-      @if (view.footer.visible) {
-        <app-slide-exercise-footer
-          [tone]="view.footer.tone"
-          [title]="view.footer.title"
-          [detail]="view.footer.detail"
-        >
-          @if (view.footer.secondary; as secondary) {
-            <app-slide-exercise-action
-              [tone]="secondary.tone"
-              [disabled]="secondary.disabled"
-              [loading]="secondary.loading"
-              [ariaLabel]="secondary.ariaLabel"
-              (pressed)="handleAction(secondary, 'secondary')"
-            >{{ secondary.label }}</app-slide-exercise-action>
-          }
-          @if (view.footer.primary; as primary) {
-            <app-slide-exercise-action
-              [tone]="primary.tone"
-              [disabled]="primary.disabled"
-              [loading]="primary.loading"
-              [ariaLabel]="primary.ariaLabel"
-              (pressed)="handleAction(primary, 'primary')"
-            >{{ primary.label }}</app-slide-exercise-action>
-          }
-        </app-slide-exercise-footer>
-      }
-    </section>
-  }
+			@if (view.footer.visible) {
+				<app-slide-exercise-footer
+					[tone]="guideSlide ? 'neutral' : view.footer.tone"
+					[title]="guideSlide ? '' : view.footer.title"
+					[detail]="guideSlide ? '' : view.footer.detail"
+				>
+					@if (guideSlide) {
+						<app-slide-exercise-action
+							class="slide-exercise-action--guide-return"
+							ariaLabel="Return to the active exercise slide"
+							(pressed)="closeGuide()"
+							>Back to exercise</app-slide-exercise-action
+						>
+					} @else {
+						<div
+							class="slide-exercise__footer-actions"
+							[class.slide-exercise__footer-actions--split]="
+								guideAvailable && !view.footer.secondary
+							"
+						>
+							@if (guideAvailable) {
+								<button
+									mat-icon-button
+									type="button"
+									class="vocora-secondary-icon-action slide-exercise__guide-action"
+									[class.slide-exercise__guide-action--split-start]="
+										!view.footer.secondary
+									"
+									aria-label="Open the exercise guide"
+									(click)="openGuide()"
+								>
+									<mat-icon
+										svgIcon="exercise-guide-lightbulb"
+										aria-hidden="true"
+									/>
+								</button>
+							}
+							@if (view.footer.secondary; as secondary) {
+								<app-slide-exercise-action
+									[tone]="secondary.tone"
+									[disabled]="secondary.disabled"
+									[loading]="secondary.loading"
+									[ariaLabel]="secondary.ariaLabel"
+									(pressed)="
+										handleAction(secondary, 'secondary')
+									"
+									>{{
+										secondary.label
+									}}</app-slide-exercise-action
+								>
+							}
+							@if (view.footer.primary; as primary) {
+								<app-slide-exercise-action
+									class="slide-exercise-action--primary"
+									[class.slide-exercise-action--split-end]="
+										guideAvailable && !view.footer.secondary
+									"
+									[tone]="primary.tone"
+									[disabled]="primary.disabled"
+									[loading]="primary.loading"
+									[ariaLabel]="primary.ariaLabel"
+									(pressed)="handleAction(primary, 'primary')"
+									>{{
+										primary.label
+									}}</app-slide-exercise-action
+								>
+							}
+						</div>
+					}
+				</app-slide-exercise-footer>
+			}
+		</section>
+	}
 }

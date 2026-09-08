@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
 import {
   isCanonicalLearningPathPublicId,
+  learningPathStartExerciseId,
   type LearningPathExerciseSelection,
 } from '../../../domain/collection-learning-path/learning-path';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
@@ -43,6 +44,7 @@ export class LearningPathPageComponent {
     );
   });
   readonly visibleLessons = computed(() => this.facade.view()?.lessons.slice(0, this.visibleLessonCount()) ?? []);
+  readonly startExerciseId = computed(() => learningPathStartExerciseId(this.facade.view()?.lessons ?? []));
   readonly remainingLessonCount = computed(() => Math.max(
     0,
     (this.facade.view()?.lessons.length ?? 0) - this.visibleLessonCount(),

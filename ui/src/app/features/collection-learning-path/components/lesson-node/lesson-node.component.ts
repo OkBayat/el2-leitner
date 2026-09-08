@@ -19,6 +19,7 @@ const LESSON_TRAIL_PALETTES: readonly LessonTrailPalette[] = ['green', 'purple',
 })
 export class LessonNodeComponent {
   readonly lesson = input.required<LearningPathLessonView>();
+  readonly startExerciseId = input<string | null>(null);
   readonly selectExercise = output<LearningPathExerciseSelection>();
   readonly active = computed(() => this.lesson().state === 'available' || this.lesson().state === 'in_progress');
   readonly mirrored = computed(() => this.lesson().position % 2 === 0);

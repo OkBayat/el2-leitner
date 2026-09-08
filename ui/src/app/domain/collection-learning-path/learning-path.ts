@@ -83,6 +83,14 @@ export interface LearningPathExerciseCompletionView {
   progressRevision?: number;
 }
 
+export interface LearningPathExerciseStartView {
+  pathId: string;
+  lessonId: string;
+  exerciseId: string;
+  exerciseStatus: LearningPathNodeState;
+  progressRevision?: number;
+}
+
 export interface ExerciseContextView {
   path: {
     id: string;
@@ -123,7 +131,9 @@ export interface LearningPathPrimaryAction {
 
 export function summarizeLearningPath(lessons: readonly LearningPathLessonView[]): LearningPathSummary {
   const requiredExercises = lessons.flatMap((lesson) => lesson.exercises.filter((exercise) => exercise.required));
-  const completedRequiredExercises = requiredExercises.filter((exercise) => exercise.state === 'completed').length;
+  const completedRequiredExercises = requiredExercises.filter(
+    (exercise) => exercise.state === 'completed' || exercise.progress?.completedAt != null,
+  ).length;
   return {
     completedLessons: lessons.filter((lesson) => lesson.state === 'completed').length,
     totalLessons: lessons.length,
@@ -133,8 +143,34 @@ export function summarizeLearningPath(lessons: readonly LearningPathLessonView[]
   };
 }
 
-export function canOpenLearningPathExercise(exercise: Pick<LearningPathExerciseView, 'state'>): boolean {
-  return exercise.state === 'available' || exercise.state === 'in_progress';
+export function isLearningPathExerciseRepeatable(
+  exercise: Pick<LearningPathExerciseView, 'config'>,
+): boolean {
+  return exercise.config['repeatable'] !== false;
+}
+
+export function canOpenLearningPathExercise(
+  exercise: Pick<LearningPathExerciseView, 'config' | 'state'>,
+): boolean {
+  return exercise.state === 'available'
+    || exercise.state === 'in_progress'
+    || (exercise.state === 'completed' && isLearningPathExerciseRepeatable(exercise));
+}
+
+export function learningPathStartExerciseId(
+  lessons: readonly LearningPathLessonView[],
+): string | null {
+  const exercises = lessons.flatMap((lesson) => lesson.exercises);
+  const hasUnfinishedExercise = exercises.some(
+    (exercise) => exercise.state === 'in_progress' && exercise.progress?.completedAt == null,
+  );
+  if (hasUnfinishedExercise) return null;
+  for (const lesson of lessons) {
+    if (lesson.state === 'completed' || lesson.state === 'locked') continue;
+    const available = lesson.exercises.find((exercise) => exercise.state === 'available');
+    if (available) return available.id;
+  }
+  return null;
 }
 
 export function isCanonicalLearningPathPublicId(value: string): boolean {

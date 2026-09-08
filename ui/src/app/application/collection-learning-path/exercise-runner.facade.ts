@@ -5,8 +5,8 @@ import { LearningStoreService } from '../../core/state/learning-store.service';
 import type {
   CompletedLearningPathExerciseOutcome,
   ExerciseContextView,
-  LearningPathResumeView,
 } from '../../domain/collection-learning-path/learning-path';
+import { isLearningPathExerciseRepeatable } from '../../domain/collection-learning-path/learning-path';
 
 function message(error: unknown): string {
   if (error instanceof ApiError && error.status === 0) {
@@ -26,7 +26,6 @@ export class ExerciseRunnerFacade {
   private requestVersion = 0;
 
   readonly context = signal<ExerciseContextView | null>(null);
-  readonly resume = signal<LearningPathResumeView | null>(null);
   readonly loading = signal(false);
   readonly error = signal('');
 
@@ -34,23 +33,26 @@ export class ExerciseRunnerFacade {
     const request = ++this.requestVersion;
     this.loading.set(true);
     this.error.set('');
-    this.resume.set(null);
     try {
       let context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
       if (context.state === 'available') {
         await this.api.commandStartExercise(pathId, lessonId, exerciseId, context.path.progressRevision ?? 0);
         context = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
+      } else if (context.state === 'completed' && isLearningPathExerciseRepeatable(context.exercise)) {
+        const practice = await this.api.commandStartExercise(
+          pathId,
+          lessonId,
+          exerciseId,
+          context.path.progressRevision ?? 0,
+        );
+        context = { ...context, state: practice.exerciseStatus };
       }
       if (context.exercise.type === 'vocabulary.quick-review'
         || context.exercise.completionPolicy === 'vocabulary-spelling') {
         await this.learningStore.refreshAfterSubscriptionChange();
       }
-      const resume = context.state === 'completed'
-        ? await this.api.queryResumePoint(pathId)
-        : null;
       if (request !== this.requestVersion) return false;
       this.context.set(context);
-      this.resume.set(resume);
       return true;
     } catch (error) {
       if (request === this.requestVersion) {
@@ -72,7 +74,7 @@ export class ExerciseRunnerFacade {
     this.loading.set(true);
     this.error.set('');
     try {
-      const completion = await this.api.commandCompleteExercise(
+      await this.api.commandCompleteExercise(
         current.path.id,
         current.lesson.id,
         current.exercise.id,
@@ -86,12 +88,6 @@ export class ExerciseRunnerFacade {
       );
       if (request !== this.requestVersion) return false;
       this.context.set(refreshed);
-      this.resume.set({
-        pathId: completion.pathId,
-        pathStatus: completion.pathStatus,
-        resumePoint: completion.resumePoint,
-        progressRevision: completion.progressRevision,
-      });
       return true;
     } catch (error) {
       if (request === this.requestVersion) {
@@ -109,12 +105,8 @@ export class ExerciseRunnerFacade {
   private async reconcile(pathId: string, lessonId: string, exerciseId: string, request: number): Promise<boolean> {
     try {
       const refreshed = await this.api.queryExerciseContext(pathId, lessonId, exerciseId);
-      const resume = refreshed.state === 'completed'
-        ? await this.api.queryResumePoint(pathId)
-        : null;
       if (request !== this.requestVersion) return false;
       this.context.set(refreshed);
-      this.resume.set(resume);
       this.error.set(refreshed.state === 'completed'
         ? ''
         : 'Progress changed in another tab. The latest saved state has been restored; continue from here.');

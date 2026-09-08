@@ -1,5 +1,6 @@
 import {
   findLearningPathResumePoint,
+  isLearningPathExerciseRepeatable,
   projectLearningPathProgress,
 } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import { ConflictError, ValidationError } from "../../../domain/errors.js";
@@ -82,8 +83,10 @@ export class CompleteExercise {
     const lesson = requireProjectedLesson(current.projected, lessonId);
     const exercise = requireProjectedExercise(lesson, exerciseId);
     const currentRevision = progressRevision(current.progress);
+    const repeatedPractice = exercise.state === "completed"
+      && isLearningPathExerciseRepeatable(exercise);
 
-    if (exercise.state === "completed") {
+    if (exercise.state === "completed" && !repeatedPractice) {
       return {
         pathId: resourcePublicId(path),
         lessonId: resourcePublicId(lesson),
@@ -101,7 +104,7 @@ export class CompleteExercise {
         "Exercise prerequisites are not complete.",
       );
     }
-    if (exercise.progress?.status !== "in_progress") {
+    if (!repeatedPractice && exercise.progress?.status !== "in_progress") {
       throw new ConflictError(
         "LEARNING_PATH_EXERCISE_NOT_STARTED",
         "Start the exercise before completing it.",
@@ -116,6 +119,18 @@ export class CompleteExercise {
       exercise,
       outcome,
     });
+    if (repeatedPractice) {
+      return {
+        pathId: resourcePublicId(path),
+        lessonId: resourcePublicId(lesson),
+        exerciseId: resourcePublicId(exercise),
+        exerciseStatus: "completed",
+        lessonStatus: lesson.state,
+        pathStatus: current.projected.path.learnerStatus,
+        resumePoint: findLearningPathResumePoint(current.projected),
+        progressRevision: currentRevision,
+      };
+    }
     const at = isoTimestamp(this.clock);
     const nextProgress = progressWithCompletedExercise(current.progress, {
       exerciseId: exercise.id,
@@ -146,7 +161,7 @@ export class CompleteExercise {
         exerciseId: exercise.id,
         status: "completed",
         startedAt: exercise.progress.startedAt,
-        completedAt: at,
+        completedAt: exercise.progress.completedAt ?? at,
         lastActivityAt: at,
         evidenceType: evidence.evidenceType,
         evidenceRef: evidence.evidenceRef,

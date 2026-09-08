@@ -10,6 +10,7 @@ import { REUSABLE_SLIDE_FIXTURES } from './slide-library.fixtures';
 import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
 import {
 	ClassificationSlideComponent,
+	ClozeSlideComponent,
 	MatchingSlideComponent,
 } from './slide-library.components';
 
@@ -53,6 +54,33 @@ describe('reusable slide renderer contract', () => {
 				`rendered content for ${type}`,
 			).not.toBe('');
 			if (type === 'cloze') {
+				const clozeInput = (
+					fixture.nativeElement as HTMLElement
+				).querySelector('textarea.cloze-input');
+				expect(clozeInput).not.toBeNull();
+				expect(clozeInput?.classList).not.toContain(
+					'mat-mdc-input-element',
+				);
+				expect(clozeInput?.closest('mat-form-field')).toBeNull();
+				expect(clozeInput?.getAttribute('rows')).toBe('1');
+				for (const [name, value] of Object.entries({
+					autocomplete: 'off',
+					autocapitalize: 'none',
+					autocorrect: 'off',
+					spellcheck: 'false',
+				})) {
+					expect(clozeInput?.getAttribute(name)).toBe(value);
+				}
+				expect(
+					(fixture.nativeElement as HTMLElement).querySelector(
+						'input.cloze-input',
+					),
+				).toBeNull();
+				expect(
+					(fixture.nativeElement as HTMLElement).querySelector(
+						'.cloze-input-measure',
+					),
+				).not.toBeNull();
 				expect(
 					(fixture.nativeElement as HTMLElement).textContent,
 				).toContain('ONE WORD ONLY');
@@ -112,6 +140,55 @@ describe('reusable slide renderer contract', () => {
 
 		matchingFixture.destroy();
 		classificationFixture.destroy();
+	});
+
+	it('renders select-mode ClozeSlide answers as numbered choice cards', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'select-cloze',
+			type: 'cloze',
+			data: {
+				content: 'If it gets worse, they {{result}}.',
+				inputMode: 'select',
+				wordBank: [
+					'will live forever',
+					'will be happy',
+					"won't do well",
+				],
+				blanks: [{ id: 'result', answers: ["won't do well"] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('mat-select')).toBeNull();
+		expect(element.querySelector('textarea.cloze-input')).toBeNull();
+		expect(
+			element
+				.querySelector('.cloze-choice-blank')
+				?.getAttribute('aria-pressed'),
+		).toBe('false');
+		const choices = element.querySelectorAll(
+			'.cloze-choice-grid .choice-option',
+		);
+		expect(choices).toHaveLength(3);
+		expect(
+			choices[0]?.querySelector('.choice-option__number')?.textContent,
+		).toContain('1');
+
+		(choices[2] as HTMLButtonElement).click();
+		fixture.detectChanges();
+		expect(choices[2]?.getAttribute('data-state')).toBe('selected');
+		expect(choices[2]?.getAttribute('aria-checked')).toBe('true');
+		expect(
+			element
+				.querySelector('.cloze-choice-blank')
+				?.getAttribute('aria-pressed'),
+		).toBe('true');
+		expect(
+			element.querySelector('.cloze-choice-blank')?.textContent,
+		).toContain("won't do well");
+		fixture.destroy();
 	});
 
 	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {

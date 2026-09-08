@@ -3,6 +3,7 @@ import type {
   CollectionLearningPathView,
   CompletedLearningPathExerciseOutcome,
   ExerciseContextView,
+  LearningPathExerciseStartView,
   LearningPathExerciseCompletionView,
   LearningPathResumeView,
 } from '../../domain/collection-learning-path/learning-path';
@@ -61,8 +62,8 @@ export class CollectionLearningPathApiService {
     return this.api.post<LearningPathResumeView>(`/api/learning-paths/${segment(pathId)}/start`);
   }
 
-  commandStartExercise(pathId: string, lessonId: string, exerciseId: string, progressRevision = 0): Promise<unknown> {
-    return this.api.post(`${exercisePath(pathId, lessonId, exerciseId)}/start`, { progressRevision });
+  commandStartExercise(pathId: string, lessonId: string, exerciseId: string, progressRevision = 0): Promise<LearningPathExerciseStartView> {
+    return this.api.post<LearningPathExerciseStartView>(`${exercisePath(pathId, lessonId, exerciseId)}/start`, { progressRevision });
   }
 
   commandActivateVocabularyIntake(

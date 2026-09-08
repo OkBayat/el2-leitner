@@ -17,14 +17,18 @@ function progressMaps(progress) {
   };
 }
 
-function exerciseCompleted(progress) {
-  return progress?.status === "completed";
+function exerciseHasCompleted(progress) {
+  return progress?.status === "completed" || progress?.completedAt != null;
+}
+
+export function isLearningPathExerciseRepeatable(exercise) {
+  return exercise?.config?.repeatable !== false;
 }
 
 function requiredExercisesComplete(exercises, exerciseProgress) {
   return exercises
     .filter((exercise) => exercise.required)
-    .every((exercise) => exerciseCompleted(exerciseProgress.get(String(exercise.id))));
+    .every((exercise) => exerciseHasCompleted(exerciseProgress.get(String(exercise.id))));
 }
 
 function publicExercise(exercise, progress, state) {
@@ -78,7 +82,7 @@ export function projectLearningPathProgress(path, progress = EMPTY_PROGRESS) {
     for (const exercise of lesson.exercises) {
       const exerciseProgress = maps.exercises.get(String(exercise.id)) ?? null;
       let exerciseState;
-      if (exerciseCompleted(exerciseProgress)) {
+      if (exerciseHasCompleted(exerciseProgress)) {
         exerciseState = "completed";
       } else if (!previousLessonsComplete || !previousRequiredExercisesComplete) {
         exerciseState = "locked";
@@ -88,7 +92,7 @@ export function projectLearningPathProgress(path, progress = EMPTY_PROGRESS) {
         exerciseState = "available";
       }
       projectedExercises.push(publicExercise(exercise, exerciseProgress, exerciseState));
-      if (exercise.required && !exerciseCompleted(exerciseProgress)) {
+      if (exercise.required && !exerciseHasCompleted(exerciseProgress)) {
         previousRequiredExercisesComplete = false;
       }
     }

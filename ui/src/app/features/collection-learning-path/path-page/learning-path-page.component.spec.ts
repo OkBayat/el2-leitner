@@ -44,6 +44,7 @@ describe('LearningPathPageComponent', () => {
     const fixture = TestBed.createComponent(LearningPathPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     expect(facade.loadByPathId).toHaveBeenCalledWith('path-1');
     expect(fixture.nativeElement.textContent).toContain('Lesson 1');
+    expect(fixture.nativeElement.textContent).toContain('START');
     expect(fixture.nativeElement.querySelector('[data-testid="lesson-trail"]')).not.toBeNull();
     const router = TestBed.inject(Router); vi.spyOn(router, 'navigate').mockResolvedValue(true);
     await fixture.componentInstance.openExercise({ lessonId: 'lesson-1', exerciseId: 'exercise-1' });

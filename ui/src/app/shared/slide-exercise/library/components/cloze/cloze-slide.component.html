@@ -5,7 +5,7 @@
 		}
 		<section class="slide-interaction">
 			<p class="slide-instruction">
-				{{ data.instruction || 'Complete the gaps.' }}
+				{{ data.instruction || "Complete the gaps." }}
 			</p>
 			<p class="cloze-content">
 				@for (segment of segments(); track $index) {
@@ -13,72 +13,87 @@
 						<span>{{ segment.text }}</span>
 					} @else if (blank(segment.fieldId); as field) {
 						<span
-							class="inline-field"
+							class="inline-field inline-field--text"
 							[attr.data-state]="blankState(field.id)"
 						>
-							@if (data.inputMode === 'select') {
-								<mat-form-field appearance="outline"
-									><mat-label>{{
-										field.label || 'Answer'
-									}}</mat-label
-									><mat-select
-										[value]="answers()[field.id] || ''"
-										[disabled]="
-											interactionState() !== 'idle'
-										"
-										(selectionChange)="
-											setAnswer(field.id, $event.value)
-										"
-										(openedChange)="
-											$event && focusBlank(field.id)
-										"
+							@if (data.inputMode === "select") {
+								<button
+									type="button"
+									class="cloze-choice-blank"
+									[class.cloze-choice-blank--active]="
+										activeBlankId() === field.id
+									"
+									[style.width.ch]="blankSize(field)"
+									[attr.aria-label]="field.label || 'Answer'"
+									[attr.aria-pressed]="
+										activeBlankId() === field.id
+									"
+									[attr.aria-describedby]="
+										field.wordLimit
+											? 'cloze-hint-' + field.id
+											: null
+									"
+									[disabled]="interactionState() !== 'idle'"
+									(click)="focusBlank(field.id)"
+								>
+									{{ answers()[field.id] || "" }}
+								</button>
+								@if (field.wordLimit) {
+									<span
+										class="visually-hidden"
+										[id]="'cloze-hint-' + field.id"
+										>{{ wordLimitLabel(field) }}</span
 									>
-										@for (
-											word of data.wordBank ?? [];
-											track word
-										) {
-											<mat-option [value]="word">{{
-												word
-											}}</mat-option>
-										}
-									</mat-select>
-									@if (field.wordLimit) {
-										<mat-hint>{{
-											wordLimitLabel(field)
-										}}</mat-hint>
-									}
-								</mat-form-field>
+								}
 							} @else {
-								<mat-form-field appearance="outline"
-									><mat-label>{{
-										field.label || 'Answer'
-									}}</mat-label
-									><input
-										matInput
-										[value]="answers()[field.id] || ''"
-										[disabled]="
-											interactionState() !== 'idle'
-										"
-										(input)="
-											setAnswer(
-												field.id,
-												inputFrom($event)
-											)
-										"
-										(focus)="focusBlank(field.id)"
-									/>
-									@if (field.wordLimit) {
-										<mat-hint>{{
-											wordLimitLabel(field)
-										}}</mat-hint>
-									}
-								</mat-form-field>
+								@for (answer of field.answers; track $index) {
+									<span
+										class="cloze-input-measure"
+										aria-hidden="true"
+										>{{ answer }}</span
+									>
+								}
+								<span
+									class="cloze-input-measure"
+									aria-hidden="true"
+									>{{ answers()[field.id] || "" }}</span
+								>
+								<textarea
+									class="cloze-input"
+									rows="1"
+									wrap="off"
+									[value]="answers()[field.id] || ''"
+									[attr.aria-label]="field.label || 'Answer'"
+									[attr.aria-describedby]="
+										field.wordLimit
+											? 'cloze-hint-' + field.id
+											: null
+									"
+									autocomplete="off"
+									autocapitalize="none"
+									autocorrect="off"
+									spellcheck="false"
+									lang="en"
+									enterkeyhint="done"
+									[disabled]="interactionState() !== 'idle'"
+									(input)="
+										setAnswer(field.id, inputFrom($event))
+									"
+									(focus)="focusBlank(field.id)"
+								></textarea>
+								@if (field.wordLimit) {
+									<span
+										class="visually-hidden"
+										[id]="'cloze-hint-' + field.id"
+										>{{ wordLimitLabel(field) }}</span
+									>
+								}
 							}
 						</span>
 					}
 				}
 			</p>
-			@if (data.inputMode === 'word-bank') {
+			@if (data.inputMode === "word-bank") {
 				<div class="chip-list" aria-label="Word bank">
 					@for (word of data.wordBank ?? []; track word) {
 						<button
@@ -88,6 +103,42 @@
 							[disabled]="interactionState() !== 'idle'"
 						>
 							{{ word }}
+						</button>
+					}
+				</div>
+			}
+			@if (data.inputMode === "select") {
+				<div
+					class="cloze-choice-grid choice-grid"
+					role="radiogroup"
+					aria-label="Answer options for the active blank"
+				>
+					@for (
+						word of data.wordBank ?? [];
+						track word;
+						let index = $index
+					) {
+						<button
+							mat-stroked-button
+							type="button"
+							class="choice-option"
+							[attr.data-state]="choiceState(word)"
+							role="radio"
+							[attr.aria-checked]="
+								answers()[activeBlankId()] === word
+							"
+							[attr.aria-label]="choiceAriaLabel(word, index)"
+							[disabled]="interactionState() !== 'idle'"
+							(click)="selectChoice(word)"
+						>
+							<span class="choice-option__content">
+								<span
+									class="choice-option__number"
+									aria-hidden="true"
+									>{{ index + 1 }}</span
+								>
+								<span>{{ word }}</span>
+							</span>
 						</button>
 					}
 				</div>

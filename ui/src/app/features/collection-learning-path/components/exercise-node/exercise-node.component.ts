@@ -26,6 +26,7 @@ const EXERCISE_NODE_ICONS: Readonly<Record<string, ExerciseNodeIcon>> = {
 })
 export class ExerciseNodeComponent {
   readonly exercise = input.required<LearningPathExerciseView>();
+  readonly showStart = input(false);
   readonly activate = output<string>();
   readonly actionable = computed(() => canOpenLearningPathExercise(this.exercise()));
   readonly label = computed(() => exerciseTypeLabel(
@@ -42,8 +43,10 @@ export class ExerciseNodeComponent {
   });
   readonly icon = computed<ExerciseNodeIcon>(() => EXERCISE_NODE_ICONS[this.exercise().type] ?? 'practice');
   readonly actionLabel = computed(() => {
-    if (this.exercise().state === 'in_progress') return 'CONTINUE';
-    if (this.exercise().state === 'available') return 'START';
+    if (this.exercise().state === 'in_progress' && this.exercise().progress?.completedAt == null) {
+      return 'CONTINUE';
+    }
+    if (this.exercise().state === 'available' && this.showStart()) return 'START';
     return '';
   });
 

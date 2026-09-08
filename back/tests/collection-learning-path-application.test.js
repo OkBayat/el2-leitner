@@ -181,7 +181,7 @@ class TransactionManagerFake {
   }
 }
 
-function createHarness({ path = pathDefinition(), access, runtime } = {}) {
+function createHarness({ path = pathDefinition(), access, runtime, clock = () => new Date(NOW) } = {}) {
   const definitionReader = new DefinitionReaderFake(path);
   const progressStore = new ProgressStoreFake();
   const accessReader = new AccessReaderFake(access);
@@ -201,7 +201,7 @@ function createHarness({ path = pathDefinition(), access, runtime } = {}) {
     accessReader,
     transactionManager,
     exerciseRuntime,
-    clock: () => new Date(NOW),
+    clock,
   };
   return {
     definitionReader,
@@ -291,6 +291,91 @@ describe("Collection Learning Path application CQRS", () => {
       harness.progressStore.writeCalls.map(([kind]) => kind),
       ["path", "lesson", "exercise"],
     );
+  });
+
+  it("restarts completed exercises by default without discarding prior completion", async () => {
+    let now = NOW;
+    let verificationCount = 0;
+    const harness = createHarness({
+      path: pathDefinition({
+        lessons: [lesson("lesson-1", 1, [exercise("exercise-1", 1)])],
+      }),
+      clock: () => new Date(now),
+      runtime: {
+        hydrate: async () => ({ ready: true }),
+        verifyCompletion: async () => {
+          verificationCount += 1;
+          return { evidenceType: null, evidenceRef: null };
+        },
+      },
+    });
+    await completeExplicit(harness, "user-1", "lesson-1", "exercise-1");
+    assert.equal(verificationCount, 1);
+    const writesBeforePractice = harness.progressStore.writeCalls.length;
+    now = "2026-09-08T15:00:00.000Z";
+
+    const restart = await harness.commands.startExercise.execute(
+      "user-1",
+      "path-1",
+      "lesson-1",
+      "exercise-1",
+    );
+    const context = await harness.queries.context.execute(
+      "user-1",
+      "path-1",
+      "lesson-1",
+      "exercise-1",
+    );
+    const course = await harness.queries.collection.execute("user-1", "collection-1");
+
+    assert.equal(restart.exerciseStatus, "in_progress");
+    assert.equal(context.state, "completed");
+    assert.equal(context.progress.status, "completed");
+    assert.equal(context.progress.completedAt, NOW);
+    assert.equal(course.lessons[0].state, "completed");
+    assert.equal(course.path.learnerStatus, "completed");
+    assert.equal(harness.progressStore.writeCalls.length, writesBeforePractice);
+
+    const repeatedCompletion = await harness.commands.completeExercise.execute(
+      "user-1",
+      "path-1",
+      "lesson-1",
+      "exercise-1",
+      { kind: "completed" },
+    );
+    assert.equal(repeatedCompletion.exerciseStatus, "completed");
+    assert.equal(verificationCount, 2);
+    const completedAgain = await harness.queries.context.execute(
+      "user-1",
+      "path-1",
+      "lesson-1",
+      "exercise-1",
+    );
+    assert.equal(completedAgain.progress.completedAt, NOW);
+    assert.equal(completedAgain.progress.lastActivityAt, NOW);
+    assert.equal(harness.progressStore.writeCalls.length, writesBeforePractice);
+  });
+
+  it("keeps completed exercises closed when their config explicitly disables repeats", async () => {
+    const harness = createHarness({
+      path: pathDefinition({
+        lessons: [lesson("lesson-1", 1, [
+          exercise("exercise-1", 1, { config: { fixture: "exercise-1", repeatable: false } }),
+        ])],
+      }),
+    });
+    await completeExplicit(harness, "user-1", "lesson-1", "exercise-1");
+    const writesBeforeRestart = harness.progressStore.writeCalls.length;
+
+    const restart = await harness.commands.startExercise.execute(
+      "user-1",
+      "path-1",
+      "lesson-1",
+      "exercise-1",
+    );
+
+    assert.equal(restart.exerciseStatus, "completed");
+    assert.equal(harness.progressStore.writeCalls.length, writesBeforeRestart);
   });
 
   it("hydrates exercise context through the exercise runtime registry instead of the HTTP layer", async () => {

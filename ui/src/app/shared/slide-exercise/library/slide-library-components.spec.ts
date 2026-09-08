@@ -250,6 +250,35 @@ describe('reusable slide library behavior', () => {
 		expect(component.interactionState()).toBe('answered-correct');
 	});
 
+	it('fills the active select-mode ClozeSlide blank from numbered choices', () => {
+		const component = new ClozeSlideComponent();
+		load(component, 'cloze', {
+			content: '{{first}} power reduces {{second}}.',
+			inputMode: 'select',
+			wordBank: ['Renewable', 'emissions', 'pollution'],
+			blanks: [
+				{ id: 'first', answers: ['Renewable'] },
+				{ id: 'second', answers: ['emissions'] },
+			],
+		});
+
+		component.selectChoice('Renewable');
+		expect(component.answers()).toEqual({ first: 'Renewable' });
+		expect(component.choiceState('Renewable')).toBe('selected');
+
+		component.focusBlank('second');
+		expect(component.choiceState('Renewable')).toBe('neutral');
+		component.selectChoice('emissions');
+		expect(component.answers()).toEqual({
+			first: 'Renewable',
+			second: 'emissions',
+		});
+
+		component.handleAction('check');
+		expect(component.interactionState()).toBe('answered-correct');
+		expect(component.choiceState('emissions')).toBe('correct');
+	});
+
 	it('honors exact spelling and rejects unrenderable AnswerField configurations', () => {
 		const component = new ClozeSlideComponent();
 		load(component, 'cloze', {

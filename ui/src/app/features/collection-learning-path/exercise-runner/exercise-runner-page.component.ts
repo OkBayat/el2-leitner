@@ -36,37 +36,38 @@ export class ExerciseRunnerPageComponent {
       };
       this.routeState.set(state);
       if (state.pathId && state.lessonId && state.exerciseId) {
-        void this.facade.load(state.pathId, state.lessonId, state.exerciseId);
+        void this.loadExercise(state);
       }
     });
   }
 
   retry(): void {
     const state = this.routeState();
-    if (state) void this.facade.load(state.pathId, state.lessonId, state.exerciseId);
+    if (state) void this.loadExercise(state);
   }
 
-  onExerciseOutcome(outcome: ExerciseOutcome): void {
+  async onExerciseOutcome(outcome: ExerciseOutcome): Promise<void> {
     if (outcome.kind === 'completed') {
-      void this.facade.complete(outcome);
+      if (await this.facade.complete(outcome)) {
+        await this.returnToLearningPath();
+      }
       return;
     }
     if (outcome.kind === 'cancelled') {
-      const context = this.facade.context();
-      if (context) void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
+      await this.returnToLearningPath();
     }
   }
 
-  continueJourney(): void {
-    const context = this.facade.context();
-    const resumePoint = this.facade.resume()?.resumePoint;
-    if (!context) return;
-    if (resumePoint) {
-      void this.router.navigate([
-        '/learning-paths', context.path.id, 'lessons', resumePoint.lessonId, 'exercises', resumePoint.exerciseId,
-      ]);
-      return;
+  private async loadExercise(state: RunnerRoute): Promise<void> {
+    if (await this.facade.load(state.pathId, state.lessonId, state.exerciseId)
+      && this.facade.context()?.state === 'completed') {
+      await this.returnToLearningPath();
     }
-    void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
+  }
+
+  private async returnToLearningPath(): Promise<void> {
+    const context = this.facade.context();
+    if (!context) return;
+    await this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
   }
 }

@@ -206,6 +206,10 @@ Use for the main action of the current interaction, such as:
 - Continue
 - Submit
 
+Use the shared Angular Material filled-button pattern. Its raised edge may use
+the semantic primary-edge token, but the control must remain flat at rest and
+must not introduce feature-local colors.
+
 ### Secondary button
 
 Use for a valid alternative action with lower emphasis.
@@ -215,6 +219,8 @@ Use for a valid alternative action with lower emphasis.
 Use for low-emphasis actions.
 
 Icon-only controls should maintain an interaction target of at least 44 x 44 CSS pixels where practical.
+Use Angular Material icon buttons for standalone icon actions and provide an
+accessible name when no visible label is present.
 
 Primary-action text/background contrast must be validated independently in both themes.
 
@@ -330,6 +336,10 @@ Forms should be calm and predictable.
 - Do not rely on placeholder text as the only label.
 - Do not use color alone to communicate validation failure.
 - Use semantic tokens for field borders, focus rings, and validation states.
+
+Selected answer options use the information surface and border tokens. Their
+compact marker uses the information foreground token while the answer label
+keeps the primary text color for reading contrast.
 
 ## 19. Tables and dense data
 

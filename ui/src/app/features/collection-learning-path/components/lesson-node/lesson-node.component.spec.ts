@@ -9,13 +9,16 @@ describe('LessonNodeComponent', () => {
   it('renders each lesson as a lesson-first trail and forwards exercise selection with lesson identity', () => {
     TestBed.configureTestingModule({ imports: [LessonNodeComponent] });
     const fixture = TestBed.createComponent(LessonNodeComponent);
-    fixture.componentRef.setInput('lesson', lesson); fixture.detectChanges();
+    fixture.componentRef.setInput('lesson', lesson);
+    fixture.componentRef.setInput('startExerciseId', 'exercise-1');
+    fixture.detectChanges();
     const selected = vi.fn(); fixture.componentInstance.selectExercise.subscribe(selected);
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('.lesson')?.classList.contains('is-active')).toBe(true);
     expect(element.querySelector('.lesson')?.getAttribute('data-palette')).toBe('green');
     expect(element.querySelector('[data-testid="lesson-trail"]')).not.toBeNull();
     expect(element.textContent).toContain('Lesson 1');
+    expect(element.textContent).toContain('START');
     (element.querySelector('button') as HTMLButtonElement).click();
     expect(selected).toHaveBeenCalledWith({ lessonId: 'lesson-1', exerciseId: 'exercise-1' });
   });
