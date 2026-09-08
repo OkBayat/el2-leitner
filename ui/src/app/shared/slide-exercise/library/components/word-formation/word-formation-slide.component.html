@@ -1,0 +1,31 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="word-formation-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Complete the word family.' }}
+			</p>
+			<h1>{{ data.baseWord }}</h1>
+			<div class="word-family-grid">
+				@for (field of data.fields; track field.id) {
+					<mat-form-field
+						appearance="outline"
+						[attr.data-state]="fieldState(field)"
+						><mat-label>{{ field.partOfSpeech }}</mat-label
+						><input
+							matInput
+							[value]="answers()[field.id] || ''"
+							[disabled]="interactionState() !== 'idle'"
+							(input)="setAnswer(field.id, inputFrom($event))"
+						/>
+						@if (field.wordLimit) {
+							<mat-hint>{{ wordLimitLabel(field) }}</mat-hint>
+						}
+					</mat-form-field>
+				}
+			</div>
+		</section>
+	</article>
+}

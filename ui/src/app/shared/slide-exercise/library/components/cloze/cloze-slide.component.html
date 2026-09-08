@@ -1,0 +1,97 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="cloze-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Complete the gaps.' }}
+			</p>
+			<p class="cloze-content">
+				@for (segment of segments(); track $index) {
+					@if (segment.text) {
+						<span>{{ segment.text }}</span>
+					} @else if (blank(segment.fieldId); as field) {
+						<span
+							class="inline-field"
+							[attr.data-state]="blankState(field.id)"
+						>
+							@if (data.inputMode === 'select') {
+								<mat-form-field appearance="outline"
+									><mat-label>{{
+										field.label || 'Answer'
+									}}</mat-label
+									><mat-select
+										[value]="answers()[field.id] || ''"
+										[disabled]="
+											interactionState() !== 'idle'
+										"
+										(selectionChange)="
+											setAnswer(field.id, $event.value)
+										"
+										(openedChange)="
+											$event && focusBlank(field.id)
+										"
+									>
+										@for (
+											word of data.wordBank ?? [];
+											track word
+										) {
+											<mat-option [value]="word">{{
+												word
+											}}</mat-option>
+										}
+									</mat-select>
+									@if (field.wordLimit) {
+										<mat-hint>{{
+											wordLimitLabel(field)
+										}}</mat-hint>
+									}
+								</mat-form-field>
+							} @else {
+								<mat-form-field appearance="outline"
+									><mat-label>{{
+										field.label || 'Answer'
+									}}</mat-label
+									><input
+										matInput
+										[value]="answers()[field.id] || ''"
+										[disabled]="
+											interactionState() !== 'idle'
+										"
+										(input)="
+											setAnswer(
+												field.id,
+												inputFrom($event)
+											)
+										"
+										(focus)="focusBlank(field.id)"
+									/>
+									@if (field.wordLimit) {
+										<mat-hint>{{
+											wordLimitLabel(field)
+										}}</mat-hint>
+									}
+								</mat-form-field>
+							}
+						</span>
+					}
+				}
+			</p>
+			@if (data.inputMode === 'word-bank') {
+				<div class="chip-list" aria-label="Word bank">
+					@for (word of data.wordBank ?? []; track word) {
+						<button
+							mat-stroked-button
+							type="button"
+							(click)="useWord(word)"
+							[disabled]="interactionState() !== 'idle'"
+						>
+							{{ word }}
+						</button>
+					}
+				</div>
+			}
+		</section>
+	</article>
+}

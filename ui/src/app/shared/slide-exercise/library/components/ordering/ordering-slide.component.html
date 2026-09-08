@@ -1,0 +1,49 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="ordering-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Put the items in order.' }}
+			</p>
+			<ol class="ordering-list">
+				@for (
+					item of orderedItems();
+					track item.id;
+					let first = $first;
+					let last = $last
+				) {
+					<li [attr.data-state]="orderState(item.id)">
+						<span>{{ item.label }}</span
+						><span class="ordering-actions"
+							><button
+								mat-icon-button
+								type="button"
+								[disabled]="
+									first || interactionState() !== 'idle'
+								"
+								[attr.aria-label]="'Move ' + item.label + ' up'"
+								(click)="move(item.id, -1)"
+							>
+								↑</button
+							><button
+								mat-icon-button
+								type="button"
+								[disabled]="
+									last || interactionState() !== 'idle'
+								"
+								[attr.aria-label]="
+									'Move ' + item.label + ' down'
+								"
+								(click)="move(item.id, 1)"
+							>
+								↓
+							</button></span
+						>
+					</li>
+				}
+			</ol>
+		</section>
+	</article>
+}

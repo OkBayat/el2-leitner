@@ -1,0 +1,68 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="writing-response-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Write your response.' }}
+			</p>
+			<h1>{{ data.prompt }}</h1>
+			@if (data.register && data.register !== 'neutral') {
+				<span class="mode-label">{{ data.register }} register</span>
+			}
+			@if (data.targetVocabulary?.length) {
+				<mat-chip-set aria-label="Target vocabulary">
+					@for (word of data.targetVocabulary; track word) {
+						<mat-chip>{{ word }}</mat-chip>
+					}
+				</mat-chip-set>
+			}
+			@if (data.planningNotes) {
+				<mat-form-field appearance="outline"
+					><mat-label>Planning notes</mat-label
+					><textarea
+						matInput
+						rows="2"
+						[value]="notes()"
+						[disabled]="interactionState() !== 'idle'"
+						(input)="notes.set(inputFrom($event))"
+					></textarea>
+				</mat-form-field>
+			}
+			<mat-form-field appearance="outline"
+				><mat-label>Your response</mat-label
+				><textarea
+					matInput
+					rows="8"
+					[value]="response()"
+					[disabled]="interactionState() !== 'idle'"
+					(input)="setResponse(inputFrom($event))"
+				></textarea
+				><mat-hint
+					>{{ wordCount() }} words
+					@if (data.recommendedMinimumWords) {
+						· recommended minimum
+						{{ data.recommendedMinimumWords }}
+					}
+				</mat-hint></mat-form-field
+			>
+			@if (remainingSeconds() > 0) {
+				<p class="timer" aria-live="polite">
+					Time remaining: {{ remainingSeconds() }}s
+				</p>
+			}
+			@if (data.modelAnswer) {
+				<div
+					class="answer-review"
+					[class.answer-review--hidden]="
+						interactionState() !== 'revealed'
+					"
+				>
+					<strong>Model answer</strong>
+					<p>{{ data.modelAnswer }}</p>
+				</div>
+			}
+		</section>
+	</article>
+}

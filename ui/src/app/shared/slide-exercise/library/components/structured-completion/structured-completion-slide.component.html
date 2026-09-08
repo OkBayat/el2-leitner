@@ -1,0 +1,113 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="structured-completion-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || 'Complete the information.' }}
+			</p>
+			@if (data.title) {
+				<h1>{{ data.title }}</h1>
+			}
+			@if (data.layout === 'table' && data.rows?.length) {
+				<div class="table-scroll">
+					<table>
+						<thead>
+							<tr>
+								@for (
+									column of data.columns ?? [];
+									track column
+								) {
+									<th scope="col">{{ column }}</th>
+								}
+							</tr>
+						</thead>
+						<tbody>
+							@for (row of data.rows; track row.id) {
+								<tr>
+									@for (cell of row.cells; track $index) {
+										<td>
+											@if (
+												cell.fieldId &&
+													field(cell.fieldId);
+												as answerField
+											) {
+												<mat-form-field
+													appearance="outline"
+													[attr.data-state]="
+														fieldState(answerField)
+													"
+													><mat-label>{{
+														answerField.label ||
+															'Answer'
+													}}</mat-label
+													><input
+														matInput
+														[value]="
+															answers()[
+																answerField.id
+															] || ''
+														"
+														[disabled]="
+															interactionState() !==
+															'idle'
+														"
+														(input)="
+															setAnswer(
+																answerField.id,
+																inputFrom(
+																	$event
+																)
+															)
+														"
+													/>
+													@if (
+														answerField.wordLimit
+													) {
+														<mat-hint>{{
+															wordLimitLabel(
+																answerField
+															)
+														}}</mat-hint>
+													}
+												</mat-form-field>
+											} @else {
+												{{ cell.text }}
+											}
+										</td>
+									}
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			} @else {
+				<div class="structured-fields" [attr.data-layout]="data.layout">
+					@for (answerField of data.fields; track answerField.id) {
+						<mat-form-field
+							appearance="outline"
+							[attr.data-state]="fieldState(answerField)"
+							><mat-label>{{
+								answerField.label || answerField.id
+							}}</mat-label
+							><input
+								matInput
+								[value]="answers()[answerField.id] || ''"
+								[disabled]="interactionState() !== 'idle'"
+								(input)="
+									setAnswer(answerField.id, inputFrom($event))
+								"
+							/>
+							@if (answerField.wordLimit) {
+								<mat-hint>{{
+									wordLimitLabel(answerField)
+								}}</mat-hint>
+							}
+						</mat-form-field>
+					}
+				</div>
+			}
+		</section>
+	</article>
+}

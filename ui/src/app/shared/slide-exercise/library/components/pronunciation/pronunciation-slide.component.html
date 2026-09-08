@@ -1,0 +1,67 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="choice-slide">
+		@if (data.stimulus) {
+			<app-slide-stimulus [stimulus]="data.stimulus" />
+		}
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{
+					data.instruction ||
+						(data.mode === 'multiple'
+							? 'Choose all correct answers.'
+							: 'Choose one answer.')
+				}}
+			</p>
+			<h1>{{ data.question }}</h1>
+			@if (data.speech; as speechPlayback) {
+				@if (speechPlayback.replay) {
+					<button
+						mat-stroked-button
+						type="button"
+						class="speech-replay"
+						[attr.aria-label]="
+							'Play pronunciation for ' + speechPlayback.text
+						"
+						(click)="playSpeech()"
+					>
+						Play pronunciation
+					</button>
+				}
+			}
+			<div
+				class="choice-grid"
+				[attr.role]="data.mode === 'multiple' ? 'group' : 'radiogroup'"
+				aria-label="Answer options"
+			>
+				@for (
+					option of data.options;
+					track option.id;
+					let index = $index
+				) {
+					<button
+						mat-stroked-button
+						type="button"
+						class="choice-option"
+						[attr.data-state]="optionState(option.id)"
+						[attr.role]="
+							data.mode === 'multiple' ? 'checkbox' : 'radio'
+						"
+						[attr.aria-checked]="isSelected(option.id)"
+						[attr.aria-label]="optionAriaLabel(option, index)"
+						[disabled]="interactionState() !== 'idle'"
+						(click)="selectOption(option.id)"
+					>
+						<span class="choice-option__content">
+							<span
+								class="choice-option__number"
+								aria-hidden="true"
+								>{{ index + 1 }}</span
+							>
+							<span>{{ option.label }}</span>
+						</span>
+					</button>
+				}
+			</div>
+		</section>
+	</article>
+}
