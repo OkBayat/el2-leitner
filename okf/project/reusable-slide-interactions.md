@@ -58,9 +58,10 @@ recall, correction, transformation, or independent production.
 
 Reusable slides may use `text`, `audio`, `image`, `chart`, or `diagram` stimuli.
 Text can contain addressable sections; audio can expose a transcript and replay
-limit; visual stimuli require accessible alternative text when an image is
-present. Prefer the stimulus that preserves the evidence source instead of
-copying its information into the question.
+limit; image and diagram stimuli require accessible alternative text. Chart
+stimuli currently permit optional alternative text, but image-backed charts
+should provide it. Prefer the stimulus that preserves the evidence source
+instead of copying its information into the question.
 
 Constructed-answer families share answer contracts for accepted forms, word
 limits, case sensitivity, punctuation sensitivity, and exact spelling. Defaults
