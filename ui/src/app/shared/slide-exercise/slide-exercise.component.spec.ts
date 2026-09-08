@@ -1,5 +1,6 @@
 import { SimpleChange } from '@angular/core';
 import { describe, expect, it, vi } from 'vitest';
+import { ReviewAnswerSoundService } from '../../core/sound/review-answer-sound.service';
 import { SlideExerciseComponent } from './slide-exercise.component';
 import type { SlideExerciseSlide } from './slide-exercise.models';
 
@@ -7,9 +8,20 @@ function slide(id: string, type = 'message'): SlideExerciseSlide {
   return { id, type, data: {} };
 }
 
+function createComponent(): {
+  component: SlideExerciseComponent;
+  answerSound: { play: ReturnType<typeof vi.fn>; stop: ReturnType<typeof vi.fn> };
+} {
+  const answerSound = { play: vi.fn(), stop: vi.fn() };
+  return {
+    component: new SlideExerciseComponent(answerSound as unknown as ReviewAnswerSoundService),
+    answerSound,
+  };
+}
+
 describe('SlideExerciseComponent', () => {
   it('preserves the active slide and renderer state when another slide configuration changes', () => {
-    const component = new SlideExerciseComponent();
+    const { component } = createComponent();
     const initial = [slide('intro'), slide('question', 'choice'), slide('summary', 'summary')];
     component.slides = initial;
     component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
@@ -25,7 +37,7 @@ describe('SlideExerciseComponent', () => {
   });
 
   it('maps Enter to the current primary action', () => {
-    const component = new SlideExerciseComponent();
+    const { component } = createComponent();
     const slides: SlideExerciseSlide[] = [{
       id: 'question',
       type: 'message',
@@ -49,7 +61,7 @@ describe('SlideExerciseComponent', () => {
   });
 
   it('lets a slide insert generated slides while keeping terminal slides last', () => {
-    const component = new SlideExerciseComponent();
+    const { component } = createComponent();
     const initial: SlideExerciseSlide[] = [
       slide('scope', 'leitner-house-one-scope'),
       { ...slide('summary', 'summary'), terminal: true },
@@ -68,7 +80,7 @@ describe('SlideExerciseComponent', () => {
   });
 
   it('schedules a retry after a gap and clamps it before the terminal slide', () => {
-    const component = new SlideExerciseComponent();
+    const { component } = createComponent();
     const initial: SlideExerciseSlide[] = [
       slide('word-1', 'dictation'),
       { ...slide('summary', 'summary'), terminal: true },
@@ -86,7 +98,7 @@ describe('SlideExerciseComponent', () => {
   });
 
   it('lets a slide copy itself after three intervening slides through the public deck API', () => {
-    const component = new SlideExerciseComponent();
+    const { component } = createComponent();
     const initial: SlideExerciseSlide[] = [
       slide('word-1', 'dictation'),
       slide('word-2', 'dictation'),
@@ -107,5 +119,33 @@ describe('SlideExerciseComponent', () => {
     expect(component.deck.map((item) => item.id)).toEqual([
       'word-1', 'word-2', 'word-3', 'word-4', 'word-1-retry', 'word-5', 'summary',
     ]);
+  });
+
+  it('plays answer feedback once for each scored slide event', () => {
+    const { component, answerSound } = createComponent();
+    const slides = [
+      slide('choice', 'choice'),
+      slide('writing', 'writing-response'),
+      slide('dictation', 'dictation'),
+    ];
+    component.slides = slides;
+    component.ngOnChanges({ slides: new SimpleChange(undefined, slides, true) });
+
+    component.onContentEvent({ type: 'answered', data: { correct: true } });
+    component.onContentEvent({ type: 'answered', data: { correct: true } });
+    component.next();
+    component.onContentEvent({ type: 'submitted', data: { correct: false } });
+    component.next();
+    component.onContentEvent({ type: 'answered', data: { correct: false } });
+
+    expect(answerSound.play.mock.calls).toEqual([['correct'], ['incorrect']]);
+  });
+
+  it('stops answer feedback audio when the exercise is destroyed', () => {
+    const { component, answerSound } = createComponent();
+
+    component.ngOnDestroy();
+
+    expect(answerSound.stop).toHaveBeenCalledOnce();
   });
 });

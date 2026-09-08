@@ -5,11 +5,13 @@ import {
   HostListener,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
   SimpleChanges,
   ViewChild,
   signal,
 } from '@angular/core';
+import { ReviewAnswerSoundService } from '../../core/sound/review-answer-sound.service';
 import type { SlideContentEvent } from './slide-content-contracts';
 import { SlideContentHostComponent } from './slide-content-host.component';
 import { createDefaultSlideContentRegistry, type SlideContentRegistry } from './slide-content-registry';
@@ -26,7 +28,7 @@ import { resolveSlideExercisePresentation, validateSlideExerciseSlides, type Sli
   styleUrl: './slide-exercise.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SlideExerciseComponent implements OnChanges {
+export class SlideExerciseComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) slides: readonly SlideExerciseSlide[] = [];
   @Input() defaults: SlideExerciseChromeConfig = {};
   @Input() registry: SlideContentRegistry = createDefaultSlideContentRegistry();
@@ -47,6 +49,8 @@ export class SlideExerciseComponent implements OnChanges {
     next: () => this.next(),
     results: () => this.results(),
   };
+
+  constructor(private readonly answerSound: ReviewAnswerSoundService) {}
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboard(event: KeyboardEvent): void {
@@ -102,8 +106,21 @@ export class SlideExerciseComponent implements OnChanges {
         itemId: slide.itemId,
         data: event.data,
       });
+      if (event.type === 'answered'
+        && event.data !== null
+        && typeof event.data === 'object'
+        && !Array.isArray(event.data)) {
+        const correct = (event.data as Record<string, unknown>)['correct'];
+        if (typeof correct === 'boolean') {
+          this.answerSound.play(correct ? 'correct' : 'incorrect');
+        }
+      }
     }
     this.contentEvent.emit({ slideId: slide.id, type: event.type, data: event.data });
+  }
+
+  ngOnDestroy(): void {
+    this.answerSound.stop();
   }
 
   handleAction(view: SlideExerciseActionView, slot: 'primary' | 'secondary'): void {
