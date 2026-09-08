@@ -321,6 +321,7 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('shares replay-limited audio control with DictationSlide and enforces exact spelling', () => {
+		configure();
 		const audioControl = new SlideAudioControlComponent();
 		audioControl.maxReplays = 1;
 		const play = vi.fn().mockResolvedValue(undefined);
@@ -334,7 +335,9 @@ describe('reusable slide library behavior', () => {
 		} as unknown as HTMLAudioElement);
 		expect(play).toHaveBeenCalledTimes(1);
 
-		const component = new DictationSlideComponent();
+		const component = TestBed.runInInjectionContext(
+			() => new DictationSlideComponent(),
+		);
 		load(component, 'dictation', {
 			audio: '/audio/example.mp3',
 			answer: 'environment',
@@ -343,6 +346,24 @@ describe('reusable slide library behavior', () => {
 		component.setAnswer('Environment');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-incorrect');
+	});
+
+	it('supports browser speech as the playback source for word dictation', () => {
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new DictationSlideComponent(),
+		);
+		load(component, 'dictation', {
+			speech: { text: 'environment', autoplay: true, replay: true },
+			answer: 'environment',
+			acceptedAnswers: ['environment'],
+			caseSensitive: false,
+		});
+
+		expect(speech.speak).toHaveBeenCalledWith('environment', 0.95);
+		component.setAnswer('Environment');
+		component.handleAction('check');
+		expect(component.interactionState()).toBe('answered-correct');
 	});
 
 	it('submits model-only RewriteSlide responses without false scoring', () => {

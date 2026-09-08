@@ -1,10 +1,12 @@
 import type { Observable } from 'rxjs';
-import type { SlideExerciseRuntimeState } from './slide-exercise.models';
+import type { SlideExerciseDeckController, SlideExerciseRuntimeState } from './slide-exercise.models';
 
 export interface SlideContentContext<TData = unknown> {
   readonly slideId: string;
   readonly type: string;
   readonly data: TData;
+  readonly environment?: unknown;
+  readonly deck?: SlideExerciseDeckController;
 }
 
 export interface SlideContentEvent<TData = unknown> {

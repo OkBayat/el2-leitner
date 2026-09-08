@@ -1,0 +1,16 @@
+:host,
+.slide-base-exercise {
+  display: block;
+  min-height: 100%;
+}
+
+.slide-base-exercise__error {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--vocora-space-8) var(--vocora-space-4);
+  color: var(--vocora-text-primary);
+}
+
+.slide-base-exercise__error p {
+  color: var(--vocora-text-secondary);
+}

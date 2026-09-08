@@ -47,4 +47,65 @@ describe('SlideExerciseComponent', () => {
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(actions).toEqual([{ slideId: 'question', actionId: 'check', behavior: 'emit', slot: 'primary' }]);
   });
+
+  it('lets a slide insert generated slides while keeping terminal slides last', () => {
+    const component = new SlideExerciseComponent();
+    const initial: SlideExerciseSlide[] = [
+      slide('scope', 'leitner-house-one-scope'),
+      { ...slide('summary', 'summary'), terminal: true },
+    ];
+    component.slides = initial;
+    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+
+    component.insertSlides({
+      anchorId: 'scope',
+      gap: 0,
+      slides: [slide('word-1', 'dictation'), slide('word-2', 'dictation')],
+    });
+
+    expect(component.deck.map((item) => item.id)).toEqual(['scope', 'word-1', 'word-2', 'summary']);
+    expect(component.currentSlide?.id).toBe('scope');
+  });
+
+  it('schedules a retry after a gap and clamps it before the terminal slide', () => {
+    const component = new SlideExerciseComponent();
+    const initial: SlideExerciseSlide[] = [
+      slide('word-1', 'dictation'),
+      { ...slide('summary', 'summary'), terminal: true },
+    ];
+    component.slides = initial;
+    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+
+    component.insertSlides({
+      anchorId: 'word-1',
+      gap: 3,
+      slides: [{ ...slide('word-1-retry', 'dictation'), rootSlideId: 'word-1', retryNumber: 1 }],
+    });
+
+    expect(component.deck.map((item) => item.id)).toEqual(['word-1', 'word-1-retry', 'summary']);
+  });
+
+  it('lets a slide copy itself after three intervening slides through the public deck API', () => {
+    const component = new SlideExerciseComponent();
+    const initial: SlideExerciseSlide[] = [
+      slide('word-1', 'dictation'),
+      slide('word-2', 'dictation'),
+      slide('word-3', 'dictation'),
+      slide('word-4', 'dictation'),
+      slide('word-5', 'dictation'),
+      { ...slide('summary', 'summary'), terminal: true },
+    ];
+    component.slides = initial;
+    component.ngOnChanges({ slides: new SimpleChange(undefined, initial, true) });
+
+    component.deckController.insertSlides({
+      anchorId: 'word-1',
+      gap: 3,
+      slides: [{ ...initial[0], id: 'word-1-retry', rootSlideId: 'word-1', retryNumber: 1 }],
+    });
+
+    expect(component.deck.map((item) => item.id)).toEqual([
+      'word-1', 'word-2', 'word-3', 'word-4', 'word-1-retry', 'word-5', 'summary',
+    ]);
+  });
 });

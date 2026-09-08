@@ -48,6 +48,8 @@ export class ReviewSessionService {
   private preparedNewIds: string[] = [];
   private repeatBoxOneCycle = true;
   private remediationEnabled = true;
+  private completionPending = false;
+  private completionDurationSeconds: number | null = null;
 
   readonly currentWord = this.currentWordSignal.asReadonly();
   readonly active = this.activeSignal.asReadonly();
@@ -92,9 +94,20 @@ export class ReviewSessionService {
   }
 
   async startScopedBoxOne(ids: readonly string[]): Promise<boolean> {
+    return this.startScopedBoxOneSession(ids, 'learning-path.quick-review', false);
+  }
+
+  async openLearningPathSpelling(ids: readonly string[], sessionId: string): Promise<boolean> {
     await this.store.initialize();
-    const state = this.store.snapshot();
-    const requested = new Set(ids.map(String));
+    const normalizedSessionId = String(sessionId ?? '').trim();
+    const requestedIds = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
+    if (!normalizedSessionId || requestedIds.length === 0) return false;
+    const wordsById = new Map(this.store.snapshot().words.map((word) => [String(word.id), word] as const));
+    const queue = requestedIds.flatMap((id) => wordsById.get(id)?.box === 1 ? [id] : []);
+    if (queue.length !== requestedIds.length) {
+      await this.learningApi.abandonSession(normalizedSessionId, 0);
+      return false;
+    }
     this.mode = 'box1';
     this.repeatBoxOneCycle = false;
     this.remediationEnabled = false;
@@ -103,10 +116,32 @@ export class ReviewSessionService {
     this.rechecks.clear();
     this.remediationAttempt = null;
     this.currentRecheck = null;
-    this.queue = state.words
-      .filter((word) => requested.has(String(word.id)) && word.box === 1)
-      .map((word) => word.id);
-    return this.openBackendSession('learning-path.quick-review', this.queue);
+    this.queue = queue;
+    return this.openExistingBackendSession(normalizedSessionId, this.queue);
+  }
+
+  private async startScopedBoxOneSession(
+    ids: readonly string[],
+    sessionMode: string,
+    preserveRequestedOrder: boolean,
+  ): Promise<boolean> {
+    await this.store.initialize();
+    const state = this.store.snapshot();
+    const requestedIds = [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))];
+    const requested = new Set(requestedIds);
+    this.mode = 'box1';
+    this.repeatBoxOneCycle = false;
+    this.remediationEnabled = false;
+    this.completedSessionIdSignal.set(null);
+    this.freePracticeSignal.set(true);
+    this.rechecks.clear();
+    this.remediationAttempt = null;
+    this.currentRecheck = null;
+    const wordsById = new Map(state.words.map((word) => [String(word.id), word] as const));
+    this.queue = preserveRequestedOrder
+      ? requestedIds.flatMap((id) => wordsById.get(id)?.box === 1 ? [id] : [])
+      : state.words.filter((word) => requested.has(String(word.id)) && word.box === 1).map((word) => word.id);
+    return this.openBackendSession(sessionMode, this.queue);
   }
 
   async startScopedMasteryCheck(ids: readonly string[], sessionId: string): Promise<boolean> {
@@ -153,6 +188,8 @@ export class ReviewSessionService {
     this.correctSignal.set(0);
     this.wrongSignal.set(0);
     this.completedSignal.set(false);
+    this.completionPending = false;
+    this.completionDurationSeconds = null;
     this.activeSignal.set(true);
     this.feedbackSignal.set(null);
     this.remediationSignal.set(null);
@@ -245,6 +282,11 @@ export class ReviewSessionService {
 
   async next(): Promise<void> {
     if (!this.canAdvanceSignal()) return;
+    if (this.completionPending) {
+      this.canAdvanceSignal.set(false);
+      await this.finishPendingSession();
+      return;
+    }
     const completedReviewCard = this.currentTaskSignal() === 'review';
     this.feedbackSignal.set(null);
     this.remediationSignal.set(null);
@@ -252,7 +294,19 @@ export class ReviewSessionService {
     this.canAdvanceSignal.set(false);
     if (completedReviewCard) this.rechecks.advance();
     this.nextTask(completedReviewCard);
-    if (!this.currentWordSignal()) await this.finish();
+    if (!this.currentWordSignal()) {
+      this.completionPending = true;
+      await this.finishPendingSession();
+    }
+  }
+
+  private async finishPendingSession(): Promise<void> {
+    try {
+      await this.finish();
+    } catch (error) {
+      this.canAdvanceSignal.set(true);
+      throw error;
+    }
   }
 
   private nextTask(_advanced: boolean): void {
@@ -287,9 +341,9 @@ export class ReviewSessionService {
   }
 
   private async finish(): Promise<void> {
-    this.activeSignal.set(false);
-    this.completedSignal.set(true);
-    const durationSeconds = Math.max(0, Math.round((Date.now() - this.startedAt) / 1000));
+    const durationSeconds = this.completionDurationSeconds
+      ?? Math.max(0, Math.round((Date.now() - this.startedAt) / 1000));
+    this.completionDurationSeconds = durationSeconds;
     const completedSessionId = this.backendSessionId;
     if (this.backendSessionId) {
       await this.learningApi.completeSession(this.backendSessionId, {
@@ -301,14 +355,19 @@ export class ReviewSessionService {
       daily.sessions += 1;
       daily.durationSeconds += durationSeconds;
     });
+    this.activeSignal.set(false);
+    this.completedSignal.set(true);
     this.completedSessionIdSignal.set(completedSessionId);
     this.backendSessionId = null;
+    this.completionPending = false;
   }
 
   async abandon(): Promise<void> {
     if (this.backendSessionId) await this.learningApi.abandonSession(this.backendSessionId, Math.max(0, Math.round((Date.now() - this.startedAt) / 1000)));
     this.speech.cancel();
     this.backendSessionId = null;
+    this.completionPending = false;
+    this.completionDurationSeconds = null;
     this.completedSessionIdSignal.set(null);
     this.queue = [];
     this.rechecks.clear();

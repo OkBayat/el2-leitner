@@ -1974,6 +1974,13 @@ function parseDictation(value: unknown): DictationSlideData {
 	const source = record(value);
 	const answer = requiredText(source['answer'], 'Dictation answer');
 	const maxReplays = Number(source['maxReplays']);
+	const audio = text(source['audio']);
+	const speechSource = source['speech'] === undefined
+		? null
+		: record(source['speech'], 'dictation speech playback');
+	if (Boolean(audio) === Boolean(speechSource)) {
+		throw new Error('Dictation requires exactly one audio or speech playback source.');
+	}
 	return {
 		...common(source),
 		mode: stringMode(
@@ -1981,7 +1988,12 @@ function parseDictation(value: unknown): DictationSlideData {
 			['word', 'phrase', 'sentence'] as const,
 			'word',
 		),
-		audio: requiredText(source['audio'], 'Dictation audio'),
+		audio: audio || undefined,
+		speech: speechSource ? {
+			text: requiredText(speechSource['text'], 'Dictation speech playback text'),
+			autoplay: speechSource['autoplay'] === true,
+			replay: speechSource['replay'] !== false,
+		} : undefined,
 		answer,
 		acceptedAnswers: strings(source['acceptedAnswers']),
 		maxReplays:
@@ -2011,14 +2023,20 @@ function parseDictation(value: unknown): DictationSlideData {
 				<p class="slide-instruction">
 					{{ data.instruction || 'Listen and type what you hear.' }}
 				</p>
-				<app-slide-audio-control
-					[src]="data.audio"
-					[maxReplays]="data.maxReplays"
-					buttonLabel="Play audio"
-					playLabel="Play dictation audio"
-					audioLabel="Dictation audio"
-					(replayCountChange)="replayCount.set($event)"
-				/>
+				@if (data.audio) {
+					<app-slide-audio-control
+						[src]="data.audio"
+						[maxReplays]="data.maxReplays"
+						buttonLabel="Play audio"
+						playLabel="Play dictation audio"
+						audioLabel="Dictation audio"
+						(replayCountChange)="replayCount.set($event)"
+					/>
+				} @else if (data.speech?.replay) {
+					<button mat-stroked-button type="button" [disabled]="!canReplay()" aria-label="Play dictation pronunciation" (click)="playSpeech()">
+						Play pronunciation
+					</button>
+				}
 				<mat-form-field
 					appearance="outline"
 					[attr.data-state]="answerState()"
@@ -2048,6 +2066,8 @@ export class DictationSlideComponent
 	extends ScoredSlideBase<DictationSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	private readonly speech = inject(SpeechService);
+	private readonly store = inject(LearningStoreService);
 	readonly answer = signal('');
 	readonly replayCount = signal(0);
 	inputFrom(event: Event): string {
@@ -2057,6 +2077,18 @@ export class DictationSlideComponent
 		this.begin(context.slideId, parseDictation(context.data));
 		this.answer.set('');
 		this.replayCount.set(0);
+		if (this.data().speech?.autoplay) this.playSpeech();
+	}
+	canReplay(): boolean {
+		return !this.data().maxReplays || this.replayCount() < this.data().maxReplays!;
+	}
+	playSpeech(): boolean {
+		const playback = this.data().speech;
+		if (!playback || !this.canReplay()) return false;
+		const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+		const played = this.speech.speak(playback.text, rate);
+		if (played) this.replayCount.update((count) => count + 1);
+		return played;
 	}
 	setAnswer(value: string): void {
 		if (this.interactionState() !== 'idle') return;
@@ -2088,6 +2120,7 @@ export class DictationSlideComponent
 		);
 	}
 	ngOnDestroy(): void {
+		this.speech.cancel();
 		this.destroy();
 	}
 }

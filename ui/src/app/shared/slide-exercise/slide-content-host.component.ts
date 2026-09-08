@@ -17,7 +17,7 @@ import {
 import { Subscription } from 'rxjs';
 import type { SlideContentComponent, SlideContentEvent } from './slide-content-contracts';
 import type { SlideContentRegistry } from './slide-content-registry';
-import type { SlideExerciseRuntimeState, SlideExerciseSlide } from './slide-exercise.models';
+import type { SlideExerciseDeckController, SlideExerciseRuntimeState, SlideExerciseSlide } from './slide-exercise.models';
 
 @Component({
   selector: 'app-slide-content-host',
@@ -29,6 +29,8 @@ import type { SlideExerciseRuntimeState, SlideExerciseSlide } from './slide-exer
 export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) slide!: SlideExerciseSlide;
   @Input({ required: true }) registry!: SlideContentRegistry;
+  @Input({ required: true }) deck!: SlideExerciseDeckController;
+  @Input() environment?: unknown;
   @Output() readonly stateChange = new EventEmitter<SlideExerciseRuntimeState>();
   @Output() readonly event = new EventEmitter<SlideContentEvent>();
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
@@ -96,6 +98,8 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
         slideId: this.slide.id,
         type: this.slide.type,
         data: this.slide.data,
+        environment: this.environment,
+        deck: this.deck,
       });
       this.rendererLoading = false;
       this.changeDetector.markForCheck();
