@@ -89,6 +89,29 @@ services:
     networks:
       - app_network
 
+  kokoro:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:${KOKORO_IMAGE_TAG:-v0.8.2}
+    restart: unless-stopped
+    environment:
+      API_LOG_LEVEL: ${KOKORO_API_LOG_LEVEL:-INFO}
+      ENABLE_WEB_PLAYER: "false"
+      ENABLE_DEBUG_ENDPOINTS: "false"
+      ALLOW_DEV_UNLOAD: "false"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8880/health', timeout=5)",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    networks:
+      - app_network
+
   app:
     build:
       context: .
@@ -99,6 +122,8 @@ services:
         condition: service_healthy
       db-setup:
         condition: service_completed_successfully
+      kokoro:
+        condition: service_started
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -110,6 +135,16 @@ services:
       DB_CONNECTION_LIMIT: ${DB_CONNECTION_LIMIT:-10}
       LISTENING_EPISODES_DIRECTORY: /app/back/data/listening/episodes
       SHADOWING_SPEECH_URL: ${SHADOWING_SPEECH_URL:-http://speech:8080}
+      KOKORO_TTS_URL: ${KOKORO_TTS_URL:-http://kokoro:8880}
+      KOKORO_TTS_MODEL: ${KOKORO_TTS_MODEL:-kokoro}
+      TTS_CACHE_DIRECTORY: /app/back/data/tts-cache
+      TTS_ALLOWED_VOICES: ${TTS_ALLOWED_VOICES:-af_bella,af_heart,af_sky,bf_emma}
+      TTS_DEFAULT_VOICE: ${TTS_DEFAULT_VOICE:-af_heart}
+      TTS_DEFAULT_SPEED: ${TTS_DEFAULT_SPEED:-1}
+      TTS_DEFAULT_FORMAT: ${TTS_DEFAULT_FORMAT:-mp3}
+      TTS_REQUEST_TIMEOUT_MS: ${TTS_REQUEST_TIMEOUT_MS:-120000}
+      TTS_MAX_TEXT_LENGTH: ${TTS_MAX_TEXT_LENGTH:-5000}
+      TTS_MODEL_VERSION: ${TTS_MODEL_VERSION:-kokoro-v1.0@kokoro-fastapi-v0.8.2}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-leitner_session}
@@ -123,6 +158,7 @@ services:
     volumes:
       - ./back/data/listening/audio:/app/back/data/listening/audio:ro
       - ./back/data/listening/episodes:/app/back/data/listening/episodes:ro
+      - tts_audio_cache:/app/back/data/tts-cache
     ports:
       - "${APP_HOST:-0.0.0.0}:${APP_PORT:-3000}:3000"
     healthcheck:
@@ -142,6 +178,7 @@ services:
 
 volumes:
   mysql_data:
+  tts_audio_cache:
 
 networks:
   app_network:

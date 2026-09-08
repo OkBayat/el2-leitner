@@ -16,6 +16,7 @@ as the authority.
 * [Reusable Slide Interactions](project/reusable-slide-interactions.md) - Selection, modes, composition, and assessment boundaries for reusable slide families.
 * [Vocora Character System](/project/vocora-character-system.md) - Mastery-aware character identities, relationships, learning behavior, voice, and visual direction.
 * [Vocora Domain Boundaries](/project/vocora-domain-boundaries.md) - Product-domain boundaries for learning delivery, Leitner retention, progress, gamification, and social features.
+* [Vocora Text-to-Speech](/project/vocora-text-to-speech.md) - Shared on-demand Kokoro synthesis, deterministic audio caching, client consumption, and environment-local deployment.
 
 # Rules
 
