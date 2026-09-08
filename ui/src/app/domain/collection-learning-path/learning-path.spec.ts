@@ -45,6 +45,7 @@ describe('Collection Learning Path UI domain', () => {
 
   it('provides stable human labels without coupling the shell to a renderer registry', () => {
     expect(exerciseTypeLabel('vocabulary.intake')).toBe('Vocabulary intake');
+    expect(exerciseTypeLabel('slide-base')).toBe('Spelling practice');
     expect(exerciseTypeLabel('listening.ielts')).toBe('IELTS listening');
     expect(exerciseTypeLabel('custom.future-drill')).toBe('Future drill');
   });

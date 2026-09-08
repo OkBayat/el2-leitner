@@ -32,15 +32,18 @@ describe('CollectionLearningPathApiService', () => {
     await api.commandStartPath('path/1');
     await api.commandStartExercise('path/1', 'lesson/1', 'exercise/1', 7);
     await api.commandActivateVocabularyIntake('path/1', 'lesson/1', 'exercise/1');
+    await api.commandStartVocabularySpelling('path/1', 'lesson/1', 'exercise/1', 'course');
     await api.commandCompleteExercise('path/1', 'lesson/1', 'exercise/1', { kind: 'completed' }, 8);
 
     expect(post.mock.calls.map(([path]) => path)).toEqual([
       '/api/learning-paths/path%2F1/start',
       '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/start',
       '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/vocabulary-intake/activate',
+      '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/vocabulary-spelling/start',
       '/api/learning-paths/path%2F1/lessons/lesson%2F1/exercises/exercise%2F1/complete',
     ]);
     expect(post.mock.calls[1]?.[1]).toEqual({ progressRevision: 7 });
+    expect(post.mock.calls[3]?.[1]).toEqual({ scope: 'course' });
     expect(post.mock.calls.at(-1)?.[1]).toEqual({ outcome: { kind: 'completed' }, progressRevision: 8 });
   });
 });

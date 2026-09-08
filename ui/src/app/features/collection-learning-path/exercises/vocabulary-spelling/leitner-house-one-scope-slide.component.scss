@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.scope-slide__eyebrow {
+  color: var(--vocora-activity-vocabulary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+h1 {
+  color: var(--vocora-text-primary);
+  font-size: 28px;
+  line-height: 36px;
+}
+
+.scope-slide strong {
+  color: var(--vocora-text-primary);
+}
+
+.scope-slide__option-detail {
+  color: var(--vocora-text-secondary);
+}
+
+@media (max-width: 575.98px) {
+  h1 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}

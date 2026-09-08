@@ -46,6 +46,14 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 - Never treat build output, generated artifacts, Docker layers, caches, or temporary files as source truth.
 - Never invent remote APIs, BBC asset URLs, episode dates, transcript locations, or metadata. Verify source facts against the official source before persisting them.
 
+## Project knowledge
+
+- Curated durable project knowledge lives in the root `okf/` Open Knowledge Format bundle.
+- Read `okf/index.md` before broad project exploration when prior project context may help.
+- Repository source and explicit project documentation remain authoritative; when OKF disagrees with current source, verify the source and correct OKF.
+- Use `k2-okf-update` only when the user explicitly asks to add, refresh, or review OKF knowledge.
+- Run `python3 .agents/skills/k2-okf-update/scripts/validate_okf.py` before finalizing any OKF content change.
+
 ## Architecture and change discipline
 
 - Preserve the existing Domain/Application/Infrastructure/Interface separation in the backend.

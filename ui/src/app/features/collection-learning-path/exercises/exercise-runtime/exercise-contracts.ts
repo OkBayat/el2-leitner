@@ -10,6 +10,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly lessonId: string;
   readonly type: string;
   readonly schemaVersion: number;
+  readonly completionPolicy?: string;
   readonly state?: LearningPathNodeState;
   readonly config: Readonly<Record<string, unknown>>;
   readonly payload: TPayload;

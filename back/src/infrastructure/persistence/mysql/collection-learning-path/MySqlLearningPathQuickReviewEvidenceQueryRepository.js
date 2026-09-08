@@ -8,7 +8,8 @@ export class MySqlLearningPathQuickReviewEvidenceQueryRepository extends Learnin
 
   async findCompletedSession(userId, sessionId) {
     const [sessionRows] = await this.pool.execute(
-      `SELECT id, public_id, mode, status, planned_count, completed_count
+      `SELECT id, public_id, mode, status, planned_count, completed_count,
+              correct_count, wrong_count, metadata_json
        FROM practice_sessions
        WHERE public_id = ? AND user_id = ?
        LIMIT 1`,
@@ -32,6 +33,11 @@ export class MySqlLearningPathQuickReviewEvidenceQueryRepository extends Learnin
       status: session.status,
       plannedCount: session.planned_count === null ? null : Number(session.planned_count),
       completedCount: Number(session.completed_count ?? 0),
+      correctCount: Number(session.correct_count ?? 0),
+      wrongCount: Number(session.wrong_count ?? 0),
+      metadata: typeof session.metadata_json === "string"
+        ? JSON.parse(session.metadata_json)
+        : session.metadata_json,
       reviewedVocabularyIds: reviewRows.map((row) => String(row.vocabulary_id)),
     };
   }

@@ -2,6 +2,7 @@ export type SlideExerciseFeedbackTone = 'neutral' | 'success' | 'information' | 
 export type SlideExerciseActionTone = 'primary' | 'secondary' | 'success' | 'information' | 'warning' | 'error';
 export type SlideExerciseActionState = SlideExerciseActionTone | 'disabled';
 export type SlideExerciseActionBehavior = 'next' | 'content' | 'emit';
+export type SlideExerciseAggregationMode = 'first-attempts' | 'all-attempts' | 'latest-attempts';
 
 export interface SlideExerciseProgressView {
   readonly value: number;
@@ -43,6 +44,37 @@ export interface SlideExerciseSlide<TData = unknown> {
   readonly type: string;
   readonly data?: TData;
   readonly chrome?: SlideExerciseChromeConfig;
+  readonly terminal?: boolean;
+  readonly rootSlideId?: string;
+  readonly retryNumber?: number;
+  readonly itemId?: string;
+}
+
+export interface SlideExerciseResult<TData = unknown> {
+  readonly slideId: string;
+  readonly rootSlideId: string;
+  readonly slideType: string;
+  readonly itemId?: string;
+  readonly data?: TData;
+}
+
+export interface SlideExerciseInsertCommand {
+  readonly anchorId: string;
+  readonly gap: number;
+  readonly slides: readonly SlideExerciseSlide[];
+}
+
+export interface SlideExerciseDeckController {
+  insertSlides(command: SlideExerciseInsertCommand): void;
+  next(): void;
+  results(): readonly SlideExerciseResult[];
+}
+
+export interface SlideExerciseScore {
+  readonly correct: number;
+  readonly mistakes: number;
+  readonly total: number;
+  readonly accuracy: number;
 }
 
 export interface SlideExerciseRuntimeState {
@@ -167,6 +199,37 @@ export function normalizeSlideExerciseProgress(value: number): number {
   const progress = Number(value);
   if (!Number.isFinite(progress)) return 0;
   return Math.min(100, Math.max(0, progress));
+}
+
+function scoredResults(results: readonly SlideExerciseResult[]): Array<SlideExerciseResult & { data: { correct: boolean } }> {
+  return results.filter((result): result is SlideExerciseResult & { data: { correct: boolean } } => {
+    if (!result.data || typeof result.data !== 'object' || Array.isArray(result.data)) return false;
+    return typeof (result.data as { correct?: unknown }).correct === 'boolean';
+  });
+}
+
+export function aggregateSlideExerciseResults(
+  results: readonly SlideExerciseResult[],
+  mode: SlideExerciseAggregationMode = 'first-attempts',
+): SlideExerciseScore {
+  const scored = scoredResults(results);
+  let selected = scored;
+  if (mode !== 'all-attempts') {
+    const grouped = new Map<string, (typeof scored)[number]>();
+    for (const result of scored) {
+      if (mode === 'first-attempts' && grouped.has(result.rootSlideId)) continue;
+      grouped.set(result.rootSlideId, result);
+    }
+    selected = [...grouped.values()];
+  }
+  const correct = selected.filter((result) => result.data.correct).length;
+  const mistakes = selected.length - correct;
+  return {
+    correct,
+    mistakes,
+    total: selected.length,
+    accuracy: selected.length ? Math.round((correct / selected.length) * 100) : 0,
+  };
 }
 
 export function resolveSlideExerciseActionState(

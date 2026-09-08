@@ -27,6 +27,7 @@ function runtimeContext(context: ExerciseContextView): ExerciseContext {
     exerciseId: context.exercise.id,
     type: context.exercise.type,
     schemaVersion: context.exercise.schemaVersion,
+    completionPolicy: context.exercise.completionPolicy,
     state: context.state,
     config: context.exercise.config,
     payload: context.payload,

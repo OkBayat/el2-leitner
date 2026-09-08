@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  aggregateSlideExerciseResults,
   resolveSlideExerciseActionState,
   resolveSlideExercisePresentation,
   validateSlideExerciseSlides,
@@ -111,5 +112,17 @@ describe('slide exercise model', () => {
     expect(presentation.footer.primary).toMatchObject({ disabled: true, loading: true });
     expect(resolveSlideExerciseActionState('success', true, false)).toBe('disabled');
     expect(resolveSlideExerciseActionState('warning', false, true)).toBe('disabled');
+  });
+
+  it('aggregates first, all, and latest attempts by root slide identity', () => {
+    const results = [
+      { slideId: 'word-1', rootSlideId: 'word-1', slideType: 'dictation', data: { correct: true } },
+      { slideId: 'word-2', rootSlideId: 'word-2', slideType: 'dictation', data: { correct: false } },
+      { slideId: 'word-2-retry', rootSlideId: 'word-2', slideType: 'dictation', data: { correct: true } },
+    ];
+
+    expect(aggregateSlideExerciseResults(results, 'first-attempts')).toEqual({ correct: 1, mistakes: 1, total: 2, accuracy: 50 });
+    expect(aggregateSlideExerciseResults(results, 'all-attempts')).toEqual({ correct: 2, mistakes: 1, total: 3, accuracy: 67 });
+    expect(aggregateSlideExerciseResults(results, 'latest-attempts')).toEqual({ correct: 2, mistakes: 0, total: 2, accuracy: 100 });
   });
 });
