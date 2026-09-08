@@ -9,6 +9,7 @@ async function authenticate(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('[data-testid="start-review"], [data-testid="practice-words"]')).toBeVisible({ timeout: 10_000 });
 }
 
 async function learningState(page: Page): Promise<any> {

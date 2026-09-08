@@ -14,6 +14,7 @@ test('episode cover, levels and vocabulary connect to Leitner without activating
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/dashboard$/u);
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
+  await expect(page.locator('[data-testid="start-review"], [data-testid="practice-words"]')).toBeVisible({ timeout: 10_000 });
   await page.locator('.desktop-sidebar').getByRole('link', { name: 'BBC 6 Minute English' }).click();
   const card = page.getByTestId('bbc-lesson-limiting-screen-time-for-children');
   await expect(card.getByTestId('episode-level')).toHaveText('Intermediate');
