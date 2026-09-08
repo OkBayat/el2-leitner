@@ -53,7 +53,7 @@ export const DEFAULT_SETTINGS: LearningSettings = {
   dailyNew: 10,
   dailyGoal: 20,
   voiceRate: 0.85,
-  theme: 'system',
+  theme: 'light',
 };
 
 function uniqueStrings(values: unknown[]): string[] {

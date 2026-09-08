@@ -1,7 +1,7 @@
 import { normalizeVocabularyForm } from "../../../domain/library/VocabularyNormalizer.js";
 import { reviewFingerprint } from "./MySqlEfficientLearningStateRepository.js";
 
-const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, dailyListeningGoal: 3, voiceRate: 0.85, theme: "system" });
+const DEFAULT_SETTINGS = Object.freeze({ dailyNew: 10, dailyGoal: 20, dailyListeningGoal: 3, voiceRate: 0.85, theme: "light" });
 const REQUIRED_WORD_KEYS = new Set(["id", "number", "term", "accepted", "category", "tags", "lessons", "notes", "createdAt"]);
 
 function parseJson(value, fallback = null) {

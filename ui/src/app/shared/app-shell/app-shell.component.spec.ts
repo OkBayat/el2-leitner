@@ -218,7 +218,8 @@ describe('AppShell responsive navigation', () => {
 		learningPathView.set(progressView('cambridge-grammar', '2'));
 		const fixture = await render();
 		const router = TestBed.inject(Router);
-		expect(fixture.componentInstance.activeCourseId()).toBe('bbc-six-minute-english');
+		expect(fixture.componentInstance.activeCourseId()).toBeNull();
+		expect(fixture.nativeElement.querySelector('.course-menu-item.is-active')).toBeNull();
 		expect(fixture.componentInstance.currentCourseProgress()).toBeNull();
 
 		await router.navigateByUrl('/learning-paths/2');

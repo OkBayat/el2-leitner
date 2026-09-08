@@ -13,6 +13,10 @@ function stateWithWord(box = 1, due = '2026-09-01') {
 }
 
 describe('learning rules regression', () => {
+	it('starts new learner settings in light theme', () => {
+		expect(createFreshState([]).settings.theme).toBe('light');
+	});
+
   it('normalizes answers and accepted spelling variants', () => {
     expect(normalizeAnswer('  Credit   Card  ')).toBe('credit card');
     expect(normalizeAnswer('taxpayers’ money')).toBe("taxpayers' money");

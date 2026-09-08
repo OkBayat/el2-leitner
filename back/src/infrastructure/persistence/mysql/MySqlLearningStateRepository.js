@@ -7,7 +7,7 @@ import {
 } from "../../../domain/library/VocabularyNormalizer.js";
 
 const ROOT_DATA_KEYS = new Set(["words", "history", "daily", "settings"]);
-const DEFAULT_SETTINGS = { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "system" };
+const DEFAULT_SETTINGS = { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" };
 
 function parseJson(value, fallback = null) {
   if (value === null || value === undefined) return fallback;

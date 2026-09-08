@@ -82,14 +82,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   async openCourse(card: HomeCourseCard): Promise<void> {
     const collection = this.selectedCourses.courses().find((candidate) => candidate.id === card.collectionId);
     if (!collection) return;
-    const destination = await this.journeys.enter(collection);
+    const destination = await this.journeys.openOverview(collection);
     if (!destination) return;
-    if (destination.kind === 'exercise') {
-      await this.router.navigate([
-        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
-      ]);
-      return;
-    }
     await this.router.navigate(learningPathOverviewRoute(destination.pathId, destination.collectionId));
   }
 }

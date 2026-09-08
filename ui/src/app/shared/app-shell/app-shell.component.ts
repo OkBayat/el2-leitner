@@ -68,7 +68,7 @@ export class AppShellComponent implements OnInit {
 		const view = this.learningPath.view();
 		return publicPathId && view?.path.id === publicPathId ? view.path.collectionId : null;
 	});
-	readonly activeCourseId = computed(() => this.currentCourseId() ?? this.courses.courses()[0]?.id ?? null);
+	readonly activeCourseId = computed(() => this.currentCourseId());
 	readonly currentCourseProgress = computed(() => {
 		const courseId = this.currentCourseId();
 		const view = this.learningPath.view();

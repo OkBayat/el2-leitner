@@ -12,7 +12,7 @@ export class ThemeService {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
   private readonly systemThemeQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
-  private activeMode: ThemeMode = 'system';
+  private activeMode: ThemeMode = 'light';
 
   constructor() {
     const query = this.systemThemeQuery;

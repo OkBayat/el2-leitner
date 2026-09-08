@@ -2,10 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  LibraryLearningPathJourneyFacade,
-  type LearningPathJourneyDestination,
-} from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import { LibraryLearningPathJourneyFacade } from '../../application/collection-learning-path/library-learning-path-journey.facade';
 import { SelectedCoursesFacade } from '../../application/collection-learning-path/selected-courses.facade';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import type { CollectionLearningPathView } from '../../domain/collection-learning-path/learning-path';
@@ -72,16 +69,18 @@ describe('HomePageComponent', () => {
   const refreshForLocalDay = vi.fn(async () => state()!);
   const loadCourses = vi.fn(async () => true);
   const loadJourneys = vi.fn(async () => true);
-  const enter = vi.fn(async (): Promise<LearningPathJourneyDestination | null> => ({
-    kind: 'exercise' as const,
-    pathId: 'cambridge-path',
-    lessonId: 'lesson-1',
-    exerciseId: 'exercise-2',
+  const enter = vi.fn();
+  let journeyView = courseView();
+  const openOverview = vi.fn(async () => ({
+    kind: 'path' as const,
+    pathId: journeyView.path.id,
+    collectionId: journeyView.path.collectionId,
   }));
 
   beforeEach(async () => {
     vi.clearAllMocks();
     state.set(stateWithDueReview(true));
+    journeyView = courseView();
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
       providers: [
@@ -94,7 +93,7 @@ describe('HomePageComponent', () => {
         { provide: SelectedCoursesFacade, useValue: { courses, loading: courseLoading, error: courseError, load: loadCourses } },
         {
           provide: LibraryLearningPathJourneyFacade,
-          useValue: { loading: signal(false), enteringId, error: journeyError, load: loadJourneys, enter, viewFor: () => courseView() },
+          useValue: { loading: signal(false), enteringId, error: journeyError, load: loadJourneys, enter, openOverview, viewFor: () => journeyView },
         },
       ],
     }).compileComponents();
@@ -113,6 +112,7 @@ describe('HomePageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
     expect(host.querySelectorAll('[data-testid="daily-review-card"]')).toHaveLength(1);
     expect(host.querySelector('[data-testid="daily-review-card"]')?.textContent).toContain('Your daily review is ready');
+    expect(host.querySelector('#my-courses-heading')?.textContent).toContain('My Courses');
     expect(host.querySelector('[data-testid="start-review"]')?.textContent).toContain('Start Review');
     expect(host.querySelector('[data-testid="home-course-card"]')?.textContent).toContain('Unit 1 · Growing up');
     expect(host.querySelector('[data-testid="home-course-status"]')?.textContent).toContain('Done');
@@ -126,20 +126,20 @@ describe('HomePageComponent', () => {
     expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"]')?.getAttribute('href')).toBe('/review?mode=box1');
   });
 
-  it('opens the whole course card directly at its current exercise', async () => {
+  it('opens the course overview without starting or resuming the course', async () => {
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
     const card = host.querySelector<HTMLButtonElement>('[data-testid="home-course-card"]');
     card?.click();
     await fixture.whenStable();
-    expect(enter).toHaveBeenCalledWith(selectedCourse);
-    expect(TestBed.inject(Router).url).toBe('/learning-paths/cambridge-path/lessons/lesson-1/exercises/exercise-2');
+    expect(openOverview).toHaveBeenCalledWith(selectedCourse);
+    expect(enter).not.toHaveBeenCalled();
+    expect(TestBed.inject(Router).url).toBe('/library/cambridge-vocabulary-for-ielts/learning-path');
   });
 
   it('opens terminal courses canonically when route ids are available', async () => {
-    enter.mockResolvedValueOnce({
-      kind: 'path', pathId: '42', collectionId: selectedCourse.id,
-    });
+    const current = courseView();
+    journeyView = { ...current, path: { ...current.path, id: '42' } };
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
     host.querySelector<HTMLButtonElement>('[data-testid="home-course-card"]')?.click();
@@ -148,9 +148,6 @@ describe('HomePageComponent', () => {
   });
 
   it('keeps terminal courses on the legacy collection route with an older backend', async () => {
-    enter.mockResolvedValueOnce({
-      kind: 'path', pathId: 'cambridge-path', collectionId: selectedCourse.id,
-    });
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
     host.querySelector<HTMLButtonElement>('[data-testid="home-course-card"]')?.click();

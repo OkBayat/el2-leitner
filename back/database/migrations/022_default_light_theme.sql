@@ -1,0 +1,2 @@
+ALTER TABLE user_settings
+  MODIFY COLUMN theme VARCHAR(32) NOT NULL DEFAULT 'light';

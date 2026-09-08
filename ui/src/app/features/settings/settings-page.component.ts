@@ -120,7 +120,7 @@ export class SettingsPageComponent implements OnInit {
     dailyGoal: new FormControl(20, { nonNullable: true, validators: [Validators.min(5), Validators.max(200)] }),
     dailyListeningGoal: new FormControl(3, { nonNullable: true, validators: [Validators.min(1), Validators.max(12)] }),
     voiceRate: new FormControl(.85, { nonNullable: true, validators: [Validators.min(.5), Validators.max(1.2)] }),
-    theme: new FormControl<ThemeMode>('system', { nonNullable: true }),
+    theme: new FormControl<ThemeMode>('light', { nonNullable: true }),
   });
 
   async ngOnInit(): Promise<void> {

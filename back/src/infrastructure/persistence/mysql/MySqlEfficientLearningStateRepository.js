@@ -14,7 +14,7 @@ import {
 } from "./MySqlLearningStateRepository.js";
 
 const ROOT_DATA_KEYS = new Set(["words", "history", "daily", "settings", "persistenceCursor"]);
-const DEFAULT_SETTINGS = { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "system" };
+const DEFAULT_SETTINGS = { dailyNew: 10, dailyGoal: 20, voiceRate: 0.85, theme: "light" };
 
 function nonNegativeInteger(value, fallback = 0) {
   const number = Number(value);

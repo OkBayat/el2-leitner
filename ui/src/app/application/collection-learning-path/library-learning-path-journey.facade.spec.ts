@@ -87,4 +87,15 @@ describe('LibraryLearningPathJourneyFacade', () => {
     expect(facade.viewFor(cambridge.id)).toBe(completed);
     expect(facade.error()).toBe('');
   });
+
+  it('opens a course overview without subscribing or starting learner progress', async () => {
+    const cambridge = collection();
+    queryCollectionLearningPath.mockResolvedValueOnce(pathView(cambridge.id));
+
+    expect(await facade.openOverview(cambridge)).toEqual({
+      kind: 'path', pathId: 'cvfi-learning-path', collectionId: cambridge.id,
+    });
+
+    expect(facade.viewFor(cambridge.id)?.path.learnerStatus).toBe('available');
+  });
 });

@@ -7,6 +7,7 @@ import type { CollectionLearningPathView, LearningPathResumePoint } from '../../
 export type LearningPathJourneyDestination =
   | { kind: 'exercise'; pathId: string; lessonId: string; exerciseId: string }
   | { kind: 'path'; pathId: string; collectionId: string };
+type LearningPathOverviewDestination = Extract<LearningPathJourneyDestination, { kind: 'path' }>;
 
 function errorMessage(error: unknown): string {
   return error instanceof Error && error.message ? error.message : 'Course could not open.';
@@ -66,11 +67,7 @@ export class LibraryLearningPathJourneyFacade {
     this.enteringId.set(collection.id);
     this.error.set('');
     try {
-      let current = this.viewFor(collection.id);
-      if (!current) {
-        current = await this.api.queryCollectionLearningPath(collection.id);
-        this.views.update((views) => new Map(views).set(collection.id, current!));
-      }
+      const current = await this.loadView(collection.id);
       const { path } = current;
       if (path.learnerStatus === 'completed' || path.learnerStatus === 'up_to_date') {
         return { kind: 'path', pathId: path.id, collectionId: collection.id };
@@ -97,5 +94,32 @@ export class LibraryLearningPathJourneyFacade {
     } finally {
       this.enteringId.set(null);
     }
+  }
+
+  async openOverview(collection: Pick<LibraryCollection, 'id'>): Promise<LearningPathOverviewDestination | null> {
+    if (this.enteringId()) return null;
+    this.enteringId.set(collection.id);
+    this.error.set('');
+    try {
+      const current = await this.loadView(collection.id);
+      return {
+        kind: 'path',
+        pathId: current.path.id,
+        collectionId: current.path.collectionId,
+      };
+    } catch (error) {
+      this.error.set(errorMessage(error));
+      return null;
+    } finally {
+      this.enteringId.set(null);
+    }
+  }
+
+  private async loadView(collectionId: string): Promise<CollectionLearningPathView> {
+    const loaded = this.viewFor(collectionId);
+    if (loaded) return loaded;
+    const current = await this.api.queryCollectionLearningPath(collectionId);
+    this.views.update((views) => new Map(views).set(collectionId, current));
+    return current;
   }
 }
