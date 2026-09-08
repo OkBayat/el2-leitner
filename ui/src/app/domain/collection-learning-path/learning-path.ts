@@ -137,6 +137,16 @@ export function canOpenLearningPathExercise(exercise: Pick<LearningPathExerciseV
   return exercise.state === 'available' || exercise.state === 'in_progress';
 }
 
+export function isCanonicalLearningPathPublicId(value: string): boolean {
+  return /^[1-9][0-9]*$/u.test(value);
+}
+
+export function learningPathOverviewRoute(pathId: string, collectionId: string): string[] {
+  return isCanonicalLearningPathPublicId(pathId)
+    ? ['/learning-paths', pathId]
+    : ['/library', collectionId, 'learning-path'];
+}
+
 export function learningPathStateLabel(state: LearningPathNodeState): string {
   return {
     locked: 'Locked',

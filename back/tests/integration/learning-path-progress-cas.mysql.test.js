@@ -27,8 +27,7 @@ test("Learning Path optimistic progress updates execute on MySQL without ambiguo
       if (userId != null) {
         await pool.execute("DELETE FROM user_learning_path_progress WHERE user_id = ?", [userId]);
       }
-      await pool.execute("DELETE FROM collection_learning_paths WHERE public_id = ?", [ids.path]);
-      await pool.execute("DELETE FROM collections WHERE public_id = ?", [ids.collection]);
+      // Route identities are append-only. Random content fixtures remain only in the dedicated _ci database.
       if (userId != null) await pool.execute("DELETE FROM users WHERE id = ?", [userId]);
     } finally {
       await pool.end();

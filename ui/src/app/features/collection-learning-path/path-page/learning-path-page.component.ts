@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
-import type { LearningPathExerciseSelection } from '../../../domain/collection-learning-path/learning-path';
+import {
+  isCanonicalLearningPathPublicId,
+  type LearningPathExerciseSelection,
+} from '../../../domain/collection-learning-path/learning-path';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
 
 const LESSON_BATCH_SIZE = 40;
-const CANONICAL_PUBLIC_ID = /^[1-9][0-9]*$/u;
 
 @Component({
   selector: 'app-learning-path-page',
@@ -83,7 +85,7 @@ export class LearningPathPageComponent {
   private async loadLegacyCollectionRoute(collectionId: string): Promise<void> {
     if (!await this.facade.load(collectionId)) return;
     const publicId = this.facade.view()?.path.id;
-    if (publicId && CANONICAL_PUBLIC_ID.test(publicId)) {
+    if (publicId && isCanonicalLearningPathPublicId(publicId)) {
       await this.router.navigate(['/learning-paths', publicId], { replaceUrl: true });
     }
   }

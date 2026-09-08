@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseRunnerFacade } from '../../../application/collection-learning-path/exercise-runner.facade';
+import { learningPathOverviewRoute } from '../../../domain/collection-learning-path/learning-path';
 import type { ExerciseOutcome } from '../exercises/exercise-runtime/exercise-contracts';
 import { ExerciseHostComponent } from '../exercises/exercise-runtime/exercise-host.component';
 
@@ -52,7 +53,7 @@ export class ExerciseRunnerPageComponent {
     }
     if (outcome.kind === 'cancelled') {
       const context = this.facade.context();
-      if (context) void this.router.navigate(['/learning-paths', context.path.id]);
+      if (context) void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
     }
   }
 
@@ -66,6 +67,6 @@ export class ExerciseRunnerPageComponent {
       ]);
       return;
     }
-    void this.router.navigate(['/learning-paths', context.path.id]);
+    void this.router.navigate(learningPathOverviewRoute(context.path.id, context.path.collectionId));
   }
 }
