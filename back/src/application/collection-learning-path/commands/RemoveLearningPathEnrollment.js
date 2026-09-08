@@ -16,7 +16,7 @@ export class RemoveLearningPathEnrollment {
     const path = await loadPathById(this.definitionReader, pathId);
     await ensureLearningPathReadAccess(this.accessReader, userId, path);
     const result = await this.transactionManager.execute((connection) => (
-      this.progressWriter.removePathProgress(userId, path.id, { connection })
+      this.progressWriter.removePathEnrollment(userId, path.id, { connection })
     ));
     return { pathId: resourcePublicId(path), removed: Boolean(result?.changed) };
   }

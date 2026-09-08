@@ -16,6 +16,7 @@ export class MySqlLearningPathCatalogQueryRepository extends LearningPathCatalog
        JOIN collections c ON c.id = p.collection_id
        LEFT JOIN user_learning_path_progress up
          ON up.learning_path_id = p.id AND up.user_id = ?
+           AND up.enrollment_status = 'active'
        WHERE p.status = 'published' AND p.retired_at IS NULL
          AND (
            c.owner_user_id = ?

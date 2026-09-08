@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import {
   CollectionLearningPathApiService,
   type LearningPathCatalogItem,
+  normalizeLearningPathCatalog,
 } from '../../core/collection-learning-path/collection-learning-path-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 import type { CollectionLearningPathView, LearningPathResumePoint } from '../../domain/collection-learning-path/learning-path';
@@ -47,7 +48,6 @@ export class LibraryLearningPathJourneyFacade {
   async load(collections: readonly Pick<LibraryCollection, 'id'>[]): Promise<boolean> {
     const request = ++this.requestVersion;
     this.loading.set(true);
-    this.catalogReady.set(false);
     this.error.set('');
     try {
       return await this.loadKnownCourses(request, collections);
@@ -56,21 +56,25 @@ export class LibraryLearningPathJourneyFacade {
     }
   }
 
-  async loadCatalog(collections: readonly Pick<LibraryCollection, 'id'>[]): Promise<boolean> {
+  async loadCatalog(collections: readonly Pick<LibraryCollection, 'id' | 'title' | 'subscribed'>[]): Promise<boolean> {
     const request = ++this.requestVersion;
     this.loading.set(true);
+    this.catalogReady.set(false);
     this.error.set('');
     try {
       const catalog = await this.api.queryLearningPathCollectionIds();
       if (request !== this.requestVersion) return false;
-      const requestedIds = new Set(collections.map((collection) => collection.id));
-      const summaries = (catalog.learningPaths ?? []).filter((item) => requestedIds.has(item.collectionId));
+      const summaries = normalizeLearningPathCatalog(catalog, collections);
+      const currentCourseIds = new Set(summaries.map((item) => item.collectionId));
       this.catalog.set(new Map(summaries.map((item) => [item.collectionId, item])));
+      this.views.update((views) => new Map([...views].filter(([collectionId]) => currentCourseIds.has(collectionId))));
       this.catalogReady.set(true);
       return true;
     } catch {
       if (request === this.requestVersion) {
         this.catalog.set(new Map());
+        this.views.set(new Map());
+        this.catalogReady.set(false);
         this.error.set('Courses could not load. Try again.');
       }
       return false;

@@ -167,7 +167,9 @@ export class LibraryDetailPageComponent implements OnInit {
   readonly collection = signal<LibraryCollection | null>(null);
   readonly course = computed<CollectionLearningPathView | null>(() => {
     const current = this.collection();
-    return current ? this.learningPaths.viewFor(current.id) : null;
+    return current && this.learningPaths.courseSummaryFor(current.id)
+      ? this.learningPaths.viewFor(current.id)
+      : null;
   });
   readonly canManage = signal(false);
   readonly entryColumns = ['term', 'section', 'actions'];
@@ -261,7 +263,7 @@ export class LibraryDetailPageComponent implements OnInit {
     const confirmed = await firstValueFrom(this.dialogs.open(ConfirmDialogComponent, {
       data: {
         title: 'Remove course',
-        message: 'Remove this course and its saved course progress? Your Leitner vocabulary will not change.',
+        message: 'Remove this course from My Courses? Your saved course progress and Leitner vocabulary will not change.',
         confirmLabel: 'Remove Course',
         danger: true,
       },

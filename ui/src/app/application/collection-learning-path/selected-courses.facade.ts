@@ -1,5 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import {
+  CollectionLearningPathApiService,
+  normalizeLearningPathCatalog,
+} from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 
@@ -46,13 +49,12 @@ export class SelectedCoursesFacade {
       ]);
       if (request !== this.requestVersion) return false;
       const collections = result.collections ?? [];
+      const summaries = normalizeLearningPathCatalog(learningPathCollections, collections);
       const learningPathIds = new Map(
-        (learningPathCollections.learningPaths ?? []).map((item) => [item.collectionId, item.pathId]),
+        summaries.flatMap((item) => item.pathId ? [[item.collectionId, item.pathId] as const] : []),
       );
       const enrolledCollectionIds = new Set(
-        learningPathCollections.learningPaths
-          ? learningPathCollections.learningPaths.filter((item) => item.enrolled).map((item) => item.collectionId)
-          : collections.filter((item) => item.subscribed).map((item) => item.id),
+        summaries.filter((item) => item.enrolled).map((item) => item.collectionId),
       );
       this.courses.set(courseMenuCollections(
         collections,

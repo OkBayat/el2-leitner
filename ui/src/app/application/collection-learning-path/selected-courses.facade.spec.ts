@@ -118,4 +118,28 @@ describe('SelectedCoursesFacade', () => {
     expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
       .toEqual([{ id: 'bbc-six-minute-english', pathId: null }]);
   });
+
+  it('supports the predecessor route-only response and excludes subscribed non-course collections', async () => {
+    const secondCourse = collection({
+      id: 'second-course', slug: 'second-course', title: 'Second Course', subscribed: false,
+    });
+    const standalone = collection({
+      id: 'standalone', slug: 'standalone', title: 'Standalone Collection', kind: 'book', subscribed: true,
+    });
+    const podcast = collection({
+      id: 'podcast-episode', slug: 'podcast-episode', title: 'Podcast Episode', kind: 'listening', subscribed: true,
+    });
+    list.mockResolvedValue({ collections: [collection(), secondCourse, standalone, podcast] });
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: ['bbc-six-minute-english', secondCourse.id],
+      learningPaths: [
+        { collectionId: 'bbc-six-minute-english', pathId: '1' },
+        { collectionId: secondCourse.id, pathId: '2' },
+      ],
+    });
+
+    expect(await facade.load()).toBe(true);
+    expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
+      .toEqual([{ id: 'bbc-six-minute-english', pathId: '1' }]);
+  });
 });

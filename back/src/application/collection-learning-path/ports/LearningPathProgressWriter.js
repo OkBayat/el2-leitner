@@ -1,6 +1,6 @@
 export class LearningPathProgressWriter {
-  async removePathProgress(_userId, _pathId, _options = {}) {
-    throw new Error("LearningPathProgressWriter.removePathProgress must be implemented");
+  async removePathEnrollment(_userId, _pathId, _options = {}) {
+    throw new Error("LearningPathProgressWriter.removePathEnrollment must be implemented");
   }
 
   async upsertPathProgress(_progress, _options = {}) {

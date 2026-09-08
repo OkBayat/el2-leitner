@@ -15,6 +15,7 @@ export class MySqlLearningPathAccessQueryRepository extends LearningPathAccessRe
                 FROM collection_learning_paths p
                 JOIN user_learning_path_progress up ON up.learning_path_id = p.id
                 WHERE p.collection_id = c.id AND up.user_id = ?
+                  AND up.enrollment_status = 'active'
               ) AS enrolled
        FROM collections c
        LEFT JOIN user_collections uc

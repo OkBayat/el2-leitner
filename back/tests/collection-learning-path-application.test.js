@@ -108,27 +108,32 @@ class ProgressStoreFake {
   record(userId, pathId) {
     const key = this.key(userId, pathId);
     if (!this.byUserAndPath.has(key)) {
-      this.byUserAndPath.set(key, { path: null, lessons: [], exercises: [] });
+      this.byUserAndPath.set(key, { enrolled: false, path: null, lessons: [], exercises: [] });
     }
     return this.byUserAndPath.get(key);
   }
 
   async findForPath(userId, pathId) {
     const current = this.byUserAndPath.get(this.key(userId, pathId));
-    return structuredClone(current ?? { path: null, lessons: [], exercises: [] });
+    if (!current?.enrolled) return { path: null, lessons: [], exercises: [] };
+    const { enrolled: _enrolled, ...progress } = current;
+    return structuredClone(progress);
   }
 
   async upsertPathProgress(progress) {
     this.writeCalls.push(["path", structuredClone(progress)]);
     const record = this.record(progress.userId, progress.pathId);
     const previous = record.path;
-    record.path = {
-      status: progress.status,
-      startedAt: previous?.startedAt ?? progress.startedAt,
-      completedAt: progress.completedAt ?? null,
-      lastActivityAt: progress.lastActivityAt,
-      lastSeenContentVersion: Math.max(previous?.lastSeenContentVersion ?? 0, progress.lastSeenContentVersion ?? 0),
-    };
+    if (!previous || record.enrolled) {
+      record.path = {
+        status: progress.status,
+        startedAt: previous?.startedAt ?? progress.startedAt,
+        completedAt: progress.completedAt ?? null,
+        lastActivityAt: progress.lastActivityAt,
+        lastSeenContentVersion: Math.max(previous?.lastSeenContentVersion ?? 0, progress.lastSeenContentVersion ?? 0),
+      };
+    }
+    record.enrolled = true;
     return { changed: true };
   }
 
@@ -170,9 +175,12 @@ class ProgressStoreFake {
     return { changed: true };
   }
 
-  async removePathProgress(userId, pathId) {
-    this.writeCalls.push(["remove-path", {userId, pathId}]);
-    return {changed: this.byUserAndPath.delete(this.key(userId, pathId))};
+  async removePathEnrollment(userId, pathId) {
+    this.writeCalls.push(["remove-enrollment", { userId, pathId }]);
+    const record = this.byUserAndPath.get(this.key(userId, pathId));
+    if (!record?.enrolled) return { changed: false };
+    record.enrolled = false;
+    return { changed: true };
   }
 }
 
@@ -285,6 +293,10 @@ describe("Collection Learning Path application CQRS", () => {
       removed: true,
     });
     assert.equal((await harness.queries.collection.execute("user-1", "collection-1")).path.learnerStatus, "available");
+    assert.equal(harness.progressStore.record("user-1", "path-1").path.status, "in_progress");
+
+    assert.equal((await harness.commands.startPath.execute("user-1", "path-1")).pathStatus, "in_progress");
+    assert.equal(harness.progressStore.record("user-1", "path-1").path.status, "in_progress");
   });
 
   it("starts only available exercises and writes path, lesson, and exercise progress transactionally", async () => {

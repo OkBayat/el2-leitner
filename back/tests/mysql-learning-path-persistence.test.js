@@ -80,20 +80,50 @@ test("course catalog projection loads titles and enrollment state in one bounded
   assert.match(pool.calls[0].sql, /LEFT JOIN user_learning_path_progress/u);
 });
 
-test("course removal clears only the authenticated learner's path-owned progress", async () => {
+test("course removal soft-removes enrollment without deleting learner progress", async () => {
   const pool = new RecordingPool([
-    [{affectedRows: 2}, []],
-    [{affectedRows: 1}, []],
     [{affectedRows: 1}, []],
   ]);
   const repository = new MySqlLearningPathProgressCommandRepository(pool);
 
-  assert.deepEqual(await repository.removePathProgress("user-7", "path-9"), {changed: true});
-  assert.equal(pool.calls.length, 3);
+  assert.deepEqual(await repository.removePathEnrollment("user-7", "path-9"), {changed: true});
+  assert.equal(pool.calls.length, 1);
   assert.ok(pool.calls.every((call) => call.parameters[0] === "user-7" && call.parameters[1] === "path-9"));
-  assert.match(pool.calls[0].sql, /user_learning_path_exercise_progress/u);
-  assert.match(pool.calls[1].sql, /user_learning_path_lesson_progress/u);
-  assert.match(pool.calls[2].sql, /user_learning_path_progress/u);
+  assert.match(pool.calls[0].sql, /enrollment_status = 'removed'/u);
+  assert.match(pool.calls[0].sql, /revision = up\.revision \+ 1/u);
+  assert.doesNotMatch(pool.calls[0].sql, /DELETE/u);
+});
+
+test("enrollment migration preserves progress rows while adding soft enrollment state", async () => {
+  const migration = await readFile(new URL("../database/migrations/023_learning_path_enrollment_state.sql", import.meta.url), "utf8");
+
+  assert.match(migration, /enrollment_status VARCHAR\(32\) NOT NULL DEFAULT 'active'/u);
+  assert.match(migration, /enrollment_removed_at TIMESTAMP\(3\) NULL/u);
+  assert.doesNotMatch(migration, /DELETE FROM|DROP TABLE|DROP COLUMN/u);
+});
+
+test("a stale progress write cannot reactivate an enrollment removed by a newer revision", async () => {
+  const pool = new RecordingPool([
+    [{ affectedRows: 1 }, []],
+    [{ affectedRows: 0 }, []],
+  ]);
+  const repository = new MySqlLearningPathProgressCommandRepository(pool);
+
+  await repository.removePathEnrollment("user-7", "path-9");
+  const result = await repository.upsertPathProgress({
+    userId: "user-7",
+    pathId: "path-9",
+    status: "in_progress",
+    startedAt: "2026-09-08T00:00:00.000Z",
+    completedAt: null,
+    lastActivityAt: "2026-09-08T00:01:00.000Z",
+    lastSeenContentVersion: 1,
+    expectedRevision: 4,
+  });
+
+  assert.deepEqual(result, { changed: false, conflict: true, revision: 4 });
+  assert.match(pool.calls[1].sql, /enrollment_status = IF\(user_learning_path_progress\.revision = \?, 'active'/u);
+  assert.equal(pool.calls[1].parameters.slice(-8).every((value) => value === 4), true);
 });
 
 test("recording artifact migration stores owner-bound audio evidence without destructive changes", async () => {
@@ -188,6 +218,7 @@ test("progress reads scope every projection query by user and path identity", as
     ["user-7", "path-9"],
     ["user-7", "path-9"],
   ]);
+  assert.ok(pool.calls.every((call) => /enrollment_status = 'active'/u.test(call.sql)));
 });
 
 test("migration keeps path structure relational and protects progress-bearing content from hard deletion", async () => {

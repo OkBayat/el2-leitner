@@ -88,6 +88,33 @@ describe('LibraryLearningPathJourneyFacade', () => {
     expect(facade.error()).toBe('');
   });
 
+  it('normalizes the predecessor route-only catalog without classifying unrelated subscriptions as courses', async () => {
+    const cambridge = collection({ subscribed: true });
+    const secondCourse = collection({
+      id: 'second-course', slug: 'second-course', title: 'Second Course', subscribed: false,
+    });
+    const podcast = collection({
+      id: 'podcast-episode', slug: 'podcast-episode', title: 'Podcast Episode', subscribed: true,
+    });
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: [cambridge.id, secondCourse.id],
+      learningPaths: [
+        { collectionId: cambridge.id, pathId: 'path-1' },
+        { collectionId: secondCourse.id, pathId: 'path-2' },
+      ],
+    });
+
+    expect(await facade.loadCatalog([cambridge, secondCourse, podcast])).toBe(true);
+
+    expect(facade.courseSummaryFor(cambridge.id)).toMatchObject({
+      title: cambridge.title, enrolled: true, learnerStatus: 'in_progress',
+    });
+    expect(facade.courseSummaryFor(secondCourse.id)).toMatchObject({
+      title: secondCourse.title, enrolled: false, learnerStatus: 'available',
+    });
+    expect(facade.courseSummaryFor(podcast.id)).toBeNull();
+  });
+
   it('fails closed when course catalog discovery fails', async () => {
     const cambridge = collection();
     queryLearningPathCollectionIds.mockRejectedValue(new Error('offline'));
@@ -96,6 +123,52 @@ describe('LibraryLearningPathJourneyFacade', () => {
     expect(facade.courseSummaryFor(cambridge.id)).toBeNull();
     expect(facade.catalogReady()).toBe(false);
     expect(facade.error()).toContain('Courses could not load');
+  });
+
+  it('marks the catalog unavailable during refresh instead of exposing stale readiness', async () => {
+    const cambridge = collection();
+    queryLearningPathCollectionIds.mockResolvedValueOnce({
+      learningPaths: [{
+        collectionId: cambridge.id,
+        pathId: 'cvfi-learning-path',
+        title: cambridge.title,
+        learnerStatus: 'available',
+        enrolled: false,
+      }],
+    });
+    expect(await facade.loadCatalog([cambridge])).toBe(true);
+
+    let resolveRefresh!: (value: { learningPaths: never[] }) => void;
+    queryLearningPathCollectionIds.mockReturnValueOnce(new Promise((resolve) => {
+      resolveRefresh = resolve;
+    }));
+    const refresh = facade.loadCatalog([cambridge]);
+
+    expect(facade.catalogReady()).toBe(false);
+    resolveRefresh({ learningPaths: [] });
+    expect(await refresh).toBe(true);
+  });
+
+  it('evicts a loaded course view when the refreshed catalog retires that course', async () => {
+    const cambridge = collection();
+    queryLearningPathCollectionIds
+      .mockResolvedValueOnce({ learningPaths: [{
+        collectionId: cambridge.id,
+        pathId: 'cvfi-learning-path',
+        title: cambridge.title,
+        learnerStatus: 'available',
+        enrolled: false,
+      }] })
+      .mockResolvedValueOnce({ learningPaths: [] });
+    queryCollectionLearningPath.mockResolvedValueOnce(pathView(cambridge.id));
+
+    expect(await facade.loadCatalog([cambridge])).toBe(true);
+    expect(await facade.openOverview(cambridge)).not.toBeNull();
+    expect(facade.viewFor(cambridge.id)).not.toBeNull();
+
+    expect(await facade.loadCatalog([cambridge])).toBe(true);
+    expect(facade.courseSummaryFor(cambridge.id)).toBeNull();
+    expect(facade.viewFor(cambridge.id)).toBeNull();
   });
 
   it('keeps catalog loading to one request for hundreds of courses', async () => {
