@@ -14,6 +14,13 @@ interface SpeechWordRange {
 	text: string;
 }
 
+const KOKORO_DIALOGUE_VOICES = [
+	"af_heart",
+	"bf_emma",
+	"af_bella",
+	"af_sky",
+] as const;
+
 function speechWordRanges(text: string): SpeechWordRange[] {
 	return [...text.matchAll(/\S+/gu)].map((match) => ({
 		charIndex: match.index ?? 0,
@@ -39,10 +46,22 @@ function estimatedWordDurationMs(word: string, rate: number): number {
 	);
 }
 
+function dialogueVoice(voiceIndex?: number): string | undefined {
+	if (voiceIndex === undefined) return undefined;
+	const normalizedVoiceIndex =
+		Number.isSafeInteger(voiceIndex) && voiceIndex >= 0 ? voiceIndex : 0;
+	return KOKORO_DIALOGUE_VOICES[
+		normalizedVoiceIndex % KOKORO_DIALOGUE_VOICES.length
+	];
+}
+
 @Injectable({ providedIn: "root" })
 export class SpeechService {
 	private playbackSequence = 0;
 	private readonly fallbackTimers = new Set<ReturnType<typeof setTimeout>>();
+	private activeRequest: AbortController | null = null;
+	private activeAudio: HTMLAudioElement | null = null;
+	private activeObjectUrl: string | null = null;
 
 	speak(
 		text: string,
@@ -50,126 +69,168 @@ export class SpeechService {
 		observer?: SpeechPlaybackObserver,
 		voiceIndex?: number,
 	): boolean {
+		const AudioConstructor = globalThis.Audio;
 		if (
-			!("speechSynthesis" in globalThis) ||
-			!("SpeechSynthesisUtterance" in globalThis)
+			typeof globalThis.fetch !== "function" ||
+			typeof AudioConstructor !== "function" ||
+			typeof globalThis.URL?.createObjectURL !== "function" ||
+			typeof globalThis.URL?.revokeObjectURL !== "function"
 		)
 			return false;
+
 		this.cancel();
 		const playbackSequence = ++this.playbackSequence;
-		const utterance = new SpeechSynthesisUtterance(text);
-		utterance.lang = "en-GB";
-		utterance.rate = clamp(rate, 0.45, 1.2);
-		const voices = globalThis.speechSynthesis.getVoices();
-		if (voiceIndex === undefined) {
-			utterance.voice =
-				voices.find((voice) => /^en-GB/iu.test(voice.lang)) ??
-				voices.find((voice) => /^en/iu.test(voice.lang)) ??
-				null;
-		} else {
-			const normalizedVoiceIndex =
-				Number.isSafeInteger(voiceIndex) && voiceIndex >= 0
-					? voiceIndex
-					: 0;
-			utterance.pitch = [0.9, 1.1, 1, 1.2][normalizedVoiceIndex % 4];
-			const englishVoices = voices
-				.filter((voice) => /^en/iu.test(voice.lang))
-				.sort((left, right) => {
-					const leftKey = `${/^en-GB/iu.test(left.lang) ? 0 : 1}|${left.lang}|${left.name}|${left.voiceURI}`;
-					const rightKey = `${/^en-GB/iu.test(right.lang) ? 0 : 1}|${right.lang}|${right.name}|${right.voiceURI}`;
-					return leftKey.localeCompare(rightKey, "en");
-				});
-			utterance.voice =
-				englishVoices.length > 0
-					? englishVoices[normalizedVoiceIndex % englishVoices.length]
-					: null;
-		}
-
-		const words = speechWordRanges(text);
-		let nativeBoundarySeen = false;
-		let fallbackStarted = false;
-		const isCurrentPlayback = () =>
-			playbackSequence === this.playbackSequence;
-		const emitFallbackWords = () => {
-			if (
-				fallbackStarted ||
-				nativeBoundarySeen ||
-				!observer?.onWordBoundary ||
-				!words.length
-			)
-				return;
-			fallbackStarted = true;
-			observer.onWordBoundary(words[0].charIndex, words[0].charLength);
-			let delay = estimatedWordDurationMs(words[0].text, utterance.rate);
-			for (let index = 1; index < words.length; index += 1) {
-				const word = words[index];
-				const timer = setTimeout(() => {
-					this.fallbackTimers.delete(timer);
-					if (isCurrentPlayback() && !nativeBoundarySeen) {
-						observer.onWordBoundary?.(
-							word.charIndex,
-							word.charLength,
-						);
-					}
-				}, delay);
-				this.fallbackTimers.add(timer);
-				delay += estimatedWordDurationMs(word.text, utterance.rate);
-			}
-		};
-
-		utterance.onstart = () => {
-			if (!isCurrentPlayback()) return;
-			observer?.onStart?.();
-			emitFallbackWords();
-		};
-		utterance.onboundary = (event) => {
-			if (!isCurrentPlayback() || event.name === "sentence") return;
-			nativeBoundarySeen = true;
-			this.clearFallbackTimers();
-			const charIndex = Math.max(
-				0,
-				Number.isFinite(event.charIndex) ? event.charIndex : 0,
-			);
-			const containingWord = words.find(
-				(word) =>
-					charIndex >= word.charIndex &&
-					charIndex < word.charIndex + word.charLength,
-			);
-			const charLength =
-				event.charLength > 0
-					? event.charLength
-					: (containingWord?.charLength ?? 1);
-			observer?.onWordBoundary?.(charIndex, charLength);
-		};
-		const finishPlayback = () => {
-			if (!isCurrentPlayback()) return;
-			this.clearFallbackTimers();
-			observer?.onEnd?.();
-			this.playbackSequence += 1;
-		};
-		utterance.onend = finishPlayback;
-		utterance.onerror = () => {
-			if (!isCurrentPlayback()) return;
-			this.clearFallbackTimers();
-			observer?.onError?.();
-			this.playbackSequence += 1;
-		};
-
-		try {
-			globalThis.speechSynthesis.speak(utterance);
-			return true;
-		} catch {
-			if (playbackSequence === this.playbackSequence)
-				this.playbackSequence += 1;
-			this.clearFallbackTimers();
-			return false;
-		}
+		const normalizedRate = clamp(rate, 0.45, 1.2);
+		const request = new AbortController();
+		this.activeRequest = request;
+		void this.requestAndPlay(
+			text,
+			normalizedRate,
+			voiceIndex,
+			playbackSequence,
+			request,
+			AudioConstructor,
+			observer,
+		);
+		return true;
 	}
 
 	cancel(): void {
 		this.playbackSequence += 1;
 		this.clearFallbackTimers();
-		globalThis.speechSynthesis?.cancel?.();
+		this.activeRequest?.abort();
+		this.activeRequest = null;
+		this.releaseAudio();
+	}
+
+	private async requestAndPlay(
+		text: string,
+		rate: number,
+		voiceIndex: number | undefined,
+		playbackSequence: number,
+		request: AbortController,
+		AudioConstructor: typeof Audio,
+		observer?: SpeechPlaybackObserver,
+	): Promise<void> {
+		try {
+			const voice = dialogueVoice(voiceIndex);
+			const response = await globalThis.fetch("/api/tts/speech", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "same-origin",
+				body: JSON.stringify({
+					text,
+					speed: rate,
+					format: "mp3",
+					...(voice ? { voice } : {}),
+				}),
+				signal: request.signal,
+			});
+			if (!response.ok) throw new Error("Speech generation failed.");
+
+			const audioBlob = await response.blob();
+			if (!audioBlob.size) {
+				throw new Error("Speech generation returned no audio.");
+			}
+			if (!this.isCurrent(playbackSequence)) return;
+			if (this.activeRequest === request) this.activeRequest = null;
+
+			const objectUrl = globalThis.URL.createObjectURL(audioBlob);
+			if (!this.isCurrent(playbackSequence)) {
+				globalThis.URL.revokeObjectURL(objectUrl);
+				return;
+			}
+
+			const audio = new AudioConstructor(objectUrl);
+			audio.preload = "auto";
+			this.activeAudio = audio;
+			this.activeObjectUrl = objectUrl;
+			audio.onended = () =>
+				this.finishPlayback(playbackSequence, observer);
+			audio.onerror = () => this.failPlayback(playbackSequence, observer);
+
+			await audio.play();
+			if (!this.isCurrent(playbackSequence)) return;
+			observer?.onStart?.();
+			if (this.isCurrent(playbackSequence)) {
+				this.emitEstimatedWordBoundaries(
+					text,
+					rate,
+					playbackSequence,
+					observer,
+				);
+			}
+		} catch {
+			if (!request.signal.aborted) {
+				this.failPlayback(playbackSequence, observer);
+			}
+		}
+	}
+
+	private emitEstimatedWordBoundaries(
+		text: string,
+		rate: number,
+		playbackSequence: number,
+		observer?: SpeechPlaybackObserver,
+	): void {
+		if (!observer?.onWordBoundary) return;
+		const words = speechWordRanges(text);
+		if (!words.length) return;
+
+		observer.onWordBoundary(words[0].charIndex, words[0].charLength);
+		let delay = estimatedWordDurationMs(words[0].text, rate);
+		for (let index = 1; index < words.length; index += 1) {
+			const word = words[index];
+			const timer = setTimeout(() => {
+				this.fallbackTimers.delete(timer);
+				if (this.isCurrent(playbackSequence)) {
+					observer.onWordBoundary?.(word.charIndex, word.charLength);
+				}
+			}, delay);
+			this.fallbackTimers.add(timer);
+			delay += estimatedWordDurationMs(word.text, rate);
+		}
+	}
+
+	private finishPlayback(
+		playbackSequence: number,
+		observer?: SpeechPlaybackObserver,
+	): void {
+		if (!this.isCurrent(playbackSequence)) return;
+		this.clearFallbackTimers();
+		this.releaseAudio();
+		this.playbackSequence += 1;
+		observer?.onEnd?.();
+	}
+
+	private failPlayback(
+		playbackSequence: number,
+		observer?: SpeechPlaybackObserver,
+	): void {
+		if (!this.isCurrent(playbackSequence)) return;
+		this.activeRequest = null;
+		this.clearFallbackTimers();
+		this.releaseAudio();
+		this.playbackSequence += 1;
+		observer?.onError?.();
+	}
+
+	private releaseAudio(): void {
+		if (this.activeAudio) {
+			this.activeAudio.onended = null;
+			this.activeAudio.onerror = null;
+			this.activeAudio.pause();
+			this.activeAudio.currentTime = 0;
+			this.activeAudio = null;
+		}
+		if (this.activeObjectUrl) {
+			globalThis.URL.revokeObjectURL(this.activeObjectUrl);
+			this.activeObjectUrl = null;
+		}
+	}
+
+	private isCurrent(playbackSequence: number): boolean {
+		return playbackSequence === this.playbackSequence;
 	}
 
 	private clearFallbackTimers(): void {
