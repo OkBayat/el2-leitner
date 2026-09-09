@@ -37,21 +37,33 @@ The three retained Playwright scenarios use the real Docker stack and verify:
 - a learner completes one review and the result reaches canonical persistence;
 - a learner starts the first course exercise from the library.
 
-Run them locally from a clean checkout:
+Run them locally from a clean checkout. The dedicated Compose project, database,
+ports, and credentials keep the smoke run isolated from staging and production:
 
 ```bash
+export COMPOSE_PROJECT_NAME=vocora-e2e-smoke
+export DB_NAME=vocora_e2e_smoke
+export DB_PASSWORD=vocora_e2e_smoke
+export MYSQL_ROOT_PASSWORD=vocora_e2e_smoke_root
+export DB_ADMIN_PASSWORD=vocora_e2e_smoke_root
+export JWT_SECRET=vocora-e2e-smoke-local-secret-at-least-32-characters
+export APP_HOST=127.0.0.1
+export APP_PORT=3200
+export PHPMYADMIN_HOST=127.0.0.1
+export PHPMYADMIN_PORT=8281
 docker compose up --build --detach
 cd ui
 npm ci
 npx playwright install chromium
-npm run e2e:smoke
+E2E_BASE_URL=http://127.0.0.1:3200 npm run e2e:smoke
+cd ..
+docker compose down
 ```
 
 The browser installation is local only. Do not add these commands to GitHub
-Actions.
-
-If port 3000 is already in use by another environment, set `E2E_BASE_URL` to
-the isolated stack URL before running `npm run e2e:smoke`.
+Actions. The final command removes only the isolated smoke containers and
+network; it intentionally preserves the smoke volumes for reuse. Never add
+`--volumes` to the cleanup command.
 
 ## Removed browser coverage
 
