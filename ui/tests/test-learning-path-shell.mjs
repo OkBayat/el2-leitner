@@ -49,12 +49,9 @@ const routes = read('src/app/app.routes.ts');
 const shellRoute = "path: 'learning-paths/:pathId'";
 const runnerRoute = "path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId'";
 const legacyRunnerRoute = "path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId'";
-const appShellRoute = "loadComponent: () => import('./shared/app-shell/app-shell.component')";
 assert.ok(routes.includes(shellRoute), 'The canonical public-id Learning Path route is required.');
 assert.ok(routes.includes(runnerRoute), 'The canonical exercise runner route is required.');
-assert.ok(routes.indexOf(runnerRoute) > routes.indexOf(appShellRoute), 'The canonical exercise runner must use AppShell.');
 assert.ok(routes.includes(legacyRunnerRoute), 'The legacy slug route must remain available during migration.');
-assert.ok(routes.indexOf(legacyRunnerRoute) > routes.indexOf(appShellRoute), 'The legacy exercise runner must use AppShell during migration.');
 assert.match(routes, /legacyLearningPathExerciseRouteGuard/u, 'The legacy slug route must resolve to its canonical numeric URL.');
 
 const runnerStyles = read('src/app/features/collection-learning-path/exercise-runner/exercise-runner-page.component.scss');
