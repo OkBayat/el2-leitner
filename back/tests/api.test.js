@@ -10,6 +10,14 @@ describe("HTTP API", () => {
   it("reports service health without authentication", async () => {
     const { app } = createTestContext();
     const response = await request(app).get("/api/health").expect(200, { status: "ok" });
+    assert.match(
+      response.headers["content-security-policy"],
+      /(?:^|;)media-src 'self' blob:(?:;|$)/
+    );
+    assert.match(
+      response.headers["content-security-policy"],
+      /(?:^|;)default-src 'self'(?:;|$)/
+    );
     assert.doesNotMatch(
       response.headers["content-security-policy"],
       /upgrade-insecure-requests/

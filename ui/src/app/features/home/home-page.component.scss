@@ -8,6 +8,44 @@
   color: var(--vocora-text-primary);
 }
 
+.telegram-banner {
+  min-height: 64px;
+  border: 1px solid var(--vocora-information-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-information-surface);
+  color: var(--vocora-information-foreground);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none;
+  transition: border-color var(--vocora-motion-fast), background var(--vocora-motion-fast);
+}
+
+.telegram-banner:hover {
+  border-color: var(--vocora-information);
+  background: color-mix(in srgb, var(--vocora-information) 12%, var(--vocora-information-surface));
+}
+
+.telegram-banner:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}
+
+.telegram-icon {
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--vocora-radius-md);
+  background: var(--vocora-information-foreground);
+  color: var(--vocora-information-surface);
+}
+
+.telegram-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
 .home-heading {
   margin-bottom: var(--vocora-space-8);
 }
@@ -242,6 +280,10 @@
 }
 
 @media (max-width: 520px) {
+  .telegram-banner {
+    min-height: 72px;
+  }
+
   .review-card {
     min-height: 236px;
     padding: var(--vocora-space-5);
@@ -302,6 +344,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .telegram-banner,
   .course-card {
     transition: none;
   }
