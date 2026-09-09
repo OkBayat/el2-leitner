@@ -5,15 +5,23 @@ import {fileURLToPath} from 'node:url';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDir, '..');
-const wordsPage = fs.readFileSync(path.join(uiRoot, 'src/app/features/words/words-page.component.ts'), 'utf8');
+const read = (relative) => fs.readFileSync(path.join(uiRoot, relative), 'utf8');
+const wordsPage = read('src/app/features/words/words-page.component.ts');
+const wordsTemplate = read('src/app/features/words/words-page.component.html');
+const wordsStyles = read('src/app/features/words/words-page.component.scss');
 
-assert.match(wordsPage, /<mat-label>Box<\/mat-label>/u, 'The words filter must use the standard Leitner Box terminology.');
-assert.match(wordsPage, /<th mat-header-cell \*matHeaderCellDef>Box<\/th>/u, 'The status column must be labeled Box.');
-assert.match(wordsPage, /word\.masteredAt \? 'mastered' : word\.box > 0 \? 'leitner' : 'not-introduced'/u, 'Mastered status must take precedence over active and not-introduced states.');
-assert.match(wordsPage, /word\.masteredAt \? 'Mastered' : word\.box > 0 \? 'Box ' \+ word\.box : 'Not introduced'/u, 'Each status chip must expose the expected user-facing label.');
-assert.match(wordsPage, /\.box-status-chip\[data-status='mastered'\]\{--status-tone:rgb\(52 168 83\)\}/u, 'Mastered words must use the green chip tone.');
-assert.match(wordsPage, /\.box-status-chip\[data-status='leitner'\]\{--status-tone:rgb\(66 133 244\)\}/u, 'Words in the Leitner system must use the blue chip tone.');
-assert.match(wordsPage, /\.box-status-chip\[data-status='not-introduced'\]\{--status-tone:rgb\(142 68 173\)\}/u, 'Not-introduced words must use the purple chip tone.');
-assert.doesNotMatch(wordsPage, />House(?:\s|<)|House 1/u, 'The words page must not expose the non-standard House terminology.');
+assert.match(wordsTemplate, /<mat-label>Box<\/mat-label>/u, 'The words filter must use the standard Leitner Box terminology.');
+assert.match(wordsTemplate, /<th mat-header-cell \*matHeaderCellDef>Box<\/th>/u, 'The status column must be labeled Box.');
+assert.ok(
+	wordsTemplate.indexOf('@if (word.masteredAt)') < wordsTemplate.indexOf('@else if (word.box > 0)'),
+	'Mastered status must take precedence over active Leitner status.',
+);
+assert.match(wordsTemplate, />Mastered<\/span>/u, 'Mastered words must expose their status label.');
+assert.match(wordsTemplate, />Box \{\{ word\.box \}\}<\/span>/u, 'Active words must expose their Leitner box number.');
+assert.match(wordsTemplate, /'Add to Leitner'/u, 'Unintroduced words must expose the requested Leitner action.');
+assert.doesNotMatch(wordsTemplate, /Not introduced/u, 'The obsolete Not introduced label must stay removed.');
+assert.match(wordsStyles, /data-status='mastered'[\s\S]*var\(--vocora-mastered\)/u, 'Mastered words must use the semantic mastered token.');
+assert.match(wordsStyles, /data-status='leitner'[\s\S]*var\(--vocora-leitner-active\)/u, 'Words in Leitner must use the semantic active token.');
+assert.doesNotMatch(`${wordsPage}\n${wordsTemplate}`, />House(?:\s|<)|House 1/u, 'The words page must not expose the non-standard House terminology.');
 
 console.log('Words Box status chip contract passed.');
