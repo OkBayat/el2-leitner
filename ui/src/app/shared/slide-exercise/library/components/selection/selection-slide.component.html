@@ -25,8 +25,10 @@
 						<span class="choice-option__content">
 							<span class="choice-option__number" aria-hidden="true">{{ index + 1 }}</span>
 							<span class="d-grid gap-1">
-								<strong>{{ option.label }}</strong>
-								@if (option.description) { <span>{{ option.description }}</span> }
+								<strong class="selection-option__label">{{ option.label }}</strong>
+								@if (option.description) {
+									<span class="selection-option__description">{{ option.description }}</span>
+								}
 							</span>
 						</span>
 					</button>

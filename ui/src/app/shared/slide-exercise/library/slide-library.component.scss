@@ -60,6 +60,7 @@ blockquote {
 }
 
 .choice-option {
+	height: auto;
 	min-height: 60px;
 	padding: var(--vocora-space-3) var(--vocora-space-4);
 	border-width: 2px;
@@ -79,6 +80,15 @@ blockquote {
 	grid-template-columns: 36px minmax(0, 1fr);
 	gap: var(--vocora-space-3);
 	align-items: center;
+}
+
+.selection-option__label {
+	color: var(--vocora-text-primary);
+}
+
+.selection-option__description {
+	color: var(--vocora-text-secondary);
+	font-size: 0.8rem;
 }
 
 .choice-option__number {

@@ -47,6 +47,10 @@ const classificationTemplate = readFileSync(
 	),
 	'utf8',
 );
+const selectionTemplate = readFileSync(
+	join(libraryRoot, 'components', 'selection', 'selection-slide.component.html'),
+	'utf8',
+);
 
 assert.doesNotMatch(
 	barrel,
@@ -99,6 +103,21 @@ assert.match(
 	/\[data-state='selected'\][\s\S]*\.choice-option__number/u,
 );
 assert.match(sharedStyles, /\.choice-option\s*\{[\s\S]*min-height:\s*60px;/u);
+assert.match(
+	sharedStyles,
+	/\.choice-option\s*\{[\s\S]*height:\s*auto;/u,
+	'Choice cards must grow with wrapped mobile content instead of clipping it.',
+);
+assert.match(selectionTemplate, /class="selection-option__label"/u);
+assert.match(selectionTemplate, /class="selection-option__description"/u);
+assert.match(
+	sharedStyles,
+	/\.selection-option__label\s*\{[\s\S]*color:\s*var\(--vocora-text-primary\);/u,
+);
+assert.match(
+	sharedStyles,
+	/\.selection-option__description\s*\{[\s\S]*color:\s*var\(--vocora-text-secondary\);[\s\S]*font-size:\s*0\.8rem;/u,
+);
 assert.match(
 	sharedStyles,
 	/\.choice-option\[data-state='selected'\][\s\S]*box-shadow:[^;]*var\(--vocora-information-border\)/u,
