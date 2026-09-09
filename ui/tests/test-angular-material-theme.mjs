@@ -272,6 +272,11 @@ assert.match(
 );
 assert.match(
 	components,
+	/\.mat-mdc-outlined-button:not\(:disabled\)\s*\{[^}]*--mat-button-outlined-label-text-color:\s*var\(\s*--vocora-action-secondary-foreground\s*\);[^}]*color:\s*var\(--vocora-action-secondary-foreground\);/u,
+	"Every enabled Material outlined button must use the canonical secondary label color.",
+);
+assert.match(
+	components,
 	/:disabled[^{]*\{[^}]*--mat-button-filled-disabled-container-color:/u,
 	"Every button intent must inherit a deterministic disabled treatment.",
 );
