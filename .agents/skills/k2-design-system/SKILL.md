@@ -31,8 +31,8 @@ with no visual effect.
   focus, and disabled behavior.
 - Paper White is the page and component canvas.
 - Charcoal is primary copy; Pencil Gray is secondary copy.
-- Eager Green owns primary CTA, progress, and correct-answer emphasis.
-- Spark Blue owns links and outlined secondary actions.
+- Spark Blue owns primary CTA, links, and outlined secondary actions.
+- Eager Green owns success, progress, and correct-answer emphasis.
 - Faded Gray owns disabled content and outlined-control borders.
 - Attention Yellow and Answer Red are Vocora semantic extensions for warning
   and incorrect/destructive feedback.

@@ -41,6 +41,21 @@ CANONICAL_FONTS = {
     "duolingo-sans": "duolingo-sans",
 }
 
+CANONICAL_ACTION_ROLES = {
+    "light": {
+        "primary": "#1CB0F6",
+        "primaryHover": "#1CB0F6",
+        "success": "#58CC02",
+        "successHover": "#58CC02",
+    },
+    "dark": {
+        "primary": "#49C0F8",
+        "primaryHover": "#5CC8FA",
+        "success": "#72D72B",
+        "successHover": "#83E640",
+    },
+}
+
 BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
 THEME_GROUPS = ("surface", "text", "action")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
@@ -142,6 +157,16 @@ def validate_tokens(data: dict[str, Any], errors: list[str]) -> None:
                             errors.append(
                                 f"Invalid color at themes.{theme_name}.{group_name}.{name}"
                             )
+
+            for theme_name, expected_roles in CANONICAL_ACTION_ROLES.items():
+                action = themes[theme_name].get("action")
+                if not isinstance(action, dict):
+                    continue
+                for name, expected in expected_roles.items():
+                    if action.get(name) != expected:
+                        errors.append(
+                            f"themes.{theme_name}.action.{name} must equal {expected}"
+                        )
 
     extensions = data.get("$extensions")
     if not isinstance(extensions, dict):

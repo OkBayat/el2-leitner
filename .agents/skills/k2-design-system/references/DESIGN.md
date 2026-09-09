@@ -14,9 +14,9 @@ Only the following foundation colors may establish new product patterns:
 
 | Token           |     Value | Role                                                        |
 | --------------- | --------: | ----------------------------------------------------------- |
-| Eager Green     | `#58CC02` | Primary CTA, progress, correct answers, large green accents |
+| Eager Green     | `#58CC02` | Success, progress, correct answers, large green accents     |
 | Storybook Green | `#D7FFB8` | Soft highlight wash                                         |
-| Spark Blue      | `#1CB0F6` | Interactive links and outlined secondary actions            |
+| Spark Blue      | `#1CB0F6` | Primary CTA, links, and outlined secondary actions           |
 | Fresh Leaf      | `#A5ED6E` | Supporting short green accents                              |
 | Night Ink       | `#000437` | Deep violet emphasis                                        |
 | Paper White     | `#FFFFFF` | Page canvas, surfaces, and text on strong fills             |
@@ -47,7 +47,8 @@ that identity rather than inverting it:
 | Border | `#536159` |
 | Primary text | `#F0F7F2` |
 | Secondary text | `#A9B8AD` |
-| Primary / success action | `#72D72B` |
+| Primary action | `#49C0F8` |
+| Success action | `#72D72B` |
 | Secondary action text | `#49C0F8` |
 | Warning action | `#FFC45A` |
 | Error action | `#FF6B6B` |
@@ -103,7 +104,7 @@ exactly one intent class:
 
 | Intent    | Class                      | Treatment                                                | Use                           |
 | --------- | -------------------------- | -------------------------------------------------------- | ----------------------------- |
-| Primary   | `vocora-button--primary`   | Eager Green fill, Paper White text                       | The one main action           |
+| Primary   | `vocora-button--primary`   | Spark Blue fill, Paper White text                        | The one main action           |
 | Success   | `vocora-button--success`   | Eager Green fill, Paper White text                       | Confirmed/correct outcome     |
 | Error     | `vocora-button--error`     | Answer Red fill, Paper White text                        | Incorrect/destructive outcome |
 | Warning   | `vocora-button--warning`   | Attention Yellow fill, Charcoal text                     | Caution or attention          |
@@ -214,8 +215,8 @@ Do:
 
 - use the canonical tokens;
 - keep surfaces white and typography calm;
-- reserve green for primary/progress/correct emphasis;
-- use blue for links and outlined secondary actions;
+- reserve green for success/progress/correct emphasis;
+- use blue for primary actions, links, and outlined secondary actions;
 - use rounded 12px interactive shapes;
 - compose Angular Material primitives.
 

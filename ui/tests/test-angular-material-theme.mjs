@@ -174,11 +174,16 @@ assert.match(designSystem, /--color-pencil-gray:\s*#777777;/iu);
 assert.match(designSystem, /--color-faded-gray:\s*#afafaf;/iu);
 assert.match(
 	designSystem,
-	/--vocora-action-primary:\s*var\(--color-eager-green\);/iu,
+	/--vocora-action-primary:\s*var\(--color-spark-blue\);/iu,
 );
 assert.match(
 	designSystem,
-	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#72d72b;[^}]*--vocora-action-secondary-foreground:\s*#49c0f8;/iu,
+	/--vocora-action-success:\s*var\(--color-eager-green\);/iu,
+	"Success actions must retain the canonical Eager Green role.",
+);
+assert.match(
+	designSystem,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#49c0f8;[^}]*--vocora-action-success:\s*#72d72b;/iu,
 	"The new button language must define independently tuned dark-theme actions.",
 );
 assert.match(designSystem, /--vocora-error:\s*#ff4b4b;/iu);
