@@ -66,8 +66,10 @@ test('learner completes a review and the result is persisted', async ({page}) =>
 test('learner starts the first course exercise from the library', async ({page}) => {
 	await registerLearner(page, 'course');
 	await page.goto('/library');
-	const course = page.locator('mat-card').filter({hasText: 'Cambridge Vocabulary for IELTS'});
-	await course.getByTestId('library-learning-path-action').click();
+	await page.getByTestId('library-all-courses')
+		.getByRole('button', {name: 'Cambridge Vocabulary for IELTS', exact: true})
+		.click();
+	await page.getByTestId('start-course-action').click();
 
 	await expect(page).toHaveURL(/\/learning-paths\/\d+\/lessons\/\d+\/exercises\/\d+$/u);
 	await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
