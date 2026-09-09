@@ -138,6 +138,33 @@ describe("SlideExerciseComponent", () => {
 		});
 	});
 
+	it("excludes an explicitly untracked leading slide from exercise progress", () => {
+		const { component } = createComponent();
+		const slides: SlideExerciseSlide[] = [
+			{
+				id: "setup",
+				type: "selection",
+				data: {},
+				chrome: { header: { progress: null } },
+			},
+			slide("question-1", "choice"),
+			slide("question-2", "choice"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+
+		expect(component.guideAvailable).toBe(false);
+		expect(component.presentation?.header.progress).toBeNull();
+
+		component.goTo("question-1");
+		expect(component.presentation?.header.progress).toEqual({
+			value: 50,
+			label: "1 of 2",
+		});
+	});
+
 	it("maps Enter to returning from the guide before the active slide action", () => {
 		const { component } = createComponent();
 		const slides = [

@@ -180,11 +180,11 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 	get presentation(): SlideExercisePresentation | null {
 		const slide = this.currentSlide;
 		if (!slide) return null;
-		const guideOffset = this.hasLeadingGuide ? 1 : 0;
+		const progressOffset = this.leadingProgressOffset;
 		const presentation = resolveSlideExercisePresentation({
 			slide,
-			index: this.currentIndex - guideOffset,
-			total: this.deck.length - guideOffset,
+			index: this.currentIndex - progressOffset,
+			total: this.deck.length - progressOffset,
 			rendererDefaults: this.registry.resolve(slide.type)?.chromeDefaults,
 			exerciseDefaults: this.defaults,
 			runtime: this.runtime,
@@ -200,6 +200,13 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 
 	private get hasLeadingGuide(): boolean {
 		return this.deck[0]?.type === "teaching-card";
+	}
+
+	private get leadingProgressOffset(): number {
+		return this.hasLeadingGuide ||
+			this.deck[0]?.chrome?.header?.progress === null
+			? 1
+			: 0;
 	}
 
 	onContentState(state: SlideExerciseRuntimeState): void {

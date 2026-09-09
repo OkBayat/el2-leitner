@@ -57,6 +57,9 @@ export class PracticeWordsPageComponent implements OnInit {
               { id: 'sentence-shadowing', label: 'Sentence Shadowing', description: 'Hear a complete sentence and repeat it.' },
             ],
           },
+          chrome: {
+            header: { progress: null },
+          },
         },
         {
           id: 'finish',

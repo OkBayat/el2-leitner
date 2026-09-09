@@ -37,7 +37,9 @@ describe('PracticeWordsPageComponent', () => {
     expect(slides[0]).toMatchObject({
       type: 'selection',
       data: { mode: 'single', expansionId: 'house-one-practice' },
+      chrome: { header: { progress: null } },
     });
+    expect(host.querySelector('[role="progressbar"]')).toBeNull();
     const modes = host.querySelectorAll<HTMLButtonElement>('[data-testid="selection-option"]');
     expect([...modes].map((option) => option.getAttribute('aria-label'))).toEqual([
       '1. Vocabulary Dictation. Hear a word or collocation and type it.',
@@ -54,6 +56,7 @@ describe('PracticeWordsPageComponent', () => {
       fixture.detectChanges();
       expect(slideBuilder.build).toHaveBeenCalledWith('practice-mode', 'vocabulary-dictation');
       expect(host.textContent).toContain('Generated practice');
+      expect(host.querySelector('.slide-exercise-header__copy strong')?.textContent?.trim()).toBe('1 of 2');
     });
     const generatedContinue = [...host.querySelectorAll<HTMLButtonElement>('button')]
       .find((button) => button.textContent?.trim() === 'Continue');

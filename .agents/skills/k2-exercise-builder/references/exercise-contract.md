@@ -68,6 +68,12 @@ Registry defaults normally own buttons:
 
 Use `chrome` only for deliberate changes such as a finish-only terminal summary. Scored slides emit `answered`; unscored decision and open-production slides emit `submitted`. A submitted event proves completion, not correctness.
 
+When the first slide is setup rather than an exercise step, set
+`chrome.header.progress` to `null` on that slide. The sequence runtime hides its
+progress bar and excludes that leading slide from later progress labels and
+totals. Do not use this override on a slide that should count toward exercise
+progress.
+
 ## Selection versus choice
 
 Use `selection` when the learner chooses a preference, path, category, or configuration and no option is correct. Set `mode` to `single` or `multiple`. It emits `selectedOptionIds` and must not contain `correctOptionId`, `correctOptionIds`, or `answers`.
