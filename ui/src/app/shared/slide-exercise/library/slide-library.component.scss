@@ -33,6 +33,19 @@ blockquote {
 	font-weight: 600;
 }
 
+.dictation-audio-actions {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	gap: var(--vocora-space-5);
+	padding-block: var(--vocora-space-4) var(--vocora-space-6);
+}
+
+.dictation-audio-actions svg {
+	width: 48%;
+	height: 48%;
+}
+
 .slide-interaction h1 {
 	font-size: clamp(24px, 5vw, 36px);
 	line-height: 1.2;

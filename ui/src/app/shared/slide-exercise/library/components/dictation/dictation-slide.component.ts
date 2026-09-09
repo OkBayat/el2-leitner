@@ -5,9 +5,13 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SpeechService } from '../../../../../core/speech/speech.service';
+import {
+	SpeechService,
+	type SpeechPlaybackMode,
+} from '../../../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
 	SlideContentComponent,
@@ -77,6 +81,7 @@ function parseDictation(value: unknown): DictationSlideData {
 	selector: 'app-dictation-slide',
 	standalone: true,
 	imports: [
+		MatButtonModule,
 		MatFormFieldModule,
 		MatInputModule,
 		SlideAudioControlComponent,
@@ -109,11 +114,20 @@ export class DictationSlideComponent
 			this.replayCount() < this.data().maxReplays!
 		);
 	}
-	playSpeech(): boolean {
+	playSpeech(mode: SpeechPlaybackMode = 'normal'): boolean {
 		const playback = this.data().speech;
 		if (!playback || !this.canReplay()) return false;
 		const rate = this.store.state()?.settings.voiceRate ?? 0.85;
-		const played = this.speech.speak(playback.text, rate);
+		const played =
+			mode === 'normal'
+				? this.speech.speak(playback.text, rate)
+				: this.speech.speak(
+						playback.text,
+						rate,
+						undefined,
+						undefined,
+						mode,
+					);
 		if (played) this.replayCount.update((count) => count + 1);
 		return played;
 	}

@@ -80,7 +80,7 @@
 							(click)="session.pronounce()">
 							▶ Play pronunciation
 						</button>
-						<button mat-button (click)="session.pronounce(.7)">Slower</button>
+						<button mat-button (click)="session.pronounce('slow')">Slower</button>
 					</div>
 
 					@if (session.remediation(); as remediation) {

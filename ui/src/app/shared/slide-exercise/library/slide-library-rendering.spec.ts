@@ -11,11 +11,68 @@ import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
 import {
 	ClassificationSlideComponent,
 	ClozeSlideComponent,
+	DictationSlideComponent,
 	MatchingSlideComponent,
 	TeachingCardSlideComponent,
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
+	it('renders normal and slower dictation speech controls', () => {
+		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
+		TestBed.configureTestingModule({
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(DictationSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'dictation-controls',
+			type: 'dictation',
+			data: {
+				speech: { text: 'renewable energy', replay: true },
+				answer: 'renewable energy',
+				maxReplays: 2,
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const normal = element.querySelector<HTMLButtonElement>(
+			'[data-testid="dictation-play-normal"]',
+		);
+		const slow = element.querySelector<HTMLButtonElement>(
+			'[data-testid="dictation-play-slow"]',
+		);
+		expect(normal?.getAttribute('aria-label')).toBe(
+			'Play dictation pronunciation',
+		);
+		expect(slow?.getAttribute('aria-label')).toBe(
+			'Play dictation pronunciation slowly',
+		);
+
+		normal?.click();
+		slow?.click();
+		expect(speech.speak).toHaveBeenNthCalledWith(1, 'renewable energy', 0.9);
+		expect(speech.speak).toHaveBeenNthCalledWith(
+			2,
+			'renewable energy',
+			0.9,
+			undefined,
+			undefined,
+			'slow',
+		);
+		fixture.detectChanges();
+		expect(normal?.disabled).toBe(true);
+		expect(slow?.disabled).toBe(true);
+
+		fixture.destroy();
+		expect(speech.cancel).toHaveBeenCalledOnce();
+	});
+
 	it('constructs and renders every registered reusable slide type from configuration', async () => {
 		TestBed.configureTestingModule({
 			providers: [

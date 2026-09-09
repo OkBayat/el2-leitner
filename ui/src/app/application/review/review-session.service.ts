@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { LearningApiService } from '../../core/learning/learning-api.service';
 import { ReviewPersistenceService } from '../../core/persistence/review-persistence.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
-import { SpeechService } from '../../core/speech/speech.service';
+import { SpeechService, type SpeechPlaybackMode } from '../../core/speech/speech.service';
 import {
   applyReview, buildWeightedBoxOneCycle, getDueWords, localDay, todayRecord,
 } from '../../domain/learning/learning-rules';
@@ -198,10 +198,13 @@ export class ReviewSessionService {
     return true;
   }
 
-  pronounce(multiplier = 1): boolean {
+  pronounce(mode: SpeechPlaybackMode = 'normal'): boolean {
     const word = this.currentWordSignal();
     if (!word) return false;
-    return this.speech.speak(word.term, this.store.snapshot().settings.voiceRate * multiplier);
+    const rate = this.store.snapshot().settings.voiceRate;
+    return mode === 'normal'
+      ? this.speech.speak(word.term, rate)
+      : this.speech.speak(word.term, rate, undefined, undefined, mode);
   }
 
   async submit(answer: string, forcedWrong = false): Promise<void> {

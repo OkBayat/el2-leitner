@@ -162,6 +162,21 @@ describe("SpeechService backend playback", () => {
 		});
 	});
 
+	it("applies the shared slower playback rate", async () => {
+		const backend = installBackend();
+		const service = new SpeechService();
+
+		service.speak("Listen slowly", 0.85, undefined, undefined, "slow");
+		await vi.waitFor(() => expect(FakeAudio.latest).not.toBeNull());
+
+		const request = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(JSON.parse(String(request.body))).toEqual({
+			text: "Listen slowly",
+			speed: 0.595,
+			format: "mp3",
+		});
+	});
+
 	it("aborts an in-flight backend request without starting fallback", async () => {
 		installBackend();
 		let requestSignal: AbortSignal | undefined;

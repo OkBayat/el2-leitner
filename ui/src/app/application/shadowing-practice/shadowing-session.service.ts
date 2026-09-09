@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError } from '../../core/http/api-client.service';
 import { PcmRecorderService } from '../../core/shadowing-practice/pcm-recorder.service';
 import { ShadowingApiService } from '../../core/shadowing-practice/shadowing-api.service';
-import { SpeechService } from '../../core/speech/speech.service';
+import { SpeechService, type SpeechPlaybackMode } from '../../core/speech/speech.service';
 import { ReviewAnswerSoundService } from '../../core/sound/review-answer-sound.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
@@ -65,11 +65,14 @@ export class ShadowingSessionService {
     }
   }
 
-  listen(multiplier = 1): void {
+  listen(mode: SpeechPlaybackMode = 'normal'): void {
     const prompt = this.prompt();
     if (!prompt || this.busy()) return;
     this.sound.stop();
-    const available = this.speech.speak(prompt.sentence.text, this.store.snapshot().settings.voiceRate * multiplier);
+    const rate = this.store.snapshot().settings.voiceRate;
+    const available = mode === 'normal'
+      ? this.speech.speak(prompt.sentence.text, rate)
+      : this.speech.speak(prompt.sentence.text, rate, undefined, undefined, mode);
     this.audioNotice.set(available ? '' : 'Sentence playback is not available in this browser.');
   }
 

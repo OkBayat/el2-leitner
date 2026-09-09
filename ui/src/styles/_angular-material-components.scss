@@ -285,6 +285,32 @@
 		color: var(--vocora-action-secondary-foreground);
 	}
 
+	.mat-mdc-unelevated-button.vocora-audio-action {
+		--mat-button-filled-container-color: var(--vocora-action-primary);
+		--mat-button-filled-label-text-color: var(
+			--vocora-action-primary-foreground
+		);
+		--mat-button-filled-container-shape: 24px;
+		--vocora-material-button-edge: var(--vocora-action-primary-edge);
+		width: 80px;
+		height: 80px;
+		min-width: 80px;
+		min-height: 80px;
+		padding: 0;
+		border-radius: 24px;
+		background: var(--vocora-action-primary);
+		color: var(--vocora-action-primary-foreground);
+	}
+
+	.mat-mdc-unelevated-button.vocora-audio-action--large {
+		--mat-button-filled-container-shape: 32px;
+		width: 112px;
+		height: 112px;
+		min-width: 112px;
+		min-height: 112px;
+		border-radius: 32px;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.mat-mdc-unelevated-button.vocora-button,
 		.mat-mdc-raised-button.vocora-button,

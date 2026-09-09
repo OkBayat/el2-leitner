@@ -612,6 +612,14 @@ describe('reusable slide library behavior', () => {
 		});
 
 		expect(speech.speak).toHaveBeenCalledWith('environment', 0.95);
+		expect(component.playSpeech('slow')).toBe(true);
+		expect(speech.speak).toHaveBeenLastCalledWith(
+			'environment',
+			0.95,
+			undefined,
+			undefined,
+			'slow',
+		);
 		component.setAnswer('Environment');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
