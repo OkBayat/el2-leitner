@@ -186,6 +186,14 @@ function actionView(
   };
 }
 
+function primaryActionTone(
+  feedbackTone: SlideExerciseFeedbackTone,
+): SlideExerciseActionTone {
+  return feedbackTone === 'success' || feedbackTone === 'error'
+    ? feedbackTone
+    : 'primary';
+}
+
 export function validateSlideExerciseSlides(slides: readonly SlideExerciseSlide[]): readonly SlideExerciseSlide[] {
   if (!slides.length) throw new Error('Slide exercise requires at least one slide.');
   const ids = slides.map((slide) => slide.id.trim());
@@ -282,6 +290,7 @@ export function resolveSlideExercisePresentation(input: PresentationInput): Slid
   }
 
   if (progress) progress = { ...progress, value: normalizeSlideExerciseProgress(progress.value) };
+  if (primary) primary = { ...primary, tone: primaryActionTone(footerTone) };
   return {
     header: { visible: headerVisible, progress },
     footer: {

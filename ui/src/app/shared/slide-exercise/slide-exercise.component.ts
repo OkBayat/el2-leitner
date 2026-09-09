@@ -76,7 +76,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 
 	private readonly currentIndexState = signal(0);
 	private readonly guideOpenState = signal(false);
-	runtime: SlideExerciseRuntimeState = {};
+	private readonly runtimeState = signal<SlideExerciseRuntimeState>({});
 	private readonly deckState = signal<readonly SlideExerciseSlide[]>([]);
 	private readonly recordedResults: SlideExerciseResult[] = [];
 	readonly deckController: SlideExerciseDeckController = {
@@ -159,6 +159,14 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 
 	get deck(): readonly SlideExerciseSlide[] {
 		return this.deckState();
+	}
+
+	get runtime(): SlideExerciseRuntimeState {
+		return this.runtimeState();
+	}
+
+	set runtime(value: SlideExerciseRuntimeState) {
+		this.runtimeState.set(value);
 	}
 
 	get currentIndex(): number {

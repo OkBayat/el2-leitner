@@ -271,6 +271,49 @@ describe("SlideExerciseComponent", () => {
 		]);
 	});
 
+	it("maps answer feedback to the primary action color and keeps ordinary actions primary", () => {
+		TestBed.configureTestingModule({
+			imports: [SlideExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		fixture.componentRef.setInput("slides", [slide("question")]);
+		fixture.detectChanges();
+
+		const primaryState = (): string | null =>
+			fixture.nativeElement
+				.querySelector(".slide-exercise-action--primary button")
+				?.getAttribute("data-state") ?? null;
+
+		expect(primaryState()).toBe("primary");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "success" } },
+		});
+		expect(fixture.componentInstance.presentation?.footer.primary?.tone).toBe(
+			"success",
+		);
+		fixture.detectChanges();
+		expect(primaryState()).toBe("success");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "error" } },
+		});
+		fixture.detectChanges();
+		expect(primaryState()).toBe("error");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "information" } },
+		});
+		fixture.detectChanges();
+		expect(primaryState()).toBe("primary");
+	});
+
 	it("lets a slide insert generated slides while keeping terminal slides last", () => {
 		const { component } = createComponent();
 		const initial: SlideExerciseSlide[] = [
