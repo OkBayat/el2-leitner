@@ -81,9 +81,22 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 Use test-driven development for new deterministic behavior and regression tests for bug fixes.
 
+Use this testing pyramid, from its fast foundation to its narrow smoke layer:
+
+1. Unit tests for pure functions, isolated services, and deterministic adapters.
+2. Behavior tests for domain and application rules observed through public behavior.
+3. Contract tests for HTTP APIs, persistence ports, provider adapters, schemas, and other boundaries.
+4. Regression tests at the lowest level that reproduces a previously discovered bug.
+5. Agent evaluation or regression tests for agent decisions, actions, and deterministic skill tooling.
+6. E2E smoke tests only for critical real-user journeys and complete-system connectivity.
+
+E2E tests must not be created by default. Before creating any E2E test, developers must prove that the scenario cannot be correctly covered by Unit Tests, Behavior Tests, Contract Tests, Regression Tests, or Agent Evaluation Tests. E2E tests are only allowed for a very small number of smoke scenarios that validate critical end-to-end system connectivity. Do not increase the number of E2E tests.
+
+GitHub CI must not install a browser for E2E or run E2E tests. The smoke suite is a manual local diagnostic; see `docs/TESTING.md` for its scope and command.
+
 Before finalizing a change, run the smallest relevant focused tests and then the repository-level checks affected by the change. Do not disable, skip, weaken, or delete unrelated tests to make a change pass.
 
-For listening episode work, validation must include the canonical episode validator and any relevant MySQL/browser integration coverage. For agent-skill changes, run the skill-owned validator and focused skill tests.
+For listening episode work, validation must include the canonical episode validator, relevant MySQL integration coverage, and focused component/API tests. For agent-skill changes, run the skill-owned validator and focused skill tests.
 
 ## Dependency and command safety
 

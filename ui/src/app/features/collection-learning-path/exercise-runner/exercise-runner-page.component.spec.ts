@@ -71,4 +71,49 @@ describe('ExerciseRunnerPageComponent', () => {
 
     expect(facade.start).toHaveBeenCalledTimes(1);
   });
+
+  it('starts the exercise before vocabulary activation through the page and runtime host', async () => {
+    let resolveStart!: (started: boolean) => void;
+    const startGate = new Promise<boolean>((resolve) => {
+      resolveStart = resolve;
+    });
+    const callOrder: string[] = [];
+    const facade = {
+      context: signal(context), loading: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true),
+      start: vi.fn().mockImplementation(() => {
+        callOrder.push('start');
+        return startGate;
+      }),
+      complete: vi.fn().mockResolvedValue(true),
+    };
+    const activate = vi.fn().mockImplementation(async () => {
+      callOrder.push('activate');
+      return { activatedCount: 1 };
+    });
+    TestBed.configureTestingModule({
+      imports: [ExerciseRunnerPageComponent],
+      providers: [provideRouter([]), { provide: ExerciseRunnerFacade, useValue: facade }, { provide: VocabularyIntakeFacade, useValue: { activate } }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: '1', lessonId: '5', exerciseId: '10' })) } }],
+    });
+    const fixture = TestBed.createComponent(ExerciseRunnerPageComponent);
+    fixture.detectChanges();
+
+    let startButton: HTMLButtonElement | undefined;
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      startButton = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')]
+        .find((button) => button.textContent?.trim() === "Let's Go");
+      expect(startButton).toBeDefined();
+    }, { timeout: 2000 });
+
+    startButton?.click();
+    await Promise.resolve();
+
+    expect(facade.start).toHaveBeenCalled();
+    expect(activate).not.toHaveBeenCalled();
+
+    resolveStart(true);
+    await vi.waitFor(() => expect(activate).toHaveBeenCalledWith('1', '5', '10'));
+
+    expect(callOrder.at(-1)).toBe('activate');
+  });
 });

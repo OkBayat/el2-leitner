@@ -27,6 +27,7 @@ const runtimeContext = {
 
 describe('VocabularyIntakeExerciseComponent', () => {
   it('starts with a report, activates scoped new words, then opens only new and Box 1 questions', async () => {
+    const ensureStarted = vi.fn().mockResolvedValue(true);
     const activate = vi.fn().mockResolvedValue({ activatedCount: 1 });
     TestBed.configureTestingModule({
       imports: [VocabularyIntakeExerciseComponent],
@@ -34,7 +35,7 @@ describe('VocabularyIntakeExerciseComponent', () => {
     });
     const fixture = TestBed.createComponent(VocabularyIntakeExerciseComponent);
     const component = fixture.componentInstance;
-    component.load(runtimeContext);
+    component.load({ ...runtimeContext, ensureStarted });
     fixture.detectChanges();
 
     const slides = component.slides();
@@ -46,7 +47,24 @@ describe('VocabularyIntakeExerciseComponent', () => {
     await component.startPractice();
 
 		expect(activate).toHaveBeenCalledWith('1', '5', '10');
+    expect(ensureStarted).toHaveBeenCalledOnce();
+    expect(ensureStarted.mock.invocationCallOrder[0]).toBeLessThan(activate.mock.invocationCallOrder[0]);
     expect(component.error()).toBe('');
+  });
+
+  it('does not activate vocabulary when the exercise cannot be started', async () => {
+    const activate = vi.fn();
+    TestBed.configureTestingModule({
+      imports: [VocabularyIntakeExerciseComponent],
+      providers: [{ provide: VocabularyIntakeFacade, useValue: { activate } }],
+    });
+    const component = TestBed.createComponent(VocabularyIntakeExerciseComponent).componentInstance;
+    component.load({ ...runtimeContext, ensureStarted: vi.fn().mockResolvedValue(false) });
+
+    await component.startPractice();
+
+    expect(activate).not.toHaveBeenCalled();
+    expect(component.error()).toBe('Exercise could not be started.');
   });
 
   it('records each question once and prepares the final correct/incorrect summary', () => {

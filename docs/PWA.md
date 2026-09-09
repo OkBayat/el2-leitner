@@ -63,6 +63,6 @@ This avoids mixing an old lazy-loaded chunk graph with new deployed bundles.
 
 - `npm test` passes in `ui/`.
 - Backend tests include manifest and worker response-header coverage.
-- Playwright verifies the manifest, worker scope, service-worker registration, control after reload, and an offline reload of the cached application shell.
+- Fast artifact and component regressions verify the manifest, worker scope, registration lifecycle, cache policy, and offline route; verify a real offline reload manually when changing complete-system PWA connectivity.
 - Test Android installation from the production HTTPS origin.
 - Test iPhone installation from Safari and verify the icon, standalone launch, status-bar/safe-area spacing, and update prompt.

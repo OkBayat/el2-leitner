@@ -61,7 +61,7 @@ Focused commands:
 
 ```bash
 cd back && node --test tests/shadowing-*.test.js
-cd ../ui && npm run test:unit && npx playwright test shadowing.spec.ts
+cd ../ui && npm run test:unit
 cd .. && python -m unittest discover -s speech -p 'test_server.py' -v
 ```
 

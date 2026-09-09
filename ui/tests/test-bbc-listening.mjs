@@ -30,7 +30,6 @@ const required = [
   'src/app/features/bbc-listening/listening-audio-player.component.html',
   'src/app/features/bbc-listening/listening-audio-player.component.scss',
   'src/app/features/bbc-listening/listening-audio-player.component.spec.ts',
-  'e2e/bbc-listening.spec.ts',
 ];
 for (const file of required) assert.ok(exists(file), `${file} is required for BBC listening practice.`);
 

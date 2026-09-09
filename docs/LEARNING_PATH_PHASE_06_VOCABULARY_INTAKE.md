@@ -60,4 +60,4 @@ Phase-specific coverage includes:
 - an opt-in MySQL integration test proving episode vocabulary does not require a second collection subscription;
 - HTTP authentication/identity tests for the type-specific command;
 - Angular domain, facade, API, registry, host, renderer, and runner tests;
-- a Playwright journey covering start → scoped activation → server-authoritative completion.
+- Angular component/facade regressions and backend behavior/HTTP tests covering start → scoped activation → server-authoritative completion.

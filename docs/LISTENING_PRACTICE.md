@@ -207,4 +207,4 @@ Coverage includes:
 - authenticated API selection, completion, answer-key non-disclosure, idempotent submission, cross-user isolation, and the new `260618` lesson
 - MySQL test-aware persistence and database verification for both built-in lessons
 - Angular domain/API/application/page/player/architecture tests
-- production Playwright flow covering both catalog cards, three tests per lesson, completion tracking, in-app audio presence/no-autoplay, and House 1 mistake capture
+- focused component, application, contract, and persistence tests covering catalog cards, ordered tests, completion tracking, audio controls/no-autoplay, and House 1 mistake capture

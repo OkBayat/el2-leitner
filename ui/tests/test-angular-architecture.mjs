@@ -36,7 +36,7 @@ for (const required of [
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
   'src/app/shared/share-story/share-story.service.ts', 'src/app/shared/share-story/share-story-dialog.component.ts',
-  'e2e/vocora.spec.ts', 'playwright.config.ts', 'tools/ci-vocabulary.mjs',
+  'e2e/smoke.spec.ts', 'playwright.config.ts', 'tools/ci-vocabulary.mjs',
   'assets/welcome/welcome-illustration-1.jpg', 'assets/welcome/welcome-illustration-2.jpg',
   'assets/welcome/welcome-illustration-3.jpg', 'assets/welcome/welcome-illustration-4.jpg',
   'assets/welcome/welcome-illustration-5.jpg'
@@ -59,7 +59,7 @@ assert.equal(pkg.dependencies['@angular/material'], '22.1.4');
 assert.equal(pkg.dependencies['@angular/cdk'], '22.1.4');
 assert.equal(pkg.dependencies.bootstrap, '5.3.8', 'Bootstrap CSS must stay pinned to the approved version.');
 assert.match(pkg.scripts.test, /check:architecture.*ng test/u);
-assert.match(pkg.scripts.e2e, /playwright test/u);
+assert.equal(pkg.scripts.e2e, 'npm run e2e:smoke');
 assert.match(pkg.scripts['build:production'], /ng build/u);
 
 const routes = read('src/app/app.routes.ts');

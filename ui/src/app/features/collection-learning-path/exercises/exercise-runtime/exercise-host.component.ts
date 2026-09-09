@@ -20,7 +20,10 @@ import type { ExerciseComponent, ExerciseContext, ExerciseOutcome } from './exer
 import { createLearningPathExerciseRegistry } from './learning-path-exercise-registry';
 import { UnsupportedExerciseComponent } from './unsupported-exercise.component';
 
-function runtimeContext(context: ExerciseContextView): ExerciseContext {
+function runtimeContext(
+  context: ExerciseContextView,
+  ensureStarted?: () => Promise<boolean>,
+): ExerciseContext {
   return {
     pathId: context.path.id,
     lessonId: context.lesson.id,
@@ -31,6 +34,7 @@ function runtimeContext(context: ExerciseContextView): ExerciseContext {
     state: context.state,
     config: context.exercise.config,
     payload: context.payload,
+    ensureStarted,
   };
 }
 
@@ -44,6 +48,7 @@ function runtimeContext(context: ExerciseContextView): ExerciseContext {
 })
 export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) context!: ExerciseContextView;
+  @Input() ensureStarted?: () => Promise<boolean>;
   @Output() readonly engaged = new EventEmitter<void>();
   @Output() readonly outcome = new EventEmitter<ExerciseOutcome>();
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
@@ -107,7 +112,7 @@ export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
       const renderer = await loader();
       if (version !== this.renderVersion) return;
       this.componentRef = this.outlet.createComponent(renderer);
-      this.componentRef.instance.load(runtimeContext(this.context));
+      this.componentRef.instance.load(runtimeContext(this.context, this.ensureStarted));
       this.outcomeSubscription = this.componentRef.instance.outcome.subscribe((outcome) => this.outcome.emit(outcome));
       this.rendererLoading = false;
       this.changeDetector.markForCheck();
