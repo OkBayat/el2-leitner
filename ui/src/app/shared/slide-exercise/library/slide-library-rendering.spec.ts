@@ -77,7 +77,7 @@ describe('reusable slide renderer contract', () => {
 			enterkeyhint: 'go',
 			wrap: 'off',
 			rows: '1',
-			autocapitalize: 'none',
+			autocapitalize: 'off',
 			autocorrect: 'off',
 			spellcheck: 'false',
 		})) {
