@@ -66,10 +66,10 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 ## Reusable slide constraint
 
-- Never create a new slide type, slide component, feature-specific slide renderer, or parallel slide interaction.
+- Never create a feature-specific slide type, slide component, renderer, or parallel slide interaction.
 - Before implementing a slide-based experience, inspect the existing registered slide types and use an existing slide only when its interaction and evidence semantics fully match the requested behavior.
 - Do not force a scored slide such as `choice` into a non-scored selection flow, invent a correct answer, or weaken an existing slide contract to make it appear compatible.
-- If no existing slide fully supports the requested interaction, stop implementation and tell the user which interaction is unsupported. Do not create or register a replacement slide.
+- If no existing slide fully supports the requested interaction, stop and tell the user which interaction is unsupported. Add a new slide only when the user explicitly authorizes a general reusable interaction; implement its object-driven contract, registry entry, tests, documentation, and design-system-compatible states together.
 
 ## Frontend styling
 

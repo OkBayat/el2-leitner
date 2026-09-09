@@ -34,9 +34,11 @@ export function options(
 	if (!Array.isArray(value)) throw new Error(`${label} are required.`);
 	const result = value.map((candidate) => {
 		const source = record(candidate, label);
+		const description = text(source['description']);
 		return {
 			id: requiredText(source['id'], `${label} id`),
 			label: requiredText(source['label'], `${label} label`),
+			...(description ? { description } : {}),
 		};
 	});
 	if (new Set(result.map((option) => option.id)).size !== result.length)

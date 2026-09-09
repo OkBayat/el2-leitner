@@ -1,5 +1,9 @@
 # K2 OKF Knowledge Bundle Update Log
 
+## 2026-09-09
+
+* **Update**: Extended [Reusable Slide Interactions](project/reusable-slide-interactions.md) with the general object-driven `selection` family, including single/multiple modes and its non-scored evidence boundary from `choice`.
+
 ## 2026-09-08
 
 * **Creation**: Added [Vocora Text-to-Speech](project/vocora-text-to-speech.md) with the shared backend endpoint, binary client-consumption contract, content-addressed cache ownership, and isolated automatic deployment behavior.

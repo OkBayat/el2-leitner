@@ -6,7 +6,7 @@ tags: [learning-path, slides, exercises, angular, interaction-design]
 timestamp: 2026-09-08T06:55:33Z
 ---
 
-Vocora provides 16 reusable interaction families for lesson exercises. Select a
+Vocora provides 17 reusable interaction families for lesson exercises. Select a
 family from the action the learner must perform and the evidence the exercise
 needs. A lesson topic such as collocations or word formation does not by itself
 determine the interaction: the same content can require recognition, controlled
@@ -17,6 +17,7 @@ recall, correction, transformation, or independent production.
 | Family | Best used for | Supported modes | Useful stimuli and combinations | Limits and cautions |
 | --- | --- | --- | --- | --- |
 | `teaching-card` | Presenting a word, usage distinction, rule, warning, or study tip before practice | `word`, `usage`, `contrast`, `rule`, `warning`, `tip`; blocks: `word`, `comparison`, `correction`, `patterns`, `example`, `note` | Text, image, chart, or diagram; often precedes a scored recognition or recall slide | It presents information and does not prove mastery. Do not use it as an assessment substitute. |
+| `selection` | Choosing a learner preference, path, category, or configuration when no option is correct | `single`, `multiple` | A question with two or more object-configured options; each option has an ID, label, and optional description | It emits selected option IDs as submitted evidence. It is not scored and must not contain correctness fields. Use `choice` for assessment. |
 | `choice` | Recognition among explicit alternatives | `single`, `multiple`, `meaning`, `part-of-speech`, `synonym`, `antonym`, `correct-spelling`, `best-word`, `odd-one-out` | Text or visual prompts; speech playback supports sound-to-option recognition | Options can cue the answer, so use constructed response when unaided recall is required. |
 | `truth` | Judging a statement against a source, claim, or opinion | `true-false`, `true-false-not-given`, `yes-no-not-given`, `agree-disagree` | Text, audio, chart, or diagram followed by one or more judgments | Use `not-given` only when source coverage genuinely makes absence distinguishable from falsehood. |
 | `matching` | Mapping two sets of related items | `definition`, `synonym`, `antonym`, `collocation`, `word-family`, `person-opinion`, `sentence-ending`, `heading-section`, `term-example` | Text sections, audio speakers, or term/example sets; can follow a teaching card | Prefer `on-complete` feedback for test-like tasks and `immediate` feedback for guided practice. Enable many-to-one only when the domain relation permits it. |
@@ -39,6 +40,8 @@ recall, correction, transformation, or independent production.
   order, recall, correct, transform, transcribe, speak, or write.
 * Use `teaching-card` for presentation; use a scored or submitted interaction to
   collect learning evidence.
+* Use `selection` for an unscored learner decision and `choice` for a scored
+  answer. Never invent an answer key for a preference or configuration choice.
 * Choose between `choice` and `short-answer` based on whether options are part of
   the intended support. Choose between `matching` and `word-formation` based on
   whether the learner maps an existing form or must produce it.
@@ -70,7 +73,7 @@ configurations are validated fail-closed, so incomplete or contradictory slide
 data must be corrected at the source rather than tolerated by the component.
 
 The registry also exposes `message` and `summary` shell content. They support
-exercise flow but are not members of the 16 reusable interaction families.
+exercise flow but are not members of the 17 reusable interaction families.
 
 # Composition Examples
 

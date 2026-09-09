@@ -84,6 +84,57 @@ function verify(definition, result, vocabulary = []) {
 }
 
 describe("slide-sequence completion evidence", () => {
+  it("accepts configured unscored selections and rejects unknown option ids", () => {
+    const definition = exercise({
+      config: {
+        slides: [
+          {
+            id: "mode",
+            type: "selection",
+            data: {
+              mode: "single",
+              question: "Choose a mode.",
+              options: [
+                { id: "guided", label: "Guided" },
+                { id: "independent", label: "Independent" },
+              ],
+            },
+          },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+
+    assert.equal(verify(definition, outcome([{
+      rootSlideId: "mode",
+      slideType: "selection",
+      eventType: "submitted",
+      data: { selectedOptionIds: ["missing"] },
+    }])), false);
+    assert.equal(verify(definition, outcome([{
+      rootSlideId: "mode",
+      slideType: "selection",
+      eventType: "submitted",
+      data: { selectedOptionIds: ["guided", "independent"] },
+    }])), false);
+    assert.deepEqual(verify(definition, outcome([{
+      rootSlideId: "mode",
+      slideType: "selection",
+      eventType: "submitted",
+      data: { selectedOptionIds: ["guided"] },
+    }])), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:1",
+    });
+
+    const scoredSelection = structuredClone(definition);
+    scoredSelection.config.slides[0].data.correctOptionIds = ["guided"];
+    assert.throws(
+      () => verify(scoredSelection, outcome([])),
+      /must not define correctness fields/,
+    );
+  });
+
   it("rejects a bare completion and requires correct scored results plus submitted production", () => {
     const definition = exercise();
 

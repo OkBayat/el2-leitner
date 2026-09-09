@@ -7,6 +7,7 @@ const uiRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const libraryRoot = join(uiRoot, 'src/app/shared/slide-exercise/library');
 const componentTypes = [
 	'teaching-card',
+	'selection',
 	'choice',
 	'truth',
 	'matching',

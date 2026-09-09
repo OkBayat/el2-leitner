@@ -50,7 +50,11 @@ export function createDefaultSlideContentRegistry(): SlideContentRegistry {
   const submittedDefaults = {
     footer: { primary: { id: 'submit', label: 'Submit', behavior: 'content' as const, disabled: true } },
   };
+  const selectionDefaults = {
+    footer: { primary: { id: 'continue', label: 'Continue', behavior: 'content' as const, disabled: true } },
+  };
   registry.register({ type: 'teaching-card', loadComponent: () => component().then((module) => module.TeachingCardSlideComponent) });
+  registry.register({ type: 'selection', chromeDefaults: selectionDefaults, loadComponent: () => component().then((module) => module.SelectionSlideComponent) });
   registry.register({ type: 'choice', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.ChoiceSlideComponent) });
   registry.register({ type: 'truth', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.TruthSlideComponent) });
   registry.register({ type: 'matching', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.MatchingSlideComponent) });

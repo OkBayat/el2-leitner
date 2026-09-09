@@ -1,0 +1,37 @@
+@if (data(); as content) {
+	<article class="slide-type" data-testid="selection-slide">
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ content.instruction || (content.mode === 'multiple' ? 'Choose one or more options.' : 'Choose one option.') }}
+			</p>
+			<h1>{{ content.question }}</h1>
+			<div
+				class="choice-grid"
+				[attr.role]="content.mode === 'multiple' ? 'group' : 'radiogroup'"
+				aria-label="Selection options"
+			>
+				@for (option of content.options; track option.id; let index = $index) {
+					<button
+						mat-stroked-button
+						type="button"
+						class="choice-option"
+						data-testid="selection-option"
+						[attr.data-state]="isSelected(option.id) ? 'selected' : 'neutral'"
+						[attr.role]="content.mode === 'multiple' ? 'checkbox' : 'radio'"
+						[attr.aria-checked]="isSelected(option.id)"
+						[attr.aria-label]="optionAriaLabel(option, index)"
+						(click)="selectOption(option.id)"
+					>
+						<span class="choice-option__content">
+							<span class="choice-option__number" aria-hidden="true">{{ index + 1 }}</span>
+							<span class="d-grid gap-1">
+								<strong>{{ option.label }}</strong>
+								@if (option.description) { <span>{{ option.description }}</span> }
+							</span>
+						</span>
+					</button>
+				}
+			</div>
+		</section>
+	</article>
+}

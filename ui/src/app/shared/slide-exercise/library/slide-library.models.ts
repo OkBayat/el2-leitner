@@ -84,6 +84,15 @@ export interface TeachingCardData extends SlideTypeData {
 export interface SlideOption {
 	readonly id: string;
 	readonly label: string;
+	readonly description?: string;
+}
+
+export type SelectionSlideMode = 'single' | 'multiple';
+
+export interface SelectionSlideData extends SlideTypeData {
+	readonly mode: SelectionSlideMode;
+	readonly question: string;
+	readonly options: readonly SlideOption[];
 }
 
 export interface SpeechPlaybackConfig {
@@ -321,6 +330,7 @@ export interface WritingResponseSlideData extends SlideTypeData {
 
 export const REUSABLE_SLIDE_TYPES = [
 	'teaching-card',
+	'selection',
 	'choice',
 	'truth',
 	'matching',

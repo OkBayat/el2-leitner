@@ -14,6 +14,7 @@ import {
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
 	RewriteSlideComponent,
+	SelectionSlideComponent,
 	ShortAnswerSlideComponent,
 	SpeakingResponseSlideComponent,
 	StructuredCompletionSlideComponent,
@@ -62,6 +63,66 @@ function configure(): {
 }
 
 describe('reusable slide library behavior', () => {
+	it('submits general single and multiple selections without correctness', () => {
+		const next = vi.fn();
+		const component = new SelectionSlideComponent();
+		const states: unknown[] = [];
+		const events: unknown[] = [];
+		component.stateChange.subscribe((state) => states.push(state));
+		component.event.subscribe((event) => events.push(event));
+		component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'single',
+				question: 'Choose a practice mode',
+				options: [
+					{ id: 'dictation', label: 'Vocabulary Dictation', description: 'Hear and type a word or collocation.' },
+					{ id: 'completion', label: 'Sentence Completion', description: 'Complete a sentence from audio.' },
+				],
+			},
+			deck: { insertSlides: vi.fn(), next, results: () => [] },
+		});
+
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: true } } } });
+		component.selectOption('completion');
+		expect(component.selectedOptionIds()).toEqual(['completion']);
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: false } } } });
+		component.handleAction('continue');
+		expect(events.at(-1)).toEqual({ type: 'submitted', data: { selectedOptionIds: ['completion'] } });
+		expect(next).toHaveBeenCalledOnce();
+
+		component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'multiple',
+				question: 'Choose study topics',
+				options: [
+					{ id: 'vocabulary', label: 'Vocabulary' },
+					{ id: 'grammar', label: 'Grammar' },
+					{ id: 'listening', label: 'Listening' },
+				],
+			},
+			deck: { insertSlides: vi.fn(), next, results: () => [] },
+		});
+		component.selectOption('vocabulary');
+		component.selectOption('listening');
+		expect(component.selectedOptionIds()).toEqual(['vocabulary', 'listening']);
+		component.selectOption('vocabulary');
+		expect(component.selectedOptionIds()).toEqual(['listening']);
+
+		expect(() => component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'ranked',
+				question: 'Choose an option',
+				options: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+			},
+		})).toThrow('Selection mode must be single or multiple.');
+	});
+
 	it('shows the correct ShortAnswerSlide answer in the footer after a wrong answer', () => {
 		const component = new ShortAnswerSlideComponent();
 		let footerDetail = '';

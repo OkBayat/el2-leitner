@@ -1,0 +1,4 @@
+interface:
+  display_name: "K2 Exercise Builder"
+  short_description: "Build validated slide-sequence exercises."
+  default_prompt: "Use $k2-exercise-builder to design a runtime-ready Vocora slides.sequence exercise from the supplied objective and source content."

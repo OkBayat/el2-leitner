@@ -22,4 +22,13 @@ describe('App', () => {
     expect(childPaths).not.toContain('learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId');
     expect(childPaths).not.toContain('learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId');
   });
+
+  it('keeps the standalone word-practice sequence outside the shared app shell', () => {
+    const appShellRoute = appRoutes.find((route) => route.path === '');
+    const childPaths = appShellRoute?.children?.map((route) => route.path) ?? [];
+    const rootPaths = appRoutes.map((route) => route.path);
+
+    expect(rootPaths).toContain('practice-words');
+    expect(childPaths).not.toContain('practice-words');
+  });
 });

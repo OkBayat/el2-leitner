@@ -11,7 +11,7 @@ const GENERATED_TYPES = new Map([
   ["meaning-choice", "choice"],
 ]);
 const UNSCORED_TYPES = new Set(["message", "teaching-card", "summary", LESSON_VOCABULARY_SCOPE_SLIDE_TYPE]);
-const SUBMITTED_TYPES = new Set(["speaking-response", "writing-response"]);
+const SUBMITTED_TYPES = new Set(["selection", "speaking-response", "writing-response"]);
 const ANSWER_FIELD_TYPES = new Set(["cloze", "structured-completion", "word-formation"]);
 const MAX_EVIDENCE_BYTES = 256_000;
 
@@ -79,6 +79,26 @@ function generatedVocabularyConfig(scopeSlide) {
 
 function strings(value) {
   return Array.isArray(value) ? value.map((item) => String(item ?? "").trim()).filter(Boolean) : [];
+}
+
+function selectionConfig(data) {
+  const mode = requiredString(data, "mode", "Selection mode");
+  if (mode !== "single" && mode !== "multiple") invalid("Selection mode is unsupported.");
+  requiredString(data, "question", "Selection question");
+  if (["correctOptionId", "correctOptionIds", "answers"].some((key) => key in data)) {
+    invalid("Selection must not define correctness fields.");
+  }
+  if (!Array.isArray(data.options) || data.options.length < 2) {
+    invalid("Selection requires at least two options.");
+  }
+  const optionIds = data.options.map((candidate) => {
+    const option = record(candidate);
+    const id = requiredString(option, "id", "Selection option id");
+    requiredString(option, "label", "Selection option label");
+    return id;
+  });
+  if (new Set(optionIds).size !== optionIds.length) invalid("Selection option ids must be unique.");
+  return { mode, optionIds };
 }
 
 function wordCount(value) {
@@ -186,6 +206,14 @@ function gradeConfiguredResult(slide, resultData) {
 }
 
 function verifySubmission(slide, resultData, context) {
+  if (slide.type === "selection") {
+    const { mode, optionIds } = selectionConfig(slide.data);
+    const selectedOptionIds = strings(resultData.selectedOptionIds);
+    return selectedOptionIds.length > 0
+      && new Set(selectedOptionIds).size === selectedOptionIds.length
+      && (mode === "multiple" || selectedOptionIds.length === 1)
+      && selectedOptionIds.every((id) => optionIds.includes(id));
+  }
   if (slide.type === "speaking-response") {
     const artifactId = String(resultData.recordingArtifactId ?? "").trim();
     const artifact = context.recordingArtifacts?.get(artifactId);
@@ -224,6 +252,7 @@ export function resolveSlideSequenceDefinition(exercise) {
     };
   });
   if (new Set(slides.map((slide) => slide.id)).size !== slides.length) invalid("slides.sequence slide ids must be unique.");
+  slides.filter((slide) => slide.type === "selection").forEach((slide) => selectionConfig(slide.data));
   if (slides.filter((slide) => slide.terminal).length !== 1 || !slides.at(-1).terminal) {
     invalid("slides.sequence requires exactly one terminal final slide.");
   }

@@ -43,6 +43,7 @@ function learnerResponse(
 	const data = record(value);
 	if (!data) return null;
 	if (
+		slideType === "selection" ||
 		slideType === "choice" ||
 		slideType === "truth" ||
 		slideType === "pronunciation"
