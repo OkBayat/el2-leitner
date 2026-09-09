@@ -33,7 +33,7 @@ limit and the absence of Playwright execution in GitHub workflows.
 
 The three retained Playwright scenarios use the real Docker stack and verify:
 
-- the application starts and registration reaches the dashboard;
+- the application starts and registration completes the welcome-to-dashboard handoff;
 - a learner completes one review and the result reaches canonical persistence;
 - a learner starts the first course exercise from the library.
 
@@ -85,7 +85,7 @@ scenarios were removed after confirming coverage at their owning boundaries:
 | `sentence-practice.spec.ts` | Retry flow, speech highlighting, daily totals, and Leitner isolation | Sentence domain/session service specs and backend sentence API/daily-attempt tests |
 | `shadowing-audio.spec.ts` | Native recorder silence and cleanup | PCM recorder and shadowing session specs plus backend silence/provider regressions |
 | `shadowing.spec.ts` | Retry, permission failure, cleanup, and responsive presentation | Shadowing domain/session service specs and authenticated API contracts |
-| `vocora.spec.ts` | Broad learner, library, review, word-edit, spelling, and layout coverage | Focused review, state, vocabulary API, library, settings, spelling, sound, and persistence tests; the critical review path remains as smoke |
+| `vocora.spec.ts` | Broad onboarding, learner, library, review, word-edit, spelling, and layout coverage | Registration and welcome component regressions plus focused review, state, vocabulary API, library, settings, spelling, sound, and persistence tests; the critical registration and review paths remain as smoke |
 
 No AI-agent browser scenario existed. Agent behavior continues to use the
 skill-owned deterministic regression and evaluation tests rather than E2E.

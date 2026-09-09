@@ -1,9 +1,10 @@
 import {expect, test, type Page} from '@playwright/test';
+import {finishNewLearnerWelcome} from './support/new-learner';
 
 const PASSWORD = 'password123';
 let accountSequence = 0;
 
-async function registerLearner(page: Page, purpose: string, awaitDailyActivation = false): Promise<void> {
+async function registerLearner(page: Page, purpose: string): Promise<void> {
 	accountSequence += 1;
 	const email = `smoke-${purpose}-${Date.now()}-${accountSequence}@example.com`;
 	const registration = page.waitForResponse(response =>
@@ -11,22 +12,13 @@ async function registerLearner(page: Page, purpose: string, awaitDailyActivation
 		&& new URL(response.url()).pathname === '/api/auth/register'
 		&& response.ok(),
 	);
-	const activation = awaitDailyActivation
-		? page.waitForResponse(response =>
-			response.request().method() === 'POST'
-			&& new URL(response.url()).pathname === '/api/learning/vocabulary-activation-batches'
-			&& response.ok(),
-		)
-		: null;
-
 	await page.goto('/register');
 	await page.getByLabel('Email').fill(email);
 	await page.getByLabel('Password').fill(PASSWORD);
 	await page.getByRole('button', {name: 'Create account'}).click();
 	await registration;
-	await expect(page).toHaveURL(/\/dashboard$/u);
+	await finishNewLearnerWelcome(page);
 	await expect(page.getByRole('heading', {name: 'Today', exact: true})).toBeVisible();
-	if (activation) await activation;
 }
 
 async function firstDueTerm(page: Page): Promise<string> {
@@ -55,7 +47,7 @@ test('application starts and a learner can register', async ({page}) => {
 });
 
 test('learner completes a review and the result is persisted', async ({page}) => {
-	await registerLearner(page, 'review', true);
+	await registerLearner(page, 'review');
 	const term = await firstDueTerm(page);
 
 	await page.goto('/review');
@@ -72,7 +64,7 @@ test('learner completes a review and the result is persisted', async ({page}) =>
 });
 
 test('learner starts the first course exercise from the library', async ({page}) => {
-	await registerLearner(page, 'course', true);
+	await registerLearner(page, 'course');
 	await page.goto('/library');
 	const course = page.locator('mat-card').filter({hasText: 'Cambridge Vocabulary for IELTS'});
 	await course.getByTestId('library-learning-path-action').click();
