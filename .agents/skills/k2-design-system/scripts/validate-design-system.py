@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the K2 design-system skill deterministically."""
+"""Validate the canonical K2 design-system skill."""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 REQUIRED_FILES = (
     "SKILL.md",
@@ -17,89 +16,34 @@ REQUIRED_FILES = (
     "references/DESIGN.md",
     "references/tokens.json",
     "references/variables.scss",
+    "references/theme.css",
     "references/material-theme.scss",
     "scripts/validate-design-system.py",
     "scripts/test_validate_design_system.py",
 )
 
-REQUIRED_THEME_GROUPS = (
-    "surface",
-    "text",
-    "action",
-    "state",
-    "activity",
-    "brand",
-)
-
-REQUIRED_SEMANTIC_KEYS = {
-    "surface": {"page", "base", "raised", "subtle", "border"},
-    "text": {"primary", "secondary", "disabled", "onPrimary", "onStrong"},
-    "action": {
-        "primary",
-        "primaryHover",
-        "secondary",
-        "secondaryForeground",
-        "focusRing",
-    },
-    "state": {
-        "success",
-        "information",
-        "warning",
-        "error",
-        "mastered",
-        "leitnerActive",
-        "notStarted",
-        "future",
-        "disabled",
-    },
-    "activity": {
-        "vocabulary",
-        "listening",
-        "shadowing",
-        "reading",
-        "writing",
-        "grammar",
-    },
-    "brand": {"green", "greenStrong", "mint", "mintLight", "teal", "orange"},
+CANONICAL_COLORS = {
+    "eager-green": "#58CC02",
+    "storybook-green": "#D7FFB8",
+    "spark-blue": "#1CB0F6",
+    "fresh-leaf": "#A5ED6E",
+    "night-ink": "#000437",
+    "paper-white": "#FFFFFF",
+    "charcoal": "#4B4B4B",
+    "pencil-gray": "#777777",
+    "faded-gray": "#AFAFAF",
+    "attention-yellow": "#FFC800",
+    "answer-red": "#FF4B4B",
 }
 
-REQUIRED_VARIABLES = {
-    "--vocora-surface-page",
-    "--vocora-surface-base",
-    "--vocora-surface-raised",
-    "--vocora-surface-subtle",
-    "--vocora-border",
-    "--vocora-text-primary",
-    "--vocora-text-secondary",
-    "--vocora-text-disabled",
-    "--vocora-text-on-primary",
-    "--vocora-action-primary",
-    "--vocora-action-primary-hover",
-    "--vocora-action-secondary",
-    "--vocora-action-secondary-foreground",
-    "--vocora-focus-ring",
-    "--vocora-success",
-    "--vocora-information",
-    "--vocora-warning",
-    "--vocora-error",
-    "--vocora-mastered",
-    "--vocora-leitner-active",
-    "--vocora-not-started",
-    "--vocora-future",
-    "--vocora-disabled",
-    "--vocora-activity-vocabulary",
-    "--vocora-activity-listening",
-    "--vocora-activity-shadowing",
-    "--vocora-activity-reading",
-    "--vocora-activity-writing",
-    "--vocora-activity-grammar",
-    "--vocora-brand-green",
-    "--vocora-brand-green-strong",
-    "--vocora-brand-mint",
-    "--vocora-brand-mint-light",
-    "--vocora-brand-teal",
-    "--vocora-brand-orange",
+CANONICAL_FONTS = {
+    "feather": "feather",
+    "duolingo-sans": "duolingo-sans",
 }
+
+BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
+THEME_GROUPS = ("surface", "text", "action")
+HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 
 def skill_root() -> Path:
@@ -120,115 +64,133 @@ def load_tokens(root: Path) -> dict[str, Any]:
     return data
 
 
-def flatten_hex_values(value: Any, path: str = "") -> list[tuple[str, str]]:
-    result: list[tuple[str, str]] = []
-    if isinstance(value, dict):
-        for key, child in value.items():
-            child_path = f"{path}.{key}" if path else key
-            result.extend(flatten_hex_values(child, child_path))
-    elif isinstance(value, str):
-        result.append((path, value))
-    return result
-
-
 def validate_required_files(root: Path, errors: list[str]) -> None:
     for relative in REQUIRED_FILES:
         if not (root / relative).is_file():
             errors.append(f"Missing required file: {relative}")
 
 
+def validate_dtcg_group(
+    group: object,
+    expected: dict[str, str],
+    token_type: str,
+    path: str,
+    errors: list[str],
+) -> None:
+    if not isinstance(group, dict):
+        errors.append(f"{path} must be an object")
+        return
+
+    for name, value in expected.items():
+        token = group.get(name)
+        if not isinstance(token, dict):
+            errors.append(f"{path}.{name} must be a token object")
+            continue
+        if token.get("$value") != value:
+            errors.append(f"{path}.{name} must equal {value}")
+        if token.get("$type") != token_type:
+            errors.append(f"{path}.{name} must use type {token_type}")
+        if not isinstance(token.get("$description"), str) or not token["$description"].strip():
+            errors.append(f"{path}.{name} must have a description")
+
+
 def validate_tokens(data: dict[str, Any], errors: list[str]) -> None:
-    meta = data.get("meta")
-    if not isinstance(meta, dict):
-        errors.append("meta must be an object")
-    else:
-        if meta.get("defaultTheme") != "light":
-            errors.append("meta.defaultTheme must be 'light'")
-        declared = meta.get("themes")
-        if declared != ["light", "dark"]:
-            errors.append("meta.themes must be exactly ['light', 'dark']")
+    validate_dtcg_group(
+        data.get("color"),
+        CANONICAL_COLORS,
+        "color",
+        "color",
+        errors,
+    )
+    validate_dtcg_group(
+        data.get("font"),
+        CANONICAL_FONTS,
+        "fontFamily",
+        "font",
+        errors,
+    )
 
     themes = data.get("themes")
     if not isinstance(themes, dict):
         errors.append("themes must be an object")
-        return
-
-    light = themes.get("light")
-    dark = themes.get("dark")
-    if not isinstance(light, dict):
-        errors.append("themes.light must be an object")
-        return
-    if not isinstance(dark, dict):
-        errors.append("themes.dark must be an object")
-        return
-
-    light_groups = set(light.keys())
-    dark_groups = set(dark.keys())
-    if light_groups != dark_groups:
-        errors.append("Light and dark theme groups must have exact parity")
-
-    for group in REQUIRED_THEME_GROUPS:
-        light_group = light.get(group)
-        dark_group = dark.get(group)
-        if not isinstance(light_group, dict):
-            errors.append(f"themes.light.{group} must be an object")
-            continue
-        if not isinstance(dark_group, dict):
-            errors.append(f"themes.dark.{group} must be an object")
-            continue
-
-        light_keys = set(light_group.keys())
-        dark_keys = set(dark_group.keys())
-        if light_keys != dark_keys:
-            errors.append(f"Theme key parity failed for group '{group}'")
-
-        missing = REQUIRED_SEMANTIC_KEYS[group] - light_keys
-        if missing:
-            errors.append(
-                f"themes.{group} missing required keys: {', '.join(sorted(missing))}"
-            )
-
-    for theme_name in ("light", "dark"):
-        theme = themes[theme_name]
-        for token_path, value in flatten_hex_values(theme, f"themes.{theme_name}"):
-            if not HEX_RE.fullmatch(value):
-                errors.append(f"Invalid hex color at {token_path}: {value!r}")
-
-    color = data.get("color")
-    if not isinstance(color, dict):
-        errors.append("color must be an object")
     else:
-        for token_path, value in flatten_hex_values(color, "color"):
-            if not HEX_RE.fullmatch(value):
-                errors.append(f"Invalid hex color at {token_path}: {value!r}")
+        light = themes.get("light")
+        dark = themes.get("dark")
+        if not isinstance(light, dict) or not isinstance(dark, dict):
+            errors.append("themes must define light and dark objects")
+        else:
+            for group_name in THEME_GROUPS:
+                light_group = light.get(group_name)
+                dark_group = dark.get(group_name)
+                if not isinstance(light_group, dict) or not isinstance(
+                    dark_group, dict
+                ):
+                    errors.append(
+                        f"themes light and dark must define {group_name} objects"
+                    )
+                    continue
+                if set(light_group) != set(dark_group):
+                    errors.append(
+                        f"Theme key parity failed for group '{group_name}'"
+                    )
+                for theme_name, group in (
+                    ("light", light_group),
+                    ("dark", dark_group),
+                ):
+                    for name, value in group.items():
+                        if not isinstance(value, str) or not HEX_COLOR.fullmatch(value):
+                            errors.append(
+                                f"Invalid color at themes.{theme_name}.{group_name}.{name}"
+                            )
 
-    for required_root in ("spacing", "radius", "motion", "typography", "interaction"):
-        if not isinstance(data.get(required_root), dict):
-            errors.append(f"{required_root} must be an object")
+    extensions = data.get("$extensions")
+    if not isinstance(extensions, dict):
+        errors.append("$extensions must be an object")
+        return
+    vocora = extensions.get("com.vocora.design-system")
+    if not isinstance(vocora, dict):
+        errors.append("$extensions.com.vocora.design-system must be an object")
+        return
+    if vocora.get("defaultTheme") != "light":
+        errors.append("The default design-system theme must be light")
+    if vocora.get("themes") != ["light", "dark"]:
+        errors.append("The design system must declare light and dark themes")
+    if vocora.get("buttonRadius") != "12px":
+        errors.append("The canonical button radius must be 12px")
+    if vocora.get("minimumTouchTarget") != "44px":
+        errors.append("The minimum touch target must be 44px")
 
 
-def extract_variables(block: str) -> set[str]:
-    return set(re.findall(r"(--vocora-[a-z0-9-]+)\s*:", block))
+def extract_css_variables(text: str) -> dict[str, str]:
+    return {
+        name: value.strip()
+        for name, value in re.findall(
+            r"(--[a-z0-9-]+)\s*:\s*([^;]+);",
+            text,
+            flags=re.IGNORECASE,
+        )
+    }
 
 
 def validate_variable_reference(root: Path, errors: list[str]) -> None:
-    path = root / "references" / "variables.scss"
-    if not path.is_file():
-        return
-
-    text = path.read_text(encoding="utf-8")
-    if "html[data-theme='light']" not in text:
-        errors.append("variables.scss must include an explicit light-theme selector")
-    if "html[data-theme='dark']" not in text:
-        errors.append("variables.scss must include an explicit dark-theme selector")
-
-    variables = extract_variables(text)
-    missing = REQUIRED_VARIABLES - variables
-    if missing:
-        errors.append(
-            "variables.scss is missing required semantic variables: "
-            + ", ".join(sorted(missing))
-        )
+    for relative in ("references/variables.scss", "references/theme.css"):
+        path = root / relative
+        if not path.is_file():
+            continue
+        variables = extract_css_variables(path.read_text(encoding="utf-8"))
+        for name, value in CANONICAL_COLORS.items():
+            variable = f"--color-{name}"
+            if variables.get(variable, "").lower() != value.lower():
+                errors.append(f"{relative} must map {variable} to {value}")
+        for name in CANONICAL_FONTS:
+            if f"--font-{name}" not in variables:
+                errors.append(f"{relative} is missing --font-{name}")
+        if relative == "references/variables.scss":
+            text = path.read_text(encoding="utf-8")
+            if "html[data-theme='light']" not in text:
+                errors.append("variables.scss must define the light theme")
+            if "html[data-theme='dark']" not in text:
+                errors.append("variables.scss must define the dark theme")
 
 
 def validate_skill_contract(root: Path, errors: list[str]) -> None:
@@ -238,8 +200,8 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
 
     text = path.read_text(encoding="utf-8")
     required_phrases = (
-        "Light theme is the default theme.",
-        "Every visual change must be designed for light and dark themes at the same time.",
+        "Light is the default theme; light and dark are both mandatory.",
+        "Buttons are flat: no gradients, elevation, or decorative shadows.",
         "### Script-owned",
         "### Codex-owned",
         "### No manual fallback",
@@ -250,22 +212,40 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
             errors.append(f"SKILL.md is missing required contract text: {phrase}")
 
 
+def validate_button_contract(root: Path, errors: list[str]) -> None:
+    path = root / "references" / "DESIGN.md"
+    if not path.is_file():
+        return
+
+    text = path.read_text(encoding="utf-8")
+    for intent in BUTTON_INTENTS:
+        css_class = f"vocora-button--{intent}"
+        if css_class not in text:
+            errors.append(f"DESIGN.md is missing button class: {css_class}")
+    if "native `disabled` attribute" not in text:
+        errors.append("DESIGN.md must require the native disabled attribute")
+
+
 def validate_material_reference(root: Path, errors: list[str]) -> None:
     path = root / "references" / "material-theme.scss"
     if not path.is_file():
         return
 
     text = path.read_text(encoding="utf-8")
-    required_mappings = (
-        "--mat-sys-surface",
-        "--mat-sys-on-surface",
-        "--mat-sys-primary",
-        "--mat-sys-on-primary",
-        "--mat-sys-error",
-    )
-    for mapping in required_mappings:
-        if mapping not in text:
-            errors.append(f"material-theme.scss missing mapping: {mapping}")
+    required_mappings = {
+        "--mat-sys-surface": "--vocora-surface-base",
+        "--mat-sys-on-surface": "--vocora-text-primary",
+        "--mat-sys-primary": "--vocora-action-primary",
+        "--mat-sys-on-primary": "--vocora-action-primary-foreground",
+        "--mat-sys-secondary": "--vocora-action-secondary-foreground",
+        "--mat-sys-error": "--vocora-action-error",
+    }
+    for material, foundation in required_mappings.items():
+        pattern = rf"{re.escape(material)}:\s*var\({re.escape(foundation)}\);"
+        if not re.search(pattern, text):
+            errors.append(
+                f"material-theme.scss must map {material} to {foundation}"
+            )
 
 
 def validate(root: Path) -> list[str]:
@@ -281,6 +261,7 @@ def validate(root: Path) -> list[str]:
 
     validate_variable_reference(root, errors)
     validate_skill_contract(root, errors)
+    validate_button_contract(root, errors)
     validate_material_reference(root, errors)
     return errors
 

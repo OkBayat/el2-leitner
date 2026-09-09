@@ -1,4 +1,4 @@
 interface:
   display_name: "K2 Design System"
-  short_description: "Apply Vocora's complete light/dark visual design system."
-  default_prompt: "Use $k2-design-system before changing any Vocora visual surface. Treat light as the default theme and design light and dark variants together. Read the canonical design guide and tokens, reuse semantic tokens instead of feature-local colors, preserve accessibility and responsive behavior, and run the skill-owned validator/tests before finalizing visual-system changes."
+  short_description: "Apply Vocora's playful light/dark design system."
+  default_prompt: "Use $k2-design-system before changing any Vocora visual surface. Read the canonical design guide and tokens, preserve the playful palette and typography in both light and dark themes, compose Angular Material with the shared button intents, reuse semantic tokens instead of feature-local colors, preserve accessibility and responsive behavior, and run the skill-owned validator/tests before finalizing visual-system changes."

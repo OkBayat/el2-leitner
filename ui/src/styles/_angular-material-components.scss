@@ -1,4 +1,7 @@
 @mixin apply() {
+	.mat-mdc-unelevated-button.vocora-button,
+	.mat-mdc-raised-button.vocora-button,
+	.mat-mdc-outlined-button.vocora-button,
 	.mat-mdc-unelevated-button.vocora-action-button {
 		--mat-button-filled-container-color: var(
 			--vocora-component-action-background,
@@ -8,19 +11,20 @@
 			--vocora-component-action-foreground,
 			var(--vocora-action-primary-foreground)
 		);
-		--mat-button-filled-disabled-container-color: var(
-			--vocora-component-action-background,
-			var(--vocora-surface-subtle)
-		);
-		--mat-button-filled-disabled-label-text-color: var(
+		--mat-button-outlined-label-text-color: var(
 			--vocora-component-action-foreground,
-			var(--vocora-text-disabled)
+			var(--vocora-action-primary-foreground)
 		);
-		height: 52px;
-		min-height: 52px;
-		padding-inline: var(--vocora-space-6);
-		border: 1px solid var(--vocora-component-action-border, transparent);
-		border-radius: var(--vocora-radius-md);
+		--mat-button-outlined-outline-color: var(
+			--vocora-component-action-border,
+			transparent
+		);
+		height: auto;
+		min-height: 44px;
+		padding: 10px 16px;
+		border: var(--vocora-component-action-border-width, 0) solid
+			var(--vocora-component-action-border, transparent);
+		border-radius: 12px;
 		background: var(
 			--vocora-component-action-background,
 			var(--vocora-action-primary)
@@ -29,46 +33,146 @@
 			--vocora-component-action-foreground,
 			var(--vocora-action-primary-foreground)
 		);
-		font-size: 14px;
-		line-height: 20px;
-		font-weight: 800;
-		letter-spacing: 0.04em;
+		font-family: var(--vocora-font-body);
+		font-size: 15px;
+		line-height: 1.33;
+		font-weight: 700;
+		letter-spacing: 0.053em;
 		text-transform: uppercase;
-		box-shadow: 0 4px 0
-			var(
-				--vocora-component-action-edge,
-				var(--vocora-action-primary-edge)
-			);
+		white-space: normal;
 		transition:
-			transform var(--vocora-motion-fast),
-			box-shadow var(--vocora-motion-fast),
-			background var(--vocora-motion-fast),
-			border-color var(--vocora-motion-fast);
+			background-color var(--vocora-motion-fast),
+			border-color var(--vocora-motion-fast),
+			color var(--vocora-motion-fast);
+	}
+
+	.vocora-button--primary {
+		--vocora-component-action-background: var(--vocora-action-primary);
+		--vocora-component-action-foreground: var(
+			--vocora-action-primary-foreground
+		);
+		--vocora-component-action-border-width: 0;
+	}
+
+	.vocora-button--secondary {
+		--vocora-component-action-background: var(--vocora-action-secondary);
+		--vocora-component-action-foreground: var(
+			--vocora-action-secondary-foreground
+		);
+		--vocora-component-action-border: var(--vocora-action-secondary-border);
+		--vocora-component-action-border-width: 2px;
+		--vocora-component-action-disabled-background: var(
+			--vocora-action-secondary-disabled-background
+		);
+		--vocora-component-action-disabled-foreground: var(
+			--vocora-action-secondary-disabled-foreground
+		);
+		--vocora-component-action-disabled-border: var(
+			--vocora-action-secondary-disabled-border
+		);
+	}
+
+	.vocora-button--success {
+		--vocora-component-action-background: var(--vocora-action-success);
+		--vocora-component-action-foreground: var(
+			--vocora-action-success-foreground
+		);
+		--vocora-component-action-border-width: 0;
+	}
+
+	.vocora-button--warning {
+		--vocora-component-action-background: var(--vocora-action-warning);
+		--vocora-component-action-foreground: var(
+			--vocora-action-warning-foreground
+		);
+		--vocora-component-action-border-width: 0;
+	}
+
+	.vocora-button--error {
+		--vocora-component-action-background: var(--vocora-action-error);
+		--vocora-component-action-foreground: var(
+			--vocora-action-error-foreground
+		);
+		--vocora-component-action-border-width: 0;
 	}
 
 	@media (hover: hover) {
+		.mat-mdc-unelevated-button.vocora-button:not(:disabled):hover,
+		.mat-mdc-raised-button.vocora-button:not(:disabled):hover,
+		.mat-mdc-outlined-button.vocora-button:not(:disabled):hover,
 		.mat-mdc-unelevated-button.vocora-action-button:not(:disabled):hover {
-			--mat-button-filled-container-color: var(
-				--vocora-component-action-hover,
-				var(--vocora-action-primary-hover)
+			background: color-mix(
+				in srgb,
+				var(
+						--vocora-component-action-foreground,
+						var(--vocora-action-primary-foreground)
+					)
+					8%,
+				var(
+					--vocora-component-action-background,
+					var(--vocora-action-primary)
+				)
 			);
-			background: var(
-				--vocora-component-action-hover,
-				var(--vocora-action-primary-hover)
-			);
-			transform: translateY(-1px);
 		}
 	}
 
+	.mat-mdc-unelevated-button.vocora-button:not(:disabled):active,
+	.mat-mdc-raised-button.vocora-button:not(:disabled):active,
+	.mat-mdc-outlined-button.vocora-button:not(:disabled):active,
 	.mat-mdc-unelevated-button.vocora-action-button:not(:disabled):active {
-		box-shadow: 0 1px 0
+		background: color-mix(
+			in srgb,
 			var(
-				--vocora-component-action-edge,
-				var(--vocora-action-primary-edge)
-			);
-		transform: translateY(3px);
+					--vocora-component-action-foreground,
+					var(--vocora-action-primary-foreground)
+				)
+				14%,
+			var(
+				--vocora-component-action-background,
+				var(--vocora-action-primary)
+			)
+		);
 	}
 
+	.mat-mdc-unelevated-button.vocora-button:disabled,
+	.mat-mdc-raised-button.vocora-button:disabled,
+	.mat-mdc-outlined-button.vocora-button:disabled,
+	.mat-mdc-unelevated-button.vocora-action-button:disabled {
+		--mat-button-filled-disabled-container-color: var(
+			--vocora-component-action-disabled-background,
+			var(--vocora-action-disabled-background)
+		);
+		--mat-button-filled-disabled-label-text-color: var(
+			--vocora-component-action-disabled-foreground,
+			var(--vocora-action-disabled-foreground)
+		);
+		--mat-button-outlined-disabled-label-text-color: var(
+			--vocora-component-action-disabled-foreground,
+			var(--vocora-action-disabled-foreground)
+		);
+		--mat-button-outlined-disabled-outline-color: var(
+			--vocora-component-action-disabled-border,
+			var(--vocora-action-disabled-border)
+		);
+		border-color: var(
+			--vocora-component-action-disabled-border,
+			var(--vocora-action-disabled-border)
+		);
+		background: var(
+			--vocora-component-action-disabled-background,
+			var(--vocora-action-disabled-background)
+		);
+		color: var(
+			--vocora-component-action-disabled-foreground,
+			var(--vocora-action-disabled-foreground)
+		);
+		opacity: 1;
+		cursor: not-allowed;
+	}
+
+	.mat-mdc-unelevated-button.vocora-button:focus-visible,
+	.mat-mdc-raised-button.vocora-button:focus-visible,
+	.mat-mdc-outlined-button.vocora-button:focus-visible,
 	.mat-mdc-unelevated-button.vocora-action-button:focus-visible,
 	.mat-mdc-icon-button.vocora-secondary-icon-action:focus-visible {
 		outline: 3px solid var(--vocora-focus-ring);
@@ -90,19 +194,16 @@
 		display: inline-grid;
 		place-items: center;
 		padding: 0;
-		border: 1px solid
-			color-mix(
-				in srgb,
-				var(--vocora-action-secondary-foreground) 38%,
-				var(--vocora-border)
-			);
-		border-radius: var(--vocora-radius-md);
+		border: 2px solid var(--vocora-action-secondary-border);
+		border-radius: 12px;
 		background: var(--vocora-action-secondary);
 		color: var(--vocora-action-secondary-foreground);
-		box-shadow: 0 2px 0 var(--vocora-border);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.mat-mdc-unelevated-button.vocora-button,
+		.mat-mdc-raised-button.vocora-button,
+		.mat-mdc-outlined-button.vocora-button,
 		.mat-mdc-unelevated-button.vocora-action-button {
 			transition: none;
 		}

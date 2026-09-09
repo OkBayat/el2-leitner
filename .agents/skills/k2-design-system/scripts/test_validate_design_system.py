@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused tests for the K2 design-system skill validator."""
+"""Focused tests for the K2 design-system validator."""
 
 from __future__ import annotations
 
@@ -30,50 +30,52 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         skill = (self.root / "SKILL.md").read_text(encoding="utf-8")
         interface = (self.root / "agents" / "openai.yaml").read_text(encoding="utf-8")
         self.assertIn("name: k2-design-system", skill)
-        self.assertIn("display_name: \"K2 Design System\"", interface)
+        self.assertIn('display_name: "K2 Design System"', interface)
         self.assertIn("$k2-design-system", interface)
 
-    def test_light_is_required_as_default_theme(self) -> None:
+    def test_canonical_palette_values_cannot_drift(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        tokens["meta"]["defaultTheme"] = "dark"
+        tokens["color"]["spark-blue"]["$value"] = "#000000"
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertIn("meta.defaultTheme must be 'light'", errors)
+        self.assertIn("color.spark-blue must equal #1CB0F6", errors)
 
-    def test_light_and_dark_theme_groups_require_parity(self) -> None:
+    def test_token_type_is_required(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        del tokens["themes"]["dark"]["activity"]
+        del tokens["color"]["eager-green"]["$type"]
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("exact parity" in error for error in errors),
-            errors,
+        self.assertIn("color.eager-green must use type color", errors)
+
+    def test_token_description_is_required(self) -> None:
+        tokens = copy.deepcopy(self.tokens)
+        tokens["font"]["feather"]["$description"] = ""
+        errors: list[str] = []
+        VALIDATOR.validate_tokens(tokens, errors)
+        self.assertIn("font.feather must have a description", errors)
+
+    def test_button_geometry_is_required(self) -> None:
+        tokens = copy.deepcopy(self.tokens)
+        tokens["$extensions"]["com.vocora.design-system"]["buttonRadius"] = "8px"
+        errors: list[str] = []
+        VALIDATOR.validate_tokens(tokens, errors)
+        self.assertIn("The canonical button radius must be 12px", errors)
+
+    def test_light_and_dark_theme_keys_require_parity(self) -> None:
+        tokens = copy.deepcopy(self.tokens)
+        del tokens["themes"]["dark"]["action"]["error"]
+        errors: list[str] = []
+        VALIDATOR.validate_tokens(tokens, errors)
+        self.assertIn("Theme key parity failed for group 'action'", errors)
+
+    def test_css_variables_match_the_canonical_palette(self) -> None:
+        variables = VALIDATOR.extract_css_variables(
+            (self.root / "references" / "variables.scss").read_text(
+                encoding="utf-8"
+            )
         )
-
-    def test_semantic_keys_require_light_dark_parity(self) -> None:
-        tokens = copy.deepcopy(self.tokens)
-        del tokens["themes"]["dark"]["state"]["future"]
-        errors: list[str] = []
-        VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("Theme key parity failed for group 'state'" in error for error in errors),
-            errors,
-        )
-
-    def test_invalid_hex_color_is_rejected(self) -> None:
-        tokens = copy.deepcopy(self.tokens)
-        tokens["themes"]["light"]["state"]["success"] = "green"
-        errors: list[str] = []
-        VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("Invalid hex color" in error for error in errors),
-            errors,
-        )
-
-    def test_required_semantic_variables_are_present(self) -> None:
-        text = (self.root / "references" / "variables.scss").read_text(encoding="utf-8")
-        variables = VALIDATOR.extract_variables(text)
-        self.assertTrue(VALIDATOR.REQUIRED_VARIABLES.issubset(variables))
+        for name, value in VALIDATOR.CANONICAL_COLORS.items():
+            self.assertEqual(variables[f"--color-{name}"].lower(), value.lower())
 
 
 if __name__ == "__main__":
