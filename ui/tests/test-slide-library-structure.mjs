@@ -29,6 +29,10 @@ const sharedStyles = readFileSync(
 	join(libraryRoot, 'slide-library.component.scss'),
 	'utf8',
 );
+const layoutStyles = readFileSync(
+	join(uiRoot, 'src/app/shared/slide-exercise/slide-exercise.component.scss'),
+	'utf8',
+);
 const clozeTemplate = readFileSync(
 	join(libraryRoot, 'components', 'cloze', 'cloze-slide.component.html'),
 	'utf8',
@@ -121,6 +125,11 @@ assert.match(
 assert.match(
 	sharedStyles,
 	/\.inline-field--text:has\(\.cloze-input\)\s*\{[\s\S]*display:\s*inline-grid;/u,
+);
+assert.match(
+	layoutStyles,
+	/\.slide-exercise__content\s*\{[\s\S]*width:\s*100%;[\s\S]*max-width:\s*600px;/u,
+	'Exercise slide content must be constrained to the shared 600px layout width.',
 );
 assert.match(
 	sharedStyles,
