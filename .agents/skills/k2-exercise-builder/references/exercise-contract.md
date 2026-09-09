@@ -72,6 +72,52 @@ Use `chrome` only for deliberate changes such as a finish-only terminal summary.
 
 Use `selection` when the learner chooses a preference, path, category, or configuration and no option is correct. Set `mode` to `single` or `multiple`. It emits `selectedOptionIds` and must not contain `correctOptionId`, `correctOptionIds`, or `answers`.
 
+## Dynamic selection expansion
+
+Use dynamic expansion when a selection chooses the shape of a sequence but the
+number or content of its activity slides comes from an authoritative runtime
+query. Add an application-registered `expansionId` to the selection data:
+
+```json
+{
+  "id": "practice-mode",
+  "type": "selection",
+  "data": {
+    "mode": "single",
+    "question": "Select a practice mode",
+    "expansionId": "house-one-practice",
+    "options": [
+      { "id": "vocabulary-dictation", "label": "Vocabulary Dictation" },
+      { "id": "sentence-completion", "label": "Sentence Completion" }
+    ]
+  }
+}
+```
+
+The exercise JSON stores only this stable identifier. Never put a function,
+Angular service, dependency-injection token, or preloaded runtime object in the
+slide data. The owning application parent supplies `selectionExpansion` in the
+runtime `ExerciseContext`. The selection sends `{ expansionId, slideId,
+selectedOptionIds }` to that handler; the handler queries its source and returns
+`{ slides }`. The selection then inserts those slides immediately after itself
+through the parent deck controller and advances only after insertion succeeds.
+
+Every returned slide must use a registered catalog type, have a unique stable
+non-terminal ID, and be fully configured from authoritative source data. The
+configured terminal `summary` remains last because the deck insertion contract
+places generated slides before it. If the handler is absent, returns no slides,
+cannot cover every required source item, or would need to invent content, keep
+the selection open and report the failure. The handler and its source query are
+application behavior and require focused application tests; the static exercise
+validator only verifies the non-empty `expansionId` and JSON envelope.
+
+For a persisted Learning Path exercise, use expansion only after the backend
+completion owner can reconstruct and verify the generated slide set and its
+answers. The current generic backend verifier does not infer arbitrary dynamic
+slides from a frontend handler. A standalone parent may own completion locally,
+as Practice Words does; otherwise stop instead of publishing unverifiable
+completion evidence.
+
 Use `choice` when options form an assessment question. Configure `correctOptionIds`; its result is graded by the backend.
 
 ## Validation boundary

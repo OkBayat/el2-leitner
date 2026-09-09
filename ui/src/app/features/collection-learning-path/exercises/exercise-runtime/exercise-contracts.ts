@@ -1,4 +1,5 @@
 import type { Observable } from 'rxjs';
+import type { SelectionSlideExpansionHandler } from '../../../../shared/slide-exercise';
 import type {
   CompletedLearningPathExerciseOutcome,
   LearningPathNodeState,
@@ -15,6 +16,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly config: Readonly<Record<string, unknown>>;
   readonly payload: TPayload;
   readonly ensureStarted?: () => Promise<boolean>;
+  readonly selectionExpansion?: SelectionSlideExpansionHandler;
 }
 
 export type ExerciseOutcome = CompletedLearningPathExerciseOutcome

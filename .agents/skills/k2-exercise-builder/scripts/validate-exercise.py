@@ -82,6 +82,8 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
             raise ValueError("Selection mode must be single or multiple.")
         text(data, "question", "Selection question")
         validate_options(data)
+        if "expansionId" in data:
+            text(data, "expansionId", "Selection expansionId")
         if any(key in data for key in ("correctOptionId", "correctOptionIds", "answers")):
             raise ValueError("Selection slides must not define correctness fields.")
         return

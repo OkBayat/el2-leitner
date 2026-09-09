@@ -2,6 +2,7 @@
 
 ## 2026-09-09
 
+* **Update**: Documented dynamic `selection` expansion, including its serializable `expansionId`, runtime-only parent handler, fail-closed source coverage, and the House 1 Practice Words reference implementation.
 * **Update**: Extended [Reusable Slide Interactions](project/reusable-slide-interactions.md) with the general object-driven `selection` family, including single/multiple modes and its non-scored evidence boundary from `choice`.
 
 ## 2026-09-08

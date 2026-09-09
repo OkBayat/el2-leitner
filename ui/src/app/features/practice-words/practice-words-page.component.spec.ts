@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
+import { PracticeWordsSlideBuilderService } from '../../application/practice-words/practice-words-slide-builder.service';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { PracticeWordsPageComponent } from './practice-words-page.component';
 
@@ -9,12 +10,18 @@ import { PracticeWordsPageComponent } from './practice-words-page.component';
 class EmptyPage {}
 
 describe('PracticeWordsPageComponent', () => {
-  it('configures the generic selection slide followed only by Finish', async () => {
+  it('expands the selected practice mode before the final Finish slide', async () => {
+    const slideBuilder = {
+      build: vi.fn().mockResolvedValue([
+        { id: 'generated-practice', type: 'message', data: { title: 'Generated practice' } },
+      ]),
+    };
     await TestBed.configureTestingModule({
       imports: [PracticeWordsPageComponent],
       providers: [
         provideRouter([{ path: 'dashboard', component: EmptyPage }]),
         { provide: CollectionLearningPathApiService, useValue: {} },
+        { provide: PracticeWordsSlideBuilderService, useValue: slideBuilder },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(PracticeWordsPageComponent);
@@ -27,7 +34,10 @@ describe('PracticeWordsPageComponent', () => {
 
     const slides = fixture.componentInstance.exerciseContext.config['slides'] as Array<Record<string, unknown>>;
     expect(slides).toHaveLength(2);
-    expect(slides[0]).toMatchObject({ type: 'selection', data: { mode: 'single' } });
+    expect(slides[0]).toMatchObject({
+      type: 'selection',
+      data: { mode: 'single', expansionId: 'house-one-practice' },
+    });
     const modes = host.querySelectorAll<HTMLButtonElement>('[data-testid="selection-option"]');
     expect([...modes].map((option) => option.getAttribute('aria-label'))).toEqual([
       '1. Vocabulary Dictation. Hear a word or collocation and type it.',
@@ -40,6 +50,14 @@ describe('PracticeWordsPageComponent', () => {
     const continueButton = [...host.querySelectorAll<HTMLButtonElement>('button')]
       .find((button) => button.textContent?.trim() === 'Continue');
     continueButton?.click();
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(slideBuilder.build).toHaveBeenCalledWith('practice-mode', 'vocabulary-dictation');
+      expect(host.textContent).toContain('Generated practice');
+    });
+    const generatedContinue = [...host.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent?.trim() === 'Continue');
+    generatedContinue?.click();
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(host.querySelector('[data-testid="summary-slide-content"]')).not.toBeNull();

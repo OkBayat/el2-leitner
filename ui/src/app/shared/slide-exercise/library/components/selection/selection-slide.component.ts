@@ -4,6 +4,7 @@ import type {
 	SlideContentComponent,
 	SlideContentContext,
 	SlideContentEvent,
+	SelectionSlideExpansionHandler,
 } from '../../../slide-content-contracts';
 import type {
 	SlideExerciseRuntimeState,
@@ -14,7 +15,7 @@ import type {
 	SlideOption,
 } from '../../slide-library.models';
 import { common } from '../../slide-library.component-support';
-import { options, record, requiredText } from '../../slide-library.utils';
+import { options, record, requiredText, text } from '../../slide-library.utils';
 
 const SELECTION_MODES = ['single', 'multiple'] as const;
 
@@ -28,12 +29,31 @@ function parseSelection(value: unknown): SelectionSlideData {
 	if (!SELECTION_MODES.includes(mode as SelectionSlideMode)) {
 		throw new Error('Selection mode must be single or multiple.');
 	}
+	const expansionId = text(source['expansionId']);
+	if ('expansionId' in source && !expansionId) {
+		throw new Error('Selection expansionId is required when configured.');
+	}
 	return {
 		...common(source),
 		mode: mode as SelectionSlideMode,
 		question: requiredText(source['question'], 'Selection question'),
 		options: parsedOptions,
+		expansionId: expansionId || undefined,
 	};
+}
+
+function expansionHandler(value: unknown): SelectionSlideExpansionHandler | null {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+	const candidate = (value as { selectionExpansion?: unknown }).selectionExpansion;
+	return typeof candidate === 'function'
+		? candidate as SelectionSlideExpansionHandler
+		: null;
+}
+
+function errorMessage(error: unknown): string {
+	return error instanceof Error && error.message
+		? error.message
+		: 'The selected practice could not be prepared.';
 }
 
 @Component({
@@ -49,12 +69,14 @@ export class SelectionSlideComponent implements SlideContentComponent {
 	readonly event = new EventEmitter<SlideContentEvent>();
 	readonly data = signal<SelectionSlideData | null>(null);
 	readonly selectedOptionIds = signal<readonly string[]>([]);
+	readonly busy = signal(false);
 	private context: SlideContentContext | null = null;
 
 	load(context: SlideContentContext): void {
 		this.context = context;
 		this.data.set(parseSelection(context.data));
 		this.selectedOptionIds.set([]);
+		this.busy.set(false);
 		this.setReady(false);
 	}
 
@@ -65,7 +87,7 @@ export class SelectionSlideComponent implements SlideContentComponent {
 
 	selectOption(optionId: string): void {
 		const data = this.data();
-		if (!data?.options.some((option) => option.id === optionId)) return;
+		if (this.busy() || !data?.options.some((option) => option.id === optionId)) return;
 		this.selectedOptionIds.update((selected) => data.mode === 'single'
 			? [optionId]
 			: selected.includes(optionId)
@@ -86,9 +108,45 @@ export class SelectionSlideComponent implements SlideContentComponent {
 
 	handleAction(actionId: string): void {
 		const selectedOptionIds = this.selectedOptionIds();
-		if (actionId !== 'continue' || !selectedOptionIds.length || !this.context?.deck) return;
+		if (actionId !== 'continue' || !selectedOptionIds.length || !this.context?.deck || this.busy()) return;
+		if (this.data()?.expansionId) {
+			void this.expand(selectedOptionIds);
+			return;
+		}
 		this.event.emit({ type: 'submitted', data: { selectedOptionIds } });
 		this.context.deck.next();
+	}
+
+	private async expand(selectedOptionIds: readonly string[]): Promise<void> {
+		const context = this.context;
+		const expansionId = this.data()?.expansionId;
+		if (!context?.deck || !expansionId) return;
+		this.busy.set(true);
+		this.stateChange.emit({
+			chrome: { footer: { primary: { disabled: true, loading: true } } },
+		});
+		try {
+			const handler = expansionHandler(context.environment);
+			if (!handler) throw new Error(`Selection expansion is unavailable: ${expansionId}`);
+			const result = await handler({ expansionId, slideId: context.slideId, selectedOptionIds });
+			if (this.context !== context) return;
+			if (!result.slides.length) throw new Error('The selected practice has no slides.');
+			context.deck.insertSlides({ anchorId: context.slideId, gap: 0, slides: result.slides });
+			this.event.emit({ type: 'submitted', data: { selectedOptionIds } });
+			context.deck.next();
+		} catch (error) {
+			this.busy.set(false);
+			this.stateChange.emit({
+				chrome: {
+					footer: {
+						tone: 'error',
+						title: 'Could not continue',
+						detail: errorMessage(error),
+						primary: { disabled: false, loading: false },
+					},
+				},
+			});
+		}
 	}
 
 	private setReady(ready: boolean): void {

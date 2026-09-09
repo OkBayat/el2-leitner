@@ -17,7 +17,7 @@ recall, correction, transformation, or independent production.
 | Family | Best used for | Supported modes | Useful stimuli and combinations | Limits and cautions |
 | --- | --- | --- | --- | --- |
 | `teaching-card` | Presenting a word, usage distinction, rule, warning, or study tip before practice | `word`, `usage`, `contrast`, `rule`, `warning`, `tip`; blocks: `word`, `comparison`, `correction`, `patterns`, `example`, `note` | Text, image, chart, or diagram; often precedes a scored recognition or recall slide | It presents information and does not prove mastery. Do not use it as an assessment substitute. |
-| `selection` | Choosing a learner preference, path, category, or configuration when no option is correct | `single`, `multiple` | A question with two or more object-configured options; each option has an ID, label, and optional description | It emits selected option IDs as submitted evidence. It is not scored and must not contain correctness fields. Use `choice` for assessment. |
+| `selection` | Choosing a learner preference, path, category, or configuration when no option is correct | `single`, `multiple` | A question with two or more object-configured options; each option has an ID, label, and optional description. A registered `expansionId` can request runtime-sized follow-up slides. | It emits selected option IDs as submitted evidence. It is not scored and must not contain correctness fields. Dynamic handlers live in the application runtime, never in JSON. Use `choice` for assessment. |
 | `choice` | Recognition among explicit alternatives | `single`, `multiple`, `meaning`, `part-of-speech`, `synonym`, `antonym`, `correct-spelling`, `best-word`, `odd-one-out` | Text or visual prompts; speech playback supports sound-to-option recognition | Options can cue the answer, so use constructed response when unaided recall is required. |
 | `truth` | Judging a statement against a source, claim, or opinion | `true-false`, `true-false-not-given`, `yes-no-not-given`, `agree-disagree` | Text, audio, chart, or diagram followed by one or more judgments | Use `not-given` only when source coverage genuinely makes absence distinguishable from falsehood. |
 | `matching` | Mapping two sets of related items | `definition`, `synonym`, `antonym`, `collocation`, `word-family`, `person-opinion`, `sentence-ending`, `heading-section`, `term-example` | Text sections, audio speakers, or term/example sets; can follow a teaching card | Prefer `on-complete` feedback for test-like tasks and `immediate` feedback for guided practice. Enable many-to-one only when the domain relation permits it. |
@@ -56,6 +56,38 @@ recall, correction, transformation, or independent production.
   objective calls for a different sequence.
 * Every sequence needs unique slide IDs and exactly one terminal slide, and that
   terminal slide must be last.
+
+# Dynamic Selection Expansion
+
+A `selection` can choose a path whose complete slide count is known only at
+runtime. Its JSON data declares a stable `expansionId`, while the owning parent
+provides a runtime-only `selectionExpansion` handler through `ExerciseContext`.
+The selection passes the expansion ID, its own slide ID, and the selected option
+IDs to the handler. The handler queries the authoritative application source,
+returns registered non-terminal slide objects, and the selection inserts them
+through the parent deck controller before advancing. The terminal summary stays
+last.
+
+This boundary keeps exercise objects serializable and keeps feature queries and
+domain mapping out of the reusable selection component. The component owns
+selection state, loading/error feedback, and delivery to the deck. The
+application handler owns interpreting option IDs, retrieving the complete source
+set, and mapping every source item to an existing slide contract. Missing
+handlers, empty results, incomplete source coverage, duplicate IDs, terminal
+generated slides, or invented answer-bearing content fail closed.
+
+Dynamic rendering and completion verification are separate contracts. A
+standalone surface may own completion locally. A persisted Learning Path
+exercise must additionally have a backend completion owner that can reconstruct
+and verify the generated set; the generic backend verifier cannot infer
+arbitrary slides from a frontend handler.
+
+Practice Words is the reference implementation: its parent maps the three mode
+IDs to a House 1 slide builder. The builder produces one `dictation` slide per
+word for vocabulary dictation, or requires sentence-practice coverage for every
+House 1 word before producing `cloze` sentence completion or `pronunciation`
+repeat slides. Both sentence modes reuse the generic `dialogue` TTS stimulus;
+no practice-specific slide component or serialized service reference is needed.
 
 # Shared Stimuli and Answer Contracts
 
@@ -96,3 +128,7 @@ exercise flow but are not members of the 17 reusable interaction families.
 [3] [Shared slide component behavior](../../ui/src/app/shared/slide-exercise/library/slide-library.component-support.ts)
 [4] [Slide sequence exercise contract](../../ui/src/app/domain/collection-learning-path/slide-sequence-exercise.ts)
 [5] [Vocabulary-Led Lesson Design](/rules/vocabulary-led-lesson-design.md)
+[6] [Selection expansion runtime contract](../../ui/src/app/shared/slide-exercise/slide-content-contracts.ts)
+[7] [Generic selection expansion behavior](../../ui/src/app/shared/slide-exercise/library/components/selection/selection-slide.component.ts)
+[8] [Practice Words runtime handler](../../ui/src/app/features/practice-words/practice-words-page.component.ts)
+[9] [House 1 practice slide builder](../../ui/src/app/application/practice-words/practice-words-slide-builder.service.ts)

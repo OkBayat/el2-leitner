@@ -27,6 +27,7 @@ def valid_exercise() -> dict:
                     "data": {
                         "mode": "single",
                         "question": "Choose a practice mode.",
+                        "expansionId": "house-one-practice",
                         "options": [
                             {"id": "dictation", "label": "Vocabulary Dictation"},
                             {"id": "shadowing", "label": "Sentence Shadowing"},
@@ -61,6 +62,12 @@ class ExerciseValidatorTests(unittest.TestCase):
         exercise = valid_exercise()
         exercise["config"]["slides"][0]["data"]["correctOptionIds"] = ["dictation"]
         with self.assertRaisesRegex(ValueError, "must not define correctness"):
+            MODULE.validate_exercise(exercise)
+
+    def test_rejects_an_empty_selection_expansion_id(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0]["data"]["expansionId"] = "   "
+        with self.assertRaisesRegex(ValueError, "Selection expansionId"):
             MODULE.validate_exercise(exercise)
 
     def test_rejects_choice_without_answer_key(self) -> None:

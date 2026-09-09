@@ -85,6 +85,7 @@ function selectionConfig(data) {
   const mode = requiredString(data, "mode", "Selection mode");
   if (mode !== "single" && mode !== "multiple") invalid("Selection mode is unsupported.");
   requiredString(data, "question", "Selection question");
+  if ("expansionId" in data) requiredString(data, "expansionId", "Selection expansionId");
   if (["correctOptionId", "correctOptionIds", "answers"].some((key) => key in data)) {
     invalid("Selection must not define correctness fields.");
   }

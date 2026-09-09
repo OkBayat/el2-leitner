@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { PracticeWordsSlideBuilderService } from '../../application/practice-words/practice-words-slide-builder.service';
+import type { SelectionSlideExpansionHandler } from '../../shared/slide-exercise';
 import type { ExerciseContext } from '../collection-learning-path/exercises/exercise-runtime/exercise-contracts';
 import { SlidesSequenceExerciseComponent } from '../collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component';
 
@@ -14,6 +16,21 @@ export class PracticeWordsPageComponent implements OnInit {
   @ViewChild(SlidesSequenceExerciseComponent, { static: true })
   private readonly exercise!: SlidesSequenceExerciseComponent;
   private readonly router = inject(Router);
+  private readonly slideBuilder = inject(PracticeWordsSlideBuilderService);
+  private readonly expandPracticeMode: SelectionSlideExpansionHandler = async (request) => {
+    if (request.expansionId !== 'house-one-practice') {
+      throw new Error(`Unsupported selection expansion: ${request.expansionId}`);
+    }
+    if (request.selectedOptionIds.length !== 1) {
+      throw new Error('Choose exactly one practice mode.');
+    }
+    return {
+      slides: await this.slideBuilder.build(
+        request.slideId,
+        request.selectedOptionIds[0],
+      ),
+    };
+  };
 
   readonly exerciseContext: ExerciseContext = {
     pathId: 'standalone-practice',
@@ -23,6 +40,7 @@ export class PracticeWordsPageComponent implements OnInit {
     schemaVersion: 1,
     completionPolicy: 'slide-sequence',
     payload: null,
+    selectionExpansion: this.expandPracticeMode,
     config: {
       slides: [
         {
@@ -30,6 +48,7 @@ export class PracticeWordsPageComponent implements OnInit {
           type: 'selection',
           data: {
             mode: 'single',
+            expansionId: 'house-one-practice',
             instruction: 'Choose how you want to practice.',
             question: 'Select a practice mode',
             options: [

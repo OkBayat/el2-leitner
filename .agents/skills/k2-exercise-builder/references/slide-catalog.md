@@ -5,7 +5,7 @@ Select a slide from the learner action and evidence required. The 17 reusable fa
 | Type | Learner action and evidence | Essential data | Important boundary |
 | --- | --- | --- | --- |
 | `teaching-card` | Read a word, contrast, rule, warning, or tip | `mode`, `title`, `blocks[]` with `kind` and `content` | Presentation only; no mastery evidence. |
-| `selection` | Choose one or several unscored preferences, paths, or settings | `mode: single|multiple`, `question`, at least two `options` | No correct answer or scoring fields. Emits selected IDs. |
+| `selection` | Choose one or several unscored preferences, paths, or settings | `mode: single|multiple`, `question`, at least two `options`; optional registered `expansionId` | No correct answer or scoring fields. Emits selected IDs. A dynamic expansion must be handled outside JSON by the owning application parent. |
 | `choice` | Recognize one or several correct alternatives | `question`, `options`, `correctOptionIds`; optional recognition `mode` and `speech` | Options cue the answer; use recall slides when cues are inappropriate. |
 | `truth` | Judge a statement | `mode`, `statement`, `correctOptionId`; optional `options` | Use not-given modes only when the source supports absence as evidence. |
 | `matching` | Map related items | `pairs` with `id`, `left`, `right`; optional mode and feedback policy | Allow many-to-one only when the relation permits it. |
@@ -29,7 +29,7 @@ Select a slide from the learner action and evidence required. The 17 reusable fa
 
 ## Common compositions
 
-- Unscored setup: `selection` -> activity slides -> `summary`.
+- Unscored setup: `selection` -> activity slides -> `summary`; the activity slides may be inserted at runtime through a registered `expansionId` when their complete source set is known only after selection.
 - Vocabulary form practice: `pronunciation` -> `dictation` -> `summary`.
 - Meaning into recall: `teaching-card` -> `choice` or `matching` -> `cloze` or `short-answer` -> `summary`.
 - Usage repair: `teaching-card` -> `error-correction` -> `rewrite` -> `summary`.

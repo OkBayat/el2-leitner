@@ -20,6 +20,7 @@
 						[attr.role]="content.mode === 'multiple' ? 'checkbox' : 'radio'"
 						[attr.aria-checked]="isSelected(option.id)"
 						[attr.aria-label]="optionAriaLabel(option, index)"
+						[disabled]="busy()"
 						(click)="selectOption(option.id)"
 					>
 						<span class="choice-option__content">

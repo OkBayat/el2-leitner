@@ -121,6 +121,89 @@ describe('reusable slide library behavior', () => {
 				options: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
 			},
 		})).toThrow('Selection mode must be single or multiple.');
+
+		expect(() => component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'single',
+				question: 'Choose an option',
+				expansionId: ' ',
+				options: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+			},
+		})).toThrow('Selection expansionId is required when configured.');
+	});
+
+	it('expands a selection through its external runtime handler before advancing', async () => {
+		const insertSlides = vi.fn();
+		const next = vi.fn();
+		const expansion = vi.fn().mockResolvedValue({
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		const component = new SelectionSlideComponent();
+		const events: unknown[] = [];
+		component.event.subscribe((event) => events.push(event));
+		component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'single',
+				question: 'Choose a path',
+				expansionId: 'build-path',
+				options: [
+					{ id: 'first', label: 'First' },
+					{ id: 'second', label: 'Second' },
+				],
+			},
+			environment: { selectionExpansion: expansion },
+			deck: { insertSlides, next, results: () => [] },
+		});
+		component.selectOption('second');
+		component.handleAction('continue');
+
+		await vi.waitFor(() => expect(next).toHaveBeenCalledOnce());
+		expect(expansion).toHaveBeenCalledWith({
+			expansionId: 'build-path',
+			slideId: 'selection',
+			selectedOptionIds: ['second'],
+		});
+		expect(insertSlides).toHaveBeenCalledWith({
+			anchorId: 'selection',
+			gap: 0,
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		expect(events).toEqual([{ type: 'submitted', data: { selectedOptionIds: ['second'] } }]);
+	});
+
+	it('keeps an expanded selection open when generation fails', async () => {
+		const next = vi.fn();
+		const states: unknown[] = [];
+		const component = new SelectionSlideComponent();
+		component.stateChange.subscribe((state) => states.push(state));
+		component.load({
+			slideId: 'selection',
+			type: 'selection',
+			data: {
+				mode: 'single',
+				question: 'Choose a path',
+				expansionId: 'build-path',
+				options: [
+					{ id: 'first', label: 'First' },
+					{ id: 'second', label: 'Second' },
+				],
+			},
+			environment: {
+				selectionExpansion: vi.fn().mockRejectedValue(new Error('No items are available.')),
+			},
+			deck: { insertSlides: vi.fn(), next, results: () => [] },
+		});
+		component.selectOption('first');
+		component.handleAction('continue');
+
+		await vi.waitFor(() => expect(states.at(-1)).toMatchObject({
+			chrome: { footer: { tone: 'error', detail: 'No items are available.' } },
+		}));
+		expect(next).not.toHaveBeenCalled();
 	});
 
 	it('shows the correct ShortAnswerSlide answer in the footer after a wrong answer', () => {

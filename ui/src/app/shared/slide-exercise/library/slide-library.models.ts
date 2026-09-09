@@ -93,6 +93,7 @@ export interface SelectionSlideData extends SlideTypeData {
 	readonly mode: SelectionSlideMode;
 	readonly question: string;
 	readonly options: readonly SlideOption[];
+	readonly expansionId?: string;
 }
 
 export interface SpeechPlaybackConfig {

@@ -133,6 +133,13 @@ describe("slide-sequence completion evidence", () => {
       () => verify(scoredSelection, outcome([])),
       /must not define correctness fields/,
     );
+
+    const invalidExpansion = structuredClone(definition);
+    invalidExpansion.config.slides[0].data.expansionId = " ";
+    assert.throws(
+      () => verify(invalidExpansion, outcome([])),
+      /Selection expansionId is required/,
+    );
   });
 
   it("rejects a bare completion and requires correct scored results plus submitted production", () => {

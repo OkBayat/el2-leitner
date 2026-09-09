@@ -28,6 +28,7 @@ It does not own Angular component implementation, backend persistence, lesson-le
 7. Use explicit answer keys only for scored slides. Submitted-response slides record evidence but do not imply semantic mastery without an evaluator.
 8. Preserve source wording and answer constraints. Do not invent facts, answer keys, audio URLs, or unsupported accepted answers.
 9. Prefer the fewest slides that achieve the objective. Do not add interaction variety for its own sake.
+10. For runtime-sized paths, a `selection` may declare `expansionId`; the application parent must own a matching runtime handler that returns only registered, non-terminal slide objects. Keep functions and services out of the exercise JSON.
 
 ## Workflow
 
@@ -46,6 +47,8 @@ If no catalog entry fits, return a blocked result containing the objective, miss
 Read [exercise-contract.md](references/exercise-contract.md). Author one JSON object using the application contract's camelCase names. Put configuration in `config.slides[].data`; use `chrome` only to override shared shell behavior intentionally.
 
 For each slide, verify that its prompt, stimulus, options, answer key, response constraints, and feedback semantics support the same objective. End with the terminal summary. A finish-only summary may use empty display fields and hide its header.
+
+When a selection determines a runtime-sized path, follow the dynamic expansion contract in [exercise-contract.md](references/exercise-contract.md). Use it only when the application already supplies the named handler and authoritative runtime source. The authored JSON names the capability with `expansionId`; it never embeds a callback, service, or generated slide list.
 
 ### 4. Validate and return
 
@@ -66,7 +69,8 @@ Stop without inventing configuration when:
 - a scored answer cannot be grounded in the supplied source;
 - required text, audio, image, chart, or diagram evidence is unavailable;
 - no registered slide type supports the required learner action or evidence;
-- the requested behavior requires branching, evaluation, persistence, or media handling not supported by the current runtime contract;
+- the requested behavior requires branching, evaluation, persistence, or media handling not supported by either the static runtime contract or a registered selection expansion handler;
+- a configured `expansionId` has no application-owned handler or authoritative runtime source;
 - deterministic validation cannot run or rejects the exercise.
 
 ## Validation
@@ -96,6 +100,7 @@ Also run the repository-required `k2-skill-architecture` validator.
 - Select the smallest semantically correct combination of existing slides.
 - Author prompts, stimuli, distractors, accepted answers, feedback, and constraints.
 - Judge whether an existing slide genuinely supports the required evidence.
+- Verify that a dynamic selection expansion is registered by the owning application surface and can cover its complete runtime source without invented content.
 - Explain a blocked capability without inventing a workaround.
 
 ### Codex-owned
