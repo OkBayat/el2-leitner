@@ -14,6 +14,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly state?: LearningPathNodeState;
   readonly config: Readonly<Record<string, unknown>>;
   readonly payload: TPayload;
+  readonly ensureStarted?: () => Promise<boolean>;
 }
 
 export type ExerciseOutcome = CompletedLearningPathExerciseOutcome

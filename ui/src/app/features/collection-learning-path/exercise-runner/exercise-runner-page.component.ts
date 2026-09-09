@@ -26,6 +26,7 @@ export class ExerciseRunnerPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly routeState = signal<RunnerRoute | null>(null);
+  readonly ensureExerciseStarted = () => this.facade.start();
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {

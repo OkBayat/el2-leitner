@@ -128,7 +128,7 @@ Tests enforce:
 - duplicate-target rejection;
 - automatic discovery of a newly inserted independent sentence;
 - random sentence selection and different-context retries;
-- unchanged learning state during browser E2E practice;
+- unchanged Leitner progress in sentence-practice application and API behavior tests;
 - bounded, user-scoped definition reads and backward-compatible card projection;
 - textarea editing, composition, feedback, safe definition rendering, and popover dismissal;
-- glyph-sized dashed gaps and focus-preserving popovers in desktop and mobile Chromium viewports.
+- glyph-sized dashed gaps and focus-preserving popovers in focused component behavior tests.

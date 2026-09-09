@@ -136,6 +136,7 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
     this.busy.set(true);
     this.error.set('');
     try {
+      await this.ensureExerciseStarted(context);
       await this.facade.activate(context.pathId, context.lessonId, context.exerciseId);
       this.slideExercise?.goTo(firstVocabularyIntakePracticeSlideId(slides));
     } catch (error) {
@@ -151,6 +152,7 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
     this.busy.set(true);
     this.error.set('');
     try {
+      await this.ensureExerciseStarted(context);
       await this.facade.activate(context.pathId, context.lessonId, context.exerciseId);
       this.outcome.emit({ kind: 'completed' });
     } catch (error) {
@@ -180,5 +182,11 @@ export class VocabularyIntakeExerciseComponent implements ExerciseComponent {
 
   complete(): void {
     this.outcome.emit({ kind: 'completed' });
+  }
+
+  private async ensureExerciseStarted(context: ExerciseContext): Promise<void> {
+    if (context.ensureStarted && !await context.ensureStarted()) {
+      throw new Error('Exercise could not be started.');
+    }
   }
 }

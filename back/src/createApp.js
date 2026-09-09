@@ -143,7 +143,7 @@ export function createApp({
       app.use((req, res, next) => {
         if (!isHtmlNavigationRequest(req)) return next();
         setNoStoreHeaders(res);
-        res.sendFile(spaIndex, (error) => {
+        res.sendFile(path.basename(spaIndex), { root: path.dirname(spaIndex) }, (error) => {
           if (error) next(error);
         });
       });

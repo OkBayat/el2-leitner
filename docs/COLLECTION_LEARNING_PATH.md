@@ -787,9 +787,9 @@ Cover:
 - loading/error states;
 - accessibility behavior relevant to the component.
 
-### E2E tests
+### Manual smoke E2E tests
 
-Cover the real user journey and important regressions without replacing lower-level deterministic tests.
+Cover only critical complete-system connectivity. Business behavior and regressions stay in lower-level deterministic tests, and new E2E scenarios are not added by default.
 
 Tests must never be weakened, skipped, or deleted merely to make a phase pass.
 
@@ -841,7 +841,7 @@ Before final integration:
 
 1. bring the latest `main` into `learning-path`;
 2. resolve conflicts on `learning-path`;
-3. run the full affected backend, Angular, MySQL, browser/E2E, and Docker smoke checks;
+3. run the full affected backend, Angular, MySQL, and Docker checks, plus the manual E2E smoke suite only when complete-system connectivity needs verification;
 4. mark the integration PR ready only after the complete feature is coherent.
 
 Do not merge the integration PR to `main` automatically unless explicitly requested.
@@ -864,7 +864,7 @@ Architecture is implemented incrementally through child PRs targeting `learning-
 12. **BBC Full Journey** — library entry, start/resume, lesson progression, up-to-date behavior.
 13. **Generic File-managed Paths** — prove a non-BBC finite course without engine redesign.
 14. **Hardening** — retries, concurrent tabs, PWA/mobile/accessibility/performance/retirement cases.
-15. **Release Gate** — full cross-domain E2E and regression verification.
+15. **Release Gate** — full cross-domain behavior, contract, regression, and affected integration verification, with the manual smoke suite only for complete-system connectivity.
 
 A phase may be split into smaller PRs if implementation evidence shows the PR would otherwise be too broad; it must not be collapsed into an unreviewable monolithic change.
 
@@ -920,7 +920,8 @@ A Learning Path child PR is done only when all applicable items are true:
 - Angular code follows standalone/OnPush/accessibility conventions;
 - focused tests pass;
 - affected backend/UI repository-level tests pass;
-- relevant MySQL/browser/E2E checks pass when the phase touches those boundaries;
+- relevant MySQL, contract, behavior, and regression checks pass when the phase touches those boundaries;
+- the manual smoke E2E suite is used only when the phase needs complete-system connectivity verification;
 - no unrelated test is disabled, skipped, weakened, or deleted;
 - migrations are additive and previously executed migrations are not edited;
 - PR base is `learning-path` for every post-Phase-0 child PR;
