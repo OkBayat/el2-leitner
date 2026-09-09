@@ -269,18 +269,22 @@
               },
               {
                 "id": "gfi-u01-facts-adverbs",
-                "type": "cloze",
+                "type": "choice",
                 "data": {
-                  "instruction": "Use each word once: generally, mainly, normally, usually, traditionally.",
-                  "content": "{{traditionally}}, families celebrate this festival in spring. The museum {{normally}} opens at nine. People {{generally}} need sleep every night. This course {{mainly}} uses short examples. The journey {{usually}} takes two hours.",
-                  "inputMode": "text",
-                  "blanks": [
-                    { "id": "traditionally", "answers": ["traditionally"] },
-                    { "id": "normally", "answers": ["normally"] },
-                    { "id": "generally", "answers": ["generally"] },
-                    { "id": "mainly", "answers": ["mainly"] },
-                    { "id": "usually", "answers": ["usually"] }
-                  ]
+                  "instruction": "Select all five words from the Unit 1 general-statement list.",
+                  "mode": "multiple",
+                  "question": "Which words commonly accompany present simple general statements?",
+                  "options": [
+                    { "id": "generally", "label": "generally" },
+                    { "id": "mainly", "label": "mainly" },
+                    { "id": "normally", "label": "normally" },
+                    { "id": "usually", "label": "usually" },
+                    { "id": "traditionally", "label": "traditionally" },
+                    { "id": "right-now", "label": "right now" },
+                    { "id": "at-the-moment", "label": "at the moment" }
+                  ],
+                  "correctOptionIds": ["generally", "mainly", "normally", "usually", "traditionally"],
+                  "explanation": "These five adverbs are the general-statement markers listed in Unit 1."
                 }
               },
               {
