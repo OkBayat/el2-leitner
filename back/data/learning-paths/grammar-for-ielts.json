@@ -205,7 +205,7 @@
                 "id": "gfi-u01-habits-rewrite",
                 "type": "rewrite",
                 "data": {
-                  "instruction": "Rewrite the idea as a present simple habit.",
+                  "instruction": "Use these exact words to make a present simple sentence: Tom / play / football / every Saturday.",
                   "mode": "target-grammar",
                   "original": "Tom's normal Saturday activity is football.",
                   "acceptedAnswers": ["Tom plays football every Saturday."],
@@ -242,7 +242,7 @@
                   "title": "Permanent, factual, or continuing since the past?",
                   "blocks": [
                     { "kind": "patterns", "title": "Permanent situation", "content": "Use the present simple for a situation presented as stable or permanent.", "secondary": "My aunt owns a bakery." },
-                    { "kind": "patterns", "title": "Fact or general truth", "content": "Use the present simple for facts and generally accepted truths.", "secondary": "Water boils at 100°C." },
+                    { "kind": "patterns", "title": "Fact or general truth", "content": "Use the present simple for facts and generally accepted truths. General statements often use generally, mainly, normally, usually or traditionally.", "secondary": "Water boils at 100°C." },
                     { "kind": "correction", "title": "Duration up to now", "content": "Do not use the present simple to say how long a situation has continued from the past until now. Use the present perfect.", "secondary": "I have lived here since 2022." }
                   ]
                 }
@@ -264,6 +264,22 @@
                     { "id": "since", "label": "I have known Ali since 2020.", "correctCategoryId": "duration" },
                     { "id": "teachers", "label": "My parents teach at a college.", "correctCategoryId": "permanent" },
                     { "id": "plants", "label": "Plants need water.", "correctCategoryId": "fact" }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-facts-adverbs",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use each word once: generally, mainly, normally, usually, traditionally.",
+                  "content": "{{traditionally}}, families celebrate this festival in spring. The museum {{normally}} opens at nine. People {{generally}} need sleep every night. This course {{mainly}} uses short examples. The journey {{usually}} takes two hours.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "traditionally", "answers": ["traditionally"] },
+                    { "id": "normally", "answers": ["normally"] },
+                    { "id": "generally", "answers": ["generally"] },
+                    { "id": "mainly", "answers": ["mainly"] },
+                    { "id": "usually", "answers": ["usually"] }
                   ]
                 }
               },
@@ -299,13 +315,14 @@
               },
               {
                 "id": "gfi-u01-facts-error",
-                "type": "error-correction",
+                "type": "cloze",
                 "data": {
-                  "instruction": "Correct the duration error.",
-                  "mode": "sentence-correction",
-                  "category": "duration up to now",
-                  "original": "We live in this house for six years.",
-                  "answers": ["We have lived in this house for six years."]
+                  "instruction": "Complete with a present perfect form.",
+                  "content": "We {{have_lived}} in this house for six years.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "have_lived", "answers": ["have lived", "have been living"] }
+                  ]
                 }
               },
               {
@@ -742,7 +759,9 @@
                     { "id": "bus", "label": "The bus always leaves at six.", "correctCategoryId": "neutral" },
                     { "id": "phone", "label": "You're always checking your phone!", "correctCategoryId": "emotional" },
                     { "id": "help", "label": "Maya always helps new students.", "correctCategoryId": "neutral" },
-                    { "id": "travel", "label": "They're always travelling to amazing places!", "correctCategoryId": "emotional" }
+                    { "id": "travel", "label": "They're always travelling to amazing places!", "correctCategoryId": "emotional" },
+                    { "id": "interrupt", "label": "She is continually interrupting me!", "correctCategoryId": "emotional" },
+                    { "id": "borrow", "label": "He is forever borrowing my charger!", "correctCategoryId": "emotional" }
                   ]
                 }
               },
@@ -766,11 +785,13 @@
                 "type": "cloze",
                 "data": {
                   "instruction": "Use the form that matches the speaker's attitude.",
-                  "content": "Our class {{always_starts}} at nine; that is the timetable. But Lee {{is_always_arriving}} late, and it is really annoying.",
+                  "content": "Our class {{always_starts}} at nine; that is the timetable. But Lee {{is_always_arriving}} late, Nina {{is_continually_interrupting}} me, and Max {{is_forever_borrowing}} my notes!",
                   "inputMode": "text",
                   "blanks": [
                     { "id": "always_starts", "answers": ["always starts"] },
-                    { "id": "is_always_arriving", "answers": ["is always arriving"] }
+                    { "id": "is_always_arriving", "answers": ["is always arriving"] },
+                    { "id": "is_continually_interrupting", "answers": ["is continually interrupting"] },
+                    { "id": "is_forever_borrowing", "answers": ["is forever borrowing"] }
                   ]
                 }
               },
@@ -1405,16 +1426,21 @@
               },
               {
                 "id": "gfi-u01-mastery-always",
-                "type": "choice",
+                "type": "classification",
                 "data": {
-                  "mode": "single",
-                  "question": "Which sentence expresses annoyance?",
-                  "options": [
-                    { "id": "a", "label": "Eva always calls on Sunday." },
-                    { "id": "b", "label": "Eva is always interrupting me!" },
-                    { "id": "c", "label": "Eva calls me now." }
+                  "instruction": "Classify each repeated action by the speaker's attitude.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "neutral", "label": "Neutral routine" },
+                    { "id": "emotional", "label": "Complaint, surprise or envy" }
                   ],
-                  "correctOptionIds": ["b"]
+                  "items": [
+                    { "id": "always-neutral", "label": "Eva always calls on Sunday.", "correctCategoryId": "neutral" },
+                    { "id": "always-emotional", "label": "Eva is always interrupting me!", "correctCategoryId": "emotional" },
+                    { "id": "constantly-emotional", "label": "Dan is constantly changing his plans!", "correctCategoryId": "emotional" },
+                    { "id": "continually-emotional", "label": "The baby is continually waking us up!", "correctCategoryId": "emotional" },
+                    { "id": "forever-emotional", "label": "You are forever losing your keys!", "correctCategoryId": "emotional" }
+                  ]
                 }
               },
               {
@@ -1480,13 +1506,14 @@
               },
               {
                 "id": "gfi-u01-mastery-duration",
-                "type": "error-correction",
+                "type": "cloze",
                 "data": {
-                  "instruction": "Correct the duration error.",
-                  "mode": "sentence-correction",
-                  "category": "duration up to now",
-                  "original": "I study English since 2023.",
-                  "answers": ["I have studied English since 2023."]
+                  "instruction": "Complete with a present perfect form.",
+                  "content": "I {{have_studied}} English since 2023.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "have_studied", "answers": ["have studied", "have been studying"] }
+                  ]
                 }
               },
               {
@@ -1516,13 +1543,13 @@
                 "type": "cloze",
                 "data": {
                   "instruction": "Complete the final mixed paragraph.",
-                  "content": "My family usually {{eats}} together, but this week my parents {{are_visiting}} relatives. I {{believe}} family meals are important. They {{help}} people talk, and their popularity {{is_growing}} again in my town.",
+                  "content": "My family usually {{eats}} together, but this week my parents {{are_visiting}} relatives. I {{believe}} family meals are important. They {{generally}} help people talk, and their popularity {{is_growing}} again in my town.",
                   "inputMode": "text",
                   "blanks": [
                     { "id": "eats", "answers": ["eats"] },
                     { "id": "are_visiting", "answers": ["are visiting"] },
                     { "id": "believe", "answers": ["believe"] },
-                    { "id": "help", "answers": ["help"] },
+                    { "id": "generally", "answers": ["generally"] },
                     { "id": "is_growing", "answers": ["is growing"] }
                   ]
                 }
