@@ -53,6 +53,14 @@ describe('reusable slide renderer contract', () => {
 		expect(slow?.getAttribute('aria-label')).toBe(
 			'Play dictation pronunciation slowly',
 		);
+		expect(normal?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/normal-speed.svg',
+		);
+		expect(slow?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/slow-speed.svg',
+		);
+		expect(normal?.querySelector('svg')).toBeNull();
+		expect(slow?.querySelector('svg')).toBeNull();
 
 		normal?.click();
 		slow?.click();
