@@ -252,6 +252,38 @@ describe('reusable slide renderer contract', () => {
 		expect(fixture.componentInstance.answers()['source']).toBe('renewable energy');
 	});
 
+	it('reveals free-text cloze answer options below the sentence', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'text-cloze-options',
+			type: 'cloze',
+			data: {
+				content: '{{first}} power reduces {{second}}.',
+				blanks: [
+					{ id: 'first', answers: ['Renewable'] },
+					{ id: 'second', answers: ['emissions'] },
+				],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('.cloze-answer-options')).toBeNull();
+		(
+			element.querySelector(
+				'.cloze-answer-support button',
+			) as HTMLButtonElement
+		).click();
+		fixture.detectChanges();
+
+		expect(
+			element.querySelector('.cloze-answer-options')?.textContent,
+		).toContain('emissions');
+		expect(
+			element.querySelector('.cloze-answer-options')?.textContent,
+		).toContain('Renewable');
+	});
+
 	it('opens vocabulary details from an answered free-text cloze field', async () => {
 		const fixture = TestBed.createComponent(ClozeSlideComponent);
 		fixture.componentInstance.load({
@@ -271,7 +303,7 @@ describe('reusable slide renderer contract', () => {
 				],
 			},
 		});
-		fixture.componentInstance.setAnswer('whistle', 'whistle');
+		fixture.componentInstance.setAnswer('whistle', 'whistel');
 		fixture.componentInstance.handleAction('check');
 		fixture.detectChanges();
 
@@ -290,6 +322,7 @@ describe('reusable slide renderer contract', () => {
 		expect(details?.textContent).toContain(
 			'The players were exultant after the final whistle.',
 		);
+		expect(details?.textContent).not.toContain('whistel');
 		expect(details?.textContent).toContain(
 			'a small device that makes a high sound',
 		);

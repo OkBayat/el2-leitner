@@ -82,12 +82,14 @@ export class ShortAnswerSlideComponent
 	}
 	handleAction(actionId: string): void {
 		if (actionId !== 'check' || !this.answer().trim()) return;
+		const data = this.data();
 		const correct = this.correct();
-		this.finish(
-			correct,
-			{ answer: this.answer(), correct },
-			this.data().explanation ?? '',
-		);
+		const detail = correct
+			? (data.explanation ?? '')
+			: [`Correct answer: ${data.answers[0]}`, data.explanation]
+					.filter(Boolean)
+					.join(' ');
+		this.finish(correct, { answer: this.answer(), correct }, detail);
 	}
 	ngOnDestroy(): void {
 		this.destroy();

@@ -179,6 +179,9 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
   assert.ok(collocationCloze);
   assert.ok(collocationCloze.data.blanks.every((blank) =>
     Array.isArray(blank.definitions) && blank.definitions.every(nonEmpty)));
+  assert.ok(!unitOne.exercises
+    .flatMap((exercise) => exercise.config.slides ?? [])
+    .some((slide) => slide.id === "cvfi-u01-family-chunks-transfer"));
   assert.deepEqual(unitOne.exercises[2].config.scope, { kind: "lesson-source" });
   assert.deepEqual(unitOne.exercises[13].config.scope, { kind: "lesson-source" });
   assert.equal(unitOne.exercises[13].config.slides[1].data.generatedSlide.type, "meaning-choice");
@@ -240,7 +243,7 @@ test("Cambridge Unit 1 slide decks and synthetic dialogue stimuli are production
   assert.ok(definition);
   const unitOne = definition.lessons[0];
   const sequences = unitOne.exercises.filter((exercise) => exercise.type === "slides.sequence");
-  assert.equal(sequences.flatMap((exercise) => exercise.config.slides).length, 91);
+  assert.equal(sequences.flatMap((exercise) => exercise.config.slides).length, 90);
   const slideIds = sequences.flatMap((exercise) => exercise.config.slides.map((slide) => slide.id));
   assert.equal(new Set(slideIds).size, slideIds.length);
   for (const exercise of sequences) {

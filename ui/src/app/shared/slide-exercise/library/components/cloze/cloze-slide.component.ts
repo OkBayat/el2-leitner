@@ -80,6 +80,8 @@ export class ClozeSlideComponent
 	private detailsOrigin?: HTMLTextAreaElement;
 	readonly segments = signal<ReturnType<typeof clozeSegments>>([]);
 	readonly activeBlankId = signal('');
+	readonly answerOptions = signal<readonly string[]>([]);
+	readonly answerOptionsVisible = signal(false);
 	readonly wordDetailsOpen = signal(false);
 	readonly wordDetailsPositions: ConnectedPosition[] = [
 		{
@@ -103,6 +105,14 @@ export class ClozeSlideComponent
 		this.begin(context.slideId, data);
 		this.answers.set({});
 		this.segments.set(clozeSegments(data.content));
+		const sourceOptions = data.wordBank?.length
+			? data.wordBank
+			: data.blanks.flatMap((blank) => blank.answers.slice(0, 1));
+		const options = [...new Set(sourceOptions)];
+		this.answerOptions.set(
+			options.length > 1 ? [...options.slice(1), options[0]] : options,
+		);
+		this.answerOptionsVisible.set(false);
 		this.wordDetailsOpen.set(false);
 		this.activeBlankId.set(
 			data.inputMode === 'select' ? '' : (data.blanks[0]?.id ?? ''),
@@ -138,6 +148,10 @@ export class ClozeSlideComponent
 		this.wordDetailsOpen.set(false);
 		if (restoreFocus) this.detailsOrigin?.focus();
 	}
+	toggleAnswerOptions(): void {
+		if (this.interactionState() !== 'idle') return;
+		this.answerOptionsVisible.update((visible) => !visible);
+	}
 	onWordDetailsOutsideClick(): void {
 		this.closeWordDetails();
 	}
@@ -148,12 +162,18 @@ export class ClozeSlideComponent
 			if (segment.text !== undefined)
 				return { text: segment.text, highlighted: false };
 			const field = this.blank(segment.fieldId);
+			const learnerAnswer = field
+				? this.answers()[field.id]?.trim()
+				: undefined;
+			const resolvedAnswer =
+				field &&
+				this.interactionState() === 'answered-incorrect' &&
+				learnerAnswer &&
+				!answerMatches(learnerAnswer, field)
+					? field.answers[0]
+					: learnerAnswer;
 			return {
-				text: field
-					? this.answers()[field.id]?.trim() ||
-						field.answers[0] ||
-						'…'
-					: '…',
+				text: field ? resolvedAnswer || field.answers[0] || '…' : '…',
 				highlighted: segment.fieldId === activeFieldId,
 			};
 		});

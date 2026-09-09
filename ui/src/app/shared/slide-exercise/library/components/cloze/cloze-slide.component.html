@@ -289,6 +289,37 @@
 					}
 				}
 			</p>
+			@if (data.inputMode === 'text' && answerOptions().length) {
+				<div class="cloze-answer-support">
+					<button
+						mat-stroked-button
+						type="button"
+						[attr.aria-expanded]="answerOptionsVisible()"
+						aria-controls="cloze-answer-options"
+						[disabled]="interactionState() !== 'idle'"
+						(click)="toggleAnswerOptions()"
+					>
+						{{
+							answerOptionsVisible()
+								? 'Hide options'
+								: 'Show options'
+						}}
+					</button>
+					@if (answerOptionsVisible()) {
+						<div
+							id="cloze-answer-options"
+							class="cloze-answer-options"
+							aria-label="Answer options"
+						>
+							@for (word of answerOptions(); track word) {
+								<span class="cloze-answer-option">{{
+									word
+								}}</span>
+							}
+						</div>
+					}
+				</div>
+			}
 			@if (data.inputMode === 'word-bank') {
 				<div class="chip-list" aria-label="Word bank">
 					@for (word of data.wordBank ?? []; track word) {

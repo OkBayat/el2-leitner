@@ -14,6 +14,7 @@ import {
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
 	RewriteSlideComponent,
+	ShortAnswerSlideComponent,
 	SpeakingResponseSlideComponent,
 	StructuredCompletionSlideComponent,
 	WordFormationSlideComponent,
@@ -61,6 +62,25 @@ function configure(): {
 }
 
 describe('reusable slide library behavior', () => {
+	it('shows the correct ShortAnswerSlide answer in the footer after a wrong answer', () => {
+		const component = new ShortAnswerSlideComponent();
+		let footerDetail = '';
+		component.stateChange.subscribe((state) => {
+			footerDetail = state.chrome?.footer?.detail ?? footerDetail;
+		});
+		load(component, 'short-answer', {
+			question: 'Which noun describes a strong emotional connection?',
+			answers: ['bond', 'connection'],
+			exactSpelling: true,
+		});
+
+		component.setAnswer('friendship');
+		component.handleAction('check');
+
+		expect(component.interactionState()).toBe('answered-incorrect');
+		expect(footerDetail).toBe('Correct answer: bond');
+	});
+
 	it('selects ChoiceSlide options by number and preserves wrong and correct states after checking', () => {
 		configure();
 		const component = TestBed.runInInjectionContext(
@@ -261,6 +281,28 @@ describe('reusable slide library behavior', () => {
 		component.setAnswer('energy', 'renewable energy');
 		component.handleAction('check');
 		expect(component.blankState('energy')).toBe('incorrect');
+	});
+
+	it('reveals shuffled answer options for a free-text ClozeSlide on request', () => {
+		const component = new ClozeSlideComponent();
+		load(component, 'cloze', {
+			content: '{{first}} power reduces {{second}} and {{third}}.',
+			blanks: [
+				{ id: 'first', answers: ['Renewable'] },
+				{ id: 'second', answers: ['emissions'] },
+				{ id: 'third', answers: ['pollution'] },
+			],
+		});
+
+		expect(component.answerOptionsVisible()).toBe(false);
+		component.toggleAnswerOptions();
+
+		expect(component.answerOptionsVisible()).toBe(true);
+		expect(component.answerOptions()).toEqual([
+			'emissions',
+			'pollution',
+			'Renewable',
+		]);
 	});
 
 	it('advances across ClozeSlide blanks when the word bank is the only input', () => {

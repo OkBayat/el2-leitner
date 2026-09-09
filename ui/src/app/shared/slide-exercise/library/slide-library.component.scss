@@ -265,6 +265,28 @@ blockquote {
 	font-weight: 600;
 }
 
+.cloze-answer-support {
+	display: grid;
+	justify-items: start;
+	gap: var(--vocora-space-3);
+	margin-top: var(--vocora-space-4);
+}
+
+.cloze-answer-options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--vocora-space-2);
+}
+
+.cloze-answer-option {
+	padding: var(--vocora-space-2) var(--vocora-space-3);
+	border: 1px solid var(--vocora-border);
+	border-radius: var(--vocora-radius-pill);
+	background: var(--vocora-surface-subtle);
+	color: var(--vocora-text-primary);
+	font-weight: 600;
+}
+
 .inline-field {
 	display: inline-block;
 	min-width: 180px;
