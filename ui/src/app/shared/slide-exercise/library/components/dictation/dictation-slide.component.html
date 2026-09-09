@@ -43,15 +43,28 @@
 				</div>
 			}
 			<mat-form-field
+				class="vocora-form-field--soft"
 				appearance="outline"
+				subscriptSizing="dynamic"
 				[attr.data-state]="answerState()"
-				><mat-label>Your answer</mat-label
-				><input
+				><textarea
+					class="dictation-answer-input"
 					matInput
 					[value]="answer()"
 					[disabled]="interactionState() !== 'idle'"
+					placeholder="Your answer"
+					aria-label="Your answer"
+					autocomplete="off"
+					lang="en"
+					aria-multiline="false"
+					enterkeyhint="go"
+					wrap="off"
+					rows="1"
+					autocapitalize="none"
+					autocorrect="off"
+					spellcheck="false"
 					(input)="setAnswer(inputFrom($event))"
-			/></mat-form-field>
+				></textarea></mat-form-field>
 			<div
 				class="answer-review"
 				[class.answer-review--hidden]="

@@ -17,7 +17,7 @@ import {
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
-	it('renders normal and slower dictation speech controls', () => {
+	it('renders dictation playback controls and a soft single-line answer field', () => {
 		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
 		TestBed.configureTestingModule({
 			providers: [
@@ -61,6 +61,28 @@ describe('reusable slide renderer contract', () => {
 		);
 		expect(normal?.querySelector('svg')).toBeNull();
 		expect(slow?.querySelector('svg')).toBeNull();
+
+		const answerField = element.querySelector('mat-form-field');
+		const answer = answerField?.querySelector('textarea');
+		expect(answerField?.classList).toContain('vocora-form-field--soft');
+		expect(answerField?.classList).not.toContain('vocora-form-field--raised');
+		expect(answerField?.querySelector('input')).toBeNull();
+		expect(answerField?.querySelector('mat-label')).toBeNull();
+		expect(answer?.getAttribute('placeholder')).toBe('Your answer');
+		expect(answer?.getAttribute('aria-label')).toBe('Your answer');
+		for (const [name, value] of Object.entries({
+			autocomplete: 'off',
+			lang: 'en',
+			'aria-multiline': 'false',
+			enterkeyhint: 'go',
+			wrap: 'off',
+			rows: '1',
+			autocapitalize: 'none',
+			autocorrect: 'off',
+			spellcheck: 'false',
+		})) {
+			expect(answer?.getAttribute(name)).toBe(value);
+		}
 
 		normal?.click();
 		slow?.click();

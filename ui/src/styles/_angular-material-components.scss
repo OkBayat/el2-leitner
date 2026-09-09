@@ -311,6 +311,37 @@
 		border-radius: 32px;
 	}
 
+	.mat-mdc-form-field.vocora-form-field--soft {
+		--mdc-outlined-text-field-container-shape: var(--vocora-radius-md);
+		--mdc-outlined-text-field-outline-color: var(
+			--vocora-action-secondary-border
+		);
+		--mdc-outlined-text-field-hover-outline-color: var(--vocora-border);
+		--mdc-outlined-text-field-focus-outline-color: var(
+			--vocora-information
+		);
+		--mdc-outlined-text-field-input-text-color: var(--vocora-text-primary);
+		--mdc-outlined-text-field-input-text-placeholder-color: var(
+			--vocora-text-disabled
+		);
+		--mat-form-field-outlined-container-shape: var(--vocora-radius-md);
+		--mat-form-field-outlined-outline-color: var(
+			--vocora-action-secondary-border
+		);
+		--mat-form-field-outlined-hover-outline-color: var(--vocora-border);
+		--mat-form-field-outlined-focus-outline-color: var(--vocora-information);
+	}
+
+	.mat-mdc-form-field.vocora-form-field--soft .mat-mdc-text-field-wrapper {
+		border-radius: var(--vocora-radius-md);
+		background: color-mix(
+			in srgb,
+			var(--vocora-surface-base) 92%,
+			var(--vocora-border)
+		);
+		box-shadow: none;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.mat-mdc-unelevated-button.vocora-button,
 		.mat-mdc-raised-button.vocora-button,
