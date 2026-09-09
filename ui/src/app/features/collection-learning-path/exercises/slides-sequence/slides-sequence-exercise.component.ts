@@ -104,6 +104,24 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 			},
 			loadComponent: async () => LessonVocabularyScopeSlideComponent,
 		});
+		registry.register({
+			type: "practice-mode-selection",
+			chromeDefaults: {
+				footer: {
+					primary: {
+						id: "continue",
+						label: "Continue",
+						behavior: "content",
+						disabled: true,
+					},
+					secondary: false,
+				},
+			},
+			loadComponent: () =>
+				import("./practice-mode-selection-slide.component").then(
+					(module) => module.PracticeModeSelectionSlideComponent,
+				),
+		});
 		return registry;
 	})();
 	readonly error = signal("");
