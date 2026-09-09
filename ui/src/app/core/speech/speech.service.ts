@@ -62,6 +62,7 @@ export class SpeechService {
 	private activeRequest: AbortController | null = null;
 	private activeAudio: HTMLAudioElement | null = null;
 	private activeObjectUrl: string | null = null;
+	private backendPlaybackStartedSequence: number | null = null;
 	private browserFallbackSequence: number | null = null;
 
 	speak(
@@ -120,6 +121,7 @@ export class SpeechService {
 		this.activeRequest?.abort();
 		this.activeRequest = null;
 		this.releaseAudio();
+		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
 		globalThis.speechSynthesis?.cancel?.();
 	}
@@ -157,18 +159,17 @@ export class SpeechService {
 			if (this.activeRequest === request) this.activeRequest = null;
 
 			const objectUrl = globalThis.URL.createObjectURL(audioBlob);
-			if (!this.isCurrent(playbackSequence)) {
-				globalThis.URL.revokeObjectURL(objectUrl);
-				return;
-			}
-
+			this.activeObjectUrl = objectUrl;
 			const audio = new AudioConstructor(objectUrl);
 			audio.preload = "auto";
 			this.activeAudio = audio;
-			this.activeObjectUrl = objectUrl;
 			audio.onended = () =>
 				this.finishPlayback(playbackSequence, observer);
-			audio.onerror = () =>
+			audio.onerror = () => {
+				if (this.backendPlaybackStartedSequence === playbackSequence) {
+					this.failPlayback(playbackSequence, observer);
+					return;
+				}
 				this.fallbackToBrowser(
 					text,
 					rate,
@@ -176,9 +177,11 @@ export class SpeechService {
 					playbackSequence,
 					observer,
 				);
+			};
 
 			await audio.play();
 			if (!this.isCurrent(playbackSequence)) return;
+			this.backendPlaybackStartedSequence = playbackSequence;
 			observer?.onStart?.();
 			if (this.isCurrent(playbackSequence)) {
 				this.emitEstimatedWordBoundaries(
@@ -217,6 +220,7 @@ export class SpeechService {
 		this.activeRequest = null;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = playbackSequence;
 		if (
 			!this.playBrowserSpeech(
@@ -352,6 +356,7 @@ export class SpeechService {
 		if (!this.isCurrent(playbackSequence)) return;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
 		this.playbackSequence += 1;
 		observer?.onEnd?.();
@@ -365,6 +370,7 @@ export class SpeechService {
 		this.activeRequest = null;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
 		this.playbackSequence += 1;
 		observer?.onError?.();

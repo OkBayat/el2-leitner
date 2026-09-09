@@ -22,6 +22,7 @@ class FakeUtterance {
 
 class FakeAudio {
 	static latest: FakeAudio | null = null;
+	static constructorError: Error | null = null;
 	static playError: Error | null = null;
 	preload = "";
 	currentTime = 0;
@@ -33,6 +34,7 @@ class FakeAudio {
 	readonly pause = vi.fn();
 
 	constructor(readonly src: string) {
+		if (FakeAudio.constructorError) throw FakeAudio.constructorError;
 		FakeAudio.latest = this;
 	}
 }
@@ -62,6 +64,7 @@ function installBrowserSpeech(voices: SpeechSynthesisVoice[] = []): {
 
 function installBackend(
 	options: {
+		constructorError?: Error;
 		ok?: boolean;
 		playError?: Error;
 	} = {},
@@ -83,6 +86,7 @@ function installBackend(
 	vi.stubGlobal("fetch", fetch);
 	vi.stubGlobal("Audio", FakeAudio);
 	vi.stubGlobal("URL", { createObjectURL, revokeObjectURL });
+	FakeAudio.constructorError = options.constructorError ?? null;
 	FakeAudio.playError = options.playError ?? null;
 	return { fetch, createObjectURL, revokeObjectURL };
 }
@@ -90,7 +94,9 @@ function installBackend(
 describe("SpeechService backend playback", () => {
 	afterEach(() => {
 		FakeAudio.latest = null;
+		FakeAudio.constructorError = null;
 		FakeAudio.playError = null;
+		vi.useRealTimers();
 		vi.unstubAllGlobals();
 		vi.restoreAllMocks();
 	});
@@ -231,6 +237,37 @@ describe("SpeechService backend playback", () => {
 		);
 	});
 
+	it("reports one lifecycle error instead of restarting after backend playback began", async () => {
+		installBackend();
+		const browser = installBrowserSpeech();
+		const onStart = vi.fn();
+		const onError = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("Started playback", 0.85, { onStart, onError });
+		await vi.waitFor(() => expect(onStart).toHaveBeenCalledOnce());
+		FakeAudio.latest?.onerror?.();
+
+		expect(browser.speak).not.toHaveBeenCalled();
+		expect(onStart).toHaveBeenCalledOnce();
+		expect(onError).toHaveBeenCalledOnce();
+	});
+
+	it("revokes the generated URL before falling back when audio construction fails", async () => {
+		const backend = installBackend({
+			constructorError: new Error("unsupported audio"),
+		});
+		const browser = installBrowserSpeech();
+		const service = new SpeechService();
+
+		service.speak("Constructor fallback");
+		await vi.waitFor(() => expect(browser.speak).toHaveBeenCalledOnce());
+
+		expect(backend.revokeObjectURL).toHaveBeenCalledWith(
+			"blob:kokoro-audio",
+		);
+	});
+
 	it("uses browser speech directly when backend playback APIs are unavailable", () => {
 		vi.stubGlobal("fetch", undefined);
 		vi.stubGlobal("Audio", undefined);
@@ -250,5 +287,108 @@ describe("SpeechService backend playback", () => {
 
 		expect(service.speak("Unavailable", 0.85, { onError })).toBe(true);
 		await vi.waitFor(() => expect(onError).toHaveBeenCalledOnce());
+	});
+
+	it("advances estimated word boundaries when browser speech has no native events", async () => {
+		vi.useFakeTimers();
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const browser = installBrowserSpeech();
+		const onWordBoundary = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("English is his first language.", 0.85, {
+			onWordBoundary,
+		});
+		browser.utterance().onstart?.();
+
+		expect(onWordBoundary).toHaveBeenLastCalledWith(0, 7);
+		await vi.advanceTimersByTimeAsync(450);
+		expect(onWordBoundary).toHaveBeenLastCalledWith(8, 2);
+		await vi.advanceTimersByTimeAsync(320);
+		expect(onWordBoundary).toHaveBeenLastCalledWith(11, 3);
+	});
+
+	it("ignores stale browser boundary events after a replacement starts", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const browser = installBrowserSpeech();
+		const firstBoundary = vi.fn();
+		const secondBoundary = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("First sentence", 0.85, {
+			onWordBoundary: firstBoundary,
+		});
+		const first = browser.utterance();
+		service.speak("Second sentence", 0.85, {
+			onWordBoundary: secondBoundary,
+		});
+		const second = browser.utterance();
+
+		first.onboundary?.({ name: "word", charIndex: 0, charLength: 5 });
+		second.onboundary?.({ name: "word", charIndex: 7, charLength: 8 });
+
+		expect(firstBoundary).not.toHaveBeenCalled();
+		expect(secondBoundary).toHaveBeenCalledWith(7, 8);
+	});
+
+	it("preserves deterministic browser dialogue voice and pitch selection", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const voices = [
+			{ lang: "en-US", name: "US", voiceURI: "us" },
+			{ lang: "en-GB", name: "GB", voiceURI: "gb" },
+		] as SpeechSynthesisVoice[];
+		const browser = installBrowserSpeech(voices);
+		const service = new SpeechService();
+
+		service.speak("Second speaker", 0.85, undefined, 1);
+
+		expect(browser.utterance().voice).toBe(voices[0]);
+		expect(browser.utterance().pitch).toBe(1.1);
+	});
+
+	it("preserves the preferred British browser voice for ordinary playback", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const voices = [
+			{ lang: "en-US", name: "US", voiceURI: "us" },
+			{ lang: "en-GB", name: "GB", voiceURI: "gb" },
+		] as SpeechSynthesisVoice[];
+		const browser = installBrowserSpeech(voices);
+		const service = new SpeechService();
+
+		service.speak("Ordinary playback");
+
+		expect(browser.utterance().voice).toBe(voices[1]);
+		expect(browser.utterance().pitch).toBe(1);
+	});
+
+	it("reports browser fallback errors without completing playback", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const browser = installBrowserSpeech();
+		const onEnd = vi.fn();
+		const onError = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("Failed fallback", 0.85, { onEnd, onError });
+		browser.utterance().onerror?.();
+
+		expect(onError).toHaveBeenCalledOnce();
+		expect(onEnd).not.toHaveBeenCalled();
+	});
+
+	it("returns false when direct browser fallback rejects synchronously", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const browser = installBrowserSpeech();
+		browser.speak.mockImplementation(() => {
+			throw new Error("voice unavailable");
+		});
+		const service = new SpeechService();
+
+		expect(service.speak("Failed fallback")).toBe(false);
 	});
 });
