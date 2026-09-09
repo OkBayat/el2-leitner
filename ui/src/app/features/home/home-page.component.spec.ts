@@ -136,7 +136,7 @@ describe('HomePageComponent', () => {
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
     expect(host.querySelector('[data-testid="daily-review-card"]')?.textContent).toContain("Today's review completed");
-    expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"]')?.getAttribute('href')).toBe('/practice-words');
+    expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"]')?.getAttribute('href')).toBe('/review?mode=box1');
   });
 
   it('opens the course overview without starting or resuming the course', async () => {

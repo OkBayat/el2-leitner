@@ -9,7 +9,6 @@ export const appRoutes: Routes = [
   { path: 'register', loadComponent: () => import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent) },
   { path: 'welcome', canActivate: [authGuard], loadComponent: () => import('./features/welcome/welcome-page.component').then((m) => m.WelcomePageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
-  { path: 'practice-words', canActivate: [authGuard], loadComponent: () => import('./features/practice-words/practice-words-page.component').then((m) => m.PracticeWordsPageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
   { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },
   { path: 'shadowing', canActivate: [authGuard], loadComponent: () => import('./features/shadowing-practice/shadowing-page.component').then((m) => m.ShadowingPageComponent) },

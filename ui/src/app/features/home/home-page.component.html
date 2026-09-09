@@ -36,7 +36,7 @@
               <span class="state-check" aria-hidden="true">✓</span>
               Today's review completed
             </p>
-            <a mat-flat-button routerLink="/practice-words" data-testid="practice-words">
+            <a mat-flat-button routerLink="/review" [queryParams]="{ mode: 'box1' }" data-testid="practice-words">
               Practice Words
             </a>
           } @else {

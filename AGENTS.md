@@ -64,6 +64,13 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 - Reuse existing commands and source contracts instead of introducing parallel mechanisms for the same behavior.
 - Preserve backward-compatible public IDs, persisted learner progress, completed attempt snapshots, and existing user-facing behavior unless the task explicitly changes them.
 
+## Reusable slide constraint
+
+- Never create a new slide type, slide component, feature-specific slide renderer, or parallel slide interaction.
+- Before implementing a slide-based experience, inspect the existing registered slide types and use an existing slide only when its interaction and evidence semantics fully match the requested behavior.
+- Do not force a scored slide such as `choice` into a non-scored selection flow, invent a correct answer, or weaken an existing slide contract to make it appear compatible.
+- If no existing slide fully supports the requested interaction, stop implementation and tell the user which interaction is unsupported. Do not create or register a replacement slide.
+
 ## Frontend styling
 
 - Prefer Angular Material components and directives whenever Material provides the standard interactive primitive needed by the UI, including buttons, icon buttons, dialogs/popups, menus, form fields and inputs, selects, checkboxes, radios, tabs, tooltips, snackbars, and progress indicators.
