@@ -14,10 +14,7 @@
 				--vocora-component-action-edge,
 				var(--vocora-material-button-edge)
 			);
-		transition:
-			background-color var(--vocora-motion-fast),
-			border-color var(--vocora-motion-fast),
-			color var(--vocora-motion-fast);
+		transition: none !important;
 	}
 
 	.mat-mdc-button {

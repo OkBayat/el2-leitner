@@ -147,9 +147,10 @@ identical to light mode.
 
 ### Interaction
 
-- Pressing removes the lower edge and translates the face down by 4px
-  immediately. Releasing restores both immediately; do not animate either
-  `transform` or `box-shadow`.
+- Textual Material buttons use `transition: none`. Pressing removes the lower
+  edge and translates the face down by 4px immediately; releasing restores the
+  complete visual state immediately. This central override is authoritative
+  over Material and feature-level button transitions.
 - Hover and pressed feedback must use Material state layers or a derived mix of
   the existing intent color; do not add a new raw color.
 - Keyboard focus remains visible with a high-contrast outline.

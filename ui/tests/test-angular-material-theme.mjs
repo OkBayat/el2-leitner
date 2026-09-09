@@ -245,10 +245,10 @@ assert.match(
 	/\.mat-mdc-button:not\(:disabled\):active,[\s\S]*?\.mat-tonal-button:disabled\s*\{[^}]*box-shadow:\s*none;[^}]*transform:\s*translateY\(4px\);/u,
 	"Pressed and disabled Material buttons must remove the lower edge within the preserved footprint.",
 );
-assert.doesNotMatch(
+assert.match(
 	components,
-	/transition:[^;]*(?:transform|box-shadow)\s+var\(--vocora-motion-fast\)/u,
-	"The Material button press and release must move immediately without animation.",
+	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*transition:\s*none\s*!important;/u,
+	"Textual Material buttons must not animate any visual property.",
 );
 assert.match(
 	components,
