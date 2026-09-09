@@ -60,22 +60,40 @@ test("Learning Path persistence adapters implement segregated application ports"
 });
 
 test("course catalog projection loads titles and enrollment state in one bounded query", async () => {
-  const pool = new RecordingPool([[[{
-    collectionId: "collection-1",
-    pathId: 8,
-    title: "Course 1",
-    learnerStatus: "in_progress",
-    enrolled: 1,
-  }], []]]);
+  const pool = new RecordingPool([[
+    [{
+      collectionId: "collection-1",
+      pathId: 8,
+      title: "Course 1",
+      learnerStatus: "in_progress",
+      enrolled: "1",
+    }, {
+      collectionId: "collection-2",
+      pathId: 9,
+      title: "Course 2",
+      learnerStatus: "available",
+      enrolled: "0",
+    }],
+    [],
+  ]]);
   const repository = new MySqlLearningPathCatalogQueryRepository(pool);
 
-  assert.deepEqual(await repository.listAvailableForUser("user-7"), [{
-    collectionId: "collection-1",
-    pathId: "8",
-    title: "Course 1",
-    learnerStatus: "in_progress",
-    enrolled: true,
-  }]);
+  assert.deepEqual(await repository.listAvailableForUser("user-7"), [
+    {
+      collectionId: "collection-1",
+      pathId: "8",
+      title: "Course 1",
+      learnerStatus: "in_progress",
+      enrolled: true,
+    },
+    {
+      collectionId: "collection-2",
+      pathId: "9",
+      title: "Course 2",
+      learnerStatus: "available",
+      enrolled: false,
+    },
+  ]);
   assert.equal(pool.calls.length, 1);
   assert.deepEqual(pool.calls[0].parameters, ["user-7", "user-7"]);
   assert.match(pool.calls[0].sql, /LEFT JOIN user_learning_path_progress/u);
@@ -88,11 +106,11 @@ test("Learning Path progression requires active course enrollment independently 
     status: "published",
     archivedAt: null,
     subscriptionStatus: "active",
-    enrolled: 0,
+    enrolled: "0",
   };
   const pool = new RecordingPool([
     [[subscribedOnly], []],
-    [[{ ...subscribedOnly, enrolled: 1 }], []],
+    [[{ ...subscribedOnly, enrolled: "1" }], []],
     [[subscribedOnly], []],
   ]);
   const repository = new MySqlLearningPathAccessQueryRepository(pool);

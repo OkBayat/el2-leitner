@@ -62,8 +62,8 @@ export function normalizeLearningPathCatalog(
       collectionId: route.collectionId,
       pathId: route.pathId || null,
       title: collection.title,
-      learnerStatus: collection.subscribed ? 'in_progress' : 'available',
-      enrolled: collection.subscribed,
+      learnerStatus: 'available',
+      enrolled: false,
     } satisfies LearningPathCatalogItem];
   });
 }
