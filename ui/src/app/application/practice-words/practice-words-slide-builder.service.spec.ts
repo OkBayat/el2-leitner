@@ -49,6 +49,14 @@ const sentences = {
 			accepted: ["persistent"],
 			box: 1,
 			mistakes: 0,
+			definitions: [
+				{
+					id: "definition-2",
+					text: "continuing despite difficulty",
+					languageCode: "en",
+					collectionTitle: "Test",
+				},
+			],
 			sentences: [
 				{
 					id: "sentence-2",
@@ -64,9 +72,9 @@ const sentences = {
 	],
 };
 
-function setup() {
+function setup(sentenceDeck = sentences) {
 	const learningApi = { getHouse: vi.fn().mockResolvedValue(house) };
-	const sentenceApi = { getDeck: vi.fn().mockResolvedValue(sentences) };
+	const sentenceApi = { getDeck: vi.fn().mockResolvedValue(sentenceDeck) };
 	TestBed.configureTestingModule({
 		providers: [
 			PracticeWordsSlideBuilderService,
@@ -91,7 +99,7 @@ describe("PracticeWordsSlideBuilderService", () => {
 		);
 
 		expect(learningApi.getHouse).toHaveBeenCalledWith(1);
-		expect(sentenceApi.getDeck).not.toHaveBeenCalled();
+		expect(sentenceApi.getDeck).toHaveBeenCalledWith(1);
 		expect(slides).toHaveLength(2);
 		expect(slides[0]).toMatchObject({
 			id: "practice-mode-vocabulary-dictation-word-1",
@@ -100,10 +108,28 @@ describe("PracticeWordsSlideBuilderService", () => {
 			data: {
 				mode: "phrase",
 				answer: "make progress",
+				definition: "move towards a goal",
 				acceptedAnswers: ["make progress"],
 				speech: { text: "make progress", autoplay: true, replay: true },
 			},
 		});
+		expect(slides.map((slide) => slide.data)).toMatchObject([
+			{ definition: "move towards a goal" },
+			{ definition: "continuing despite difficulty" },
+		]);
+	});
+
+	it("does not build a dictation deck when any House 1 definition is unavailable", async () => {
+		const { builder } = setup({
+			...sentences,
+			cards: sentences.cards.map((card) =>
+				card.id === "word-2" ? { ...card, definitions: [] } : card,
+			),
+		});
+
+		await expect(
+			builder.build("practice-mode", "vocabulary-dictation"),
+		).rejects.toThrow("Definitions are unavailable for 1 House 1 word.");
 	});
 
 	it("builds one audio-led cloze slide for every House 1 word", async () => {

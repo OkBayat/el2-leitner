@@ -126,6 +126,18 @@ assert.match(
 	sharedStyles,
 	/\.choice-option\[data-state='selected'\][\s\S]*box-shadow:[^;]*var\(--vocora-information-border\)/u,
 );
+const correctChoiceStyles = sharedStyles.match(
+	/\.choice-option\[data-state='correct'\]\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(correctChoiceStyles, /border-color:\s*var\(--vocora-success\)\s*!important;/u);
+assert.match(correctChoiceStyles, /background:\s*var\(--vocora-success-surface\)\s*!important;/u);
+assert.match(correctChoiceStyles, /box-shadow:[^;]*var\(--vocora-action-success-edge\)/u);
+const incorrectChoiceStyles = sharedStyles.match(
+	/\.choice-option\[data-state='incorrect'\]\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(incorrectChoiceStyles, /border-color:\s*var\(--vocora-error\)\s*!important;/u);
+assert.match(incorrectChoiceStyles, /background:\s*var\(--vocora-error-surface\)\s*!important;/u);
+assert.match(incorrectChoiceStyles, /box-shadow:[^;]*var\(--vocora-error-edge\)/u);
 assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='correct'\]\s*\{/u);
 assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='incorrect'\]\s*\{/u);
 const correctSoftField = materialComponents.match(

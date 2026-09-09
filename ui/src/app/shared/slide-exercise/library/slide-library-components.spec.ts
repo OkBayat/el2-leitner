@@ -225,7 +225,7 @@ describe('reusable slide library behavior', () => {
 		expect(footerDetail).toBe('Correct answer: bond');
 	});
 
-	it('selects ChoiceSlide options by number and preserves wrong and correct states after checking', () => {
+	it('preserves the selected wrong and correct ChoiceSlide states after checking', () => {
 		configure();
 		const component = TestBed.runInInjectionContext(
 			() => new ChoiceSlideComponent(),
@@ -245,6 +245,20 @@ describe('reusable slide library behavior', () => {
 
 		expect(component.interactionState()).toBe('answered-incorrect');
 		expect(component.optionState('a')).toBe('incorrect');
+		expect(component.optionState('b')).toBe('correct');
+
+		load(component, 'choice', {
+			question: 'Choose the correct spelling.',
+			options: [
+				{ id: 'a', label: 'enviroment' },
+				{ id: 'b', label: 'environment' },
+			],
+			correctOptionIds: ['b'],
+		});
+		component.selectOption('b');
+		component.handleAction('check');
+
+		expect(component.optionState('a')).toBe('neutral');
 		expect(component.optionState('b')).toBe('correct');
 	});
 

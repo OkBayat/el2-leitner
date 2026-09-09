@@ -147,10 +147,14 @@ blockquote {
 }
 
 .choice-option[data-state='correct'] {
-	box-shadow: 0 3px 0 var(--vocora-action-primary-edge);
+	border-color: var(--vocora-success) !important;
+	background: var(--vocora-success-surface) !important;
+	box-shadow: 0 3px 0 var(--vocora-action-success-edge);
 }
 
 .choice-option[data-state='incorrect'] {
+	border-color: var(--vocora-error) !important;
+	background: var(--vocora-error-surface) !important;
 	box-shadow: 0 3px 0 var(--vocora-error-edge);
 }
 

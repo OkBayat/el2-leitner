@@ -49,6 +49,27 @@ function sentenceCards(
 	return cards;
 }
 
+function wordDefinitions(
+	deck: SentencePracticeDeck,
+	words: readonly HouseOneWord[],
+): ReadonlyMap<string, string> {
+	const definitions = new Map(
+		deck.cards.map((card) => [
+			card.id,
+			card.definitions
+				?.map((definition) => definition.text.trim())
+				.find(Boolean) ?? "",
+		]),
+	);
+	const missing = words.filter((word) => !definitions.get(word.id));
+	if (missing.length) {
+		throw new Error(
+			`Definitions are unavailable for ${missing.length} House 1 ${missing.length === 1 ? "word" : "words"}.`,
+		);
+	}
+	return definitions;
+}
+
 function slideId(
 	anchorId: string,
 	mode: PracticeWordsMode,
@@ -81,9 +102,14 @@ export class PracticeWordsSlideBuilderService {
 			throw new Error(
 				"Add words to House 1 before starting this practice.",
 			);
+		const deck = await this.sentenceApi.getDeck(1);
 		if (mode === "vocabulary-dictation")
-			return this.dictationSlides(anchorId, words);
-		const cards = sentenceCards(await this.sentenceApi.getDeck(1), words);
+			return this.dictationSlides(
+				anchorId,
+				words,
+				wordDefinitions(deck, words),
+			);
+		const cards = sentenceCards(deck, words);
 		return mode === "sentence-completion"
 			? this.completionSlides(anchorId, words, cards)
 			: this.shadowingSlides(anchorId, words, cards);
@@ -92,6 +118,7 @@ export class PracticeWordsSlideBuilderService {
 	private dictationSlides(
 		anchorId: string,
 		words: readonly HouseOneWord[],
+		definitions: ReadonlyMap<string, string>,
 	): readonly SlideExerciseSlide[] {
 		return words.map((word) => ({
 			id: slideId(anchorId, "vocabulary-dictation", word.id),
@@ -103,6 +130,7 @@ export class PracticeWordsSlideBuilderService {
 				instruction: "Listen and type the word or collocation.",
 				speech: { text: word.term, autoplay: true, replay: true },
 				answer: word.term,
+				definition: definitions.get(word.id)!,
 				acceptedAnswers: acceptedAnswers(word),
 				caseSensitive: false,
 				punctuationSensitive: false,
