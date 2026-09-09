@@ -177,7 +177,7 @@ describe("SpeechService backend playback", () => {
 		});
 	});
 
-	it("adds terminal punctuation only to isolated words sent to Kokoro", async () => {
+	it("sends isolated words and phrases to Kokoro unchanged", async () => {
 		const backend = installBackend();
 		const service = new SpeechService();
 
@@ -186,7 +186,7 @@ describe("SpeechService backend playback", () => {
 
 		const isolatedWordRequest = backend.fetch.mock.calls[0][1] as RequestInit;
 		expect(JSON.parse(String(isolatedWordRequest.body))).toMatchObject({
-			text: "Saturday.",
+			text: "Saturday",
 		});
 
 		service.speak("renewable energy", 0.85);

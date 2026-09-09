@@ -24,13 +24,6 @@ const KOKORO_DIALOGUE_VOICES = [
 ] as const;
 const SLOW_PLAYBACK_MULTIPLIER = 0.85;
 
-function kokoroInput(text: string): string {
-	const trimmed = text.trim();
-	return /^[\p{L}\p{M}]+(?:['’-][\p{L}\p{M}]+)*$/u.test(trimmed)
-		? `${trimmed}.`
-		: text;
-}
-
 function speechWordRanges(text: string): SpeechWordRange[] {
 	return [...text.matchAll(/\S+/gu)].map((match) => ({
 		charIndex: match.index ?? 0,
@@ -162,7 +155,7 @@ export class SpeechService {
 				headers: { "Content-Type": "application/json" },
 				credentials: "same-origin",
 				body: JSON.stringify({
-					text: kokoroInput(text),
+					text,
 					speed: rate,
 					format: "mp3",
 					...(voice ? { voice } : {}),
