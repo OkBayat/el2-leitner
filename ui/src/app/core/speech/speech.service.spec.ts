@@ -172,8 +172,28 @@ describe("SpeechService backend playback", () => {
 		const request = backend.fetch.mock.calls[0][1] as RequestInit;
 		expect(JSON.parse(String(request.body))).toEqual({
 			text: "Listen slowly",
-			speed: 0.595,
+			speed: 0.7225,
 			format: "mp3",
+		});
+	});
+
+	it("adds terminal punctuation only to isolated words sent to Kokoro", async () => {
+		const backend = installBackend();
+		const service = new SpeechService();
+
+		service.speak("Saturday", 0.85);
+		await vi.waitFor(() => expect(FakeAudio.latest).not.toBeNull());
+
+		const isolatedWordRequest = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(JSON.parse(String(isolatedWordRequest.body))).toMatchObject({
+			text: "Saturday.",
+		});
+
+		service.speak("renewable energy", 0.85);
+		await vi.waitFor(() => expect(backend.fetch).toHaveBeenCalledTimes(2));
+		const phraseRequest = backend.fetch.mock.calls[1][1] as RequestInit;
+		expect(JSON.parse(String(phraseRequest.body))).toMatchObject({
+			text: "renewable energy",
 		});
 	});
 

@@ -22,7 +22,14 @@ const KOKORO_DIALOGUE_VOICES = [
 	"af_bella",
 	"af_sky",
 ] as const;
-const SLOW_PLAYBACK_MULTIPLIER = 0.7;
+const SLOW_PLAYBACK_MULTIPLIER = 0.85;
+
+function kokoroInput(text: string): string {
+	const trimmed = text.trim();
+	return /^[\p{L}\p{M}]+(?:['’-][\p{L}\p{M}]+)*$/u.test(trimmed)
+		? `${trimmed}.`
+		: text;
+}
 
 function speechWordRanges(text: string): SpeechWordRange[] {
 	return [...text.matchAll(/\S+/gu)].map((match) => ({
@@ -91,11 +98,11 @@ export class SpeechService {
 		this.cancel();
 		const playbackSequence = ++this.playbackSequence;
 		this.boundarySequence = playbackSequence;
-		const normalizedRate = clamp(
-			rate * (mode === "slow" ? SLOW_PLAYBACK_MULTIPLIER : 1),
-			0.45,
-			1.2,
-		);
+		const selectedRate =
+			mode === "slow"
+				? Math.round(rate * SLOW_PLAYBACK_MULTIPLIER * 10_000) / 10_000
+				: rate;
+		const normalizedRate = clamp(selectedRate, 0.45, 1.2);
 		if (!backendAvailable) {
 			this.browserFallbackSequence = playbackSequence;
 			const started = this.playBrowserSpeech(
@@ -155,7 +162,7 @@ export class SpeechService {
 				headers: { "Content-Type": "application/json" },
 				credentials: "same-origin",
 				body: JSON.stringify({
-					text,
+					text: kokoroInput(text),
 					speed: rate,
 					format: "mp3",
 					...(voice ? { voice } : {}),
