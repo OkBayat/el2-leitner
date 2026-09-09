@@ -127,8 +127,36 @@ describe('reusable slide library behavior', () => {
 		expect(speech.cancel).toHaveBeenCalledOnce();
 	});
 
+	it('plays the left MatchingSlide phrase when it is selected', () => {
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new MatchingSlideComponent(),
+		);
+		load(component, 'matching', {
+			pairs: [
+				{
+					id: 'relationship',
+					left: 'establish a relationship',
+					right: 'create a new connection',
+				},
+			],
+		});
+
+		component.selectLeft('relationship');
+
+		expect(speech.speak).toHaveBeenCalledWith(
+			'establish a relationship',
+			0.95,
+		);
+		component.ngOnDestroy();
+		expect(speech.cancel).toHaveBeenCalledOnce();
+	});
+
 	it('locks correct MatchingSlide pairs, rejects wrong pairs, and completes only after every pair', () => {
-		const component = new MatchingSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new MatchingSlideComponent(),
+		);
 		const events: unknown[] = [];
 		component.event.subscribe((event) => events.push(event));
 		load(component, 'matching', {
@@ -157,7 +185,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('suppresses pair-level error feedback when MatchingSlide feedback is deferred', () => {
-		const component = new MatchingSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new MatchingSlideComponent(),
+		);
 		const events: unknown[] = [];
 		component.event.subscribe((event) => events.push(event));
 		load(component, 'matching', {
