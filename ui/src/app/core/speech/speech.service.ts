@@ -165,11 +165,7 @@ export class SpeechService {
 			this.activeAudio = audio;
 			audio.onended = () =>
 				this.finishPlayback(playbackSequence, observer);
-			audio.onerror = () => {
-				if (this.backendPlaybackStartedSequence === playbackSequence) {
-					this.failPlayback(playbackSequence, observer);
-					return;
-				}
+			audio.onerror = () =>
 				this.fallbackToBrowser(
 					text,
 					rate,
@@ -177,7 +173,6 @@ export class SpeechService {
 					playbackSequence,
 					observer,
 				);
-			};
 
 			await audio.play();
 			if (!this.isCurrent(playbackSequence)) return;
@@ -220,6 +215,10 @@ export class SpeechService {
 		this.activeRequest = null;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		const fallbackObserver =
+			this.backendPlaybackStartedSequence === playbackSequence && observer
+				? { onEnd: observer.onEnd, onError: observer.onError }
+				: observer;
 		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = playbackSequence;
 		if (
@@ -228,7 +227,7 @@ export class SpeechService {
 				rate,
 				voiceIndex,
 				playbackSequence,
-				observer,
+				fallbackObserver,
 			)
 		) {
 			this.failPlayback(playbackSequence, observer);

@@ -237,20 +237,32 @@ describe("SpeechService backend playback", () => {
 		);
 	});
 
-	it("reports one lifecycle error instead of restarting after backend playback began", async () => {
+	it("falls back after backend playback starts without restarting its observer lifecycle", async () => {
 		installBackend();
 		const browser = installBrowserSpeech();
 		const onStart = vi.fn();
+		const onWordBoundary = vi.fn();
+		const onEnd = vi.fn();
 		const onError = vi.fn();
 		const service = new SpeechService();
 
-		service.speak("Started playback", 0.85, { onStart, onError });
+		service.speak("Started playback", 0.85, {
+			onStart,
+			onWordBoundary,
+			onEnd,
+			onError,
+		});
 		await vi.waitFor(() => expect(onStart).toHaveBeenCalledOnce());
 		FakeAudio.latest?.onerror?.();
+		expect(browser.speak).toHaveBeenCalledOnce();
 
-		expect(browser.speak).not.toHaveBeenCalled();
+		browser.utterance().onstart?.();
+		browser.utterance().onend?.();
+
 		expect(onStart).toHaveBeenCalledOnce();
-		expect(onError).toHaveBeenCalledOnce();
+		expect(onWordBoundary).toHaveBeenCalledOnce();
+		expect(onEnd).toHaveBeenCalledOnce();
+		expect(onError).not.toHaveBeenCalled();
 	});
 
 	it("revokes the generated URL before falling back when audio construction fails", async () => {
