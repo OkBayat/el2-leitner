@@ -93,6 +93,7 @@ export function createApp({
     helmet({
       contentSecurityPolicy: {
         directives: {
+          "media-src": ["'self'", "blob:"],
           // The documented Docker deployment is HTTP on localhost. Browsers
           // (notably Safari) may otherwise rewrite it to unavailable HTTPS.
           "upgrade-insecure-requests": null
