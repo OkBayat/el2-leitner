@@ -1,0 +1,67 @@
+<section class="word-detail" data-testid="word-detail-page">
+  <a mat-button routerLink="/words" class="back-action">← Back to Word Bank</a>
+
+  @if (word(); as current) {
+    <header>
+      <div>
+        <p class="eyebrow">Word details</p>
+        <h1>{{ current.term }}</h1>
+        @if (current.accepted.length > 1) {
+          <p class="accepted-forms">Accepted forms: {{ current.accepted.join(' / ') }}</p>
+        }
+      </div>
+      <button mat-stroked-button type="button" (click)="playWord(current)">Play pronunciation</button>
+    </header>
+
+    <section class="stats" aria-label="Practice statistics">
+      <article><strong>{{ current.attempts }}</strong><span>Attempts</span></article>
+      <article><strong>{{ current.correct }}</strong><span>Correct</span></article>
+      <article><strong>{{ current.mistakes }}</strong><span>Mistakes</span></article>
+      <article><strong>{{ current.currentStreak }}</strong><span>Current streak</span></article>
+    </section>
+
+    <section class="detail-card">
+      <h2>Learning details</h2>
+      <dl>
+        <div><dt>Leitner status</dt><dd>{{ boxLabel(current) }}</dd></div>
+        <div><dt>Next review</dt><dd>{{ displayDate(current.due) }}</dd></div>
+        <div><dt>Added to Leitner</dt><dd>{{ displayDate(current.introducedOn) }}</dd></div>
+        <div><dt>Last reviewed</dt><dd>{{ displayDate(current.lastReviewed) }}</dd></div>
+        <div><dt>Category</dt><dd>{{ current.category || '—' }}</dd></div>
+        <div><dt>Lessons</dt><dd>{{ current.lessons.join(', ') || '—' }}</dd></div>
+      </dl>
+      @if (current.notes) {
+        <div class="notes"><h3>Notes</h3><p>{{ current.notes }}</p></div>
+      }
+    </section>
+
+    <section class="detail-card">
+      <h2>Collections</h2>
+      @for (source of sources(); track source.id) {
+        <div class="collection-row">
+          <a [routerLink]="['/library', source.id]">{{ source.title }}</a>
+          @if (canManage()) {
+            <div class="management-actions">
+              <button mat-button type="button" [disabled]="busy()" (click)="editSource(source)">Edit</button>
+              <button mat-button type="button" class="text-danger" [disabled]="busy()" (click)="deleteSource(source)">Delete</button>
+            </div>
+          }
+        </div>
+      } @empty {
+        <p class="muted">This word is not currently linked to a visible collection.</p>
+      }
+    </section>
+
+    @if (canRemove()) {
+      <section class="personal-action">
+        <div>
+          <h2>My Word Bank</h2>
+          <p>You can remove this word because it has not entered Leitner yet.</p>
+        </div>
+        <button mat-stroked-button type="button" class="text-danger" [disabled]="busy()" (click)="removeFromWordBank()">
+          Remove from my Word Bank
+        </button>
+      </section>
+    }
+  }
+</section>

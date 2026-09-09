@@ -189,6 +189,10 @@ export function isActiveLeitnerWord(word: LearningWord): boolean {
   return word.box > 0 && !word.masteredAt;
 }
 
+export function canExcludeFromWordBank(word: LearningWord): boolean {
+  return word.box === 0 && !word.introducedOn && !word.masteredAt;
+}
+
 export function getDueWords(state: LearningState, day = localDay()): LearningWord[] {
   return state.words
     .filter((word) => word.box > 0 && !word.masteredAt && word.due && word.due <= day && (!word.blockedUntil || word.blockedUntil <= day))

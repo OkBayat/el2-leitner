@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { CatalogService } from '../catalog/catalog.service';
 import { ApiClientService, ApiError } from '../http/api-client.service';
 import { VocabularyApiService } from '../learning/vocabulary-api.service';
-import { activateUnseenWords, createFreshState, ensureDailyWords, hydrateState, localDay } from '../../domain/learning/learning-rules';
+import { activateUnseenWords, canExcludeFromWordBank, createFreshState, ensureDailyWords, hydrateState, localDay } from '../../domain/learning/learning-rules';
 import { LearningState, LearningStateResponse, LearningWord, ThemeMode } from '../../domain/learning/models';
 
 const LEGACY_STORAGE_KEY = 'vazheyar-ielts-state-v1';
@@ -172,6 +172,20 @@ export class LearningStoreService {
     if (!result.activated.length) return result;
     const revision = await this.vocabularyApi.activateBatch(this.revisionSignal(), result.activated.map((word) => word.id), day, source);
     this.replaceLocal(result.state, revision); return result;
+  }
+
+  async excludeWord(word: LearningWord): Promise<LearningState> {
+    const current = this.snapshot().words.find((item) => item.id === word.id);
+    if (!current) return this.snapshot();
+    if (!canExcludeFromWordBank(current)) {
+      throw new Error('This word is already in Leitner and cannot be removed from your Word Bank.');
+    }
+    const revision = await this.vocabularyApi.exclude(this.revisionSignal(), current.id);
+    const state = this.snapshot();
+    state.words = state.words.filter((item) => item.id !== current.id);
+    state.updatedAt = new Date().toISOString();
+    this.replaceLocal(state, revision);
+    return state;
   }
 
   async update(mutator: (state: LearningState) => void): Promise<LearningState> {

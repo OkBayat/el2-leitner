@@ -88,13 +88,18 @@ export interface ReviewCommand {
 
 export interface LibraryEntry {
   id: string;
+  vocabularyId?: string;
   term?: string;
+  primaryForm?: string;
   accepted?: string[];
+  acceptedForms?: string[];
   category?: string;
   notes?: string;
   section?: string;
+  sectionPath?: string | null;
   lesson?: string;
   tags?: string[];
+  note?: string | null;
   [key: string]: unknown;
 }
 

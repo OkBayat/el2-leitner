@@ -1,0 +1,81 @@
+<section class="page" data-testid="word-bank-page">
+  <header>
+    <div>
+      <h1>Word Bank</h1>
+      <p>{{ visibleWords().length }} of {{ filtered().length }} words</p>
+    </div>
+    <div class="header-actions">
+      <input #fileInput hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="importFile($event)">
+      <button mat-stroked-button (click)="fileInput.click()">Import MD / TXT</button>
+      <button mat-flat-button (click)="editWord()">Add word</button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput [formControl]="search" (input)="resetVisible()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Box</mat-label>
+      <mat-select [formControl]="box" (selectionChange)="resetVisible()">
+        <mat-option value="all">All</mat-option>
+        <mat-option value="0">Not in Leitner</mat-option>
+        @for (house of [1, 2, 3, 4, 5]; track house) {
+          <mat-option [value]="String(house)">Box {{ house }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Sort</mat-label>
+      <mat-select [formControl]="sort" (selectionChange)="resetVisible()">
+        <mat-option value="number">Original order</mat-option>
+        <mat-option value="mistakes">Most mistakes</mat-option>
+        <mat-option value="due">Next due</mat-option>
+        <mat-option value="alpha">Alphabetical</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="table-wrap">
+    <table mat-table [dataSource]="visibleWords()">
+      <ng-container matColumnDef="term">
+        <th mat-header-cell *matHeaderCellDef>Word</th>
+        <td mat-cell *matCellDef="let word">
+          <a class="word-link" [routerLink]="['/words', word.id]">{{ word.accepted.join(' / ') }}</a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="box">
+        <th mat-header-cell *matHeaderCellDef>Box</th>
+        <td mat-cell *matCellDef="let word">
+          @if (word.masteredAt) {
+            <span class="box-status-chip" data-status="mastered">Mastered</span>
+          } @else if (word.box > 0) {
+            <span class="box-status-chip" data-status="leitner">Box {{ word.box }}</span>
+          } @else {
+            <button
+              mat-stroked-button
+              type="button"
+              class="add-to-leitner"
+              [disabled]="activatingId() !== ''"
+              (click)="activate(word)"
+            >
+              {{ activatingId() === word.id ? 'Adding…' : 'Add to Leitner' }}
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+    @if (!filtered().length) {
+      <p class="empty">No words match these filters.</p>
+    }
+  </div>
+
+  <div #loadMoreSentinel class="lazy-sentinel" aria-live="polite">
+    @if (hasMore()) { Loading more words… }
+  </div>
+</section>
