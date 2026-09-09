@@ -189,13 +189,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 			exerciseDefaults: this.defaults,
 			runtime: this.runtime,
 		});
-		if (!this.hasLeadingGuide || this.currentIndex > 0) {
-			return presentation;
-		}
-		return {
-			...presentation,
-			header: { ...presentation.header, progress: null },
-		};
+		return presentation;
 	}
 
 	private get hasLeadingGuide(): boolean {
@@ -203,8 +197,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 	}
 
 	private get leadingProgressOffset(): number {
-		return this.hasLeadingGuide ||
-			this.deck[0]?.chrome?.header?.progress === null
+		return this.deck[0]?.chrome?.header?.progress === null
 			? 1
 			: 0;
 	}

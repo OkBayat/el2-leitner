@@ -111,7 +111,7 @@ describe("SlideExerciseComponent", () => {
 		expect(component.currentSlide?.id).toBe("question");
 	});
 
-	it("excludes the leading guide from exercise progress", () => {
+	it("counts a leading guide unless its JSON explicitly excludes progress", () => {
 		const { component } = createComponent();
 		const slides = [
 			slide("guide", "teaching-card"),
@@ -123,18 +123,21 @@ describe("SlideExerciseComponent", () => {
 			slides: new SimpleChange(undefined, slides, true),
 		});
 
-		expect(component.presentation?.header.progress).toBeNull();
+		expect(
+			component.presentation?.header.progress?.value,
+		).toBeCloseTo(100 / 3);
+		expect(component.presentation?.header.progress?.label).toBe("1 of 3");
 
 		component.goTo("question-1");
-		expect(component.presentation?.header.progress).toEqual({
-			value: 50,
-			label: "1 of 2",
-		});
+		expect(
+			component.presentation?.header.progress?.value,
+		).toBeCloseTo(200 / 3);
+		expect(component.presentation?.header.progress?.label).toBe("2 of 3");
 
 		component.goTo("question-2");
 		expect(component.presentation?.header.progress).toEqual({
 			value: 100,
-			label: "2 of 2",
+			label: "3 of 3",
 		});
 	});
 
