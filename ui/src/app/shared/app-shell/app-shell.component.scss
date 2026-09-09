@@ -6,6 +6,7 @@
 	--shell-sidebar-width: 0px;
 	display: block;
 	min-height: 100dvh;
+	overflow-x: clip;
 	background: var(--mat-sys-surface);
 	color: var(--vocora-nav-text);
 }
@@ -30,9 +31,10 @@
 .skip-link:focus { transform: none; }
 
 .mobile-status {
-	position: sticky;
+	position: fixed;
 	z-index: 30;
 	top: 0;
+	inset-inline: 0;
 	display: grid;
 	width: 100vw;
 	max-width: 100vw;
@@ -70,6 +72,7 @@ button.status-item {
 
 .shell-workspace {
 	min-width: 0;
+	padding-top: var(--shell-header-height);
 }
 
 .content {
@@ -161,6 +164,7 @@ a:focus-visible, button:focus-visible {
 		padding-left: calc(var(--shell-sidebar-width) + var(--safe-area-left, 0px));
 	}
 	.mobile-status, .mobile-nav { display: none; }
+	.shell-workspace { padding-top: 0; }
 	.desktop-sidebar {
 		position: fixed;
 		z-index: 40;
