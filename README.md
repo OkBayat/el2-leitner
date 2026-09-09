@@ -214,11 +214,11 @@ npm ci
 npm test
 ```
 
-GitHub CI does not run Playwright E2E tests. The three critical smoke journeys
-are manual-only; see [Testing Strategy](docs/TESTING.md) for the local command
-and the lower-level coverage map.
+Browser E2E tests are disabled locally and in CI until Vocora has a dedicated,
+isolated test database. See [Testing Strategy](docs/TESTING.md) for the
+fail-closed policy and lower-level coverage map.
 
-CI علاوه بر unit/API/browser tests، MySQL 8.4 و کل Docker stack را بالا می‌آورد و موارد زیر را smoke-test می‌کند:
+CI علاوه بر unit/API/structural tests، MySQL 8.4 و کل Docker stack را بالا می‌آورد و موارد زیر را smoke-test می‌کند:
 
 - migration و seed دقیق ۱۵۰۰ **ردیف منبع** به catalog normalized و بررسی count واژه‌های یکتا/aliasها
 - auth و normalized state persistence

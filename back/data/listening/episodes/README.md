@@ -292,7 +292,9 @@ npm --prefix back run db:validate:listening
 node --test back/tests/listening-question-quality.test.js back/tests/listening-catalog-quality.test.js back/tests/listening-review-command.test.js
 npm --prefix back test                     # Includes Python ZIP/tool tests; Python 3 required for development/CI
 npm --prefix ui test                       # Architecture, 117+ UI unit cases, production build, PWA and CSP checks
-npm --prefix ui run e2e:smoke              # Optional manual critical-connectivity smoke; app must be running
 ```
+
+Browser E2E is disabled until Vocora has a dedicated, isolated test database.
+Do not invoke Playwright as part of listening validation.
 
 `Listening episode integration` CI uses an ephemeral **MySQL 8.4** database to test insert/no-op/update, shared vocabulary identities, snapshots, progress, explicit archiving, transaction rollback and simultaneous deployments. Normal `node --test` deliberately skips that integration suite without `LISTENING_MYSQL_INTEGRATION=1`; never enable it on a production database. Loader tests exercise invalid metadata/difficulty/answers/files, duplicates, symlinks, transcript exclusion and semantic hash stability. HTTP tests cover authentication, image/audio boundaries, Range requests, legacy fallback and answer-key non-disclosure. Tool tests cover deterministic checksummed ZIPs, absent media/transcript, safe paths and refusal to overwrite output.

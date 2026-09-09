@@ -30,8 +30,9 @@ with no visual effect.
 - Theme switching must preserve semantic meaning, hierarchy, content fit,
   focus, and disabled behavior.
 - Paper White is the page and component canvas.
-- Charcoal is primary copy; Pencil Gray is secondary copy.
-- Spark Blue owns primary CTA, links, and outlined secondary actions.
+- Charcoal is primary copy and secondary-button copy; Pencil Gray is secondary
+  descriptive copy.
+- Spark Blue owns primary CTA and links.
 - Eager Green owns success, progress, and correct-answer emphasis.
 - Faded Gray owns disabled content and outlined-control borders.
 - Attention Yellow and Answer Red are Vocora semantic extensions for warning
@@ -75,7 +76,8 @@ Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
 secondary intent. Use the native `disabled` attribute for every disabled
 state. Filled intents have no border. Secondary buttons retain their 2px
 border in both enabled and disabled states. Disabled buttons have no lower
-edge.
+edge. Secondary labels use Charcoal (`#4B4B4B`) in both themes; the dark theme
+keeps the secondary button's Paper White surface for accessible contrast.
 
 Do not apply CTA color classes to answer-option tiles or other content-sized
 selection controls. Their colors remain selection-owned, while the global

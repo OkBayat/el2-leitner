@@ -1,39 +1,66 @@
-import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const uiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const repositoryRoot = path.resolve(uiRoot, '..');
-const e2eRoot = path.join(uiRoot, 'e2e');
-const workflowRoot = path.join(repositoryRoot, '.github', 'workflows');
+const uiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repositoryRoot = path.resolve(uiRoot, "..");
+const workflowRoot = path.join(repositoryRoot, ".github", "workflows");
+const guardRelativePath = "tools/e2e-disabled.mjs";
+const guardCommand = `node ${guardRelativePath}`;
+const read = (root, relative) =>
+	fs.readFileSync(path.join(root, relative), "utf8");
 
-const specFiles = fs.readdirSync(e2eRoot)
-	.filter(name => name.endsWith('.spec.ts'))
-	.sort();
-const declarations = specFiles.flatMap(name => {
-	const source = fs.readFileSync(path.join(e2eRoot, name), 'utf8');
-	assert.doesNotMatch(source, /\b(?:page|context)\.route\s*\(/u,
-		`${name} must exercise the real system rather than mocked browser routes.`);
-	assert.doesNotMatch(source, /\bfor\s*\(/u,
-		`${name} must not multiply smoke scenarios through parameterized loops.`);
-	return [...source.matchAll(/\btest\s*\(\s*(['"`])(.+?)\1/gu)]
-		.map(match => ({file: name, title: match[2]}));
-});
-
-assert.ok(declarations.length >= 2 && declarations.length <= 3,
-	`Playwright must contain only 2 or 3 smoke scenarios; found ${declarations.length}.`);
-
-const workflowFiles = fs.readdirSync(workflowRoot)
-	.filter(name => /\.ya?ml$/u.test(name));
-for (const name of workflowFiles) {
-	const source = fs.readFileSync(path.join(workflowRoot, name), 'utf8');
-	assert.doesNotMatch(source, /(?:playwright(?:\s+install|\s+test)|npm\s+run\s+e2e|@playwright\/test)/iu,
-		`${name} must not install or run Playwright in GitHub CI.`);
+const packageJson = JSON.parse(read(uiRoot, "package.json"));
+for (const script of ["e2e", "e2e:smoke", "e2e:headed"]) {
+	assert.equal(
+		packageJson.scripts[script],
+		guardCommand,
+		`${script} must fail closed through the shared E2E guard.`,
+	);
 }
 
-const packageJson = JSON.parse(fs.readFileSync(path.join(uiRoot, 'package.json'), 'utf8'));
-assert.equal(packageJson.scripts['e2e'], 'npm run e2e:smoke');
-assert.equal(packageJson.scripts['e2e:smoke'], 'playwright test e2e/smoke.spec.ts');
+const guardPath = path.join(uiRoot, guardRelativePath);
+assert.ok(fs.existsSync(guardPath), "The shared E2E guard must exist.");
+const guardedRun = spawnSync(process.execPath, [guardPath], {
+	encoding: "utf8",
+});
+assert.equal(guardedRun.status, 1, "The E2E guard must reject execution.");
+assert.match(guardedRun.stderr, /E2E_DISABLED/u);
+assert.match(guardedRun.stderr, /dedicated test database/iu);
 
-console.log(`E2E smoke strategy validated: ${declarations.length} real-system scenarios across ${specFiles.length} file(s).`);
+const playwrightConfig = read(uiRoot, "playwright.config.ts");
+assert.match(
+	playwrightConfig,
+	/throw new Error\(/u,
+	"Direct Playwright execution must fail while loading its config.",
+);
+assert.match(playwrightConfig, /E2E_DISABLED/u);
+assert.doesNotMatch(
+	playwrightConfig,
+	/defineConfig|projects\s*:|baseURL\s*:/u,
+	"The disabled Playwright config must not retain a runnable browser configuration.",
+);
+
+const workflowFiles = fs
+	.readdirSync(workflowRoot)
+	.filter((name) => /\.ya?ml$/u.test(name));
+for (const name of workflowFiles) {
+	const source = read(workflowRoot, name);
+	assert.doesNotMatch(
+		source,
+		/(?:playwright(?:\s+install|\s+test)|npm\s+run\s+e2e|@playwright\/test)/iu,
+		`${name} must not install or run Playwright in GitHub CI.`,
+	);
+}
+
+const agentGuide = read(repositoryRoot, "AGENTS.md");
+assert.match(agentGuide, /E2E tests are disabled repository-wide\./u);
+assert.match(
+	agentGuide,
+	/Never create, develop, invoke, or run E2E or Playwright tests/u,
+);
+assert.match(agentGuide, /dedicated, isolated test database/u);
+
+console.log("E2E execution guard contract passed.");

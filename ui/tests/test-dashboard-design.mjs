@@ -24,7 +24,7 @@ assert.match(dashboardTs, /styleUrl:\s*'dashboard-page\.component\.scss'/u, 'Das
 assert.match(dashboardTs, /houseWidths = \[40, 54, 70, 85, 100\] as const/u, 'Leitner house widths must preserve the approved pyramid progression.');
 assert.match(dashboardHtml, /\[style\.width\.%\]="houseWidths\[house\.box - 1\]"/u, 'Every Leitner row must derive its visual width from the pyramid contract.');
 assert.match(dashboardHtml, /data-testid="house-status"/u, 'House status needs its stable regression locator.');
-assert.match(dashboardHtml, />Today's plan</u, 'The current dashboard E2E contract must keep the Today plan label.');
+assert.match(dashboardHtml, />Today's plan</u, 'The current dashboard UI contract must keep the Today plan label.');
 assert.match(dashboardHtml, /Today's progress/u, 'The minimal dashboard must expose the compact daily progress summary.');
 assert.equal(dashboardHtml.match(/class="leitner-row"/gu)?.length, 1, 'One template loop must own all five Leitner rows.');
 assert.doesNotMatch(dashboardHtml, /data-tooltip|\[attr\.title\]/u, 'Leitner state cells must not expose hover tooltip attributes.');

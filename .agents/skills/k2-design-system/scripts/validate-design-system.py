@@ -47,12 +47,14 @@ CANONICAL_ACTION_ROLES = {
         "primaryHover": "#1CB0F6",
         "success": "#58CC02",
         "successHover": "#58CC02",
+        "secondaryForeground": "#4B4B4B",
     },
     "dark": {
         "primary": "#49C0F8",
         "primaryHover": "#5CC8FA",
         "success": "#72D72B",
         "successHover": "#83E640",
+        "secondaryForeground": "#4B4B4B",
     },
 }
 

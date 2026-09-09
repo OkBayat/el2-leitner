@@ -787,9 +787,9 @@ Cover:
 - loading/error states;
 - accessibility behavior relevant to the component.
 
-### Manual smoke E2E tests
+### Browser E2E tests
 
-Cover only critical complete-system connectivity. Business behavior and regressions stay in lower-level deterministic tests, and new E2E scenarios are not added by default.
+Browser E2E is disabled repository-wide because it can leave durable test state in a non-dedicated database. Do not develop or run Playwright tests until a dedicated, isolated test database exists and the repository policy and execution guards are explicitly revised. Keep all current behavior and regression coverage in lower-level deterministic tests.
 
 Tests must never be weakened, skipped, or deleted merely to make a phase pass.
 
@@ -841,7 +841,7 @@ Before final integration:
 
 1. bring the latest `main` into `learning-path`;
 2. resolve conflicts on `learning-path`;
-3. run the full affected backend, Angular, MySQL, and Docker checks, plus the manual E2E smoke suite only when complete-system connectivity needs verification;
+3. run the full affected backend, Angular, MySQL, and Docker checks without invoking E2E or Playwright;
 4. mark the integration PR ready only after the complete feature is coherent.
 
 Do not merge the integration PR to `main` automatically unless explicitly requested.
@@ -921,7 +921,7 @@ A Learning Path child PR is done only when all applicable items are true:
 - focused tests pass;
 - affected backend/UI repository-level tests pass;
 - relevant MySQL, contract, behavior, and regression checks pass when the phase touches those boundaries;
-- the manual smoke E2E suite is used only when the phase needs complete-system connectivity verification;
+- browser E2E remains disabled and is not invoked;
 - no unrelated test is disabled, skipped, weakened, or deleted;
 - migrations are additive and previously executed migrations are not edited;
 - PR base is `learning-path` for every post-Phase-0 child PR;

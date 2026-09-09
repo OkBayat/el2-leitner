@@ -186,6 +186,16 @@ assert.match(
 	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#49c0f8;[^}]*--vocora-action-success:\s*#72d72b;/iu,
 	"The new button language must define independently tuned dark-theme actions.",
 );
+assert.match(
+	designSystem,
+	/--vocora-action-secondary-foreground:\s*var\(--color-charcoal\);/iu,
+	"Light secondary buttons must use the canonical Charcoal label color.",
+);
+assert.match(
+	designSystem,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*#ffffff;[^}]*--vocora-action-secondary-foreground:\s*#4b4b4b;/iu,
+	"Dark secondary buttons must preserve the white surface and Charcoal label pairing.",
+);
 assert.match(designSystem, /--vocora-error:\s*#ff4b4b;/iu);
 assert.match(designSystem, /--vocora-information-surface:\s*#ddf4ff;/iu);
 

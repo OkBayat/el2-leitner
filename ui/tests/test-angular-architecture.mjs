@@ -36,7 +36,7 @@ for (const required of [
   'src/app/features/settings/settings-page.component.ts', 'src/app/features/library/library-page.component.ts',
   'src/app/features/library/library-dialogs.component.ts', 'src/app/features/leitner-house/leitner-house-page.component.ts',
   'src/app/shared/share-story/share-story.service.ts', 'src/app/shared/share-story/share-story-dialog.component.ts',
-  'e2e/smoke.spec.ts', 'playwright.config.ts', 'tools/ci-vocabulary.mjs',
+  'e2e/smoke.spec.ts', 'playwright.config.ts', 'tools/e2e-disabled.mjs', 'tools/ci-vocabulary.mjs',
   'assets/welcome/welcome-illustration-1.jpg', 'assets/welcome/welcome-illustration-2.jpg',
   'assets/welcome/welcome-illustration-3.jpg', 'assets/welcome/welcome-illustration-4.jpg',
   'assets/welcome/welcome-illustration-5.jpg'
@@ -59,7 +59,7 @@ assert.equal(pkg.dependencies['@angular/material'], '22.1.4');
 assert.equal(pkg.dependencies['@angular/cdk'], '22.1.4');
 assert.equal(pkg.dependencies.bootstrap, '5.3.8', 'Bootstrap CSS must stay pinned to the approved version.');
 assert.match(pkg.scripts.test, /check:architecture.*ng test/u);
-assert.equal(pkg.scripts.e2e, 'npm run e2e:smoke');
+assert.equal(pkg.scripts.e2e, 'node tools/e2e-disabled.mjs');
 assert.match(pkg.scripts['build:production'], /ng build/u);
 
 const routes = read('src/app/app.routes.ts');
@@ -177,7 +177,7 @@ assert.match(reviewContextBadgeSpec, /phase: RemediationPhase\.COMPLETED,[\s\S]*
 assert.equal(reviewTemplate.match(/class="review-answer-form"/gu)?.length, 1, 'Every review/remediation stage must render through one shared answer form.');
 assert.equal(reviewTemplate.match(/class="review-answer-field"/gu)?.length, 1, 'Every review/remediation stage must render through one shared Material field.');
 assert.equal(reviewTemplate.match(/class="review-answer-input"/gu)?.length, 1, 'Every review/remediation stage must render through one shared input element.');
-assert.equal(reviewTemplate.match(/data-testid="review-answer-input"/gu)?.length, 1, 'The shared answer input must have one stable E2E locator.');
+assert.equal(reviewTemplate.match(/data-testid="review-answer-input"/gu)?.length, 1, 'The shared answer input must have one stable test locator.');
 assert.equal(reviewTemplate.match(/autocapitalize="none"/gu)?.length, 1, 'The shared spelling input must disable mobile auto-capitalization.');
 assert.equal(reviewTemplate.match(/autocorrect="off"/gu)?.length, 1, 'The shared spelling input must disable mobile auto-correction.');
 assert.equal(reviewTemplate.match(/spellcheck="false"/gu)?.length, 1, 'The shared spelling input must disable browser spellcheck assistance.');

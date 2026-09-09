@@ -40,10 +40,12 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         VALIDATOR.validate_tokens(tokens, errors)
         self.assertIn("color.spark-blue must equal #1CB0F6", errors)
 
-    def test_primary_and_success_action_roles_cannot_drift(self) -> None:
+    def test_action_roles_cannot_drift(self) -> None:
         tokens = copy.deepcopy(self.tokens)
         tokens["themes"]["light"]["action"]["primary"] = "#58CC02"
+        tokens["themes"]["light"]["action"]["secondaryForeground"] = "#1CB0F6"
         tokens["themes"]["dark"]["action"]["success"] = "#49C0F8"
+        tokens["themes"]["dark"]["action"]["secondaryForeground"] = "#F0F7F2"
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
         self.assertIn(
@@ -51,7 +53,15 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
             errors,
         )
         self.assertIn(
+            "themes.light.action.secondaryForeground must equal #4B4B4B",
+            errors,
+        )
+        self.assertIn(
             "themes.dark.action.success must equal #72D72B",
+            errors,
+        )
+        self.assertIn(
+            "themes.dark.action.secondaryForeground must equal #4B4B4B",
             errors,
         )
 

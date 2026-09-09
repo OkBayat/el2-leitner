@@ -16,7 +16,7 @@ Only the following foundation colors may establish new product patterns:
 | --------------- | --------: | ----------------------------------------------------------- |
 | Eager Green     | `#58CC02` | Success, progress, correct answers, large green accents     |
 | Storybook Green | `#D7FFB8` | Soft highlight wash                                         |
-| Spark Blue      | `#1CB0F6` | Primary CTA, links, and outlined secondary actions           |
+| Spark Blue      | `#1CB0F6` | Primary CTA and links                                        |
 | Fresh Leaf      | `#A5ED6E` | Supporting short green accents                              |
 | Night Ink       | `#000437` | Deep violet emphasis                                        |
 | Paper White     | `#FFFFFF` | Page canvas, surfaces, and text on strong fills             |
@@ -49,7 +49,8 @@ that identity rather than inverting it:
 | Secondary text | `#A9B8AD` |
 | Primary action | `#49C0F8` |
 | Success action | `#72D72B` |
-| Secondary action text | `#49C0F8` |
+| Secondary action surface | `#FFFFFF` |
+| Secondary action text | `#4B4B4B` |
 | Warning action | `#FFC45A` |
 | Error action | `#FF6B6B` |
 
@@ -108,7 +109,7 @@ exactly one intent class:
 | Success   | `vocora-button--success`   | Eager Green fill, Paper White text                       | Confirmed/correct outcome     |
 | Error     | `vocora-button--error`     | Answer Red fill, Paper White text                        | Incorrect/destructive outcome |
 | Warning   | `vocora-button--warning`   | Attention Yellow fill, Charcoal text                     | Caution or attention          |
-| Secondary | `vocora-button--secondary` | Paper White fill, Spark Blue text, 2px Faded Gray border | Lower-emphasis alternative    |
+| Secondary | `vocora-button--secondary` | Paper White fill, Charcoal text, 2px Faded Gray border   | Lower-emphasis alternative    |
 
 Example:
 
@@ -123,7 +124,9 @@ Use `mat-flat-button` for primary, success, error, and warning intents. Use
 visual contract deterministic if a supported Material directive is changed.
 Filled buttons are borderless. Secondary buttons use a 2px border around the
 face in addition to the 4px lower edge; the border and lower edge are separate
-parts of the control shape.
+parts of the control shape. Secondary labels use Charcoal (`#4B4B4B`) in both
+themes. Dark mode preserves the Paper White secondary surface so this fixed
+foreground remains readable.
 
 Button labels use the control type style: 15px, weight 700, and 0.053em
 tracking. Uppercase is appropriate for short CTA labels, not explanatory copy.
@@ -216,7 +219,8 @@ Do:
 - use the canonical tokens;
 - keep surfaces white and typography calm;
 - reserve green for success/progress/correct emphasis;
-- use blue for primary actions, links, and outlined secondary actions;
+- use blue for primary actions and links;
+- use Charcoal for secondary-button labels in both themes;
 - use rounded 12px interactive shapes;
 - compose Angular Material primitives.
 
