@@ -62,6 +62,7 @@ export class SpeechService {
 	private activeRequest: AbortController | null = null;
 	private activeAudio: HTMLAudioElement | null = null;
 	private activeObjectUrl: string | null = null;
+	private browserFallbackSequence: number | null = null;
 
 	speak(
 		text: string,
@@ -70,17 +71,35 @@ export class SpeechService {
 		voiceIndex?: number,
 	): boolean {
 		const AudioConstructor = globalThis.Audio;
-		if (
-			typeof globalThis.fetch !== "function" ||
-			typeof AudioConstructor !== "function" ||
-			typeof globalThis.URL?.createObjectURL !== "function" ||
-			typeof globalThis.URL?.revokeObjectURL !== "function"
-		)
-			return false;
+		const backendAvailable =
+			typeof globalThis.fetch === "function" &&
+			typeof AudioConstructor === "function" &&
+			typeof globalThis.URL?.createObjectURL === "function" &&
+			typeof globalThis.URL?.revokeObjectURL === "function";
+		const browserFallbackAvailable =
+			typeof globalThis.speechSynthesis?.speak === "function" &&
+			typeof globalThis.SpeechSynthesisUtterance === "function";
+		if (!backendAvailable && !browserFallbackAvailable) return false;
 
 		this.cancel();
 		const playbackSequence = ++this.playbackSequence;
 		const normalizedRate = clamp(rate, 0.45, 1.2);
+		if (!backendAvailable) {
+			this.browserFallbackSequence = playbackSequence;
+			const started = this.playBrowserSpeech(
+				text,
+				normalizedRate,
+				voiceIndex,
+				playbackSequence,
+				observer,
+			);
+			if (!started) {
+				this.browserFallbackSequence = null;
+				this.playbackSequence += 1;
+			}
+			return started;
+		}
+
 		const request = new AbortController();
 		this.activeRequest = request;
 		void this.requestAndPlay(
@@ -101,6 +120,8 @@ export class SpeechService {
 		this.activeRequest?.abort();
 		this.activeRequest = null;
 		this.releaseAudio();
+		this.browserFallbackSequence = null;
+		globalThis.speechSynthesis?.cancel?.();
 	}
 
 	private async requestAndPlay(
@@ -147,7 +168,14 @@ export class SpeechService {
 			this.activeObjectUrl = objectUrl;
 			audio.onended = () =>
 				this.finishPlayback(playbackSequence, observer);
-			audio.onerror = () => this.failPlayback(playbackSequence, observer);
+			audio.onerror = () =>
+				this.fallbackToBrowser(
+					text,
+					rate,
+					voiceIndex,
+					playbackSequence,
+					observer,
+				);
 
 			await audio.play();
 			if (!this.isCurrent(playbackSequence)) return;
@@ -162,8 +190,133 @@ export class SpeechService {
 			}
 		} catch {
 			if (!request.signal.aborted) {
-				this.failPlayback(playbackSequence, observer);
+				this.fallbackToBrowser(
+					text,
+					rate,
+					voiceIndex,
+					playbackSequence,
+					observer,
+				);
 			}
+		}
+	}
+
+	private fallbackToBrowser(
+		text: string,
+		rate: number,
+		voiceIndex: number | undefined,
+		playbackSequence: number,
+		observer?: SpeechPlaybackObserver,
+	): void {
+		if (
+			!this.isCurrent(playbackSequence) ||
+			this.browserFallbackSequence === playbackSequence
+		)
+			return;
+
+		this.activeRequest = null;
+		this.clearFallbackTimers();
+		this.releaseAudio();
+		this.browserFallbackSequence = playbackSequence;
+		if (
+			!this.playBrowserSpeech(
+				text,
+				rate,
+				voiceIndex,
+				playbackSequence,
+				observer,
+			)
+		) {
+			this.failPlayback(playbackSequence, observer);
+		}
+	}
+
+	private playBrowserSpeech(
+		text: string,
+		rate: number,
+		voiceIndex: number | undefined,
+		playbackSequence: number,
+		observer?: SpeechPlaybackObserver,
+	): boolean {
+		const speechSynthesis = globalThis.speechSynthesis;
+		const UtteranceConstructor = globalThis.SpeechSynthesisUtterance;
+		if (
+			typeof speechSynthesis?.speak !== "function" ||
+			typeof UtteranceConstructor !== "function"
+		)
+			return false;
+
+		const utterance = new UtteranceConstructor(text);
+		utterance.lang = "en-GB";
+		utterance.rate = rate;
+		const voices = speechSynthesis.getVoices();
+		if (voiceIndex === undefined) {
+			utterance.voice =
+				voices.find((voice) => /^en-GB/iu.test(voice.lang)) ??
+				voices.find((voice) => /^en/iu.test(voice.lang)) ??
+				null;
+		} else {
+			const normalizedVoiceIndex =
+				Number.isSafeInteger(voiceIndex) && voiceIndex >= 0
+					? voiceIndex
+					: 0;
+			utterance.pitch = [0.9, 1.1, 1, 1.2][normalizedVoiceIndex % 4];
+			const englishVoices = voices
+				.filter((voice) => /^en/iu.test(voice.lang))
+				.sort((left, right) => {
+					const leftKey = `${/^en-GB/iu.test(left.lang) ? 0 : 1}|${left.lang}|${left.name}|${left.voiceURI}`;
+					const rightKey = `${/^en-GB/iu.test(right.lang) ? 0 : 1}|${right.lang}|${right.name}|${right.voiceURI}`;
+					return leftKey.localeCompare(rightKey, "en");
+				});
+			utterance.voice =
+				englishVoices.length > 0
+					? englishVoices[normalizedVoiceIndex % englishVoices.length]
+					: null;
+		}
+
+		let nativeBoundarySeen = false;
+		utterance.onstart = () => {
+			if (!this.isCurrent(playbackSequence)) return;
+			observer?.onStart?.();
+			if (!nativeBoundarySeen && this.isCurrent(playbackSequence)) {
+				this.emitEstimatedWordBoundaries(
+					text,
+					rate,
+					playbackSequence,
+					observer,
+				);
+			}
+		};
+		utterance.onboundary = (event) => {
+			if (!this.isCurrent(playbackSequence) || event.name === "sentence")
+				return;
+			nativeBoundarySeen = true;
+			this.clearFallbackTimers();
+			const words = speechWordRanges(text);
+			const charIndex = Math.max(
+				0,
+				Number.isFinite(event.charIndex) ? event.charIndex : 0,
+			);
+			const containingWord = words.find(
+				(word) =>
+					charIndex >= word.charIndex &&
+					charIndex < word.charIndex + word.charLength,
+			);
+			observer?.onWordBoundary?.(
+				charIndex,
+				event.charLength > 0
+					? event.charLength
+					: (containingWord?.charLength ?? 1),
+			);
+		};
+		utterance.onend = () => this.finishPlayback(playbackSequence, observer);
+		utterance.onerror = () => this.failPlayback(playbackSequence, observer);
+
+		try {
+			speechSynthesis.speak(utterance);
+			return true;
+		} catch {
+			return false;
 		}
 	}
 
@@ -199,6 +352,7 @@ export class SpeechService {
 		if (!this.isCurrent(playbackSequence)) return;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		this.browserFallbackSequence = null;
 		this.playbackSequence += 1;
 		observer?.onEnd?.();
 	}
@@ -211,6 +365,7 @@ export class SpeechService {
 		this.activeRequest = null;
 		this.clearFallbackTimers();
 		this.releaseAudio();
+		this.browserFallbackSequence = null;
 		this.playbackSequence += 1;
 		observer?.onError?.();
 	}

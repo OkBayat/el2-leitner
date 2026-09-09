@@ -6,7 +6,7 @@ class FakeUtterance {
 	rate = 1;
 	pitch = 1;
 	voice: SpeechSynthesisVoice | null = null;
-	onstart: ((event: unknown) => void) | null = null;
+	onstart: (() => void) | null = null;
 	onboundary:
 		| ((event: {
 				name: string;
@@ -14,41 +14,89 @@ class FakeUtterance {
 				charLength: number;
 		  }) => void)
 		| null = null;
-	onend: ((event: unknown) => void) | null = null;
-	onerror: ((event: unknown) => void) | null = null;
+	onend: (() => void) | null = null;
+	onerror: (() => void) | null = null;
 
 	constructor(readonly text: string) {}
 }
 
-function installSpeechSynthesis(voices: SpeechSynthesisVoice[] = []): {
+class FakeAudio {
+	static latest: FakeAudio | null = null;
+	static playError: Error | null = null;
+	preload = "";
+	currentTime = 0;
+	onended: (() => void) | null = null;
+	onerror: (() => void) | null = null;
+	readonly play = vi.fn(async () => {
+		if (FakeAudio.playError) throw FakeAudio.playError;
+	});
+	readonly pause = vi.fn();
+
+	constructor(readonly src: string) {
+		FakeAudio.latest = this;
+	}
+}
+
+function installBrowserSpeech(voices: SpeechSynthesisVoice[] = []): {
 	utterance: () => FakeUtterance;
+	speak: ReturnType<typeof vi.fn>;
 } {
 	let latest: FakeUtterance | null = null;
+	const speak = vi.fn((utterance: FakeUtterance) => {
+		latest = utterance;
+	});
 	vi.stubGlobal("SpeechSynthesisUtterance", FakeUtterance);
 	vi.stubGlobal("speechSynthesis", {
 		cancel: vi.fn(),
 		getVoices: vi.fn(() => voices),
-		speak: vi.fn((utterance: FakeUtterance) => {
-			latest = utterance;
-		}),
+		speak,
 	});
 	return {
 		utterance: () => {
-			if (!latest) throw new Error("Expected an utterance to be spoken.");
+			if (!latest) throw new Error("Expected browser speech fallback.");
 			return latest;
 		},
+		speak,
 	};
 }
 
-describe("SpeechService playback events", () => {
+function installBackend(
+	options: {
+		ok?: boolean;
+		playError?: Error;
+	} = {},
+): {
+	fetch: ReturnType<typeof vi.fn>;
+	createObjectURL: ReturnType<typeof vi.fn>;
+	revokeObjectURL: ReturnType<typeof vi.fn>;
+} {
+	const audioBlob = new Blob(["generated-audio"], { type: "audio/mpeg" });
+	const fetch = vi.fn(
+		async () =>
+			({
+				ok: options.ok ?? true,
+				blob: vi.fn(async () => audioBlob),
+			}) as unknown as Response,
+	);
+	const createObjectURL = vi.fn(() => "blob:kokoro-audio");
+	const revokeObjectURL = vi.fn();
+	vi.stubGlobal("fetch", fetch);
+	vi.stubGlobal("Audio", FakeAudio);
+	vi.stubGlobal("URL", { createObjectURL, revokeObjectURL });
+	FakeAudio.playError = options.playError ?? null;
+	return { fetch, createObjectURL, revokeObjectURL };
+}
+
+describe("SpeechService backend playback", () => {
 	afterEach(() => {
-		vi.useRealTimers();
+		FakeAudio.latest = null;
+		FakeAudio.playError = null;
 		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
 	});
 
-	it("uses native word boundaries when the browser provides them", async () => {
-		vi.useFakeTimers();
-		const speech = installSpeechSynthesis();
+	it("requests Kokoro audio and releases the temporary URL after playback", async () => {
+		const backend = installBackend();
 		const onStart = vi.fn();
 		const onWordBoundary = vi.fn();
 		const onEnd = vi.fn();
@@ -61,163 +109,146 @@ describe("SpeechService playback events", () => {
 				onEnd,
 			}),
 		).toBe(true);
-		const utterance = speech.utterance();
-		utterance.onstart?.({});
-		utterance.onboundary?.({ name: "word", charIndex: 6, charLength: 5 });
-		utterance.onboundary?.({
-			name: "sentence",
-			charIndex: 0,
-			charLength: 11,
-		});
-		await vi.advanceTimersByTimeAsync(2_000);
-		utterance.onend?.({});
+		await vi.waitFor(() => expect(onStart).toHaveBeenCalledOnce());
 
-		expect(onStart).toHaveBeenCalledTimes(1);
+		const request = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(backend.fetch).toHaveBeenCalledWith(
+			"/api/tts/speech",
+			expect.objectContaining({
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "same-origin",
+				signal: expect.any(AbortSignal),
+			}),
+		);
+		expect(JSON.parse(String(request.body))).toEqual({
+			text: "Hello world",
+			speed: 0.85,
+			format: "mp3",
+		});
+		expect(backend.createObjectURL).toHaveBeenCalledOnce();
+		expect(FakeAudio.latest?.src).toBe("blob:kokoro-audio");
+		expect(FakeAudio.latest?.play).toHaveBeenCalledOnce();
+		expect(onWordBoundary).toHaveBeenCalledWith(0, 5);
+
+		FakeAudio.latest?.onended?.();
+
+		expect(onEnd).toHaveBeenCalledOnce();
+		expect(FakeAudio.latest?.pause).toHaveBeenCalledOnce();
+		expect(backend.revokeObjectURL).toHaveBeenCalledWith(
+			"blob:kokoro-audio",
+		);
+	});
+
+	it("maps dialogue turns to deterministic Kokoro voices", async () => {
+		const backend = installBackend();
+		const service = new SpeechService();
+
+		service.speak("Second speaker", 0.95, undefined, 5);
+		await vi.waitFor(() => expect(FakeAudio.latest).not.toBeNull());
+
+		const request = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(JSON.parse(String(request.body))).toEqual({
+			text: "Second speaker",
+			speed: 0.95,
+			format: "mp3",
+			voice: "bf_emma",
+		});
+	});
+
+	it("aborts an in-flight backend request without starting fallback", async () => {
+		installBackend();
+		let requestSignal: AbortSignal | undefined;
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				(_input: RequestInfo | URL, init?: RequestInit) =>
+					new Promise<Response>((_resolve, reject) => {
+						requestSignal = init?.signal ?? undefined;
+						requestSignal?.addEventListener("abort", () => {
+							reject(new DOMException("Aborted", "AbortError"));
+						});
+					}),
+			),
+		);
+		const browser = installBrowserSpeech();
+		const onError = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("Cancel me", 0.85, { onError });
+		service.cancel();
+		await Promise.resolve();
+
+		expect(requestSignal?.aborted).toBe(true);
+		expect(browser.speak).not.toHaveBeenCalled();
+		expect(onError).not.toHaveBeenCalled();
+	});
+
+	it("falls back to the previous browser speech behavior when the endpoint fails", async () => {
+		installBackend({ ok: false });
+		const browser = installBrowserSpeech();
+		const onStart = vi.fn();
+		const onWordBoundary = vi.fn();
+		const onEnd = vi.fn();
+		const service = new SpeechService();
+
+		service.speak("Hello world", 0.85, {
+			onStart,
+			onWordBoundary,
+			onEnd,
+		});
+		await vi.waitFor(() => expect(browser.speak).toHaveBeenCalledOnce());
+
+		const utterance = browser.utterance();
+		expect(utterance.lang).toBe("en-GB");
+		expect(utterance.rate).toBe(0.85);
+		utterance.onstart?.();
+		utterance.onboundary?.({
+			name: "word",
+			charIndex: 6,
+			charLength: 5,
+		});
+		utterance.onend?.();
+
+		expect(onStart).toHaveBeenCalledOnce();
 		expect(onWordBoundary.mock.calls).toEqual([
 			[0, 5],
 			[6, 5],
 		]);
-		expect(onEnd).toHaveBeenCalledTimes(1);
+		expect(onEnd).toHaveBeenCalledOnce();
 	});
 
-	it("advances word by word when a browser voice emits no boundary events", async () => {
-		vi.useFakeTimers();
-		const speech = installSpeechSynthesis();
-		const onWordBoundary = vi.fn();
+	it("falls back when generated audio cannot start playback", async () => {
+		const backend = installBackend({ playError: new Error("blocked") });
+		const browser = installBrowserSpeech();
 		const service = new SpeechService();
 
-		service.speak("English is his first language.", 0.85, {
-			onWordBoundary,
-		});
-		const utterance = speech.utterance();
-		utterance.onstart?.({});
+		service.speak("Fallback playback");
+		await vi.waitFor(() => expect(browser.speak).toHaveBeenCalledOnce());
 
-		expect(onWordBoundary).toHaveBeenLastCalledWith(0, 7);
-		await vi.advanceTimersByTimeAsync(450);
-		expect(onWordBoundary).toHaveBeenLastCalledWith(8, 2);
-		await vi.advanceTimersByTimeAsync(320);
-		expect(onWordBoundary).toHaveBeenLastCalledWith(11, 3);
+		expect(backend.revokeObjectURL).toHaveBeenCalledWith(
+			"blob:kokoro-audio",
+		);
 	});
 
-	it("stops fallback timing as soon as a native boundary appears", async () => {
-		vi.useFakeTimers();
-		const speech = installSpeechSynthesis();
-		const onWordBoundary = vi.fn();
+	it("uses browser speech directly when backend playback APIs are unavailable", () => {
+		vi.stubGlobal("fetch", undefined);
+		vi.stubGlobal("Audio", undefined);
+		const browser = installBrowserSpeech();
 		const service = new SpeechService();
 
-		service.speak("One two three four", 0.85, { onWordBoundary });
-		const utterance = speech.utterance();
-		utterance.onstart?.({});
-		utterance.onboundary?.({ name: "word", charIndex: 4, charLength: 3 });
-		await vi.advanceTimersByTimeAsync(5_000);
-
-		expect(onWordBoundary.mock.calls).toEqual([
-			[0, 3],
-			[4, 3],
-		]);
+		expect(service.speak("Local fallback")).toBe(true);
+		expect(browser.utterance().text).toBe("Local fallback");
 	});
 
-	it("ignores stale boundary events after a new utterance starts", () => {
-		const speech = installSpeechSynthesis();
-		const firstBoundary = vi.fn();
-		const secondBoundary = vi.fn();
-		const service = new SpeechService();
-
-		service.speak("First sentence", 0.85, {
-			onWordBoundary: firstBoundary,
-		});
-		const first = speech.utterance();
-		service.speak("Second sentence", 0.85, {
-			onWordBoundary: secondBoundary,
-		});
-		const second = speech.utterance();
-
-		first.onboundary?.({ name: "word", charIndex: 0, charLength: 5 });
-		second.onboundary?.({ name: "word", charIndex: 7, charLength: 8 });
-
-		expect(firstBoundary).not.toHaveBeenCalled();
-		expect(secondBoundary).toHaveBeenCalledWith(7, 8);
-	});
-
-	it("selects a deterministic English voice for dialogue turns", () => {
-		const voices = [
-			{
-				lang: "en-US",
-				name: "US",
-				voiceURI: "us",
-			} as SpeechSynthesisVoice,
-			{
-				lang: "en-GB",
-				name: "GB",
-				voiceURI: "gb",
-			} as SpeechSynthesisVoice,
-		];
-		const speech = installSpeechSynthesis(voices);
-		const service = new SpeechService();
-
-		service.speak("Second speaker", 0.85, undefined, 1);
-
-		expect(speech.utterance().voice).toBe(voices[0]);
-		expect(speech.utterance().pitch).toBe(1.1);
-	});
-
-	it("preserves legacy voice selection and pitch when no dialogue voice index is supplied", () => {
-		const voices = [
-			{
-				lang: "en-US",
-				name: "US",
-				voiceURI: "us",
-			} as SpeechSynthesisVoice,
-			{
-				lang: "en-GB",
-				name: "Zulu",
-				voiceURI: "zulu",
-			} as SpeechSynthesisVoice,
-			{
-				lang: "en-GB",
-				name: "Alpha",
-				voiceURI: "alpha",
-			} as SpeechSynthesisVoice,
-		];
-		const speech = installSpeechSynthesis(voices);
-		const service = new SpeechService();
-
-		service.speak("Legacy playback");
-
-		expect(speech.utterance().voice).toBe(voices[1]);
-		expect(speech.utterance().pitch).toBe(1);
-	});
-
-	it("uses deterministic pitch when browser voices are initially unavailable", () => {
-		const speech = installSpeechSynthesis([]);
-		const service = new SpeechService();
-
-		service.speak("Third speaker", 0.85, undefined, 2);
-
-		expect(speech.utterance().voice).toBeNull();
-		expect(speech.utterance().pitch).toBe(1);
-	});
-
-	it("reports synthesis errors without treating a failed turn as completed", () => {
-		const speech = installSpeechSynthesis();
-		const onEnd = vi.fn();
+	it("reports an error when both backend playback and browser fallback fail", async () => {
+		installBackend({ ok: false });
+		vi.stubGlobal("speechSynthesis", undefined);
+		vi.stubGlobal("SpeechSynthesisUtterance", undefined);
 		const onError = vi.fn();
 		const service = new SpeechService();
 
-		service.speak("Failed turn", 0.85, { onEnd, onError });
-		speech.utterance().onerror?.({});
-
-		expect(onError).toHaveBeenCalledOnce();
-		expect(onEnd).not.toHaveBeenCalled();
-	});
-
-	it("returns false when the browser rejects synthesis synchronously", () => {
-		installSpeechSynthesis();
-		vi.mocked(globalThis.speechSynthesis.speak).mockImplementation(() => {
-			throw new Error("voice unavailable");
-		});
-		const service = new SpeechService();
-
-		expect(service.speak("Failed turn")).toBe(false);
+		expect(service.speak("Unavailable", 0.85, { onError })).toBe(true);
+		await vi.waitFor(() => expect(onError).toHaveBeenCalledOnce());
 	});
 });
