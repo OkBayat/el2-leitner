@@ -8,6 +8,9 @@
 				{{ data.instruction || 'Learn' }}
 			</p>
 			<h1>{{ data.title }}</h1>
+			@if (data.explanation) {
+				<p class="teaching-card__lead">{{ data.explanation }}</p>
+			}
 			<div class="teaching-grid">
 				@for (block of data.blocks; track $index) {
 					<section

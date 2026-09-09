@@ -12,6 +12,7 @@ import {
 	ClassificationSlideComponent,
 	ClozeSlideComponent,
 	MatchingSlideComponent,
+	TeachingCardSlideComponent,
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
@@ -90,6 +91,36 @@ describe('reusable slide renderer contract', () => {
 			}
 			fixture.destroy();
 		}
+	});
+
+	it('renders TeachingCard guidance before its learning blocks', () => {
+		const fixture = TestBed.createComponent(TeachingCardSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'teaching-clarity',
+			type: 'teaching-card',
+			data: {
+				instruction: 'Understand the pattern before you practise.',
+				title: 'Store relationships as chunks',
+				explanation:
+					'Learn the whole phrase so you can choose a natural combination.',
+				blocks: [
+					{
+						kind: 'patterns',
+						title: 'Verbs',
+						content: 'Use establish for creating a relationship.',
+					},
+				],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('.teaching-card__lead')?.textContent).toContain(
+			'Learn the whole phrase',
+		);
+		expect(element.querySelector('.teaching-grid')?.textContent).toContain(
+			'Use establish for creating a relationship.',
+		);
 	});
 
 	it('exposes MatchingSlide and ClassificationSlide interaction states accessibly', () => {

@@ -26,6 +26,7 @@ export type GeneratedVocabularySlideConfig =
   | GeneratedVocabularyMeaningChoiceConfig;
 
 interface LessonVocabularyScopeData {
+  readonly autoStart: boolean;
   readonly intro: {
     readonly eyebrow: string;
     readonly title: string;
@@ -95,6 +96,7 @@ function parseScopeData(value: unknown): LessonVocabularyScopeData {
     throw new Error('Lesson vocabulary generated slide is unavailable.');
   }
   return {
+    autoStart: source?.['autoStart'] === true,
     intro: {
       eyebrow: requiredText(intro, 'eyebrow'),
       title: requiredText(intro, 'title'),
@@ -175,6 +177,7 @@ export class LessonVocabularyScopeSlideComponent implements SlideContentComponen
   private context: SlideContentContext | null = null;
   private generatedSlide: GeneratedVocabularySlideConfig | null = null;
   private items: readonly SlideSequenceVocabularyItem[] = [];
+  private started = false;
   readonly eyebrow = signal('');
   readonly title = signal('');
   readonly description = signal('');
@@ -187,14 +190,25 @@ export class LessonVocabularyScopeSlideComponent implements SlideContentComponen
     this.context = context;
     this.generatedSlide = data.generatedSlide;
     this.items = payload.items;
+    this.started = false;
     this.eyebrow.set(data.intro.eyebrow);
     this.title.set(renderTemplate(data.intro.title, { total: payload.items.length }));
     this.description.set(data.intro.description);
+    if (data.autoStart) {
+      queueMicrotask(() => {
+        if (this.context === context) this.startVocabularyScope();
+      });
+    }
   }
 
   handleAction(actionId: string): void {
+    if (actionId === 'start-vocabulary-scope') this.startVocabularyScope();
+  }
+
+  private startVocabularyScope(): void {
     const context = this.context;
-    if (actionId !== 'start-vocabulary-scope' || !context?.deck || !this.generatedSlide) return;
+    if (this.started || !context?.deck || !this.generatedSlide) return;
+    this.started = true;
     context.deck.insertSlides({
       anchorId: context.slideId,
       gap: 0,
