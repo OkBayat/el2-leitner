@@ -123,7 +123,7 @@ describe('HomePageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
     const banner = host.querySelector<HTMLAnchorElement>('[data-testid="telegram-channel-banner"]');
 
-    expect(banner?.href).toBe('https://t.me/vocora');
+    expect(banner?.href).toBe('https://t.me/vocorair');
     expect(banner?.target).toBe('_blank');
     expect(banner?.rel).toContain('noopener');
     expect(banner?.rel).toContain('noreferrer');
