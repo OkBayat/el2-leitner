@@ -625,6 +625,35 @@ describe('reusable slide library behavior', () => {
 		expect(component.interactionState()).toBe('answered-correct');
 	});
 
+	it('shows the configured dictation definition in the footer after any checked answer', () => {
+		configure();
+		const definition = 'the natural world in which people, animals, and plants live';
+
+		for (const { answer, tone } of [
+			{ answer: 'environment', tone: 'success' },
+			{ answer: 'enviroment', tone: 'error' },
+		] as const) {
+			const component = TestBed.runInInjectionContext(
+				() => new DictationSlideComponent(),
+			);
+			const states: unknown[] = [];
+			component.stateChange.subscribe((state) => states.push(state));
+			load(component, 'dictation', {
+				audio: '/audio/environment.mp3',
+				answer: 'environment',
+				definition: `  ${definition}  `,
+			});
+
+			component.setAnswer(answer);
+			component.handleAction('check');
+
+			expect(states.at(-1)).toMatchObject({
+				chrome: { footer: { tone, detail: definition } },
+			});
+			component.ngOnDestroy();
+		}
+	});
+
 	it('submits model-only RewriteSlide responses without false scoring', () => {
 		const component = new RewriteSlideComponent();
 		const events: unknown[] = [];

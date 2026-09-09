@@ -71,6 +71,7 @@ function parseDictation(value: unknown): DictationSlideData {
 				}
 			: undefined,
 		answer,
+		definition: text(source['definition']) || undefined,
 		acceptedAnswers: strings(source['acceptedAnswers']),
 		maxReplays:
 			Number.isInteger(maxReplays) && maxReplays > 0
@@ -167,7 +168,7 @@ export class DictationSlideComponent
 		this.finish(
 			correct,
 			{ answer: this.answer(), correct, replayCount: this.replayCount() },
-			this.data().explanation ?? '',
+			this.data().definition ?? this.data().explanation ?? '',
 		);
 	}
 	ngOnDestroy(): void {

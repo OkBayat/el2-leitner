@@ -296,6 +296,7 @@ export interface DictationSlideData extends SlideTypeData {
 	readonly audio?: string;
 	readonly speech?: SpeechPlaybackConfig;
 	readonly answer: string;
+	readonly definition?: string;
 	readonly acceptedAnswers?: readonly string[];
 	readonly maxReplays?: number;
 	readonly punctuationSensitive?: boolean;
