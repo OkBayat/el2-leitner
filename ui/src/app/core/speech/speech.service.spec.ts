@@ -257,10 +257,23 @@ describe("SpeechService backend playback", () => {
 		expect(browser.speak).toHaveBeenCalledOnce();
 
 		browser.utterance().onstart?.();
+		browser.utterance().onboundary?.({
+			name: "word",
+			charIndex: 0,
+			charLength: 7,
+		});
+		browser.utterance().onboundary?.({
+			name: "word",
+			charIndex: 8,
+			charLength: 8,
+		});
 		browser.utterance().onend?.();
 
 		expect(onStart).toHaveBeenCalledOnce();
-		expect(onWordBoundary).toHaveBeenCalledOnce();
+		expect(onWordBoundary.mock.calls).toEqual([
+			[0, 7],
+			[8, 8],
+		]);
 		expect(onEnd).toHaveBeenCalledOnce();
 		expect(onError).not.toHaveBeenCalled();
 	});

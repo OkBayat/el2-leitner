@@ -59,11 +59,13 @@ function dialogueVoice(voiceIndex?: number): string | undefined {
 export class SpeechService {
 	private playbackSequence = 0;
 	private readonly fallbackTimers = new Set<ReturnType<typeof setTimeout>>();
+	private readonly emittedBoundaryRanges = new Set<string>();
 	private activeRequest: AbortController | null = null;
 	private activeAudio: HTMLAudioElement | null = null;
 	private activeObjectUrl: string | null = null;
 	private backendPlaybackStartedSequence: number | null = null;
 	private browserFallbackSequence: number | null = null;
+	private boundarySequence: number | null = null;
 
 	speak(
 		text: string,
@@ -84,6 +86,7 @@ export class SpeechService {
 
 		this.cancel();
 		const playbackSequence = ++this.playbackSequence;
+		this.boundarySequence = playbackSequence;
 		const normalizedRate = clamp(rate, 0.45, 1.2);
 		if (!backendAvailable) {
 			this.browserFallbackSequence = playbackSequence;
@@ -123,6 +126,8 @@ export class SpeechService {
 		this.releaseAudio();
 		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
+		this.boundarySequence = null;
+		this.emittedBoundaryRanges.clear();
 		globalThis.speechSynthesis?.cancel?.();
 	}
 
@@ -217,7 +222,11 @@ export class SpeechService {
 		this.releaseAudio();
 		const fallbackObserver =
 			this.backendPlaybackStartedSequence === playbackSequence && observer
-				? { onEnd: observer.onEnd, onError: observer.onError }
+				? {
+						onWordBoundary: observer.onWordBoundary,
+						onEnd: observer.onEnd,
+						onError: observer.onError,
+					}
 				: observer;
 		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = playbackSequence;
@@ -305,7 +314,9 @@ export class SpeechService {
 					charIndex >= word.charIndex &&
 					charIndex < word.charIndex + word.charLength,
 			);
-			observer?.onWordBoundary?.(
+			this.emitWordBoundary(
+				playbackSequence,
+				observer,
 				charIndex,
 				event.charLength > 0
 					? event.charLength
@@ -333,19 +344,48 @@ export class SpeechService {
 		const words = speechWordRanges(text);
 		if (!words.length) return;
 
-		observer.onWordBoundary(words[0].charIndex, words[0].charLength);
+		this.emitWordBoundary(
+			playbackSequence,
+			observer,
+			words[0].charIndex,
+			words[0].charLength,
+		);
 		let delay = estimatedWordDurationMs(words[0].text, rate);
 		for (let index = 1; index < words.length; index += 1) {
 			const word = words[index];
 			const timer = setTimeout(() => {
 				this.fallbackTimers.delete(timer);
 				if (this.isCurrent(playbackSequence)) {
-					observer.onWordBoundary?.(word.charIndex, word.charLength);
+					this.emitWordBoundary(
+						playbackSequence,
+						observer,
+						word.charIndex,
+						word.charLength,
+					);
 				}
 			}, delay);
 			this.fallbackTimers.add(timer);
 			delay += estimatedWordDurationMs(word.text, rate);
 		}
+	}
+
+	private emitWordBoundary(
+		playbackSequence: number,
+		observer: SpeechPlaybackObserver | undefined,
+		charIndex: number,
+		charLength: number,
+	): void {
+		const onWordBoundary = observer?.onWordBoundary;
+		if (
+			!this.isCurrent(playbackSequence) ||
+			this.boundarySequence !== playbackSequence ||
+			!onWordBoundary
+		)
+			return;
+		const range = `${charIndex}:${charLength}`;
+		if (this.emittedBoundaryRanges.has(range)) return;
+		this.emittedBoundaryRanges.add(range);
+		onWordBoundary(charIndex, charLength);
 	}
 
 	private finishPlayback(
@@ -357,6 +397,8 @@ export class SpeechService {
 		this.releaseAudio();
 		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
+		this.boundarySequence = null;
+		this.emittedBoundaryRanges.clear();
 		this.playbackSequence += 1;
 		observer?.onEnd?.();
 	}
@@ -371,6 +413,8 @@ export class SpeechService {
 		this.releaseAudio();
 		this.backendPlaybackStartedSequence = null;
 		this.browserFallbackSequence = null;
+		this.boundarySequence = null;
+		this.emittedBoundaryRanges.clear();
 		this.playbackSequence += 1;
 		observer?.onError?.();
 	}
