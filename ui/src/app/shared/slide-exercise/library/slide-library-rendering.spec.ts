@@ -64,6 +64,7 @@ describe('reusable slide renderer contract', () => {
 
 		const answerField = element.querySelector('mat-form-field');
 		const answer = answerField?.querySelector('textarea');
+		expect(document.activeElement).toBe(answer);
 		expect(answerField?.classList).toContain('vocora-form-field--soft');
 		expect(answerField?.classList).not.toContain('vocora-form-field--raised');
 		expect(answerField?.querySelector('input')).toBeNull();
@@ -86,7 +87,15 @@ describe('reusable slide renderer contract', () => {
 		answer?.focus();
 		expect(getComputedStyle(answer!).outlineStyle).toBe('none');
 
-		normal?.click();
+		expect(normal?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		document.dispatchEvent(
+			new KeyboardEvent('keydown', {
+				key: 'r',
+				altKey: true,
+				bubbles: true,
+				cancelable: true,
+			}),
+		);
 		slow?.click();
 		expect(speech.speak).toHaveBeenNthCalledWith(1, 'renewable energy', 0.9);
 		expect(speech.speak).toHaveBeenNthCalledWith(

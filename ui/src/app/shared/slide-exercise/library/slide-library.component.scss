@@ -50,6 +50,9 @@ blockquote {
 	resize: none;
 	overflow: hidden;
 	white-space: nowrap;
+	font-size: 1.2rem;
+	font-weight: 500;
+	transform: translateY(-2px);
 }
 
 .dictation-answer-input:focus,

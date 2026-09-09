@@ -138,6 +138,12 @@ const correctSoftFieldWrapper = materialComponents.match(
 )?.[1] ?? '';
 assert.match(correctSoftFieldWrapper, /background:\s*var\(--vocora-success-surface\);/u);
 assert.doesNotMatch(materialComponents, /\.vocora-form-field--soft\[data-state='incorrect'\]/u);
+const dictationAnswerStyles = sharedStyles.match(
+	/\.dictation-answer-input\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(dictationAnswerStyles, /font-size:\s*1\.2rem;/u);
+assert.match(dictationAnswerStyles, /font-weight:\s*500;/u);
+assert.match(dictationAnswerStyles, /transform:\s*translateY\(-2px\);/u);
 assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);

@@ -20,6 +20,7 @@
 				<div class="dictation-audio-actions" role="group" aria-label="Dictation pronunciation controls">
 					<button
 						mat-flat-button
+						appShortcutClick="Alt+R"
 						class="vocora-audio-action vocora-audio-action--large"
 						type="button"
 						[disabled]="!canReplay()"
@@ -48,6 +49,7 @@
 				subscriptSizing="dynamic"
 				[attr.data-state]="answerState()"
 				><textarea
+					#answerInput
 					class="dictation-answer-input"
 					matInput
 					[value]="answer()"

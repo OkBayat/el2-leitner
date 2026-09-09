@@ -1,7 +1,10 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
 	OnDestroy,
+	ViewChild,
 	inject,
 	signal,
 } from '@angular/core';
@@ -13,6 +16,7 @@ import {
 	type SpeechPlaybackMode,
 } from '../../../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../../../core/state/learning-store.service';
+import { ShortcutClickDirective } from '../../../../shortcut-click.directive';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -84,6 +88,7 @@ function parseDictation(value: unknown): DictationSlideData {
 		MatButtonModule,
 		MatFormFieldModule,
 		MatInputModule,
+		ShortcutClickDirective,
 		SlideAudioControlComponent,
 		SlideStimulusComponent,
 	],
@@ -93,10 +98,12 @@ function parseDictation(value: unknown): DictationSlideData {
 })
 export class DictationSlideComponent
 	extends ScoredSlideBase<DictationSlideData>
-	implements SlideContentComponent, OnDestroy
+	implements SlideContentComponent, AfterViewInit, OnDestroy
 {
 	private readonly speech = inject(SpeechService);
 	private readonly store = inject(LearningStoreService);
+	@ViewChild('answerInput')
+	private answerInput?: ElementRef<HTMLTextAreaElement>;
 	readonly answer = signal('');
 	readonly replayCount = signal(0);
 	inputFrom(event: Event): string {
@@ -150,6 +157,9 @@ export class DictationSlideComponent
 			: this.correct()
 				? 'correct'
 				: 'incorrect';
+	}
+	ngAfterViewInit(): void {
+		this.answerInput?.nativeElement.focus();
 	}
 	handleAction(actionId: string): void {
 		if (actionId !== 'check' || !this.answer().trim()) return;
