@@ -1,13 +1,13 @@
 :host {
   display: block;
-  min-height: var(--shell-content-viewport-height, 100dvh);
+  min-height: 100dvh;
   background: var(--vocora-surface-page);
   color: var(--vocora-text-primary);
 }
 
 .slide-exercise {
-  height: var(--shell-content-viewport-height, 100dvh);
-  min-height: var(--shell-content-viewport-height, 100dvh);
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
@@ -52,7 +52,7 @@ app-slide-exercise-footer {
 
 @media (min-width: 601px) {
   :host {
-    height: var(--shell-content-viewport-height, 100vh);
+    height: 100vh;
     min-height: 0;
   }
 

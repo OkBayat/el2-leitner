@@ -12,13 +12,14 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();
   });
 
-  it('keeps canonical and legacy learning path exercises inside the shared app shell', () => {
+  it('keeps canonical and legacy learning path exercises outside the shared app shell', () => {
     const appShellRoute = appRoutes.find((route) => route.path === '');
     const childPaths = appShellRoute?.children?.map((route) => route.path) ?? [];
+    const rootPaths = appRoutes.map((route) => route.path);
 
-    expect(childPaths).toContain('learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId');
-    expect(childPaths).toContain('learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId');
-    expect(appRoutes.map((route) => route.path)).not.toContain('learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId');
-    expect(appRoutes.map((route) => route.path)).not.toContain('learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId');
+    expect(rootPaths).toContain('learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId');
+    expect(rootPaths).toContain('learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId');
+    expect(childPaths).not.toContain('learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId');
+    expect(childPaths).not.toContain('learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId');
   });
 });

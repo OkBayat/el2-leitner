@@ -49,16 +49,27 @@ const routes = read('src/app/app.routes.ts');
 const shellRoute = "path: 'learning-paths/:pathId'";
 const runnerRoute = "path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId'";
 const legacyRunnerRoute = "path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId'";
+const appShellRoute = "loadComponent: () => import('./shared/app-shell/app-shell.component')";
 assert.ok(routes.includes(shellRoute), 'The canonical public-id Learning Path route is required.');
 assert.ok(routes.includes(runnerRoute), 'The canonical exercise runner route is required.');
+assert.ok(routes.indexOf(runnerRoute) < routes.indexOf(appShellRoute), 'The canonical exercise runner must stay outside AppShell.');
 assert.ok(routes.includes(legacyRunnerRoute), 'The legacy slug route must remain available during migration.');
+assert.ok(routes.indexOf(legacyRunnerRoute) < routes.indexOf(appShellRoute), 'The legacy exercise runner must stay outside AppShell during migration.');
 assert.match(routes, /legacyLearningPathExerciseRouteGuard/u, 'The legacy slug route must resolve to its canonical numeric URL.');
 
 const runnerStyles = read('src/app/features/collection-learning-path/exercise-runner/exercise-runner-page.component.scss');
-assert.doesNotMatch(runnerStyles, /height:\s*100d?vh/u, 'The exercise page must not own a viewport layout outside AppShell.');
-assert.match(runnerStyles, /--shell-content-viewport-height/u, 'The exercise page must fit the shared shell content viewport.');
+assert.match(runnerStyles, /height:\s*100dvh/u, 'The exercise page must own its distraction-free mobile viewport.');
 const slideExerciseStyles = read('src/app/shared/slide-exercise/slide-exercise.component.scss');
-assert.match(slideExerciseStyles, /--shell-content-viewport-height/u, 'Shared slide exercises must fit the available AppShell content viewport.');
+assert.match(slideExerciseStyles, /min-height:\s*100dvh/u, 'Shared slide exercises must fill the distraction-free mobile viewport.');
+
+const exerciseNodeStyles = read('src/app/features/collection-learning-path/components/exercise-node/exercise-node.component.scss');
+assert.match(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*72px/su, 'Translated trail nodes must own only their visible width.');
+assert.doesNotMatch(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*100%/su, 'Translated trail nodes must not shift a full-width host beyond the viewport.');
+
+const appShellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
+assert.match(appShellStyles, /:host\s*\{[^}]*overflow-x:\s*clip/su, 'AppShell must contain feature overflow without creating a horizontal scroller.');
+assert.match(appShellStyles, /\.mobile-status\s*\{[^}]*position:\s*fixed/su, 'The mobile status header must remain fixed during document scrolling.');
+assert.match(appShellStyles, /\.mobile-nav\s*\{[^}]*position:\s*fixed/su, 'The mobile navigation must remain fixed during document scrolling.');
 
 const pathFacade = read('src/app/application/collection-learning-path/collection-learning-path.facade.ts');
 const runnerFacade = read('src/app/application/collection-learning-path/exercise-runner.facade.ts');

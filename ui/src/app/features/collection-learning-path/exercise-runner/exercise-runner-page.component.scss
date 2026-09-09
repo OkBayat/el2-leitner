@@ -1,6 +1,6 @@
 :host {
   display: block;
-  height: var(--shell-content-viewport-height);
+  height: 100dvh;
   min-height: 0;
   overflow: hidden;
   background: var(--mat-sys-surface);
@@ -58,6 +58,10 @@
 .runner-spinner { width: 24px; height: 24px; border: 3px solid var(--mat-sys-outline-variant); border-top-color: var(--mat-sys-primary); border-radius: 50%; animation: spin 700ms linear infinite; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (min-width: 601px) {
+  :host { height: 100vh; }
+}
 
 @media (max-width: 520px) {
   .runner__workspace { align-items: start; padding-top: 20px; }
