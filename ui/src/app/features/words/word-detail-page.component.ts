@@ -155,7 +155,7 @@ export class WordDetailPageComponent implements OnInit {
   }
 
   private async refreshAfterManagedChange(): Promise<void> {
-    await this.store.refreshCanonical();
+    await this.store.refreshAfterSubscriptionChange();
     if (!this.word()) {
       await this.router.navigate(['/words']);
       return;

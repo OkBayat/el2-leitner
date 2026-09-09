@@ -26,7 +26,10 @@ describe('WordDetailPageComponent', () => {
   const stateSignal = signal(state);
   const navigate = vi.fn();
   const excludeWord = vi.fn();
+  const refreshAfterSubscriptionChange = vi.fn().mockResolvedValue(state);
   const list = vi.fn();
+  const get = vi.fn();
+  const updateEntry = vi.fn();
   const sources = vi.fn().mockResolvedValue([{
     vocabularyId: 'word-1',
     term: 'evidence',
@@ -48,7 +51,7 @@ describe('WordDetailPageComponent', () => {
             initialize: vi.fn().mockResolvedValue(state),
             snapshot: () => structuredClone(stateSignal()),
             excludeWord,
-            refreshCanonical: vi.fn().mockResolvedValue(state),
+            refreshAfterSubscriptionChange,
           },
         },
         { provide: VocabularyApiService, useValue: { sources } },
@@ -56,8 +59,8 @@ describe('WordDetailPageComponent', () => {
           provide: LibraryApiService,
           useValue: {
             list,
-            get: vi.fn(),
-            updateEntry: vi.fn(),
+            get,
+            updateEntry,
             removeEntry: vi.fn(),
           },
         },
@@ -99,6 +102,18 @@ describe('WordDetailPageComponent', () => {
 
     expect(element.querySelector('.management-actions')?.textContent).toContain('Edit');
     expect(element.querySelector('.management-actions')?.textContent).toContain('Delete');
+  });
+
+  it('reconciles a newer canonical revision after a manager edits a collection entry', async () => {
+    get.mockResolvedValue({
+      collection: { entries: [{ id: 'entry-1', vocabularyId: 'word-1' }] },
+    });
+    const fixture = await render(true);
+
+    await fixture.componentInstance.editSource(fixture.componentInstance.sources()[0]);
+
+    expect(updateEntry).toHaveBeenCalledWith('collection-1', 'entry-1', true);
+    expect(refreshAfterSubscriptionChange).toHaveBeenCalledOnce();
   });
 
   it('removes an eligible word from only the current learner Word Bank', async () => {
