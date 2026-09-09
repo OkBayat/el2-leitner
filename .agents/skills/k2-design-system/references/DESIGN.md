@@ -147,6 +147,9 @@ identical to light mode.
 
 ### Interaction
 
+- Pressing removes the lower edge and translates the face down by 4px
+  immediately. Releasing restores both immediately; do not animate either
+  `transform` or `box-shadow`.
 - Hover and pressed feedback must use Material state layers or a derived mix of
   the existing intent color; do not add a new raw color.
 - Keyboard focus remains visible with a high-contrast outline.

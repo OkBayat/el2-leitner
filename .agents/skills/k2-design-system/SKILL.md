@@ -40,6 +40,8 @@ with no visual effect.
   lower edge while retaining content-driven height.
 - Buttons use no gradients or ambient elevation; their only depth cue is the
   canonical 4px lower edge.
+- Button press and release movement is immediate; never transition the lower
+  edge or vertical translation.
 - Feature code consumes semantic variables and shared classes, never local raw
   colors or Material reskins.
 
