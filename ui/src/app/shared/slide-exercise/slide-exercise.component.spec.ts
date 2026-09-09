@@ -111,7 +111,7 @@ describe("SlideExerciseComponent", () => {
 		expect(component.currentSlide?.id).toBe("question");
 	});
 
-	it("excludes the leading guide from exercise progress", () => {
+	it("counts a leading guide unless its JSON explicitly excludes progress", () => {
 		const { component } = createComponent();
 		const slides = [
 			slide("guide", "teaching-card"),
@@ -123,18 +123,48 @@ describe("SlideExerciseComponent", () => {
 			slides: new SimpleChange(undefined, slides, true),
 		});
 
+		expect(
+			component.presentation?.header.progress?.value,
+		).toBeCloseTo(100 / 3);
+		expect(component.presentation?.header.progress?.label).toBe("1 of 3");
+
+		component.goTo("question-1");
+		expect(
+			component.presentation?.header.progress?.value,
+		).toBeCloseTo(200 / 3);
+		expect(component.presentation?.header.progress?.label).toBe("2 of 3");
+
+		component.goTo("question-2");
+		expect(component.presentation?.header.progress).toEqual({
+			value: 100,
+			label: "3 of 3",
+		});
+	});
+
+	it("excludes an explicitly untracked leading slide from exercise progress", () => {
+		const { component } = createComponent();
+		const slides: SlideExerciseSlide[] = [
+			{
+				id: "setup",
+				type: "selection",
+				data: {},
+				chrome: { header: { progress: null } },
+			},
+			slide("question-1", "choice"),
+			slide("question-2", "choice"),
+		];
+		component.slides = slides;
+		component.ngOnChanges({
+			slides: new SimpleChange(undefined, slides, true),
+		});
+
+		expect(component.guideAvailable).toBe(false);
 		expect(component.presentation?.header.progress).toBeNull();
 
 		component.goTo("question-1");
 		expect(component.presentation?.header.progress).toEqual({
 			value: 50,
 			label: "1 of 2",
-		});
-
-		component.goTo("question-2");
-		expect(component.presentation?.header.progress).toEqual({
-			value: 100,
-			label: "2 of 2",
 		});
 	});
 
@@ -269,6 +299,49 @@ describe("SlideExerciseComponent", () => {
 				slot: "primary",
 			},
 		]);
+	});
+
+	it("maps answer feedback to the primary action color and keeps ordinary actions primary", () => {
+		TestBed.configureTestingModule({
+			imports: [SlideExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		fixture.componentRef.setInput("slides", [slide("question")]);
+		fixture.detectChanges();
+
+		const primaryState = (): string | null =>
+			fixture.nativeElement
+				.querySelector(".slide-exercise-action--primary button")
+				?.getAttribute("data-state") ?? null;
+
+		expect(primaryState()).toBe("primary");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "success" } },
+		});
+		expect(fixture.componentInstance.presentation?.footer.primary?.tone).toBe(
+			"success",
+		);
+		fixture.detectChanges();
+		expect(primaryState()).toBe("success");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "error" } },
+		});
+		fixture.detectChanges();
+		expect(primaryState()).toBe("error");
+
+		fixture.componentInstance.onContentState({
+			chrome: { footer: { tone: "information" } },
+		});
+		fixture.detectChanges();
+		expect(primaryState()).toBe("primary");
 	});
 
 	it("lets a slide insert generated slides while keeping terminal slides last", () => {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused tests for the K2 design-system skill validator."""
+"""Focused tests for the K2 design-system validator."""
 
 from __future__ import annotations
 
@@ -30,50 +30,82 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         skill = (self.root / "SKILL.md").read_text(encoding="utf-8")
         interface = (self.root / "agents" / "openai.yaml").read_text(encoding="utf-8")
         self.assertIn("name: k2-design-system", skill)
-        self.assertIn("display_name: \"K2 Design System\"", interface)
+        self.assertIn('display_name: "K2 Design System"', interface)
         self.assertIn("$k2-design-system", interface)
 
-    def test_light_is_required_as_default_theme(self) -> None:
+    def test_canonical_palette_values_cannot_drift(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        tokens["meta"]["defaultTheme"] = "dark"
+        tokens["color"]["spark-blue"]["$value"] = "#000000"
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertIn("meta.defaultTheme must be 'light'", errors)
+        self.assertIn("color.spark-blue must equal #1CB0F6", errors)
 
-    def test_light_and_dark_theme_groups_require_parity(self) -> None:
+    def test_action_roles_cannot_drift(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        del tokens["themes"]["dark"]["activity"]
+        tokens["themes"]["light"]["action"]["primary"] = "#58CC02"
+        tokens["themes"]["light"]["action"]["secondaryForeground"] = "#1CB0F6"
+        tokens["themes"]["light"]["action"]["disabledBackground"] = "#AFAFAF"
+        tokens["themes"]["dark"]["action"]["success"] = "#49C0F8"
+        tokens["themes"]["dark"]["action"]["secondaryForeground"] = "#F0F7F2"
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("exact parity" in error for error in errors),
+        self.assertIn(
+            "themes.light.action.primary must equal #1CB0F6",
+            errors,
+        )
+        self.assertIn(
+            "themes.light.action.secondaryForeground must equal #4B4B4B",
+            errors,
+        )
+        self.assertIn(
+            "themes.light.action.disabledBackground must equal #D9D9D9",
+            errors,
+        )
+        self.assertIn(
+            "themes.dark.action.success must equal #72D72B",
+            errors,
+        )
+        self.assertIn(
+            "themes.dark.action.secondaryForeground must equal #4B4B4B",
             errors,
         )
 
-    def test_semantic_keys_require_light_dark_parity(self) -> None:
+    def test_token_type_is_required(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        del tokens["themes"]["dark"]["state"]["future"]
+        del tokens["color"]["eager-green"]["$type"]
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("Theme key parity failed for group 'state'" in error for error in errors),
-            errors,
-        )
+        self.assertIn("color.eager-green must use type color", errors)
 
-    def test_invalid_hex_color_is_rejected(self) -> None:
+    def test_token_description_is_required(self) -> None:
         tokens = copy.deepcopy(self.tokens)
-        tokens["themes"]["light"]["state"]["success"] = "green"
+        tokens["font"]["feather"]["$description"] = ""
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertTrue(
-            any("Invalid hex color" in error for error in errors),
-            errors,
-        )
+        self.assertIn("font.feather must have a description", errors)
 
-    def test_required_semantic_variables_are_present(self) -> None:
-        text = (self.root / "references" / "variables.scss").read_text(encoding="utf-8")
-        variables = VALIDATOR.extract_variables(text)
-        self.assertTrue(VALIDATOR.REQUIRED_VARIABLES.issubset(variables))
+    def test_button_geometry_is_required(self) -> None:
+        tokens = copy.deepcopy(self.tokens)
+        tokens["$extensions"]["com.vocora.design-system"]["buttonRadius"] = "8px"
+        errors: list[str] = []
+        VALIDATOR.validate_tokens(tokens, errors)
+        self.assertIn("The canonical button radius must be 13px", errors)
+
+    def test_light_and_dark_theme_keys_require_parity(self) -> None:
+        tokens = copy.deepcopy(self.tokens)
+        del tokens["themes"]["dark"]["action"]["error"]
+        errors: list[str] = []
+        VALIDATOR.validate_tokens(tokens, errors)
+        self.assertIn("Theme key parity failed for group 'action'", errors)
+
+    def test_css_variables_match_the_canonical_palette(self) -> None:
+        variables = VALIDATOR.extract_css_variables(
+            (self.root / "references" / "variables.scss").read_text(
+                encoding="utf-8"
+            )
+        )
+        for name, value in VALIDATOR.CANONICAL_COLORS.items():
+            self.assertEqual(variables[f"--color-{name}"].lower(), value.lower())
 
 
 if __name__ == "__main__":

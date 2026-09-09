@@ -1,5 +1,11 @@
 # K2 OKF Knowledge Bundle Update Log
 
+## 2026-09-09
+
+* **Update**: Clarified application-owned `sequenceCompletion` persistence and single-turn dialogue playback for generated Practice Words sequences.
+* **Update**: Documented dynamic `selection` expansion, including its serializable `expansionId`, runtime-only parent handler, fail-closed source coverage, and the House 1 Practice Words reference implementation.
+* **Update**: Extended [Reusable Slide Interactions](project/reusable-slide-interactions.md) with the general object-driven `selection` family, including single/multiple modes and its non-scored evidence boundary from `choice`.
+
 ## 2026-09-08
 
 * **Creation**: Added [Vocora Text-to-Speech](project/vocora-text-to-speech.md) with the shared backend endpoint, binary client-consumption contract, content-addressed cache ownership, and isolated automatic deployment behavior.

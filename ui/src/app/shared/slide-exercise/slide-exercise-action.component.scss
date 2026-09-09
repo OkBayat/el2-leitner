@@ -1,20 +1,97 @@
-:host { display: inline-block; min-width: 156px; }
-.slide-exercise-action { width: 100%; }
-.slide-exercise-action[data-state='primary'] { --vocora-component-action-foreground: var(--vocora-text-on-strong); }
-.slide-exercise-action[data-state='secondary'] { --vocora-component-action-background: var(--vocora-action-secondary); --vocora-component-action-foreground: var(--vocora-action-secondary-foreground); --vocora-component-action-edge: var(--vocora-border); --vocora-component-action-hover: color-mix(in srgb, var(--vocora-action-secondary-foreground) 8%, var(--vocora-action-secondary)); --vocora-component-action-border: color-mix(in srgb, var(--vocora-action-secondary-foreground) 38%, var(--vocora-border)); }
-.slide-exercise-action[data-state='success'] { --vocora-component-action-background: var(--vocora-success); --vocora-component-action-foreground: var(--vocora-success-foreground); --vocora-component-action-edge: var(--vocora-action-primary-edge); --vocora-component-action-hover: var(--vocora-action-primary-hover); }
-.slide-exercise-action[data-state='information'] { --vocora-component-action-background: var(--vocora-information); --vocora-component-action-foreground: var(--vocora-information-foreground); --vocora-component-action-edge: var(--vocora-information-border); --vocora-component-action-hover: var(--vocora-information-border); }
-.slide-exercise-action[data-state='warning'] { --vocora-component-action-background: color-mix(in srgb, var(--vocora-warning) 20%, var(--vocora-surface-base)); --vocora-component-action-foreground: var(--vocora-text-primary); --vocora-component-action-edge: var(--vocora-warning); --vocora-component-action-hover: color-mix(in srgb, var(--vocora-warning) 28%, var(--vocora-surface-base)); --vocora-component-action-border: var(--vocora-warning); }
-.slide-exercise-action[data-state='error'] { --vocora-component-action-background: var(--vocora-error); --vocora-component-action-foreground: var(--vocora-error-foreground); --vocora-component-action-edge: var(--vocora-error-edge); --vocora-component-action-hover: var(--vocora-error-edge); }
-.slide-exercise-action[data-state='disabled'] { --vocora-component-action-background: var(--vocora-surface-subtle); --vocora-component-action-foreground: var(--vocora-text-disabled); --vocora-component-action-edge: transparent; --vocora-component-action-hover: var(--vocora-surface-subtle); --vocora-component-action-border: var(--vocora-border); box-shadow: none; cursor: not-allowed; }
-.slide-exercise-action__spinner { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: var(--vocora-radius-pill); animation: slide-action-spin 700ms linear infinite; }
-@keyframes slide-action-spin { to { transform: rotate(360deg); } }
-@media (max-width: 600px) {
-  :host { width: 100%; min-width: 0; }
-  .slide-exercise-action { height: 56px; min-height: 56px; }
-  :host(.slide-exercise-action--split-end) .slide-exercise-action {
-    border-start-start-radius: var(--vocora-radius-xs);
-    border-end-start-radius: var(--vocora-radius-xs);
-  }
+:host {
+	display: inline-block;
+	min-width: 156px;
 }
-@media (prefers-reduced-motion: reduce) { .slide-exercise-action { transition: none; } .slide-exercise-action__spinner { animation: none; } }
+.slide-exercise-action {
+	width: 100%;
+}
+.slide-exercise-action[data-state="primary"] {
+	--vocora-component-action-background: var(--vocora-action-primary);
+	--vocora-component-action-foreground: var(
+		--vocora-action-primary-foreground
+	);
+}
+.slide-exercise-action[data-state="secondary"] {
+	--vocora-component-action-background: var(--vocora-action-secondary);
+	--vocora-component-action-foreground: var(
+		--vocora-action-secondary-foreground
+	);
+	--vocora-component-action-border: var(--vocora-action-secondary-border);
+	--vocora-component-action-border-width: 2px;
+	--vocora-component-action-disabled-background: var(
+		--vocora-action-secondary-disabled-background
+	);
+	--vocora-component-action-disabled-foreground: var(
+		--vocora-action-secondary-disabled-foreground
+	);
+	--vocora-component-action-disabled-border: var(
+		--vocora-action-secondary-disabled-border
+	);
+}
+.slide-exercise-action[data-state="success"] {
+	--vocora-component-action-background: var(--vocora-action-success);
+	--vocora-component-action-foreground: var(
+		--vocora-action-success-foreground
+	);
+}
+.slide-exercise-action[data-state="information"] {
+	--vocora-component-action-background: var(--color-spark-blue);
+	--vocora-component-action-foreground: var(--color-paper-white);
+}
+.slide-exercise-action[data-state="warning"] {
+	--vocora-component-action-background: var(--vocora-action-warning);
+	--vocora-component-action-foreground: var(
+		--vocora-action-warning-foreground
+	);
+}
+.slide-exercise-action[data-state="error"] {
+	--vocora-component-action-background: var(--vocora-action-error);
+	--vocora-component-action-foreground: var(--vocora-action-error-foreground);
+}
+.slide-exercise-action[data-state="disabled"] {
+	--vocora-component-action-disabled-background: var(
+		--vocora-action-disabled-background
+	);
+	--vocora-component-action-disabled-foreground: var(
+		--vocora-action-disabled-foreground
+	);
+	--vocora-component-action-disabled-border: var(
+		--vocora-action-disabled-border
+	);
+	cursor: not-allowed;
+}
+.slide-exercise-action__spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: var(--vocora-radius-pill);
+	animation: slide-action-spin 700ms linear infinite;
+}
+@keyframes slide-action-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@media (max-width: 600px) {
+	:host {
+		width: 100%;
+		min-width: 0;
+	}
+	.slide-exercise-action {
+		height: 56px;
+		min-height: 56px;
+	}
+	:host(.slide-exercise-action--split-end) .slide-exercise-action {
+		border-start-start-radius: var(--vocora-radius-xs);
+		border-end-start-radius: var(--vocora-radius-xs);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.slide-exercise-action {
+		transition: none;
+	}
+	.slide-exercise-action__spinner {
+		animation: none;
+	}
+}

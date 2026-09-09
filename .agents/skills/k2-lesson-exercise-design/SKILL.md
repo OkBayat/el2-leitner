@@ -115,7 +115,7 @@ For each exercise:
 7. order slides from the amount of support appropriate to that exercise toward the intended end performance;
 8. define completion evidence without inventing a scientifically privileged score threshold.
 
-The current per-slide runtime contract is intentionally provisional in this skill. Follow the placeholder slide envelope in `output-contract.md`. Do not invent production component properties that the placeholder does not define.
+The per-slide contract in this lesson-plan artifact is intentionally provisional. Follow the placeholder envelope in `output-contract.md`; when the caller needs exact application configuration, invoke `k2-exercise-builder` for every exercise after the lesson plan is structurally valid. Never invent production component properties in this skill.
 
 ### Checkpoint 4 — Audit coverage and validate the object
 
@@ -140,7 +140,7 @@ Return the object only after the validator reports `status: valid`. If the sourc
 
 ## Slide-contract placeholder policy
 
-The provisional output contract currently allows the 16 reusable interaction types documented in `output-contract.md`, but the `data` payload remains a deliberate placeholder.
+The provisional output contract currently allows the 17 reusable interaction types documented in `output-contract.md`, but the `data` payload remains a deliberate placeholder. `k2-exercise-builder` owns the authoritative runtime-ready object and must be used for that handoff.
 
 When the application slide contracts become authoritative for agent generation, update these surfaces atomically:
 

@@ -1,184 +1,118 @@
 ---
 name: k2-design-system
-description: Mandatory visual design system for all Vocora UI work, including color, light/dark theming, typography, spacing, layout, component styling, responsive behavior, PWA surfaces, branding, mascot usage, and semantic states. Use before creating or modifying any visual product surface. Do not use for backend- or infrastructure-only changes with no visual impact.
+description: Mandatory Vocora visual design system for palette, typography, spacing, layout, Angular Material controls, responsive behavior, accessibility, branding, and semantic feedback. Use before creating or changing any product-facing UI.
 ---
 
 # K2 Design System
 
-Use this skill as the source of truth for visual design work in Vocora.
+Use this skill as the canonical visual contract for Vocora.
 
-Vocora is a language-learning application intended for long daily study sessions. Its UI must remain simple, calm, focused, friendly, readable, and visually consistent across the product.
+Vocora uses a playful classroom-on-white-paper language: rounded shapes,
+comfortable spacing, calm gray copy, and a small saturated palette that gives
+interaction and learning feedback clear emotional weight.
 
-## Mandatory theme contract
+## Scope
 
-Vocora always supports both light and dark themes.
+Use this skill before changing:
 
-- Light theme is the default theme.
-- Every visual change must be designed for light and dark themes at the same time.
-- A component is not complete if only one theme has been designed or validated.
-- Every semantic color token that can appear in the UI must define a light-theme value and a dark-theme value.
-- Do not implement dark mode as a later inversion pass. Dark mode is a first-class design target.
-- Theme behavior must preserve meaning, hierarchy, contrast, and state identity across both themes.
+- product layout, spacing, typography, color, or visual hierarchy;
+- buttons, links, controls, forms, cards, dialogs, navigation, or tables;
+- hover, focus, selected, correct, incorrect, warning, or disabled states;
+- responsive and mobile behavior;
+- mascot, illustration, icon, PWA, or branded surfaces.
 
-## When this skill is mandatory
+Do not use it for backend, database, deployment, or infrastructure-only work
+with no visual effect.
 
-Use this skill before changing any of the following:
+## Canonical visual contract
 
-- page layout or page chrome;
-- color or theme behavior;
-- typography;
-- spacing;
-- border radius;
-- shadows and elevation;
-- buttons and controls;
-- cards, dialogs, popovers, menus, tables, chips, and badges;
-- forms and input states;
-- navigation and timeline UI;
-- empty, loading, success, error, warning, and disabled states;
-- responsive behavior;
-- PWA visual surfaces;
-- illustrations, mascot placement, and brand visuals.
-
-Do not use this skill for backend, database, deployment, or infrastructure-only changes that have no visual effect.
+- Light is the default theme; light and dark are both mandatory.
+- Theme switching must preserve semantic meaning, hierarchy, content fit,
+  focus, and disabled behavior.
+- Paper White is the page and component canvas.
+- Charcoal is primary copy and secondary-button copy; Pencil Gray is secondary
+  descriptive copy.
+- Spark Blue owns primary CTA and links.
+- Eager Green owns success, progress, and correct-answer emphasis.
+- Faded Gray owns disabled content and routine outlined-control borders; button
+  states use the exact lighter grays from their supplied visual references.
+- Attention Yellow and Answer Red are Vocora semantic extensions for warning
+  and incorrect/destructive feedback.
+- Textual Angular Material buttons use a 13px radius, a 44px face, and a 4px
+  lower edge while retaining content-driven height.
+- Buttons use no gradients or ambient elevation; their only depth cue is the
+  canonical 4px lower edge.
+- Textual Material buttons use no CSS transition. Press, release, color, border,
+  and lower-edge changes are all immediate.
+- Feature code consumes semantic variables and shared classes, never local raw
+  colors or Material reskins.
 
 ## Required workflow
 
-1. Read `references/DESIGN.md` before making a visual change.
-2. Read `references/tokens.json` when choosing or introducing design tokens.
-3. Read `references/variables.scss` when implementing token usage in SCSS/CSS.
-4. Read `references/material-theme.scss` when changing Angular Material theme integration.
-5. Reuse existing semantic tokens and patterns before adding new ones.
-6. Design the light-theme and dark-theme behavior together.
-7. Validate responsive behavior, contrast, focus states, disabled states, and motion behavior.
-8. Run the skill validator and focused skill tests before finalizing the change.
+1. Read `references/DESIGN.md`.
+2. Read `references/tokens.json` before selecting or extending a token.
+3. Read `references/variables.scss` before implementing CSS variables.
+4. Read `references/theme.css` when a Tailwind theme bridge is relevant.
+5. Read `references/material-theme.scss` for Angular Material integration.
+6. Reuse the existing token and component pattern.
+7. Add a new token only when the requested semantic role is genuinely absent.
+8. Define and verify light and dark behavior together.
+9. Verify responsive layout, wrapped labels, focus, disabled state, and reduced
+   motion for the changed surface.
+10. Run the skill validator, its focused tests, and the affected product test.
 
-## Core visual principles
+## Angular Material button rule
 
-Vocora should feel:
+Use Angular Material as the interaction primitive.
 
-- simple;
-- friendly;
-- focused;
-- calm enough for long study sessions;
-- playful without becoming noisy or childish;
-- visually consistent across features;
-- easy to scan on mobile first.
+For a shared CTA, apply `vocora-button` and exactly one of:
 
-Prefer clear hierarchy, generous whitespace, restrained decoration, and explicit interaction states.
+- `vocora-button--primary`;
+- `vocora-button--success`;
+- `vocora-button--error`;
+- `vocora-button--warning`;
+- `vocora-button--secondary`.
 
-Do not add UI elements only to fill empty space.
+Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
+secondary intent. Use the native `disabled` attribute for every disabled
+state. Filled intents have no border. Secondary buttons retain their 2px
+`#E5E5E5` border in both enabled and disabled states. Disabled buttons have no
+lower edge. Light filled-disabled buttons use `#D9D9D9` with `#777777` labels;
+disabled secondary labels use `#D9D9D9`. Secondary labels use Charcoal
+(`#4B4B4B`) in both themes; the dark theme keeps the secondary button's Paper
+White surface for accessible contrast.
 
-## Brand identity
+Do not apply CTA color classes to answer-option tiles or other content-sized
+selection controls. Their colors remain selection-owned, while the global
+Material button geometry keeps their height content-driven.
 
-Vocora's visual identity is centered around a green parrot mascot and a restrained palette built from:
+Do not create a feature-local Material override. Extend the central design
+tokens, central Material adapter, and this reference together.
 
-- Vocora Green;
-- Vocora Mint;
-- Vocora Teal;
-- Vocora Orange;
-- neutral surface and text colors.
+## Typography rule
 
-The mascot is a brand asset, not a general-purpose decorative element.
+Use `duolingo-sans` for body, navigation, controls, and subheadings, with the
+documented fallback stack. Use `feather` only for display headlines at 48px or
+larger, with Feather Bold or Nunito Black as fallback.
 
-## Semantic color rule
+Do not use uppercase tracking on body copy. It is reserved for short controls
+and navigation labels.
 
-Components must consume semantic tokens instead of deciding raw colors locally.
+## Brand and imagery rule
 
-A component should express intent such as:
+The mascot and illustration language is flat, rounded, and bold. Illustration
+colors do not automatically become UI tokens. Keep character art special and
+avoid routine mascot decoration in dense study surfaces.
 
-- primary;
-- secondary;
-- success;
-- information;
-- warning;
-- error;
-- disabled;
-- mastered;
-- leitner-active;
-- not-started;
-- future.
+## Accessibility and responsiveness
 
-Do not hard-code raw hex values in feature components when a design token exists or should exist.
-
-## Light and dark theme rule
-
-Every visual token must be considered in both themes.
-
-At minimum, both themes must define:
-
-- page background;
-- surface;
-- raised surface;
-- subtle surface;
-- border;
-- text primary;
-- text secondary;
-- text disabled;
-- primary action;
-- primary action foreground;
-- secondary action;
-- focus ring;
-- success;
-- information;
-- warning;
-- error;
-- mastered;
-- leitner-active;
-- not-started;
-- future;
-- disabled;
-- brand accent colors.
-
-Light theme remains the default application theme.
-
-## UI constraints
-
-Avoid:
-
-- page-specific color palettes;
-- arbitrary raw color values;
-- unnecessary gradients;
-- heavy shadows;
-- excessive borders;
-- decorative color with no semantic purpose;
-- repeated mascot placement across dense practice UI;
-- pixel-for-pixel imitation of another product's visual system.
-
-## Accessibility
-
-- Meet WCAG AA contrast for normal text and interactive content where applicable.
-- Do not rely on color alone to communicate critical state.
-- Keep keyboard focus visible in both themes.
-- Keep interactive touch targets at least 44 x 44 CSS pixels when practical.
-- Preserve readable disabled states without making content disappear.
+- Keep visible keyboard focus.
+- Preserve native disabled semantics.
+- Do not communicate critical state by color alone.
+- Keep interactive targets at least 44 x 44 CSS pixels.
+- Let labels wrap instead of clipping them.
+- Avoid horizontal overflow at the repository minimum viewport.
 - Respect `prefers-reduced-motion`.
-
-## Responsive design
-
-- Design mobile first.
-- Support the repository's existing minimum viewport width.
-- Avoid horizontal overflow.
-- Keep primary actions reachable on small screens.
-- Reduce nonessential metadata before reducing readability.
-- Use responsive variants for dense tables and multi-column layouts.
-
-## Mascot usage
-
-Appropriate mascot contexts include:
-
-- onboarding;
-- important empty states;
-- meaningful achievements;
-- PWA install surfaces;
-- streak or milestone feedback;
-- selected branded loading states.
-
-Avoid routine mascot decoration in:
-
-- tables;
-- dense practice cards;
-- repeated list rows;
-- every button or panel.
 
 ## Determinism Boundary
 
@@ -186,50 +120,49 @@ Avoid routine mascot decoration in:
 
 The validator owns deterministic checks for:
 
-- required skill file structure;
-- valid token JSON syntax;
-- required light and dark theme branches;
-- required token groups;
-- valid hex color syntax where hex values are used;
-- duplicate or missing semantic tokens;
-- required light/dark parity for semantic color keys;
-- expected source-reference files.
+- required skill structure and reference files;
+- valid Design Tokens JSON;
+- the exact canonical foundation palette and font token identities;
+- complete light/dark semantic token parity;
+- required CSS variable parity with the token source;
+- required Material semantic mappings;
+- documented five-intent button contract and native disabled rule.
 
 ### Codex-owned
 
-Codex owns semantic design judgment, including:
+Codex owns semantic visual judgment, including:
 
-- visual hierarchy;
-- token selection by meaning;
-- layout choices;
-- density;
-- responsive composition;
-- readability;
-- whether mascot usage is appropriate;
-- whether a new token or pattern is justified;
-- whether light and dark versions preserve the same interaction meaning.
+- hierarchy, density, composition, and responsive layout;
+- whether an existing semantic token fits the requested meaning;
+- readable foreground/background selection;
+- appropriate mascot or illustration use;
+- whether a genuinely new semantic extension is justified.
+- whether light and dark variants preserve the same meaning and hierarchy.
 
 ### No manual fallback
 
-- Do not bypass or replace deterministic validation with manual inspection.
-
-- If the validator fails, fix the skill source, token data, or validator. Do not disable the rule, ignore the failure, or substitute prose-only verification.
+- Do not bypass deterministic validation.
+- If the validator fails, fix the canonical source, mapping, or validator; do
+  not replace it with prose-only inspection.
 
 ## Stop conditions
 
-If a requested UI change needs a visual concept not covered by the design system:
+Stop before implementation when:
 
-1. stop before inventing a local visual language;
-2. identify the missing semantic token or reusable pattern;
-3. extend the design system coherently for both light and dark themes;
-4. validate the new system rule;
-5. then implement the product change.
+- the requested semantic role is absent and cannot be represented honestly by
+  the canonical palette;
+- the requested font or asset is required exactly but is unavailable;
+- a feature-local override would be needed because the central Material
+  contract cannot express the requested behavior;
+- accessibility or content fit cannot be preserved.
 
-Never create a parallel visual system inside a feature.
+Report the missing system capability, extend the canonical design system when
+authorized, validate it, and only then implement the product surface.
 
-## Source-of-truth references
+## References
 
-- `references/DESIGN.md` — human-readable visual rules and component guidance.
-- `references/tokens.json` — machine-readable canonical tokens for both themes.
-- `references/variables.scss` — SCSS/CSS custom-property mapping reference.
-- `references/material-theme.scss` — Angular Material integration reference.
+- `references/DESIGN.md` — complete human-readable visual system.
+- `references/tokens.json` — canonical machine-readable foundation.
+- `references/variables.scss` — CSS custom properties and semantic aliases.
+- `references/theme.css` — `@theme` bridge.
+- `references/material-theme.scss` — Angular Material semantic bridge.

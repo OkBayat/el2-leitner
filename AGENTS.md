@@ -64,6 +64,13 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 - Reuse existing commands and source contracts instead of introducing parallel mechanisms for the same behavior.
 - Preserve backward-compatible public IDs, persisted learner progress, completed attempt snapshots, and existing user-facing behavior unless the task explicitly changes them.
 
+## Reusable slide constraint
+
+- Never create a feature-specific slide type, slide component, renderer, or parallel slide interaction.
+- Before implementing a slide-based experience, inspect the existing registered slide types and use an existing slide only when its interaction and evidence semantics fully match the requested behavior.
+- Do not force a scored slide such as `choice` into a non-scored selection flow, invent a correct answer, or weaken an existing slide contract to make it appear compatible.
+- If no existing slide fully supports the requested interaction, stop and tell the user which interaction is unsupported. Add a new slide only when the user explicitly authorizes a general reusable interaction; implement its object-driven contract, registry entry, tests, documentation, and design-system-compatible states together.
+
 ## Frontend styling
 
 - Prefer Angular Material components and directives whenever Material provides the standard interactive primitive needed by the UI, including buttons, icon buttons, dialogs/popups, menus, form fields and inputs, selects, checkboxes, radios, tabs, tooltips, snackbars, and progress indicators.
@@ -81,18 +88,15 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 Use test-driven development for new deterministic behavior and regression tests for bug fixes.
 
-Use this testing pyramid, from its fast foundation to its narrow smoke layer:
+Use this testing pyramid:
 
 1. Unit tests for pure functions, isolated services, and deterministic adapters.
 2. Behavior tests for domain and application rules observed through public behavior.
 3. Contract tests for HTTP APIs, persistence ports, provider adapters, schemas, and other boundaries.
 4. Regression tests at the lowest level that reproduces a previously discovered bug.
 5. Agent evaluation or regression tests for agent decisions, actions, and deterministic skill tooling.
-6. E2E smoke tests only for critical real-user journeys and complete-system connectivity.
 
-E2E tests must not be created by default. Before creating any E2E test, developers must prove that the scenario cannot be correctly covered by Unit Tests, Behavior Tests, Contract Tests, Regression Tests, or Agent Evaluation Tests. E2E tests are only allowed for a very small number of smoke scenarios that validate critical end-to-end system connectivity. Do not increase the number of E2E tests.
-
-GitHub CI must not install a browser for E2E or run E2E tests. The smoke suite is a manual local diagnostic; see `docs/TESTING.md` for its scope and command.
+E2E tests are disabled repository-wide. Never create, develop, invoke, or run E2E or Playwright tests, locally or in CI. The current browser tests can leave durable fingerprints and test state in a non-dedicated database. They may be reconsidered only after a dedicated, isolated test database exists and this repository rule and its fail-closed execution guards are explicitly revised. Until then, prove behavior with unit, behavior, contract, regression, or agent-evaluation tests.
 
 Before finalizing a change, run the smallest relevant focused tests and then the repository-level checks affected by the change. Do not disable, skip, weaken, or delete unrelated tests to make a change pass.
 

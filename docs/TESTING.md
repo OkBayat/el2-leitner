@@ -1,8 +1,8 @@
 # Testing Strategy
 
-Vocora gets most of its confidence from fast tests close to the behavior they
-own. Playwright is a small, manually run smoke diagnostic, not a coverage
-suite.
+Vocora gets its confidence from deterministic tests close to the behavior they
+own. Browser E2E is currently unavailable because it can persist fingerprints
+and test state in a non-dedicated database.
 
 ## Testing pyramid
 
@@ -18,52 +18,20 @@ Choose the lowest test level that can prove the behavior:
    discovered bug, kept at the owning boundary.
 5. **Agent evaluation/regression test** — agent decisions, permitted actions,
    outputs, and deterministic skill tooling.
-6. **E2E smoke test** — only complete-system connectivity and a critical
-   real-user journey that cannot be proven at a lower level.
 
-E2E tests must not be created by default. Do not add scenarios to the smoke
-suite. Any proposed replacement must first show why unit, behavior, contract,
-regression, or agent evaluation coverage cannot prove the scenario.
+## E2E disabled
 
-GitHub CI must never install a browser for E2E or run the Playwright suite.
-The fast `check:test-strategy` regression test enforces both the three-scenario
-limit and the absence of Playwright execution in GitHub workflows.
+Never create, develop, invoke, or run E2E or Playwright tests, locally or in
+CI. The npm E2E scripts and the default Playwright configuration fail closed
+before a browser can start. The retained specs are dormant reference material,
+not an executable test surface.
 
-## Manual smoke E2E
-
-The three retained Playwright scenarios use the real Docker stack and verify:
-
-- the application starts and registration completes the welcome-to-dashboard handoff;
-- a learner completes one review and the result reaches canonical persistence;
-- a learner starts the first course exercise from the library.
-
-Run them locally from a clean checkout. The dedicated Compose project, database,
-ports, and credentials keep the smoke run isolated from staging and production:
-
-```bash
-export COMPOSE_PROJECT_NAME=vocora-e2e-smoke
-export DB_NAME=vocora_e2e_smoke
-export DB_PASSWORD=vocora_e2e_smoke
-export MYSQL_ROOT_PASSWORD=vocora_e2e_smoke_root
-export DB_ADMIN_PASSWORD=vocora_e2e_smoke_root
-export JWT_SECRET=vocora-e2e-smoke-local-secret-at-least-32-characters
-export APP_HOST=127.0.0.1
-export APP_PORT=3200
-export PHPMYADMIN_HOST=127.0.0.1
-export PHPMYADMIN_PORT=8281
-docker compose up --build --detach
-cd ui
-npm ci
-npx playwright install chromium
-E2E_BASE_URL=http://127.0.0.1:3200 npm run e2e:smoke
-cd ..
-docker compose down
-```
-
-The browser installation is local only. Do not add these commands to GitHub
-Actions. The final command removes only the isolated smoke containers and
-network; it intentionally preserves the smoke volumes for reuse. Never add
-`--volumes` to the cleanup command.
+This restriction can be reconsidered only after Vocora has a dedicated,
+isolated test database and the root agent policy, npm guard, Playwright guard,
+and this document are deliberately revised together. Until then, use unit,
+behavior, contract, regression, or agent-evaluation coverage. The fast
+`check:test-strategy` regression test enforces the execution guards and scans
+GitHub workflows for forbidden Playwright execution.
 
 ## Removed browser coverage
 
@@ -85,7 +53,7 @@ scenarios were removed after confirming coverage at their owning boundaries:
 | `sentence-practice.spec.ts` | Retry flow, speech highlighting, daily totals, and Leitner isolation | Sentence domain/session service specs and backend sentence API/daily-attempt tests |
 | `shadowing-audio.spec.ts` | Native recorder silence and cleanup | PCM recorder and shadowing session specs plus backend silence/provider regressions |
 | `shadowing.spec.ts` | Retry, permission failure, cleanup, and responsive presentation | Shadowing domain/session service specs and authenticated API contracts |
-| `vocora.spec.ts` | Broad onboarding, learner, library, review, word-edit, spelling, and layout coverage | Registration and welcome component regressions plus focused review, state, vocabulary API, library, settings, spelling, sound, and persistence tests; the critical registration and review paths remain as smoke |
+| `vocora.spec.ts` | Broad onboarding, learner, library, review, word-edit, spelling, and layout coverage | Registration and welcome component regressions plus focused review, state, vocabulary API, library, settings, spelling, sound, and persistence tests |
 
 No AI-agent browser scenario existed. Agent behavior continues to use the
 skill-owned deterministic regression and evaluation tests rather than E2E.

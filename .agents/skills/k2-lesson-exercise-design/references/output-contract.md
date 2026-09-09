@@ -214,10 +214,11 @@ The current skill does **not** claim to own the final runtime `data` contract fo
 }
 ```
 
-The 16 provisional reusable `type` values are:
+The 17 provisional reusable `type` values are:
 
 ```text
 teaching-card
+selection
 choice
 truth
 matching

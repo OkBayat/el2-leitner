@@ -44,6 +44,28 @@ it('rejects client-graded shadowing and every other shadowing box', async () => 
   }
 });
 
+it('allows standalone attempts only for the registered practice-words modes', async () => {
+  const modes = [
+    'practice-words.vocabulary-dictation',
+    'practice-words.sentence-completion',
+    'practice-words.sentence-shadowing',
+  ];
+
+  for (const mode of modes) {
+    const { instance, writes, transaction } = repository(mode);
+    await instance.recordAttempt('u', 's', { day: '2026-09-05', correct: true });
+    assert.equal(writes.length, 3);
+    assert.equal(transaction.committed, true);
+  }
+
+  const { instance, writes } = repository('practice-words.unregistered');
+  await assert.rejects(
+    instance.recordAttempt('u', 's', { day: '2026-09-05', correct: true }),
+    { code: 'INVALID_SESSION' },
+  );
+  assert.equal(writes.length, 0);
+});
+
 it('rolls back the attempt and daily totals when timeline evidence cannot be written', async () => {
   const { instance, transaction } = repository('shadowing-house-1', true);
   await assert.rejects(instance.recordAttempt('u', 's', { day: '2026-09-05', correct: false, shadowing: true }), /Daily evidence unavailable/u);

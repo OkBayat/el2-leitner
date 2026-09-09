@@ -33,6 +33,19 @@ export const REUSABLE_SLIDE_FIXTURES: readonly SlideExerciseSlide[] = [
 		},
 	},
 	{
+		id: 'showcase-selection',
+		type: 'selection',
+		data: {
+			mode: 'single',
+			instruction: 'Choose one option.',
+			question: 'How would you like to continue?',
+			options: [
+				{ id: 'guided', label: 'Guided practice', description: 'Work with additional support.' },
+				{ id: 'independent', label: 'Independent practice', description: 'Work without additional support.' },
+			],
+		},
+	},
+	{
 		id: 'showcase-choice',
 		type: 'choice',
 		data: {

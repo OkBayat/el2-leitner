@@ -81,7 +81,6 @@ describe("SlidesSequenceExerciseComponent", () => {
 		).componentInstance as SlideExerciseComponent;
 		slideExercise.next();
 		expect(outcomes).not.toHaveBeenCalled();
-		slideExercise.next();
 		await fixture.componentInstance.finish("summary");
 		expect(outcomes).toHaveBeenCalledOnce();
 		expect(outcomes).toHaveBeenCalledWith({
@@ -278,5 +277,64 @@ describe("SlidesSequenceExerciseComponent", () => {
 				],
 			},
 		});
+	});
+
+	it("awaits an application-owned sequence completion handler before emitting completion", async () => {
+		TestBed.configureTestingModule({
+			imports: [SlidesSequenceExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		const outcomes = vi.fn();
+		const sequenceCompletion = vi.fn().mockResolvedValue(undefined);
+		fixture.componentInstance.outcome.subscribe(outcomes);
+		fixture.componentInstance.load({
+			...context,
+			sequenceCompletion,
+			config: {
+				slides: [
+					{ id: "choice", type: "choice", data: {} },
+					{ id: "summary", type: "summary", terminal: true, data: {} },
+				],
+			},
+		});
+		fixture.detectChanges();
+		const slideExercise = fixture.debugElement.query(
+			By.directive(SlideExerciseComponent),
+		).componentInstance as SlideExerciseComponent;
+		slideExercise.onContentEvent({
+			type: "answered",
+			data: { selectedOptionIds: ["correct"], correct: true },
+		});
+		slideExercise.next();
+
+		await fixture.componentInstance.finish("summary");
+
+		expect(sequenceCompletion).toHaveBeenCalledWith([
+			expect.objectContaining({ slideId: "choice", eventType: "answered" }),
+		]);
+		expect(outcomes).toHaveBeenCalledOnce();
+
+		sequenceCompletion.mockRejectedValueOnce(new Error("Could not save practice."));
+		fixture.componentInstance.load({
+			...context,
+			sequenceCompletion,
+		});
+		fixture.detectChanges();
+		const reloadedSlideExercise = fixture.debugElement.query(
+			By.directive(SlideExerciseComponent),
+		).componentInstance as SlideExerciseComponent;
+		reloadedSlideExercise.goTo("summary");
+		outcomes.mockClear();
+
+		await fixture.componentInstance.finish("summary");
+
+		expect(outcomes).not.toHaveBeenCalled();
+		expect(fixture.componentInstance.error()).toBe("Could not save practice.");
 	});
 });

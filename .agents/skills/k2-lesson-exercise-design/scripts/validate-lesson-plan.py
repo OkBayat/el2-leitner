@@ -10,7 +10,7 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 ALLOWED_SLIDE_TYPES = {
-    "teaching-card", "choice", "truth", "matching", "classification", "ordering",
+    "teaching-card", "selection", "choice", "truth", "matching", "classification", "ordering",
     "cloze", "structured-completion", "short-answer", "word-formation",
     "error-correction", "rewrite", "pronunciation", "dictation",
     "speaking-response", "writing-response",

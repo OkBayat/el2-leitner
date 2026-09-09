@@ -76,7 +76,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 
 	private readonly currentIndexState = signal(0);
 	private readonly guideOpenState = signal(false);
-	runtime: SlideExerciseRuntimeState = {};
+	private readonly runtimeState = signal<SlideExerciseRuntimeState>({});
 	private readonly deckState = signal<readonly SlideExerciseSlide[]>([]);
 	private readonly recordedResults: SlideExerciseResult[] = [];
 	readonly deckController: SlideExerciseDeckController = {
@@ -161,6 +161,14 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 		return this.deckState();
 	}
 
+	get runtime(): SlideExerciseRuntimeState {
+		return this.runtimeState();
+	}
+
+	set runtime(value: SlideExerciseRuntimeState) {
+		this.runtimeState.set(value);
+	}
+
 	get currentIndex(): number {
 		return this.currentIndexState();
 	}
@@ -172,26 +180,26 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 	get presentation(): SlideExercisePresentation | null {
 		const slide = this.currentSlide;
 		if (!slide) return null;
-		const guideOffset = this.hasLeadingGuide ? 1 : 0;
+		const progressOffset = this.leadingProgressOffset;
 		const presentation = resolveSlideExercisePresentation({
 			slide,
-			index: this.currentIndex - guideOffset,
-			total: this.deck.length - guideOffset,
+			index: this.currentIndex - progressOffset,
+			total: this.deck.length - progressOffset,
 			rendererDefaults: this.registry.resolve(slide.type)?.chromeDefaults,
 			exerciseDefaults: this.defaults,
 			runtime: this.runtime,
 		});
-		if (!this.hasLeadingGuide || this.currentIndex > 0) {
-			return presentation;
-		}
-		return {
-			...presentation,
-			header: { ...presentation.header, progress: null },
-		};
+		return presentation;
 	}
 
 	private get hasLeadingGuide(): boolean {
 		return this.deck[0]?.type === "teaching-card";
+	}
+
+	private get leadingProgressOffset(): number {
+		return this.deck[0]?.chrome?.header?.progress === null
+			? 1
+			: 0;
 	}
 
 	onContentState(state: SlideExerciseRuntimeState): void {

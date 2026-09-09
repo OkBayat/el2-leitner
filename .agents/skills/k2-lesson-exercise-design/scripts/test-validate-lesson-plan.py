@@ -139,6 +139,9 @@ def valid_plan() -> dict:
 
 
 class LessonPlanValidatorTests(unittest.TestCase):
+    def test_allows_generic_selection_in_provisional_plans(self) -> None:
+        self.assertIn("selection", MODULE.ALLOWED_SLIDE_TYPES)
+
     def test_accepts_minimal_valid_plan(self) -> None:
         self.assertEqual(MODULE.validate_plan(valid_plan()), [])
 

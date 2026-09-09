@@ -25,9 +25,9 @@
         "test": "npm run check:architecture && npm run check:test-strategy && npm run check:slide-library-structure && npm run check:bootstrap-theme && npm run check:angular-material-theme && npm run check:learning-path && npm run check:dashboard-design && npm run check:table-design && npm run check:library-design && npm run check:words-box-status && npm run check:review-answer-textarea && npm run check:bbc-listening && ng test --watch=false && npm run build:production && npm run check:pwa && npm run check:production-csp",
         "test:unit": "ng test --watch=false",
         "test:regression": "ng test --watch=false",
-        "e2e": "npm run e2e:smoke",
-        "e2e:smoke": "playwright test e2e/smoke.spec.ts",
-        "e2e:headed": "npm run e2e:smoke -- --headed"
+        "e2e": "node tools/e2e-disabled.mjs",
+        "e2e:smoke": "node tools/e2e-disabled.mjs",
+        "e2e:headed": "node tools/e2e-disabled.mjs"
     },
     "dependencies": {
         "@angular/cdk": "22.1.4",

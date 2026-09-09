@@ -34,9 +34,11 @@ export function options(
 	if (!Array.isArray(value)) throw new Error(`${label} are required.`);
 	const result = value.map((candidate) => {
 		const source = record(candidate, label);
+		const description = text(source['description']);
 		return {
 			id: requiredText(source['id'], `${label} id`),
 			label: requiredText(source['label'], `${label} label`),
+			...(description ? { description } : {}),
 		};
 	});
 	if (new Set(result.map((option) => option.id)).size !== result.length)
@@ -110,8 +112,8 @@ export function parseStimulus(value: unknown): SlideStimulus | undefined {
 		};
 	}
 	if (type === 'dialogue') {
-		if (!Array.isArray(source['turns']) || source['turns'].length < 2)
-			throw new Error('Dialogue stimulus requires at least two turns.');
+		if (!Array.isArray(source['turns']) || source['turns'].length < 1)
+			throw new Error('Dialogue stimulus requires at least one turn.');
 		const turns = source['turns'].map((candidate, index) => {
 			const turn = record(candidate, 'dialogue turn');
 			const voiceIndex = Number(turn['voiceIndex']);

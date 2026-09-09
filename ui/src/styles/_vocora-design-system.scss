@@ -1,150 +1,214 @@
 @mixin apply() {
-  :root,
-  html[data-theme='light'] {
-    --vocora-surface-page: #f8faf9;
-    --vocora-surface-base: #ffffff;
-    --vocora-surface-raised: #ffffff;
-    --vocora-surface-subtle: #f1f5f2;
-    --vocora-border: #e4eae6;
+	:root,
+	html[data-theme="light"] {
+		--vocora-surface-page: var(--color-paper-white);
+		--vocora-surface-base: var(--color-paper-white);
+		--vocora-surface-raised: var(--color-paper-white);
+		--vocora-surface-subtle: var(--color-storybook-green);
+		--vocora-border: var(--color-faded-gray);
 
-    --vocora-text-primary: #18201b;
-    --vocora-text-secondary: #59635c;
-    --vocora-text-secondary-rgb: 89, 99, 92;
-    --vocora-text-disabled: #a7b2aa;
-    --vocora-text-on-primary: #ffffff;
-    --vocora-text-on-strong: #ffffff;
+		--vocora-text-primary: var(--color-charcoal);
+		--vocora-text-secondary: var(--color-pencil-gray);
+		--vocora-text-secondary-rgb: 119, 119, 119;
+		--vocora-text-disabled: var(--color-faded-gray);
+		--vocora-text-on-primary: var(--color-paper-white);
+		--vocora-text-on-strong: var(--color-paper-white);
 
-    --vocora-action-primary: #58cc02;
-    --vocora-action-primary-rgb: 88, 204, 2;
-    --vocora-action-primary-hover: #58a700;
-    --vocora-action-primary-edge: #58a700;
-    --vocora-action-primary-foreground: #173500;
-    --vocora-action-secondary: #effbf3;
-    --vocora-action-secondary-foreground: #176437;
-    --vocora-focus-ring: #086f6b;
+		--vocora-action-primary: var(--color-spark-blue);
+		--vocora-action-primary-rgb: 28, 176, 246;
+		--vocora-action-primary-hover: var(--color-spark-blue);
+		--vocora-action-primary-edge: #1899d6;
+		--vocora-action-primary-foreground: var(--color-paper-white);
+		--vocora-action-secondary: var(--color-paper-white);
+		--vocora-action-secondary-hover: var(--color-paper-white);
+		--vocora-action-secondary-edge: var(--color-button-border-gray);
+		--vocora-action-secondary-border: var(--color-button-border-gray);
+		--vocora-action-secondary-foreground: var(--color-charcoal);
+		--vocora-action-secondary-disabled-background: var(--color-paper-white);
+		--vocora-action-secondary-disabled-foreground: var(--color-button-disabled-gray);
+		--vocora-action-secondary-disabled-border: var(--color-button-border-gray);
+		--vocora-action-success: var(--color-eager-green);
+		--vocora-action-success-hover: var(--color-eager-green);
+		--vocora-action-success-edge: var(--color-eager-green);
+		--vocora-action-success-foreground: var(--color-paper-white);
+		--vocora-action-warning: var(--color-attention-yellow);
+		--vocora-action-warning-hover: var(--color-attention-yellow);
+		--vocora-action-warning-edge: var(--color-attention-yellow);
+		--vocora-action-warning-foreground: var(--color-charcoal);
+		--vocora-action-error: var(--color-answer-red);
+		--vocora-action-error-hover: var(--color-answer-red);
+		--vocora-action-error-edge: var(--color-answer-red);
+		--vocora-action-error-foreground: var(--color-paper-white);
+		--vocora-action-disabled-background: var(--color-button-disabled-gray);
+		--vocora-action-disabled-foreground: var(--color-pencil-gray);
+		--vocora-action-disabled-border: var(--color-button-disabled-gray);
+		--vocora-focus-ring: var(--color-spark-blue);
 
-    --vocora-success: #58cc02;
-    --vocora-success-rgb: 88, 204, 2;
-    --vocora-success-surface: #d7ffb8;
-    --vocora-success-foreground: #335f00;
-    --vocora-information: #1cb0f6;
-    --vocora-information-rgb: 28, 176, 246;
-    --vocora-information-border: #84d8ff;
-    --vocora-information-surface: #ddf4ff;
-    --vocora-information-foreground: #063f5c;
-    --vocora-warning: #e99a00;
-    --vocora-warning-rgb: 233, 154, 0;
-    --vocora-error: #ff4b4b;
-    --vocora-error-rgb: 255, 75, 75;
-    --vocora-error-edge: #ea2b2b;
-    --vocora-error-surface: #ffdfe0;
-    --vocora-error-foreground: #4a0000;
-    --vocora-mastered: #258a49;
-    --vocora-leitner-active: #2563eb;
-    --vocora-not-started: #7c4ddb;
-    --vocora-future: #d2dad5;
-    --vocora-disabled: #a7b2aa;
+		--vocora-success: #58cc02;
+		--vocora-success-rgb: 88, 204, 2;
+		--vocora-success-surface: #d7ffb8;
+		--vocora-success-foreground: #335f00;
+		--vocora-information: #1cb0f6;
+		--vocora-information-rgb: 28, 176, 246;
+		--vocora-information-border: #84d8ff;
+		--vocora-information-surface: #ddf4ff;
+		--vocora-information-foreground: #063f5c;
+		--vocora-warning: #e99a00;
+		--vocora-warning-rgb: 233, 154, 0;
+		--vocora-error: #ff4b4b;
+		--vocora-error-rgb: 255, 75, 75;
+		--vocora-error-edge: #ea2b2b;
+		--vocora-error-surface: #ffdfe0;
+		--vocora-error-foreground: #4a0000;
+		--vocora-mastered: #258a49;
+		--vocora-leitner-active: #2563eb;
+		--vocora-not-started: #7c4ddb;
+		--vocora-future: #d2dad5;
+		--vocora-disabled: #a7b2aa;
 
-    --vocora-activity-vocabulary: #258a49;
-    --vocora-activity-listening: #2563eb;
-    --vocora-activity-shadowing: #086f6b;
-    --vocora-activity-reading: #7c4ddb;
-    --vocora-activity-writing: #d96a12;
-    --vocora-activity-grammar: #4f46e5;
+		--vocora-activity-vocabulary: #258a49;
+		--vocora-activity-listening: #2563eb;
+		--vocora-activity-shadowing: #086f6b;
+		--vocora-activity-reading: #7c4ddb;
+		--vocora-activity-writing: #d96a12;
+		--vocora-activity-grammar: #4f46e5;
 
-    --vocora-brand-green: #4fc66a;
-    --vocora-brand-green-strong: #258a49;
-    --vocora-brand-mint: #c8f3d5;
-    --vocora-brand-mint-light: #effbf3;
-    --vocora-brand-teal: #086f6b;
-    --vocora-brand-orange: #ffb51b;
-  }
+		--vocora-brand-green: #4fc66a;
+		--vocora-brand-green-strong: #258a49;
+		--vocora-brand-mint: #c8f3d5;
+		--vocora-brand-mint-light: #effbf3;
+		--vocora-brand-teal: #086f6b;
+		--vocora-brand-orange: #ffb51b;
+	}
 
-  html[data-theme='dark'] {
-    --vocora-surface-page: #0f1611;
-    --vocora-surface-base: #161f19;
-    --vocora-surface-raised: #1d2921;
-    --vocora-surface-subtle: #223027;
-    --vocora-border: #2a392f;
+	html[data-theme="dark"] {
+		--vocora-surface-page: #0f1611;
+		--vocora-surface-base: #161f19;
+		--vocora-surface-raised: #1d2921;
+		--vocora-surface-subtle: #223027;
+		--vocora-border: #536159;
 
-    --vocora-text-primary: #f0f7f2;
-    --vocora-text-secondary: #a9b8ad;
-    --vocora-text-secondary-rgb: 169, 184, 173;
-    --vocora-text-disabled: #6f7d73;
-    --vocora-text-on-primary: #08130b;
-    --vocora-text-on-strong: #f6fff8;
+		--vocora-text-primary: #f0f7f2;
+		--vocora-text-secondary: #a9b8ad;
+		--vocora-text-secondary-rgb: 169, 184, 173;
+		--vocora-text-disabled: #6f7d73;
+		--vocora-text-on-primary: #063f5c;
+		--vocora-text-on-strong: #f6fff8;
 
-    --vocora-action-primary: #72d72b;
-    --vocora-action-primary-rgb: 114, 215, 43;
-    --vocora-action-primary-hover: #83e640;
-    --vocora-action-primary-edge: #489b0c;
-    --vocora-action-primary-foreground: #0f2900;
-    --vocora-action-secondary: #274b35;
-    --vocora-action-secondary-foreground: #ddf7e5;
-    --vocora-focus-ring: #42bdb4;
+		--vocora-action-primary: #49c0f8;
+		--vocora-action-primary-rgb: 73, 192, 248;
+		--vocora-action-primary-hover: #5cc8fa;
+		--vocora-action-primary-edge: #2879a0;
+		--vocora-action-primary-foreground: #063f5c;
+		--vocora-action-secondary: #ffffff;
+		--vocora-action-secondary-hover: #ffffff;
+		--vocora-action-secondary-edge: #afafaf;
+		--vocora-action-secondary-border: #afafaf;
+		--vocora-action-secondary-foreground: #4b4b4b;
+		--vocora-action-secondary-disabled-background: #ffffff;
+		--vocora-action-secondary-disabled-foreground: #6f7d73;
+		--vocora-action-secondary-disabled-border: #afafaf;
+		--vocora-action-success: #72d72b;
+		--vocora-action-success-hover: #83e640;
+		--vocora-action-success-edge: #489b0c;
+		--vocora-action-success-foreground: #0f2900;
+		--vocora-action-warning: #ffc45a;
+		--vocora-action-warning-hover: #ffd178;
+		--vocora-action-warning-edge: #c47b00;
+		--vocora-action-warning-foreground: #352100;
+		--vocora-action-error: #ff6b6b;
+		--vocora-action-error-hover: #ff8585;
+		--vocora-action-error-edge: #cf3c3c;
+		--vocora-action-error-foreground: #4a0000;
+		--vocora-action-disabled-background: #344239;
+		--vocora-action-disabled-foreground: #829087;
+		--vocora-action-disabled-border: #46564b;
+		--vocora-focus-ring: #49c0f8;
 
-    --vocora-success: #72d72b;
-    --vocora-success-rgb: 114, 215, 43;
-    --vocora-success-surface: #294217;
-    --vocora-success-foreground: #d7ffb8;
-    --vocora-information: #49c0f8;
-    --vocora-information-rgb: 73, 192, 248;
-    --vocora-information-border: #2879a0;
-    --vocora-information-surface: #17384a;
-    --vocora-information-foreground: #c8ecff;
-    --vocora-warning: #ffc45a;
-    --vocora-warning-rgb: 255, 196, 90;
-    --vocora-error: #ff6b6b;
-    --vocora-error-rgb: 255, 107, 107;
-    --vocora-error-edge: #cf3c3c;
-    --vocora-error-surface: #4a2023;
-    --vocora-error-foreground: #ffd5d5;
-    --vocora-mastered: #65d780;
-    --vocora-leitner-active: #6ea8fe;
-    --vocora-not-started: #a98bff;
-    --vocora-future: #536159;
-    --vocora-disabled: #6f7d73;
+		--vocora-success: #72d72b;
+		--vocora-success-rgb: 114, 215, 43;
+		--vocora-success-surface: #294217;
+		--vocora-success-foreground: #d7ffb8;
+		--vocora-information: #49c0f8;
+		--vocora-information-rgb: 73, 192, 248;
+		--vocora-information-border: #2879a0;
+		--vocora-information-surface: #17384a;
+		--vocora-information-foreground: #c8ecff;
+		--vocora-warning: #ffc45a;
+		--vocora-warning-rgb: 255, 196, 90;
+		--vocora-error: #ff6b6b;
+		--vocora-error-rgb: 255, 107, 107;
+		--vocora-error-edge: #cf3c3c;
+		--vocora-error-surface: #4a2023;
+		--vocora-error-foreground: #ffd5d5;
+		--vocora-mastered: #65d780;
+		--vocora-leitner-active: #6ea8fe;
+		--vocora-not-started: #a98bff;
+		--vocora-future: #536159;
+		--vocora-disabled: #6f7d73;
 
-    --vocora-activity-vocabulary: #65d780;
-    --vocora-activity-listening: #6ea8fe;
-    --vocora-activity-shadowing: #42bdb4;
-    --vocora-activity-reading: #a98bff;
-    --vocora-activity-writing: #ffb26b;
-    --vocora-activity-grammar: #8f8bff;
+		--vocora-activity-vocabulary: #65d780;
+		--vocora-activity-listening: #6ea8fe;
+		--vocora-activity-shadowing: #42bdb4;
+		--vocora-activity-reading: #a98bff;
+		--vocora-activity-writing: #ffb26b;
+		--vocora-activity-grammar: #8f8bff;
 
-    --vocora-brand-green: #65d780;
-    --vocora-brand-green-strong: #4fc66a;
-    --vocora-brand-mint: #274b35;
-    --vocora-brand-mint-light: #1f3327;
-    --vocora-brand-teal: #42bdb4;
-    --vocora-brand-orange: #ffc15a;
-  }
+		--vocora-brand-green: #65d780;
+		--vocora-brand-green-strong: #4fc66a;
+		--vocora-brand-mint: #274b35;
+		--vocora-brand-mint-light: #1f3327;
+		--vocora-brand-teal: #42bdb4;
+		--vocora-brand-orange: #ffc15a;
+	}
 
-  :root {
-    --vocora-neutral-black: #000000;
+	:root {
+		--color-eager-green: #58cc02;
+		--color-storybook-green: #d7ffb8;
+		--color-spark-blue: #1cb0f6;
+		--color-fresh-leaf: #a5ed6e;
+		--color-night-ink: #000437;
+		--color-paper-white: #ffffff;
+		--color-charcoal: #4b4b4b;
+		--color-pencil-gray: #777777;
+		--color-faded-gray: #afafaf;
+		--color-button-disabled-gray: #d9d9d9;
+		--color-button-border-gray: #e5e5e5;
+		--color-attention-yellow: #ffc800;
+		--color-answer-red: #ff4b4b;
 
-    --vocora-space-1: 4px;
-    --vocora-space-2: 8px;
-    --vocora-space-3: 12px;
-    --vocora-space-4: 16px;
-    --vocora-space-5: 20px;
-    --vocora-space-6: 24px;
-    --vocora-space-8: 32px;
-    --vocora-space-10: 40px;
-    --vocora-space-12: 48px;
-    --vocora-space-16: 64px;
+		--vocora-font-display:
+			"feather", "Nunito Black", ui-sans-serif, system-ui, -apple-system,
+			BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		--vocora-font-body:
+			"duolingo-sans", "Inter", "Nunito Sans", ui-sans-serif, system-ui,
+			-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-    --vocora-radius-xs: 8px;
-    --vocora-radius-sm: 10px;
-    --vocora-radius-md: 14px;
-    --vocora-radius-lg: 18px;
-    --vocora-radius-xl: 24px;
-    --vocora-radius-dialog: 28px;
-    --vocora-radius-pill: 999px;
+		--vocora-neutral-black: #000000;
 
-    --vocora-motion-fast: 120ms;
-    --vocora-motion-normal: 180ms;
-    --vocora-motion-slow: 240ms;
-    --vocora-touch-target-min: 44px;
-  }
+		--vocora-space-1: 4px;
+		--vocora-space-2: 8px;
+		--vocora-space-3: 12px;
+		--vocora-space-4: 16px;
+		--vocora-space-5: 20px;
+		--vocora-space-6: 24px;
+		--vocora-space-8: 32px;
+		--vocora-space-10: 40px;
+		--vocora-space-12: 48px;
+		--vocora-space-16: 64px;
+
+		--vocora-radius-xs: 8px;
+		--vocora-radius-sm: 10px;
+		--vocora-radius-button: 13px;
+		--vocora-radius-md: 14px;
+		--vocora-radius-lg: 18px;
+		--vocora-radius-xl: 24px;
+		--vocora-radius-dialog: 28px;
+		--vocora-radius-pill: 999px;
+
+		--vocora-motion-fast: 120ms;
+		--vocora-motion-normal: 180ms;
+		--vocora-motion-slow: 240ms;
+		--vocora-touch-target-min: 44px;
+	}
 }

@@ -1,6 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { NotFoundError, ValidationError } from "../../../domain/errors.js";
 
+const STANDALONE_ATTEMPT_MODES = new Set([
+  "practice-words.vocabulary-dictation",
+  "practice-words.sentence-completion",
+  "practice-words.sentence-shadowing"
+]);
+
 function asDay(value) {
   if (!value) return null;
   if (typeof value === "string") return value.slice(0, 10);
@@ -65,10 +71,14 @@ export class MySqlPracticeSessionRepository {
       if (!session) {
         throw new NotFoundError("PRACTICE_SESSION_NOT_FOUND", "Active practice session was not found.");
       }
-      if (!String(session.mode || "").startsWith("sentence-house-") && !(shadowing === true && session.mode === "shadowing-house-1")) {
+      const mode = String(session.mode || "");
+      const supportsStandaloneAttempts = mode.startsWith("sentence-house-")
+        || STANDALONE_ATTEMPT_MODES.has(mode)
+        || (shadowing === true && mode === "shadowing-house-1");
+      if (!supportsStandaloneAttempts) {
         throw new ValidationError(
           "INVALID_SESSION",
-          "Only sentence-practice or server-graded Box 1 shadowing sessions can record standalone practice attempts."
+          "This practice mode cannot record standalone practice attempts."
         );
       }
 

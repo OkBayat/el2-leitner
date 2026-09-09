@@ -137,7 +137,7 @@ assert.ok(
 		styles.indexOf("@include angular-material-theme.apply();"),
 	"Shared Material component styles must be applied after semantic Material colors.",
 );
-assert.match(components, /\.mat-mdc-unelevated-button\.vocora-action-button/u);
+assert.match(components, /\.mat-mdc-unelevated-button/u);
 assert.match(
 	components,
 	/--mat-button-filled-container-color:\s*var\(\s*--vocora-component-action-background,\s*var\(--vocora-action-primary\)\s*\);/u,
@@ -162,18 +162,134 @@ assert.match(
 	/\.mat-mdc-icon-button\.vocora-secondary-icon-action\s*\{[^}]*--mat-icon-button-icon-color:\s*var\(\s*--vocora-action-secondary-foreground\s*\);/u,
 	"The shared secondary icon button must map its Material icon color to the Vocora secondary action token.",
 );
-assert.match(components, /var\(--vocora-action-primary-edge\)/u);
 assert.match(
 	theme,
 	/--mat-sys-error-container:\s*var\(--vocora-error-surface\);/u,
 );
-assert.match(designSystem, /--vocora-action-primary:\s*#58cc02;/iu);
+assert.match(designSystem, /--color-eager-green:\s*#58cc02;/iu);
+assert.match(designSystem, /--color-spark-blue:\s*#1cb0f6;/iu);
+assert.match(designSystem, /--color-paper-white:\s*#ffffff;/iu);
+assert.match(designSystem, /--color-charcoal:\s*#4b4b4b;/iu);
+assert.match(designSystem, /--color-pencil-gray:\s*#777777;/iu);
+assert.match(designSystem, /--color-faded-gray:\s*#afafaf;/iu);
+assert.match(
+	designSystem,
+	/--vocora-action-primary:\s*var\(--color-spark-blue\);/iu,
+);
+assert.match(
+	designSystem,
+	/--vocora-action-success:\s*var\(--color-eager-green\);/iu,
+	"Success actions must retain the canonical Eager Green role.",
+);
+assert.match(
+	designSystem,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#49c0f8;[^}]*--vocora-action-success:\s*#72d72b;/iu,
+	"The new button language must define independently tuned dark-theme actions.",
+);
+assert.match(
+	designSystem,
+	/--vocora-action-secondary-foreground:\s*var\(--color-charcoal\);/iu,
+	"Light secondary buttons must use the canonical Charcoal label color.",
+);
+assert.match(designSystem, /--color-button-disabled-gray:\s*#d9d9d9;/iu);
+assert.match(designSystem, /--color-button-border-gray:\s*#e5e5e5;/iu);
+assert.match(designSystem, /--vocora-action-secondary-border:\s*var\(--color-button-border-gray\);/iu);
+assert.match(designSystem, /--vocora-action-secondary-disabled-foreground:\s*var\(--color-button-disabled-gray\);/iu);
+assert.match(designSystem, /--vocora-action-disabled-background:\s*var\(--color-button-disabled-gray\);/iu);
+assert.match(designSystem, /--vocora-action-disabled-foreground:\s*var\(--color-pencil-gray\);/iu);
+assert.match(
+	designSystem,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*#ffffff;[^}]*--vocora-action-secondary-foreground:\s*#4b4b4b;/iu,
+	"Dark secondary buttons must preserve the white surface and Charcoal label pairing.",
+);
 assert.match(designSystem, /--vocora-error:\s*#ff4b4b;/iu);
 assert.match(designSystem, /--vocora-information-surface:\s*#ddf4ff;/iu);
+
+for (const intent of ["primary", "secondary", "success", "warning", "error"]) {
+	assert.match(
+		components,
+		new RegExp(`\\.vocora-button--${intent}\\b`),
+		`Material button intent '${intent}' must have a central modifier class.`,
+	);
+}
+
+for (const [intent, token] of [
+	["primary", "primary"],
+	["secondary", "secondary"],
+	["success", "success"],
+	["warning", "warning"],
+	["error", "error"],
+]) {
+	assert.match(
+		components,
+		new RegExp(
+			`\\.vocora-button--${intent}\\s*\\{[^}]*--vocora-component-action-background:\\s*var\\(--vocora-action-${token}\\);`,
+			"u",
+		),
+		`Material button intent '${intent}' must map to its semantic background token.`,
+	);
+}
+
+for (const token of ["disabled-background", "disabled-foreground"]) {
+	assert.match(
+		designSystem,
+		new RegExp(
+			`--vocora-action-${token}:\\s*var\\(--color-[^)]+\\);`,
+			"iu",
+		),
+		`Button token '${token}' must exist in the product design system.`,
+	);
+}
+
+assert.match(
+	components,
+	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*44px;/u,
+	"All textual Material buttons must allow wrapped labels while preserving the minimum touch target.",
+);
+assert.match(
+	components,
+	/border-radius:\s*var\(--vocora-radius-button\);/u,
+	"Material action buttons must use the shared 13px radius token.",
+);
+assert.match(
+	components,
+	/box-shadow:\s*0 4px 0/u,
+	"Enabled Material buttons must use the canonical four-pixel lower edge.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-unelevated-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-raised-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-outlined-button\s*\{[^}]*border-width:\s*2px;/u,
+	"Filled buttons must be borderless while outlined buttons keep the canonical two-pixel border.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-button:not\(:disabled\):active,[\s\S]*?\.mat-tonal-button:disabled\s*\{[^}]*box-shadow:\s*none;[^}]*transform:\s*translateY\(4px\);/u,
+	"Pressed and disabled Material buttons must remove the lower edge within the preserved footprint.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*transition:\s*none\s*!important;/u,
+	"Textual Material buttons must not animate any visual property.",
+);
+assert.match(
+	components,
+	/\.vocora-button--secondary\s*\{[^}]*--vocora-component-action-border:\s*var\(--vocora-action-secondary-border\);/u,
+	"Secondary buttons must use the canonical outlined treatment.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-outlined-button:not\(:disabled\)\s*\{[^}]*--mat-button-outlined-label-text-color:\s*var\(\s*--vocora-action-secondary-foreground\s*\);[^}]*color:\s*var\(--vocora-action-secondary-foreground\);/u,
+	"Every enabled Material outlined button must use the canonical secondary label color.",
+);
+assert.match(
+	components,
+	/:disabled[^{]*\{[^}]*--mat-button-filled-disabled-container-color:/u,
+	"Every button intent must inherit a deterministic disabled treatment.",
+);
 assert.match(
 	exerciseAction,
-	/\.slide-exercise-action\[data-state='primary'\][^{]*\{[^}]*--vocora-component-action-foreground:\s*var\(--vocora-text-on-strong\);/u,
-	"Exercise primary actions must use the high-contrast light foreground token.",
+	/\.slide-exercise-action\[data-state=["']primary["']\][^{]*\{[^}]*--vocora-component-action-foreground:\s*var\(\s*--vocora-action-primary-foreground\s*\);/u,
+	"Exercise primary actions must use the canonical button foreground token.",
 );
 assert.doesNotMatch(
 	exerciseFooter,
