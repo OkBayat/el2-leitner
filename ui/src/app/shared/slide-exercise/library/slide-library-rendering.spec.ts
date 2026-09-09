@@ -83,6 +83,8 @@ describe('reusable slide renderer contract', () => {
 		})) {
 			expect(answer?.getAttribute(name)).toBe(value);
 		}
+		answer?.focus();
+		expect(getComputedStyle(answer!).outlineStyle).toBe('none');
 
 		normal?.click();
 		slow?.click();

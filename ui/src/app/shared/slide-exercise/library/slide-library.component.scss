@@ -52,6 +52,11 @@ blockquote {
 	white-space: nowrap;
 }
 
+.dictation-answer-input:focus,
+.dictation-answer-input:focus-visible {
+	outline-style: none;
+}
+
 .slide-interaction h1 {
 	font-size: clamp(24px, 5vw, 36px);
 	line-height: 1.2;
