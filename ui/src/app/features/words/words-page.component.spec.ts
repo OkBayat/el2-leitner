@@ -50,6 +50,7 @@ describe('WordsPageComponent', () => {
     expect(element.textContent).not.toContain('Previous');
     expect(element.textContent).not.toContain('Next');
     expect(element.querySelectorAll('.word-link')).toHaveLength(40);
+    expect(getComputedStyle(element.querySelector<HTMLButtonElement>('.add-to-leitner')!).whiteSpace).toBe('nowrap');
 
     element.querySelector<HTMLButtonElement>('.add-to-leitner')?.click();
     await fixture.whenStable();

@@ -48,6 +48,12 @@ table {
   width: 100%;
 }
 
+.mat-column-box {
+  width: 168px;
+  padding-inline: var(--vocora-space-3);
+  text-align: center;
+}
+
 .word-link {
   display: inline-flex;
   align-items: center;
@@ -88,6 +94,9 @@ table {
 
 .add-to-leitner {
   min-height: var(--vocora-touch-target-min);
+  min-inline-size: 144px;
+  padding-inline: var(--vocora-space-4);
+  white-space: nowrap;
 }
 
 .empty {
@@ -117,5 +126,17 @@ table {
 
   .filters {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-column-box {
+    width: 152px;
+    padding-inline: var(--vocora-space-2);
+  }
+
+  .add-to-leitner {
+    min-inline-size: 136px;
+    padding-inline: var(--vocora-space-3);
   }
 }
