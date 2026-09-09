@@ -182,6 +182,7 @@ export interface AnswerField {
 	readonly id: string;
 	readonly label?: string;
 	readonly answers: readonly string[];
+	readonly definitions?: readonly string[];
 	readonly wordLimit?: number;
 	readonly caseSensitive?: boolean;
 	readonly punctuationSensitive?: boolean;

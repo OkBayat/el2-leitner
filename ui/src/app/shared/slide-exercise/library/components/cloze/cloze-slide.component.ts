@@ -1,9 +1,11 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	HostListener,
 	OnDestroy,
 	signal,
 } from '@angular/core';
+import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import type {
 	SlideContentComponent,
@@ -66,7 +68,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 @Component({
 	selector: 'app-cloze-slide',
 	standalone: true,
-	imports: [MatButtonModule, SlideStimulusComponent],
+	imports: [MatButtonModule, OverlayModule, SlideStimulusComponent],
 	templateUrl: './cloze-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,8 +77,24 @@ export class ClozeSlideComponent
 	extends AnswerFieldsSlideBase<ClozeSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	private detailsOrigin?: HTMLTextAreaElement;
 	readonly segments = signal<ReturnType<typeof clozeSegments>>([]);
 	readonly activeBlankId = signal('');
+	readonly wordDetailsOpen = signal(false);
+	readonly wordDetailsPositions: ConnectedPosition[] = [
+		{
+			originX: 'center',
+			originY: 'bottom',
+			overlayX: 'center',
+			overlayY: 'top',
+		},
+		{
+			originX: 'center',
+			originY: 'top',
+			overlayX: 'center',
+			overlayY: 'bottom',
+		},
+	];
 	fields(): readonly AnswerField[] {
 		return this.data().blanks;
 	}
@@ -85,6 +103,7 @@ export class ClozeSlideComponent
 		this.begin(context.slideId, data);
 		this.answers.set({});
 		this.segments.set(clozeSegments(data.content));
+		this.wordDetailsOpen.set(false);
 		this.activeBlankId.set(
 			data.inputMode === 'select' ? '' : (data.blanks[0]?.id ?? ''),
 		);
@@ -108,6 +127,36 @@ export class ClozeSlideComponent
 	focusBlank(id: string): void {
 		if (this.interactionState() !== 'idle') return;
 		this.activeBlankId.set(id);
+	}
+	openWordDetails(id: string, event: Event): void {
+		if (this.interactionState() === 'idle') return;
+		this.activeBlankId.set(id);
+		this.detailsOrigin = event.currentTarget as HTMLTextAreaElement;
+		this.wordDetailsOpen.set(true);
+	}
+	closeWordDetails(restoreFocus = false): void {
+		this.wordDetailsOpen.set(false);
+		if (restoreFocus) this.detailsOrigin?.focus();
+	}
+	onWordDetailsOutsideClick(): void {
+		this.closeWordDetails();
+	}
+	resolvedSentenceSegments(
+		activeFieldId: string,
+	): readonly { readonly text: string; readonly highlighted: boolean }[] {
+		return this.segments().map((segment) => {
+			if (segment.text !== undefined)
+				return { text: segment.text, highlighted: false };
+			const field = this.blank(segment.fieldId);
+			return {
+				text: field
+					? this.answers()[field.id]?.trim() ||
+						field.answers[0] ||
+						'…'
+					: '…',
+				highlighted: segment.fieldId === activeFieldId,
+			};
+		});
 	}
 	selectChoice(word: string): void {
 		const field =
@@ -158,7 +207,14 @@ export class ClozeSlideComponent
 		)
 			this.checkFields();
 	}
+	@HostListener('document:keydown', ['$event'])
+	onDocumentKeydown(event: KeyboardEvent): void {
+		if (event.key !== 'Escape' || !this.wordDetailsOpen()) return;
+		event.preventDefault();
+		this.closeWordDetails(true);
+	}
 	ngOnDestroy(): void {
+		this.wordDetailsOpen.set(false);
 		this.destroy();
 	}
 }

@@ -2,16 +2,22 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	OnDestroy,
+	inject,
 	signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { SpeechService } from '../../../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
 } from '../../../slide-content-contracts';
 import { ScoredSlideBase } from '../../scored-slide.base';
-import type { ClassificationSlideData } from '../../slide-library.models';
+import type {
+	ClassificationItem,
+	ClassificationSlideData,
+} from '../../slide-library.models';
 import { SlideStimulusComponent } from '../../slide-stimulus.component';
 import { common, stringMode } from '../../slide-library.component-support';
 import { options, record, requiredText } from '../../slide-library.utils';
@@ -79,6 +85,8 @@ export class ClassificationSlideComponent
 	extends ScoredSlideBase<ClassificationSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	private readonly speech = inject(SpeechService);
+	private readonly store = inject(LearningStoreService);
 	readonly selectedItemId = signal('');
 	readonly assignments = signal<Readonly<Record<string, string>>>({});
 	load(context: SlideContentContext): void {
@@ -87,7 +95,11 @@ export class ClassificationSlideComponent
 		this.assignments.set({});
 	}
 	selectItem(id: string): void {
-		if (this.interactionState() === 'idle') this.selectedItemId.set(id);
+		const item = this.data().items.find((candidate) => candidate.id === id);
+		if (!item || this.interactionState() !== 'idle') return;
+		this.selectedItemId.set(id);
+		const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+		this.speech.speak(item.label, rate);
 	}
 	assignSelected(categoryId: string): void {
 		const id = this.selectedItemId();
@@ -98,11 +110,21 @@ export class ClassificationSlideComponent
 			Object.keys(this.assignments()).length === this.data().items.length,
 		);
 	}
-	assignedLabels(categoryId: string): string {
-		return this.data()
-			.items.filter((item) => this.assignments()[item.id] === categoryId)
-			.map((item) => item.label)
-			.join(', ');
+	assignedItems(categoryId: string): readonly ClassificationItem[] {
+		return this.data().items.filter(
+			(item) => this.assignments()[item.id] === categoryId,
+		);
+	}
+	selectedItemLabel(): string {
+		return (
+			this.data().items.find((item) => item.id === this.selectedItemId())
+				?.label ?? ''
+		);
+	}
+	handleBucketKeydown(event: KeyboardEvent, categoryId: string): void {
+		if (event.key !== 'Enter' && event.key !== ' ') return;
+		event.preventDefault();
+		this.assignSelected(categoryId);
 	}
 	assignmentState(id: string): string {
 		if (this.interactionState() === 'idle')
@@ -165,6 +187,7 @@ export class ClassificationSlideComponent
 		);
 	}
 	ngOnDestroy(): void {
+		this.speech.cancel();
 		this.destroy();
 	}
 }

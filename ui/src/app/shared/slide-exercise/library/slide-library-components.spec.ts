@@ -207,7 +207,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('validates every ClassificationSlide category assignment', () => {
-		const component = new ClassificationSlideComponent();
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClassificationSlideComponent(),
+		);
 		load(component, 'classification', {
 			instruction: 'Classify the words.',
 			categories: [
@@ -220,6 +223,7 @@ describe('reusable slide library behavior', () => {
 			],
 		});
 		component.selectItem('paw');
+		expect(speech.speak).toHaveBeenCalledWith('paw', 0.95);
 		component.assignSelected('animal');
 		component.selectItem('root');
 		component.assignSelected('plant');

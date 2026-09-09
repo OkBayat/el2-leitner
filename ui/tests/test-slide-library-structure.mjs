@@ -37,6 +37,15 @@ const clozeTemplate = readFileSync(
 	join(libraryRoot, 'components', 'cloze', 'cloze-slide.component.html'),
 	'utf8',
 );
+const classificationTemplate = readFileSync(
+	join(
+		libraryRoot,
+		'components',
+		'classification',
+		'classification-slide.component.html',
+	),
+	'utf8',
+);
 
 assert.doesNotMatch(
 	barrel,
@@ -108,6 +117,8 @@ for (const attribute of [
 assert.match(clozeTemplate, /class="cloze-input-measure"/u);
 assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
+assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
+assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
 assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
 assert.match(clozeTemplate, /class="choice-option"/u);
 assert.match(

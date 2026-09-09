@@ -165,6 +165,15 @@ describe('reusable slide renderer contract', () => {
 		const classifiedItem = (
 			classificationFixture.nativeElement as HTMLElement
 		).querySelector('.chip-list button');
+		const classificationBucket = (
+			classificationFixture.nativeElement as HTMLElement
+		).querySelector('.bucket');
+		expect(classificationBucket?.tagName).toBe('DIV');
+		expect(
+			(classificationFixture.nativeElement as HTMLElement).querySelector(
+				'button.bucket',
+			),
+		).toBeNull();
 		expect(classifiedItem?.getAttribute('aria-label')).toContain(
 			'incorrect; correct category Animal',
 		);
@@ -241,6 +250,50 @@ describe('reusable slide renderer contract', () => {
 		textarea.dispatchEvent(new Event('input'));
 
 		expect(fixture.componentInstance.answers()['source']).toBe('renewable energy');
+	});
+
+	it('opens vocabulary details from an answered free-text cloze field', async () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'cloze-vocabulary-details',
+			type: 'cloze',
+			data: {
+				content:
+					'The players were exultant after the final {{whistle}}.',
+				blanks: [
+					{
+						id: 'whistle',
+						answers: ['whistle'],
+						definitions: [
+							'a small device that makes a high sound when air passes through it',
+						],
+					},
+				],
+			},
+		});
+		fixture.componentInstance.setAnswer('whistle', 'whistle');
+		fixture.componentInstance.handleAction('check');
+		fixture.detectChanges();
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea.cloze-input',
+		) as HTMLTextAreaElement;
+		expect(textarea.readOnly).toBe(true);
+		expect(textarea.disabled).toBe(false);
+		textarea.click();
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		const details = document.body.querySelector(
+			'[data-testid="cloze-word-details"]',
+		);
+		expect(details?.textContent).toContain(
+			'The players were exultant after the final whistle.',
+		);
+		expect(details?.textContent).toContain(
+			'a small device that makes a high sound',
+		);
+		fixture.destroy();
 	});
 
 	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {

@@ -173,6 +173,12 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
   assert.ok(teachingCards.every((slide) => nonEmpty(slide.data.instruction)
     && nonEmpty(slide.data.explanation)
     && slide.data.blocks.every((block) => nonEmpty(block.title))));
+  const collocationCloze = unitOne.exercises
+    .flatMap((exercise) => exercise.config.slides ?? [])
+    .find((slide) => slide.id === "cvfi-u01-collocations-context");
+  assert.ok(collocationCloze);
+  assert.ok(collocationCloze.data.blanks.every((blank) =>
+    Array.isArray(blank.definitions) && blank.definitions.every(nonEmpty)));
   assert.deepEqual(unitOne.exercises[2].config.scope, { kind: "lesson-source" });
   assert.deepEqual(unitOne.exercises[13].config.scope, { kind: "lesson-source" });
   assert.equal(unitOne.exercises[13].config.slides[1].data.generatedSlide.type, "meaning-choice");
