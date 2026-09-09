@@ -1,6 +1,6 @@
 :host {
   display: block;
-  height: 100dvh;
+  height: var(--shell-content-viewport-height);
   min-height: 0;
   overflow: hidden;
   background: var(--mat-sys-surface);
@@ -52,19 +52,12 @@
 .runner-card h1, .runner-card p { margin: 0; }
 .runner-card p { max-width: 44ch; color: var(--mat-sys-on-surface-variant); }
 .runner-card__marker { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--mat-sys-primary-container); color: var(--mat-sys-on-primary-container); font-size: 1.5rem; font-weight: 900; }
-.runner-card__eyebrow { color: var(--mat-sys-primary)!important; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; }
-.runner-card__meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
-.runner-card__meta span { padding: 6px 10px; border-radius: 999px; background: var(--mat-sys-surface-container-high); font-size: 0.8rem; font-weight: 700; }
 .runner-card button, .runner-inline-error button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: var(--mat-sys-primary); color: var(--mat-sys-on-primary); font-weight: 800; cursor: pointer; }
 .runner-card button:focus-visible, .runner-inline-error button:focus-visible { outline: 3px solid var(--mat-sys-primary); outline-offset: 2px; }
 .runner-inline-error { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 14px 18px 0; padding: 12px 14px; border-radius: 14px; background: var(--mat-sys-error-container); color: var(--mat-sys-on-error-container); }
 .runner-spinner { width: 24px; height: 24px; border: 3px solid var(--mat-sys-outline-variant); border-top-color: var(--mat-sys-primary); border-radius: 50%; animation: spin 700ms linear infinite; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-
-@media (min-width: 601px) {
-  :host { height: 100vh; }
-}
 
 @media (max-width: 520px) {
   .runner__workspace { align-items: start; padding-top: 20px; }

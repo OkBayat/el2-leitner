@@ -4,6 +4,7 @@
 	--shell-header-height: calc(64px + var(--safe-area-top, 0px));
 	--shell-bottom-height: calc(80px + var(--safe-area-bottom, 0px));
 	--shell-sidebar-width: 0px;
+	--shell-content-viewport-height: calc(100dvh - var(--shell-header-height) - var(--shell-bottom-height) - 36px);
 	display: block;
 	min-height: 100dvh;
 	background: var(--mat-sys-surface);
@@ -158,6 +159,7 @@ a:focus-visible, button:focus-visible {
 		--shell-header-height: 0px;
 		--shell-bottom-height: 0px;
 		--shell-sidebar-width: 88px;
+		--shell-content-viewport-height: calc(100dvh - 84px);
 		padding-left: calc(var(--shell-sidebar-width) + var(--safe-area-left, 0px));
 	}
 	.mobile-status, .mobile-nav { display: none; }
