@@ -50,6 +50,32 @@ test("collection loader always ignores example-collection.md", async () => {
   }
 });
 
+test("collection loader accepts a course catalog with lessons and no vocabulary", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "vocora-collections-"));
+  const courseOnlySource = `
+# Grammar for IELTS
+## Unit 1 — Present tenses
+`;
+  try {
+    assert.throws(
+      () => new VocabularyFileParser().parse(courseOnlySource),
+      { code: "EMPTY_IMPORT" }
+    );
+    await writeFile(join(directory, "grammar-for-ielts.md"), courseOnlySource, "utf8");
+
+    const [sourceRecord] = await loadCollectionSources(directory, new VocabularyFileParser());
+    assert.equal(sourceRecord.slug, "grammar-for-ielts");
+    assert.equal(sourceRecord.parsed.title, "Grammar for IELTS");
+    assert.deepEqual(sourceRecord.parsed.sections.map((section) => section.title), [
+      "Unit 1 — Present tenses"
+    ]);
+    assert.equal(sourceRecord.parsed.entries.length, 0);
+    assert.equal(sourceRecord.sourceItemCount, 0);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("collection source format version forces provenance-aware resyncs", () => {
   assert.equal(COLLECTION_SOURCE_FORMAT_VERSION, 2);
 });
