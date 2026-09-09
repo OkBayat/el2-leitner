@@ -118,6 +118,19 @@ describe('HomePageComponent', () => {
     expect(host.querySelector('[data-testid="home-course-status"]')?.textContent).toContain('Done');
   });
 
+  it('links the dashboard announcement to the Vocora Telegram channel', async () => {
+    const fixture = await render();
+    const host: HTMLElement = fixture.nativeElement;
+    const banner = host.querySelector<HTMLAnchorElement>('[data-testid="telegram-channel-banner"]');
+
+    expect(banner?.href).toBe('https://t.me/vocorair');
+    expect(banner?.target).toBe('_blank');
+    expect(banner?.rel).toContain('noopener');
+    expect(banner?.rel).toContain('noreferrer');
+    expect(banner?.textContent).toContain('Join Vocora on Telegram for updates and new features.');
+    expect(banner?.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
+  });
+
   it('switches a completed daily review to free Leitner practice', async () => {
     state.set(stateWithDueReview(false));
     const fixture = await render();
