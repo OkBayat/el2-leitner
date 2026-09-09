@@ -143,16 +143,6 @@ blockquote {
 	color: var(--vocora-information-foreground);
 }
 
-[data-state='correct'] {
-	border-color: var(--vocora-success) !important;
-	background: var(--vocora-success-surface) !important;
-}
-
-[data-state='incorrect'] {
-	border-color: var(--vocora-error) !important;
-	background: var(--vocora-error-surface) !important;
-}
-
 .choice-option[data-state='correct'] {
 	box-shadow: 0 3px 0 var(--vocora-action-primary-edge);
 }

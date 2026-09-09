@@ -30,6 +30,10 @@ const sharedStyles = readFileSync(
 	join(libraryRoot, 'slide-library.component.scss'),
 	'utf8',
 );
+const materialComponents = readFileSync(
+	join(uiRoot, 'src/styles/_angular-material-components.scss'),
+	'utf8',
+);
 const layoutStyles = readFileSync(
 	join(uiRoot, 'src/app/shared/slide-exercise/slide-exercise.component.scss'),
 	'utf8',
@@ -122,6 +126,18 @@ assert.match(
 	sharedStyles,
 	/\.choice-option\[data-state='selected'\][\s\S]*box-shadow:[^;]*var\(--vocora-information-border\)/u,
 );
+assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='correct'\]\s*\{/u);
+assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='incorrect'\]\s*\{/u);
+const correctSoftField = materialComponents.match(
+	/\.mat-mdc-form-field\.vocora-form-field--soft\[data-state='correct'\]\s*\{([\s\S]*?)\n\t\}/u,
+)?.[1] ?? '';
+assert.match(correctSoftField, /--mdc-outlined-text-field-outline-color:\s*var\(\s*--vocora-success\s*\);/u);
+assert.match(correctSoftField, /--mat-form-field-outlined-outline-color:\s*var\(\s*--vocora-success\s*\);/u);
+const correctSoftFieldWrapper = materialComponents.match(
+	/\.mat-mdc-form-field\.vocora-form-field--soft\[data-state='correct'\]\s+\.mat-mdc-text-field-wrapper\s*\{([\s\S]*?)\n\t\}/u,
+)?.[1] ?? '';
+assert.match(correctSoftFieldWrapper, /background:\s*var\(--vocora-success-surface\);/u);
+assert.doesNotMatch(materialComponents, /\.vocora-form-field--soft\[data-state='incorrect'\]/u);
 assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);

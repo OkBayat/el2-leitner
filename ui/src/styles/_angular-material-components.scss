@@ -342,6 +342,20 @@
 		box-shadow: none;
 	}
 
+	.mat-mdc-form-field.vocora-form-field--soft[data-state='correct'] {
+		--mdc-outlined-text-field-outline-color: var(--vocora-success);
+		--mdc-outlined-text-field-hover-outline-color: var(--vocora-success);
+		--mdc-outlined-text-field-focus-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-hover-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-focus-outline-color: var(--vocora-success);
+	}
+
+	.mat-mdc-form-field.vocora-form-field--soft[data-state='correct']
+		.mat-mdc-text-field-wrapper {
+		background: var(--vocora-success-surface);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.mat-mdc-unelevated-button.vocora-button,
 		.mat-mdc-raised-button.vocora-button,
