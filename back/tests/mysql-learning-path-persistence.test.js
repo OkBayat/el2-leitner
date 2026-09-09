@@ -3,12 +3,15 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 import { LearningPathDefinitionReader } from "../src/application/collection-learning-path/ports/LearningPathDefinitionReader.js";
+import { LearningPathCatalogReader } from "../src/application/collection-learning-path/ports/LearningPathCatalogReader.js";
 import { LearningPathDefinitionWriter } from "../src/application/collection-learning-path/ports/LearningPathDefinitionWriter.js";
 import { LearningPathProgressReader } from "../src/application/collection-learning-path/ports/LearningPathProgressReader.js";
 import { LearningPathProgressWriter } from "../src/application/collection-learning-path/ports/LearningPathProgressWriter.js";
 import { LearningPathRecordingArtifactRepository } from "../src/application/collection-learning-path/ports/LearningPathRecordingArtifactRepository.js";
 import { LearningPathTransactionManager } from "../src/application/collection-learning-path/ports/LearningPathTransactionManager.js";
 import { MySqlLearningPathDefinitionCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionCommandRepository.js";
+import { MySqlLearningPathAccessQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
+import { MySqlLearningPathCatalogQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathCatalogQueryRepository.js";
 import { MySqlLearningPathDefinitionQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressCommandRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressCommandRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../src/infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
@@ -48,11 +51,111 @@ class RecordingPool {
 test("Learning Path persistence adapters implement segregated application ports", () => {
   const pool = new RecordingPool();
   assert.ok(new MySqlLearningPathDefinitionQueryRepository(pool) instanceof LearningPathDefinitionReader);
+  assert.ok(new MySqlLearningPathCatalogQueryRepository(pool) instanceof LearningPathCatalogReader);
   assert.ok(new MySqlLearningPathDefinitionCommandRepository(pool) instanceof LearningPathDefinitionWriter);
   assert.ok(new MySqlLearningPathProgressQueryRepository(pool) instanceof LearningPathProgressReader);
   assert.ok(new MySqlLearningPathProgressCommandRepository(pool) instanceof LearningPathProgressWriter);
   assert.ok(new MySqlLearningPathRecordingArtifactRepository(pool) instanceof LearningPathRecordingArtifactRepository);
   assert.ok(new MySqlLearningPathTransactionManager(new ConnectionPool(new TransactionConnection())) instanceof LearningPathTransactionManager);
+});
+
+test("course catalog projection loads titles and enrollment state in one bounded query", async () => {
+  const pool = new RecordingPool([[[{
+    collectionId: "collection-1",
+    pathId: 8,
+    title: "Course 1",
+    learnerStatus: "in_progress",
+    enrolled: 1,
+  }], []]]);
+  const repository = new MySqlLearningPathCatalogQueryRepository(pool);
+
+  assert.deepEqual(await repository.listAvailableForUser("user-7"), [{
+    collectionId: "collection-1",
+    pathId: "8",
+    title: "Course 1",
+    learnerStatus: "in_progress",
+    enrolled: true,
+  }]);
+  assert.equal(pool.calls.length, 1);
+  assert.deepEqual(pool.calls[0].parameters, ["user-7", "user-7"]);
+  assert.match(pool.calls[0].sql, /LEFT JOIN user_learning_path_progress/u);
+});
+
+test("Learning Path progression requires active course enrollment independently of Leitner subscription", async () => {
+  const subscribedOnly = {
+    ownerUserId: null,
+    visibility: "public",
+    status: "published",
+    archivedAt: null,
+    subscriptionStatus: "active",
+    enrolled: 0,
+  };
+  const pool = new RecordingPool([
+    [[subscribedOnly], []],
+    [[{ ...subscribedOnly, enrolled: 1 }], []],
+    [[subscribedOnly], []],
+  ]);
+  const repository = new MySqlLearningPathAccessQueryRepository(pool);
+
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: false,
+  });
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: true,
+  });
+  assert.deepEqual(await repository.getForCollection("user-7", "collection-1"), {
+    canRead: true,
+    canProgress: false,
+  });
+  assert.ok(pool.calls.every((call) => /up\.enrollment_status = 'active'/u.test(call.sql)));
+});
+
+test("course removal soft-removes enrollment without deleting learner progress", async () => {
+  const pool = new RecordingPool([
+    [{affectedRows: 1}, []],
+  ]);
+  const repository = new MySqlLearningPathProgressCommandRepository(pool);
+
+  assert.deepEqual(await repository.removePathEnrollment("user-7", "path-9"), {changed: true});
+  assert.equal(pool.calls.length, 1);
+  assert.ok(pool.calls.every((call) => call.parameters[0] === "user-7" && call.parameters[1] === "path-9"));
+  assert.match(pool.calls[0].sql, /enrollment_status = 'removed'/u);
+  assert.match(pool.calls[0].sql, /revision = up\.revision \+ 1/u);
+  assert.doesNotMatch(pool.calls[0].sql, /DELETE/u);
+});
+
+test("enrollment migration preserves progress rows while adding soft enrollment state", async () => {
+  const migration = await readFile(new URL("../database/migrations/023_learning_path_enrollment_state.sql", import.meta.url), "utf8");
+
+  assert.match(migration, /enrollment_status VARCHAR\(32\) NOT NULL DEFAULT 'active'/u);
+  assert.match(migration, /enrollment_removed_at TIMESTAMP\(3\) NULL/u);
+  assert.doesNotMatch(migration, /DELETE FROM|DROP TABLE|DROP COLUMN/u);
+});
+
+test("a stale progress write cannot reactivate an enrollment removed by a newer revision", async () => {
+  const pool = new RecordingPool([
+    [{ affectedRows: 1 }, []],
+    [{ affectedRows: 0 }, []],
+  ]);
+  const repository = new MySqlLearningPathProgressCommandRepository(pool);
+
+  await repository.removePathEnrollment("user-7", "path-9");
+  const result = await repository.upsertPathProgress({
+    userId: "user-7",
+    pathId: "path-9",
+    status: "in_progress",
+    startedAt: "2026-09-08T00:00:00.000Z",
+    completedAt: null,
+    lastActivityAt: "2026-09-08T00:01:00.000Z",
+    lastSeenContentVersion: 1,
+    expectedRevision: 4,
+  });
+
+  assert.deepEqual(result, { changed: false, conflict: true, revision: 4 });
+  assert.match(pool.calls[1].sql, /enrollment_status = IF\(user_learning_path_progress\.revision = \?, 'active'/u);
+  assert.equal(pool.calls[1].parameters.slice(-8).every((value) => value === 4), true);
 });
 
 test("recording artifact migration stores owner-bound audio evidence without destructive changes", async () => {
@@ -123,6 +226,7 @@ test("progress persistence converts application ISO timestamps before handing th
   });
 
   const parameters = pool.calls[0].parameters;
+  assert.match(pool.calls[0].sql, /user_learning_path_progress\.status/u);
   assert.ok(parameters[2] instanceof Date);
   assert.equal(parameters[2].toISOString(), startedAt);
   assert.equal(parameters[3], null);
@@ -147,6 +251,7 @@ test("progress reads scope every projection query by user and path identity", as
     ["user-7", "path-9"],
     ["user-7", "path-9"],
   ]);
+  assert.ok(pool.calls.every((call) => /enrollment_status = 'active'/u.test(call.sql)));
 });
 
 test("migration keeps path structure relational and protects progress-bearing content from hard deletion", async () => {

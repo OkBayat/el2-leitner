@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import { LibraryApiService } from '../../core/library/library-api.service';
 import type { CollectionLearningPathView } from '../../domain/collection-learning-path/learning-path';
 import { CollectionLearningPathFacade } from './collection-learning-path.facade';
 import { LibraryLearningPathJourneyFacade } from './library-learning-path-journey.facade';
@@ -34,7 +33,6 @@ describe('Collection Learning Path journey facades', () => {
     TestBed.configureTestingModule({ providers: [
       CollectionLearningPathFacade,
       { provide: CollectionLearningPathApiService, useValue: api },
-      { provide: LibraryApiService, useValue: { subscribe: vi.fn() } },
     ] });
 
     const facade = TestBed.inject(CollectionLearningPathFacade);
@@ -44,7 +42,7 @@ describe('Collection Learning Path journey facades', () => {
     expect(facade.resume()?.resumePoint).toEqual(initial.resumePoint);
   });
 
-  it('enrolls an accessible course before starting it and keeps StartLearningPath server authoritative', async () => {
+  it('starts an accessible course without changing its Leitner subscription', async () => {
     const initial = view({}, false);
     const started = { pathId: 'path-1', pathStatus: 'in_progress', resumePoint: initial.resumePoint };
     const refreshed = view({ learnerStatus: 'in_progress' }, true);
@@ -53,17 +51,14 @@ describe('Collection Learning Path journey facades', () => {
       queryResumePoint: vi.fn(),
       commandStartPath: vi.fn().mockResolvedValue(started),
     };
-    const library = { subscribe: vi.fn().mockResolvedValue({ collection: { ...course, subscribed: true } }) };
     TestBed.configureTestingModule({ providers: [
       CollectionLearningPathFacade,
       { provide: CollectionLearningPathApiService, useValue: api },
-      { provide: LibraryApiService, useValue: library },
     ] });
 
     const facade = TestBed.inject(CollectionLearningPathFacade);
     await facade.load('course-1');
     expect(await facade.start()).toBe(true);
-    expect(library.subscribe).toHaveBeenCalledWith('course-1');
     expect(api.commandStartPath).toHaveBeenCalledWith('path-1');
     expect(facade.resume()?.pathStatus).toBe('in_progress');
   });
@@ -75,17 +70,14 @@ describe('Collection Learning Path journey facades', () => {
       commandStartPath: vi.fn().mockResolvedValue({ pathId: 'path-1', pathStatus: 'in_progress', resumePoint: initial.resumePoint }),
       queryResumePoint: vi.fn(),
     };
-    const library = { subscribe: vi.fn().mockResolvedValue({ collection: { ...course, subscribed: true } }) };
     TestBed.configureTestingModule({ providers: [
       LibraryLearningPathJourneyFacade,
       { provide: CollectionLearningPathApiService, useValue: api },
-      { provide: LibraryApiService, useValue: library },
     ] });
 
     const facade = TestBed.inject(LibraryLearningPathJourneyFacade);
     expect(await facade.load([course])).toBe(true);
     const destination = await facade.enter(course);
-    expect(library.subscribe).toHaveBeenCalledWith('course-1');
     expect(destination).toEqual({
       kind: 'exercise', pathId: 'path-1', lessonId: 'episode-1', exerciseId: 'exercise-1',
     });
@@ -104,7 +96,6 @@ describe('Collection Learning Path journey facades', () => {
       TestBed.configureTestingModule({ providers: [
         LibraryLearningPathJourneyFacade,
         { provide: CollectionLearningPathApiService, useValue: api },
-        { provide: LibraryApiService, useValue: { subscribe: vi.fn() } },
       ] });
       const facade = TestBed.inject(LibraryLearningPathJourneyFacade);
       await facade.load([course]);

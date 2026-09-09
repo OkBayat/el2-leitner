@@ -1,6 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
-import { LibraryApiService } from '../../core/library/library-api.service';
+import {
+  CollectionLearningPathApiService,
+  type LearningPathCatalogItem,
+  normalizeLearningPathCatalog,
+} from '../../core/collection-learning-path/collection-learning-path-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 import type { CollectionLearningPathView, LearningPathResumePoint } from '../../domain/collection-learning-path/learning-path';
 
@@ -25,11 +28,12 @@ function exerciseDestination(pathId: string, resumePoint: LearningPathResumePoin
 @Injectable({ providedIn: 'root' })
 export class LibraryLearningPathJourneyFacade {
   private readonly api = inject(CollectionLearningPathApiService);
-  private readonly library = inject(LibraryApiService);
   private readonly views = signal<ReadonlyMap<string, CollectionLearningPathView>>(new Map());
+  private readonly catalog = signal<ReadonlyMap<string, LearningPathCatalogItem>>(new Map());
   private requestVersion = 0;
 
   readonly loading = signal(false);
+  readonly catalogReady = signal(false);
   readonly enteringId = signal<string | null>(null);
   readonly error = signal('');
 
@@ -37,26 +41,43 @@ export class LibraryLearningPathJourneyFacade {
     return this.views().get(collectionId) ?? null;
   }
 
+  courseSummaryFor(collectionId: string): LearningPathCatalogItem | null {
+    return this.catalog().get(collectionId) ?? null;
+  }
+
   async load(collections: readonly Pick<LibraryCollection, 'id'>[]): Promise<boolean> {
     const request = ++this.requestVersion;
     this.loading.set(true);
     this.error.set('');
     try {
-      const results = await Promise.all(collections.map(async (collection) => {
-        try {
-          return [collection.id, await this.api.queryCollectionLearningPath(collection.id)] as const;
-        } catch {
-          return null;
-        }
-      }));
+      return await this.loadKnownCourses(request, collections);
+    } finally {
+      if (request === this.requestVersion) this.loading.set(false);
+    }
+  }
+
+  async loadCatalog(collections: readonly Pick<LibraryCollection, 'id' | 'title' | 'subscribed'>[]): Promise<boolean> {
+    const request = ++this.requestVersion;
+    this.loading.set(true);
+    this.catalogReady.set(false);
+    this.error.set('');
+    try {
+      const catalog = await this.api.queryLearningPathCollectionIds();
       if (request !== this.requestVersion) return false;
-      const available = results.filter((result): result is readonly [string, CollectionLearningPathView] => result !== null);
-      this.views.set(new Map(available));
-      if (available.length !== results.length) {
-        this.error.set('Some courses could not load. Open a course to try again.');
-        return false;
-      }
+      const summaries = normalizeLearningPathCatalog(catalog, collections);
+      const currentCourseIds = new Set(summaries.map((item) => item.collectionId));
+      this.catalog.set(new Map(summaries.map((item) => [item.collectionId, item])));
+      this.views.update((views) => new Map([...views].filter(([collectionId]) => currentCourseIds.has(collectionId))));
+      this.catalogReady.set(true);
       return true;
+    } catch {
+      if (request === this.requestVersion) {
+        this.catalog.set(new Map());
+        this.views.set(new Map());
+        this.catalogReady.set(false);
+        this.error.set('Courses could not load. Try again.');
+      }
+      return false;
     } finally {
       if (request === this.requestVersion) this.loading.set(false);
     }
@@ -71,10 +92,6 @@ export class LibraryLearningPathJourneyFacade {
       const { path } = current;
       if (path.learnerStatus === 'completed' || path.learnerStatus === 'up_to_date') {
         return { kind: 'path', pathId: path.id, collectionId: collection.id };
-      }
-
-      if (!current.access.canProgress) {
-        await this.library.subscribe(collection.id);
       }
 
       let resumePoint = current.resumePoint;
@@ -115,11 +132,45 @@ export class LibraryLearningPathJourneyFacade {
     }
   }
 
+  async removeEnrollment(pathId: string): Promise<boolean> {
+    this.error.set('');
+    try {
+      await this.api.commandRemovePathEnrollment(pathId);
+      return true;
+    } catch (error) {
+      this.error.set(errorMessage(error));
+      return false;
+    }
+  }
+
   private async loadView(collectionId: string): Promise<CollectionLearningPathView> {
     const loaded = this.viewFor(collectionId);
     if (loaded) return loaded;
     const current = await this.api.queryCollectionLearningPath(collectionId);
     this.views.update((views) => new Map(views).set(collectionId, current));
     return current;
+  }
+
+  private async loadKnownCourses(
+    request: number,
+    collections: readonly Pick<LibraryCollection, 'id'>[],
+  ): Promise<boolean> {
+    const results = await Promise.all(collections.map(async (collection) => {
+      try {
+        return [collection.id, await this.api.queryCollectionLearningPath(collection.id)] as const;
+      } catch {
+        return null;
+      }
+    }));
+    if (request !== this.requestVersion) return false;
+    const available = results.filter(
+      (result): result is readonly [string, CollectionLearningPathView] => result !== null,
+    );
+    this.views.set(new Map(available));
+    if (available.length !== results.length) {
+      this.error.set('Some courses could not load. Open a course to try again.');
+      return false;
+    }
+    return true;
   }
 }

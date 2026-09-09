@@ -31,7 +31,10 @@ describe('SelectedCoursesFacade', () => {
     list.mockResolvedValue({ collections: [collection()] });
     queryLearningPathCollectionIds.mockResolvedValue({
       collectionIds: ['bbc-six-minute-english'],
-      learningPaths: [{ collectionId: 'bbc-six-minute-english', pathId: '1' }],
+      learningPaths: [{
+        collectionId: 'bbc-six-minute-english', pathId: '1', title: 'BBC 6 Minute English',
+        learnerStatus: 'in_progress', enrolled: true,
+      }],
     });
     TestBed.configureTestingModule({ providers: [
       SelectedCoursesFacade,
@@ -41,7 +44,7 @@ describe('SelectedCoursesFacade', () => {
     facade = TestBed.inject(SelectedCoursesFacade);
   });
 
-  it('keeps subscribed Learning Path collections regardless of library kind', () => {
+  it('keeps enrolled courses regardless of vocabulary subscription or library kind', () => {
     const cambridge = collection({
       id: 'cambridge-vocabulary-for-ielts',
       slug: 'cambridge-vocabulary-for-ielts',
@@ -53,6 +56,7 @@ describe('SelectedCoursesFacade', () => {
     const result = courseMenuCollections(
       [collection({ subscribed: false }), cambridge, unrelated],
       new Map([['bbc-six-minute-english', '1'], [cambridge.id, '2']]),
+      new Set([cambridge.id]),
     );
 
     expect(result.map((course) => course.id)).toEqual([cambridge.id]);
@@ -65,6 +69,7 @@ describe('SelectedCoursesFacade', () => {
         collection({ id: 'vocabulary', slug: 'vocabulary', title: 'Vocabulary', kind: 'book', subscribed: true }),
       ],
       new Map([['bbc-six-minute-english', '1']]),
+      new Set(),
     );
 
     expect(result).toEqual([]);
@@ -83,8 +88,8 @@ describe('SelectedCoursesFacade', () => {
     queryLearningPathCollectionIds.mockResolvedValue({
       collectionIds: ['bbc-six-minute-english', cambridge.id],
       learningPaths: [
-        { collectionId: 'bbc-six-minute-english', pathId: '1' },
-        { collectionId: cambridge.id, pathId: '2' },
+        { collectionId: 'bbc-six-minute-english', pathId: '1', title: 'BBC 6 Minute English', learnerStatus: 'available', enrolled: false },
+        { collectionId: cambridge.id, pathId: '2', title: cambridge.title, learnerStatus: 'in_progress', enrolled: true },
       ],
     });
 
@@ -112,5 +117,29 @@ describe('SelectedCoursesFacade', () => {
     expect(await facade.load()).toBe(true);
     expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
       .toEqual([{ id: 'bbc-six-minute-english', pathId: null }]);
+  });
+
+  it('supports the predecessor route-only response and excludes subscribed non-course collections', async () => {
+    const secondCourse = collection({
+      id: 'second-course', slug: 'second-course', title: 'Second Course', subscribed: false,
+    });
+    const standalone = collection({
+      id: 'standalone', slug: 'standalone', title: 'Standalone Collection', kind: 'book', subscribed: true,
+    });
+    const podcast = collection({
+      id: 'podcast-episode', slug: 'podcast-episode', title: 'Podcast Episode', kind: 'listening', subscribed: true,
+    });
+    list.mockResolvedValue({ collections: [collection(), secondCourse, standalone, podcast] });
+    queryLearningPathCollectionIds.mockResolvedValue({
+      collectionIds: ['bbc-six-minute-english', secondCourse.id],
+      learningPaths: [
+        { collectionId: 'bbc-six-minute-english', pathId: '1' },
+        { collectionId: secondCourse.id, pathId: '2' },
+      ],
+    });
+
+    expect(await facade.load()).toBe(true);
+    expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
+      .toEqual([{ id: 'bbc-six-minute-english', pathId: '1' }]);
   });
 });

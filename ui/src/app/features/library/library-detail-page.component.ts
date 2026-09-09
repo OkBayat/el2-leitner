@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 import {MatButtonModule} from '@angular/material/button';
@@ -7,7 +7,14 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
+import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
+import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
 import {LibraryApiService} from '../../core/library/library-api.service';
+import {
+  learningPathOverviewRoute,
+  type CollectionLearningPathView,
+  type LearningPathLearnerStatus,
+} from '../../domain/collection-learning-path/learning-path';
 import {LibraryCollection, LibraryEntry} from '../../domain/learning/models';
 import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog.component';
 import {
@@ -46,14 +53,52 @@ import {
             <mat-progress-bar mode="determinate" [value]="progress(c).percent" />
           </div>
 
-          <div class="actions" data-testid="library-detail-actions">
-            <button mat-flat-button (click)="toggleSubscription()">{{ c.subscribed ? 'Remove from box' : 'Add to box' }}</button>
-            @if (canManage()) {
+          <div class="learning-actions" data-testid="library-detail-actions">
+            @if (learningPaths.error()) {
+              <div class="action-option" role="alert">
+                <p>{{ learningPaths.error() }}</p>
+                <button mat-stroked-button data-testid="course-detail-retry" (click)="reload()">Retry</button>
+              </div>
+            } @else if (course(); as courseView) {
+              <div class="action-option">
+                <button
+                  mat-flat-button
+                  data-testid="start-course-action"
+                  [disabled]="learningPaths.enteringId() === c.id"
+                  (click)="startCourse()"
+                >
+                  @if (learningPaths.enteringId() === c.id) { Opening… } @else { {{ courseActionLabel(courseView.path.learnerStatus) }} }
+                </button>
+                <p>Start this course to follow a structured learning path with lessons, exercises, and progress tracking.</p>
+                @if (courseView.path.learnerStatus !== 'available') {
+                  <button mat-stroked-button data-testid="remove-course-action" (click)="removeCourse()">
+                    Remove Course
+                  </button>
+                }
+              </div>
+              <div class="action-option">
+                <button mat-stroked-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                  {{ leitnerActionLabel(c) }}
+                </button>
+                <p>{{ leitnerDescription(c, true) }}</p>
+              </div>
+            } @else if (learningPaths.catalogReady()) {
+              <div class="action-option">
+                <button mat-flat-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                  {{ leitnerActionLabel(c) }}
+                </button>
+                <p>{{ leitnerDescription(c, false) }}</p>
+              </div>
+            }
+          </div>
+
+          @if (canManage()) {
+            <div class="management-actions">
               <button mat-stroked-button (click)="editCollection()">Edit collection</button>
               <button mat-stroked-button (click)="importEntries()">Import file</button>
               <button mat-stroked-button (click)="editEntry()">Add word</button>
-            }
-          </div>
+            </div>
+          }
 
           @if (c.entries?.length) {
             <div class="table-wrap">
@@ -97,12 +142,16 @@ import {
     h1{margin:0;font-size:28px;line-height:1.25;font-weight:500}
     .description{margin:0;line-height:1.55}
     .progress{display:grid;gap:8px}
-    .actions{display:flex;flex-wrap:wrap;gap:8px}
+    .learning-actions{display:grid;gap:12px}
+    .action-option{display:grid;gap:8px;padding:16px;border:1px solid var(--vocora-border);border-radius:var(--vocora-radius-md);background:var(--vocora-surface-subtle)}
+    .action-option button{justify-self:start;min-height:var(--vocora-touch-target-min)}
+    .action-option p{margin:0;color:var(--vocora-text-secondary);font:var(--mat-sys-body-medium);line-height:1.5}
+    .management-actions{display:flex;flex-wrap:wrap;gap:8px}
     .table-wrap{overflow-x:auto}
     table{width:100%}
     .entry-actions{text-align:right;white-space:nowrap}
     .empty{padding:30px;text-align:center;color:var(--mat-sys-on-surface-variant)}
-    @media(max-width:640px){.actions>*{flex:1 1 auto}.detail-content{width:100%}}
+    @media(max-width:640px){.action-option button{width:100%}.management-actions>*{flex:1 1 auto}.detail-content{width:100%}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -112,8 +161,16 @@ export class LibraryDetailPageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialogs = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
+  private readonly selectedCourses = inject(SelectedCoursesFacade);
+  readonly learningPaths = inject(LibraryLearningPathJourneyFacade);
 
   readonly collection = signal<LibraryCollection | null>(null);
+  readonly course = computed<CollectionLearningPathView | null>(() => {
+    const current = this.collection();
+    return current && this.learningPaths.courseSummaryFor(current.id)
+      ? this.learningPaths.viewFor(current.id)
+      : null;
+  });
   readonly canManage = signal(false);
   readonly entryColumns = ['term', 'section', 'actions'];
   readonly level = libraryLevel;
@@ -129,13 +186,17 @@ export class LibraryDetailPageComponent implements OnInit {
     await this.load(id);
   }
 
-  private async load(id: string): Promise<void> {
+  async load(id: string): Promise<void> {
     const result = await this.api.get(id);
     this.collection.set(result.collection);
     this.canManage.set(Boolean(result.capabilities?.canManage));
+    const catalogLoaded = await this.learningPaths.loadCatalog([result.collection]);
+    if (catalogLoaded && this.learningPaths.courseSummaryFor(result.collection.id)) {
+      await this.learningPaths.load([result.collection]);
+    }
   }
 
-  private async reload(): Promise<void> {
+  async reload(): Promise<void> {
     const current = this.collection();
     if (!current) return;
     await this.load(current.id);
@@ -147,6 +208,70 @@ export class LibraryDetailPageComponent implements OnInit {
     if (current.subscribed) await this.api.unsubscribe(current.id);
     else await this.api.subscribe(current.id);
     await this.reload();
+    await this.selectedCourses.load();
+  }
+
+  courseActionLabel(status: LearningPathLearnerStatus): string {
+    return {
+      available: 'Start Course',
+      in_progress: 'Continue Course',
+      completed: 'View Course',
+      up_to_date: 'View Course',
+    }[status];
+  }
+
+  leitnerActionLabel(collection: LibraryCollection): string {
+    return collection.subscribed ? 'Remove from Leitner' : 'Add to Leitner Only';
+  }
+
+  leitnerDescription(collection: LibraryCollection, course: boolean): string {
+    if (collection.subscribed) {
+      return course
+        ? 'Remove these words from your Leitner box without deleting your saved course progress.'
+        : 'Remove these words from your Leitner box.';
+    }
+    return course
+      ? 'Add these words to your Leitner box and practice them daily. This will not start the course or add it to your learning path.'
+      : 'Add these words to your Leitner box and practice them daily.';
+  }
+
+  async startCourse(): Promise<void> {
+    const current = this.collection();
+    if (!current) return;
+    const destination = await this.learningPaths.enter(current);
+    if (!destination) {
+      if (this.learningPaths.error()) this.snack.open(this.learningPaths.error(), 'OK', {duration: 3000});
+      return;
+    }
+    await this.selectedCourses.load();
+    if (destination.kind === 'exercise') {
+      await this.router.navigate([
+        '/learning-paths', destination.pathId, 'lessons', destination.lessonId, 'exercises', destination.exerciseId,
+      ]);
+      return;
+    }
+    const path = this.learningPaths.viewFor(destination.collectionId)?.path;
+    await this.router.navigate(path
+      ? learningPathOverviewRoute(path.id, destination.collectionId)
+      : ['/library', destination.collectionId, 'learning-path']);
+  }
+
+  async removeCourse(): Promise<void> {
+    const current = this.collection();
+    const course = this.course();
+    if (!current || !course) return;
+    const confirmed = await firstValueFrom(this.dialogs.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Remove course',
+        message: 'Remove this course from My Courses? Your saved course progress and Leitner vocabulary will not change.',
+        confirmLabel: 'Remove Course',
+        danger: true,
+      },
+    }).afterClosed());
+    if (!confirmed) return;
+    if (!await this.learningPaths.removeEnrollment(course.path.id)) return;
+    await this.reload();
+    await this.selectedCourses.load();
   }
 
   async editCollection(): Promise<void> {

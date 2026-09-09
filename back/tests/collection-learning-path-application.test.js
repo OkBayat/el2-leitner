@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { CompleteExercise } from "../src/application/collection-learning-path/commands/CompleteExercise.js";
 import { StartExercise } from "../src/application/collection-learning-path/commands/StartExercise.js";
 import { StartLearningPath } from "../src/application/collection-learning-path/commands/StartLearningPath.js";
+import { RemoveLearningPathEnrollment } from "../src/application/collection-learning-path/commands/RemoveLearningPathEnrollment.js";
 import { ExerciseRuntimeRegistry } from "../src/application/collection-learning-path/ExerciseRuntimeRegistry.js";
 import { GetCollectionLearningPath } from "../src/application/collection-learning-path/queries/GetCollectionLearningPath.js";
 import { GetExerciseContext } from "../src/application/collection-learning-path/queries/GetExerciseContext.js";
@@ -107,27 +108,32 @@ class ProgressStoreFake {
   record(userId, pathId) {
     const key = this.key(userId, pathId);
     if (!this.byUserAndPath.has(key)) {
-      this.byUserAndPath.set(key, { path: null, lessons: [], exercises: [] });
+      this.byUserAndPath.set(key, { enrolled: false, path: null, lessons: [], exercises: [] });
     }
     return this.byUserAndPath.get(key);
   }
 
   async findForPath(userId, pathId) {
     const current = this.byUserAndPath.get(this.key(userId, pathId));
-    return structuredClone(current ?? { path: null, lessons: [], exercises: [] });
+    if (!current?.enrolled) return { path: null, lessons: [], exercises: [] };
+    const { enrolled: _enrolled, ...progress } = current;
+    return structuredClone(progress);
   }
 
   async upsertPathProgress(progress) {
     this.writeCalls.push(["path", structuredClone(progress)]);
     const record = this.record(progress.userId, progress.pathId);
     const previous = record.path;
-    record.path = {
-      status: progress.status,
-      startedAt: previous?.startedAt ?? progress.startedAt,
-      completedAt: progress.completedAt ?? null,
-      lastActivityAt: progress.lastActivityAt,
-      lastSeenContentVersion: Math.max(previous?.lastSeenContentVersion ?? 0, progress.lastSeenContentVersion ?? 0),
-    };
+    if (!previous || record.enrolled) {
+      record.path = {
+        status: progress.status,
+        startedAt: previous?.startedAt ?? progress.startedAt,
+        completedAt: progress.completedAt ?? null,
+        lastActivityAt: progress.lastActivityAt,
+        lastSeenContentVersion: Math.max(previous?.lastSeenContentVersion ?? 0, progress.lastSeenContentVersion ?? 0),
+      };
+    }
+    record.enrolled = true;
     return { changed: true };
   }
 
@@ -166,6 +172,14 @@ class ProgressStoreFake {
     };
     if (index >= 0) record.exercises[index] = next;
     else record.exercises.push(next);
+    return { changed: true };
+  }
+
+  async removePathEnrollment(userId, pathId) {
+    this.writeCalls.push(["remove-enrollment", { userId, pathId }]);
+    const record = this.byUserAndPath.get(this.key(userId, pathId));
+    if (!record?.enrolled) return { changed: false };
+    record.enrolled = false;
     return { changed: true };
   }
 }
@@ -215,6 +229,7 @@ function createHarness({ path = pathDefinition(), access, runtime, clock = () =>
     },
     commands: {
       startPath: new StartLearningPath(dependencies),
+      removePath: new RemoveLearningPathEnrollment(dependencies),
       startExercise: new StartExercise(dependencies),
       completeExercise: new CompleteExercise(dependencies),
     },
@@ -262,13 +277,36 @@ describe("Collection Learning Path application CQRS", () => {
     assert.ok(writes.every(([, progress]) => progress.lastSeenContentVersion === 3));
   });
 
-  it("refuses learner progress writes when the collection is readable but not active for progress", async () => {
+  it("starts a readable course without implicitly requiring a Leitner subscription", async () => {
     const harness = createHarness({ access: { canRead: true, canProgress: false } });
+    const result = await harness.commands.startPath.execute("user-1", "path-1");
+    assert.equal(result.pathStatus, "in_progress");
+    assert.equal(harness.progressStore.writeCalls[0][0], "path");
+  });
+
+  it("does not let a Leitner-only learner deep-link into course progression", async () => {
+    const harness = createHarness({ access: { canRead: true, canProgress: false } });
+
     await assert.rejects(
-      harness.commands.startPath.execute("user-1", "path-1"),
+      harness.commands.startExercise.execute("user-1", "path-1", "lesson-1", "exercise-1"),
       (error) => error?.code === "LEARNING_PATH_PROGRESS_FORBIDDEN" && error?.statusCode === 403,
     );
-    assert.equal(harness.progressStore.writeCalls.length, 0);
+    assert.deepEqual(harness.progressStore.writeCalls, []);
+  });
+
+  it("removes course enrollment independently and makes the path available again", async () => {
+    const harness = createHarness({ access: { canRead: true, canProgress: false } });
+    await harness.commands.startPath.execute("user-1", "path-1");
+
+    assert.deepEqual(await harness.commands.removePath.execute("user-1", "path-1"), {
+      pathId: "path-1",
+      removed: true,
+    });
+    assert.equal((await harness.queries.collection.execute("user-1", "collection-1")).path.learnerStatus, "available");
+    assert.equal(harness.progressStore.record("user-1", "path-1").path.status, "in_progress");
+
+    assert.equal((await harness.commands.startPath.execute("user-1", "path-1")).pathStatus, "in_progress");
+    assert.equal(harness.progressStore.record("user-1", "path-1").path.status, "in_progress");
   });
 
   it("starts only available exercises and writes path, lesson, and exercise progress transactionally", async () => {

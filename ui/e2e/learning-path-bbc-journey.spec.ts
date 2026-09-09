@@ -107,7 +107,7 @@ async function mockShell(page: Page) {
   await page.route('**/api/state**', (route) => route.fulfill({ json: { state, revision: 1 } }));
 }
 
-test('Library Start course enrolls and opens the server-authoritative BBC resume exercise', async ({ page }) => {
+test('Library Start course enrolls independently and opens the server-authoritative BBC resume exercise', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockShell(page);
   const writes: string[] = [];
@@ -135,6 +135,32 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
       subscribed,
     }],
   } }));
+  await page.route('**/api/learning-paths/collections', (route) => route.fulfill({json: {
+    collectionIds: [collectionId],
+    learningPaths: [{
+      collectionId,
+      pathId,
+      title: 'BBC 6 Minute English',
+      learnerStatus: currentView.path.learnerStatus,
+      enrolled: currentView.path.learnerStatus !== 'available',
+    }],
+  }}));
+  await page.route(`**/api/library/${collectionId}`, (route) => route.fulfill({ json: {
+    collection: {
+      id: collectionId,
+      slug: collectionId,
+      title: 'BBC 6 Minute English',
+      description: 'Rolling listening course',
+      kind: 'course',
+      visibility: 'public',
+      status: 'published',
+      contentVersion: 1,
+      wordCount: 0,
+      subscribed,
+      entries: [],
+    },
+    capabilities: {canManage: false},
+  } }));
   await page.route(`**/api/library/${collectionId}/subscription`, async (route) => {
     writes.push('subscribe');
     subscribed = true;
@@ -156,13 +182,24 @@ test('Library Start course enrolls and opens the server-authoritative BBC resume
   });
 
   await page.goto('/library');
-  await expect(page.getByRole('heading', { name: 'BBC 6 Minute English' })).toBeVisible();
-  await page.getByTestId('library-learning-path-action').click();
+  await expect(page.getByRole('heading', {name: 'All Courses'})).toBeVisible();
+  const courseItem = page.getByTestId('library-all-courses').getByRole('button', {name: 'BBC 6 Minute English'});
+  const lightColor = await courseItem.evaluate((element) => getComputedStyle(element).color);
+  expect((await courseItem.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await expect.poll(() => courseItem.evaluate((element) => getComputedStyle(element).color)).not.toBe(lightColor);
+  await courseItem.focus();
+  await expect(courseItem).toBeFocused();
+  await courseItem.click();
+  await expect(page.getByTestId('library-detail-page')).toBeVisible();
+  await expect(page.getByTestId('leitner-only-action')).toContainText('Add to Leitner Only');
+  await page.getByTestId('start-course-action').click();
 
   await expect(page).toHaveURL(new RegExp(`/learning-paths/${pathId}/lessons/${episodeOne}/exercises/${intakeOne}$`, 'u'));
   await expect(page.getByTestId('vocabulary-intake')).toBeVisible();
   await expect(page.getByRole('heading', { name: "Meet this lesson's words" })).toBeVisible();
-  expect(writes).toEqual(['subscribe', 'start-path']);
+  expect(writes).toEqual(['start-path']);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

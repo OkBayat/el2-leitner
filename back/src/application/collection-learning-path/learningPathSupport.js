@@ -120,7 +120,7 @@ export async function ensureLearningPathProgressAccess(accessReader, userId, pat
   if (!access.canProgress) {
     throw new ForbiddenError(
       "LEARNING_PATH_PROGRESS_FORBIDDEN",
-      "Add this collection before starting its Learning Path.",
+      "Start this course before opening its exercises.",
     );
   }
   return access;

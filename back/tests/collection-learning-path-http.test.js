@@ -13,7 +13,7 @@ function createRouterHarness(overrides = {}) {
     listAvailableCollections: {
       async execute(userId) {
         calls.push(["listAvailableCollections", userId]);
-        return [{ collectionId: "collection-1", pathId: "1" }];
+        return [{ collectionId: "collection-1", pathId: "1", title: "Fixture path", learnerStatus: "in_progress", enrolled: true }];
       },
     },
     getCollectionLearningPath: {
@@ -128,6 +128,12 @@ function createRouterHarness(overrides = {}) {
         return { pathId, pathStatus: "in_progress", resumePoint: { lessonId: "lesson-1", exerciseId: "exercise-1" } };
       },
     },
+    removeLearningPathEnrollment: {
+      async execute(userId, pathId) {
+        calls.push(["removeLearningPathEnrollment", userId, pathId]);
+        return { pathId, removed: true };
+      },
+    },
     startExercise: {
       async execute(userId, pathId, lessonId, exerciseId) {
         calls.push(["startExercise", userId, pathId, lessonId, exerciseId]);
@@ -204,6 +210,7 @@ describe("Collection Learning Path HTTP adapter", () => {
       });
     await request(app).get("/api/learning-paths/1/resume").expect(200);
     await request(app).post("/api/learning-paths/1/start").expect(200);
+    await request(app).delete("/api/learning-paths/1/enrollment").expect(200, {pathId: "1", removed: true});
     await request(app)
       .post("/api/learning-paths/1/lessons/5/exercises/10/start")
       .expect(200);
@@ -218,7 +225,7 @@ describe("Collection Learning Path HTTP adapter", () => {
 
     await request(app).get("/api/learning-paths/collections").expect(200, {
       collectionIds: ["collection-1"],
-      learningPaths: [{ collectionId: "collection-1", pathId: "1" }],
+      learningPaths: [{ collectionId: "collection-1", pathId: "1", title: "Fixture path", learnerStatus: "in_progress", enrolled: true }],
     });
   });
 
@@ -270,7 +277,7 @@ describe("Collection Learning Path HTTP adapter", () => {
 
   it("preserves canonical 403, 404, and 409 application errors", async () => {
     const cases = [
-      [new ForbiddenError("LEARNING_PATH_PROGRESS_FORBIDDEN", "Add this collection before starting its Learning Path."), 403],
+      [new ForbiddenError("LEARNING_PATH_PROGRESS_FORBIDDEN", "Start this course before opening its exercises."), 403],
       [new NotFoundError("LEARNING_PATH_NOT_FOUND", "Learning Path was not found."), 404],
       [new ConflictError("LEARNING_PATH_EXERCISE_LOCKED", "Exercise prerequisites are not complete."), 409],
       [new ValidationError("INVALID_LEARNING_PATH_ID", "A valid Learning Path id is required."), 400],

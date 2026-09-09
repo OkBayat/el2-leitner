@@ -1,6 +1,6 @@
 import { findLearningPathResumePoint } from "../../../domain/collection-learning-path/LearningPathProgression.js";
 import {
-  ensureLearningPathProgressAccess,
+  ensureLearningPathReadAccess,
   isoTimestamp,
   loadPathById,
   progressRevision,
@@ -27,7 +27,7 @@ export class StartLearningPath {
 
   async execute(userId, pathId) {
     const path = await loadPathById(this.definitionReader, pathId);
-    await ensureLearningPathProgressAccess(this.accessReader, userId, path);
+    await ensureLearningPathReadAccess(this.accessReader, userId, path);
     const current = await projectedPathForUser({ progressReader: this.progressReader, userId, path });
 
     if (current.projected.path.learnerStatus !== "completed"

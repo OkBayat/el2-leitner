@@ -4,29 +4,26 @@ import { describe, it } from "node:test";
 import { ListAvailableLearningPathCollections } from "../src/application/collection-learning-path/queries/ListAvailableLearningPathCollections.js";
 
 describe("ListAvailableLearningPathCollections", () => {
-  it("returns only collections whose Learning Paths are readable by the user", async () => {
-    const definitionReader = {
-      async listActiveCollectionRoutes() {
+  it("returns the bounded learner-specific course catalog projection", async () => {
+    const calls = [];
+    const catalogReader = {
+      async listAvailableForUser(userId) {
+        calls.push(userId);
         return [
-          { collectionId: "bbc-six-minute-english", pathId: "1" },
-          { collectionId: "private-course", pathId: "2" },
-          { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3" },
+          { collectionId: "bbc-six-minute-english", pathId: "1", title: "BBC 6 Minute English", learnerStatus: "in_progress", enrolled: true },
+          { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3", title: "Cambridge Vocabulary for IELTS", learnerStatus: "available", enrolled: false },
         ];
       },
     };
-    const accessReader = {
-      async getForCollection(_userId, collectionId) {
-        return { canRead: collectionId !== "private-course", canProgress: false };
-      },
-    };
-    const query = new ListAvailableLearningPathCollections({ definitionReader, accessReader });
+    const query = new ListAvailableLearningPathCollections({ catalogReader });
 
     assert.deepEqual(
       await query.execute("user-1"),
       [
-        { collectionId: "bbc-six-minute-english", pathId: "1" },
-        { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3" },
+        { collectionId: "bbc-six-minute-english", pathId: "1", title: "BBC 6 Minute English", learnerStatus: "in_progress", enrolled: true },
+        { collectionId: "cambridge-vocabulary-for-ielts", pathId: "3", title: "Cambridge Vocabulary for IELTS", learnerStatus: "available", enrolled: false },
       ],
     );
+    assert.deepEqual(calls, ["user-1"]);
   });
 });

@@ -10,7 +10,63 @@ import type {
 import type { VocabularyIntakeActivationView } from '../../domain/collection-learning-path/vocabulary-intake';
 import type { VocabularyMasteryCheckStartView } from '../../domain/collection-learning-path/vocabulary-mastery-check';
 import type { VocabularySpellingScope, VocabularySpellingStartView } from '../../domain/collection-learning-path/vocabulary-spelling-practice';
+import type { LibraryCollection } from '../../domain/learning/models';
 import { ApiClientService } from '../http/api-client.service';
+
+export interface LearningPathCatalogRoute {
+  collectionId: string;
+  pathId: string;
+}
+
+export interface LearningPathCatalogItem {
+  collectionId: string;
+  pathId: string | null;
+  title: string;
+  learnerStatus: 'available' | 'in_progress' | 'completed' | 'up_to_date';
+  enrolled: boolean;
+}
+
+export interface LearningPathCatalogResponse {
+  collectionIds?: string[];
+  learningPaths?: Array<LearningPathCatalogRoute | LearningPathCatalogItem>;
+}
+
+const learnerStatuses = new Set<LearningPathCatalogItem['learnerStatus']>([
+  'available',
+  'in_progress',
+  'completed',
+  'up_to_date',
+]);
+
+function isRichCatalogItem(item: LearningPathCatalogRoute | LearningPathCatalogItem): item is LearningPathCatalogItem {
+  const candidate = item as Partial<LearningPathCatalogItem>;
+  return typeof candidate.title === 'string'
+    && typeof candidate.enrolled === 'boolean'
+    && learnerStatuses.has(candidate.learnerStatus as LearningPathCatalogItem['learnerStatus']);
+}
+
+export function normalizeLearningPathCatalog(
+  response: LearningPathCatalogResponse,
+  collections: readonly Pick<LibraryCollection, 'id' | 'title' | 'subscribed'>[],
+): LearningPathCatalogItem[] {
+  const collectionsById = new Map(collections.map((collection) => [collection.id, collection]));
+  const routes: Array<LearningPathCatalogRoute | LearningPathCatalogItem> = Array.isArray(response.learningPaths)
+    ? response.learningPaths
+    : (response.collectionIds ?? []).map((collectionId) => ({ collectionId, pathId: '' }));
+
+  return routes.flatMap((route) => {
+    const collection = collectionsById.get(route.collectionId);
+    if (!collection || typeof route.pathId !== 'string') return [];
+    if (isRichCatalogItem(route)) return [{ ...route }];
+    return [{
+      collectionId: route.collectionId,
+      pathId: route.pathId || null,
+      title: collection.title,
+      learnerStatus: collection.subscribed ? 'in_progress' : 'available',
+      enrolled: collection.subscribed,
+    } satisfies LearningPathCatalogItem];
+  });
+}
 
 function segment(value: string): string {
   return encodeURIComponent(value);
@@ -24,10 +80,7 @@ function exercisePath(pathId: string, lessonId: string, exerciseId: string): str
 export class CollectionLearningPathApiService {
   private readonly api = inject(ApiClientService);
 
-  queryLearningPathCollectionIds(): Promise<{
-    collectionIds: string[];
-    learningPaths?: Array<{ collectionId: string; pathId: string }>;
-  }> {
+  queryLearningPathCollectionIds(): Promise<LearningPathCatalogResponse> {
     return this.api.get('/api/learning-paths/collections');
   }
 
@@ -60,6 +113,12 @@ export class CollectionLearningPathApiService {
 
   commandStartPath(pathId: string): Promise<LearningPathResumeView> {
     return this.api.post<LearningPathResumeView>(`/api/learning-paths/${segment(pathId)}/start`);
+  }
+
+  commandRemovePathEnrollment(pathId: string): Promise<{pathId: string; removed: boolean}> {
+    return this.api.delete<{pathId: string; removed: boolean}>(
+      `/api/learning-paths/${segment(pathId)}/enrollment`,
+    );
   }
 
   commandStartExercise(pathId: string, lessonId: string, exerciseId: string, progressRevision = 0): Promise<LearningPathExerciseStartView> {

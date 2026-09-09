@@ -1,5 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import {
+  CollectionLearningPathApiService,
+  normalizeLearningPathCatalog,
+} from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { LibraryApiService } from '../../core/library/library-api.service';
 import type { LibraryCollection } from '../../domain/learning/models';
 
@@ -16,13 +19,13 @@ function byTitle(left: LibraryCollection, right: LibraryCollection): number {
 export function courseMenuCollections(
   collections: readonly LibraryCollection[],
   learningPathIds: ReadonlyMap<string, string>,
-  availableCollectionIds: ReadonlySet<string> = new Set(learningPathIds.keys()),
+  enrolledCollectionIds: ReadonlySet<string> = new Set(),
 ): SelectedCourse[] {
   const courses = collections.flatMap((collection) => {
-    if (!availableCollectionIds.has(collection.id) && !learningPathIds.has(collection.id)) return [];
+    if (!enrolledCollectionIds.has(collection.id)) return [];
     return [{ ...collection, learningPathId: learningPathIds.get(collection.id) ?? null }];
   });
-  return courses.filter((collection) => collection.subscribed).sort(byTitle);
+  return courses.sort(byTitle);
 }
 
 @Injectable({ providedIn: 'root' })
@@ -46,13 +49,17 @@ export class SelectedCoursesFacade {
       ]);
       if (request !== this.requestVersion) return false;
       const collections = result.collections ?? [];
+      const summaries = normalizeLearningPathCatalog(learningPathCollections, collections);
       const learningPathIds = new Map(
-        (learningPathCollections.learningPaths ?? []).map((item) => [item.collectionId, item.pathId]),
+        summaries.flatMap((item) => item.pathId ? [[item.collectionId, item.pathId] as const] : []),
+      );
+      const enrolledCollectionIds = new Set(
+        summaries.filter((item) => item.enrolled).map((item) => item.collectionId),
       );
       this.courses.set(courseMenuCollections(
         collections,
         learningPathIds,
-        new Set(learningPathCollections.collectionIds ?? []),
+        enrolledCollectionIds,
       ));
       return true;
     } catch (error) {

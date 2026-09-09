@@ -9,13 +9,20 @@ export class MySqlLearningPathAccessQueryRepository extends LearningPathAccessRe
   async getForCollection(userId, collectionPublicId) {
     const [rows] = await this.pool.execute(
       `SELECT c.owner_user_id AS ownerUserId, c.visibility, c.status, c.archived_at AS archivedAt,
-              uc.status AS subscriptionStatus
+              uc.status AS subscriptionStatus,
+              EXISTS (
+                SELECT 1
+                FROM collection_learning_paths p
+                JOIN user_learning_path_progress up ON up.learning_path_id = p.id
+                WHERE p.collection_id = c.id AND up.user_id = ?
+                  AND up.enrollment_status = 'active'
+              ) AS enrolled
        FROM collections c
        LEFT JOIN user_collections uc
          ON uc.collection_id = c.id AND uc.user_id = ?
        WHERE c.public_id = ?
        LIMIT 1`,
-      [userId, collectionPublicId],
+      [userId, userId, collectionPublicId],
     );
     const row = rows[0];
     if (!row) return { canRead: false, canProgress: false };
@@ -25,7 +32,7 @@ export class MySqlLearningPathAccessQueryRepository extends LearningPathAccessRe
       && row.archivedAt == null
       && (row.visibility === "public" || row.visibility === "unlisted");
     const canRead = ownsCollection || publishedForLearners;
-    const canProgress = canRead && (ownsCollection || row.subscriptionStatus === "active");
+    const canProgress = canRead && Boolean(row.enrolled);
     return { canRead, canProgress };
   }
 }

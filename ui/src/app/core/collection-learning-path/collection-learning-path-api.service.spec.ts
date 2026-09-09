@@ -6,13 +6,14 @@ import { CollectionLearningPathApiService } from './collection-learning-path-api
 describe('CollectionLearningPathApiService', () => {
   const get = vi.fn();
   const post = vi.fn();
+  const remove = vi.fn();
   let api: CollectionLearningPathApiService;
 
   beforeEach(() => {
-    get.mockReset(); post.mockReset();
-    get.mockResolvedValue({ context: {} }); post.mockResolvedValue({});
+    get.mockReset(); post.mockReset(); remove.mockReset();
+    get.mockResolvedValue({ context: {} }); post.mockResolvedValue({}); remove.mockResolvedValue({});
     TestBed.configureTestingModule({
-      providers: [CollectionLearningPathApiService, { provide: ApiClientService, useValue: { get, post } }],
+      providers: [CollectionLearningPathApiService, { provide: ApiClientService, useValue: { get, post, delete: remove } }],
     });
     api = TestBed.inject(CollectionLearningPathApiService);
   });
@@ -36,6 +37,7 @@ describe('CollectionLearningPathApiService', () => {
 
   it('keeps generic and type-specific mutations on explicit command endpoints with progress revisions', async () => {
     await api.commandStartPath('1');
+    await api.commandRemovePathEnrollment('1');
     await api.commandStartExercise('1', '5', '10', 7);
     await api.commandActivateVocabularyIntake('1', '5', '10');
     await api.commandStartVocabularySpelling('1', '5', '10', 'course');
@@ -51,6 +53,7 @@ describe('CollectionLearningPathApiService', () => {
       '/api/learning-paths/1/lessons/5/exercises/10/slides/speaking%2F1/recordings',
       '/api/learning-paths/1/lessons/5/exercises/10/complete',
     ]);
+    expect(remove).toHaveBeenCalledWith('/api/learning-paths/1/enrollment');
     expect(post.mock.calls[1]?.[1]).toEqual({ progressRevision: 7 });
     expect(post.mock.calls[3]?.[1]).toEqual({ scope: 'course' });
     expect(post.mock.calls[4]).toEqual([
