@@ -112,8 +112,8 @@ export function parseStimulus(value: unknown): SlideStimulus | undefined {
 		};
 	}
 	if (type === 'dialogue') {
-		if (!Array.isArray(source['turns']) || source['turns'].length < 2)
-			throw new Error('Dialogue stimulus requires at least two turns.');
+		if (!Array.isArray(source['turns']) || source['turns'].length < 1)
+			throw new Error('Dialogue stimulus requires at least one turn.');
 		const turns = source['turns'].map((candidate, index) => {
 			const turn = record(candidate, 'dialogue turn');
 			const voiceIndex = Number(turn['voiceIndex']);

@@ -34,7 +34,8 @@ with no visual effect.
   descriptive copy.
 - Spark Blue owns primary CTA and links.
 - Eager Green owns success, progress, and correct-answer emphasis.
-- Faded Gray owns disabled content and outlined-control borders.
+- Faded Gray owns disabled content and routine outlined-control borders; button
+  states use the exact lighter grays from their supplied visual references.
 - Attention Yellow and Answer Red are Vocora semantic extensions for warning
   and incorrect/destructive feedback.
 - Textual Angular Material buttons use a 13px radius, a 44px face, and a 4px
@@ -75,9 +76,11 @@ For a shared CTA, apply `vocora-button` and exactly one of:
 Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
 secondary intent. Use the native `disabled` attribute for every disabled
 state. Filled intents have no border. Secondary buttons retain their 2px
-border in both enabled and disabled states. Disabled buttons have no lower
-edge. Secondary labels use Charcoal (`#4B4B4B`) in both themes; the dark theme
-keeps the secondary button's Paper White surface for accessible contrast.
+`#E5E5E5` border in both enabled and disabled states. Disabled buttons have no
+lower edge. Light filled-disabled buttons use `#D9D9D9` with `#777777` labels;
+disabled secondary labels use `#D9D9D9`. Secondary labels use Charcoal
+(`#4B4B4B`) in both themes; the dark theme keeps the secondary button's Paper
+White surface for accessible contrast.
 
 Do not apply CTA color classes to answer-option tiles or other content-sized
 selection controls. Their colors remain selection-owned, while the global

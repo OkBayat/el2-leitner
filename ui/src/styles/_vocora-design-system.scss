@@ -21,12 +21,12 @@
 		--vocora-action-primary-foreground: var(--color-paper-white);
 		--vocora-action-secondary: var(--color-paper-white);
 		--vocora-action-secondary-hover: var(--color-paper-white);
-		--vocora-action-secondary-edge: var(--color-faded-gray);
-		--vocora-action-secondary-border: var(--color-faded-gray);
+		--vocora-action-secondary-edge: var(--color-button-border-gray);
+		--vocora-action-secondary-border: var(--color-button-border-gray);
 		--vocora-action-secondary-foreground: var(--color-charcoal);
 		--vocora-action-secondary-disabled-background: var(--color-paper-white);
-		--vocora-action-secondary-disabled-foreground: var(--color-faded-gray);
-		--vocora-action-secondary-disabled-border: var(--color-faded-gray);
+		--vocora-action-secondary-disabled-foreground: var(--color-button-disabled-gray);
+		--vocora-action-secondary-disabled-border: var(--color-button-border-gray);
 		--vocora-action-success: var(--color-eager-green);
 		--vocora-action-success-hover: var(--color-eager-green);
 		--vocora-action-success-edge: var(--color-eager-green);
@@ -39,9 +39,9 @@
 		--vocora-action-error-hover: var(--color-answer-red);
 		--vocora-action-error-edge: var(--color-answer-red);
 		--vocora-action-error-foreground: var(--color-paper-white);
-		--vocora-action-disabled-background: var(--color-faded-gray);
-		--vocora-action-disabled-foreground: var(--color-paper-white);
-		--vocora-action-disabled-border: var(--color-faded-gray);
+		--vocora-action-disabled-background: var(--color-button-disabled-gray);
+		--vocora-action-disabled-foreground: var(--color-pencil-gray);
+		--vocora-action-disabled-border: var(--color-button-disabled-gray);
 		--vocora-focus-ring: var(--color-spark-blue);
 
 		--vocora-success: #58cc02;
@@ -172,6 +172,8 @@
 		--color-charcoal: #4b4b4b;
 		--color-pencil-gray: #777777;
 		--color-faded-gray: #afafaf;
+		--color-button-disabled-gray: #d9d9d9;
+		--color-button-border-gray: #e5e5e5;
 		--color-attention-yellow: #ffc800;
 		--color-answer-red: #ff4b4b;
 

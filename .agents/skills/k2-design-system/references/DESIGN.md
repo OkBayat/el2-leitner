@@ -23,6 +23,8 @@ Only the following foundation colors may establish new product patterns:
 | Charcoal        | `#4B4B4B` | Headings and primary copy                                   |
 | Pencil Gray     | `#777777` | Secondary copy                                              |
 | Faded Gray      | `#AFAFAF` | Disabled content and control borders                        |
+| Button Disabled Gray | `#D9D9D9` | Disabled button faces and secondary labels              |
+| Button Border Gray | `#E5E5E5` | Secondary button borders                                   |
 
 Vocora additionally defines two semantic feedback colors required by the
 exercise domain:
@@ -109,7 +111,7 @@ exactly one intent class:
 | Success   | `vocora-button--success`   | Eager Green fill, Paper White text                       | Confirmed/correct outcome     |
 | Error     | `vocora-button--error`     | Answer Red fill, Paper White text                        | Incorrect/destructive outcome |
 | Warning   | `vocora-button--warning`   | Attention Yellow fill, Charcoal text                     | Caution or attention          |
-| Secondary | `vocora-button--secondary` | Paper White fill, Charcoal text, 2px Faded Gray border   | Lower-emphasis alternative    |
+| Secondary | `vocora-button--secondary` | Paper White fill, Charcoal text, 2px `#E5E5E5` border   | Lower-emphasis alternative    |
 
 Example:
 
@@ -139,8 +141,8 @@ at least 48px.
 Use the native `disabled` attribute. Never encode disabled state with a visual
 class alone.
 
-- Filled intents: Faded Gray fill, Paper White label, and no border.
-- Secondary intent: Paper White fill with Faded Gray label and 2px border.
+- Light filled intents: `#D9D9D9` fill, Pencil Gray (`#777777`) label, and no border.
+- Light secondary intent: Paper White fill with `#D9D9D9` label and a 2px `#E5E5E5` border.
 - Disabled buttons have no lower edge or hover/pressed response and sit 4px
   lower inside the preserved footprint.
 - The cursor and Material disabled semantics remain intact.

@@ -44,6 +44,7 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         tokens = copy.deepcopy(self.tokens)
         tokens["themes"]["light"]["action"]["primary"] = "#58CC02"
         tokens["themes"]["light"]["action"]["secondaryForeground"] = "#1CB0F6"
+        tokens["themes"]["light"]["action"]["disabledBackground"] = "#AFAFAF"
         tokens["themes"]["dark"]["action"]["success"] = "#49C0F8"
         tokens["themes"]["dark"]["action"]["secondaryForeground"] = "#F0F7F2"
         errors: list[str] = []
@@ -54,6 +55,10 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         )
         self.assertIn(
             "themes.light.action.secondaryForeground must equal #4B4B4B",
+            errors,
+        )
+        self.assertIn(
+            "themes.light.action.disabledBackground must equal #D9D9D9",
             errors,
         )
         self.assertIn(

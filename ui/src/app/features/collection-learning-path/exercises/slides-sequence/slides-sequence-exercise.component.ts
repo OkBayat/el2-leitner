@@ -191,13 +191,13 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		this.finishing.set(true);
 		this.error.set("");
 		try {
+			const slideResults = this.slideExercise.deckController.results();
 			const results = (
 				await Promise.all(
-					this.slideExercise.deckController
-						.results()
-						.map((result) => this.evidenceResult(result)),
+					slideResults.map((result) => this.evidenceResult(result)),
 				)
 			).filter((result) => result !== null);
+			await this.runtime()?.sequenceCompletion?.(slideResults);
 			this.completed.set(true);
 			this.outcome.emit({
 				kind: "completed",

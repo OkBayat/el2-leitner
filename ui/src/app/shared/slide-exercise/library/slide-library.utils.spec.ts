@@ -26,12 +26,21 @@ describe('slide stimulus parsing', () => {
 		});
 	});
 
-	it('rejects a dialogue without at least two complete turns', () => {
-		expect(() =>
+	it('parses a single spoken turn for audio-led practice', () => {
+		expect(
 			parseStimulus({
 				type: 'dialogue',
-				turns: [{ speaker: 'Host', text: 'Only one turn.' }],
+				turns: [{ speaker: 'Sentence', text: 'Repeat this sentence.' }],
 			}),
-		).toThrow(/two turns/iu);
+		).toEqual({
+			type: 'dialogue',
+			turns: [
+				{
+					speaker: 'Sentence',
+					text: 'Repeat this sentence.',
+					voiceIndex: 0,
+				},
+			],
+		});
 	});
 });

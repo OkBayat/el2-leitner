@@ -10,6 +10,8 @@
   --color-charcoal: #4b4b4b;
   --color-pencil-gray: #777777;
   --color-faded-gray: #afafaf;
+  --color-button-disabled-gray: #d9d9d9;
+  --color-button-border-gray: #e5e5e5;
   --color-attention-yellow: #ffc800;
   --color-answer-red: #ff4b4b;
 
@@ -38,10 +40,10 @@ html[data-theme='light'] {
   --vocora-action-secondary: #ffffff;
   --vocora-action-secondary-hover: #ffffff;
   --vocora-action-secondary-foreground: #4b4b4b;
-  --vocora-action-secondary-border: #afafaf;
+  --vocora-action-secondary-border: #e5e5e5;
   --vocora-action-secondary-disabled-background: #ffffff;
-  --vocora-action-secondary-disabled-foreground: #afafaf;
-  --vocora-action-secondary-disabled-border: #afafaf;
+  --vocora-action-secondary-disabled-foreground: #d9d9d9;
+  --vocora-action-secondary-disabled-border: #e5e5e5;
   --vocora-action-success: #58cc02;
   --vocora-action-success-hover: #58cc02;
   --vocora-action-success-foreground: #ffffff;
@@ -51,9 +53,9 @@ html[data-theme='light'] {
   --vocora-action-error: #ff4b4b;
   --vocora-action-error-hover: #ff4b4b;
   --vocora-action-error-foreground: #ffffff;
-  --vocora-action-disabled-background: #afafaf;
-  --vocora-action-disabled-foreground: #ffffff;
-  --vocora-action-disabled-border: #afafaf;
+  --vocora-action-disabled-background: #d9d9d9;
+  --vocora-action-disabled-foreground: #777777;
+  --vocora-action-disabled-border: #d9d9d9;
   --vocora-focus-ring: #1cb0f6;
 }
 

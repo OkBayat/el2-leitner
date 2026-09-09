@@ -32,6 +32,8 @@ CANONICAL_COLORS = {
     "charcoal": "#4B4B4B",
     "pencil-gray": "#777777",
     "faded-gray": "#AFAFAF",
+    "button-disabled-gray": "#D9D9D9",
+    "button-border-gray": "#E5E5E5",
     "attention-yellow": "#FFC800",
     "answer-red": "#FF4B4B",
 }
@@ -48,6 +50,11 @@ CANONICAL_ACTION_ROLES = {
         "success": "#58CC02",
         "successHover": "#58CC02",
         "secondaryForeground": "#4B4B4B",
+        "secondaryBorder": "#E5E5E5",
+        "secondaryDisabledForeground": "#D9D9D9",
+        "secondaryDisabledBorder": "#E5E5E5",
+        "disabledBackground": "#D9D9D9",
+        "disabledForeground": "#777777",
     },
     "dark": {
         "primary": "#49C0F8",

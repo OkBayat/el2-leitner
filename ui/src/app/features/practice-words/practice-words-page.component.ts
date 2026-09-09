@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { PracticeWordsSlideBuilderService } from '../../application/practice-words/practice-words-slide-builder.service';
+import { PracticeWordsSlideBuilderService, type PracticeWordsMode } from '../../application/practice-words/practice-words-slide-builder.service';
+import { PracticeWordsSessionService } from '../../application/practice-words/practice-words-session.service';
 import type { SelectionSlideExpansionHandler } from '../../shared/slide-exercise';
-import type { ExerciseContext } from '../collection-learning-path/exercises/exercise-runtime/exercise-contracts';
+import type { ExerciseContext, ExerciseOutcome } from '../collection-learning-path/exercises/exercise-runtime/exercise-contracts';
 import { SlidesSequenceExerciseComponent } from '../collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component';
 
 @Component({
   selector: 'app-practice-words-page',
   standalone: true,
   imports: [SlidesSequenceExerciseComponent],
-  template: '<app-slides-sequence-exercise (outcome)="onOutcome()" />',
+  template: '<app-slides-sequence-exercise (outcome)="onOutcome($event)" />',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PracticeWordsPageComponent implements OnInit {
@@ -17,6 +18,7 @@ export class PracticeWordsPageComponent implements OnInit {
   private readonly exercise!: SlidesSequenceExerciseComponent;
   private readonly router = inject(Router);
   private readonly slideBuilder = inject(PracticeWordsSlideBuilderService);
+  private readonly practiceSession = inject(PracticeWordsSessionService);
   private readonly expandPracticeMode: SelectionSlideExpansionHandler = async (request) => {
     if (request.expansionId !== 'house-one-practice') {
       throw new Error(`Unsupported selection expansion: ${request.expansionId}`);
@@ -24,12 +26,10 @@ export class PracticeWordsPageComponent implements OnInit {
     if (request.selectedOptionIds.length !== 1) {
       throw new Error('Choose exactly one practice mode.');
     }
-    return {
-      slides: await this.slideBuilder.build(
-        request.slideId,
-        request.selectedOptionIds[0],
-      ),
-    };
+    const mode = request.selectedOptionIds[0];
+    const slides = await this.slideBuilder.build(request.slideId, mode);
+    await this.practiceSession.start(mode as PracticeWordsMode, slides.length);
+    return { slides };
   };
 
   readonly exerciseContext: ExerciseContext = {
@@ -41,6 +41,7 @@ export class PracticeWordsPageComponent implements OnInit {
     completionPolicy: 'slide-sequence',
     payload: null,
     selectionExpansion: this.expandPracticeMode,
+    sequenceCompletion: (results) => this.practiceSession.complete(results),
     config: {
       slides: [
         {
@@ -86,7 +87,8 @@ export class PracticeWordsPageComponent implements OnInit {
     this.exercise.load(this.exerciseContext);
   }
 
-  onOutcome(): void {
+  async onOutcome(outcome: ExerciseOutcome): Promise<void> {
+    if (outcome.kind === 'cancelled') await this.practiceSession.abandon();
     void this.router.navigateByUrl('/dashboard');
   }
 }

@@ -3,7 +3,7 @@ type: Concept
 title: Reusable Slide Interactions
 description: Select and compose Vocora reusable slide families by learner action, evidence type, and assessment boundary.
 tags: [learning-path, slides, exercises, angular, interaction-design]
-timestamp: 2026-09-08T06:55:33Z
+timestamp: 2026-09-09T20:49:00Z
 ---
 
 Vocora provides 17 reusable interaction families for lesson exercises. Select a
@@ -82,16 +82,24 @@ exercise must additionally have a backend completion owner that can reconstruct
 and verify the generated set; the generic backend verifier cannot infer
 arbitrary slides from a frontend handler.
 
+A standalone parent that owns session persistence can provide the runtime-only
+`sequenceCompletion` handler through `ExerciseContext`. The sequence awaits it
+with the recorded slide results before emitting completion, so persistence
+failures leave Finish retryable. Like `selectionExpansion`, this handler is an
+application boundary and never belongs in serialized exercise JSON.
+
 Practice Words is the reference implementation: its parent maps the three mode
 IDs to a House 1 slide builder. The builder produces one `dictation` slide per
 word for vocabulary dictation, or requires sentence-practice coverage for every
 House 1 word before producing `cloze` sentence completion or `pronunciation`
-repeat slides. Both sentence modes reuse the generic `dialogue` TTS stimulus;
-no practice-specific slide component or serialized service reference is needed.
+repeat slides. Both sentence modes reuse the generic `dialogue` TTS stimulus,
+which accepts one or more spoken turns. The Practice Words application session
+service records scored attempts and completes or abandons the session; no
+practice-specific slide component or serialized service reference is needed.
 
 # Shared Stimuli and Answer Contracts
 
-Reusable slides may use `text`, `audio`, `image`, `chart`, or `diagram` stimuli.
+Reusable slides may use `text`, `audio`, `dialogue`, `image`, `chart`, or `diagram` stimuli.
 Text can contain addressable sections; audio can expose a transcript and replay
 limit; image and diagram stimuli require accessible alternative text. Chart
 stimuli currently permit optional alternative text, but image-backed charts
@@ -132,3 +140,5 @@ exercise flow but are not members of the 17 reusable interaction families.
 [7] [Generic selection expansion behavior](../../ui/src/app/shared/slide-exercise/library/components/selection/selection-slide.component.ts)
 [8] [Practice Words runtime handler](../../ui/src/app/features/practice-words/practice-words-page.component.ts)
 [9] [House 1 practice slide builder](../../ui/src/app/application/practice-words/practice-words-slide-builder.service.ts)
+[10] [Practice Words session persistence](../../ui/src/app/application/practice-words/practice-words-session.service.ts)
+[11] [Sequence completion boundary](../../ui/src/app/features/collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component.ts)

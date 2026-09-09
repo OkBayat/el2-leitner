@@ -53,7 +53,7 @@ The sequence needs at least two slides, unique slide IDs, and exactly one termin
 
 ## Shared slide data
 
-All reusable slides may declare `instruction`, `stimulus`, and `explanation` where the component supports them. Stimulus types are `text`, `audio`, `dialogue`, `image`, `chart`, and `diagram`; use their exact fields from `slide-library.models.ts`. Never invent an asset URL.
+All reusable slides may declare `instruction`, `stimulus`, and `explanation` where the component supports them. Stimulus types are `text`, `audio`, `dialogue`, `image`, `chart`, and `diagram`; use their exact fields from `slide-library.models.ts`. A `dialogue` stimulus accepts one or more spoken turns, so it also owns a single generated utterance that needs the shared speech playback path. Never invent an asset URL.
 
 Options are objects with a stable `id`, visible `label`, and optional `description`. Answer fields use an `id`, one or more `answers`, and optional constraints such as `wordLimit`, `caseSensitive`, `punctuationSensitive`, or `exactSpelling`.
 
@@ -107,6 +107,13 @@ runtime `ExerciseContext`. The selection sends `{ expansionId, slideId,
 selectedOptionIds }` to that handler; the handler queries its source and returns
 `{ slides }`. The selection then inserts those slides immediately after itself
 through the parent deck controller and advances only after insertion succeeds.
+
+When a standalone expanded sequence must persist a session before reporting
+completion, its application parent may also supply `sequenceCompletion` in the
+runtime `ExerciseContext`. The sequence awaits that handler with the recorded
+slide results before emitting its completed outcome, and keeps completion
+retryable if persistence fails. This callback is runtime application behavior;
+never serialize it into exercise or slide JSON.
 
 Every returned slide must use a registered catalog type, have a unique stable
 non-terminal ID, and be fully configured from authoritative source data. The

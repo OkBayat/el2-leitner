@@ -191,6 +191,12 @@ assert.match(
 	/--vocora-action-secondary-foreground:\s*var\(--color-charcoal\);/iu,
 	"Light secondary buttons must use the canonical Charcoal label color.",
 );
+assert.match(designSystem, /--color-button-disabled-gray:\s*#d9d9d9;/iu);
+assert.match(designSystem, /--color-button-border-gray:\s*#e5e5e5;/iu);
+assert.match(designSystem, /--vocora-action-secondary-border:\s*var\(--color-button-border-gray\);/iu);
+assert.match(designSystem, /--vocora-action-secondary-disabled-foreground:\s*var\(--color-button-disabled-gray\);/iu);
+assert.match(designSystem, /--vocora-action-disabled-background:\s*var\(--color-button-disabled-gray\);/iu);
+assert.match(designSystem, /--vocora-action-disabled-foreground:\s*var\(--color-pencil-gray\);/iu);
 assert.match(
 	designSystem,
 	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*#ffffff;[^}]*--vocora-action-secondary-foreground:\s*#4b4b4b;/iu,

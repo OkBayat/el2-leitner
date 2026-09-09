@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
 import { PracticeWordsSlideBuilderService } from '../../application/practice-words/practice-words-slide-builder.service';
+import { PracticeWordsSessionService } from '../../application/practice-words/practice-words-session.service';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
 import { PracticeWordsPageComponent } from './practice-words-page.component';
 
@@ -16,12 +17,18 @@ describe('PracticeWordsPageComponent', () => {
         { id: 'generated-practice', type: 'message', data: { title: 'Generated practice' } },
       ]),
     };
+    const practiceSession = {
+      start: vi.fn().mockResolvedValue(undefined),
+      complete: vi.fn().mockResolvedValue(undefined),
+      abandon: vi.fn().mockResolvedValue(undefined),
+    };
     await TestBed.configureTestingModule({
       imports: [PracticeWordsPageComponent],
       providers: [
         provideRouter([{ path: 'dashboard', component: EmptyPage }]),
         { provide: CollectionLearningPathApiService, useValue: {} },
         { provide: PracticeWordsSlideBuilderService, useValue: slideBuilder },
+        { provide: PracticeWordsSessionService, useValue: practiceSession },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(PracticeWordsPageComponent);
@@ -55,6 +62,7 @@ describe('PracticeWordsPageComponent', () => {
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(slideBuilder.build).toHaveBeenCalledWith('practice-mode', 'vocabulary-dictation');
+      expect(practiceSession.start).toHaveBeenCalledWith('vocabulary-dictation', 1);
       expect(host.textContent).toContain('Generated practice');
       expect(host.querySelector('.slide-exercise-header__copy strong')?.textContent?.trim()).toBe('1 of 2');
     });
@@ -104,6 +112,7 @@ describe('PracticeWordsPageComponent', () => {
     expect(finishButton).toBeDefined();
     finishButton?.click();
     await fixture.whenStable();
+    expect(practiceSession.complete).toHaveBeenCalledWith(expect.any(Array));
     expect(TestBed.inject(Router).url).toBe('/dashboard');
   });
 });
