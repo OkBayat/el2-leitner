@@ -62,9 +62,13 @@ export class PracticeWordsPageComponent implements OnInit {
           id: 'finish',
           type: 'summary',
           terminal: true,
-          data: { eyebrow: '', title: '', subtitle: '', metrics: [] },
+          data: {
+            aggregationMode: 'first-attempts',
+            eyebrow: 'Practice complete',
+            title: 'Every House 1 word has been practiced',
+            subtitle: 'Review your first-attempt results.',
+          },
           chrome: {
-            header: { visible: false },
             footer: {
               primary: { id: 'finish', label: 'Finish', behavior: 'emit' },
               secondary: false,

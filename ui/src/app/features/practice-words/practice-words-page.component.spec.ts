@@ -62,7 +62,40 @@ describe('PracticeWordsPageComponent', () => {
       fixture.detectChanges();
       expect(host.querySelector('[data-testid="summary-slide-content"]')).not.toBeNull();
     });
-    expect(host.querySelector('[data-testid="summary-slide-content"]')?.textContent?.trim()).toBe('');
+    const summary = host.querySelector('[data-testid="summary-slide-content"]');
+    expect(summary?.textContent).toContain('Practice complete');
+    expect(summary?.textContent).toContain('Every House 1 word has been practiced');
+    expect(summary?.textContent).toContain('Review your first-attempt results.');
+    expect(summary?.textContent).toContain('Correct');
+    expect(summary?.textContent).toContain('Mistakes');
+    expect(summary?.textContent).toContain('Accuracy');
+    const metrics = [...(summary?.querySelectorAll('.summary-slide__metric') ?? [])]
+      .map((metric) => ({
+        label: metric.querySelector('dt')?.textContent?.trim(),
+        value: metric.querySelector('dd')?.textContent?.trim(),
+      }));
+    expect(metrics).toEqual([
+      { label: 'Correct', value: '0' },
+      { label: 'Mistakes', value: '0' },
+      { label: 'Accuracy', value: '0%' },
+    ]);
+    expect(slides[1]).toEqual({
+      id: 'finish',
+      type: 'summary',
+      terminal: true,
+      data: {
+        aggregationMode: 'first-attempts',
+        eyebrow: 'Practice complete',
+        title: 'Every House 1 word has been practiced',
+        subtitle: 'Review your first-attempt results.',
+      },
+      chrome: {
+        footer: {
+          primary: { id: 'finish', label: 'Finish', behavior: 'emit' },
+          secondary: false,
+        },
+      },
+    });
     const finishButton = [...host.querySelectorAll<HTMLButtonElement>('button')]
       .find((button) => button.textContent?.trim() === 'Finish');
     expect(finishButton).toBeDefined();
