@@ -10,13 +10,14 @@ const read = (relative) => fs.readFileSync(path.join(uiRoot, relative), 'utf8');
 const globalStyles = read('src/styles.scss');
 const tableStyles = read('src/styles/_table-design.scss');
 const words = read('src/app/features/words/words-page.component.ts');
+const wordsTemplate = read('src/app/features/words/words-page.component.html');
 const house = read('src/app/features/leitner-house/leitner-house-page.component.ts');
 const reports = read('src/app/features/reports/reports-page.component.ts');
 
 assert.match(globalStyles, /@use '.\/styles\/table-design' as table-design/u, 'Table styling must have one shared global owner.');
 assert.match(globalStyles, /@include table-design\.apply\(\)/u, 'Shared table styling must be applied from the global style composition root.');
 
-for (const source of [words, house, reports]) {
+for (const source of [`${words}\n${wordsTemplate}`, house, reports]) {
 	assert.match(source, /MatTableModule/u, 'Every data-table feature must continue to use Angular Material table primitives.');
 	assert.match(source, /<table mat-table/u, 'Every data-table feature must use the shared Material table surface.');
 }
@@ -30,21 +31,15 @@ assert.match(tableStyles, /\.mat-mdc-row \.row-actions[\s\S]*opacity:\s*0;[\s\S]
 assert.match(tableStyles, /\.mat-mdc-row:hover \.row-actions,[\s\S]*\.mat-mdc-row:focus-within \.row-actions[\s\S]*opacity:\s*1;[\s\S]*pointer-events:\s*auto;[\s\S]*visibility:\s*visible/u, 'Row actions must appear only while the row is hovered or keyboard-focused.');
 assert.doesNotMatch(tableStyles, /@media\(hover:\s*none\)[\s\S]*\.row-actions[\s\S]*opacity:\s*1/u, 'There must not be a blanket rule that keeps row actions permanently visible.');
 
-assert.match(words, /SpeechService/u, 'Word Bank must reuse the shared speech service.');
-assert.match(words, /title="Play pronunciation"[\s\S]*\(click\)="speakWord\(word\)"/u, 'Pronunciation must be available as a row action.');
-assert.match(words, /speakWord\(word: LearningWord\): void \{ this\.speech\.speak\(word\.term, this\.store\.snapshot\(\)\.settings\.voiceRate\); \}/u, 'Pronunciation must preserve the configured voice rate from the previous implementation.');
-assert.match(words, /title="Edit"/u, 'Edit must remain a hover row action.');
-assert.match(words, /title="Delete"/u, 'Delete must remain a hover row action.');
-
-assert.doesNotMatch(words, /MatChipsModule|<mat-chip/u, 'Collection labels must no longer use Material chips.');
-assert.match(words, /class="collection-actions"/u, 'Collection labels need a lightweight shared container.');
-assert.match(words, /<button mat-button type="button" class="collection-label"/u, 'Collection labels must use simple Material text buttons.');
-assert.match(tableStyles, /\.collection-label\.mat-mdc-button/u, 'Collection buttons must receive the minimal table treatment.');
+assert.deepEqual(
+	[...wordsTemplate.matchAll(/matColumnDef="([^"]+)"/gu)].map((match) => match[1]),
+	['term', 'box'],
+	'Word Bank must expose only the Word and Box columns.',
+);
+assert.match(wordsTemplate, /\[routerLink\]="\['\/words', word\.id\]"/u, 'Word labels must link to their detail page.');
+assert.match(wordsTemplate, />\s*\{\{ activatingId\(\) === word\.id \? 'Adding…' : 'Add to Leitner' \}\}\s*<\/button>/u, 'Unintroduced words must expose the Add to Leitner action.');
+assert.doesNotMatch(wordsTemplate, />Previous<|>Next</u, 'Word Bank paging controls must stay removed.');
+assert.match(words, /IntersectionObserver/u, 'Word Bank must lazy-load additional table rows.');
 assert.match(tableStyles, /\.mat-mdc-header-cell[\s\S]*font-size:\s*12px;[\s\S]*font-weight:\s*600/u, 'Headers should remain compact rather than visually heavy.');
-
-assert.doesNotMatch(words, />My words</u, 'Missing collection provenance must never be presented as a fabricated “My words” collection.');
-assert.match(words, /class="collection-empty">—<\/span>/u, 'Words with no proven collection source should render a neutral unavailable marker.');
-assert.match(words, /effect\(\(\) => \{[\s\S]*visibleSourceIds\(\)[\s\S]*loadSources/u, 'Collection sources must reload whenever the visible Word Bank page changes.');
-assert.match(words, /request !== this\.sourceRequest/u, 'Late collection-source responses must not overwrite the current visible page.');
 
 console.log('Google-like table design contract passed.');

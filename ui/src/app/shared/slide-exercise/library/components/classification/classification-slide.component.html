@@ -26,24 +26,56 @@
 			</div>
 			<div class="bucket-grid">
 				@for (category of data.categories; track category.id) {
-					<button
-						mat-stroked-button
-						type="button"
+					<div
 						class="bucket"
+						role="button"
 						[attr.aria-label]="
 							classificationBucketAriaLabel(
 								category.id,
 								category.label
 							)
 						"
-						[disabled]="
+						[attr.aria-disabled]="
 							!selectedItemId() || interactionState() !== 'idle'
 						"
+						[attr.tabindex]="
+							selectedItemId() && interactionState() === 'idle'
+								? 0
+								: -1
+						"
+						[attr.data-drop-ready]="
+							selectedItemId() && interactionState() === 'idle'
+								? 'true'
+								: null
+						"
 						(click)="assignSelected(category.id)"
+						(keydown)="handleBucketKeydown($event, category.id)"
 					>
-						<strong>{{ category.label }}</strong
-						><span>{{ assignedLabels(category.id) }}</span>
-					</button>
+						<div class="bucket__header">
+							<strong>{{ category.label }}</strong>
+							<span class="bucket__count" aria-hidden="true">
+								{{ assignedItems(category.id).length }}
+							</span>
+						</div>
+						<div class="bucket__items">
+							@for (
+								item of assignedItems(category.id);
+								track item.id
+							) {
+								<span class="bucket__item">{{
+									item.label
+								}}</span>
+							} @empty {
+								<span class="bucket__placeholder">
+									@if (selectedItemLabel()) {
+										Place “{{ selectedItemLabel() }}” here
+									} @else {
+										Select a word above
+									}
+								</span>
+							}
+						</div>
+					</div>
 				}
 			</div>
 		</section>

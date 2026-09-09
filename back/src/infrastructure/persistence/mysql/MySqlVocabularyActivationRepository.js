@@ -232,6 +232,78 @@ export class MySqlVocabularyActivationRepository {
     }
   }
 
+  async exclude(userId, { expectedRevision, vocabularyId }) {
+    const connection = await this.pool.getConnection();
+    try {
+      await connection.beginTransaction();
+
+      if (!(await this.claimRevision(connection, userId, expectedRevision))) {
+        const current = await this.currentRevision(connection, userId);
+        if (current === null) {
+          throw new NotFoundError("LEARNING_STATE_NOT_FOUND", "Learning state was not found.");
+        }
+        if (current === expectedRevision + 1) {
+          const retriedTarget = await this.activationTarget(connection, userId, vocabularyId);
+          if (retriedTarget?.progress_status === "excluded") {
+            await connection.commit();
+            return current;
+          }
+        }
+        throw new ConflictError(
+          "STATE_CONFLICT",
+          "Learning state was updated by another session. Reload and try again."
+        );
+      }
+
+      const [progressWrite] = await connection.execute(
+        `INSERT INTO user_vocabulary_progress (user_id, vocabulary_entry_id, status)
+         SELECT ?, ve.id, 'excluded'
+         FROM vocabulary_entries ve
+         JOIN collection_entries ce
+           ON ce.vocabulary_entry_id = ve.id AND ce.removed_at IS NULL
+         JOIN user_collections uc
+           ON uc.collection_id = ce.collection_id AND uc.user_id = ? AND uc.status = 'active'
+         JOIN collections c ON c.id = ce.collection_id AND c.archived_at IS NULL
+         LEFT JOIN user_vocabulary_progress existing
+           ON existing.user_id = ? AND existing.vocabulary_entry_id = ve.id
+         WHERE ve.public_id = ?
+           AND ve.status = 'active'
+           AND (existing.user_id IS NULL OR (
+             existing.status NOT IN ('excluded', 'mastered')
+             AND existing.mastered_at IS NULL
+             AND COALESCE(existing.box, 0) = 0
+             AND existing.introduced_on IS NULL
+           ))
+         ORDER BY c.is_default DESC, ce.collection_id
+         LIMIT 1
+         ON DUPLICATE KEY UPDATE status = 'excluded', updated_at = CURRENT_TIMESTAMP(3)`,
+        [userId, userId, userId, vocabularyId]
+      );
+
+      if (Number(progressWrite.affectedRows) === 0) {
+        const target = await this.activationTarget(connection, userId, vocabularyId);
+        if (!target) {
+          throw new NotFoundError(
+            "VOCABULARY_NOT_FOUND",
+            "Vocabulary entry was not found in an active collection."
+          );
+        }
+        throw new ConflictError(
+          "VOCABULARY_ALREADY_ACTIVE",
+          "Vocabulary is already active in the learning boxes."
+        );
+      }
+
+      await connection.commit();
+      return expectedRevision + 1;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
   async activateBatch(userId, { expectedRevision, vocabularyIds, day, source }) {
     const connection = await this.pool.getConnection();
     let transactionStarted = false;

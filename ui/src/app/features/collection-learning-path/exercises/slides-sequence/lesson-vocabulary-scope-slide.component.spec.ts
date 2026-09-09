@@ -114,4 +114,42 @@ describe('lesson vocabulary scope slide generation', () => {
     });
     expect(deck.next).toHaveBeenCalledOnce();
   });
+
+  it('automatically enters a configured vocabulary scope without an extra launch step', async () => {
+    TestBed.configureTestingModule({ imports: [LessonVocabularyScopeSlideComponent] });
+    const fixture = TestBed.createComponent(LessonVocabularyScopeSlideComponent);
+    const deck = { insertSlides: vi.fn(), next: vi.fn(), results: vi.fn(() => []) };
+    fixture.componentInstance.load({
+      slideId: 'scope',
+      type: 'lesson-vocabulary-scope',
+      data: {
+        autoStart: true,
+        intro: {
+          eyebrow: 'Meaning review',
+          title: '{{total}} targets',
+          description: 'Review every meaning.',
+        },
+        generatedSlide: meaningConfig,
+      },
+      environment: {
+        pathId: 'path-1',
+        lessonId: 'lesson-1',
+        exerciseId: 'exercise-1',
+        type: 'slides.sequence',
+        schemaVersion: 1,
+        config: {},
+        payload: {
+          scope: { kind: 'collection-section', ref: 'unit-1' },
+          items,
+          summary: { total: items.length },
+        },
+      },
+      deck,
+    });
+
+    await Promise.resolve();
+
+    expect(deck.insertSlides).toHaveBeenCalledOnce();
+    expect(deck.next).toHaveBeenCalledOnce();
+  });
 });

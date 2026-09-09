@@ -22,6 +22,7 @@ export const appRoutes: Routes = [
     children: [
       { path: 'dashboard', loadComponent: () => import('./features/home/home-page.component').then((m) => m.HomePageComponent) },
       { path: 'overview', loadComponent: () => import('./features/dashboard/dashboard-page.component').then((m) => m.DashboardPageComponent) },
+      { path: 'words/:wordId', loadComponent: () => import('./features/words/word-detail-page.component').then((m) => m.WordDetailPageComponent) },
       { path: 'words', loadComponent: () => import('./features/words/words-page.component').then((m) => m.WordsPageComponent) },
       { path: 'reports', loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent) },
       { path: 'settings', loadComponent: () => import('./features/settings/settings-page.component').then((m) => m.SettingsPageComponent) },

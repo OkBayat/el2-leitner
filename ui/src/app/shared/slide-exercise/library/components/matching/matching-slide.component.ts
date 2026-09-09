@@ -2,9 +2,12 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	OnDestroy,
+	inject,
 	signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { SpeechService } from '../../../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -72,6 +75,8 @@ export class MatchingSlideComponent
 	extends ScoredSlideBase<MatchingSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	private readonly speech = inject(SpeechService);
+	private readonly store = inject(LearningStoreService);
 	readonly selectedLeftId = signal('');
 	readonly matchedPairIds = signal<readonly string[]>([]);
 	readonly matchedAssignments = signal<Readonly<Record<string, string>>>({});
@@ -102,10 +107,13 @@ export class MatchingSlideComponent
 		);
 	}
 	selectLeft(id: string): void {
-		if (this.interactionState() === 'idle' && !this.isMatched(id)) {
+		const pair = this.data().pairs.find((candidate) => candidate.id === id);
+		if (pair && this.interactionState() === 'idle' && !this.isMatched(id)) {
 			this.selectedLeftId.set(id);
 			this.pairFeedback.set('');
 			this.wrongPair.set(null);
+			const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+			this.speech.speak(pair.left, rate);
 		}
 	}
 	selectRight(rightId: string): void {
@@ -187,6 +195,7 @@ export class MatchingSlideComponent
 		);
 	}
 	ngOnDestroy(): void {
+		this.speech.cancel();
 		this.destroy();
 	}
 }

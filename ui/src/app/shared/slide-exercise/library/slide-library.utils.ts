@@ -50,6 +50,7 @@ export function answerFields(value: unknown): readonly AnswerField[] {
 	const fields = value.map((candidate) => {
 		const source = record(candidate, 'answer field');
 		const answers = strings(source['answers']);
+		const definitions = strings(source['definitions']);
 		if (!answers.length)
 			throw new Error('Answer field answers are required.');
 		const wordLimit = Number(source['wordLimit']);
@@ -57,6 +58,7 @@ export function answerFields(value: unknown): readonly AnswerField[] {
 			id: requiredText(source['id'], 'Answer field id'),
 			label: text(source['label']) || undefined,
 			answers,
+			definitions: definitions.length ? definitions : undefined,
 			wordLimit:
 				Number.isInteger(wordLimit) && wordLimit > 0
 					? wordLimit

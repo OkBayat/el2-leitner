@@ -167,6 +167,21 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
   assert.deepEqual(unitOne.exercises[2].config.slides.map((slide) => slide.type), [
     "teaching-card", "lesson-vocabulary-scope", "matching", "choice", "cloze", "short-answer", "classification", "rewrite", "summary",
   ]);
+  assert.equal(unitOne.exercises[2].config.slides[1].data.autoStart, true);
+  const teachingCards = unitOne.exercises.flatMap((exercise) =>
+    exercise.config.slides?.filter((slide) => slide.type === "teaching-card") ?? []);
+  assert.ok(teachingCards.every((slide) => nonEmpty(slide.data.instruction)
+    && nonEmpty(slide.data.explanation)
+    && slide.data.blocks.every((block) => nonEmpty(block.title))));
+  const collocationCloze = unitOne.exercises
+    .flatMap((exercise) => exercise.config.slides ?? [])
+    .find((slide) => slide.id === "cvfi-u01-collocations-context");
+  assert.ok(collocationCloze);
+  assert.ok(collocationCloze.data.blanks.every((blank) =>
+    Array.isArray(blank.definitions) && blank.definitions.every(nonEmpty)));
+  assert.ok(!unitOne.exercises
+    .flatMap((exercise) => exercise.config.slides ?? [])
+    .some((slide) => slide.id === "cvfi-u01-family-chunks-transfer"));
   assert.deepEqual(unitOne.exercises[2].config.scope, { kind: "lesson-source" });
   assert.deepEqual(unitOne.exercises[13].config.scope, { kind: "lesson-source" });
   assert.equal(unitOne.exercises[13].config.slides[1].data.generatedSlide.type, "meaning-choice");
@@ -228,7 +243,7 @@ test("Cambridge Unit 1 slide decks and synthetic dialogue stimuli are production
   assert.ok(definition);
   const unitOne = definition.lessons[0];
   const sequences = unitOne.exercises.filter((exercise) => exercise.type === "slides.sequence");
-  assert.equal(sequences.flatMap((exercise) => exercise.config.slides).length, 91);
+  assert.equal(sequences.flatMap((exercise) => exercise.config.slides).length, 90);
   const slideIds = sequences.flatMap((exercise) => exercise.config.slides.map((slide) => slide.id));
   assert.equal(new Set(slideIds).size, slideIds.length);
   for (const exercise of sequences) {

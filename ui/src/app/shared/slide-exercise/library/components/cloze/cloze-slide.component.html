@@ -15,6 +15,8 @@
 						<span
 							class="inline-field inline-field--text"
 							[attr.data-state]="blankState(field.id)"
+							cdkOverlayOrigin
+							#wordDetailsOrigin="cdkOverlayOrigin"
 						>
 							@if (data.inputMode === "select") {
 								<button
@@ -75,11 +77,42 @@
 									spellcheck="false"
 									lang="en"
 									enterkeyhint="done"
-									[disabled]="interactionState() !== 'idle'"
+									[readOnly]="interactionState() !== 'idle'"
+									[attr.aria-haspopup]="
+										interactionState() !== 'idle'
+											? 'dialog'
+											: null
+									"
+									[attr.aria-expanded]="
+										interactionState() !== 'idle'
+											? wordDetailsOpen() &&
+												activeBlankId() === field.id
+											: null
+									"
+									[attr.aria-controls]="
+										wordDetailsOpen() &&
+										activeBlankId() === field.id
+											? 'cloze-word-details-' + field.id
+											: null
+									"
+									[attr.aria-keyshortcuts]="
+										interactionState() !== 'idle'
+											? 'Enter'
+											: null
+									"
+									[attr.title]="
+										interactionState() !== 'idle'
+											? 'Click for word meaning'
+											: null
+									"
 									(input)="
 										setAnswer(field.id, inputFrom($event))
 									"
-									(keydown.enter)="$event.preventDefault()"
+									(click)="openWordDetails(field.id, $event)"
+									(keydown.enter)="
+										$event.preventDefault();
+										openWordDetails(field.id, $event)
+									"
 									(focus)="focusBlank(field.id)"
 								></textarea>
 								@if (field.wordLimit) {
@@ -89,12 +122,205 @@
 										>{{ wordLimitLabel(field) }}</span
 									>
 								}
+								<ng-template
+									cdkConnectedOverlay
+									[cdkConnectedOverlayOrigin]="
+										wordDetailsOrigin
+									"
+									[cdkConnectedOverlayOpen]="
+										wordDetailsOpen() &&
+										activeBlankId() === field.id
+									"
+									[cdkConnectedOverlayPositions]="
+										wordDetailsPositions
+									"
+									[cdkConnectedOverlayHasBackdrop]="false"
+									[cdkConnectedOverlayPush]="true"
+									[cdkConnectedOverlayViewportMargin]="0"
+									[cdkConnectedOverlayDisposeOnNavigation]="
+										true
+									"
+									(overlayOutsideClick)="
+										onWordDetailsOutsideClick()
+									"
+									(detach)="closeWordDetails()"
+								>
+									<div
+										class="cloze-word-details-frame"
+										(click)="closeWordDetails()"
+									>
+										<section
+											class="cloze-word-details"
+											[id]="
+												'cloze-word-details-' + field.id
+											"
+											role="dialog"
+											aria-modal="false"
+											[attr.aria-labelledby]="
+												'cloze-word-details-title-' +
+												field.id
+											"
+											data-testid="cloze-word-details"
+											(click)="$event.stopPropagation()"
+										>
+											<header
+												class="cloze-word-details__header"
+											>
+												<div
+													class="cloze-word-details__icon"
+													aria-hidden="true"
+												>
+													<svg
+														width="24"
+														height="24"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="1.8"
+													>
+														<path
+															d="M12 5v15M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"
+														/>
+													</svg>
+												</div>
+												<div
+													class="cloze-word-details__heading"
+												>
+													<span
+														class="cloze-word-details__eyebrow"
+													>
+														Vocabulary notes
+													</span>
+													<h2
+														[id]="
+															'cloze-word-details-title-' +
+															field.id
+														"
+													>
+														Word meaning
+													</h2>
+												</div>
+												<button
+													mat-icon-button
+													type="button"
+													aria-label="Close word meaning"
+													(click)="
+														closeWordDetails(true)
+													"
+												>
+													<svg
+														width="20"
+														height="20"
+														viewBox="0 0 24 24"
+														aria-hidden="true"
+													>
+														<path
+															d="m6 6 12 12M18 6 6 18"
+															stroke="currentColor"
+															stroke-width="2"
+														/>
+													</svg>
+												</button>
+											</header>
+											<div
+												class="cloze-word-details__content"
+											>
+												<div
+													class="cloze-word-details__sentence"
+												>
+													<span
+														class="cloze-word-details__eyebrow"
+													>
+														In this sentence
+													</span>
+													<p>
+														@for (
+															part of resolvedSentenceSegments(
+																field.id
+															);
+															track $index
+														) {
+															@if (
+																part.highlighted
+															) {
+																<mark>{{
+																	part.text
+																}}</mark>
+															} @else {
+																<span>{{
+																	part.text
+																}}</span>
+															}
+														}
+													</p>
+												</div>
+												<ol
+													class="cloze-word-details__definitions"
+												>
+													@for (
+														definition of field.definitions ??
+															[];
+														track $index
+													) {
+														<li>
+															{{ definition }}
+														</li>
+													} @empty {
+														<li
+															class="cloze-word-details__empty"
+														>
+															No definition is
+															available for this
+															answer yet.
+														</li>
+													}
+												</ol>
+											</div>
+											<footer
+												class="cloze-word-details__footer"
+											>
+												From this lesson
+											</footer>
+										</section>
+									</div>
+								</ng-template>
 							}
 						</span>
 					}
 				}
 			</p>
-			@if (data.inputMode === "word-bank") {
+			@if (data.inputMode === 'text' && answerOptions().length) {
+				<div class="cloze-answer-support">
+					<button
+						mat-stroked-button
+						type="button"
+						[attr.aria-expanded]="answerOptionsVisible()"
+						aria-controls="cloze-answer-options"
+						[disabled]="interactionState() !== 'idle'"
+						(click)="toggleAnswerOptions()"
+					>
+						{{
+							answerOptionsVisible()
+								? 'Hide options'
+								: 'Show options'
+						}}
+					</button>
+					@if (answerOptionsVisible()) {
+						<div
+							id="cloze-answer-options"
+							class="cloze-answer-options"
+							aria-label="Answer options"
+						>
+							@for (word of answerOptions(); track word) {
+								<span class="cloze-answer-option">{{
+									word
+								}}</span>
+							}
+						</div>
+					}
+				</div>
+			}
+			@if (data.inputMode === 'word-bank') {
 				<div class="chip-list" aria-label="Word bank">
 					@for (word of data.wordBank ?? []; track word) {
 						<button

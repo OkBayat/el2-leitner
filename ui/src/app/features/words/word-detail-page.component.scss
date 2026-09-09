@@ -1,0 +1,178 @@
+:host {
+  display: block;
+}
+
+.word-detail {
+  width: min(100%, 880px);
+  display: grid;
+  gap: var(--vocora-space-5);
+}
+
+.back-action {
+  justify-self: start;
+}
+
+header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--vocora-space-4);
+}
+
+.eyebrow,
+.accepted-forms,
+.muted,
+.personal-action p {
+  color: var(--vocora-text-secondary);
+}
+
+.eyebrow {
+  margin: 0 0 var(--vocora-space-1);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: var(--vocora-space-1);
+  font-size: clamp(28px, 6vw, 40px);
+  line-height: 1.2;
+}
+
+h2 {
+  margin-bottom: var(--vocora-space-4);
+  font-size: 20px;
+}
+
+.accepted-forms,
+.muted,
+.personal-action p {
+  margin-bottom: 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--vocora-space-3);
+}
+
+.stats article,
+.detail-card,
+.personal-action {
+  border: 1px solid var(--vocora-border);
+  border-radius: var(--vocora-radius-lg);
+  background: var(--vocora-surface-base);
+}
+
+.stats article {
+  display: grid;
+  gap: var(--vocora-space-1);
+  padding: var(--vocora-space-4);
+}
+
+.stats strong {
+  font-size: 24px;
+}
+
+.stats span,
+dt {
+  color: var(--vocora-text-secondary);
+  font-size: 14px;
+}
+
+.detail-card,
+.personal-action {
+  padding: var(--vocora-space-5);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--vocora-space-4);
+  margin: 0;
+}
+
+dl div {
+  display: grid;
+  gap: var(--vocora-space-1);
+}
+
+dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.notes {
+  margin-top: var(--vocora-space-5);
+  padding-top: var(--vocora-space-4);
+  border-top: 1px solid var(--vocora-border);
+}
+
+.notes h3 {
+  margin-bottom: var(--vocora-space-2);
+  font-size: 16px;
+}
+
+.notes p {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+}
+
+.collection-row,
+.personal-action,
+.management-actions {
+  display: flex;
+  align-items: center;
+}
+
+.collection-row {
+  min-height: var(--vocora-touch-target-min);
+  justify-content: space-between;
+  gap: var(--vocora-space-3);
+  padding-block: var(--vocora-space-2);
+  border-top: 1px solid var(--vocora-border);
+}
+
+.collection-row a {
+  color: var(--vocora-text-primary);
+  font-weight: 600;
+}
+
+.management-actions {
+  gap: var(--vocora-space-1);
+}
+
+.personal-action {
+  justify-content: space-between;
+  gap: var(--vocora-space-4);
+  background: var(--vocora-surface-subtle);
+}
+
+.personal-action h2 {
+  margin-bottom: var(--vocora-space-1);
+}
+
+@media (max-width: 680px) {
+  header,
+  .personal-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .stats,
+  dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .personal-action button {
+    width: 100%;
+  }
+}

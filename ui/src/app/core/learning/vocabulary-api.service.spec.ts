@@ -18,6 +18,17 @@ describe('VocabularyApiService compact persistence', () => {
     expect(api.post).toHaveBeenCalledWith('/api/learning/vocabulary-activation-batches', { revision: 8, vocabularyIds: ['a', 'b'], day: '2026-09-01', source: 'daily' });
   });
 
+  it('uses the dedicated exclusion command for removing an unintroduced word', async () => {
+    const api = { post: vi.fn().mockResolvedValue({ revision: 6 }), put: vi.fn(), get: vi.fn() };
+    TestBed.configureTestingModule({ providers: [VocabularyApiService, { provide: ApiClientService, useValue: api }] });
+
+    expect(await TestBed.inject(VocabularyApiService).exclude(5, 'word-1')).toBe(6);
+    expect(api.post).toHaveBeenCalledWith('/api/learning/vocabulary-exclusions', {
+      revision: 5,
+      vocabularyId: 'word-1',
+    });
+  });
+
   it('sends only the edited vocabulary fields and revision for a word edit', async () => {
     const api = {
       post: vi.fn(),

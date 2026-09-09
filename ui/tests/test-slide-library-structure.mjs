@@ -29,8 +29,21 @@ const sharedStyles = readFileSync(
 	join(libraryRoot, 'slide-library.component.scss'),
 	'utf8',
 );
+const layoutStyles = readFileSync(
+	join(uiRoot, 'src/app/shared/slide-exercise/slide-exercise.component.scss'),
+	'utf8',
+);
 const clozeTemplate = readFileSync(
 	join(libraryRoot, 'components', 'cloze', 'cloze-slide.component.html'),
+	'utf8',
+);
+const classificationTemplate = readFileSync(
+	join(
+		libraryRoot,
+		'components',
+		'classification',
+		'classification-slide.component.html',
+	),
 	'utf8',
 );
 
@@ -104,6 +117,8 @@ for (const attribute of [
 assert.match(clozeTemplate, /class="cloze-input-measure"/u);
 assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
+assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
+assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
 assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
 assert.match(clozeTemplate, /class="choice-option"/u);
 assert.match(
@@ -121,6 +136,16 @@ assert.match(
 assert.match(
 	sharedStyles,
 	/\.inline-field--text:has\(\.cloze-input\)\s*\{[\s\S]*display:\s*inline-grid;/u,
+);
+assert.match(
+	layoutStyles,
+	/\.slide-exercise__content\s*\{[\s\S]*width:\s*100%;[\s\S]*max-width:\s*600px;/u,
+	'Exercise slide content must be constrained to the shared 600px layout width.',
+);
+assert.match(
+	sharedStyles,
+	/@media \(max-width:\s*620px\)[\s\S]*\.matching-grid\s*\{[^}]*row-gap:\s*var\(--vocora-space-6\);/u,
+	'Mobile matching columns must have a clear group separation.',
 );
 assert.match(
 	sharedStyles,

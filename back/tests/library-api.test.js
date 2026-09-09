@@ -36,6 +36,10 @@ describe("library API", () => {
       visibility: "public",
       status: "published"
     }).expect(403);
+    await learner.put("/api/library/ielts-listening-core-1500/entries/entry-1").send({
+      term: "changed"
+    }).expect(403);
+    await learner.delete("/api/library/ielts-listening-core-1500/entries/entry-1").expect(403);
 
     await owner.post("/api/library").send({
       title: "American English File 3",

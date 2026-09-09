@@ -39,6 +39,14 @@ export class VocabularyApiService {
     return this.requireNextRevision(response.revision, revision);
   }
 
+  async exclude(revision: number, vocabularyId: string): Promise<number> {
+    const response = await this.api.post<{ revision: number }>('/api/learning/vocabulary-exclusions', {
+      revision,
+      vocabularyId,
+    });
+    return this.requireNextRevision(response.revision, revision);
+  }
+
   async update(revision: number, vocabularyId: string, input: VocabularyEditInput): Promise<VocabularyEditResult> {
     const response = await this.api.put<VocabularyEditResult>(
       `/api/learning/vocabulary/${encodeURIComponent(vocabularyId)}`,

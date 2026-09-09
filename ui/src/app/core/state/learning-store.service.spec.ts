@@ -272,3 +272,36 @@ describe('Explicit subscription reconciliation', () => {
     expect(store.revision()).toBe(8);
   });
 });
+
+describe('Word Bank exclusions', () => {
+  it('removes an unintroduced word locally after the dedicated command succeeds', async () => {
+    TestBed.resetTestingModule();
+    const state = createFreshState([{ id: 'word-1', term: 'evidence' }]);
+    const exclude = vi.fn().mockResolvedValue(6);
+    const store = setup({}, {}, { exclude });
+    store.replaceLocal(state, 5);
+
+    await store.excludeWord(state.words[0]);
+
+    expect(exclude).toHaveBeenCalledWith(5, 'word-1');
+    expect(store.revision()).toBe(6);
+    expect(store.snapshot().words).toEqual([]);
+  });
+
+  it('does not remove a word that has already entered Leitner', async () => {
+    TestBed.resetTestingModule();
+    const state = createFreshState([{
+      id: 'word-1',
+      term: 'evidence',
+      box: 1,
+      introducedOn: '2026-09-09',
+    }]);
+    const exclude = vi.fn();
+    const store = setup({}, {}, { exclude });
+    store.replaceLocal(state, 5);
+
+    await expect(store.excludeWord(state.words[0])).rejects.toThrow(/already in Leitner/u);
+    expect(exclude).not.toHaveBeenCalled();
+    expect(store.snapshot().words).toHaveLength(1);
+  });
+});

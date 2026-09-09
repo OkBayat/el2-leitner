@@ -12,6 +12,7 @@ import {
 	ClassificationSlideComponent,
 	ClozeSlideComponent,
 	MatchingSlideComponent,
+	TeachingCardSlideComponent,
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
@@ -92,6 +93,36 @@ describe('reusable slide renderer contract', () => {
 		}
 	});
 
+	it('renders TeachingCard guidance before its learning blocks', () => {
+		const fixture = TestBed.createComponent(TeachingCardSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'teaching-clarity',
+			type: 'teaching-card',
+			data: {
+				instruction: 'Understand the pattern before you practise.',
+				title: 'Store relationships as chunks',
+				explanation:
+					'Learn the whole phrase so you can choose a natural combination.',
+				blocks: [
+					{
+						kind: 'patterns',
+						title: 'Verbs',
+						content: 'Use establish for creating a relationship.',
+					},
+				],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('.teaching-card__lead')?.textContent).toContain(
+			'Learn the whole phrase',
+		);
+		expect(element.querySelector('.teaching-grid')?.textContent).toContain(
+			'Use establish for creating a relationship.',
+		);
+	});
+
 	it('exposes MatchingSlide and ClassificationSlide interaction states accessibly', () => {
 		const matchingFixture = TestBed.createComponent(MatchingSlideComponent);
 		matchingFixture.componentInstance.load({
@@ -134,6 +165,15 @@ describe('reusable slide renderer contract', () => {
 		const classifiedItem = (
 			classificationFixture.nativeElement as HTMLElement
 		).querySelector('.chip-list button');
+		const classificationBucket = (
+			classificationFixture.nativeElement as HTMLElement
+		).querySelector('.bucket');
+		expect(classificationBucket?.tagName).toBe('DIV');
+		expect(
+			(classificationFixture.nativeElement as HTMLElement).querySelector(
+				'button.bucket',
+			),
+		).toBeNull();
 		expect(classifiedItem?.getAttribute('aria-label')).toContain(
 			'incorrect; correct category Animal',
 		);
@@ -210,6 +250,83 @@ describe('reusable slide renderer contract', () => {
 		textarea.dispatchEvent(new Event('input'));
 
 		expect(fixture.componentInstance.answers()['source']).toBe('renewable energy');
+	});
+
+	it('reveals free-text cloze answer options below the sentence', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'text-cloze-options',
+			type: 'cloze',
+			data: {
+				content: '{{first}} power reduces {{second}}.',
+				blanks: [
+					{ id: 'first', answers: ['Renewable'] },
+					{ id: 'second', answers: ['emissions'] },
+				],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		expect(element.querySelector('.cloze-answer-options')).toBeNull();
+		(
+			element.querySelector(
+				'.cloze-answer-support button',
+			) as HTMLButtonElement
+		).click();
+		fixture.detectChanges();
+
+		expect(
+			element.querySelector('.cloze-answer-options')?.textContent,
+		).toContain('emissions');
+		expect(
+			element.querySelector('.cloze-answer-options')?.textContent,
+		).toContain('Renewable');
+	});
+
+	it('opens vocabulary details from an answered free-text cloze field', async () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'cloze-vocabulary-details',
+			type: 'cloze',
+			data: {
+				content:
+					'The players were exultant after the final {{whistle}}.',
+				blanks: [
+					{
+						id: 'whistle',
+						answers: ['whistle'],
+						definitions: [
+							'a small device that makes a high sound when air passes through it',
+						],
+					},
+				],
+			},
+		});
+		fixture.componentInstance.setAnswer('whistle', 'whistel');
+		fixture.componentInstance.handleAction('check');
+		fixture.detectChanges();
+
+		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
+			'textarea.cloze-input',
+		) as HTMLTextAreaElement;
+		expect(textarea.readOnly).toBe(true);
+		expect(textarea.disabled).toBe(false);
+		textarea.click();
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		const details = document.body.querySelector(
+			'[data-testid="cloze-word-details"]',
+		);
+		expect(details?.textContent).toContain(
+			'The players were exultant after the final whistle.',
+		);
+		expect(details?.textContent).not.toContain('whistel');
+		expect(details?.textContent).toContain(
+			'a small device that makes a high sound',
+		);
+		fixture.destroy();
 	});
 
 	it('routes number keys and Enter through the shared shell for ChoiceSlide', async () => {
