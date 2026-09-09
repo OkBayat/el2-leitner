@@ -36,8 +36,10 @@ with no visual effect.
 - Faded Gray owns disabled content and outlined-control borders.
 - Attention Yellow and Answer Red are Vocora semantic extensions for warning
   and incorrect/destructive feedback.
-- Interactive shapes use a 12px radius and at least a 44px touch target.
-- Buttons are flat: no gradients, elevation, or decorative shadows.
+- Textual Angular Material buttons use a 13px radius, a 44px face, and a 4px
+  lower edge while retaining content-driven height.
+- Buttons use no gradients or ambient elevation; their only depth cue is the
+  canonical 4px lower edge.
 - Feature code consumes semantic variables and shared classes, never local raw
   colors or Material reskins.
 
@@ -69,10 +71,13 @@ For a shared CTA, apply `vocora-button` and exactly one of:
 
 Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
 secondary intent. Use the native `disabled` attribute for every disabled
-state.
+state. Filled intents have no border. Secondary buttons retain their 2px
+border in both enabled and disabled states. Disabled buttons have no lower
+edge.
 
-Do not apply CTA classes to answer-option tiles or other content-sized selection
-controls. Those controls must retain content-driven height.
+Do not apply CTA color classes to answer-option tiles or other content-sized
+selection controls. Their colors remain selection-owned, while the global
+Material button geometry keeps their height content-driven.
 
 Do not create a feature-local Material override. Extend the central design
 tokens, central Material adapter, and this reference together.

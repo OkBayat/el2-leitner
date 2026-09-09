@@ -222,18 +222,28 @@ for (const token of ["disabled-background", "disabled-foreground"]) {
 
 assert.match(
 	components,
-	/\.mat-mdc-(?:unelevated|outlined)-button[^}]*height:\s*auto;[^}]*min-height:\s*44px;/u,
-	"Material action buttons must allow wrapped labels while preserving the minimum touch target.",
+	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*44px;/u,
+	"All textual Material buttons must allow wrapped labels while preserving the minimum touch target.",
 );
 assert.match(
 	components,
-	/border-radius:\s*12px;/u,
-	"Material action buttons must use the canonical 12px radius.",
+	/border-radius:\s*var\(--vocora-radius-button\);/u,
+	"Material action buttons must use the shared 13px radius token.",
 );
-assert.doesNotMatch(
+assert.match(
 	components,
-	/box-shadow:/u,
-	"The flat sticker-like button pattern must not add shadows.",
+	/box-shadow:\s*0 4px 0/u,
+	"Enabled Material buttons must use the canonical four-pixel lower edge.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-unelevated-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-raised-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-outlined-button\s*\{[^}]*border-width:\s*2px;/u,
+	"Filled buttons must be borderless while outlined buttons keep the canonical two-pixel border.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-button:not\(:disabled\):active,[\s\S]*?\.mat-tonal-button:disabled\s*\{[^}]*box-shadow:\s*none;[^}]*transform:\s*translateY\(4px\);/u,
+	"Pressed and disabled Material buttons must remove the lower edge within the preserved footprint.",
 );
 assert.match(
 	components,

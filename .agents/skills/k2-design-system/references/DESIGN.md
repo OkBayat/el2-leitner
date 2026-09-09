@@ -86,7 +86,7 @@ is reserved for short interactive or emphasized content.
 - Section gap: 80–120px.
 - Card padding: 16–24px.
 - Related element gap: 12px.
-- Buttons, links, and navigation items use a 12px radius.
+- Textual buttons use a 13px radius; links and navigation items use 12px.
 - Interactive targets remain at least 44 x 44 CSS pixels.
 
 Prefer generous whitespace and focused single-purpose regions. Avoid dense
@@ -94,8 +94,9 @@ enterprise-dashboard composition, deep card nesting, and decorative grids.
 
 ## 4. Material button system
 
-Buttons are flat, chunky-rounded controls. They never use gradients, elevation,
-or decorative shadows.
+Textual Angular Material buttons are chunky, rounded controls with a 44px face,
+a 13px radius, and a 4px lower edge. They never use gradients or ambient
+elevation; the lower edge is their only depth cue.
 
 Every styled Angular Material button uses the base class `vocora-button` and
 exactly one intent class:
@@ -119,20 +120,25 @@ Example:
 Use `mat-flat-button` for primary, success, error, and warning intents. Use
 `mat-stroked-button` for secondary intent. The central override also keeps the
 visual contract deterministic if a supported Material directive is changed.
+Filled buttons are borderless. Secondary buttons use a 2px border around the
+face in addition to the 4px lower edge; the border and lower edge are separate
+parts of the control shape.
 
 Button labels use the control type style: 15px, weight 700, and 0.053em
 tracking. Uppercase is appropriate for short CTA labels, not explanatory copy.
 Button height is content-driven with a 44px minimum, so translated or wrapped
-labels cannot be clipped.
+labels cannot be clipped. The lower edge brings the normal visual footprint to
+at least 48px.
 
 ### Disabled buttons
 
 Use the native `disabled` attribute. Never encode disabled state with a visual
 class alone.
 
-- Filled intents: Faded Gray fill and Paper White label.
+- Filled intents: Faded Gray fill, Paper White label, and no border.
 - Secondary intent: Paper White fill with Faded Gray label and 2px border.
-- Disabled buttons have no hover/pressed response.
+- Disabled buttons have no lower edge or hover/pressed response and sit 4px
+  lower inside the preserved footprint.
 - The cursor and Material disabled semantics remain intact.
 
 Dark buttons use the dark action values in `tokens.json`; intent, hierarchy,
@@ -211,7 +217,8 @@ Do:
 
 Do not:
 
-- introduce gradients, glass effects, or button shadows;
+- introduce gradients, glass effects, or button shadows other than the
+  canonical 4px lower edge;
 - use sharp control corners;
 - apply display type below 48px;
 - color routine body paragraphs;

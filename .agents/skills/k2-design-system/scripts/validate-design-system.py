@@ -155,8 +155,8 @@ def validate_tokens(data: dict[str, Any], errors: list[str]) -> None:
         errors.append("The default design-system theme must be light")
     if vocora.get("themes") != ["light", "dark"]:
         errors.append("The design system must declare light and dark themes")
-    if vocora.get("buttonRadius") != "12px":
-        errors.append("The canonical button radius must be 12px")
+    if vocora.get("buttonRadius") != "13px":
+        errors.append("The canonical button radius must be 13px")
     if vocora.get("minimumTouchTarget") != "44px":
         errors.append("The minimum touch target must be 44px")
 
@@ -201,7 +201,7 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
     text = path.read_text(encoding="utf-8")
     required_phrases = (
         "Light is the default theme; light and dark are both mandatory.",
-        "Buttons are flat: no gradients, elevation, or decorative shadows.",
+        "canonical 4px lower edge",
         "### Script-owned",
         "### Codex-owned",
         "### No manual fallback",

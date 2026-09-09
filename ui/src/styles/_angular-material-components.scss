@@ -1,4 +1,90 @@
 @mixin apply() {
+	.mat-mdc-button,
+	.mat-mdc-unelevated-button,
+	.mat-mdc-raised-button,
+	.mat-mdc-outlined-button,
+	.mat-tonal-button {
+		height: auto;
+		min-height: 44px;
+		margin-block-end: 4px;
+		padding: 10px 16px;
+		border-radius: var(--vocora-radius-button);
+		box-shadow: 0 4px 0
+			var(
+				--vocora-component-action-edge,
+				var(--vocora-material-button-edge)
+			);
+		transition:
+			transform var(--vocora-motion-fast),
+			box-shadow var(--vocora-motion-fast),
+			background-color var(--vocora-motion-fast),
+			border-color var(--vocora-motion-fast),
+			color var(--vocora-motion-fast);
+	}
+
+	.mat-mdc-button {
+		--mat-button-text-container-shape: var(--vocora-radius-button);
+		--vocora-material-button-edge: color-mix(
+			in srgb,
+			currentColor 35%,
+			transparent
+		);
+	}
+
+	.mat-mdc-unelevated-button {
+		--mat-button-filled-container-shape: var(--vocora-radius-button);
+		border-width: 0;
+		--vocora-material-button-edge: color-mix(
+			in srgb,
+			var(--mat-button-filled-container-color, var(--mat-sys-primary)) 82%,
+			var(--vocora-neutral-black)
+		);
+	}
+
+	.mat-mdc-raised-button {
+		--mat-button-protected-container-shape: var(--vocora-radius-button);
+		border-width: 0;
+		--vocora-material-button-edge: color-mix(
+			in srgb,
+			var(--mat-button-protected-container-color, var(--mat-sys-surface)) 82%,
+			var(--vocora-neutral-black)
+		);
+	}
+
+	.mat-mdc-outlined-button {
+		--mat-button-outlined-container-shape: var(--vocora-radius-button);
+		border-width: 2px;
+		--vocora-material-button-edge: var(
+			--mat-button-outlined-outline-color,
+			var(--mat-sys-outline)
+		);
+	}
+
+	.mat-tonal-button {
+		--mat-button-tonal-container-shape: var(--vocora-radius-button);
+		border-width: 0;
+		--vocora-material-button-edge: color-mix(
+			in srgb,
+			var(--mat-button-tonal-container-color, var(--mat-sys-secondary-container))
+				82%,
+			var(--vocora-neutral-black)
+		);
+	}
+
+	.mat-mdc-button:not(:disabled):active,
+	.mat-mdc-unelevated-button:not(:disabled):active,
+	.mat-mdc-raised-button:not(:disabled):active,
+	.mat-mdc-outlined-button:not(:disabled):active,
+	.mat-tonal-button:not(:disabled):active,
+	.mat-mdc-button:disabled,
+	.mat-mdc-unelevated-button:disabled,
+	.mat-mdc-raised-button:disabled,
+	.mat-mdc-outlined-button:disabled,
+	.mat-tonal-button:disabled {
+		box-shadow: none;
+		transform: translateY(4px);
+	}
+
 	.mat-mdc-unelevated-button.vocora-button,
 	.mat-mdc-raised-button.vocora-button,
 	.mat-mdc-outlined-button.vocora-button,
@@ -19,12 +105,8 @@
 			--vocora-component-action-border,
 			transparent
 		);
-		height: auto;
-		min-height: 44px;
-		padding: 10px 16px;
 		border: var(--vocora-component-action-border-width, 0) solid
 			var(--vocora-component-action-border, transparent);
-		border-radius: 12px;
 		background: var(
 			--vocora-component-action-background,
 			var(--vocora-action-primary)
@@ -40,10 +122,6 @@
 		letter-spacing: 0.053em;
 		text-transform: uppercase;
 		white-space: normal;
-		transition:
-			background-color var(--vocora-motion-fast),
-			border-color var(--vocora-motion-fast),
-			color var(--vocora-motion-fast);
 	}
 
 	.vocora-button--primary {
@@ -52,6 +130,7 @@
 			--vocora-action-primary-foreground
 		);
 		--vocora-component-action-border-width: 0;
+		--vocora-component-action-edge: var(--vocora-action-primary-edge);
 	}
 
 	.vocora-button--secondary {
@@ -61,6 +140,7 @@
 		);
 		--vocora-component-action-border: var(--vocora-action-secondary-border);
 		--vocora-component-action-border-width: 2px;
+		--vocora-component-action-edge: var(--vocora-action-secondary-edge);
 		--vocora-component-action-disabled-background: var(
 			--vocora-action-secondary-disabled-background
 		);
@@ -78,6 +158,7 @@
 			--vocora-action-success-foreground
 		);
 		--vocora-component-action-border-width: 0;
+		--vocora-component-action-edge: var(--vocora-action-success-edge);
 	}
 
 	.vocora-button--warning {
@@ -86,6 +167,7 @@
 			--vocora-action-warning-foreground
 		);
 		--vocora-component-action-border-width: 0;
+		--vocora-component-action-edge: var(--vocora-action-warning-edge);
 	}
 
 	.vocora-button--error {
@@ -94,6 +176,7 @@
 			--vocora-action-error-foreground
 		);
 		--vocora-component-action-border-width: 0;
+		--vocora-component-action-edge: var(--vocora-action-error-edge);
 	}
 
 	@media (hover: hover) {

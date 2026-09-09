@@ -59,7 +59,7 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         tokens["$extensions"]["com.vocora.design-system"]["buttonRadius"] = "8px"
         errors: list[str] = []
         VALIDATOR.validate_tokens(tokens, errors)
-        self.assertIn("The canonical button radius must be 12px", errors)
+        self.assertIn("The canonical button radius must be 13px", errors)
 
     def test_light_and_dark_theme_keys_require_parity(self) -> None:
         tokens = copy.deepcopy(self.tokens)
