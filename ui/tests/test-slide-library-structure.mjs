@@ -133,6 +133,11 @@ assert.match(
 );
 assert.match(
 	sharedStyles,
+	/@media \(max-width:\s*620px\)[\s\S]*\.matching-grid\s*\{[^}]*row-gap:\s*var\(--vocora-space-6\);/u,
+	'Mobile matching columns must have a clear group separation.',
+);
+assert.match(
+	sharedStyles,
 	/\.cloze-input-measure\s*\{[\s\S]*white-space:\s*pre;[\s\S]*visibility:\s*hidden;/u,
 );
 assert.match(

@@ -448,6 +448,10 @@ input:focus-visible,
 		grid-template-columns: 1fr;
 	}
 
+	.matching-grid {
+		row-gap: var(--vocora-space-6);
+	}
+
 	.cloze-content {
 		line-height: 1.8;
 	}
