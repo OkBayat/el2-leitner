@@ -314,13 +314,13 @@ assert.match(
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="30"[^>]*height="30"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="#58A700"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
-	"Successful feedback must use the supplied 30px rounded check SVG.",
+	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="#58A700"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
+	"Successful feedback must use the supplied rounded check SVG at 35px.",
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="30"[^>]*height="30"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
-	"Incorrect feedback must use a matching 30px rounded cross SVG.",
+	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
+	"Incorrect feedback must use a matching rounded cross SVG at 35px.",
 );
 assert.doesNotMatch(
 	exerciseFooterTemplate,
