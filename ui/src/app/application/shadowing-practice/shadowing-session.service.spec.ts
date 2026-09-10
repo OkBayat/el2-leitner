@@ -47,6 +47,7 @@ describe('ShadowingSessionService', () => {
   });
   it('starts a reusable session and selects an exact prompt without playing it', async () => {
     await service.start();
+    expect(service.cards().map(card => card.id)).toEqual(['w']);
     expect(service.prompt()).toBeNull();
     expect(service.phase()).toBe('ready');
     expect(speech.speak).not.toHaveBeenCalled();

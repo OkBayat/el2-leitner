@@ -5,6 +5,7 @@ import type {
 	SentencePracticeCard,
 	SentencePracticeDeck,
 } from "../../domain/sentence-practice/sentence-practice";
+import type { ShadowingCard } from "../../domain/shadowing-practice/shadowing";
 import type {
 	ClozeSlideData,
 	DictationSlideData,
@@ -58,6 +59,20 @@ function sentenceCards(
 	return cards;
 }
 
+function shadowingCardMap(
+	cards: readonly ShadowingCard[],
+	words: readonly HouseOneWord[],
+): ReadonlyMap<string, ShadowingCard> {
+	const mapped = new Map(cards.map((card) => [card.id, card]));
+	const missing = words.filter((word) => !mapped.get(word.id)?.sentences[0]);
+	if (missing.length) {
+		throw new Error(
+			`Sentence shadowing is unavailable for ${missing.length} House 1 ${missing.length === 1 ? "word" : "words"}.`,
+		);
+	}
+	return mapped;
+}
+
 function wordDefinitions(
 	deck: SentencePracticeDeck,
 	words: readonly HouseOneWord[],
@@ -95,6 +110,7 @@ export class PracticeWordsSlideBuilderService {
 	async build(
 		anchorId: string,
 		mode: string,
+		shadowingCards?: readonly ShadowingCard[],
 	): Promise<readonly SlideExerciseSlide[]> {
 		if (
 			mode !== "vocabulary-dictation" &&
@@ -111,6 +127,16 @@ export class PracticeWordsSlideBuilderService {
 			throw new Error(
 				"Add words to House 1 before starting this practice.",
 			);
+		if (mode === "sentence-shadowing") {
+			if (!shadowingCards) {
+				throw new Error("Sentence shadowing requires an active recording session.");
+			}
+			return this.shadowingSlides(
+				anchorId,
+				words,
+				shadowingCardMap(shadowingCards, words),
+			);
+		}
 		const deck = await this.sentenceApi.getDeck(1);
 		if (mode === "vocabulary-dictation")
 			return this.dictationSlides(
@@ -119,9 +145,7 @@ export class PracticeWordsSlideBuilderService {
 				wordDefinitions(deck, words),
 			);
 		const cards = sentenceCards(deck, words);
-		return mode === "sentence-completion"
-			? this.completionSlides(anchorId, words, cards)
-			: this.shadowingSlides(anchorId, words, cards);
+		return this.completionSlides(anchorId, words, cards);
 	}
 
 	private dictationSlides(
@@ -188,7 +212,7 @@ export class PracticeWordsSlideBuilderService {
 	private shadowingSlides(
 		anchorId: string,
 		words: readonly HouseOneWord[],
-		cards: ReadonlyMap<string, SentencePracticeCard>,
+		cards: ReadonlyMap<string, ShadowingCard>,
 	): readonly SlideExerciseSlide[] {
 		return words.map((word) => {
 			const sentence = cards.get(word.id)!.sentences[0];

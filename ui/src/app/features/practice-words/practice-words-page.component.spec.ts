@@ -14,10 +14,13 @@ class EmptyPage {}
 
 describe('PracticeWordsPageComponent', () => {
 	it('uses one shared shadowing session for the third practice mode', async () => {
+		const sessionCards = [{ id: 'word-1', term: 'word', sentences: [] }];
+		let sessionStarted = false;
 		const slideBuilder = {
-			build: vi.fn().mockResolvedValue([
-				{ id: 'generated-shadowing', type: 'pronunciation', data: {} },
-			]),
+			build: vi.fn().mockImplementation(async () => {
+				expect(sessionStarted).toBe(true);
+				return [{ id: 'generated-shadowing', type: 'pronunciation', data: {} }];
+			}),
 		};
 		const practiceSession = {
 			start: vi.fn(),
@@ -25,9 +28,10 @@ describe('PracticeWordsPageComponent', () => {
 			abandon: vi.fn(),
 		};
 		const shadowingSession = {
-			start: vi.fn().mockResolvedValue(undefined),
+			start: vi.fn().mockImplementation(async () => { sessionStarted = true; }),
 			phase: signal('ready'),
 			error: signal(''),
+			cards: signal(sessionCards),
 			complete: vi.fn().mockResolvedValue('session-1'),
 			dispose: vi.fn(),
 		};
@@ -60,6 +64,7 @@ describe('PracticeWordsPageComponent', () => {
 
 		expect(expanded?.slides).toHaveLength(1);
 		expect(shadowingSession.start).toHaveBeenCalledOnce();
+		expect(slideBuilder.build).toHaveBeenCalledWith('practice-mode', 'sentence-shadowing', sessionCards);
 		expect(practiceSession.start).not.toHaveBeenCalled();
 		expect(component.exerciseContext.pronunciationPractice).toBe(shadowingSession);
 		await component.exerciseContext.sequenceCompletion?.([]);

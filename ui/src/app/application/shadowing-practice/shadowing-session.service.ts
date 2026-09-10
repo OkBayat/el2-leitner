@@ -22,6 +22,7 @@ export class ShadowingSessionService implements PronunciationPracticeController 
   private readonly theme = inject(ThemeService);
   readonly phase = signal<Phase>('loading');
   readonly prompt = signal<ShadowingPrompt | null>(null);
+  readonly cards = signal<readonly ShadowingPrompt['card'][]>([]);
   readonly assessment = signal<ShadowingAssessment | null>(null);
   readonly result = signal<ShadowingResult | null>(null);
   readonly error = signal('');
@@ -37,7 +38,7 @@ export class ShadowingSessionService implements PronunciationPracticeController 
   private sessionId: string | null = null;
   private recordingId: string | null = null;
   private queue?: ShadowingQueue;
-  private cards = new Map<string, ShadowingPrompt['card']>();
+  private cardsById = new Map<string, ShadowingPrompt['card']>();
   private generation = 0;
   private pending: Promise<void> = Promise.resolve();
   private queued = 0;
@@ -63,7 +64,8 @@ export class ShadowingSessionService implements PronunciationPracticeController 
       const deck = await this.api.start();
       if (generation !== this.generation) { if (deck.sessionId) void this.api.close(deck.sessionId).catch(() => {}); return; }
       this.sessionId = deck.sessionId;
-      this.cards = new Map(deck.cards.map(card => [card.id, card]));
+      this.cards.set(deck.cards);
+      this.cardsById = new Map(deck.cards.map(card => [card.id, card]));
       this.queue = new ShadowingQueue(deck.cards);
       if (!deck.sessionId || !deck.cards.length) { this.phase.set('empty'); return; }
       this.phase.set('ready');
@@ -75,7 +77,7 @@ export class ShadowingSessionService implements PronunciationPracticeController 
 
   selectPrompt(itemId: string, promptId: string): boolean {
     if (this.busy() || !this.sessionId) return false;
-    const card = this.cards.get(itemId);
+    const card = this.cardsById.get(itemId);
     const sentence = card?.sentences.find(candidate => candidate.id === promptId);
     if (!card || !sentence) return false;
     this.pause();
@@ -233,7 +235,8 @@ export class ShadowingSessionService implements PronunciationPracticeController 
     this.pause();
     const id = this.sessionId;
     this.sessionId = null;
-    this.cards.clear();
+    this.cards.set([]);
+    this.cardsById.clear();
     this.queue = undefined;
     if (id) void this.api.close(id).catch(() => {});
   }

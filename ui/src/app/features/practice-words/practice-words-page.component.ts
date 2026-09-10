@@ -4,7 +4,7 @@ import { PracticeWordsSlideBuilderService, type PracticeWordsMode } from '../../
 import { PracticeWordsSessionService } from '../../application/practice-words/practice-words-session.service';
 import { ShadowingSessionService } from '../../application/shadowing-practice/shadowing-session.service';
 import { PcmRecorderService } from '../../core/shadowing-practice/pcm-recorder.service';
-import type { SelectionSlideExpansionHandler } from '../../shared/slide-exercise';
+import type { SelectionSlideExpansionHandler, SlideExerciseSlide } from '../../shared/slide-exercise';
 import type { ExerciseContext, ExerciseOutcome } from '../collection-learning-path/exercises/exercise-runtime/exercise-contracts';
 import { SlidesSequenceExerciseComponent } from '../collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component';
 
@@ -32,16 +32,24 @@ export class PracticeWordsPageComponent implements OnInit, OnDestroy {
       throw new Error('Choose exactly one practice mode.');
     }
     const mode = request.selectedOptionIds[0];
-    const slides = await this.slideBuilder.build(request.slideId, mode);
-    this.selectedMode = mode as PracticeWordsMode;
-    if (this.selectedMode === 'sentence-shadowing') {
+    const selectedMode = mode as PracticeWordsMode;
+    let slides: readonly SlideExerciseSlide[];
+    if (selectedMode === 'sentence-shadowing') {
       await this.shadowingSession.start();
       if (this.shadowingSession.phase() !== 'ready') {
         throw new Error(this.shadowingSession.error() || 'Sentence shadowing is unavailable.');
       }
+      try {
+        slides = await this.slideBuilder.build(request.slideId, mode, this.shadowingSession.cards());
+      } catch (error) {
+        await this.shadowingSession.complete();
+        throw error;
+      }
     } else {
-      await this.practiceSession.start(this.selectedMode, slides.length);
+      slides = await this.slideBuilder.build(request.slideId, mode);
+      await this.practiceSession.start(selectedMode, slides.length);
     }
+    this.selectedMode = selectedMode;
     return { slides };
   };
 
