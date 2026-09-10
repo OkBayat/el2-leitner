@@ -94,18 +94,29 @@ export class PronunciationSlideComponent
 
 	constructor() {
 		super();
-			effect(() => {
+		effect(() => {
 			const result = this.controller()?.result();
 			if (!result || result === this.lastResult || this.interactionState() !== 'idle') return;
 			this.lastResult = result;
+			const recognized = new Set(untracked(this.recognizedWordIndexes));
+			result.words.forEach((word, index) => {
+				if (word.matched) recognized.add(index);
+			});
+			this.recognizedWordIndexes.set(recognized);
+			const matchedCount = [...recognized].filter(
+				(index) => index < result.totalCount,
+			).length;
+			const score = result.totalCount
+				? Math.floor((matchedCount * 1000) / result.totalCount) / 10
+				: 0;
 			const data = {
 				correct: result.passed,
-				score: result.score,
+				score,
 				transcript: result.transcript,
-				matchedCount: result.matchedCount,
+				matchedCount,
 				totalCount: result.totalCount,
 			};
-			const detail = `${result.matchedCount} of ${result.totalCount} words recognized · ${result.score}%`;
+			const detail = `${matchedCount} of ${result.totalCount} words recognized · ${score}%`;
 			if (result.passed) {
 				this.finish(true, data, detail);
 				return;

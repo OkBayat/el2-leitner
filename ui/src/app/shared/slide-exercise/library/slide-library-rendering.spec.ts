@@ -6,6 +6,7 @@ import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import { createDefaultSlideContentRegistry } from '../slide-content-registry';
 import { SlideExerciseComponent } from '../slide-exercise.component';
+import type { SlideExerciseRuntimeState } from '../slide-exercise.models';
 import { REUSABLE_SLIDE_FIXTURES } from './slide-library.fixtures';
 import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
 import {
@@ -636,6 +637,8 @@ describe('reusable slide renderer contract', () => {
 			],
 		});
 		const fixture = TestBed.createComponent(PronunciationSlideComponent);
+		const states: SlideExerciseRuntimeState[] = [];
+		fixture.componentInstance.stateChange.subscribe((state) => states.push(state));
 		fixture.componentInstance.load({
 			slideId: 'repeat-sentence',
 			type: 'pronunciation',
@@ -725,6 +728,13 @@ describe('reusable slide renderer contract', () => {
 		});
 		fixture.detectChanges();
 		expect(element.querySelectorAll('.cloze-playback-token--word.is-recognized')).toHaveLength(2);
+		expect(states.at(-1)).toMatchObject({
+			chrome: {
+				footer: {
+					detail: '2 of 5 words recognized · 40%',
+				},
+			},
+		});
 
 		result.set({
 			words: [
