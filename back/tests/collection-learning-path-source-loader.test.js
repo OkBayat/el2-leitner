@@ -92,6 +92,19 @@ test("all file-managed teaching cards use the markdown teaching contract", async
   assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("### ")));
   assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("**")));
   assert.ok(teachingCards.every((slide) => !Object.hasOwn(slide.data, "blocks")));
+  assert.ok(teachingCards.every((slide) => slide.chrome?.header?.progress === null));
+});
+
+test("Cambridge Grammar for IELTS Unit 1 exercises provide at least ten slides", async () => {
+  const sources = await loadLearningPathSources(SOURCES, parseFileManagedLearningPathSource);
+  const grammar = sources.find(({ fileName }) => fileName === "grammar-for-ielts.json");
+
+  assert.ok(grammar);
+  assert.equal(grammar.definition.path.title, "Cambridge Grammar for IELTS");
+  assert.equal(grammar.definition.lessons[0].exercises.length, 14);
+  assert.ok(grammar.definition.lessons[0].exercises.every(
+    (exercise) => exercise.config.slides.length >= 10,
+  ));
 });
 
 test("all file-managed rewrites are unambiguous one-or-two-word corrections", async () => {

@@ -289,6 +289,19 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         text(data, "prompt", "Writing response prompt")
 
 
+def validate_slide_chrome(slide_type: str, slide: dict) -> None:
+    if slide_type != "teaching-card":
+        return
+    chrome = slide.get("chrome")
+    header = chrome.get("header") if isinstance(chrome, dict) else None
+    if (
+        not isinstance(header, dict)
+        or "progress" not in header
+        or header["progress"] is not None
+    ):
+        raise ValueError("Teaching card chrome.header.progress must be null.")
+
+
 def validate_exercise(value: Any) -> dict:
     exercise = record(value, "Exercise")
     text(exercise, "id", "Exercise id")
@@ -310,6 +323,7 @@ def validate_exercise(value: Any) -> dict:
             raise ValueError(f"Unsupported slide type: {slide_type}")
         data = record(slide.get("data", {}), f"{slide_type} data")
         validate_slide_data(slide_type, data)
+        validate_slide_chrome(slide_type, slide)
         ids.append(slide_id)
         types.append(slide_type)
     if len(set(ids)) != len(ids):

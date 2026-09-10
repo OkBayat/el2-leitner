@@ -169,6 +169,40 @@ class ExerciseValidatorTests(unittest.TestCase):
             },
         )
 
+    def test_accepts_teaching_card_with_progress_removed_from_header(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0] = {
+            "id": "rule",
+            "type": "teaching-card",
+            "data": {
+                "mode": "rule",
+                "title": "Present simple",
+                "markdown": "### Form\n- Use **does** with he, she and it.",
+            },
+            "chrome": {"header": {"progress": None}},
+        }
+
+        self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
+
+    def test_rejects_teaching_card_without_explicitly_hidden_progress(self) -> None:
+        for chrome in (None, {}, {"header": {}}, {"header": {"progress": True}}):
+            exercise = valid_exercise()
+            slide = {
+                "id": "rule",
+                "type": "teaching-card",
+                "data": {
+                    "mode": "rule",
+                    "title": "Present simple",
+                    "markdown": "### Form\nUse the base verb.",
+                },
+            }
+            if chrome is not None:
+                slide["chrome"] = chrome
+            exercise["config"]["slides"][0] = slide
+            with self.subTest(chrome=chrome):
+                with self.assertRaisesRegex(ValueError, "chrome.header.progress must be null"):
+                    MODULE.validate_exercise(exercise)
+
     def test_requires_exactly_one_teaching_card_content_format(self) -> None:
         for data in (
             {"mode": "rule", "title": "Missing content"},
