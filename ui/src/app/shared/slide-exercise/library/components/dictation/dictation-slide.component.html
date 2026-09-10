@@ -42,8 +42,9 @@
 				<app-slide-audio-control
 					[src]="data.audio"
 					[maxReplays]="data.maxReplays"
-					buttonLabel="Play audio"
+					[speedControls]="true"
 					playLabel="Play dictation audio"
+					slowPlayLabel="Play dictation audio slowly"
 					audioLabel="Dictation audio"
 					(replayCountChange)="replayCount.set($event)"
 				/>

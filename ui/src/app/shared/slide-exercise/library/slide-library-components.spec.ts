@@ -595,15 +595,17 @@ describe('reusable slide library behavior', () => {
 		const audioControl = new SlideAudioControlComponent();
 		audioControl.maxReplays = 1;
 		const play = vi.fn().mockResolvedValue(undefined);
-		audioControl.play({
+		const audio = {
 			play,
 			currentTime: 2,
-		} as unknown as HTMLAudioElement);
-		audioControl.play({
-			play,
-			currentTime: 2,
-		} as unknown as HTMLAudioElement);
+			playbackRate: 1,
+			preservesPitch: false,
+		} as unknown as HTMLAudioElement;
+		audioControl.play(audio, 0.85);
+		audioControl.play(audio);
 		expect(play).toHaveBeenCalledTimes(1);
+		expect(audio.playbackRate).toBe(0.85);
+		expect(audio.preservesPitch).toBe(true);
 
 		const component = TestBed.runInInjectionContext(
 			() => new DictationSlideComponent(),

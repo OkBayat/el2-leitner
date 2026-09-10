@@ -114,6 +114,62 @@ describe('reusable slide renderer contract', () => {
 		expect(speech.cancel).toHaveBeenCalledOnce();
 	});
 
+	it('renders the same normal and slow controls for audio-backed dictation', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(DictationSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'audio-dictation-controls',
+			type: 'dictation',
+			data: {
+				audio: '/audio/example.mp3',
+				answer: 'environment',
+				maxReplays: 1,
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const normal = element.querySelector<HTMLButtonElement>(
+			'[data-testid="slide-audio-play-normal"]',
+		);
+		const slow = element.querySelector<HTMLButtonElement>(
+			'[data-testid="slide-audio-play-slow"]',
+		);
+		expect(normal?.getAttribute('aria-label')).toBe('Play dictation audio');
+		expect(slow?.getAttribute('aria-label')).toBe(
+			'Play dictation audio slowly',
+		);
+		expect(normal?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		expect(normal?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/normal-speed.svg',
+		);
+		expect(slow?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/slow-speed.svg',
+		);
+
+		const audio = element.querySelector('audio')!;
+		audio.play = vi.fn().mockResolvedValue(undefined);
+		slow?.click();
+		fixture.detectChanges();
+
+		expect(audio.playbackRate).toBe(0.85);
+		expect(audio.preservesPitch).toBe(true);
+		expect(normal?.disabled).toBe(true);
+		expect(slow?.disabled).toBe(true);
+		fixture.destroy();
+	});
+
 	it('constructs and renders every registered reusable slide type from configuration', async () => {
 		TestBed.configureTestingModule({
 			providers: [

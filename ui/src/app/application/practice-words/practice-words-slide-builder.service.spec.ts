@@ -132,6 +132,26 @@ describe("PracticeWordsSlideBuilderService", () => {
 		).rejects.toThrow("Definitions are unavailable for 1 House 1 word.");
 	});
 
+	it("builds dictation for a defined House 1 word without a matching sentence", async () => {
+		const { builder } = setup({
+			...sentences,
+			cards: sentences.cards.map((card) =>
+				card.id === "word-2" ? { ...card, sentences: [] } : card,
+			),
+		});
+
+		const slides = await builder.build(
+			"practice-mode",
+			"vocabulary-dictation",
+		);
+
+		expect(slides).toHaveLength(2);
+		expect(slides[1].data).toMatchObject({
+			answer: "persistent",
+			definition: "continuing despite difficulty",
+		});
+	});
+
 	it("builds one audio-led cloze slide for every House 1 word", async () => {
 		const { builder } = setup();
 
