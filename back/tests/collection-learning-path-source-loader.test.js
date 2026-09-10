@@ -8,6 +8,8 @@ import { test } from "node:test";
 import { parseFileManagedLearningPathSource } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
 import { loadLearningPathSources } from "../src/infrastructure/content/loadLearningPathSources.js";
 
+const SOURCES = new URL("../data/learning-paths/", import.meta.url);
+
 function definition(id, prefix) {
   return {
     schemaVersion: 1,
@@ -61,4 +63,18 @@ test("file-managed source loader rejects invalid filenames and duplicate managed
   } finally {
     await rm(duplicateDirectory, { recursive: true, force: true });
   }
+});
+
+test("Grammar for IELTS Unit 1 teaching cards use the markdown teaching contract", async () => {
+  const sources = await loadLearningPathSources(SOURCES, parseFileManagedLearningPathSource);
+  const grammar = sources.find(({ fileName }) => fileName === "grammar-for-ielts.json");
+  assert.ok(grammar);
+  const teachingCards = grammar.definition.lessons[0].exercises.flatMap((exercise) =>
+    exercise.config.slides.filter((slide) => slide.type === "teaching-card"));
+
+  assert.equal(teachingCards.length, 13);
+  assert.ok(teachingCards.every((slide) => typeof slide.data.markdown === "string"));
+  assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("### ")));
+  assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("**")));
+  assert.ok(teachingCards.every((slide) => !Object.hasOwn(slide.data, "blocks")));
 });

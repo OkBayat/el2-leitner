@@ -37,11 +37,7 @@
                   "mode": "rule",
                   "instruction": "Learn the three basic present simple patterns.",
                   "title": "Present simple form",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Positive", "content": "Use the base verb with I, you, we and they. Add -s or -es with he, she and it.", "secondary": "I work. She works." },
-                    { "kind": "patterns", "title": "Negative", "content": "Use do not or does not plus the base verb.", "secondary": "They do not work. He does not work." },
-                    { "kind": "patterns", "title": "Question", "content": "Use Do or Does, then the subject, then the base verb.", "secondary": "Do you work? Does she work?" }
-                  ]
+                  "markdown": "### Build the present simple\n\n#### Positive\nUse the **base verb** with *I, you, we,* and *they*. Add **-s** or **-es** with *he, she,* and *it*.\n\n- I work.\n- She works.\n\n#### Negative\nUse **do not / don't** or **does not / doesn't** + the base verb. Do not add **-s** after *doesn't*.\n\n- They don't work.\n- He doesn't work.\n\n#### Question\nUse **Do / Does + subject + base verb**.\n\n- Do you work?\n- Does she work?"
                 }
               },
               {
@@ -145,11 +141,7 @@
                   "mode": "usage",
                   "instruction": "Connect repeated actions with the present simple.",
                   "title": "Regular habits and repeated actions",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Frequency words", "content": "Use the present simple with words such as always, usually, often, sometimes, rarely and never.", "secondary": "I usually walk to work." },
-                    { "kind": "patterns", "title": "Time expressions", "content": "Expressions such as every day, most mornings and on Fridays also show repetition.", "secondary": "We practise every evening." },
-                    { "kind": "note", "title": "Word position", "content": "Frequency adverbs normally go before a main verb but after the verb be.", "secondary": "She often cooks. She is often busy." }
-                  ]
+                  "markdown": "### Habits and repeated actions\nUse the **present simple** for things that happen regularly.\n\n#### Useful time words\n- Frequency words: *always, usually, often, sometimes, rarely, never*\n- Repeated times: *every day, most mornings, on Fridays*\n\n#### Put frequency words in the right place\n1. Before a main verb: She **often cooks**.\n2. After the verb *be*: She **is often** busy.\n\nI usually walk to work.\nWe practise every evening."
                 }
               },
               {
@@ -240,11 +232,7 @@
                   "mode": "contrast",
                   "instruction": "Learn three important present-time meanings.",
                   "title": "Permanent, factual, or continuing since the past?",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Permanent situation", "content": "Use the present simple for a situation presented as stable or permanent.", "secondary": "My aunt owns a bakery." },
-                    { "kind": "patterns", "title": "Fact or general truth", "content": "Use the present simple for facts and generally accepted truths. General statements often use generally, mainly, normally, usually or traditionally.", "secondary": "Water boils at 100°C." },
-                    { "kind": "correction", "title": "Duration up to now", "content": "Do not use the present simple to say how long a situation has continued from the past until now. Use the present perfect.", "secondary": "I have lived here since 2022." }
-                  ]
+                  "markdown": "### Permanent situations and facts\nUse the **present simple** for a stable situation, a fact, or a general truth.\n\n- Permanent situation: My aunt **owns** a bakery.\n- General truth: Water **boils** at 100°C.\n- Common general-statement words: *generally, mainly, normally, usually, traditionally*\n\n#### A situation that started in the past\nTo say how long a situation has continued until now, use the **present perfect**, not the present simple.\n\nI **have lived** here since 2022."
                 }
               },
               {
@@ -357,10 +345,7 @@
                   "mode": "usage",
                   "instruction": "Learn two less obvious uses of the present simple.",
                   "title": "Steps and stories",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Instructions and directions", "content": "Use the present simple to explain steps or directions.", "secondary": "First you open the file. Then you choose Save." },
-                    { "kind": "patterns", "title": "Stories and reviews", "content": "Use the present simple to tell the events of a story or describe what happens in a film, book or play.", "secondary": "The hero finds the key and escapes." }
-                  ]
+                  "markdown": "### Steps and stories\nThe **present simple** has two useful meanings beyond habits and facts.\n\n#### Instructions and directions\nUse it to explain steps in order.\n\n1. First, you **open** the file.\n2. Then, you **choose** Save.\n\n#### Stories and reviews\nUse it to tell events in a story or say what happens in a film, book, or play.\n\nThe hero **finds** the key and **escapes**."
                 }
               },
               {
@@ -452,11 +437,7 @@
                   "mode": "rule",
                   "instruction": "Learn the complete present continuous form.",
                   "title": "Be plus verb-ing",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Positive", "content": "Use am, is or are plus the -ing form.", "secondary": "I am working. She is working. They are working." },
-                    { "kind": "patterns", "title": "Negative", "content": "Put not after am, is or are.", "secondary": "He is not working. We are not working." },
-                    { "kind": "patterns", "title": "Question", "content": "Put am, is or are before the subject.", "secondary": "Are you working? Is she working?" }
-                  ]
+                  "markdown": "### Build the present continuous\nUse **am / is / are + verb-ing**.\n\n#### Positive\n- I **am working**.\n- She **is working**.\n- They **are working**.\n\n#### Negative\nPut **not** after *am, is,* or *are*: He **is not working**.\n\n#### Question\nPut *am, is,* or *are* before the subject: **Are you working?**\n\nThe main verb always has the **-ing** form."
                 }
               },
               {
@@ -558,11 +539,7 @@
                   "mode": "usage",
                   "instruction": "Connect present continuous forms with two core meanings.",
                   "title": "Now or temporary",
-                  "blocks": [
-                    { "kind": "patterns", "title": "At the moment of speaking", "content": "Use the present continuous for an action happening now.", "secondary": "I am waiting outside." },
-                    { "kind": "patterns", "title": "Temporary situation", "content": "Use it for a situation around now that is not presented as permanent.", "secondary": "I am staying with my aunt this month." },
-                    { "kind": "note", "title": "Common signals", "content": "At the moment, currently, now and this week, month or year often point to a current or temporary situation." }
-                  ]
+                  "markdown": "### Now or temporary\nUse the **present continuous** for an action happening now or a temporary situation around now.\n\n- Happening now: I **am waiting** outside.\n- Temporary: I **am staying** with my aunt this month.\n\n#### Common signals\n*At the moment, currently,* and *now* often mean the action is happening as we speak.\n*This week, this month,* and *this year* often introduce a temporary situation."
                 }
               },
               {
@@ -651,10 +628,7 @@
                   "mode": "usage",
                   "instruction": "Recognize change over time.",
                   "title": "A situation that is developing",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Trend or change", "content": "Use the present continuous when a situation is changing or developing around the present time.", "secondary": "Prices are rising. Online study is becoming more common." },
-                    { "kind": "note", "title": "Not every fact is a trend", "content": "Use the present simple for a stable fact. Use the continuous only when the sentence presents an ongoing change." }
-                  ]
+                  "markdown": "### A developing situation\nUse the **present continuous** when something is changing or developing around the present time.\n\n- Prices **are rising**.\n- Online study **is becoming** more common.\n\n#### Fact or trend?\nUse the **present simple** for a stable fact. Use the **present continuous** only when the sentence presents an ongoing change."
                 }
               },
               {
@@ -743,10 +717,7 @@
                   "mode": "contrast",
                   "instruction": "Notice how the tense changes the speaker's attitude.",
                   "title": "Two meanings with always",
-                  "blocks": [
-                    { "kind": "comparison", "title": "Neutral repeated fact", "content": "Use the present simple when always only reports a regular habit.", "secondary": "He always arrives at eight." },
-                    { "kind": "comparison", "title": "Complaint, surprise or envy", "content": "Use always, constantly, continually or forever with the present continuous to show that something happens more than expected and the speaker feels strongly about it.", "secondary": "He is always losing his keys!" }
-                  ]
+                  "markdown": "### Two meanings with always\nThe tense shows the speaker's attitude.\n\n#### Neutral repeated fact\nUse the **present simple** when *always* only reports a routine: He **always arrives** at eight.\n\n#### Strong feeling\nUse **always, constantly, continually,** or **forever** with the present continuous when something happens more than expected. It can show complaint, surprise, or envy.\n\nHe **is always losing** his keys!"
                 }
               },
               {
@@ -838,11 +809,7 @@
                   "mode": "tip",
                   "instruction": "Use meaning before looking at the time phrase.",
                   "title": "A simple decision",
-                  "blocks": [
-                    { "kind": "note", "title": "Choose present simple", "content": "Ask whether the sentence is a habit, permanent situation, fact, instruction or story description." },
-                    { "kind": "note", "title": "Choose present continuous", "content": "Ask whether it is happening now, temporary, changing, or an emotional repeated action." },
-                    { "kind": "note", "title": "Check state verbs", "content": "A state verb normally stays in a simple form even when the state is true now." }
-                  ]
+                  "markdown": "### Choose the tense in three steps\n1. Choose the **present simple** for a habit, permanent situation, fact, instruction, or story description.\n2. Choose the **present continuous** for something happening now, temporary, changing, or repeatedly causing a strong feeling.\n3. Check the verb. A **state verb** normally stays in a simple form, even when the state is true now.\n\nUse the meaning first. A time phrase is only a clue."
                 }
               },
               {
@@ -950,13 +917,7 @@
                   "mode": "rule",
                   "instruction": "Group state verbs by the kind of state they describe.",
                   "title": "State verbs normally use simple forms",
-                  "blocks": [
-                    { "kind": "patterns", "title": "Thoughts", "content": "Examples include agree, assume, believe, disagree, forget, hope, know, regret, remember, suppose, think and understand." },
-                    { "kind": "patterns", "title": "Feelings", "content": "Examples include adore, despise, dislike, enjoy, feel, hate, like, love, mind, prefer and want." },
-                    { "kind": "patterns", "title": "Senses", "content": "Examples include feel, hear, see, smell and taste." },
-                    { "kind": "patterns", "title": "Possession", "content": "Examples include have, own and belong." },
-                    { "kind": "patterns", "title": "Description", "content": "Examples include appear, contain, look, look like, mean, resemble, seem, smell, sound, taste and weigh." }
-                  ]
+                  "markdown": "### State verbs normally use simple forms\nState verbs describe a state, not an activity. Learn them in five groups.\n\n- **Thoughts:** agree, assume, believe, disagree, forget, hope, know, regret, remember, suppose, think, understand\n- **Feelings:** adore, despise, dislike, enjoy, feel, hate, like, love, mind, prefer, want\n- **Senses:** feel, hear, see, smell, taste\n- **Possession:** have, own, belong\n- **Description:** appear, contain, look, look like, mean, resemble, seem, smell, sound, taste, weigh\n\nSome verbs appear in more than one group because their meaning can change."
                 }
               },
               {
@@ -1081,10 +1042,7 @@
                   "mode": "warning",
                   "instruction": "Avoid a common present continuous error.",
                   "title": "A state can be true now without a continuous form",
-                  "blocks": [
-                    { "kind": "correction", "title": "Normal rule", "content": "Do not normally use state verbs in the present continuous because they describe a state rather than a temporary activity.", "secondary": "I want some water. Not: I am wanting some water." },
-                    { "kind": "patterns", "title": "A current sense", "content": "To describe something you notice through a sense now, can is often natural.", "secondary": "I can hear music. I can smell smoke." }
-                  ]
+                  "markdown": "### A state can be true now\nDo not normally use a state verb in the present continuous. A state can be true now and still use the **present simple**.\n\n- Correct: I **want** some water.\n- Not: I *am wanting* some water.\n\n#### Senses happening now\nWith a sense verb, **can + base verb** is often natural.\n\n- I **can hear** music.\n- I **can smell** smoke."
                 }
               },
               {
@@ -1171,11 +1129,7 @@
                   "mode": "contrast",
                   "instruction": "Choose the tense from the verb's meaning.",
                   "title": "Some state verbs can describe temporary activities",
-                  "blocks": [
-                    { "kind": "comparison", "title": "think", "content": "Think is simple for an opinion, but continuous for the mental activity happening now.", "secondary": "I think it is useful. I am thinking about the problem." },
-                    { "kind": "comparison", "title": "taste", "content": "Taste is simple for a flavour, but continuous for the action of testing food.", "secondary": "The sauce tastes good. I am tasting the sauce." },
-                    { "kind": "comparison", "title": "have", "content": "Have is simple for possession, but continuous for an experience or activity.", "secondary": "I have a bicycle. We are having lunch." }
-                  ]
+                  "markdown": "### Meaning can change the tense\nSome state verbs can also describe an activity. Choose the tense from the meaning.\n\n#### Think\n- Opinion: I **think** it is useful.\n- Mental activity now: I **am thinking** about the problem.\n\n#### Taste\n- Flavour: The sauce **tastes** good.\n- Testing food now: I **am tasting** the sauce.\n\n#### Have\n- Possession: I **have** a bicycle.\n- Experience or activity: We **are having** lunch."
                 }
               },
               {
@@ -1294,11 +1248,7 @@
                   "mode": "tip",
                   "instruction": "Use the same three checks for every sentence.",
                   "title": "Check meaning, helper and verb form",
-                  "blocks": [
-                    { "kind": "note", "title": "1. Meaning", "content": "Decide whether the sentence describes a simple-present meaning or a continuous-present meaning." },
-                    { "kind": "note", "title": "2. Helper", "content": "Check do or does for present simple negatives and questions, and am, is or are for the continuous." },
-                    { "kind": "note", "title": "3. Main verb", "content": "Use the base verb after do or does, and the -ing form after am, is or are." }
-                  ]
+                  "markdown": "### Repair a present-tense sentence\nUse the same three checks every time.\n\n1. **Meaning:** Is it a present-simple meaning or a present-continuous meaning?\n2. **Helper:** Use *do / does* for present simple negatives and questions. Use *am / is / are* for the continuous.\n3. **Main verb:** Use the base verb after *do / does*. Use the **-ing** form after *am / is / are*.\n\nThen read the whole sentence once more and check that the subject matches the helper."
                 }
               },
               {

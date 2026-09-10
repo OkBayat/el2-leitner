@@ -57,6 +57,18 @@ All reusable slides may declare `instruction`, `stimulus`, and `explanation` whe
 
 Options are objects with a stable `id`, visible `label`, and optional `description`. Answer fields use an `id`, one or more `answers`, and optional constraints such as `wordLimit`, `caseSensitive`, `punctuationSensitive`, or `exactSpelling`.
 
+### Teaching-card Markdown
+
+New `teaching-card` slides put instructional content in one non-empty
+`markdown` string. The constrained renderer supports paragraphs, explicit line
+breaks, `###` and `####` headings, `**bold**`, `*italic*`, numbered lists, and
+bullet lists. Raw HTML, links, images, tables, and arbitrary Markdown extensions
+are not part of this contract. The renderer escapes raw HTML before rendering.
+
+Legacy `blocks` configurations remain supported so existing courses continue to
+load. Configure exactly one of `markdown` or `blocks`; new or materially revised
+teaching cards use `markdown`.
+
 ## Chrome and evidence
 
 Registry defaults normally own buttons:

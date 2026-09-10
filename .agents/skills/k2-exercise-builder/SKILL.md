@@ -29,6 +29,7 @@ It does not own Angular component implementation, backend persistence, lesson-le
 8. Preserve source wording and answer constraints. Do not invent facts, answer keys, audio URLs, or unsupported accepted answers.
 9. Prefer the fewest slides that achieve the objective. Do not add interaction variety for its own sake.
 10. For runtime-sized paths, a `selection` may declare `expansionId`; the application parent must own a matching runtime handler that returns only registered, non-terminal slide objects. Keep functions and services out of the exercise JSON.
+11. Author new `teaching-card` content in its constrained `markdown` field. Use legacy `blocks` only when preserving an existing configuration, and never configure both formats together.
 
 ## Workflow
 

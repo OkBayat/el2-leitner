@@ -159,6 +159,13 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         return
     if slide_type == "teaching-card":
         text(data, "title", "Teaching card title")
+        has_markdown = "markdown" in data
+        has_blocks = "blocks" in data
+        if has_markdown == has_blocks:
+            raise ValueError("Teaching card requires exactly one markdown or blocks content format.")
+        if has_markdown:
+            text(data, "markdown", "Teaching card markdown")
+            return
         for candidate in array(data, "blocks", "Teaching card blocks"):
             block = record(candidate, "teaching block")
             kind = text(block, "kind", "Teaching block kind")

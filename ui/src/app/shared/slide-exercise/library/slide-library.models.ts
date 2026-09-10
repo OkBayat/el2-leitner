@@ -78,7 +78,8 @@ export interface TeachingBlock {
 export interface TeachingCardData extends SlideTypeData {
 	readonly mode: 'word' | 'usage' | 'contrast' | 'rule' | 'warning' | 'tip';
 	readonly title: string;
-	readonly blocks: readonly TeachingBlock[];
+	readonly markdown?: string;
+	readonly blocks?: readonly TeachingBlock[];
 }
 
 export interface SlideOption {

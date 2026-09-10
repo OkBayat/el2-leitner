@@ -573,6 +573,48 @@ td mat-form-field {
 	line-height: 24px;
 }
 
+.teaching-markdown {
+	max-width: 72ch;
+	display: grid;
+	gap: var(--vocora-space-3);
+	color: var(--vocora-text-secondary);
+	font-size: 17px;
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+}
+
+.teaching-markdown h3,
+.teaching-markdown h4,
+.teaching-markdown p,
+.teaching-markdown ul,
+.teaching-markdown ol {
+	margin: 0;
+}
+
+.teaching-markdown h3,
+.teaching-markdown h4 {
+	color: var(--vocora-text-primary);
+}
+
+.teaching-markdown h3 {
+	font-size: 22px;
+	line-height: 1.35;
+}
+
+.teaching-markdown h4 {
+	font-size: 18px;
+	line-height: 1.4;
+}
+
+.teaching-markdown ul,
+.teaching-markdown ol {
+	padding-inline-start: var(--vocora-space-6);
+}
+
+.teaching-markdown li + li {
+	margin-top: var(--vocora-space-2);
+}
+
 .teaching-block,
 .answer-review,
 blockquote {

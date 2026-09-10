@@ -13,23 +13,17 @@ export const REUSABLE_SLIDE_FIXTURES: readonly SlideExerciseSlide[] = [
 			mode: 'word',
 			instruction: 'Explore the word',
 			title: 'adaptable',
-			blocks: [
-				{
-					kind: 'word',
-					title: 'Adjective · /əˈdæptəbəl/',
-					content: 'able to change for a new situation',
-				},
-				{
-					kind: 'patterns',
-					title: 'Useful patterns',
-					content: 'highly adaptable · adaptable approach',
-				},
-				{
-					kind: 'example',
-					title: 'Example',
-					content: 'The design is adaptable to small spaces.',
-				},
-			],
+			markdown: [
+				'### Adjective · /əˈdæptəbəl/',
+				'**adaptable** means able to change for a new situation.',
+				'',
+				'#### Useful patterns',
+				'- highly adaptable',
+				'- adaptable approach',
+				'',
+				'#### Example',
+				'The design is *adaptable* to small spaces.',
+			].join('\n'),
 		},
 	},
 	{

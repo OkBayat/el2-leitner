@@ -135,6 +135,42 @@ class ExerciseValidatorTests(unittest.TestCase):
                 },
             )
 
+    def test_accepts_markdown_only_teaching_cards(self) -> None:
+        MODULE.validate_slide_data(
+            "teaching-card",
+            {
+                "mode": "rule",
+                "title": "Present simple",
+                "markdown": "### Form\n- Use **does** with he, she and it.",
+            },
+        )
+
+    def test_requires_exactly_one_teaching_card_content_format(self) -> None:
+        for data in (
+            {"mode": "rule", "title": "Missing content"},
+            {
+                "mode": "rule",
+                "title": "Duplicate content",
+                "markdown": "### Rule\nUse the base verb.",
+                "blocks": [{"kind": "note", "content": "Use the base verb."}],
+            },
+        ):
+            with self.subTest(title=data["title"]):
+                with self.assertRaisesRegex(ValueError, "exactly one"):
+                    MODULE.validate_slide_data("teaching-card", data)
+
+    def test_rejects_empty_teaching_card_content(self) -> None:
+        for field, value, error in (
+            ("markdown", "   ", "Teaching card markdown"),
+            ("blocks", [], "Teaching card blocks"),
+        ):
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, error):
+                    MODULE.validate_slide_data(
+                        "teaching-card",
+                        {"mode": "rule", "title": "Empty content", field: value},
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()
