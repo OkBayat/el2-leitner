@@ -72,7 +72,7 @@ describe('reusable slide renderer contract', () => {
 			'Your answer',
 		);
 		expect(answer?.classList).not.toContain('dictation-answer-input');
-		expect(answer?.getAttribute('placeholder')).toBe('Your answer');
+		expect(answer?.getAttribute('placeholder')).toBeNull();
 		expect(answer?.getAttribute('aria-label')).toBe('Your answer');
 		for (const [name, value] of Object.entries({
 			autocomplete: 'off',

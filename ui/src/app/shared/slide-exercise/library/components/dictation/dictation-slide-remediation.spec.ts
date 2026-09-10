@@ -142,6 +142,9 @@ describe('dictation slide remediation', () => {
 		expect(element.querySelector('.spelling-comparison')).toBeNull();
 		expect(element.querySelector('mat-label')?.textContent).toContain('Recall from memory');
 		expect(
+			element.querySelector('textarea')?.getAttribute('placeholder'),
+		).toBeNull();
+		expect(
 			element.querySelector('[data-testid="dictation-remediation-badge"]')?.textContent,
 		).toContain('RECALL FROM MEMORY');
 		await vi.waitFor(() =>
@@ -155,6 +158,9 @@ describe('dictation slide remediation', () => {
 		expect(element.querySelector('textarea')).not.toBeNull();
 		expect(element.querySelector('.spelling-comparison')).not.toBeNull();
 		expect(element.querySelector('mat-label')?.textContent).toContain('Exact copy');
+		expect(
+			element.querySelector('textarea')?.getAttribute('placeholder'),
+		).toBeNull();
 		expect(
 			element.querySelector('[data-testid="dictation-remediation-badge"]')?.textContent,
 		).toContain('COPY THE CORRECTION');
