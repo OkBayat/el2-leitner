@@ -290,7 +290,7 @@ describe('reusable slide renderer contract', () => {
 				title: 'Present simple',
 				markdown: [
 					'### Form',
-					'Use **does not** with *he, she,* and *it*.',
+					'Use the **base verb** with *I, you, we,* and *they*. Add **-s** or **-es** with *he, she,* and *it*.',
 					'The main verb stays in the base form.',
 					'',
 					'#### Steps',
@@ -310,11 +310,17 @@ describe('reusable slide renderer contract', () => {
 		const markdown = element.querySelector('.teaching-markdown');
 		expect(markdown?.querySelector('h3')?.textContent).toBe('Form');
 		expect(markdown?.querySelector('h4')?.textContent).toBe('Steps');
-		expect(markdown?.querySelector('strong')?.textContent).toBe('does not');
+		expect(markdown?.querySelector('strong')?.textContent).toBe('base verb');
 		expect(markdown?.querySelector('strong')?.classList).toContain(
 			'teaching-markdown__known',
 		);
-		expect(markdown?.querySelectorAll('em')).toHaveLength(2);
+		expect([...markdown?.querySelectorAll('strong') ?? []].map((element) => element.textContent)).toEqual([
+			'base verb',
+			'-s',
+			'-es',
+		]);
+		expect(markdown?.textContent).not.toContain('known">');
+		expect(markdown?.querySelectorAll('em')).toHaveLength(4);
 		expect(markdown?.querySelectorAll('ol li')).toHaveLength(2);
 		expect(markdown?.querySelectorAll('ul li')).toHaveLength(2);
 		expect(markdown?.querySelector('p br')).not.toBeNull();
