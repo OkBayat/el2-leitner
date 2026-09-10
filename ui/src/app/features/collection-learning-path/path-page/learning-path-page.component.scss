@@ -35,6 +35,60 @@
   margin-top: var(--vocora-space-5);
 }
 
+.lesson-section {
+  display: block;
+}
+
+.lesson-divider {
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  gap: var(--vocora-space-4);
+  color: var(--vocora-text-secondary);
+  text-align: center;
+}
+
+.lesson-divider::before,
+.lesson-divider::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: var(--vocora-border);
+}
+
+.lesson-divider__heading {
+  display: grid;
+  min-width: 0;
+  min-height: var(--vocora-touch-target-min);
+  align-content: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.lesson-divider__heading:hover h2 {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lesson-divider__heading p,
+.lesson-divider__heading h2 {
+  margin: 0;
+}
+
+.lesson-divider__heading p {
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lesson-divider__heading h2 {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
 .lesson-context-header {
   --lesson-tone: var(--vocora-activity-vocabulary);
   --lesson-side: color-mix(in srgb, var(--lesson-tone) 74%, black);
@@ -210,6 +264,14 @@ a:focus-visible {
 
   .lesson-context-header__heading h2 {
     font-size: 18px;
+  }
+
+  .lesson-divider {
+    gap: var(--vocora-space-2);
+  }
+
+  .lesson-divider__heading h2 {
+    font-size: 13px;
   }
 }
 

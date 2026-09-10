@@ -29,11 +29,16 @@ describe('LearningPathPageComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
     const header = element.querySelector<HTMLElement>('[data-testid="current-lesson-header"]');
     const sections = element.querySelectorAll<HTMLElement>('[data-testid="lesson-section"]');
+    const dividers = element.querySelectorAll<HTMLElement>('[data-testid="lesson-divider"]');
     expect(header).not.toBeNull();
     expect(element.querySelectorAll('[data-testid="current-lesson-header"]')).toHaveLength(1);
     expect(element.querySelectorAll('.lesson__header')).toHaveLength(0);
     expect(header?.textContent).toContain('Lesson 1');
     expect(sections).toHaveLength(2);
+    expect(dividers).toHaveLength(1);
+    expect(dividers[0].textContent).toContain('Lesson 2 · Locked');
+    expect(dividers[0].textContent).toContain('Lesson 2');
+    expect(dividers[0].querySelector('a')?.getAttribute('href')).toBe('/learning-paths/path-1/lessons/lesson-2');
 
     vi.spyOn(header as HTMLElement, 'getBoundingClientRect').mockReturnValue({ bottom: 120 } as DOMRect);
     vi.spyOn(sections[0], 'getBoundingClientRect').mockReturnValue({ top: 40 } as DOMRect);

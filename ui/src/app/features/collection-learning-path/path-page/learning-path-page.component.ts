@@ -23,6 +23,7 @@ const LESSON_BATCH_SIZE = 40;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LearningPathPageComponent {
+  readonly learningPathStateLabel = learningPathStateLabel;
   readonly facade = inject(CollectionLearningPathFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

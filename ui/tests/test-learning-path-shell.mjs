@@ -78,6 +78,11 @@ assert.match(
   /\.lesson-context-header\s*\{[^}]*position:\s*sticky/su,
   'The Learning Path page must own one sticky lesson context header.',
 );
+assert.match(
+  pathPageStyles,
+  /\.lesson-divider::before,\s*\.lesson-divider::after\s*\{[^}]*height:\s*2px[^}]*background:\s*var\(--vocora-border\)/su,
+  'Lesson boundaries must retain the two-sided divider line.',
+);
 
 const appShellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
 assert.match(appShellStyles, /:host\s*\{[^}]*overflow-x:\s*clip/su, 'AppShell must contain feature overflow without creating a horizontal scroller.');

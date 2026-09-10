@@ -45,15 +45,30 @@
     }
 
     <section class="lesson-list" aria-label="Course lessons">
-      @for (lesson of visibleLessons(); track lesson.id) {
-        <app-learning-path-lesson-node
+      @for (lesson of visibleLessons(); track lesson.id; let first = $first) {
+        <div
           class="lesson-section"
           data-testid="lesson-section"
           [attr.data-lesson-id]="lesson.id"
-          [lesson]="lesson"
-          [startExerciseId]="startExerciseId()"
-          (selectExercise)="openExercise($event)"
-        />
+        >
+          @if (!first) {
+            <header class="lesson-divider" data-testid="lesson-divider">
+              <a
+                class="lesson-divider__heading"
+                [routerLink]="['/learning-paths', view.path.id, 'lessons', lesson.id]"
+              >
+                <p>Lesson {{ lesson.position }} · {{ learningPathStateLabel(lesson.state) }}</p>
+                <h2>{{ lesson.title }}</h2>
+              </a>
+            </header>
+          }
+
+          <app-learning-path-lesson-node
+            [lesson]="lesson"
+            [startExerciseId]="startExerciseId()"
+            (selectExercise)="openExercise($event)"
+          />
+        </div>
       } @empty {
         <div class="state-card">
           <h2>No lessons published yet</h2>
