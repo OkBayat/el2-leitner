@@ -35,6 +35,15 @@ function acceptedAnswers(word: HouseOneWord): readonly string[] {
 	];
 }
 
+function shuffledWords(words: readonly HouseOneWord[]): readonly HouseOneWord[] {
+	const result = [...words];
+	for (let index = result.length - 1; index > 0; index -= 1) {
+		const target = Math.floor(Math.random() * (index + 1));
+		[result[index], result[target]] = [result[target], result[index]];
+	}
+	return result;
+}
+
 function sentenceCards(
 	deck: SentencePracticeDeck,
 	words: readonly HouseOneWord[],
@@ -95,8 +104,8 @@ export class PracticeWordsSlideBuilderService {
 			throw new Error(`Unsupported practice mode: ${String(mode)}`);
 		}
 		const house = await this.learningApi.getHouse<HouseOneSnapshot>(1);
-		const words = house.words.filter(
-			(word) => word.id.trim() && word.term.trim(),
+		const words = shuffledWords(
+			house.words.filter((word) => word.id.trim() && word.term.trim()),
 		);
 		if (!words.length)
 			throw new Error(

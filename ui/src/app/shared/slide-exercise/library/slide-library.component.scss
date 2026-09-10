@@ -283,6 +283,7 @@ blockquote {
 }
 
 .cloze-content .cloze-sentence-replay {
+	position: relative;
 	display: inline-block;
 	margin-inline-end: var(--vocora-space-2);
 	border: 0;
@@ -290,7 +291,9 @@ blockquote {
 }
 
 .cloze-sentence-replay__icon {
-	display: inline-block;
+	position: absolute;
+	inset: 50% auto auto 50%;
+	transform: translate(-50%, -50%);
 	width: 26px;
 	height: 26px;
 	background: var(--vocora-action-primary);

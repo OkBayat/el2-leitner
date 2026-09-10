@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LearningApiService } from "../../core/learning/learning-api.service";
 import { SentencePracticeApiService } from "../../core/sentence-practice/sentence-practice-api.service";
 import { PracticeWordsSlideBuilderService } from "./practice-words-slide-builder.service";
@@ -90,6 +90,30 @@ function setup(sentenceDeck = sentences) {
 }
 
 describe("PracticeWordsSlideBuilderService", () => {
+	beforeEach(() => {
+		vi.spyOn(Math, "random").mockReturnValue(0.999);
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it.each([
+		"vocabulary-dictation",
+		"sentence-completion",
+		"sentence-shadowing",
+	] as const)("shuffles House 1 words before building %s slides", async (mode) => {
+		const { builder } = setup();
+		vi.mocked(Math.random).mockReturnValue(0);
+
+		const slides = await builder.build("practice-mode", mode);
+
+		expect(slides.map((slide) => slide.itemId)).toEqual([
+			"word-2",
+			"word-1",
+		]);
+	});
+
 	it("builds one reusable dictation slide for every House 1 word", async () => {
 		const { builder, learningApi, sentenceApi } = setup();
 

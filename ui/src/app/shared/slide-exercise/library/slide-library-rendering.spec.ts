@@ -546,6 +546,15 @@ describe('reusable slide renderer contract', () => {
 		expect(getComputedStyle(button as HTMLButtonElement).display).toBe(
 			'inline-block',
 		);
+		const replayIcon = button?.querySelector<HTMLElement>(
+			'.cloze-sentence-replay__icon',
+		);
+		expect(getComputedStyle(replayIcon as HTMLElement).position).toBe(
+			'absolute',
+		);
+		expect(getComputedStyle(replayIcon as HTMLElement).inset).toBe(
+			'50% auto auto 50%',
+		);
 
 		const spokenWords = element.querySelectorAll(
 			'.cloze-playback-token--word',
