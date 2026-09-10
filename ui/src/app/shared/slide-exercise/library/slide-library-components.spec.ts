@@ -428,7 +428,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('validates ClozeSlide blanks independently, including variants and word limits', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			instruction: 'Complete the sentence.',
 			content: '{{energy}} can reduce {{pollution}}.',
@@ -459,7 +462,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('reveals shuffled answer options for a free-text ClozeSlide on request', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}} and {{third}}.',
 			blanks: [
@@ -480,8 +486,51 @@ describe('reusable slide library behavior', () => {
 		]);
 	});
 
+	it('autoplays and tracks whole-sentence speech for ClozeSlide replay', () => {
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
+		load(component, 'cloze', {
+			content: 'Use {{source}} today.',
+			speech: { text: 'Use renewable energy today.' },
+			blanks: [{ id: 'source', answers: ['renewable energy'] }],
+		});
+
+		expect(speech.speak).toHaveBeenCalledWith(
+			'Use renewable energy today.',
+			0.95,
+			expect.objectContaining({
+				onStart: expect.any(Function),
+				onWordBoundary: expect.any(Function),
+				onEnd: expect.any(Function),
+			}),
+		);
+		const observer = speech.speak.mock.calls[0][2] as {
+			onStart: () => void;
+			onWordBoundary: (charIndex: number) => void;
+			onEnd: () => void;
+		};
+		expect(component.playbackCharIndex()).toBeNull();
+		observer.onStart();
+		expect(component.playbackActive()).toBe(true);
+		observer.onWordBoundary(4);
+		expect(component.playbackCharIndex()).toBe(4);
+		observer.onEnd();
+		expect(component.playbackActive()).toBe(false);
+		expect(component.playbackCharIndex()).toBe(27);
+
+		expect(component.playSentence()).toBe(true);
+		expect(speech.speak).toHaveBeenCalledTimes(2);
+		component.ngOnDestroy();
+		expect(speech.cancel).toHaveBeenCalled();
+	});
+
 	it('advances across ClozeSlide blanks when the word bank is the only input', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}}.',
 			inputMode: 'word-bank',
@@ -503,7 +552,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('fills the active select-mode ClozeSlide blank from numbered choices', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}}.',
 			inputMode: 'select',
@@ -532,7 +584,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('honors exact spelling and rejects unrenderable AnswerField configurations', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{term}}',
 			blanks: [
@@ -544,7 +599,7 @@ describe('reusable slide library behavior', () => {
 		expect(component.interactionState()).toBe('answered-incorrect');
 
 		expect(() =>
-			load(new ClozeSlideComponent(), 'cloze', {
+			load(TestBed.runInInjectionContext(() => new ClozeSlideComponent()), 'cloze', {
 				content: '{{first}} and {{first}}',
 				blanks: [
 					{ id: 'first', answers: ['one'] },
@@ -552,6 +607,14 @@ describe('reusable slide library behavior', () => {
 				],
 			}),
 		).toThrow('placeholders');
+
+		expect(() =>
+			load(TestBed.runInInjectionContext(() => new ClozeSlideComponent()), 'cloze', {
+				content: 'Use {{term}} today.',
+				speech: { text: 'Use a different sentence.' },
+				blanks: [{ id: 'term', answers: ['renewable energy'] }],
+			}),
+		).toThrow('completed sentence');
 
 		expect(() =>
 			load(

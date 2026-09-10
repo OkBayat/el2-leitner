@@ -7,13 +7,43 @@
 			@if (data.stimulus) {
 				<app-slide-stimulus [stimulus]="data.stimulus" />
 			}
-			<p class="cloze-content">
+			<div class="cloze-sentence">
+				@if (data.speech) {
+					<button
+						mat-icon-button
+						appShortcutClick="Alt+R"
+						class="vocora-secondary-icon-action cloze-sentence-replay"
+						type="button"
+						aria-label="Replay sentence"
+						data-testid="cloze-sentence-replay"
+						(click)="playSentence()"
+					>
+						<img
+							src="/assets/icons/normal-speed.svg"
+							alt=""
+							aria-hidden="true"
+						/>
+					</button>
+				}
+				<p
+					class="cloze-content"
+					[class.cloze-content--spoken]="data.speech"
+					[class.is-playing]="playbackActive()"
+				>
 				@for (segment of segments(); track $index) {
-					@if (segment.text) {
-						<span>{{ segment.text }}</span>
+					@if (segment.text !== undefined) {
+						@for (token of segment.tokens ?? []; track $index) {
+							<span
+								class="cloze-playback-token"
+								[class.cloze-playback-token--word]="token.word"
+								[class.is-spoken]="isPlaybackTokenSpoken(token)"
+								>{{ token.text }}</span
+							>
+						}
 					} @else if (blank(segment.fieldId); as field) {
 						<span
 							class="inline-field inline-field--text"
+							[class.is-spoken]="isPlaybackGapSpoken(segment)"
 							[attr.data-state]="blankState(field.id)"
 							cdkOverlayOrigin
 							#wordDetailsOrigin="cdkOverlayOrigin"
@@ -288,7 +318,8 @@
 						</span>
 					}
 				}
-			</p>
+				</p>
+			</div>
 			@if (
 				data.inputMode === 'text' &&
 				data.showOptions &&

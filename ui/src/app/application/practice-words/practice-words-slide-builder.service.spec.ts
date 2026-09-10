@@ -168,15 +168,7 @@ describe("PracticeWordsSlideBuilderService", () => {
 			data: {
 				showOptions: false,
 				content: "You can {{answer}} every day.",
-				stimulus: {
-					type: "dialogue",
-					turns: [
-						{
-							speaker: "Sentence",
-							text: "You can make progress every day.",
-						},
-					],
-				},
+				speech: { text: "You can make progress every day." },
 				blanks: [
 					{
 						id: "answer",
@@ -186,6 +178,7 @@ describe("PracticeWordsSlideBuilderService", () => {
 				],
 			},
 		});
+		expect(slides[0].data).not.toHaveProperty("stimulus");
 	});
 
 	it("builds one sentence-repeat pronunciation slide for every House 1 word", async () => {

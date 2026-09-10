@@ -204,6 +204,7 @@ export interface ClozeSlideData extends SlideTypeData {
 	readonly content: string;
 	readonly inputMode?: 'text' | 'word-bank' | 'select';
 	readonly showOptions?: boolean;
+	readonly speech?: Pick<SpeechPlaybackConfig, 'text'>;
 	readonly blanks: readonly AnswerField[];
 	readonly wordBank?: readonly string[];
 }

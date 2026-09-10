@@ -276,10 +276,37 @@ blockquote {
 }
 
 .cloze-content {
+	flex: 1;
 	margin: 0;
 	font-size: clamp(22px, 4.5vw, 32px);
 	line-height: 1.8;
 	font-weight: 600;
+}
+
+.cloze-sentence {
+	display: flex;
+	align-items: center;
+	gap: var(--vocora-space-3);
+}
+
+.cloze-sentence-replay {
+	flex: 0 0 auto;
+}
+
+.cloze-sentence-replay img {
+	width: 26px;
+	height: 26px;
+}
+
+.cloze-content--spoken .cloze-playback-token--word,
+.cloze-content--spoken .inline-field {
+	opacity: 0.48;
+	transition: opacity 120ms ease;
+}
+
+.cloze-content--spoken .cloze-playback-token--word.is-spoken,
+.cloze-content--spoken .inline-field.is-spoken {
+	opacity: 1;
 }
 
 .cloze-answer-support {
@@ -752,6 +779,8 @@ input:focus-visible,
 
 	.cloze-input,
 	.cloze-choice-blank,
+	.cloze-playback-token,
+	.cloze-content--spoken .inline-field,
 	.bucket {
 		transition: none;
 	}

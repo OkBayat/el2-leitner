@@ -508,6 +508,70 @@ describe('reusable slide renderer contract', () => {
 		);
 	});
 
+	it('renders ClozeSlide sentence replay and reveals spoken words in order', () => {
+		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
+		TestBed.configureTestingModule({
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'spoken-cloze',
+			type: 'cloze',
+			data: {
+				content: 'Use {{source}} today.',
+				speech: { text: 'Use renewable energy today.' },
+				blanks: [{ id: 'source', answers: ['renewable energy'] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const button = element.querySelector<HTMLButtonElement>(
+			'[data-testid="cloze-sentence-replay"]',
+		);
+		expect(element.querySelector('app-slide-stimulus')).toBeNull();
+		expect(button?.hasAttribute('mat-icon-button')).toBe(true);
+		expect(button?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		expect(button?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/normal-speed.svg',
+		);
+		expect(button?.nextElementSibling?.classList).toContain('cloze-content');
+
+		const spokenWords = element.querySelectorAll(
+			'.cloze-playback-token--word',
+		);
+		const blank = element.querySelector('.inline-field--text');
+		expect(spokenWords[0]?.classList).not.toContain('is-spoken');
+		expect(blank?.classList).not.toContain('is-spoken');
+
+		const observer = speech.speak.mock.calls[0][2] as {
+			onWordBoundary: (charIndex: number) => void;
+			onEnd: () => void;
+		};
+		observer.onWordBoundary(0);
+		fixture.detectChanges();
+		expect(spokenWords[0]?.classList).toContain('is-spoken');
+		expect(blank?.classList).not.toContain('is-spoken');
+
+		observer.onWordBoundary(4);
+		fixture.detectChanges();
+		expect(blank?.classList).toContain('is-spoken');
+		observer.onEnd();
+		fixture.detectChanges();
+		expect(spokenWords[spokenWords.length - 1]?.classList).toContain(
+			'is-spoken',
+		);
+
+		button?.click();
+		expect(speech.speak).toHaveBeenCalledTimes(2);
+	});
+
 	it('opens vocabulary details from an answered free-text cloze field', async () => {
 		const fixture = TestBed.createComponent(ClozeSlideComponent);
 		fixture.componentInstance.load({

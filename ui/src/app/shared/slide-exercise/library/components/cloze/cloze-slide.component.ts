@@ -3,10 +3,17 @@ import {
 	Component,
 	HostListener,
 	OnDestroy,
+	inject,
 	signal,
 } from '@angular/core';
 import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
+import {
+	SpeechService,
+	type SpeechPlaybackObserver,
+} from '../../../../../core/speech/speech.service';
+import { LearningStoreService } from '../../../../../core/state/learning-store.service';
+import { ShortcutClickDirective } from '../../../../shortcut-click.directive';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -26,6 +33,35 @@ import {
 	strings,
 } from '../../slide-library.utils';
 
+interface SentencePlaybackToken {
+	readonly text: string;
+	readonly start: number;
+	readonly end: number;
+	readonly word: boolean;
+}
+
+interface ClozePlaybackSegment {
+	readonly text?: string;
+	readonly fieldId?: string;
+	readonly tokens?: readonly SentencePlaybackToken[];
+	readonly spokenStart?: number;
+}
+
+function sentencePlaybackTokens(
+	text: string,
+	offset: number,
+): readonly SentencePlaybackToken[] {
+	return [...text.matchAll(/\s+|[^\s]+/gu)].map((match) => {
+		const start = offset + (match.index ?? 0);
+		return {
+			text: match[0],
+			start,
+			end: start + match[0].length,
+			word: /\S/u.test(match[0]),
+		};
+	});
+}
+
 function clozeSegments(
 	content: string,
 ): readonly { readonly text?: string; readonly fieldId?: string }[] {
@@ -39,11 +75,45 @@ function clozeSegments(
 		);
 }
 
+function completedClozeText(
+	segments: ReturnType<typeof clozeSegments>,
+	blanks: readonly AnswerField[],
+): string {
+	return segments
+		.map((segment) =>
+			segment.text !== undefined
+				? segment.text
+				: (blanks.find((blank) => blank.id === segment.fieldId)
+						?.answers[0] ?? ''),
+		)
+		.join('');
+}
+
+function clozePlaybackSegments(
+	content: string,
+	blanks: readonly AnswerField[],
+): readonly ClozePlaybackSegment[] {
+	let offset = 0;
+	return clozeSegments(content).map((segment) => {
+		if (segment.text !== undefined) {
+			const tokens = sentencePlaybackTokens(segment.text, offset);
+			offset += segment.text.length;
+			return { ...segment, tokens };
+		}
+		const spokenStart = offset;
+		offset +=
+			blanks.find((blank) => blank.id === segment.fieldId)?.answers[0]
+				.length ?? 0;
+		return { ...segment, spokenStart };
+	});
+}
+
 function parseCloze(value: unknown): ClozeSlideData {
 	const source = record(value);
 	const blanks = answerFields(source['blanks']);
 	const content = requiredText(source['content'], 'Cloze content');
-	const fieldIds = clozeSegments(content).flatMap((segment) =>
+	const segments = clozeSegments(content);
+	const fieldIds = segments.flatMap((segment) =>
 		segment.fieldId ? [segment.fieldId] : [],
 	);
 	if (
@@ -52,6 +122,23 @@ function parseCloze(value: unknown): ClozeSlideData {
 		fieldIds.some((id) => !blanks.some((blank) => blank.id === id))
 	)
 		throw new Error('Cloze placeholders must match answer fields.');
+	const speechSource =
+		source['speech'] === undefined
+			? null
+			: record(source['speech'], 'cloze speech playback');
+	const speech = speechSource
+		? {
+				text: requiredText(
+					speechSource['text'],
+					'Cloze speech playback text',
+				),
+			}
+		: undefined;
+	if (speech && speech.text !== completedClozeText(segments, blanks)) {
+		throw new Error(
+			'Cloze speech playback text must match the completed sentence.',
+		);
+	}
 	return {
 		...common(source),
 		content,
@@ -61,6 +148,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 			'text',
 		),
 		showOptions: source['showOptions'] !== false,
+		speech,
 		blanks,
 		wordBank: strings(source['wordBank']),
 	};
@@ -69,7 +157,12 @@ function parseCloze(value: unknown): ClozeSlideData {
 @Component({
 	selector: 'app-cloze-slide',
 	standalone: true,
-	imports: [MatButtonModule, OverlayModule, SlideStimulusComponent],
+	imports: [
+		MatButtonModule,
+		OverlayModule,
+		ShortcutClickDirective,
+		SlideStimulusComponent,
+	],
 	templateUrl: './cloze-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -78,12 +171,16 @@ export class ClozeSlideComponent
 	extends AnswerFieldsSlideBase<ClozeSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	private readonly speech = inject(SpeechService);
+	private readonly store = inject(LearningStoreService);
 	private detailsOrigin?: HTMLTextAreaElement;
-	readonly segments = signal<ReturnType<typeof clozeSegments>>([]);
+	readonly segments = signal<readonly ClozePlaybackSegment[]>([]);
 	readonly activeBlankId = signal('');
 	readonly answerOptions = signal<readonly string[]>([]);
 	readonly answerOptionsVisible = signal(false);
 	readonly wordDetailsOpen = signal(false);
+	readonly playbackActive = signal(false);
+	readonly playbackCharIndex = signal<number | null>(null);
 	readonly wordDetailsPositions: ConnectedPosition[] = [
 		{
 			originX: 'center',
@@ -102,10 +199,12 @@ export class ClozeSlideComponent
 		return this.data().blanks;
 	}
 	load(context: SlideContentContext): void {
+		this.speech.cancel();
+		this.resetPlaybackState();
 		const data = parseCloze(context.data);
 		this.begin(context.slideId, data);
 		this.answers.set({});
-		this.segments.set(clozeSegments(data.content));
+		this.segments.set(clozePlaybackSegments(data.content, data.blanks));
 		const sourceOptions = data.wordBank?.length
 			? data.wordBank
 			: data.blanks.flatMap((blank) => blank.answers.slice(0, 1));
@@ -117,6 +216,49 @@ export class ClozeSlideComponent
 		this.wordDetailsOpen.set(false);
 		this.activeBlankId.set(
 			data.inputMode === 'select' ? '' : (data.blanks[0]?.id ?? ''),
+		);
+		if (data.speech) this.playSentence();
+	}
+	playSentence(): boolean {
+		const playback = this.data().speech;
+		if (!playback) return false;
+		this.resetPlaybackState();
+		const observer: SpeechPlaybackObserver = {
+			onStart: () => {
+				if (this.data().speech !== playback) return;
+				this.playbackActive.set(true);
+				this.playbackCharIndex.set(null);
+			},
+			onWordBoundary: (charIndex) => {
+				if (this.data().speech !== playback) return;
+				this.playbackActive.set(true);
+				this.playbackCharIndex.set(charIndex);
+			},
+			onEnd: () => {
+				if (this.data().speech !== playback) return;
+				this.playbackActive.set(false);
+				this.playbackCharIndex.set(playback.text.length);
+			},
+			onError: () => {
+				if (this.data().speech !== playback) return;
+				this.resetPlaybackState();
+			},
+		};
+		const rate = this.store.state()?.settings.voiceRate ?? 0.85;
+		const started = this.speech.speak(playback.text, rate, observer);
+		if (!started) this.resetPlaybackState();
+		return started;
+	}
+	isPlaybackTokenSpoken(token: SentencePlaybackToken): boolean {
+		const charIndex = this.playbackCharIndex();
+		return token.word && charIndex !== null && charIndex >= token.start;
+	}
+	isPlaybackGapSpoken(segment: ClozePlaybackSegment): boolean {
+		const charIndex = this.playbackCharIndex();
+		return (
+			segment.spokenStart !== undefined &&
+			charIndex !== null &&
+			charIndex >= segment.spokenStart
 		);
 	}
 	blank(id: string | undefined): AnswerField | undefined {
@@ -235,7 +377,13 @@ export class ClozeSlideComponent
 		this.closeWordDetails(true);
 	}
 	ngOnDestroy(): void {
+		this.speech.cancel();
+		this.resetPlaybackState();
 		this.wordDetailsOpen.set(false);
 		this.destroy();
+	}
+	private resetPlaybackState(): void {
+		this.playbackActive.set(false);
+		this.playbackCharIndex.set(null);
 	}
 }

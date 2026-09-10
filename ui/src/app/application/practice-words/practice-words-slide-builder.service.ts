@@ -155,10 +155,7 @@ export class PracticeWordsSlideBuilderService {
 				data: {
 					instruction:
 						"Listen to the missing word or collocation and complete the sentence.",
-					stimulus: {
-						type: "dialogue",
-						turns: [{ speaker: "Sentence", text: sentence.text }],
-					},
+					speech: { text: sentence.text },
 					content: `${sentence.before}{{answer}}${sentence.after}`,
 					inputMode: "text",
 					showOptions: false,
