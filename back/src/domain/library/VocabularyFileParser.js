@@ -149,10 +149,9 @@ export class VocabularyFileParser {
     if (!sections.length) {
       throw new ValidationError("EMPTY_COLLECTION_SECTIONS", "Collection file needs at least one ## lesson.");
     }
-    if (!entries.length) {
+    if (!entries.length && !requireStructured) {
       throw new ValidationError("EMPTY_IMPORT", "No vocabulary items were found in the collection file.");
     }
-
     return {
       title,
       sections,

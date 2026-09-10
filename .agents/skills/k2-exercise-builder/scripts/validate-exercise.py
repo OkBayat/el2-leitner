@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -15,6 +16,102 @@ SLIDE_TYPES = {
     "short-answer", "word-formation", "error-correction", "rewrite",
     "pronunciation", "dictation", "speaking-response", "writing-response",
 }
+ENUM_FIELDS = {
+    "teaching-card": {
+        "mode": ({"word", "usage", "contrast", "rule", "warning", "tip"}, True),
+    },
+    "selection": {"mode": ({"single", "multiple"}, True)},
+    "choice": {
+        "mode": ({
+            "single", "multiple", "meaning", "part-of-speech", "synonym",
+            "antonym", "correct-spelling", "best-word", "odd-one-out",
+        }, False),
+    },
+    "truth": {
+        "mode": ({
+            "true-false", "true-false-not-given", "yes-no-not-given",
+            "agree-disagree",
+        }, True),
+    },
+    "matching": {
+        "mode": ({
+            "definition", "synonym", "antonym", "collocation", "word-family",
+            "person-opinion", "sentence-ending", "heading-section", "term-example",
+        }, False),
+        "feedbackMode": ({"immediate", "on-complete"}, False),
+    },
+    "classification": {
+        "mode": ({
+            "positive-negative", "formal-informal", "countable-uncountable",
+            "part-of-speech", "possible-impossible", "linking-word-function",
+            "letter-language-function", "sound", "custom",
+        }, False),
+    },
+    "ordering": {
+        "mode": ({"sequence", "chronology", "severity", "adjective-order", "process"}, False),
+    },
+    "cloze": {"inputMode": ({"text", "word-bank", "select"}, False)},
+    "structured-completion": {
+        "layout": ({"form", "table", "notes", "flowchart", "timeline"}, True),
+    },
+    "word-formation": {
+        "mode": ({
+            "family", "target-part-of-speech", "prefix", "suffix", "negative-form",
+            "base-word", "transitive-intransitive",
+        }, False),
+    },
+    "error-correction": {
+        "mode": ({
+            "select-and-replace", "inline-edit", "sentence-correction",
+            "paragraph-correction",
+        }, False),
+    },
+    "rewrite": {
+        "mode": ({
+            "paraphrase", "target-grammar", "target-vocabulary",
+            "sentence-transformation", "noun-to-verb", "verb-to-noun", "formalize",
+            "linking-word", "synonym-replacement",
+        }, False),
+    },
+    "pronunciation": {
+        "mode": ({
+            "phoneme-match", "sound-choice", "word-stress", "listen-and-identify",
+            "ipa-match", "repeat",
+        }, True),
+    },
+    "dictation": {"mode": ({"word", "phrase", "sentence"}, False)},
+    "speaking-response": {
+        "mode": ({"part1", "cue-card", "part3", "vocabulary-production"}, True),
+    },
+    "writing-response": {
+        "mode": ({
+            "sentence", "paragraph", "task1-chart", "task1-process", "task2-essay",
+            "general-letter",
+        }, True),
+        "register": ({"formal", "informal", "neutral"}, False),
+    },
+}
+TEACHING_BLOCK_KINDS = {"word", "comparison", "correction", "patterns", "example", "note"}
+
+
+def word_tokens(value: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+(?:'[a-z0-9]+)?", value.casefold())
+
+
+def word_edit_distance(left: str, right: str) -> int:
+    source = word_tokens(left)
+    target = word_tokens(right)
+    row = list(range(len(target) + 1))
+    for source_index, source_word in enumerate(source, start=1):
+        next_row = [source_index]
+        for target_index, target_word in enumerate(target, start=1):
+            next_row.append(min(
+                next_row[target_index - 1] + 1,
+                row[target_index] + 1,
+                row[target_index - 1] + (source_word != target_word),
+            ))
+        row = next_row
+    return row[-1]
 
 
 def record(value: Any, label: str) -> dict:
@@ -28,6 +125,15 @@ def text(source: dict, key: str, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{label} is required.")
     return value.strip()
+
+
+def validate_enum_fields(slide_type: str, data: dict) -> None:
+    for field, (allowed, required) in ENUM_FIELDS.get(slide_type, {}).items():
+        if field not in data and not required:
+            continue
+        value = text(data, field, f"{slide_type} {field}")
+        if value not in allowed:
+            raise ValueError(f"{slide_type} {field} is unsupported: {value}.")
 
 
 def array(source: dict, key: str, label: str, minimum: int = 1) -> list:
@@ -69,12 +175,24 @@ def validate_answer_fields(data: dict, key: str) -> None:
 
 
 def validate_slide_data(slide_type: str, data: dict) -> None:
+    validate_enum_fields(slide_type, data)
     if slide_type in {"message", "summary"}:
         return
     if slide_type == "teaching-card":
         text(data, "title", "Teaching card title")
+        has_markdown = "markdown" in data
+        has_blocks = "blocks" in data
+        if has_markdown == has_blocks:
+            raise ValueError("Teaching card requires exactly one markdown or blocks content format.")
+        if has_markdown:
+            text(data, "markdown", "Teaching card markdown")
+            return
         for candidate in array(data, "blocks", "Teaching card blocks"):
-            text(record(candidate, "teaching block"), "content", "Teaching block content")
+            block = record(candidate, "teaching block")
+            kind = text(block, "kind", "Teaching block kind")
+            if kind not in TEACHING_BLOCK_KINDS:
+                raise ValueError(f"Teaching block kind is unsupported: {kind}.")
+            text(block, "content", "Teaching block content")
         return
     if slide_type == "selection":
         mode = text(data, "mode", "Selection mode")
@@ -141,7 +259,15 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         string_array(data, "answers", "Error correction answers")
         return
     if slide_type == "rewrite":
-        text(data, "original", "Rewrite original")
+        original = text(data, "original", "Rewrite original")
+        model_answer = text(data, "modelAnswer", "Rewrite modelAnswer")
+        accepted_answers = string_array(data, "acceptedAnswers", "Rewrite acceptedAnswers")
+        if "requiredFragments" in data:
+            raise ValueError("Rewrite slides use exact acceptedAnswers, not requiredFragments.")
+        for answer in {model_answer, *accepted_answers}:
+            distance = word_edit_distance(original, answer)
+            if distance < 1 or distance > 2:
+                raise ValueError("Rewrite answers must require exactly one or two word edits.")
         return
     if slide_type == "pronunciation":
         text(data, "mode", "Pronunciation mode")
@@ -161,6 +287,19 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
     if slide_type == "writing-response":
         text(data, "mode", "Writing response mode")
         text(data, "prompt", "Writing response prompt")
+
+
+def validate_slide_chrome(slide_type: str, slide: dict) -> None:
+    if slide_type != "teaching-card":
+        return
+    chrome = slide.get("chrome")
+    header = chrome.get("header") if isinstance(chrome, dict) else None
+    if (
+        not isinstance(header, dict)
+        or "progress" not in header
+        or header["progress"] is not None
+    ):
+        raise ValueError("Teaching card chrome.header.progress must be null.")
 
 
 def validate_exercise(value: Any) -> dict:
@@ -184,6 +323,7 @@ def validate_exercise(value: Any) -> dict:
             raise ValueError(f"Unsupported slide type: {slide_type}")
         data = record(slide.get("data", {}), f"{slide_type} data")
         validate_slide_data(slide_type, data)
+        validate_slide_chrome(slide_type, slide)
         ids.append(slide_id)
         types.append(slide_type)
     if len(set(ids)) != len(ids):

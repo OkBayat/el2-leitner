@@ -32,7 +32,7 @@ export class MySqlLearningPathAccessQueryRepository extends LearningPathAccessRe
       && row.archivedAt == null
       && (row.visibility === "public" || row.visibility === "unlisted");
     const canRead = ownsCollection || publishedForLearners;
-    const canProgress = canRead && Boolean(row.enrolled);
+    const canProgress = canRead && Number(row.enrolled) === 1;
     return { canRead, canProgress };
   }
 }

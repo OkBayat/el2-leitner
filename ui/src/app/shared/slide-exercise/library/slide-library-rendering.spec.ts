@@ -277,6 +277,49 @@ describe('reusable slide renderer contract', () => {
 		);
 	});
 
+	it('renders constrained TeachingCard markdown without allowing raw HTML', () => {
+		const fixture = TestBed.createComponent(TeachingCardSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'teaching-markdown',
+			type: 'teaching-card',
+			data: {
+				mode: 'rule',
+				instruction: 'Learn the pattern.',
+				title: 'Present simple',
+				markdown: [
+					'### Form',
+					'Use **does not** with *he, she,* and *it*.',
+					'The main verb stays in the base form.',
+					'',
+					'#### Steps',
+					'1. Choose the subject.',
+					'2. Choose do or does.',
+					'',
+					'- I do not work.',
+					'- She does not work.',
+					'',
+					'<img src=x onerror=alert(1)>',
+				].join('\n'),
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const markdown = element.querySelector('.teaching-markdown');
+		expect(markdown?.querySelector('h3')?.textContent).toBe('Form');
+		expect(markdown?.querySelector('h4')?.textContent).toBe('Steps');
+		expect(markdown?.querySelector('strong')?.textContent).toBe('does not');
+		expect(markdown?.querySelector('strong')?.classList).toContain(
+			'teaching-markdown__known',
+		);
+		expect(markdown?.querySelectorAll('em')).toHaveLength(2);
+		expect(markdown?.querySelectorAll('ol li')).toHaveLength(2);
+		expect(markdown?.querySelectorAll('ul li')).toHaveLength(2);
+		expect(markdown?.querySelector('p br')).not.toBeNull();
+		expect(markdown?.querySelector('img')).toBeNull();
+		expect(markdown?.textContent).toContain('<img src=x onerror=alert(1)>');
+	});
+
 	it('exposes MatchingSlide and ClassificationSlide interaction states accessibly', () => {
 		const matchingFixture = TestBed.createComponent(MatchingSlideComponent);
 		matchingFixture.componentInstance.load({
@@ -502,6 +545,7 @@ describe('reusable slide renderer contract', () => {
 			],
 		});
 		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		const random = vi.spyOn(Math, 'random').mockReturnValue(0.999);
 		const slide = REUSABLE_SLIDE_FIXTURES.find(
 			(candidate) => candidate.type === 'choice',
 		)!;
@@ -515,6 +559,7 @@ describe('reusable slide renderer contract', () => {
 				),
 			).not.toBeNull();
 		});
+		random.mockRestore();
 
 		const preventNumber = vi.fn();
 		fixture.componentInstance.handleKeyboard({

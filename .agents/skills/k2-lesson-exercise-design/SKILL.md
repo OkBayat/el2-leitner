@@ -59,6 +59,7 @@ When the task also asks to implement application behavior, return the completed 
 16. **Coverage must close.** Every source target must be either covered or explicitly listed as uncovered with a blocker or warning. Never silently drop source material.
 17. **Agent-facing JSON uses `snake_case`.** Keep one canonical field name for each concept.
 18. **Return one object by default.** Unless the caller asks for commentary, return the canonical JSON object rather than prose plus JSON.
+19. **Keep rewrite tasks local and predictable.** Follow the local-correction rule and examples in [learning-design-rules.md](references/learning-design-rules.md). Select `rewrite` only for one or two word-level edits, never for full paraphrase or restructuring, and require exact accepted answers in the runtime-ready `k2-exercise-builder` handoff.
 
 ## Authoring workflow
 

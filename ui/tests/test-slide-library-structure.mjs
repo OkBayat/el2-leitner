@@ -177,6 +177,11 @@ assert.match(
 	/\.mat-mdc-form-field \.mat-mdc-input-element:focus,[\s\S]*\.mat-mdc-form-field \.mat-mdc-input-element:focus-visible\s*\{[\s\S]*outline-style:\s*none;/u,
 );
 assert.doesNotMatch(sharedStyles, /\.dictation-answer-input/u);
+assert.match(
+	sharedStyles,
+	/:host ::ng-deep \.teaching-markdown \.teaching-markdown__known\s*\{[\s\S]*color:\s*var\(--vocora-action-primary\);/u,
+	'Teaching-card strong text must use the scoped primary action color.',
+);
 assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);

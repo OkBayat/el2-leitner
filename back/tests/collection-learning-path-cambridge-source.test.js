@@ -9,8 +9,6 @@ import { loadLearningPathSources } from "../src/infrastructure/content/loadLearn
 const SOURCES = new URL("../data/learning-paths/", import.meta.url);
 const VOCABULARY_SOURCE = new URL("../data/collections/cambridge-vocabulary-for-ielts.md", import.meta.url);
 
-const TEACHING_BLOCK_KINDS = new Set(["word", "comparison", "correction", "patterns", "example", "note"]);
-
 function nonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -51,8 +49,8 @@ function assertReusableSlide(slide) {
     }
   } else if (slide.type === "teaching-card") {
     assert.ok(nonEmpty(data.title));
-    assert.ok(Array.isArray(data.blocks) && data.blocks.length > 0);
-    assert.ok(data.blocks.every((block) => TEACHING_BLOCK_KINDS.has(block.kind) && nonEmpty(block.content)));
+    assert.ok(nonEmpty(data.markdown));
+    assert.equal(Object.hasOwn(data, "blocks"), false);
   } else if (slide.type === "choice") {
     assert.ok(nonEmpty(data.question));
     assert.ok(Array.isArray(data.options) && data.options.length >= 2);
@@ -172,7 +170,8 @@ test("Cambridge Vocabulary for IELTS is a complete finite 20-unit file-managed c
     exercise.config.slides?.filter((slide) => slide.type === "teaching-card") ?? []);
   assert.ok(teachingCards.every((slide) => nonEmpty(slide.data.instruction)
     && nonEmpty(slide.data.explanation)
-    && slide.data.blocks.every((block) => nonEmpty(block.title))));
+    && slide.data.markdown.includes("### ")
+    && slide.data.markdown.includes("**")));
   const collocationCloze = unitOne.exercises
     .flatMap((exercise) => exercise.config.slides ?? [])
     .find((slide) => slide.id === "cvfi-u01-collocations-context");

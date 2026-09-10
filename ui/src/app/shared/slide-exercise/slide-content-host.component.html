@@ -10,11 +10,34 @@
     <div class="slide-content-host__status slide-content-host__status--error" role="alert">
       <strong>Unsupported slide</strong>
       <span>No renderer is registered for “{{ unsupportedType }}”.</span>
+      <button
+        mat-stroked-button
+        type="button"
+        class="vocora-button vocora-button--secondary"
+        data-testid="skip-unavailable-slide"
+        aria-label="Skip the unavailable slide"
+        (click)="requestSkip()"
+      >Skip</button>
     </div>
   } @else if (rendererLoadFailed) {
     <div class="slide-content-host__status slide-content-host__status--error" role="alert">
       <strong>Slide could not load</strong>
-      <button type="button" (click)="retry()">Try again</button>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <button
+          mat-flat-button
+          type="button"
+          class="vocora-button vocora-button--primary"
+          (click)="retry()"
+        >Try again</button>
+        <button
+          mat-stroked-button
+          type="button"
+          class="vocora-button vocora-button--secondary"
+          data-testid="skip-unavailable-slide"
+          aria-label="Skip the unavailable slide"
+          (click)="requestSkip()"
+        >Skip</button>
+      </div>
     </div>
   }
 </div>

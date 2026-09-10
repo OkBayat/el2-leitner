@@ -21,6 +21,7 @@ import {
 	options,
 	record,
 	requiredText,
+	shuffled,
 	strings,
 } from '../../slide-library.utils';
 
@@ -60,7 +61,7 @@ function parseChoice(value: unknown): ChoiceSlideData {
 		...common(source),
 		mode,
 		question: requiredText(source['question'], 'Choice question'),
-		options: parsedOptions,
+		options: shuffled(parsedOptions),
 		correctOptionIds,
 		speech: speechSource
 			? {

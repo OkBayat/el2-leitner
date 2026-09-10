@@ -88,7 +88,7 @@ describe('LibraryLearningPathJourneyFacade', () => {
     expect(facade.error()).toBe('');
   });
 
-  it('normalizes the predecessor route-only catalog without classifying unrelated subscriptions as courses', async () => {
+  it('keeps predecessor route-only courses available without inferring enrollment from subscriptions', async () => {
     const cambridge = collection({ subscribed: true });
     const secondCourse = collection({
       id: 'second-course', slug: 'second-course', title: 'Second Course', subscribed: false,
@@ -107,7 +107,7 @@ describe('LibraryLearningPathJourneyFacade', () => {
     expect(await facade.loadCatalog([cambridge, secondCourse, podcast])).toBe(true);
 
     expect(facade.courseSummaryFor(cambridge.id)).toMatchObject({
-      title: cambridge.title, enrolled: true, learnerStatus: 'in_progress',
+      title: cambridge.title, enrolled: false, learnerStatus: 'available',
     });
     expect(facade.courseSummaryFor(secondCourse.id)).toMatchObject({
       title: secondCourse.title, enrolled: false, learnerStatus: 'available',

@@ -34,7 +34,7 @@ export class MySqlLearningPathCatalogQueryRepository extends LearningPathCatalog
       pathId: String(row.pathId),
       title: row.title,
       learnerStatus: row.learnerStatus,
-      enrolled: Boolean(row.enrolled),
+      enrolled: Number(row.enrolled) === 1,
     }));
   }
 }

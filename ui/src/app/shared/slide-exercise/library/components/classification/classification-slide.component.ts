@@ -20,7 +20,12 @@ import type {
 } from '../../slide-library.models';
 import { SlideStimulusComponent } from '../../slide-stimulus.component';
 import { common, stringMode } from '../../slide-library.component-support';
-import { options, record, requiredText } from '../../slide-library.utils';
+import {
+	options,
+	record,
+	requiredText,
+	shuffled,
+} from '../../slide-library.utils';
 
 function parseClassification(value: unknown): ClassificationSlideData {
 	const source = record(value);
@@ -69,7 +74,7 @@ function parseClassification(value: unknown): ClassificationSlideData {
 			'custom',
 		),
 		categories,
-		items,
+		items: shuffled(items),
 	};
 }
 

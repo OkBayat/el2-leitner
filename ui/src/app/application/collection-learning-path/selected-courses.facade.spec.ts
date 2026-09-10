@@ -111,15 +111,14 @@ describe('SelectedCoursesFacade', () => {
     expect(facade.loading()).toBe(false);
   });
 
-  it('keeps course navigation available while an older backend returns only collection ids', async () => {
+  it('does not infer selected courses while an older backend returns only collection ids', async () => {
     queryLearningPathCollectionIds.mockResolvedValue({ collectionIds: ['bbc-six-minute-english'] });
 
     expect(await facade.load()).toBe(true);
-    expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
-      .toEqual([{ id: 'bbc-six-minute-english', pathId: null }]);
+    expect(facade.courses()).toEqual([]);
   });
 
-  it('supports the predecessor route-only response and excludes subscribed non-course collections', async () => {
+  it('does not infer predecessor route-only enrollment from collection subscriptions', async () => {
     const secondCourse = collection({
       id: 'second-course', slug: 'second-course', title: 'Second Course', subscribed: false,
     });
@@ -139,7 +138,6 @@ describe('SelectedCoursesFacade', () => {
     });
 
     expect(await facade.load()).toBe(true);
-    expect(facade.courses().map((course) => ({ id: course.id, pathId: course.learningPathId })))
-      .toEqual([{ id: 'bbc-six-minute-english', pathId: '1' }]);
+    expect(facade.courses()).toEqual([]);
   });
 });

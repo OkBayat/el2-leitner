@@ -1,5 +1,9 @@
 # K2 OKF Knowledge Bundle Update Log
 
+## 2026-09-10
+
+* **Update**: Documented the constrained, raw-HTML-escaping Markdown contract for new `teaching-card` content while retaining legacy block compatibility.
+
 ## 2026-09-09
 
 * **Update**: Clarified application-owned `sequenceCompletion` persistence and single-turn dialogue playback for generated Practice Words sequences.

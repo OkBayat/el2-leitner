@@ -1,0 +1,3042 @@
+{
+  "schemaVersion": 1,
+  "managedIdPrefix": "gfi-",
+  "path": {
+    "id": "gfi-learning-path",
+    "collectionId": "grammar-for-ielts",
+    "title": "Cambridge Grammar for IELTS",
+    "mode": "finite",
+    "status": "published"
+  },
+  "lessons": [
+    {
+      "id": "gfi-unit-01",
+      "title": "Unit 1 — Present tenses",
+      "position": 1,
+      "source": {
+        "kind": "collection-section",
+        "collectionId": "grammar-for-ielts",
+        "sectionTitle": "Unit 1 — Present tenses"
+      },
+      "exercises": [
+        {
+          "id": "gfi-u01-present-simple-forms",
+          "position": 10,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Build the present simple",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-ps-forms-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn the three basic present simple patterns.",
+                  "title": "Present simple form",
+                  "markdown": "### Build the present simple\n\n#### Positive\nUse the **base verb** with *I, you, we,* and *they*. Add **-s** or **-es** with *he, she,* and *it*.\n\n- I work.\n- She works.\n\n#### Negative\nUse **do not / don't** or **does not / doesn't** + the base verb. Do not add **-s** after *doesn't*.\n\n- They don't work.\n- He doesn't work.\n\n#### Question\nUse **Do / Does + subject + base verb**.\n\n- Do you work?\n- Does she work?"
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-positive",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    { "id": "a", "label": "Leo play tennis on Saturdays." },
+                    { "id": "b", "label": "Leo plays tennis on Saturdays." },
+                    { "id": "c", "label": "Leo playing tennis on Saturdays." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "With he, she or it, the present simple verb normally ends in -s or -es."
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete the sentence: Mina ___ coffee in the evening.",
+                  "options": [
+                    { "id": "a", "label": "doesn't drink" },
+                    { "id": "b", "label": "doesn't drinks" },
+                    { "id": "c", "label": "not drink" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "After doesn't, use the base verb: drink."
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct question.",
+                  "options": [
+                    { "id": "a", "label": "Does your brother lives here?" },
+                    { "id": "b", "label": "Do your brother live here?" },
+                    { "id": "c", "label": "Does your brother live here?" }
+                  ],
+                  "correctOptionIds": ["c"],
+                  "explanation": "Use Does with your brother, followed by the base verb live."
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete each sentence with the present simple form.",
+                  "content": "I {{work}} from home. Sara {{studies}} English. Leo {{watches}} the news and {{goes}} to bed early. We {{do_not_need}} a car. {{does_he_walk}} to college?",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "work", "answers": ["work"] },
+                    { "id": "studies", "answers": ["studies"] },
+                    { "id": "watches", "answers": ["watches"] },
+                    { "id": "goes", "answers": ["goes"] },
+                    {
+                      "id": "do_not_need",
+                      "answers": ["do not need", "don't need"]
+                    },
+                    { "id": "does_he_walk", "answers": ["Does he walk"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct both verb-form errors.",
+                  "mode": "sentence-correction",
+                  "category": "present simple form",
+                  "original": "She don't drives to work.",
+                  "answers": [
+                    "She doesn't drive to work.",
+                    "She does not drive to work."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-es",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Maya wash the car on Sundays."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Maya washes the car on Sundays."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Maya washs the car on Sundays."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Wash ends in -sh, so add -es with she: washes."
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-do-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete the sentence: We ___ TV before school.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "don't watch"
+                    },
+                    {
+                      "id": "b",
+                      "label": "doesn't watch"
+                    },
+                    {
+                      "id": "c",
+                      "label": "don't watches"
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use don't with we, followed by the base verb watch."
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-question-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the question helper and verb form.",
+                  "mode": "sentence-correction",
+                  "category": "present simple question",
+                  "original": "Do Sam likes music?",
+                  "answers": ["Does Sam like music?"]
+                }
+              },
+              {
+                "id": "gfi-u01-ps-forms-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Forms complete",
+                  "title": "You can build present simple statements and questions",
+                  "subtitle": "Next, connect the form to its main uses."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-habits-frequency",
+          "position": 20,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Habits and frequency",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-habits-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Connect repeated actions with the present simple.",
+                  "title": "Regular habits and repeated actions",
+                  "markdown": "### Habits and repeated actions\nUse the **present simple** for things that happen regularly.\n\n#### Useful time words\n- Frequency words: *always, usually, often, sometimes, rarely, never*\n- Repeated times: *every day, most mornings, on Fridays*\n\n#### Put frequency words in the right place\n1. Before a main verb: She **often cooks**.\n2. After the verb *be*: She **is often** busy.\n\nI usually walk to work.\nWe practise every evening."
+                }
+              },
+              {
+                "id": "gfi-u01-habits-markers",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each time phrase.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "regular", "label": "Regular or repeated" },
+                    { "id": "now", "label": "At this moment" }
+                  ],
+                  "items": [
+                    {
+                      "id": "usually",
+                      "label": "usually",
+                      "correctCategoryId": "regular"
+                    },
+                    {
+                      "id": "every-day",
+                      "label": "every day",
+                      "correctCategoryId": "regular"
+                    },
+                    {
+                      "id": "most-mornings",
+                      "label": "most mornings",
+                      "correctCategoryId": "regular"
+                    },
+                    {
+                      "id": "right-now",
+                      "label": "right now",
+                      "correctCategoryId": "now"
+                    },
+                    {
+                      "id": "at-the-moment",
+                      "label": "at the moment",
+                      "correctCategoryId": "now"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-habits-position",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I check usually my email after breakfast."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I usually check my email after breakfast."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I am usually check my email after breakfast."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Usually goes before the main verb check."
+                }
+              },
+              {
+                "id": "gfi-u01-habits-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the present simple form.",
+                  "content": "Nora {{gets_up}} early most days. Her classes {{start}} at nine. She {{does_not_study}} on Sunday, and she {{is}} usually free that day.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "gets_up", "answers": ["gets up"] },
+                    { "id": "start", "answers": ["start"] },
+                    {
+                      "id": "does_not_study",
+                      "answers": ["does not study", "doesn't study"]
+                    },
+                    { "id": "is", "answers": ["is"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-habits-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one verb to make the present simple form agree with Tom.",
+                  "mode": "target-grammar",
+                  "original": "Tom play football every Saturday.",
+                  "acceptedAnswers": ["Tom plays football every Saturday."],
+                  "modelAnswer": "Tom plays football every Saturday."
+                }
+              },
+              {
+                "id": "gfi-u01-habits-before-main-verb",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Omar walks often to work."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Omar often walks to work."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Omar is often walk to work."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Put often before the main verb walks."
+                }
+              },
+              {
+                "id": "gfi-u01-habits-after-be",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural sentence with usually.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Nina usually is tired after work."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Nina is usually tired after work."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Nina does usually tired after work."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Put usually after the verb be: is usually."
+                }
+              },
+              {
+                "id": "gfi-u01-habits-more-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the regular habits.",
+                  "content": "Ben {{always_reads}} before bed. His friends {{sometimes_visit}} him on Fridays.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "always_reads",
+                      "answers": ["always reads"]
+                    },
+                    {
+                      "id": "sometimes_visit",
+                      "answers": ["sometimes visit"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-habits-order-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Move the frequency word to the natural position.",
+                  "mode": "sentence-correction",
+                  "category": "frequency word order",
+                  "original": "Maya drinks often tea after lunch.",
+                  "answers": ["Maya often drinks tea after lunch."]
+                }
+              },
+              {
+                "id": "gfi-u01-habits-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Habits complete",
+                  "title": "You can describe routines clearly",
+                  "subtitle": "Next, separate permanent situations, facts and duration."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-permanent-facts-duration",
+          "position": 30,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Permanent situations and facts",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-facts-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Learn three important present-time meanings.",
+                  "title": "Permanent, factual, or continuing since the past?",
+                  "markdown": "### Permanent situations and facts\nUse the **present simple** for a stable situation, a fact, or a general truth.\n\n- Permanent situation: My aunt **owns** a bakery.\n- General truth: Water **boils** at 100°C.\n- Common general-statement words: *generally, mainly, normally, usually, traditionally*\n\n#### A situation that started in the past\nTo say how long a situation has continued until now, use the **present perfect**, not the present simple.\n\nI **have lived** here since 2022."
+                }
+              },
+              {
+                "id": "gfi-u01-facts-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Choose the meaning of each sentence.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "permanent", "label": "Permanent situation" },
+                    { "id": "fact", "label": "Fact or general truth" },
+                    { "id": "duration", "label": "Duration continuing to now" }
+                  ],
+                  "items": [
+                    {
+                      "id": "owns",
+                      "label": "Rita owns a small flat.",
+                      "correctCategoryId": "permanent"
+                    },
+                    {
+                      "id": "earth",
+                      "label": "The Earth moves around the Sun.",
+                      "correctCategoryId": "fact"
+                    },
+                    {
+                      "id": "since",
+                      "label": "I have known Ali since 2020.",
+                      "correctCategoryId": "duration"
+                    },
+                    {
+                      "id": "teachers",
+                      "label": "My parents teach at a college.",
+                      "correctCategoryId": "permanent"
+                    },
+                    {
+                      "id": "plants",
+                      "label": "Plants need water.",
+                      "correctCategoryId": "fact"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-facts-adverbs",
+                "type": "choice",
+                "data": {
+                  "instruction": "Select all five words from the Unit 1 general-statement list.",
+                  "mode": "multiple",
+                  "question": "Which words commonly accompany present simple general statements?",
+                  "options": [
+                    { "id": "generally", "label": "generally" },
+                    { "id": "mainly", "label": "mainly" },
+                    { "id": "normally", "label": "normally" },
+                    { "id": "usually", "label": "usually" },
+                    { "id": "traditionally", "label": "traditionally" },
+                    { "id": "right-now", "label": "right now" },
+                    { "id": "at-the-moment", "label": "at the moment" }
+                  ],
+                  "correctOptionIds": [
+                    "generally",
+                    "mainly",
+                    "normally",
+                    "usually",
+                    "traditionally"
+                  ],
+                  "explanation": "These five adverbs are the general-statement markers listed in Unit 1."
+                }
+              },
+              {
+                "id": "gfi-u01-facts-duration-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence about a situation that began in 2021 and is still true.",
+                  "options": [
+                    { "id": "a", "label": "I work here since 2021." },
+                    { "id": "b", "label": "I have worked here since 2021." },
+                    { "id": "c", "label": "I am working here since 2021." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Use the present perfect for duration from a past starting point to now."
+                }
+              },
+              {
+                "id": "gfi-u01-facts-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the facts and permanent situations.",
+                  "content": "The library {{opens}} at eight. My cousin {{lives}} in Ankara. Ice {{melts}} when it gets warm. This machine {{uses}} very little power.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "opens", "answers": ["opens"] },
+                    { "id": "lives", "answers": ["lives"] },
+                    { "id": "melts", "answers": ["melts"] },
+                    { "id": "uses", "answers": ["uses"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-facts-error",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete with a present perfect form.",
+                  "content": "We {{have_lived}} in this house for six years.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "have_lived",
+                      "answers": ["have lived", "have been living"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-facts-permanent-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct permanent situation.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "My uncle owns a small shop."
+                    },
+                    {
+                      "id": "b",
+                      "label": "My uncle is owning a small shop."
+                    },
+                    {
+                      "id": "c",
+                      "label": "My uncle own a small shop."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use the present simple for a stable situation: owns."
+                }
+              },
+              {
+                "id": "gfi-u01-facts-general-truth-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct general truth.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "The Sun is rising in the east every day."
+                    },
+                    {
+                      "id": "b",
+                      "label": "The Sun rises in the east."
+                    },
+                    {
+                      "id": "c",
+                      "label": "The Sun rise in the east."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Use the present simple for a general truth."
+                }
+              },
+              {
+                "id": "gfi-u01-facts-duration-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Use the present perfect for a situation continuing from the past.",
+                  "mode": "sentence-correction",
+                  "category": "duration continuing to now",
+                  "original": "I know Farah since 2020.",
+                  "answers": ["I have known Farah since 2020."]
+                }
+              },
+              {
+                "id": "gfi-u01-facts-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Meaning complete",
+                  "title": "You can distinguish facts, permanent situations and duration",
+                  "subtitle": "Next, use the present simple for instructions and stories."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-instructions-stories",
+          "position": 40,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Instructions and narrative present",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-instructions-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Learn two less obvious uses of the present simple.",
+                  "title": "Steps and stories",
+                  "markdown": "### Steps and stories\nThe **present simple** has two useful meanings beyond habits and facts.\n\n#### Instructions and directions\nUse it to explain steps in order.\n\n1. First, you **open** the file.\n2. Then, you **choose** Save.\n\n#### Stories and reviews\nUse it to tell events in a story or say what happens in a film, book, or play.\n\nThe hero **finds** the key and **escapes**."
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each present simple use.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "instruction",
+                      "label": "Instruction or direction"
+                    },
+                    { "id": "story", "label": "Story, film, book or play" },
+                    { "id": "habit", "label": "Habit" }
+                  ],
+                  "items": [
+                    {
+                      "id": "turn",
+                      "label": "You turn right after the bank.",
+                      "correctCategoryId": "instruction"
+                    },
+                    {
+                      "id": "click",
+                      "label": "Next, you click the blue button.",
+                      "correctCategoryId": "instruction"
+                    },
+                    {
+                      "id": "hero",
+                      "label": "At the end, the hero returns home.",
+                      "correctCategoryId": "story"
+                    },
+                    {
+                      "id": "film",
+                      "label": "In the film, two friends open a café.",
+                      "correctCategoryId": "story"
+                    },
+                    {
+                      "id": "walk",
+                      "label": "I walk to class every day.",
+                      "correctCategoryId": "habit"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence is the clearest instruction?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "First, you are entering your password."
+                    },
+                    { "id": "b", "label": "First, you enter your password." },
+                    { "id": "c", "label": "First, you entered your password." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Use the present simple for a sequence of instructions."
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the short process description.",
+                  "content": "First, the user {{opens}} the app. Next, the app {{asks}} for a password. The user {{types}} it and {{presses}} Continue.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "opens", "answers": ["opens"] },
+                    { "id": "asks", "answers": ["asks"] },
+                    { "id": "types", "answers": ["types"] },
+                    { "id": "presses", "answers": ["presses"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the tense in the film description.",
+                  "mode": "sentence-correction",
+                  "category": "narrative present",
+                  "original": "In the final scene, the detective is finding the missing letter and solves the case.",
+                  "answers": [
+                    "In the final scene, the detective finds the missing letter and solves the case."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-step-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the clearest first step.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "First, you add the sugar."
+                    },
+                    {
+                      "id": "b",
+                      "label": "First, you are adding the sugar."
+                    },
+                    {
+                      "id": "c",
+                      "label": "First, you adds the sugar."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use the present simple to give a step in a process."
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-story-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct film description.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "In the film, the detective finds the letter."
+                    },
+                    {
+                      "id": "b",
+                      "label": "In the film, the detective is find the letter."
+                    },
+                    {
+                      "id": "c",
+                      "label": "In the film, the detective find the letter."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use the present simple to describe what happens in a film."
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-directions-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the directions with present simple verbs.",
+                  "content": "You {{turn}} left at the bank and {{walk}} to the station.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "turn",
+                      "answers": ["turn"]
+                    },
+                    {
+                      "id": "walk",
+                      "answers": ["walk"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-story-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the tense in the story description.",
+                  "mode": "sentence-correction",
+                  "category": "story description",
+                  "original": "In the story, the boy is finding a map.",
+                  "answers": ["In the story, the boy finds a map."]
+                }
+              },
+              {
+                "id": "gfi-u01-instructions-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Uses complete",
+                  "title": "You can use the present simple for steps and stories",
+                  "subtitle": "Next, build the present continuous accurately."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-present-continuous-forms",
+          "position": 50,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Build the present continuous",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-pc-forms-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn the complete present continuous form.",
+                  "title": "Be plus verb-ing",
+                  "markdown": "### Build the present continuous\nUse **am / is / are + verb-ing**.\n\n#### Positive\n- I **am working**.\n- She **is working**.\n- They **are working**.\n\n#### Negative\nPut **not** after *am, is,* or *are*: He **is not working**.\n\n#### Question\nPut *am, is,* or *are* before the subject: **Are you working?**\n\nThe main verb always has the **-ing** form."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-positive",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete the sentence: The children ___ outside now.",
+                  "options": [
+                    { "id": "a", "label": "are playing" },
+                    { "id": "b", "label": "is playing" },
+                    { "id": "c", "label": "playing" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use are with the plural subject children."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct negative sentence.",
+                  "options": [
+                    { "id": "a", "label": "I don't working today." },
+                    { "id": "b", "label": "I'm not working today." },
+                    { "id": "c", "label": "I not am working today." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "The negative is am not plus verb-ing."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct question.",
+                  "options": [
+                    { "id": "a", "label": "What you are reading?" },
+                    { "id": "b", "label": "What do you reading?" },
+                    { "id": "c", "label": "What are you reading?" }
+                  ],
+                  "correctOptionIds": ["c"],
+                  "explanation": "In a question, are comes before the subject you."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete each present continuous form.",
+                  "content": "I {{am_waiting}} for the bus. Mia {{is_studying}}. We {{are_not_using}} the room. {{are_they_coming}} with us?",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "am_waiting", "answers": ["am waiting"] },
+                    { "id": "is_studying", "answers": ["is studying"] },
+                    { "id": "are_not_using", "answers": ["are not using"] },
+                    { "id": "are_they_coming", "answers": ["Are they coming"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb form.",
+                  "mode": "sentence-correction",
+                  "category": "present continuous form",
+                  "original": "She is writeing an email.",
+                  "answers": [
+                    "She is writing an email.",
+                    "She's writing an email."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-ing-spelling",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct present continuous form.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Sara is writeing an email."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Sara writing an email."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Sara is writing an email."
+                    }
+                  ],
+                  "correctOptionIds": ["c"],
+                  "explanation": "Use is + writing. Drop the final e before adding -ing."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-helper",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete the sentence: We ___ for the bus.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "is waiting"
+                    },
+                    {
+                      "id": "b",
+                      "label": "are waiting"
+                    },
+                    {
+                      "id": "c",
+                      "label": "are wait"
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Use are with we, followed by waiting."
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-question-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the helper in the question.",
+                  "mode": "sentence-correction",
+                  "category": "present continuous question",
+                  "original": "Is they coming with us?",
+                  "answers": ["Are they coming with us?"]
+                }
+              },
+              {
+                "id": "gfi-u01-pc-forms-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Forms complete",
+                  "title": "You can build present continuous forms",
+                  "subtitle": "Next, choose it for actions now and temporary situations."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-now-temporary",
+          "position": 60,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Actions now and temporary situations",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-now-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Connect present continuous forms with two core meanings.",
+                  "title": "Now or temporary",
+                  "markdown": "### Now or temporary\nUse the **present continuous** for an action happening now or a temporary situation around now.\n\n- Happening now: I **am waiting** outside.\n- Temporary: I **am staying** with my aunt this month.\n\n#### Common signals\n*At the moment, currently,* and *now* often mean the action is happening as we speak.\n*This week, this month,* and *this year* often introduce a temporary situation."
+                }
+              },
+              {
+                "id": "gfi-u01-now-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Choose the meaning of each present continuous sentence.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "now", "label": "Happening at this moment" },
+                    { "id": "temporary", "label": "Temporary around now" }
+                  ],
+                  "items": [
+                    {
+                      "id": "door",
+                      "label": "Someone is knocking at the door.",
+                      "correctCategoryId": "now"
+                    },
+                    {
+                      "id": "month",
+                      "label": "I am taking an evening class this month.",
+                      "correctCategoryId": "temporary"
+                    },
+                    {
+                      "id": "phone",
+                      "label": "Your phone is ringing.",
+                      "correctCategoryId": "now"
+                    },
+                    {
+                      "id": "project",
+                      "label": "We are working in Berlin for a short project.",
+                      "correctCategoryId": "temporary"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-now-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Omar normally lives in Cairo, but this month he ___ in Dubai.",
+                  "options": [
+                    { "id": "a", "label": "stays" },
+                    { "id": "b", "label": "is staying" },
+                    { "id": "c", "label": "stay" }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "This month marks a temporary situation."
+                }
+              },
+              {
+                "id": "gfi-u01-now-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the present continuous.",
+                  "content": "Please be quiet; the baby {{is_sleeping}}. I {{am_using}} my brother's laptop this week. Our neighbours {{are_repairing}} their kitchen at the moment.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "is_sleeping", "answers": ["is sleeping"] },
+                    { "id": "am_using", "answers": ["am using"] },
+                    { "id": "are_repairing", "answers": ["are repairing"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-now-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the temporary situation.",
+                  "mode": "sentence-correction",
+                  "category": "temporary situation",
+                  "original": "I work at the city office this week because my usual office is closed.",
+                  "answers": [
+                    "I am working at the city office this week because my usual office is closed.",
+                    "I'm working at the city office this week because my usual office is closed."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-now-action-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Listen! The baby ___ right now.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "cries"
+                    },
+                    {
+                      "id": "b",
+                      "label": "is crying"
+                    },
+                    {
+                      "id": "c",
+                      "label": "cry"
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Right now signals an action happening at this moment."
+                }
+              },
+              {
+                "id": "gfi-u01-now-signals-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each time expression.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "now",
+                      "label": "Now or temporary"
+                    },
+                    {
+                      "id": "habit",
+                      "label": "Regular habit"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "currently",
+                      "label": "currently",
+                      "correctCategoryId": "now"
+                    },
+                    {
+                      "id": "this-week",
+                      "label": "this week",
+                      "correctCategoryId": "now"
+                    },
+                    {
+                      "id": "every-day",
+                      "label": "every day",
+                      "correctCategoryId": "habit"
+                    },
+                    {
+                      "id": "usually",
+                      "label": "usually",
+                      "correctCategoryId": "habit"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-now-temporary-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the temporary situation.",
+                  "content": "I {{am_staying}} with my aunt this week, and my brother {{is_using}} my room.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "am_staying",
+                      "answers": ["am staying"]
+                    },
+                    {
+                      "id": "is_using",
+                      "answers": ["is using"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-now-action-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the action happening now.",
+                  "mode": "sentence-correction",
+                  "category": "action happening now",
+                  "original": "Look! The dog runs across the road.",
+                  "answers": ["Look! The dog is running across the road."]
+                }
+              },
+              {
+                "id": "gfi-u01-now-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Current time complete",
+                  "title": "You can describe actions now and temporary situations",
+                  "subtitle": "Next, use the continuous for change and trends."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-trends-change",
+          "position": 70,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Trends and changing situations",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-trends-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Recognize change over time.",
+                  "title": "A situation that is developing",
+                  "markdown": "### A developing situation\nUse the **present continuous** when something is changing or developing around the present time.\n\n- Prices **are rising**.\n- Online study **is becoming** more common.\n\n#### Fact or trend?\nUse the **present simple** for a stable fact. Use the **present continuous** only when the sentence presents an ongoing change."
+                }
+              },
+              {
+                "id": "gfi-u01-trends-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Separate stable facts from current trends.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "fact", "label": "Stable fact" },
+                    { "id": "trend", "label": "Changing trend" }
+                  ],
+                  "items": [
+                    {
+                      "id": "sun",
+                      "label": "The Sun gives us light.",
+                      "correctCategoryId": "fact"
+                    },
+                    {
+                      "id": "temperature",
+                      "label": "Average temperatures are rising.",
+                      "correctCategoryId": "trend"
+                    },
+                    {
+                      "id": "internet",
+                      "label": "The Internet connects computers.",
+                      "correctCategoryId": "fact"
+                    },
+                    {
+                      "id": "remote",
+                      "label": "More employees are working remotely.",
+                      "correctCategoryId": "trend"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-trends-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "The chart shows that demand ___ quickly this year.",
+                  "options": [
+                    { "id": "a", "label": "rises" },
+                    { "id": "b", "label": "is rising" },
+                    { "id": "c", "label": "rise" }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "The sentence describes a developing trend this year."
+                }
+              },
+              {
+                "id": "gfi-u01-trends-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the changing situations.",
+                  "content": "The town {{is_growing}} rapidly. More families {{are_moving}} here, and new shops {{are_opening}} every month.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "is_growing", "answers": ["is growing"] },
+                    { "id": "are_moving", "answers": ["are moving"] },
+                    { "id": "are_opening", "answers": ["are opening"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-trends-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the trend sentence.",
+                  "mode": "sentence-correction",
+                  "category": "changing situation",
+                  "original": "The cost of food goes up rapidly at the moment.",
+                  "answers": [
+                    "The cost of food is going up rapidly at the moment."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-trends-warmer-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence that describes a current change.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "The weather gets warmer this week."
+                    },
+                    {
+                      "id": "b",
+                      "label": "The weather is getting warmer this week."
+                    },
+                    {
+                      "id": "c",
+                      "label": "The weather getting warmer this week."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Use the present continuous for a developing situation."
+                }
+              },
+              {
+                "id": "gfi-u01-trends-falling-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Costs are lower each month. Complete the trend: Costs ___.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "are falling"
+                    },
+                    {
+                      "id": "b",
+                      "label": "falls"
+                    },
+                    {
+                      "id": "c",
+                      "label": "is falling"
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Costs is plural, so use are falling."
+                }
+              },
+              {
+                "id": "gfi-u01-trends-more-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete both developing situations.",
+                  "content": "The city {{is_becoming}} busier, and house prices {{are_rising}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "is_becoming",
+                      "answers": ["is becoming"]
+                    },
+                    {
+                      "id": "are_rising",
+                      "answers": ["are rising"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-trends-stable-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence describes a stable fact rather than a current trend?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Water boils at 100°C."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Prices are rising this month."
+                    },
+                    {
+                      "id": "c",
+                      "label": "The town is becoming larger."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "A stable fact uses the present simple."
+                }
+              },
+              {
+                "id": "gfi-u01-trends-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Trends complete",
+                  "title": "You can describe current change",
+                  "subtitle": "Next, learn the emotional use of always with the continuous."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-always-emphasis",
+          "position": 80,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Always: neutral habit or emotional comment",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-always-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Notice how the tense changes the speaker's attitude.",
+                  "title": "Two meanings with always",
+                  "markdown": "### Two meanings with always\nThe tense shows the speaker's attitude.\n\n#### Neutral repeated fact\nUse the **present simple** when *always* only reports a routine: He **always arrives** at eight.\n\n#### Strong feeling\nUse **always, constantly, continually,** or **forever** with the present continuous when something happens more than expected. It can show complaint, surprise, or envy.\n\nHe **is always losing** his keys!"
+                }
+              },
+              {
+                "id": "gfi-u01-always-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify the speaker's meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "neutral", "label": "Neutral routine" },
+                    {
+                      "id": "emotional",
+                      "label": "Complaint, surprise or envy"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "bus",
+                      "label": "The bus always leaves at six.",
+                      "correctCategoryId": "neutral"
+                    },
+                    {
+                      "id": "phone",
+                      "label": "You're always checking your phone!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "help",
+                      "label": "Maya always helps new students.",
+                      "correctCategoryId": "neutral"
+                    },
+                    {
+                      "id": "travel",
+                      "label": "They're always travelling to amazing places!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "interrupt",
+                      "label": "She is continually interrupting me!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "borrow",
+                      "label": "He is forever borrowing my charger!",
+                      "correctCategoryId": "emotional"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-always-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence that clearly sounds like a complaint.",
+                  "options": [
+                    { "id": "a", "label": "Sam always puts his cup here." },
+                    {
+                      "id": "b",
+                      "label": "Sam is always leaving dirty cups on my desk!"
+                    },
+                    { "id": "c", "label": "Sam leaves work at five." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Is always leaving presents the repeated action as annoying."
+                }
+              },
+              {
+                "id": "gfi-u01-always-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the form that matches the speaker's attitude.",
+                  "content": "Our class {{always_starts}} at nine; that is the timetable. But Lee {{is_always_arriving}} late, Nina {{is_continually_interrupting}} me, and Max {{is_forever_borrowing}} my notes!",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "always_starts", "answers": ["always starts"] },
+                    {
+                      "id": "is_always_arriving",
+                      "answers": ["is always arriving"]
+                    },
+                    {
+                      "id": "is_continually_interrupting",
+                      "answers": ["is continually interrupting"]
+                    },
+                    {
+                      "id": "is_forever_borrowing",
+                      "answers": ["is forever borrowing"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-always-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the verb phrase to show an annoying repeated action.",
+                  "mode": "target-grammar",
+                  "original": "My neighbour constantly plays loud music at night!",
+                  "acceptedAnswers": [
+                    "My neighbour is constantly playing loud music at night!",
+                    "My neighbour's constantly playing loud music at night!"
+                  ],
+                  "modelAnswer": "My neighbour is constantly playing loud music at night!"
+                }
+              },
+              {
+                "id": "gfi-u01-always-neutral-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the neutral routine.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "She always arrives at eight."
+                    },
+                    {
+                      "id": "b",
+                      "label": "She is always arriving late!"
+                    },
+                    {
+                      "id": "c",
+                      "label": "She always arriving at eight."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "The present simple reports a neutral repeated fact."
+                }
+              },
+              {
+                "id": "gfi-u01-always-forever-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence that shows annoyance.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "He borrows my pen on Mondays."
+                    },
+                    {
+                      "id": "b",
+                      "label": "He is forever borrowing my pen!"
+                    },
+                    {
+                      "id": "c",
+                      "label": "He forever borrow my pen!"
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Forever with the present continuous can show a strong feeling."
+                }
+              },
+              {
+                "id": "gfi-u01-always-attitude-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the emotional repeated action.",
+                  "content": "Our bus {{is_always_arriving}} late!",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "is_always_arriving",
+                      "answers": ["is always arriving"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-always-order-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Move always to the natural position in the present continuous.",
+                  "mode": "sentence-correction",
+                  "category": "emotional repetition word order",
+                  "original": "He is forgetting always his keys!",
+                  "answers": ["He is always forgetting his keys!"]
+                }
+              },
+              {
+                "id": "gfi-u01-always-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Emphasis complete",
+                  "title": "You can distinguish neutral habits from emotional repetition",
+                  "subtitle": "Next, choose between both present tenses in mixed contexts."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-tense-contrast",
+          "position": 90,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Present simple or present continuous?",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-contrast-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Use meaning before looking at the time phrase.",
+                  "title": "A simple decision",
+                  "markdown": "### Choose the tense in three steps\n1. Choose the **present simple** for a habit, permanent situation, fact, instruction, or story description.\n2. Choose the **present continuous** for something happening now, temporary, changing, or repeatedly causing a strong feeling.\n3. Check the verb. A **state verb** normally stays in a simple form, even when the state is true now.\n\nUse the meaning first. A time phrase is only a clue."
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Choose the tense required by each meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "simple", "label": "Present simple" },
+                    { "id": "continuous", "label": "Present continuous" }
+                  ],
+                  "items": [
+                    {
+                      "id": "routine",
+                      "label": "a daily routine",
+                      "correctCategoryId": "simple"
+                    },
+                    {
+                      "id": "fact",
+                      "label": "a scientific fact",
+                      "correctCategoryId": "simple"
+                    },
+                    {
+                      "id": "now",
+                      "label": "an action happening now",
+                      "correctCategoryId": "continuous"
+                    },
+                    {
+                      "id": "temporary",
+                      "label": "a temporary situation this month",
+                      "correctCategoryId": "continuous"
+                    },
+                    {
+                      "id": "directions",
+                      "label": "directions to a place",
+                      "correctCategoryId": "simple"
+                    },
+                    {
+                      "id": "trend",
+                      "label": "a trend that is developing",
+                      "correctCategoryId": "continuous"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-choice-one",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "I usually ___ at home, but today I ___ in the library.",
+                  "options": [
+                    { "id": "a", "label": "study / am studying" },
+                    { "id": "b", "label": "am studying / study" },
+                    { "id": "c", "label": "study / study" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Usually marks a habit; today marks the temporary contrast."
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-choice-two",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct pair: The museum ___ at ten. Look, the guide ___ the door now.",
+                  "options": [
+                    { "id": "a", "label": "is opening / opens" },
+                    { "id": "b", "label": "opens / is opening" },
+                    { "id": "c", "label": "open / opening" }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "The timetable is present simple; the action now is present continuous."
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Choose the form from meaning.",
+                  "content": "Ben normally {{cycles}} to work, but he {{is_taking}} the bus this week. The bus {{leaves}} at 7:30, and more people {{are_using}} it because fuel prices {{are_rising}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "cycles", "answers": ["cycles"] },
+                    { "id": "is_taking", "answers": ["is taking"] },
+                    { "id": "leaves", "answers": ["leaves"] },
+                    { "id": "are_using", "answers": ["are using"] },
+                    { "id": "are_rising", "answers": ["are rising"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct both tense choices.",
+                  "mode": "sentence-correction",
+                  "category": "present tense contrast",
+                  "original": "I am usually walking to class, but today I walk with my friend.",
+                  "answers": [
+                    "I usually walk to class, but today I am walking with my friend.",
+                    "I usually walk to class, but today I'm walking with my friend."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-daily-now-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Mina usually ___ the bus, but today she ___ a taxi.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "takes / is taking"
+                    },
+                    {
+                      "id": "b",
+                      "label": "is taking / takes"
+                    },
+                    {
+                      "id": "c",
+                      "label": "takes / takes"
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Use present simple for the routine and present continuous for today."
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-fact-trend-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the current trend.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Most plants need water."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Online classes are becoming more common."
+                    },
+                    {
+                      "id": "c",
+                      "label": "The library opens at nine."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Are becoming describes a change around the present time."
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-more-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use present simple for the schedule and present continuous for now.",
+                  "content": "The shop {{opens}} at nine, but the workers {{are_cleaning}} it now.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "opens",
+                      "answers": ["opens"]
+                    },
+                    {
+                      "id": "are_cleaning",
+                      "answers": ["are cleaning"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-contrast-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Contrast complete",
+                  "title": "You can choose the tense from context",
+                  "subtitle": "Next, learn which verbs normally describe states."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-state-verb-groups",
+          "position": 100,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Recognize state verbs",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-state-groups-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Group state verbs by the kind of state they describe.",
+                  "title": "State verbs normally use simple forms",
+                  "markdown": "### State verbs normally use simple forms\nState verbs describe a state, not an activity. Learn them in five groups.\n\n- **Thoughts:** agree, assume, believe, disagree, forget, hope, know, regret, remember, suppose, think, understand\n- **Feelings:** adore, despise, dislike, enjoy, feel, hate, like, love, mind, prefer, want\n- **Senses:** feel, hear, see, smell, taste\n- **Possession:** have, own, belong\n- **Description:** appear, contain, look, look like, mean, resemble, seem, smell, sound, taste, weigh\n\nSome verbs appear in more than one group because their meaning can change."
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-matching",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each state-verb group to examples.",
+                  "mode": "definition",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "thought",
+                      "left": "Thought",
+                      "right": "know, believe, understand"
+                    },
+                    {
+                      "id": "feeling",
+                      "left": "Feeling",
+                      "right": "love, prefer, want"
+                    },
+                    {
+                      "id": "sense",
+                      "left": "Sense",
+                      "right": "hear, smell, taste"
+                    },
+                    {
+                      "id": "possession",
+                      "left": "Possession",
+                      "right": "have, own, belong"
+                    },
+                    {
+                      "id": "description",
+                      "left": "Description",
+                      "right": "seem, contain, weigh"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each verb by its main state meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "thought", "label": "Thought" },
+                    { "id": "feeling", "label": "Feeling" },
+                    { "id": "sense", "label": "Sense" },
+                    { "id": "possession", "label": "Possession" },
+                    { "id": "description", "label": "Description" }
+                  ],
+                  "items": [
+                    {
+                      "id": "understand",
+                      "label": "understand",
+                      "correctCategoryId": "thought"
+                    },
+                    {
+                      "id": "prefer",
+                      "label": "prefer",
+                      "correctCategoryId": "feeling"
+                    },
+                    {
+                      "id": "hear",
+                      "label": "hear",
+                      "correctCategoryId": "sense"
+                    },
+                    {
+                      "id": "belong",
+                      "label": "belong",
+                      "correctCategoryId": "possession"
+                    },
+                    {
+                      "id": "contain",
+                      "label": "contain",
+                      "correctCategoryId": "description"
+                    },
+                    {
+                      "id": "resemble",
+                      "label": "resemble",
+                      "correctCategoryId": "description"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence uses a state verb correctly?",
+                  "options": [
+                    { "id": "a", "label": "I am knowing the answer." },
+                    { "id": "b", "label": "I know the answer." },
+                    { "id": "c", "label": "I knowing the answer." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Know describes a mental state and is not normally continuous."
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-more",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify more state verbs from Unit 1.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "thought", "label": "Thought" },
+                    { "id": "feeling", "label": "Feeling" },
+                    { "id": "sense", "label": "Sense" },
+                    { "id": "possession", "label": "Possession" },
+                    { "id": "description", "label": "Description" }
+                  ],
+                  "items": [
+                    {
+                      "id": "assume",
+                      "label": "assume",
+                      "correctCategoryId": "thought"
+                    },
+                    {
+                      "id": "regret",
+                      "label": "regret",
+                      "correctCategoryId": "thought"
+                    },
+                    {
+                      "id": "adore",
+                      "label": "adore",
+                      "correctCategoryId": "feeling"
+                    },
+                    {
+                      "id": "mind",
+                      "label": "mind",
+                      "correctCategoryId": "feeling"
+                    },
+                    {
+                      "id": "taste",
+                      "label": "taste",
+                      "correctCategoryId": "sense"
+                    },
+                    {
+                      "id": "have",
+                      "label": "have",
+                      "correctCategoryId": "possession"
+                    },
+                    {
+                      "id": "look-like",
+                      "label": "look like",
+                      "correctCategoryId": "description"
+                    },
+                    {
+                      "id": "weigh",
+                      "label": "weigh",
+                      "correctCategoryId": "description"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use simple forms for these states.",
+                  "content": "I {{understand}} the question. Maya {{prefers}} tea. This bag {{belongs}} to me. The box {{contains}} old photos.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "understand", "answers": ["understand"] },
+                    { "id": "prefers", "answers": ["prefers"] },
+                    { "id": "belongs", "answers": ["belongs"] },
+                    { "id": "contains", "answers": ["contains"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-belong-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence with belong.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "This bag belongs to me."
+                    },
+                    {
+                      "id": "b",
+                      "label": "This bag is belonging to me."
+                    },
+                    {
+                      "id": "c",
+                      "label": "This bag belong to me."
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Belong describes possession and normally uses a simple form."
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-extra-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each state verb by its main meaning here.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "thought",
+                      "label": "Thought"
+                    },
+                    {
+                      "id": "sense",
+                      "label": "Sense"
+                    },
+                    {
+                      "id": "possession",
+                      "label": "Possession"
+                    },
+                    {
+                      "id": "description",
+                      "label": "Description"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "understand",
+                      "label": "understand",
+                      "correctCategoryId": "thought"
+                    },
+                    {
+                      "id": "hear",
+                      "label": "hear",
+                      "correctCategoryId": "sense"
+                    },
+                    {
+                      "id": "own",
+                      "label": "own",
+                      "correctCategoryId": "possession"
+                    },
+                    {
+                      "id": "resemble",
+                      "label": "resemble",
+                      "correctCategoryId": "description"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-more-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the state sentences with simple forms.",
+                  "content": "I {{remember}} her name. This bag {{belongs}} to Lee. The soup {{tastes}} good.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "remember",
+                      "answers": ["remember"]
+                    },
+                    {
+                      "id": "belongs",
+                      "answers": ["belongs"]
+                    },
+                    {
+                      "id": "tastes",
+                      "answers": ["tastes"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-groups-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Recognition complete",
+                  "title": "You can recognize the main state-verb groups",
+                  "subtitle": "Next, apply the state-verb rule and its sense exception."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-state-verbs-in-use",
+          "position": 110,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Use state verbs accurately",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-state-use-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "warning",
+                  "instruction": "Avoid a common present continuous error.",
+                  "title": "A state can be true now without a continuous form",
+                  "markdown": "### A state can be true now\nDo not normally use a state verb in the present continuous. A state can be true now and still use the **present simple**.\n\n- Correct: I **want** some water.\n- Not: I *am wanting* some water.\n\n#### Senses happening now\nWith a sense verb, **can + base verb** is often natural.\n\n- I **can hear** music.\n- I **can smell** smoke."
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-choice-one",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    { "id": "a", "label": "I am wanting to ask a question." },
+                    { "id": "b", "label": "I want to ask a question." },
+                    { "id": "c", "label": "I wanting to ask a question." }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Want is normally a state verb."
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-choice-two",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "There may be a fire. I ___ smoke.",
+                  "options": [
+                    { "id": "a", "label": "can smell" },
+                    { "id": "b", "label": "am smelling" },
+                    { "id": "c", "label": "smells" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Can smell is natural for a sense you notice now."
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the state sentences.",
+                  "content": "I {{believe}} you. This soup {{smells}} good. We {{own}} the flat. From here, I {{can_see}} the station.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "believe", "answers": ["believe"] },
+                    { "id": "smells", "answers": ["smells"] },
+                    { "id": "own", "answers": ["own"] },
+                    { "id": "can_see", "answers": ["can see"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct both state-verb errors.",
+                  "mode": "sentence-correction",
+                  "category": "state verbs",
+                  "original": "I am knowing this word, but I am not understanding its meaning.",
+                  "answers": [
+                    "I know this word, but I do not understand its meaning.",
+                    "I know this word, but I don't understand its meaning."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-want-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I am wanting some water."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I want some water."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I wanting some water."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Want is a state verb and normally uses the present simple."
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-hear-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "There is music outside. Complete the sentence: I ___ it.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "can hear"
+                    },
+                    {
+                      "id": "b",
+                      "label": "am hearing"
+                    },
+                    {
+                      "id": "c",
+                      "label": "can hearing"
+                    }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Can + base verb is natural for a sense happening now."
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-more-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the state sentences.",
+                  "content": "I {{know}} the answer, and Sara {{prefers}} the blue chair.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "know",
+                      "answers": ["know"]
+                    },
+                    {
+                      "id": "prefers",
+                      "answers": ["prefers"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-own-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the state verb.",
+                  "mode": "sentence-correction",
+                  "category": "state verb",
+                  "original": "We are owning a small apartment.",
+                  "answers": ["We own a small apartment."]
+                }
+              },
+              {
+                "id": "gfi-u01-state-use-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "State forms complete",
+                  "title": "You can keep ordinary states out of the continuous",
+                  "subtitle": "Next, learn when think, taste and have change meaning."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-changing-meaning-verbs",
+          "position": 120,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Think, taste and have",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-changing-meaning-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Choose the tense from the verb's meaning.",
+                  "title": "Some state verbs can describe temporary activities",
+                  "markdown": "### Meaning can change the tense\nSome state verbs can also describe an activity. Choose the tense from the meaning.\n\n#### Think\n- Opinion: I **think** it is useful.\n- Mental activity now: I **am thinking** about the problem.\n\n#### Taste\n- Flavour: The sauce **tastes** good.\n- Testing food now: I **am tasting** the sauce.\n\n#### Have\n- Possession: I **have** a bicycle.\n- Experience or activity: We **are having** lunch."
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-match",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each form to its meaning.",
+                  "mode": "definition",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "think-opinion",
+                      "left": "I think",
+                      "right": "my opinion"
+                    },
+                    {
+                      "id": "thinking",
+                      "left": "I am thinking",
+                      "right": "mental activity now"
+                    },
+                    {
+                      "id": "tastes",
+                      "left": "It tastes",
+                      "right": "the flavour it has"
+                    },
+                    {
+                      "id": "tasting",
+                      "left": "I am tasting",
+                      "right": "testing the flavour now"
+                    },
+                    { "id": "have", "left": "I have", "right": "possession" },
+                    {
+                      "id": "having",
+                      "left": "I am having",
+                      "right": "an experience or activity now"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-think",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct pair: I ___ this plan is good, but I ___ about one possible problem.",
+                  "options": [
+                    { "id": "a", "label": "think / am thinking" },
+                    { "id": "b", "label": "am thinking / think" },
+                    { "id": "c", "label": "am thinking / am thinking" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "The first is an opinion; the second is mental activity now."
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-taste",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct pair: The soup ___ salty, so the cook ___ it again.",
+                  "options": [
+                    { "id": "a", "label": "is tasting / tastes" },
+                    { "id": "b", "label": "tastes / is tasting" },
+                    { "id": "c", "label": "tastes / tastes" }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Tastes describes flavour; is tasting describes the cook's action."
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-have",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct pair: We ___ a small garden, and we ___ a picnic there now.",
+                  "options": [
+                    { "id": "a", "label": "have / are having" },
+                    { "id": "b", "label": "are having / have" },
+                    { "id": "c", "label": "are having / are having" }
+                  ],
+                  "correctOptionIds": ["a"],
+                  "explanation": "Have is possession; are having is a current activity."
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Choose each form from its meaning.",
+                  "content": "I {{think}} this tea is excellent. The waiter {{is_tasting}} a new dessert. We {{have}} two tickets, and we {{are_having}} a great time.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "think", "answers": ["think"] },
+                    { "id": "is_tasting", "answers": ["is tasting"] },
+                    { "id": "have", "answers": ["have"] },
+                    { "id": "are_having", "answers": ["are having"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct both meanings of have.",
+                  "mode": "sentence-correction",
+                  "category": "changing state-verb meaning",
+                  "original": "I am having a new laptop, and I have lunch with my team right now.",
+                  "answers": [
+                    "I have a new laptop, and I am having lunch with my team right now.",
+                    "I have a new laptop, and I'm having lunch with my team right now."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-think-repair",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Use the activity meaning of think for an action happening now.",
+                  "mode": "sentence-correction",
+                  "category": "changing meaning of think",
+                  "original": "I think about the problem right now.",
+                  "answers": [
+                    "I am thinking about the problem right now.",
+                    "I'm thinking about the problem right now."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-have-activity",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence where have describes an activity happening now.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "They have a large kitchen."
+                    },
+                    {
+                      "id": "b",
+                      "label": "They are having dinner now."
+                    },
+                    {
+                      "id": "c",
+                      "label": "They are having a large kitchen."
+                    }
+                  ],
+                  "correctOptionIds": ["b"],
+                  "explanation": "Having dinner is an activity, so the present continuous is correct."
+                }
+              },
+              {
+                "id": "gfi-u01-changing-meaning-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Meaning contrasts complete",
+                  "title": "You can choose forms for think, taste and have",
+                  "subtitle": "Next, repair mixed present-tense errors."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-error-repair",
+          "position": 130,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Repair common present-tense errors",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-repair-tip",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Use the same three checks for every sentence.",
+                  "title": "Check meaning, helper and verb form",
+                  "markdown": "### Repair a present-tense sentence\nUse the same three checks every time.\n\n1. **Meaning:** Is it a present-simple meaning or a present-continuous meaning?\n2. **Helper:** Use *do / does* for present simple negatives and questions. Use *am / is / are* for the continuous.\n3. **Main verb:** Use the base verb after *do / does*. Use the **-ing** form after *am / is / are*.\n\nThen read the whole sentence once more and check that the subject matches the helper."
+                }
+              },
+              {
+                "id": "gfi-u01-repair-one",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "present simple form",
+                  "original": "Does Lina works on Fridays?",
+                  "answers": ["Does Lina work on Fridays?"]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-two",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "habit",
+                  "original": "We are usually eating at home.",
+                  "answers": ["We usually eat at home."]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-three",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "action now",
+                  "original": "Please wait. I talk to a customer right now.",
+                  "answers": [
+                    "Please wait. I am talking to a customer right now.",
+                    "Please wait. I'm talking to a customer right now."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-four",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "trend",
+                  "original": "At the moment, the number of students studying online increases quickly.",
+                  "answers": [
+                    "At the moment, the number of students studying online is increasing quickly."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-five",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "state verb",
+                  "original": "This box is containing six bottles.",
+                  "answers": ["This box contains six bottles."]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-six",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "temporary situation",
+                  "original": "My sister lives with us this week while her flat is repaired.",
+                  "answers": [
+                    "My sister is living with us this week while her flat is repaired.",
+                    "My sister's living with us this week while her flat is repaired."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-seven",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "state verb",
+                  "original": "I am believing this answer is correct.",
+                  "answers": ["I believe this answer is correct."]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-eight",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the sentence.",
+                  "mode": "sentence-correction",
+                  "category": "duration",
+                  "original": "He knows her since primary school.",
+                  "answers": ["He has known her since primary school."]
+                }
+              },
+              {
+                "id": "gfi-u01-repair-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Repair complete",
+                  "title": "You can find and correct common present-tense errors",
+                  "subtitle": "The final exercise now checks every Unit 1 grammar target."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u01-mastery-check",
+          "position": 140,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Unit 1 mastery check",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u01-mastery-form",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    { "id": "a", "label": "Does he needs any help?" },
+                    { "id": "b", "label": "Does he need any help?" },
+                    { "id": "c", "label": "Do he need any help?" }
+                  ],
+                  "correctOptionIds": ["b"]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-habit-now",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Nadia usually ___ at the office, but today she ___ from home.",
+                  "options": [
+                    { "id": "a", "label": "works / is working" },
+                    { "id": "b", "label": "is working / works" },
+                    { "id": "c", "label": "works / works" }
+                  ],
+                  "correctOptionIds": ["a"]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-uses",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each sentence by its grammar use.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "habit", "label": "Habit" },
+                    { "id": "fact", "label": "Fact" },
+                    { "id": "instruction", "label": "Instruction" },
+                    { "id": "story", "label": "Story description" },
+                    { "id": "temporary", "label": "Temporary situation" },
+                    { "id": "trend", "label": "Changing trend" }
+                  ],
+                  "items": [
+                    {
+                      "id": "gym",
+                      "label": "I go to the gym twice a week.",
+                      "correctCategoryId": "habit"
+                    },
+                    {
+                      "id": "metal",
+                      "label": "Metal expands when it gets hot.",
+                      "correctCategoryId": "fact"
+                    },
+                    {
+                      "id": "left",
+                      "label": "You go past the school and turn left.",
+                      "correctCategoryId": "instruction"
+                    },
+                    {
+                      "id": "novel",
+                      "label": "In the novel, the family moves to Canada.",
+                      "correctCategoryId": "story"
+                    },
+                    {
+                      "id": "hotel",
+                      "label": "We are staying in a hotel this week.",
+                      "correctCategoryId": "temporary"
+                    },
+                    {
+                      "id": "sales",
+                      "label": "Online sales are increasing.",
+                      "correctCategoryId": "trend"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-continuous-form",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the present continuous forms.",
+                  "content": "Why {{are_you_laughing}}? I {{am_not_laughing}}; I {{am_smiling}} because the news is good.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "are_you_laughing",
+                      "answers": ["are you laughing"]
+                    },
+                    { "id": "am_not_laughing", "answers": ["am not laughing"] },
+                    { "id": "am_smiling", "answers": ["am smiling"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-always",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each repeated action by the speaker's attitude.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "neutral", "label": "Neutral routine" },
+                    {
+                      "id": "emotional",
+                      "label": "Complaint, surprise or envy"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "always-neutral",
+                      "label": "Eva always calls on Sunday.",
+                      "correctCategoryId": "neutral"
+                    },
+                    {
+                      "id": "always-emotional",
+                      "label": "Eva is always interrupting me!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "constantly-emotional",
+                      "label": "Dan is constantly changing his plans!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "continually-emotional",
+                      "label": "The baby is continually waking us up!",
+                      "correctCategoryId": "emotional"
+                    },
+                    {
+                      "id": "forever-emotional",
+                      "label": "You are forever losing your keys!",
+                      "correctCategoryId": "emotional"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-state",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    { "id": "a", "label": "I am preferring the blue one." },
+                    { "id": "b", "label": "I prefer the blue one." },
+                    { "id": "c", "label": "I preferring the blue one." }
+                  ],
+                  "correctOptionIds": ["b"]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-state-groups",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify the state verbs by meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "thought", "label": "Thought" },
+                    { "id": "feeling", "label": "Feeling" },
+                    { "id": "sense", "label": "Sense" },
+                    { "id": "possession", "label": "Possession" },
+                    { "id": "description", "label": "Description" }
+                  ],
+                  "items": [
+                    {
+                      "id": "believe",
+                      "label": "believe",
+                      "correctCategoryId": "thought"
+                    },
+                    {
+                      "id": "hate",
+                      "label": "hate",
+                      "correctCategoryId": "feeling"
+                    },
+                    {
+                      "id": "hear",
+                      "label": "hear",
+                      "correctCategoryId": "sense"
+                    },
+                    {
+                      "id": "own",
+                      "label": "own",
+                      "correctCategoryId": "possession"
+                    },
+                    {
+                      "id": "seem",
+                      "label": "seem",
+                      "correctCategoryId": "description"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-sense",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Complete with two words.",
+                  "question": "There is music next door. I ___ it clearly.",
+                  "answers": ["can hear"],
+                  "wordLimit": 2
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-meanings",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use think, taste and have in the correct forms.",
+                  "content": "I {{think}} the meal is ready. The chef {{is_tasting}} the soup. We {{have}} a table by the window and we {{are_having}} dinner now.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "think", "answers": ["think"] },
+                    { "id": "is_tasting", "answers": ["is tasting"] },
+                    { "id": "have", "answers": ["have"] },
+                    { "id": "are_having", "answers": ["are having"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-duration",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete with a present perfect form.",
+                  "content": "I {{have_studied}} English since 2023.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "have_studied",
+                      "answers": ["have studied", "have been studying"]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-instructions",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the instruction.",
+                  "mode": "sentence-correction",
+                  "category": "instructions",
+                  "original": "First, you are switching on the machine, and then you are pressing Start.",
+                  "answers": [
+                    "First, you switch on the machine, and then you press Start."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-trend",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the changing trend.",
+                  "mode": "sentence-correction",
+                  "category": "trend",
+                  "original": "The number of electric cars grows quickly at the moment.",
+                  "answers": [
+                    "The number of electric cars is growing quickly at the moment."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-final-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the final mixed paragraph.",
+                  "content": "My family usually {{eats}} together, but this week my parents {{are_visiting}} relatives. I {{believe}} family meals are important. They {{generally}} help people talk, and their popularity {{is_growing}} again in my town.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "eats", "answers": ["eats"] },
+                    { "id": "are_visiting", "answers": ["are visiting"] },
+                    { "id": "believe", "answers": ["believe"] },
+                    { "id": "generally", "answers": ["generally"] },
+                    { "id": "is_growing", "answers": ["is growing"] }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u01-mastery-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Unit 1 complete",
+                  "title": "You have completed Present tenses",
+                  "subtitle": "Every Unit 1 grammar point has been retrieved in mixed contexts."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

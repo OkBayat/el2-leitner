@@ -11,24 +11,56 @@
 			@if (data.explanation) {
 				<p class="teaching-card__lead">{{ data.explanation }}</p>
 			}
-			<div class="teaching-grid">
-				@for (block of data.blocks; track $index) {
-					<section
-						class="teaching-block"
-						[attr.data-kind]="block.kind"
-					>
-						@if (block.title) {
-							<h2>{{ block.title }}</h2>
+			@if (data.markdown) {
+				<div class="teaching-markdown">
+					@for (block of markdownBlocks(); track $index) {
+						@switch (block.kind) {
+							@case ('h3') {
+								<h3 [innerHTML]="block.html"></h3>
+							}
+							@case ('h4') {
+								<h4 [innerHTML]="block.html"></h4>
+							}
+							@case ('paragraph') {
+								<p [innerHTML]="block.html"></p>
+							}
+							@case ('ordered-list') {
+								<ol>
+									@for (item of block.items; track $index) {
+										<li [innerHTML]="item"></li>
+									}
+								</ol>
+							}
+							@case ('bullet-list') {
+								<ul>
+									@for (item of block.items; track $index) {
+										<li [innerHTML]="item"></li>
+									}
+								</ul>
+							}
 						}
-						<p>{{ block.content }}</p>
-						@if (block.secondary) {
-							<p class="text-secondary">
-								{{ block.secondary }}
-							</p>
-						}
-					</section>
-				}
-			</div>
+					}
+				</div>
+			} @else {
+				<div class="teaching-grid">
+					@for (block of data.blocks ?? []; track $index) {
+						<section
+							class="teaching-block"
+							[attr.data-kind]="block.kind"
+						>
+							@if (block.title) {
+								<h2>{{ block.title }}</h2>
+							}
+							<p>{{ block.content }}</p>
+							@if (block.secondary) {
+								<p class="text-secondary">
+									{{ block.secondary }}
+								</p>
+							}
+						</section>
+					}
+				</div>
+			}
 		</section>
 	</article>
 }
