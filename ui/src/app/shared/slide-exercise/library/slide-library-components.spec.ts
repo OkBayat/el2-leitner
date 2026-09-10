@@ -267,6 +267,10 @@ describe('reusable slide library behavior', () => {
 		const component = TestBed.runInInjectionContext(
 			() => new ChoiceSlideComponent(),
 		);
+		let footerTitle = '';
+		component.stateChange.subscribe((state) => {
+			footerTitle = state.chrome?.footer?.title ?? footerTitle;
+		});
 		load(component, 'choice', {
 			mode: 'multiple',
 			question: 'Choose both formal words.',
@@ -281,6 +285,7 @@ describe('reusable slide library behavior', () => {
 		component.selectOption('c');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
+		expect(footerTitle).toBe('Nice!');
 	});
 
 	it('supports optional generic speech autoplay and replay for ChoiceSlide', () => {

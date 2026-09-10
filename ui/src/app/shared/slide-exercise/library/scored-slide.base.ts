@@ -58,7 +58,7 @@ export abstract class ScoredSlideBase<TData> {
 			chrome: {
 				footer: {
 					tone: correct ? 'success' : 'error',
-					title: correct ? 'Correct' : 'Not quite',
+					title: correct ? 'Nice!' : 'Not quite',
 					detail: explanation,
 					primary: {
 						id: 'continue',
