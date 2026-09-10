@@ -7,29 +7,27 @@
 			@if (data.stimulus) {
 				<app-slide-stimulus [stimulus]="data.stimulus" />
 			}
-			<div class="cloze-sentence">
+			<p
+				class="cloze-content"
+				[class.cloze-content--spoken]="data.speech"
+				[class.is-playing]="playbackActive()"
+			>
 				@if (data.speech) {
 					<button
 						mat-icon-button
 						appShortcutClick="Alt+R"
-						class="vocora-secondary-icon-action cloze-sentence-replay"
+						class="cloze-sentence-replay"
 						type="button"
 						aria-label="Replay sentence"
 						data-testid="cloze-sentence-replay"
 						(click)="playSentence()"
 					>
-						<img
-							src="/assets/icons/normal-speed.svg"
-							alt=""
+						<span
+							class="cloze-sentence-replay__icon"
 							aria-hidden="true"
-						/>
+						></span>
 					</button>
 				}
-				<p
-					class="cloze-content"
-					[class.cloze-content--spoken]="data.speech"
-					[class.is-playing]="playbackActive()"
-				>
 				@for (segment of segments(); track $index) {
 					@if (segment.text !== undefined) {
 						@for (token of segment.tokens ?? []; track $index) {
@@ -91,6 +89,7 @@
 									>{{ answers()[field.id] || "" }}</span
 								>
 								<textarea
+									#clozeInput
 									class="cloze-input"
 									rows="1"
 									wrap="off"
@@ -318,8 +317,7 @@
 						</span>
 					}
 				}
-				</p>
-			</div>
+			</p>
 			@if (
 				data.inputMode === 'text' &&
 				data.showOptions &&

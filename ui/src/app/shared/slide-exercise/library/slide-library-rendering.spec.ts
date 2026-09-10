@@ -443,6 +443,7 @@ describe('reusable slide renderer contract', () => {
 		const textarea = (fixture.nativeElement as HTMLElement).querySelector(
 			'textarea.cloze-input',
 		) as HTMLTextAreaElement;
+		expect(document.activeElement).toBe(textarea);
 		textarea.value = 'renewable\nenergy';
 		textarea.dispatchEvent(new Event('input'));
 
@@ -538,10 +539,13 @@ describe('reusable slide renderer contract', () => {
 		expect(element.querySelector('app-slide-stimulus')).toBeNull();
 		expect(button?.hasAttribute('mat-icon-button')).toBe(true);
 		expect(button?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
-		expect(button?.querySelector('img')?.getAttribute('src')).toBe(
-			'/assets/icons/normal-speed.svg',
+		expect(button?.classList).not.toContain('vocora-secondary-icon-action');
+		expect(button?.querySelector('.cloze-sentence-replay__icon')).not.toBeNull();
+		const sentence = element.querySelector('.cloze-content');
+		expect(sentence?.firstElementChild).toBe(button);
+		expect(getComputedStyle(button as HTMLButtonElement).display).toBe(
+			'inline-block',
 		);
-		expect(button?.nextElementSibling?.classList).toContain('cloze-content');
 
 		const spokenWords = element.querySelectorAll(
 			'.cloze-playback-token--word',

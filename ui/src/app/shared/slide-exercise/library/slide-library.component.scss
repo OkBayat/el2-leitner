@@ -276,26 +276,26 @@ blockquote {
 }
 
 .cloze-content {
-	flex: 1;
 	margin: 0;
 	font-size: clamp(22px, 4.5vw, 32px);
 	line-height: 1.8;
 	font-weight: 600;
 }
 
-.cloze-sentence {
-	display: flex;
-	align-items: center;
-	gap: var(--vocora-space-3);
+.cloze-content .cloze-sentence-replay {
+	display: inline-block;
+	margin-inline-end: var(--vocora-space-2);
+	border: 0;
+	vertical-align: middle;
 }
 
-.cloze-sentence-replay {
-	flex: 0 0 auto;
-}
-
-.cloze-sentence-replay img {
+.cloze-sentence-replay__icon {
+	display: inline-block;
 	width: 26px;
 	height: 26px;
+	background: var(--vocora-action-primary);
+	-webkit-mask: url('/assets/icons/normal-speed.svg') center / contain no-repeat;
+	mask: url('/assets/icons/normal-speed.svg') center / contain no-repeat;
 }
 
 .cloze-content--spoken .cloze-playback-token--word,

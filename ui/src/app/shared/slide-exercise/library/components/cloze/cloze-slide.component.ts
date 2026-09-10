@@ -1,8 +1,11 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
 	HostListener,
 	OnDestroy,
+	ViewChild,
 	inject,
 	signal,
 } from '@angular/core';
@@ -169,10 +172,11 @@ function parseCloze(value: unknown): ClozeSlideData {
 })
 export class ClozeSlideComponent
 	extends AnswerFieldsSlideBase<ClozeSlideData>
-	implements SlideContentComponent, OnDestroy
+	implements SlideContentComponent, AfterViewInit, OnDestroy
 {
 	private readonly speech = inject(SpeechService);
 	private readonly store = inject(LearningStoreService);
+	@ViewChild('clozeInput') private clozeInput?: ElementRef<HTMLTextAreaElement>;
 	private detailsOrigin?: HTMLTextAreaElement;
 	readonly segments = signal<readonly ClozePlaybackSegment[]>([]);
 	readonly activeBlankId = signal('');
@@ -197,6 +201,9 @@ export class ClozeSlideComponent
 	];
 	fields(): readonly AnswerField[] {
 		return this.data().blanks;
+	}
+	ngAfterViewInit(): void {
+		this.clozeInput?.nativeElement.focus();
 	}
 	load(context: SlideContentContext): void {
 		this.speech.cancel();
