@@ -23,7 +23,6 @@ export class LessonNodeComponent {
   readonly lesson = input.required<LearningPathLessonView>();
   readonly startExerciseId = input<string | null>(null);
   readonly selectExercise = output<LearningPathExerciseSelection>();
-  readonly active = computed(() => this.lesson().state === 'available' || this.lesson().state === 'in_progress');
   readonly mirrored = computed(() => this.lesson().position % 2 === 0);
   readonly palette = computed<LessonTrailPalette>(() => {
     const index = Math.max(0, this.lesson().position - 1) % LESSON_TRAIL_PALETTES.length;

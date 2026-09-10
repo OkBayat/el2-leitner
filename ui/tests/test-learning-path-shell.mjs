@@ -66,6 +66,18 @@ const exerciseNodeStyles = read('src/app/features/collection-learning-path/compo
 assert.match(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*72px/su, 'Translated trail nodes must own only their visible width.');
 assert.doesNotMatch(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*100%/su, 'Translated trail nodes must not shift a full-width host beyond the viewport.');
 
+const lessonNodeStyles = read('src/app/features/collection-learning-path/components/lesson-node/lesson-node.component.scss');
+assert.match(
+  lessonNodeStyles,
+  /\.lesson\s*>\s*\.lesson__header\s*\{[^}]*position:\s*sticky/su,
+  'Every lesson header must retain the sticky card behavior while scrolling.',
+);
+assert.doesNotMatch(
+  lessonNodeStyles,
+  /\.lesson\.is-active\s*>\s*\.lesson__header/u,
+  'Sticky lesson headers must not be limited to the active lesson.',
+);
+
 const appShellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
 assert.match(appShellStyles, /:host\s*\{[^}]*overflow-x:\s*clip/su, 'AppShell must contain feature overflow without creating a horizontal scroller.');
 assert.match(appShellStyles, /\.mobile-status\s*\{[^}]*position:\s*fixed/su, 'The mobile status header must remain fixed during document scrolling.');
