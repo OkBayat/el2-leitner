@@ -329,7 +329,6 @@ blockquote {
 	min-height: 84px;
 	margin-top: var(--vocora-space-6);
 	border-width: 2px;
-	border-bottom-width: 5px;
 	border-radius: var(--vocora-radius-lg);
 	color: var(--vocora-action-primary);
 	font-weight: 800;
@@ -337,6 +336,7 @@ blockquote {
 }
 
 .pronunciation-record[aria-pressed='true'] {
+	--mat-button-outlined-outline-color: var(--vocora-action-primary);
 	border-color: var(--vocora-action-primary);
 	text-transform: none;
 }
