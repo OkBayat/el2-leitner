@@ -312,6 +312,11 @@ assert.match(
 	/\.slide-exercise-action\[data-state=["']primary["']\][^{]*\{[^}]*--vocora-component-action-foreground:\s*var\(\s*--vocora-action-primary-foreground\s*\);/u,
 	"Exercise primary actions must use the canonical button foreground token.",
 );
+assert.match(
+	exerciseAction,
+	/\.slide-exercise-action__spinner\s*\{[^}]*display:\s*inline-block;[^}]*width:\s*16px;[^}]*height:\s*16px;/u,
+	"Exercise action loading indicators must retain their circular box instead of collapsing into a line beside the label.",
+);
 assert.doesNotMatch(
 	exerciseFooter,
 	/data-tone='error'[^}]*\.slide-exercise-action/u,
