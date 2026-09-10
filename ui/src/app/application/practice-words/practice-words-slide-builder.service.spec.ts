@@ -166,10 +166,16 @@ describe("PracticeWordsSlideBuilderService", () => {
 			itemId: "word-1",
 			type: "cloze",
 			data: {
+				showOptions: false,
 				content: "You can {{answer}} every day.",
 				stimulus: {
 					type: "dialogue",
-					turns: [{ speaker: "Missing word", text: "make progress" }],
+					turns: [
+						{
+							speaker: "Sentence",
+							text: "You can make progress every day.",
+						},
+					],
 				},
 				blanks: [
 					{

@@ -203,6 +203,7 @@ export interface AnswerField {
 export interface ClozeSlideData extends SlideTypeData {
 	readonly content: string;
 	readonly inputMode?: 'text' | 'word-bank' | 'select';
+	readonly showOptions?: boolean;
 	readonly blanks: readonly AnswerField[];
 	readonly wordBank?: readonly string[];
 }

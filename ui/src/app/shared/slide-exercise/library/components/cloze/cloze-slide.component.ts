@@ -60,6 +60,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 			['text', 'word-bank', 'select'] as const,
 			'text',
 		),
+		showOptions: source['showOptions'] !== false,
 		blanks,
 		wordBank: strings(source['wordBank']),
 	};

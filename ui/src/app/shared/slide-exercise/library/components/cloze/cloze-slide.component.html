@@ -1,12 +1,12 @@
 @if (content(); as data) {
 	<article class="slide-type" data-testid="cloze-slide">
-		@if (data.stimulus) {
-			<app-slide-stimulus [stimulus]="data.stimulus" />
-		}
 		<section class="slide-interaction">
 			<p class="slide-instruction">
 				{{ data.instruction || "Complete the gaps." }}
 			</p>
+			@if (data.stimulus) {
+				<app-slide-stimulus [stimulus]="data.stimulus" />
+			}
 			<p class="cloze-content">
 				@for (segment of segments(); track $index) {
 					@if (segment.text) {
@@ -289,7 +289,11 @@
 					}
 				}
 			</p>
-			@if (data.inputMode === 'text' && answerOptions().length) {
+			@if (
+				data.inputMode === 'text' &&
+				data.showOptions &&
+				answerOptions().length
+			) {
 				<div class="cloze-answer-support">
 					<button
 						mat-stroked-button

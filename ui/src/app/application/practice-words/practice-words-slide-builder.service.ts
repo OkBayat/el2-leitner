@@ -157,10 +157,11 @@ export class PracticeWordsSlideBuilderService {
 						"Listen to the missing word or collocation and complete the sentence.",
 					stimulus: {
 						type: "dialogue",
-						turns: [{ speaker: "Missing word", text: word.term }],
+						turns: [{ speaker: "Sentence", text: sentence.text }],
 					},
 					content: `${sentence.before}{{answer}}${sentence.after}`,
 					inputMode: "text",
+					showOptions: false,
 					blanks: [
 						{
 							id: "answer",

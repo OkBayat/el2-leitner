@@ -481,6 +481,33 @@ describe('reusable slide renderer contract', () => {
 		).toContain('Renewable');
 	});
 
+	it('can hide free-text answer options and stacks the stimulus below the instruction', () => {
+		const fixture = TestBed.createComponent(ClozeSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'text-cloze-hidden-options',
+			type: 'cloze',
+			data: {
+				instruction: 'Listen and complete the sentence.',
+				stimulus: {
+					type: 'dialogue',
+					turns: [{ speaker: 'Sentence', text: 'Use renewable energy today.' }],
+				},
+				content: 'Use {{source}} today.',
+				showOptions: false,
+				blanks: [{ id: 'source', answers: ['renewable energy'] }],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const instruction = element.querySelector('.slide-instruction');
+		expect(element.querySelector('.cloze-answer-support')).toBeNull();
+		expect(element.querySelector('.slide-type > app-slide-stimulus')).toBeNull();
+		expect(instruction?.nextElementSibling?.tagName).toBe(
+			'APP-SLIDE-STIMULUS',
+		);
+	});
+
 	it('opens vocabulary details from an answered free-text cloze field', async () => {
 		const fixture = TestBed.createComponent(ClozeSlideComponent);
 		fixture.componentInstance.load({
