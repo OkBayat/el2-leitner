@@ -69,8 +69,8 @@ Legacy `blocks` configurations remain supported so existing courses continue to
 load. Configure exactly one of `markdown` or `blocks`; new or materially revised
 teaching cards use `markdown`.
 
-Every `teaching-card` is instructional setup rather than a scored exercise
-step, so its slide object must include:
+Every `teaching-card` is instructional content rather than a scored response,
+so its slide object must hide header progress with:
 
 ```json
 {
@@ -91,10 +91,12 @@ Registry defaults normally own buttons:
 
 Use `chrome` only for deliberate changes such as a finish-only terminal summary. Scored slides emit `answered`; unscored decision and open-production slides emit `submitted`. A submitted event proves completion, not correctness.
 
-Every `teaching-card` must set `chrome.header.progress` to `null`. The sequence
-runtime hides progress on that instructional card and excludes it from later
-progress labels and totals. A non-teaching setup slide may use the same override
-only when it also should not count toward exercise progress.
+Every `teaching-card` must set `chrome.header.progress` to `null`, which hides
+progress on that instructional card. When the card is also the first slide, the
+sequence runtime excludes that leading setup slide from later progress labels
+and totals. A non-leading card still counts toward the sequence total even
+though its own progress is hidden. A non-teaching leading setup slide may use
+the same override only when it also should not count toward exercise progress.
 
 ## Selection versus choice
 
