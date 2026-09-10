@@ -43,9 +43,15 @@ courses.sort((left, right) => left.collectionId.localeCompare(right.collectionId
 
 await mkdir(dirname(outputPath), { recursive: true });
 const catalog = JSON.stringify({ schemaVersion: 1, courses }, null, 2);
-await writeFile(
-  outputPath,
-  `// Generated from back/data/learning-paths/*.json. Do not edit.\nexport const LEARNING_PATH_PODCAST_CATALOG = ${catalog} as const;\n`,
-  'utf8',
-);
-console.info(`Generated ${outputPath} from ${courses.length} course definitions.`);
+const generated = `// Generated from back/data/learning-paths/*.json. Do not edit.\nexport const LEARNING_PATH_PODCAST_CATALOG = ${catalog} as const;\n`;
+
+if (process.argv.includes('--check')) {
+  const current = await readFile(outputPath, 'utf8').catch(() => '');
+  if (current !== generated) {
+    throw new Error('Learning Path podcast catalog is missing or stale. Run npm run generate:learning-path-podcast-catalog.');
+  }
+  console.info(`Learning Path podcast catalog matches ${courses.length} course definitions.`);
+} else {
+  await writeFile(outputPath, generated, 'utf8');
+  console.info(`Generated ${outputPath} from ${courses.length} course definitions.`);
+}
