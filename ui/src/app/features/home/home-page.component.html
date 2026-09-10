@@ -36,12 +36,17 @@
               <span class="state-check" aria-hidden="true">✓</span>
               Today's review completed
             </p>
-            <a mat-flat-button routerLink="/practice-words" data-testid="practice-words">
-              Practice Words
-            </a>
+            <div class="review-actions">
+              <a mat-flat-button class="vocora-button vocora-button--primary" routerLink="/practice-words" data-testid="practice-words">
+                Practice Words
+              </a>
+              <a mat-stroked-button class="vocora-button vocora-button--secondary" routerLink="/add-new-words" data-testid="add-new-words">
+                Add new words
+              </a>
+            </div>
           } @else {
             <p class="review-state">Your daily review is ready</p>
-            <a mat-flat-button routerLink="/review" data-testid="start-review">Start Review</a>
+            <a mat-flat-button class="vocora-button vocora-button--primary" routerLink="/daily-review" data-testid="start-review">Start Review</a>
           }
         } @else {
           <p class="review-state" role="status">Loading today's review…</p>

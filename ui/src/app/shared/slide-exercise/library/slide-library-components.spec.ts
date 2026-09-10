@@ -13,6 +13,8 @@ import {
 	DictationSlideComponent,
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
+	NumberInputSlideComponent,
+	PronunciationSlideComponent,
 	RewriteSlideComponent,
 	SelectionSlideComponent,
 	ShortAnswerSlideComponent,
@@ -24,12 +26,18 @@ import {
 
 function load(
 	component: {
-		load(context: { slideId: string; type: string; data: unknown }): void;
+		load(context: {
+			slideId: string;
+			type: string;
+			data: unknown;
+			environment?: unknown;
+		}): void;
 	},
 	type: string,
 	data: unknown,
+	environment?: unknown,
 ): void {
-	component.load({ slideId: 'slide-1', type, data });
+	component.load({ slideId: 'slide-1', type, data, environment });
 }
 
 function configure(): {
@@ -63,6 +71,59 @@ function configure(): {
 }
 
 describe('reusable slide library behavior', () => {
+	it('autoplays repeat-mode pronunciation and starts recording when playback ends', () => {
+		const speech = configure();
+		let playbackObserver: { onEnd?: () => void } | undefined;
+		speech.speak.mockImplementation(
+			(_text: string, _rate: number, observer: { onEnd?: () => void }) => {
+				playbackObserver = observer;
+				return true;
+			},
+		);
+		const practice = {
+			supported: true,
+			phase: signal('ready'),
+			levels: signal<readonly number[]>(Array(28).fill(4)),
+			seconds: signal(0),
+			assessment: signal(null),
+			result: signal(null),
+			error: signal(''),
+			selectPrompt: vi.fn().mockReturnValue(true),
+			record: vi.fn().mockResolvedValue(undefined),
+			stop: vi.fn().mockResolvedValue(undefined),
+			pause: vi.fn(),
+		};
+		const component = TestBed.runInInjectionContext(
+			() => new PronunciationSlideComponent(),
+		);
+
+		load(
+			component,
+			'pronunciation',
+			{
+				mode: 'repeat',
+				instruction: 'Listen, then repeat the complete sentence aloud.',
+				question: 'She is persistent.',
+				word: 'persistent',
+				speech: { text: 'She is persistent.' },
+				recording: { itemId: 'word-2', promptId: 'sentence-2' },
+			},
+			{ pronunciationPractice: practice },
+		);
+
+		expect(practice.selectPrompt).toHaveBeenCalledWith(
+			'word-2',
+			'sentence-2',
+		);
+		expect(speech.speak).toHaveBeenCalledWith(
+			'She is persistent.',
+			0.95,
+			expect.objectContaining({ onEnd: expect.any(Function) }),
+		);
+		playbackObserver?.onEnd?.();
+		expect(practice.record).toHaveBeenCalledOnce();
+	});
+
 	it('submits general single and multiple selections without correctness', () => {
 		const next = vi.fn();
 		const component = new SelectionSlideComponent();
@@ -173,6 +234,55 @@ describe('reusable slide library behavior', () => {
 			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
 		});
 		expect(events).toEqual([{ type: 'submitted', data: { selectedOptionIds: ['second'] } }]);
+	});
+
+	it('submits a bounded number through an external expansion handler before advancing', async () => {
+		const insertSlides = vi.fn();
+		const next = vi.fn();
+		const expansion = vi.fn().mockResolvedValue({
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		const component = new NumberInputSlideComponent();
+		const states: unknown[] = [];
+		const events: unknown[] = [];
+		component.stateChange.subscribe((state) => states.push(state));
+		component.event.subscribe((event) => events.push(event));
+		component.load({
+			slideId: 'word-count',
+			type: 'number-input',
+			data: {
+				instruction: 'Choose the size of this practice.',
+				question: 'How many new words would you like to add?',
+				label: 'Number of words',
+				min: 1,
+				max: 20,
+				step: 1,
+				initialValue: 10,
+				expansionId: 'new-word-practice',
+			},
+			environment: { numberInputExpansion: expansion },
+			deck: { insertSlides, next, results: () => [] },
+		});
+
+		expect(component.value()).toBe(10);
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: false } } } });
+		component.setValue('21');
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: true } } } });
+		component.setValue('12');
+		component.handleAction('continue');
+
+		await vi.waitFor(() => expect(next).toHaveBeenCalledOnce());
+		expect(expansion).toHaveBeenCalledWith({
+			expansionId: 'new-word-practice',
+			slideId: 'word-count',
+			value: 12,
+		});
+		expect(insertSlides).toHaveBeenCalledWith({
+			anchorId: 'word-count',
+			gap: 0,
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		expect(events).toEqual([{ type: 'submitted', data: { value: 12 } }]);
 	});
 
 	it('keeps an expanded selection open when generation fails', async () => {
@@ -428,7 +538,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('validates ClozeSlide blanks independently, including variants and word limits', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			instruction: 'Complete the sentence.',
 			content: '{{energy}} can reduce {{pollution}}.',
@@ -459,7 +572,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('reveals shuffled answer options for a free-text ClozeSlide on request', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}} and {{third}}.',
 			blanks: [
@@ -480,8 +596,51 @@ describe('reusable slide library behavior', () => {
 		]);
 	});
 
+	it('autoplays and tracks whole-sentence speech for ClozeSlide replay', () => {
+		const speech = configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
+		load(component, 'cloze', {
+			content: 'Use {{source}} today.',
+			speech: { text: 'Use renewable energy today.' },
+			blanks: [{ id: 'source', answers: ['renewable energy'] }],
+		});
+
+		expect(speech.speak).toHaveBeenCalledWith(
+			'Use renewable energy today.',
+			0.95,
+			expect.objectContaining({
+				onStart: expect.any(Function),
+				onWordBoundary: expect.any(Function),
+				onEnd: expect.any(Function),
+			}),
+		);
+		const observer = speech.speak.mock.calls[0][2] as {
+			onStart: () => void;
+			onWordBoundary: (charIndex: number) => void;
+			onEnd: () => void;
+		};
+		expect(component.playbackCharIndex()).toBeNull();
+		observer.onStart();
+		expect(component.playbackActive()).toBe(true);
+		observer.onWordBoundary(4);
+		expect(component.playbackCharIndex()).toBe(4);
+		observer.onEnd();
+		expect(component.playbackActive()).toBe(false);
+		expect(component.playbackCharIndex()).toBe(27);
+
+		expect(component.playSentence()).toBe(true);
+		expect(speech.speak).toHaveBeenCalledTimes(2);
+		component.ngOnDestroy();
+		expect(speech.cancel).toHaveBeenCalled();
+	});
+
 	it('advances across ClozeSlide blanks when the word bank is the only input', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}}.',
 			inputMode: 'word-bank',
@@ -503,7 +662,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('fills the active select-mode ClozeSlide blank from numbered choices', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{first}} power reduces {{second}}.',
 			inputMode: 'select',
@@ -532,7 +694,10 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('honors exact spelling and rejects unrenderable AnswerField configurations', () => {
-		const component = new ClozeSlideComponent();
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClozeSlideComponent(),
+		);
 		load(component, 'cloze', {
 			content: '{{term}}',
 			blanks: [
@@ -544,7 +709,7 @@ describe('reusable slide library behavior', () => {
 		expect(component.interactionState()).toBe('answered-incorrect');
 
 		expect(() =>
-			load(new ClozeSlideComponent(), 'cloze', {
+			load(TestBed.runInInjectionContext(() => new ClozeSlideComponent()), 'cloze', {
 				content: '{{first}} and {{first}}',
 				blanks: [
 					{ id: 'first', answers: ['one'] },
@@ -552,6 +717,14 @@ describe('reusable slide library behavior', () => {
 				],
 			}),
 		).toThrow('placeholders');
+
+		expect(() =>
+			load(TestBed.runInInjectionContext(() => new ClozeSlideComponent()), 'cloze', {
+				content: 'Use {{term}} today.',
+				speech: { text: 'Use a different sentence.' },
+				blanks: [{ id: 'term', answers: ['renewable energy'] }],
+			}),
+		).toThrow('completed sentence');
 
 		expect(() =>
 			load(

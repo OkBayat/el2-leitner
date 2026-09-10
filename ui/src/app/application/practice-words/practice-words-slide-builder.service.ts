@@ -5,12 +5,13 @@ import type {
 	SentencePracticeCard,
 	SentencePracticeDeck,
 } from "../../domain/sentence-practice/sentence-practice";
+import type { ShadowingCard } from "../../domain/shadowing-practice/shadowing";
 import type {
 	ClozeSlideData,
-	DictationSlideData,
 	PronunciationSlideData,
 	SlideExerciseSlide,
 } from "../../shared/slide-exercise";
+import { LeitnerDictationSlideBuilderService } from "../review/leitner-dictation-slide-builder.service";
 
 export type PracticeWordsMode =
 	"vocabulary-dictation" | "sentence-completion" | "sentence-shadowing";
@@ -35,6 +36,15 @@ function acceptedAnswers(word: HouseOneWord): readonly string[] {
 	];
 }
 
+function shuffledWords(words: readonly HouseOneWord[]): readonly HouseOneWord[] {
+	const result = [...words];
+	for (let index = result.length - 1; index > 0; index -= 1) {
+		const target = Math.floor(Math.random() * (index + 1));
+		[result[index], result[target]] = [result[target], result[index]];
+	}
+	return result;
+}
+
 function sentenceCards(
 	deck: SentencePracticeDeck,
 	words: readonly HouseOneWord[],
@@ -47,6 +57,20 @@ function sentenceCards(
 		);
 	}
 	return cards;
+}
+
+function shadowingCardMap(
+	cards: readonly ShadowingCard[],
+	words: readonly HouseOneWord[],
+): ReadonlyMap<string, ShadowingCard> {
+	const mapped = new Map(cards.map((card) => [card.id, card]));
+	const missing = words.filter((word) => !mapped.get(word.id)?.sentences[0]);
+	if (missing.length) {
+		throw new Error(
+			`Sentence shadowing is unavailable for ${missing.length} House 1 ${missing.length === 1 ? "word" : "words"}.`,
+		);
+	}
+	return mapped;
 }
 
 function wordDefinitions(
@@ -82,10 +106,12 @@ function slideId(
 export class PracticeWordsSlideBuilderService {
 	private readonly learningApi = inject(LearningApiService);
 	private readonly sentenceApi = inject(SentencePracticeApiService);
+	private readonly dictationBuilder = inject(LeitnerDictationSlideBuilderService);
 
 	async build(
 		anchorId: string,
 		mode: string,
+		shadowingCards?: readonly ShadowingCard[],
 	): Promise<readonly SlideExerciseSlide[]> {
 		if (
 			mode !== "vocabulary-dictation" &&
@@ -95,47 +121,33 @@ export class PracticeWordsSlideBuilderService {
 			throw new Error(`Unsupported practice mode: ${String(mode)}`);
 		}
 		const house = await this.learningApi.getHouse<HouseOneSnapshot>(1);
-		const words = house.words.filter(
-			(word) => word.id.trim() && word.term.trim(),
+		const words = shuffledWords(
+			house.words.filter((word) => word.id.trim() && word.term.trim()),
 		);
 		if (!words.length)
 			throw new Error(
 				"Add words to House 1 before starting this practice.",
 			);
+		if (mode === "sentence-shadowing") {
+			if (!shadowingCards) {
+				throw new Error("Sentence shadowing requires an active recording session.");
+			}
+			return this.shadowingSlides(
+				anchorId,
+				words,
+				shadowingCardMap(shadowingCards, words),
+			);
+		}
 		const deck = await this.sentenceApi.getDeck(1);
 		if (mode === "vocabulary-dictation")
-			return this.dictationSlides(
+			return this.dictationBuilder.build(
 				anchorId,
 				words,
 				wordDefinitions(deck, words),
+				false,
 			);
 		const cards = sentenceCards(deck, words);
-		return mode === "sentence-completion"
-			? this.completionSlides(anchorId, words, cards)
-			: this.shadowingSlides(anchorId, words, cards);
-	}
-
-	private dictationSlides(
-		anchorId: string,
-		words: readonly HouseOneWord[],
-		definitions: ReadonlyMap<string, string>,
-	): readonly SlideExerciseSlide[] {
-		return words.map((word) => ({
-			id: slideId(anchorId, "vocabulary-dictation", word.id),
-			rootSlideId: slideId(anchorId, "vocabulary-dictation", word.id),
-			itemId: word.id,
-			type: "dictation",
-			data: {
-				mode: "phrase",
-				instruction: "Listen and type the word or collocation.",
-				speech: { text: word.term, autoplay: true, replay: true },
-				answer: word.term,
-				definition: definitions.get(word.id)!,
-				acceptedAnswers: acceptedAnswers(word),
-				caseSensitive: false,
-				punctuationSensitive: false,
-			} satisfies DictationSlideData,
-		}));
+		return this.completionSlides(anchorId, words, cards);
 	}
 
 	private completionSlides(
@@ -155,12 +167,10 @@ export class PracticeWordsSlideBuilderService {
 				data: {
 					instruction:
 						"Listen to the missing word or collocation and complete the sentence.",
-					stimulus: {
-						type: "dialogue",
-						turns: [{ speaker: "Missing word", text: word.term }],
-					},
+					speech: { text: sentence.text },
 					content: `${sentence.before}{{answer}}${sentence.after}`,
 					inputMode: "text",
+					showOptions: false,
 					blanks: [
 						{
 							id: "answer",
@@ -181,7 +191,7 @@ export class PracticeWordsSlideBuilderService {
 	private shadowingSlides(
 		anchorId: string,
 		words: readonly HouseOneWord[],
-		cards: ReadonlyMap<string, SentencePracticeCard>,
+		cards: ReadonlyMap<string, ShadowingCard>,
 	): readonly SlideExerciseSlide[] {
 		return words.map((word) => {
 			const sentence = cards.get(word.id)!.sentences[0];
@@ -197,10 +207,8 @@ export class PracticeWordsSlideBuilderService {
 						"Listen, then repeat the complete sentence aloud.",
 					question: sentence.text,
 					word: word.term,
-					stimulus: {
-						type: "dialogue",
-						turns: [{ speaker: "Sentence", text: sentence.text }],
-					},
+					speech: { text: sentence.text },
+					recording: { itemId: word.id, promptId: sentence.id },
 				} satisfies PronunciationSlideData,
 			};
 		});

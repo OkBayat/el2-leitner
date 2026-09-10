@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LearningApiService } from "../../core/learning/learning-api.service";
 import { SentencePracticeApiService } from "../../core/sentence-practice/sentence-practice-api.service";
 import { PracticeWordsSlideBuilderService } from "./practice-words-slide-builder.service";
@@ -72,6 +72,23 @@ const sentences = {
 	],
 };
 
+const shadowingCards = sentences.cards.map((card) => ({
+	id: card.id,
+	term: card.term,
+	sentences: card.sentences.map((sentence) => ({
+		id: sentence.id,
+		text: sentence.text,
+		category: sentence.category,
+		leading: "",
+		words: [],
+		transcript: "",
+		matchedCount: 0,
+		totalCount: 0,
+		score: 0,
+		passed: false,
+	})),
+}));
+
 function setup(sentenceDeck = sentences) {
 	const learningApi = { getHouse: vi.fn().mockResolvedValue(house) };
 	const sentenceApi = { getDeck: vi.fn().mockResolvedValue(sentenceDeck) };
@@ -90,6 +107,34 @@ function setup(sentenceDeck = sentences) {
 }
 
 describe("PracticeWordsSlideBuilderService", () => {
+	beforeEach(() => {
+		vi.spyOn(Math, "random").mockReturnValue(0.999);
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it.each([
+		"vocabulary-dictation",
+		"sentence-completion",
+		"sentence-shadowing",
+	] as const)("shuffles House 1 words before building %s slides", async (mode) => {
+		const { builder } = setup();
+		vi.mocked(Math.random).mockReturnValue(0);
+
+		const slides = await builder.build(
+			"practice-mode",
+			mode,
+			mode === "sentence-shadowing" ? shadowingCards : undefined,
+		);
+
+		expect(slides.map((slide) => slide.itemId)).toEqual([
+			"word-2",
+			"word-1",
+		]);
+	});
+
 	it("builds one reusable dictation slide for every House 1 word", async () => {
 		const { builder, learningApi, sentenceApi } = setup();
 
@@ -166,11 +211,9 @@ describe("PracticeWordsSlideBuilderService", () => {
 			itemId: "word-1",
 			type: "cloze",
 			data: {
+				showOptions: false,
 				content: "You can {{answer}} every day.",
-				stimulus: {
-					type: "dialogue",
-					turns: [{ speaker: "Missing word", text: "make progress" }],
-				},
+				speech: { text: "You can make progress every day." },
 				blanks: [
 					{
 						id: "answer",
@@ -180,14 +223,16 @@ describe("PracticeWordsSlideBuilderService", () => {
 				],
 			},
 		});
+		expect(slides[0].data).not.toHaveProperty("stimulus");
 	});
 
 	it("builds one sentence-repeat pronunciation slide for every House 1 word", async () => {
-		const { builder } = setup();
+		const { builder, sentenceApi } = setup();
 
 		const slides = await builder.build(
 			"practice-mode",
 			"sentence-shadowing",
+			shadowingCards,
 		);
 
 		expect(slides).toHaveLength(2);
@@ -198,14 +243,12 @@ describe("PracticeWordsSlideBuilderService", () => {
 			data: {
 				mode: "repeat",
 				question: "She is persistent.",
-				stimulus: {
-					type: "dialogue",
-					turns: [
-						{ speaker: "Sentence", text: "She is persistent." },
-					],
-				},
+				speech: { text: "She is persistent." },
+				recording: { itemId: "word-2", promptId: "sentence-2" },
 			},
 		});
+		expect(slides[1].data).not.toHaveProperty("stimulus");
+		expect(sentenceApi.getDeck).not.toHaveBeenCalled();
 	});
 
 	it("fails closed when a sentence mode cannot cover every House 1 word", async () => {

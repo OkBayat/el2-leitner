@@ -1,8 +1,6 @@
 import { parseLeitnerHouse } from "../../domain/learning/LeitnerHouse.js";
 import { createSentenceMatcher } from "../../domain/sentence-practice/SentenceMatcher.js";
 
-const MAX_SENTENCES_PER_CARD = 12;
-
 function shuffled(items, random) {
   const result = [...items];
   for (let index = result.length - 1; index > 0; index -= 1) {
@@ -83,7 +81,7 @@ export class GetSentencePracticeCards {
       const { acceptedSet: _acceptedSet, ...card } = grouped;
       cards.push({
         ...card,
-        sentences: shuffled(matches, this.random).slice(0, MAX_SENTENCES_PER_CARD)
+        sentences: shuffled(matches, this.random)
       });
     }
 
@@ -97,5 +95,3 @@ export class GetSentencePracticeCards {
     };
   }
 }
-
-export { MAX_SENTENCES_PER_CARD };

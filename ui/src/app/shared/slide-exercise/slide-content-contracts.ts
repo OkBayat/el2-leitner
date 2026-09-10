@@ -1,3 +1,4 @@
+import type { Signal } from '@angular/core';
 import type { Observable } from 'rxjs';
 import type {
   SlideExerciseDeckController,
@@ -18,6 +19,58 @@ export interface SelectionSlideExpansionResult {
 export type SelectionSlideExpansionHandler = (
   request: SelectionSlideExpansionRequest,
 ) => SelectionSlideExpansionResult | Promise<SelectionSlideExpansionResult>;
+
+export interface NumberInputSlideExpansionRequest {
+  readonly expansionId: string;
+  readonly slideId: string;
+  readonly value: number;
+}
+
+export interface NumberInputSlideExpansionResult {
+  readonly slides: readonly SlideExerciseSlide[];
+}
+
+export type NumberInputSlideExpansionHandler = (
+  request: NumberInputSlideExpansionRequest,
+) => NumberInputSlideExpansionResult | Promise<NumberInputSlideExpansionResult>;
+
+export type PronunciationPracticePhase =
+  | 'loading'
+  | 'load-error'
+  | 'empty'
+  | 'ready'
+  | 'requesting'
+  | 'recording'
+  | 'processing'
+  | 'evaluation-error'
+  | 'feedback'
+  | 'complete';
+
+export interface PronunciationPracticeAssessment {
+  readonly words: readonly {
+    readonly text: string;
+    readonly matched: boolean;
+  }[];
+  readonly transcript: string;
+  readonly matchedCount: number;
+  readonly totalCount: number;
+  readonly score: number;
+  readonly passed: boolean;
+}
+
+export interface PronunciationPracticeController {
+  readonly supported: boolean;
+  readonly phase: Signal<PronunciationPracticePhase>;
+  readonly levels: Signal<readonly number[]>;
+  readonly seconds: Signal<number>;
+  readonly assessment: Signal<PronunciationPracticeAssessment | null>;
+  readonly result: Signal<PronunciationPracticeAssessment | null>;
+  readonly error: Signal<string>;
+  selectPrompt(itemId: string, promptId: string): boolean;
+  record(): Promise<void>;
+  stop(): Promise<void>;
+  pause(): void;
+}
 
 export interface SlideContentContext<TData = unknown> {
   readonly slideId: string;

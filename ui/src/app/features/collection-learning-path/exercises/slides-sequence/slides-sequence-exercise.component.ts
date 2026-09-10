@@ -50,6 +50,7 @@ function learnerResponse(
 	) {
 		return { selectedOptionIds: data["selectedOptionIds"] };
 	}
+	if (slideType === "number-input") return { value: data["value"] };
 	if (slideType === "classification")
 		return { assignments: data["assignments"] };
 	if (slideType === "matching")
@@ -113,6 +114,10 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 	private retryIncorrect = false;
 	private readonly sourceSlides = new Map<string, SlideExerciseSlide>();
 	private readonly retryCounts = new Map<string, number>();
+	private readonly savedResultIds = new Set<string>();
+	private readonly failedResultIds = new Set<string>();
+	private readonly resultSaves = new Map<string, Promise<void>>();
+	private loadGeneration = 0;
 
 	load(context: ExerciseContext): void {
 		this.runtime.set(context);
@@ -122,6 +127,10 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		this.retryIncorrect = false;
 		this.sourceSlides.clear();
 		this.retryCounts.clear();
+		this.savedResultIds.clear();
+		this.failedResultIds.clear();
+		this.resultSaves.clear();
+		this.loadGeneration += 1;
 		try {
 			const definition = parseSlideSequenceExercise(context.config);
 			const slides = definition.slides as readonly SlideExerciseSlide[];
@@ -136,6 +145,10 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 			this.slides.set([]);
 			this.error.set(message(error));
 		}
+	}
+
+	onSlideResult(result: SlideExerciseResult): void {
+		void this.persistSlideResult(result).catch((error) => this.error.set(message(error)));
 	}
 
 	onAction(event: SlideExerciseActionEvent): void {
@@ -192,6 +205,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		this.error.set("");
 		try {
 			const slideResults = this.slideExercise.deckController.results();
+			await Promise.all(slideResults.map((result) => this.persistSlideResult(result)));
 			const results = (
 				await Promise.all(
 					slideResults.map((result) => this.evidenceResult(result)),
@@ -211,6 +225,31 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		} finally {
 			this.finishing.set(false);
 		}
+	}
+
+	private persistSlideResult(result: SlideExerciseResult): Promise<void> {
+		const handler = this.runtime()?.slideResult;
+		if (!handler || this.savedResultIds.has(result.slideId)) return Promise.resolve();
+		const pending = this.resultSaves.get(result.slideId);
+		if (pending) return pending;
+		const generation = this.loadGeneration;
+		const save = handler(result)
+			.then(() => {
+				if (generation === this.loadGeneration) {
+					this.savedResultIds.add(result.slideId);
+					this.failedResultIds.delete(result.slideId);
+					if (!this.failedResultIds.size) this.error.set("");
+				}
+			})
+			.catch((error) => {
+				if (generation === this.loadGeneration) this.failedResultIds.add(result.slideId);
+				throw error;
+			})
+			.finally(() => {
+				if (this.resultSaves.get(result.slideId) === save) this.resultSaves.delete(result.slideId);
+			});
+		this.resultSaves.set(result.slideId, save);
+		return save;
 	}
 
 	private async evidenceResult(result: SlideExerciseResult): Promise<{

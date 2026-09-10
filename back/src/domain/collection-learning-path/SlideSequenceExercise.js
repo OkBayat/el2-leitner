@@ -11,7 +11,7 @@ const GENERATED_TYPES = new Map([
   ["meaning-choice", "choice"],
 ]);
 const UNSCORED_TYPES = new Set(["message", "teaching-card", "summary", LESSON_VOCABULARY_SCOPE_SLIDE_TYPE]);
-const SUBMITTED_TYPES = new Set(["selection", "speaking-response", "writing-response"]);
+const SUBMITTED_TYPES = new Set(["selection", "number-input", "speaking-response", "writing-response"]);
 const ANSWER_FIELD_TYPES = new Set(["cloze", "structured-completion", "word-formation"]);
 const MAX_EVIDENCE_BYTES = 256_000;
 
@@ -100,6 +100,22 @@ function selectionConfig(data) {
   });
   if (new Set(optionIds).size !== optionIds.length) invalid("Selection option ids must be unique.");
   return { mode, optionIds };
+}
+
+function numberInputConfig(data) {
+  requiredString(data, "question", "Number input question");
+  const values = Object.fromEntries(["min", "max", "step", "initialValue"].map((key) => {
+    const value = data[key];
+    if (typeof value !== "number" || !Number.isFinite(value)) invalid(`Number input ${key} must be a finite number.`);
+    return [key, value];
+  }));
+  if (values.max < values.min) invalid("Number input max must be greater than or equal to min.");
+  if (values.step <= 0) invalid("Number input step must be greater than zero.");
+  if (values.initialValue < values.min || values.initialValue > values.max) {
+    invalid("Number input initialValue must be within min and max.");
+  }
+  if ("expansionId" in data) requiredString(data, "expansionId", "Number input expansionId");
+  return values;
 }
 
 function wordCount(value) {
@@ -215,6 +231,13 @@ function verifySubmission(slide, resultData, context) {
       && (mode === "multiple" || selectedOptionIds.length === 1)
       && selectedOptionIds.every((id) => optionIds.includes(id));
   }
+  if (slide.type === "number-input") {
+    const config = numberInputConfig(slide.data);
+    const value = resultData.value;
+    if (typeof value !== "number" || !Number.isFinite(value) || value < config.min || value > config.max) return false;
+    const steps = (value - config.min) / config.step;
+    return Math.abs(steps - Math.round(steps)) < Number.EPSILON * 10;
+  }
   if (slide.type === "speaking-response") {
     const artifactId = String(resultData.recordingArtifactId ?? "").trim();
     const artifact = context.recordingArtifacts?.get(artifactId);
@@ -254,6 +277,7 @@ export function resolveSlideSequenceDefinition(exercise) {
   });
   if (new Set(slides.map((slide) => slide.id)).size !== slides.length) invalid("slides.sequence slide ids must be unique.");
   slides.filter((slide) => slide.type === "selection").forEach((slide) => selectionConfig(slide.data));
+  slides.filter((slide) => slide.type === "number-input").forEach((slide) => numberInputConfig(slide.data));
   if (slides.filter((slide) => slide.terminal).length !== 1 || !slides.at(-1).terminal) {
     invalid("slides.sequence requires exactly one terminal final slide.");
   }

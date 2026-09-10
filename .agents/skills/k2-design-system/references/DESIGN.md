@@ -110,7 +110,7 @@ exactly one intent class:
 | Primary   | `vocora-button--primary`   | Spark Blue fill, Paper White text                        | The one main action           |
 | Success   | `vocora-button--success`   | Eager Green fill, Paper White text                       | Confirmed/correct outcome     |
 | Error     | `vocora-button--error`     | Answer Red fill, Paper White text                        | Incorrect/destructive outcome |
-| Warning   | `vocora-button--warning`   | Attention Yellow fill, Charcoal text                     | Caution or attention          |
+| Warning   | `vocora-button--warning`   | Attention Yellow fill, Paper White text                  | Caution or attention          |
 | Secondary | `vocora-button--secondary` | Paper White fill, Charcoal text, 2px `#E5E5E5` border   | Lower-emphasis alternative    |
 
 Example:

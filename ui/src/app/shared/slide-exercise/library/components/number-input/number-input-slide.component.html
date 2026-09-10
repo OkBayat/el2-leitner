@@ -1,0 +1,24 @@
+@if (data(); as content) {
+	<article class="slide-type" data-testid="number-input-slide">
+		<section class="slide-interaction">
+			<p class="slide-instruction">{{ content.instruction || 'Enter a number to continue.' }}</p>
+			<h1>{{ content.question }}</h1>
+			<mat-form-field appearance="outline" subscriptSizing="dynamic">
+				<mat-label>{{ content.label || 'Number' }}</mat-label>
+				<input
+					#numberInput
+					matInput
+					type="number"
+					inputmode="numeric"
+					data-testid="number-input"
+					[min]="content.min"
+					[max]="content.max"
+					[step]="content.step"
+					[value]="value() ?? ''"
+					[disabled]="busy()"
+					(input)="setValue(inputFrom($event))"
+				/>
+			</mat-form-field>
+		</section>
+	</article>
+}

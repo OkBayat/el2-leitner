@@ -1,5 +1,6 @@
 export { ChoiceSlideComponent } from './components/choice/choice-slide.component';
 export { SelectionSlideComponent } from './components/selection/selection-slide.component';
+export { NumberInputSlideComponent } from './components/number-input/number-input-slide.component';
 export { TruthSlideComponent } from './components/truth/truth-slide.component';
 export { TeachingCardSlideComponent } from './components/teaching-card/teaching-card-slide.component';
 export { MatchingSlideComponent } from './components/matching/matching-slide.component';

@@ -11,6 +11,7 @@ import { ThemeService } from '../../core/theme/theme.service';
 const assessment = { leading: '', words: [{ text: 'Hello', after: '.', matched: false }], transcript: '', matchedCount: 0, totalCount: 1, score: 0, passed: false };
 const result = { ...assessment, words: [{ text: 'Hello', after: '.', matched: true }], transcript: 'hello', matchedCount: 1, score: 100, passed: true,
   counts: { completedCount: 1, correctCount: 1, wrongCount: 0 }, daily: { day: '2026-09-05', attempts: 1, correct: 1, wrong: 0, newAdded: 0, sessions: 0, durationSeconds: 0 } };
+const secondAssessment = { leading: '', words: [{ text: 'Again', after: '.', matched: false }], transcript: '', matchedCount: 0, totalCount: 1, score: 0, passed: false };
 
 describe('ShadowingSessionService', () => {
   let service: ShadowingSessionService;
@@ -45,6 +46,18 @@ describe('ShadowingSessionService', () => {
     expect(microphone.open).not.toHaveBeenCalled();
     expect(service.phase()).toBe('ready');
   });
+  it('starts a reusable session and selects an exact prompt without playing it', async () => {
+    await service.start();
+    expect(service.cards().map(card => card.id)).toEqual(['w']);
+    expect(service.prompt()).toBeNull();
+    expect(service.phase()).toBe('ready');
+    expect(speech.speak).not.toHaveBeenCalled();
+
+    expect(service.selectPrompt('w', 'sentence')).toBe(true);
+    expect(service.prompt()?.sentence.text).toBe('Hello.');
+    expect(service.assessment()?.words[0]?.matched).toBe(false);
+    expect(speech.speak).not.toHaveBeenCalled();
+  });
   it('shows partial recognition but grades only after stopping and ignores duplicate stop clicks', async () => {
     await service.load(); await service.record(); handlers.pcm(new ArrayBuffer(16000));
     await vi.waitFor(() => expect(service.assessment()?.matchedCount).toBe(1));
@@ -77,5 +90,21 @@ describe('ShadowingSessionService', () => {
   it('clears old word highlights when the same sentence is retried', async () => {
     await service.load(); await service.record(); handlers.pcm(new ArrayBuffer(16000)); await service.stop();
     await service.record(); expect(service.result()).toBeNull(); expect(service.assessment()?.score).toBe(0);
+  });
+  it('does not cancel a completed recording while selecting and recording the next slide', async () => {
+    api.start.mockResolvedValueOnce({ sessionId: 's', maxSeconds: 30, threshold: 90, cards: [
+      { id: 'w', term: 'hello', sentences: [{ ...assessment, id: 'sentence', text: 'Hello.' }] },
+      { id: 'w-2', term: 'again', sentences: [{ ...secondAssessment, id: 'sentence-2', text: 'Again.' }] },
+    ] });
+    await service.start();
+    expect(service.selectPrompt('w', 'sentence')).toBe(true);
+    await service.record(); handlers.pcm(new ArrayBuffer(16000)); await service.stop();
+
+    expect(service.selectPrompt('w-2', 'sentence-2')).toBe(true);
+    await service.record();
+
+    expect(api.cancel).not.toHaveBeenCalled();
+    expect(api.record).toHaveBeenNthCalledWith(2, 's', 'w-2', 'sentence-2', expect.any(String));
+    expect(service.phase()).toBe('recording');
   });
 });

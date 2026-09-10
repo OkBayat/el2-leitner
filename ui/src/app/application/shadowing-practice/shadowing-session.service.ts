@@ -8,11 +8,12 @@ import { LearningStoreService } from '../../core/state/learning-store.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { localDay } from '../../domain/learning/learning-rules';
 import { ShadowingAssessment, ShadowingCounts, ShadowingPrompt, ShadowingQueue, ShadowingResult } from '../../domain/shadowing-practice/shadowing';
+import type { PronunciationPracticeController } from '../../shared/slide-exercise';
 
 type Phase = 'loading' | 'load-error' | 'empty' | 'ready' | 'requesting' | 'recording' | 'processing' | 'evaluation-error' | 'feedback' | 'complete';
 
 @Injectable()
-export class ShadowingSessionService {
+export class ShadowingSessionService implements PronunciationPracticeController {
   private readonly api = inject(ShadowingApiService);
   private readonly microphone = inject(PcmRecorderService);
   private readonly speech = inject(SpeechService);
@@ -21,6 +22,7 @@ export class ShadowingSessionService {
   private readonly theme = inject(ThemeService);
   readonly phase = signal<Phase>('loading');
   readonly prompt = signal<ShadowingPrompt | null>(null);
+  readonly cards = signal<readonly ShadowingPrompt['card'][]>([]);
   readonly assessment = signal<ShadowingAssessment | null>(null);
   readonly result = signal<ShadowingResult | null>(null);
   readonly error = signal('');
@@ -36,6 +38,7 @@ export class ShadowingSessionService {
   private sessionId: string | null = null;
   private recordingId: string | null = null;
   private queue?: ShadowingQueue;
+  private cardsById = new Map<string, ShadowingPrompt['card']>();
   private generation = 0;
   private pending: Promise<void> = Promise.resolve();
   private queued = 0;
@@ -44,6 +47,11 @@ export class ShadowingSessionService {
   private heardVoice = false;
 
   async load(): Promise<void> {
+    await this.start();
+    if (this.phase() === 'ready') this.next();
+  }
+
+  async start(): Promise<void> {
     this.dispose();
     const generation = this.generation;
     this.phase.set('loading'); this.error.set(''); this.errorCode.set('');
@@ -56,13 +64,28 @@ export class ShadowingSessionService {
       const deck = await this.api.start();
       if (generation !== this.generation) { if (deck.sessionId) void this.api.close(deck.sessionId).catch(() => {}); return; }
       this.sessionId = deck.sessionId;
+      this.cards.set(deck.cards);
+      this.cardsById = new Map(deck.cards.map(card => [card.id, card]));
       this.queue = new ShadowingQueue(deck.cards);
       if (!deck.sessionId || !deck.cards.length) { this.phase.set('empty'); return; }
-      this.next();
+      this.phase.set('ready');
     } catch (error) {
       if (generation !== this.generation) return;
       this.showError(error); this.phase.set('load-error');
     }
+  }
+
+  selectPrompt(itemId: string, promptId: string): boolean {
+    if (this.busy() || !this.sessionId) return false;
+    const card = this.cardsById.get(itemId);
+    const sentence = card?.sentences.find(candidate => candidate.id === promptId);
+    if (!card || !sentence) return false;
+    this.pause();
+    this.prompt.set({ card, sentence });
+    this.result.set(null); this.assessment.set(sentence);
+    this.error.set(''); this.errorCode.set(''); this.seconds.set(0); this.levels.set(Array(28).fill(4));
+    this.phase.set('ready');
+    return true;
   }
 
   listen(mode: SpeechPlaybackMode = 'normal'): void {
@@ -152,12 +175,13 @@ export class ShadowingSessionService {
     try {
       const result = await this.api.finish(this.sessionId, this.recordingId);
       if (generation !== this.generation) return;
-      this.assessment.set(result); this.result.set(result); this.counts.set(result.counts);
+      this.recordingId = null;
+      this.assessment.set(result); this.counts.set(result.counts);
       const state = this.store.snapshot();
       const { day, ...daily } = result.daily;
       state.daily[day] = daily;
       this.store.replaceLocal(state);
-      this.phase.set('feedback'); this.error.set('');
+      this.phase.set('feedback'); this.error.set(''); this.result.set(result);
       this.sound.play(result.passed ? 'correct' : 'incorrect');
     } catch (error) {
       if (generation !== this.generation) return;
@@ -212,6 +236,9 @@ export class ShadowingSessionService {
     this.pause();
     const id = this.sessionId;
     this.sessionId = null;
+    this.cards.set([]);
+    this.cardsById.clear();
+    this.queue = undefined;
     if (id) void this.api.close(id).catch(() => {});
   }
 }

@@ -8,6 +8,7 @@ const libraryRoot = join(uiRoot, 'src/app/shared/slide-exercise/library');
 const componentTypes = [
 	'teaching-card',
 	'selection',
+	'number-input',
 	'choice',
 	'truth',
 	'matching',
@@ -177,6 +178,27 @@ assert.match(
 	/\.mat-mdc-form-field \.mat-mdc-input-element:focus,[\s\S]*\.mat-mdc-form-field \.mat-mdc-input-element:focus-visible\s*\{[\s\S]*outline-style:\s*none;/u,
 );
 assert.doesNotMatch(sharedStyles, /\.dictation-answer-input/u);
+const pronunciationRecordStyles = sharedStyles.match(
+	/\.pronunciation-record\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.doesNotMatch(
+	pronunciationRecordStyles,
+	/border-bottom-width/u,
+	'Pronunciation recording must use only the canonical Material lower edge.',
+);
+assert.match(
+	pronunciationRecordStyles,
+	/--mat-button-outlined-label-text-color:\s*var\(--vocora-action-primary\);/u,
+	'Pronunciation recording must keep its label and waveform primary blue.',
+);
+const activePronunciationRecordStyles = sharedStyles.match(
+	/\.pronunciation-record\[aria-pressed='true'\]\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(
+	activePronunciationRecordStyles,
+	/--mat-button-outlined-outline-color:\s*var\(--vocora-action-primary\);/u,
+	'Active pronunciation recording must keep its outline and lower edge the same primary color.',
+);
 assert.match(
 	sharedStyles,
 	/:host ::ng-deep \.teaching-markdown \.teaching-markdown__known\s*\{[\s\S]*color:\s*var\(--vocora-action-primary\);/u,

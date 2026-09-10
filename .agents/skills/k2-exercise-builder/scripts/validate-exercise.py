@@ -11,7 +11,7 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 SLIDE_TYPES = {
-    "message", "summary", "teaching-card", "selection", "choice", "truth",
+    "message", "summary", "teaching-card", "selection", "number-input", "choice", "truth",
     "matching", "classification", "ordering", "cloze", "structured-completion",
     "short-answer", "word-formation", "error-correction", "rewrite",
     "pronunciation", "dictation", "speaking-response", "writing-response",
@@ -174,6 +174,16 @@ def validate_answer_fields(data: dict, key: str) -> None:
         string_array(field, "answers", "Answer field answers")
 
 
+def finite_number(data: dict, key: str) -> float:
+    value = data.get(key)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"Number input {key} must be a finite number.")
+    number = float(value)
+    if number == float("inf") or number == float("-inf") or number != number:
+        raise ValueError(f"Number input {key} must be a finite number.")
+    return number
+
+
 def validate_slide_data(slide_type: str, data: dict) -> None:
     validate_enum_fields(slide_type, data)
     if slide_type in {"message", "summary"}:
@@ -204,6 +214,21 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
             text(data, "expansionId", "Selection expansionId")
         if any(key in data for key in ("correctOptionId", "correctOptionIds", "answers")):
             raise ValueError("Selection slides must not define correctness fields.")
+        return
+    if slide_type == "number-input":
+        text(data, "question", "Number input question")
+        minimum = finite_number(data, "min")
+        maximum = finite_number(data, "max")
+        step = finite_number(data, "step")
+        initial = finite_number(data, "initialValue")
+        if maximum < minimum:
+            raise ValueError("Number input max must be greater than or equal to min.")
+        if step <= 0:
+            raise ValueError("Number input step must be greater than zero.")
+        if initial < minimum or initial > maximum:
+            raise ValueError("Number input initialValue must be within min and max.")
+        if "expansionId" in data:
+            text(data, "expansionId", "Number input expansionId")
         return
     if slide_type == "choice":
         text(data, "question", "Choice question")

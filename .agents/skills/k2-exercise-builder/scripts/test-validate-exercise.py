@@ -70,6 +70,40 @@ class ExerciseValidatorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Selection expansionId"):
             MODULE.validate_exercise(exercise)
 
+    def test_accepts_a_bounded_number_input_expansion(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0] = {
+            "id": "word-count",
+            "type": "number-input",
+            "data": {
+                "question": "How many new words would you like to add?",
+                "label": "Number of words",
+                "min": 1,
+                "max": 20,
+                "step": 1,
+                "initialValue": 10,
+                "expansionId": "new-word-practice",
+            },
+        }
+        result = MODULE.validate_exercise(exercise)
+        self.assertEqual(result["slide_types"], ["number-input", "summary"])
+
+    def test_rejects_an_out_of_range_number_input_default(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0] = {
+            "id": "word-count",
+            "type": "number-input",
+            "data": {
+                "question": "Choose a count.",
+                "min": 1,
+                "max": 5,
+                "step": 1,
+                "initialValue": 10,
+            },
+        }
+        with self.assertRaisesRegex(ValueError, "initialValue"):
+            MODULE.validate_exercise(exercise)
+
     def test_rejects_choice_without_answer_key(self) -> None:
         exercise = valid_exercise()
         exercise["config"]["slides"][0] = {

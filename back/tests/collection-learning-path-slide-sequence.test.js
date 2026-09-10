@@ -142,6 +142,41 @@ describe("slide-sequence completion evidence", () => {
     );
   });
 
+  it("accepts a bounded numeric setup value and rejects an out-of-range value", () => {
+    const definition = exercise({
+      config: {
+        slides: [
+          {
+            id: "word-count",
+            type: "number-input",
+            data: {
+              question: "How many new words would you like to add?",
+              min: 1,
+              max: 20,
+              step: 1,
+              initialValue: 10,
+              expansionId: "new-word-practice",
+            },
+          },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+    const result = (value) => outcome([{
+      rootSlideId: "word-count",
+      slideType: "number-input",
+      eventType: "submitted",
+      data: { value },
+    }]);
+
+    assert.equal(verify(definition, result(21)), false);
+    assert.equal(verify(definition, result("12")), false);
+    assert.deepEqual(verify(definition, result(12)), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:1",
+    });
+  });
+
   it("rejects a bare completion and requires correct scored results plus submitted production", () => {
     const definition = exercise();
 

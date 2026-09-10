@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { PracticeWordsSlideBuilderService, type PracticeWordsMode } from '../../application/practice-words/practice-words-slide-builder.service';
 import { PracticeWordsSessionService } from '../../application/practice-words/practice-words-session.service';
-import type { SelectionSlideExpansionHandler } from '../../shared/slide-exercise';
+import { ShadowingSessionService } from '../../application/shadowing-practice/shadowing-session.service';
+import { PcmRecorderService } from '../../core/shadowing-practice/pcm-recorder.service';
+import type { SelectionSlideExpansionHandler, SlideExerciseSlide } from '../../shared/slide-exercise';
 import type { ExerciseContext, ExerciseOutcome } from '../collection-learning-path/exercises/exercise-runtime/exercise-contracts';
 import { SlidesSequenceExerciseComponent } from '../collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component';
 
@@ -10,15 +12,18 @@ import { SlidesSequenceExerciseComponent } from '../collection-learning-path/exe
   selector: 'app-practice-words-page',
   standalone: true,
   imports: [SlidesSequenceExerciseComponent],
+  providers: [ShadowingSessionService, PcmRecorderService],
   template: '<app-slides-sequence-exercise (outcome)="onOutcome($event)" />',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PracticeWordsPageComponent implements OnInit {
+export class PracticeWordsPageComponent implements OnInit, OnDestroy {
   @ViewChild(SlidesSequenceExerciseComponent, { static: true })
   private readonly exercise!: SlidesSequenceExerciseComponent;
   private readonly router = inject(Router);
   private readonly slideBuilder = inject(PracticeWordsSlideBuilderService);
   private readonly practiceSession = inject(PracticeWordsSessionService);
+  private readonly shadowingSession = inject(ShadowingSessionService);
+  private selectedMode: PracticeWordsMode | null = null;
   private readonly expandPracticeMode: SelectionSlideExpansionHandler = async (request) => {
     if (request.expansionId !== 'house-one-practice') {
       throw new Error(`Unsupported selection expansion: ${request.expansionId}`);
@@ -27,8 +32,24 @@ export class PracticeWordsPageComponent implements OnInit {
       throw new Error('Choose exactly one practice mode.');
     }
     const mode = request.selectedOptionIds[0];
-    const slides = await this.slideBuilder.build(request.slideId, mode);
-    await this.practiceSession.start(mode as PracticeWordsMode, slides.length);
+    const selectedMode = mode as PracticeWordsMode;
+    let slides: readonly SlideExerciseSlide[];
+    if (selectedMode === 'sentence-shadowing') {
+      await this.shadowingSession.start();
+      if (this.shadowingSession.phase() !== 'ready') {
+        throw new Error(this.shadowingSession.error() || 'Sentence shadowing is unavailable.');
+      }
+      try {
+        slides = await this.slideBuilder.build(request.slideId, mode, this.shadowingSession.cards());
+      } catch (error) {
+        await this.shadowingSession.complete();
+        throw error;
+      }
+    } else {
+      slides = await this.slideBuilder.build(request.slideId, mode);
+      await this.practiceSession.start(selectedMode, slides.length);
+    }
+    this.selectedMode = selectedMode;
     return { slides };
   };
 
@@ -41,7 +62,14 @@ export class PracticeWordsPageComponent implements OnInit {
     completionPolicy: 'slide-sequence',
     payload: null,
     selectionExpansion: this.expandPracticeMode,
-    sequenceCompletion: (results) => this.practiceSession.complete(results),
+    pronunciationPractice: this.shadowingSession,
+    sequenceCompletion: async (results) => {
+      if (this.selectedMode === 'sentence-shadowing') {
+        await this.shadowingSession.complete();
+        return;
+      }
+      await this.practiceSession.complete(results);
+    },
     config: {
       slides: [
         {
@@ -87,8 +115,15 @@ export class PracticeWordsPageComponent implements OnInit {
     this.exercise.load(this.exerciseContext);
   }
 
+  ngOnDestroy(): void {
+    this.shadowingSession.dispose();
+  }
+
   async onOutcome(outcome: ExerciseOutcome): Promise<void> {
-    if (outcome.kind === 'cancelled') await this.practiceSession.abandon();
+    if (outcome.kind === 'cancelled') {
+      if (this.selectedMode === 'sentence-shadowing') await this.shadowingSession.complete();
+      else await this.practiceSession.abandon();
+    }
     void this.router.navigateByUrl('/dashboard');
   }
 }

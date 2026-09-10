@@ -97,6 +97,16 @@ export interface SelectionSlideData extends SlideTypeData {
 	readonly expansionId?: string;
 }
 
+export interface NumberInputSlideData extends SlideTypeData {
+	readonly question: string;
+	readonly label?: string;
+	readonly min: number;
+	readonly max: number;
+	readonly step: number;
+	readonly initialValue: number;
+	readonly expansionId?: string;
+}
+
 export interface SpeechPlaybackConfig {
 	readonly text: string;
 	readonly autoplay?: boolean;
@@ -203,6 +213,8 @@ export interface AnswerField {
 export interface ClozeSlideData extends SlideTypeData {
 	readonly content: string;
 	readonly inputMode?: 'text' | 'word-bank' | 'select';
+	readonly showOptions?: boolean;
+	readonly speech?: Pick<SpeechPlaybackConfig, 'text'>;
 	readonly blanks: readonly AnswerField[];
 	readonly wordBank?: readonly string[];
 }
@@ -291,6 +303,11 @@ export interface PronunciationSlideData extends SlideTypeData {
 	readonly word?: string;
 	readonly options?: readonly SlideOption[];
 	readonly correctOptionId?: string;
+	readonly speech?: Pick<SpeechPlaybackConfig, 'text'>;
+	readonly recording?: {
+		readonly itemId: string;
+		readonly promptId: string;
+	};
 }
 
 export interface DictationSlideData extends SlideTypeData {
@@ -335,6 +352,7 @@ export interface WritingResponseSlideData extends SlideTypeData {
 export const REUSABLE_SLIDE_TYPES = [
 	'teaching-card',
 	'selection',
+	'number-input',
 	'choice',
 	'truth',
 	'matching',

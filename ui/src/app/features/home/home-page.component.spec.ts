@@ -137,6 +137,14 @@ describe('HomePageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
     expect(host.querySelector('[data-testid="daily-review-card"]')?.textContent).toContain("Today's review completed");
     expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"]')?.getAttribute('href')).toBe('/practice-words');
+    expect(host.querySelector<HTMLAnchorElement>('[data-testid="add-new-words"]')?.getAttribute('href')).toBe('/add-new-words');
+    expect(host.querySelector('[data-testid="add-new-words"]')?.hasAttribute('mat-stroked-button')).toBe(true);
+  });
+
+  it('starts today review through the slide exercise route', async () => {
+    const fixture = await render();
+    const link = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('[data-testid="start-review"]');
+    expect(link?.getAttribute('href')).toBe('/daily-review');
   });
 
   it('opens the course overview without starting or resuming the course', async () => {

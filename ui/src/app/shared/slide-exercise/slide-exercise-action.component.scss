@@ -61,8 +61,11 @@
 	cursor: not-allowed;
 }
 .slide-exercise-action__spinner {
+	display: inline-block;
 	width: 16px;
 	height: 16px;
+	margin-inline-end: var(--vocora-space-2);
+	vertical-align: middle;
 	border: 2px solid currentColor;
 	border-right-color: transparent;
 	border-radius: var(--vocora-radius-pill);

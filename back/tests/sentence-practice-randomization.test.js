@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { GetSentencePracticeCards, MAX_SENTENCES_PER_CARD } from "../src/application/sentence-practice/GetSentencePracticeCards.js";
+import { GetSentencePracticeCards } from "../src/application/sentence-practice/GetSentencePracticeCards.js";
 
 class Repository {
   async findWordsForHouse() {
@@ -20,7 +20,7 @@ class Repository {
 }
 
 describe("Sentence practice random sentence selection", () => {
-  it("samples matching sentences after matching the whole catalog instead of always taking the first rows", async () => {
+  it("keeps every matching sentence while randomizing their order", async () => {
     const repository = new Repository();
     const first = await new GetSentencePracticeCards({
       sentencePracticeRepository: repository,
@@ -31,8 +31,12 @@ describe("Sentence practice random sentence selection", () => {
       random: () => 0,
     }).execute("user-1", 1);
 
-    assert.equal(first.cards[0].sentences.length, MAX_SENTENCES_PER_CARD);
-    assert.equal(second.cards[0].sentences.length, MAX_SENTENCES_PER_CARD);
+    assert.equal(first.cards[0].sentences.length, 20);
+    assert.equal(second.cards[0].sentences.length, 20);
+    assert.deepEqual(
+      new Set(first.cards[0].sentences.map((sentence) => sentence.id)),
+      new Set(second.cards[0].sentences.map((sentence) => sentence.id))
+    );
     assert.notDeepEqual(
       first.cards[0].sentences.map((sentence) => sentence.id),
       second.cards[0].sentences.map((sentence) => sentence.id)

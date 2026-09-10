@@ -282,6 +282,92 @@ blockquote {
 	font-weight: 600;
 }
 
+.cloze-content .cloze-sentence-replay {
+	position: relative;
+	display: inline-block;
+	margin-inline-end: var(--vocora-space-2);
+	border: 0;
+	vertical-align: middle;
+}
+
+.cloze-sentence-replay__icon {
+	position: absolute;
+	inset: 50% auto auto 50%;
+	transform: translate(-50%, -50%);
+	width: 26px;
+	height: 26px;
+	background: var(--vocora-action-primary);
+	-webkit-mask: url('/assets/icons/normal-speed.svg') center / contain no-repeat;
+	mask: url('/assets/icons/normal-speed.svg') center / contain no-repeat;
+}
+
+.cloze-content--spoken .cloze-playback-token--word,
+.cloze-content--spoken .inline-field {
+	opacity: 0.48;
+	transition: opacity 120ms ease;
+}
+
+.cloze-content--spoken .cloze-playback-token--word.is-spoken,
+.cloze-content--spoken .inline-field.is-spoken {
+	opacity: 1;
+}
+
+.pronunciation-sentence {
+	overflow-wrap: anywhere;
+}
+
+.pronunciation-sentence .cloze-playback-token--word.is-recognized {
+	color: var(--vocora-action-primary);
+}
+
+.pronunciation-record {
+	--mat-button-outlined-label-text-color: var(--vocora-action-primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--vocora-space-3);
+	width: 100%;
+	min-height: 84px;
+	margin-top: var(--vocora-space-6);
+	border-width: 2px;
+	border-radius: var(--vocora-radius-lg);
+	color: var(--vocora-action-primary);
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.pronunciation-record[aria-pressed='true'] {
+	--mat-button-outlined-outline-color: var(--vocora-action-primary);
+	border-color: var(--vocora-action-primary);
+	text-transform: none;
+}
+
+.pronunciation-record__microphone {
+	flex: 0 0 auto;
+}
+
+.pronunciation-waveform {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	height: 34px;
+}
+
+.pronunciation-waveform span {
+	display: block;
+	width: 4px;
+	border-radius: var(--vocora-radius-pill);
+	background: currentColor;
+}
+
+.pronunciation-record__hint,
+.pronunciation-record__error {
+	margin: var(--vocora-space-3) 0 0;
+	font-size: 12px;
+	color: var(--vocora-text-secondary);
+}
+
 .cloze-answer-support {
 	display: grid;
 	justify-items: start;
@@ -752,6 +838,9 @@ input:focus-visible,
 
 	.cloze-input,
 	.cloze-choice-blank,
+	.cloze-playback-token,
+	.cloze-content--spoken .inline-field,
+	.pronunciation-waveform span,
 	.bucket {
 		transition: none;
 	}
