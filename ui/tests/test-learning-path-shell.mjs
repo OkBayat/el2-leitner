@@ -66,6 +66,24 @@ const exerciseNodeStyles = read('src/app/features/collection-learning-path/compo
 assert.match(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*72px/su, 'Translated trail nodes must own only their visible width.');
 assert.doesNotMatch(exerciseNodeStyles, /:host\s*\{[^}]*width:\s*100%/su, 'Translated trail nodes must not shift a full-width host beyond the viewport.');
 
+const lessonNodeStyles = read('src/app/features/collection-learning-path/components/lesson-node/lesson-node.component.scss');
+assert.doesNotMatch(
+  lessonNodeStyles,
+  /\.lesson__header/u,
+  'Individual lessons must not render or position their own headers.',
+);
+const pathPageStyles = read('src/app/features/collection-learning-path/path-page/learning-path-page.component.scss');
+assert.match(
+  pathPageStyles,
+  /\.lesson-context-header\s*\{[^}]*position:\s*sticky/su,
+  'The Learning Path page must own one sticky lesson context header.',
+);
+assert.match(
+  pathPageStyles,
+  /\.lesson-divider::before,\s*\.lesson-divider::after\s*\{[^}]*height:\s*2px[^}]*background:\s*var\(--vocora-border\)/su,
+  'Lesson boundaries must retain the two-sided divider line.',
+);
+
 const appShellStyles = read('src/app/shared/app-shell/app-shell.component.scss');
 assert.match(appShellStyles, /:host\s*\{[^}]*overflow-x:\s*clip/su, 'AppShell must contain feature overflow without creating a horizontal scroller.');
 assert.match(appShellStyles, /\.mobile-status\s*\{[^}]*position:\s*fixed/su, 'The mobile status header must remain fixed during document scrolling.');

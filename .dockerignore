@@ -10,6 +10,7 @@
 
 # Episode audio is installed locally from an episode bundle, never committed or baked into images.
 **/data/listening/episodes/**/*.mp3
+back/data/listening/audio/*.m4a
 back/data/tts-cache/
 
 # Local Python tooling caches

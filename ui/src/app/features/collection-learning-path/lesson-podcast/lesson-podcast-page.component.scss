@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--vocora-surface-page);
+  color: var(--vocora-text-primary);
+}
+
+.lesson-podcast-page {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 100dvh;
+  padding: var(--vocora-space-4) clamp(16px, 4vw, 40px) calc(var(--vocora-space-8) + var(--safe-area-bottom));
+}
+
+.lesson-podcast-page__nav {
+  justify-self: start;
+}
+
+.lesson-podcast-page__content {
+  display: grid;
+  width: min(100%, 960px);
+  align-content: center;
+  justify-self: center;
+  gap: var(--vocora-space-8);
+  padding-block: var(--vocora-space-8);
+  text-align: center;
+}
+
+.lesson-podcast-page__content h1,
+.lesson-podcast-page__content p {
+  margin: 0;
+}
+
+.lesson-podcast-page__content h1 {
+  font-family: var(--vocora-font-body);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.lesson-podcast-page__error {
+  display: grid;
+  justify-items: center;
+  gap: var(--vocora-space-4);
+}
+
+.lesson-podcast-page__error p {
+  color: var(--vocora-text-secondary);
+}
+
+@media (max-width: 440px) {
+  .lesson-podcast-page {
+    padding-inline: var(--vocora-space-3);
+  }
+
+  .lesson-podcast-page__content {
+    align-content: start;
+    padding-top: var(--vocora-space-12);
+  }
+}

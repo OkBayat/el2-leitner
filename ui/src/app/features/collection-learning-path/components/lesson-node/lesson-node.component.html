@@ -2,16 +2,8 @@
   class="lesson"
   [attr.data-state]="lesson().state"
   [attr.data-palette]="palette()"
-  [class.is-active]="active()"
   [class.is-mirrored]="mirrored()"
 >
-  <header class="lesson__header">
-    <div class="lesson__heading">
-      <p>Lesson {{ lesson().position }} · {{ stateLabel() }}</p>
-      <h2>{{ lesson().title }}</h2>
-    </div>
-  </header>
-
   <div class="lesson__trail" data-testid="lesson-trail">
     <ol class="lesson__exercises" [attr.aria-label]="lesson().title + ' exercises'">
       @for (exercise of lesson().exercises; track exercise.id) {

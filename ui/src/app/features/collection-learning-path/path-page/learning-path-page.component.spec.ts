@@ -11,6 +11,54 @@ const view: CollectionLearningPathView = { access: { canProgress: true }, resume
 const resume: LearningPathResumeView = { pathId: 'path-1', pathStatus: 'available', resumePoint: { lessonId: 'lesson-1', exerciseId: 'exercise-1' } };
 
 describe('LearningPathPageComponent', () => {
+  it('keeps one sticky header and changes its lesson when the next trail reaches it', () => {
+    const secondLesson = {
+      ...view.lessons[0],
+      id: 'lesson-2',
+      title: 'Lesson 2',
+      position: 2,
+      state: 'locked' as const,
+      exercises: [],
+    };
+    const scrollView = { ...view, lessons: [view.lessons[0], secondLesson] };
+    const facade = { view: signal(scrollView), resume: signal(resume), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn(), loadByPathId: vi.fn(), start: vi.fn() };
+    TestBed.configureTestingModule({ imports: [LearningPathPageComponent], providers: [provideRouter([]), { provide: CollectionLearningPathFacade, useValue: facade }, { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ pathId: 'path-1' })) } }] });
+    const fixture = TestBed.createComponent(LearningPathPageComponent);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const header = element.querySelector<HTMLElement>('[data-testid="current-lesson-header"]');
+    const sections = element.querySelectorAll<HTMLElement>('[data-testid="lesson-section"]');
+    const dividers = element.querySelectorAll<HTMLElement>('[data-testid="lesson-divider"]');
+    expect(header).not.toBeNull();
+    expect(element.querySelectorAll('[data-testid="current-lesson-header"]')).toHaveLength(1);
+    expect(element.querySelectorAll('.lesson__header')).toHaveLength(0);
+    expect(header?.textContent).toContain('Lesson 1');
+    expect(sections).toHaveLength(2);
+    expect(dividers).toHaveLength(1);
+    expect(dividers[0].textContent).toContain('Lesson 2 · Locked');
+    expect(dividers[0].textContent).toContain('Lesson 2');
+    expect(dividers[0].querySelector('a')?.getAttribute('href')).toBe('/learning-paths/path-1/lessons/lesson-2');
+
+    vi.spyOn(header as HTMLElement, 'getBoundingClientRect').mockReturnValue({ bottom: 120 } as DOMRect);
+    vi.spyOn(sections[0], 'getBoundingClientRect').mockReturnValue({ top: 40 } as DOMRect);
+    const secondSectionRect = vi.spyOn(sections[1], 'getBoundingClientRect').mockReturnValue({ top: 120 } as DOMRect);
+    window.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+
+    expect(header?.textContent).toContain('Lesson 2');
+    expect(header?.textContent).toContain('Locked');
+    expect(header?.getAttribute('data-palette')).toBe('purple');
+    expect(header?.querySelector('a')?.getAttribute('href')).toBe('/learning-paths/path-1/lessons/lesson-2');
+
+    secondSectionRect.mockReturnValue({ top: 121 } as DOMRect);
+    window.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+
+    expect(header?.textContent).toContain('Lesson 1');
+    expect(header?.getAttribute('data-palette')).toBe('green');
+  });
+
   it('replaces the legacy collection route with the canonical public-id route', async () => {
     const numericView = { ...view, path: { ...view.path, id: '1' } };
     const facade = { view: signal(numericView), resume: signal(resume), loading: signal(false), starting: signal(false), error: signal(''), load: vi.fn().mockResolvedValue(true), loadByPathId: vi.fn(), start: vi.fn() };

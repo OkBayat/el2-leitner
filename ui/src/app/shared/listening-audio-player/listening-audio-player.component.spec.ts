@@ -16,6 +16,31 @@ describe('ListeningAudioPlayerComponent', () => {
     return fixture;
   }
 
+  it('accepts reusable audio copy while preserving the supplied media source', () => {
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
+    fixture.componentRef.setInput('title', 'Lesson audio');
+    fixture.componentRef.setInput('description', '');
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('strong')?.textContent).toBe('Lesson audio');
+    expect(element.querySelector('.sticky-hint')).toBeNull();
+    expect(element.querySelector('audio')?.getAttribute('src')).toBe('/api/learning-paths/4/lessons/64/audio');
+  });
+
+  it('keeps controls visible when scroll collapsing is disabled by the host page', () => {
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
+    fixture.componentRef.setInput('collapseOnScroll', false);
+    fixture.detectChanges();
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 100 });
+    fixture.componentInstance.onWindowScroll();
+
+    expect(fixture.componentInstance.collapsed()).toBe(false);
+  });
+
   it('does not autoplay and supports play, pause, stop, five-second skips, and direct seeking', async () => {
     const play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
     const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined);

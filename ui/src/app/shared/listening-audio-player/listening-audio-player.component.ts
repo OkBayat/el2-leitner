@@ -23,6 +23,9 @@ const PLAYER_TOP_SAFE_ZONE = 24;
 })
 export class ListeningAudioPlayerComponent implements OnInit {
   readonly src = input.required<string>();
+  readonly title = input('Episode audio');
+  readonly description = input('Sticky while scrolling');
+  readonly collapseOnScroll = input(true);
   readonly playing = signal(false);
   readonly currentTime = signal(0);
   readonly duration = signal(0);
@@ -44,6 +47,10 @@ export class ListeningAudioPlayerComponent implements OnInit {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
+    if (!this.collapseOnScroll()) {
+      this.setCollapsed(false);
+      return;
+    }
     const currentScrollY = Math.max(0, window.scrollY);
 
     if (currentScrollY <= PLAYER_TOP_SAFE_ZONE) {
@@ -81,7 +88,7 @@ export class ListeningAudioPlayerComponent implements OnInit {
     try {
       await this.audio().nativeElement.play();
     } catch {
-      this.error.set('The episode audio could not be played.');
+      this.error.set('The audio could not be played.');
     }
   }
 
@@ -131,7 +138,7 @@ export class ListeningAudioPlayerComponent implements OnInit {
 
   onAudioError(): void {
     this.playing.set(false);
-    this.error.set('The episode audio file is not available.');
+    this.error.set('The audio file is not available.');
   }
 
   formatTime(seconds: number): string {
