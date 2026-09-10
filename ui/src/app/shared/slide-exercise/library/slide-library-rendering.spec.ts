@@ -68,7 +68,10 @@ describe('reusable slide renderer contract', () => {
 		expect(answerField?.classList).toContain('vocora-form-field--soft');
 		expect(answerField?.classList).not.toContain('vocora-form-field--raised');
 		expect(answerField?.querySelector('input')).toBeNull();
-		expect(answerField?.querySelector('mat-label')).toBeNull();
+		expect(answerField?.querySelector('mat-label')?.textContent).toContain(
+			'Your answer',
+		);
+		expect(answer?.classList).not.toContain('dictation-answer-input');
 		expect(answer?.getAttribute('placeholder')).toBe('Your answer');
 		expect(answer?.getAttribute('aria-label')).toBe('Your answer');
 		for (const [name, value] of Object.entries({
@@ -84,9 +87,6 @@ describe('reusable slide renderer contract', () => {
 		})) {
 			expect(answer?.getAttribute(name)).toBe(value);
 		}
-		answer?.focus();
-		expect(getComputedStyle(answer!).outlineStyle).toBe('none');
-
 		expect(normal?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
 		document.dispatchEvent(
 			new KeyboardEvent('keydown', {

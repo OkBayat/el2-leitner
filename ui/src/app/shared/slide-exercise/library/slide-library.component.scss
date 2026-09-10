@@ -46,20 +46,6 @@ blockquote {
 	height: 48%;
 }
 
-.dictation-answer-input {
-	resize: none;
-	overflow: hidden;
-	white-space: nowrap;
-	font-size: 1.2rem;
-	font-weight: 500;
-	transform: translateY(-2px);
-}
-
-.dictation-answer-input:focus,
-.dictation-answer-input:focus-visible {
-	outline-style: none;
-}
-
 .slide-interaction h1 {
 	font-size: clamp(24px, 5vw, 36px);
 	line-height: 1.2;

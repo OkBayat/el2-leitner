@@ -117,19 +117,16 @@
 					subscriptSizing="dynamic"
 					[attr.data-state]="answerState()"
 				>
-					@if (answerLabel(); as label) {
-						<mat-label>{{ label }}</mat-label>
-					}
+					<mat-label>{{ answerLabel() }}</mat-label>
 					<textarea
 						#answerInput
-						class="dictation-answer-input"
 						data-testid="dictation-answer-input"
 						matInput
 						[value]="answer()"
 						[disabled]="answerDisabled()"
 						[readonly]="answerReadOnly()"
-						[placeholder]="answerLabel() || 'Your answer'"
-						[attr.aria-label]="answerLabel() || 'Your answer'"
+						[placeholder]="answerLabel()"
+						[attr.aria-label]="answerLabel()"
 						autocomplete="off"
 						lang="en"
 						aria-multiline="false"

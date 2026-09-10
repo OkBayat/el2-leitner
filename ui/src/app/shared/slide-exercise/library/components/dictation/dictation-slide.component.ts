@@ -144,7 +144,7 @@ export class DictationSlideComponent
 		) {
 			return 'Recall from memory';
 		}
-		return null;
+		return 'Your answer';
 	});
 	readonly remediationBadge = computed<DictationRemediationBadge | null>(() => {
 		const phase = this.remediation()?.phase;
