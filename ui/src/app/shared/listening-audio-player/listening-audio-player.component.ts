@@ -25,6 +25,7 @@ export class ListeningAudioPlayerComponent implements OnInit {
   readonly src = input.required<string>();
   readonly title = input('Episode audio');
   readonly description = input('Sticky while scrolling');
+  readonly collapseOnScroll = input(true);
   readonly playing = signal(false);
   readonly currentTime = signal(0);
   readonly duration = signal(0);
@@ -46,6 +47,10 @@ export class ListeningAudioPlayerComponent implements OnInit {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
+    if (!this.collapseOnScroll()) {
+      this.setCollapsed(false);
+      return;
+    }
     const currentScrollY = Math.max(0, window.scrollY);
 
     if (currentScrollY <= PLAYER_TOP_SAFE_ZONE) {

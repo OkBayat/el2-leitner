@@ -29,6 +29,18 @@ describe('ListeningAudioPlayerComponent', () => {
     expect(element.querySelector('audio')?.getAttribute('src')).toBe('/data/learning-path-podcasts/gfi-unit-01.m4a');
   });
 
+  it('keeps controls visible when scroll collapsing is disabled by the host page', () => {
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/data/learning-path-podcasts/gfi-unit-01.m4a');
+    fixture.componentRef.setInput('collapseOnScroll', false);
+    fixture.detectChanges();
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 100 });
+    fixture.componentInstance.onWindowScroll();
+
+    expect(fixture.componentInstance.collapsed()).toBe(false);
+  });
+
   it('does not autoplay and supports play, pause, stop, five-second skips, and direct seeking', async () => {
     const play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
     const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined);

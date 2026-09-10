@@ -14,7 +14,7 @@ ui/.nvmrc
 ui/proxy.conf.json
 ui/playwright-report/
 ui/test-results/
-ui/data/learning-path-podcast-catalog.json
+ui/src/app/generated/learning-path-podcast-catalog.ts
 
 # Episode audio is installed locally from an episode bundle, never committed or baked into images.
 **/data/listening/episodes/**/*.mp3

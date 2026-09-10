@@ -68,7 +68,7 @@
             [value]="currentTime()"
             [disabled]="duration() <= 0"
             [attr.aria-valuetext]="formatTime(currentTime()) + ' of ' + formatTime(duration())"
-            aria-label="Episode position"
+            [attr.aria-label]="title() + ' position'"
             data-testid="audio-progress"
             (input)="onSeekInput($event)"
           >

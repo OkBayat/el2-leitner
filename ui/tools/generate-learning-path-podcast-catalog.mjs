@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const toolsDirectory = dirname(fileURLToPath(import.meta.url));
 const repositoryDirectory = resolve(toolsDirectory, '../..');
 const definitionsDirectory = resolve(repositoryDirectory, 'back/data/learning-paths');
-const outputPath = resolve(repositoryDirectory, 'ui/data/learning-path-podcast-catalog.json');
+const outputPath = resolve(repositoryDirectory, 'ui/src/app/generated/learning-path-podcast-catalog.ts');
 
 function requiredString(value, label, fileName) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -42,5 +42,10 @@ const courses = await Promise.all(fileNames.map(readCourse));
 courses.sort((left, right) => left.collectionId.localeCompare(right.collectionId));
 
 await mkdir(dirname(outputPath), { recursive: true });
-await writeFile(outputPath, `${JSON.stringify({ schemaVersion: 1, courses }, null, 2)}\n`, 'utf8');
+const catalog = JSON.stringify({ schemaVersion: 1, courses }, null, 2);
+await writeFile(
+  outputPath,
+  `// Generated from back/data/learning-paths/*.json. Do not edit.\nexport const LEARNING_PATH_PODCAST_CATALOG = ${catalog} as const;\n`,
+  'utf8',
+);
 console.info(`Generated ${outputPath} from ${courses.length} course definitions.`);
