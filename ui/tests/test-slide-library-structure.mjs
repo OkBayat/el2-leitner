@@ -141,21 +141,42 @@ assert.match(incorrectChoiceStyles, /box-shadow:[^;]*var\(--vocora-error-edge\)/
 assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='correct'\]\s*\{/u);
 assert.doesNotMatch(sharedStyles, /(?:^|\n)\[data-state='incorrect'\]\s*\{/u);
 const correctSoftField = materialComponents.match(
-	/\.mat-mdc-form-field\.vocora-form-field--soft\[data-state='correct'\]\s*\{([\s\S]*?)\n\t\}/u,
+	/\.mat-mdc-form-field\[data-state='correct'\]\s*\{([\s\S]*?)\n\t\}/u,
 )?.[1] ?? '';
 assert.match(correctSoftField, /--mdc-outlined-text-field-outline-color:\s*var\(\s*--vocora-success\s*\);/u);
 assert.match(correctSoftField, /--mat-form-field-outlined-outline-color:\s*var\(\s*--vocora-success\s*\);/u);
 const correctSoftFieldWrapper = materialComponents.match(
-	/\.mat-mdc-form-field\.vocora-form-field--soft\[data-state='correct'\]\s+\.mat-mdc-text-field-wrapper\s*\{([\s\S]*?)\n\t\}/u,
+	/\.mat-mdc-form-field\[data-state='correct'\]\s+\.mat-mdc-text-field-wrapper\s*\{([\s\S]*?)\n\t\}/u,
 )?.[1] ?? '';
 assert.match(correctSoftFieldWrapper, /background:\s*var\(--vocora-success-surface\);/u);
-assert.doesNotMatch(materialComponents, /\.vocora-form-field--soft\[data-state='incorrect'\]/u);
-const dictationAnswerStyles = sharedStyles.match(
-	/\.dictation-answer-input\s*\{([\s\S]*?)\n\}/u,
+assert.doesNotMatch(materialComponents, /\.mat-mdc-form-field\[data-state='incorrect'\]/u);
+const sharedFormFieldStyles = materialComponents.match(
+	/\.mat-mdc-form-field\s*\{([\s\S]*?)\n\t\}/u,
 )?.[1] ?? '';
-assert.match(dictationAnswerStyles, /font-size:\s*1\.2rem;/u);
-assert.match(dictationAnswerStyles, /font-weight:\s*500;/u);
-assert.match(dictationAnswerStyles, /transform:\s*translateY\(-2px\);/u);
+assert.match(sharedFormFieldStyles, /--mdc-outlined-text-field-container-shape:\s*var\(--vocora-radius-md\);/u);
+assert.match(sharedFormFieldStyles, /--mdc-outlined-text-field-outline-color:\s*var\(/u);
+const sharedFormFieldWrapper = materialComponents.match(
+	/\.mat-mdc-form-field \.mat-mdc-text-field-wrapper\s*\{([\s\S]*?)\n\t\}/u,
+)?.[1] ?? '';
+assert.match(sharedFormFieldWrapper, /border-radius:\s*var\(--vocora-radius-md\);/u);
+assert.match(sharedFormFieldWrapper, /background:\s*color-mix\(/u);
+const sharedAnswerStyles = materialComponents.match(
+	/\.mat-mdc-form-field \.mat-mdc-input-element\s*\{([\s\S]*?)\n\t\}/u,
+)?.[1] ?? '';
+assert.match(sharedAnswerStyles, /font-size:\s*1\.2rem;/u);
+assert.match(sharedAnswerStyles, /font-weight:\s*500;/u);
+assert.match(sharedAnswerStyles, /transform:\s*translateY\(-2px\);/u);
+const sharedSingleLineTextareaStyles = materialComponents.match(
+	/\.mat-mdc-form-field textarea\.mat-mdc-input-element\[rows='1'\]\s*\{([\s\S]*?)\n\t\}/u,
+)?.[1] ?? '';
+assert.match(sharedSingleLineTextareaStyles, /resize:\s*none;/u);
+assert.match(sharedSingleLineTextareaStyles, /overflow:\s*hidden;/u);
+assert.match(sharedSingleLineTextareaStyles, /white-space:\s*nowrap;/u);
+assert.match(
+	materialComponents,
+	/\.mat-mdc-form-field \.mat-mdc-input-element:focus,[\s\S]*\.mat-mdc-form-field \.mat-mdc-input-element:focus-visible\s*\{[\s\S]*outline-style:\s*none;/u,
+);
+assert.doesNotMatch(sharedStyles, /\.dictation-answer-input/u);
 assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);

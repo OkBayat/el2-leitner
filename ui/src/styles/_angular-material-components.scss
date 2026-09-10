@@ -311,7 +311,7 @@
 		border-radius: 32px;
 	}
 
-	.mat-mdc-form-field.vocora-form-field--soft {
+	.mat-mdc-form-field {
 		--mdc-outlined-text-field-container-shape: var(--vocora-radius-md);
 		--mdc-outlined-text-field-outline-color: var(
 			--vocora-action-secondary-border
@@ -332,7 +332,7 @@
 		--mat-form-field-outlined-focus-outline-color: var(--vocora-information);
 	}
 
-	.mat-mdc-form-field.vocora-form-field--soft .mat-mdc-text-field-wrapper {
+	.mat-mdc-form-field .mat-mdc-text-field-wrapper {
 		border-radius: var(--vocora-radius-md);
 		background: color-mix(
 			in srgb,
@@ -342,7 +342,24 @@
 		box-shadow: none;
 	}
 
-	.mat-mdc-form-field.vocora-form-field--soft[data-state='correct'] {
+	.mat-mdc-form-field .mat-mdc-input-element {
+		font-size: 1.2rem;
+		font-weight: 500;
+		transform: translateY(-2px);
+	}
+
+	.mat-mdc-form-field textarea.mat-mdc-input-element[rows='1'] {
+		resize: none;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.mat-mdc-form-field .mat-mdc-input-element:focus,
+	.mat-mdc-form-field .mat-mdc-input-element:focus-visible {
+		outline-style: none;
+	}
+
+	.mat-mdc-form-field[data-state='correct'] {
 		--mdc-outlined-text-field-outline-color: var(--vocora-success);
 		--mdc-outlined-text-field-hover-outline-color: var(--vocora-success);
 		--mdc-outlined-text-field-focus-outline-color: var(--vocora-success);
@@ -351,7 +368,7 @@
 		--mat-form-field-outlined-focus-outline-color: var(--vocora-success);
 	}
 
-	.mat-mdc-form-field.vocora-form-field--soft[data-state='correct']
+	.mat-mdc-form-field[data-state='correct']
 		.mat-mdc-text-field-wrapper {
 		background: var(--vocora-success-surface);
 	}

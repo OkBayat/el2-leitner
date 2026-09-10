@@ -65,7 +65,7 @@ describe('reusable slide renderer contract', () => {
 		const answerField = element.querySelector('mat-form-field');
 		const answer = answerField?.querySelector('textarea');
 		expect(document.activeElement).toBe(answer);
-		expect(answerField?.classList).toContain('vocora-form-field--soft');
+		expect(answerField?.classList).not.toContain('vocora-form-field--soft');
 		expect(answerField?.classList).not.toContain('vocora-form-field--raised');
 		expect(answerField?.querySelector('input')).toBeNull();
 		expect(answerField?.querySelector('mat-label')?.textContent).toContain(
