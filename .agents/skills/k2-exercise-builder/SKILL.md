@@ -52,14 +52,19 @@ When a selection determines a runtime-sized path, follow the dynamic expansion c
 
 ### 4. Validate and return
 
-Write the candidate object to a temporary JSON file and run:
+Write every candidate or materially revised exercise object to a temporary JSON
+file and run:
 
 ```bash
 rtk python3 .agents/skills/k2-exercise-builder/scripts/validate-exercise.py \
   --input <exercise.json>
 ```
 
-Fix all failures at the object source. Return the validated exercise object and, only when useful, a short note explaining slide selection or a blocker.
+The validator checks the sequence envelope, per-slide required data, answer
+references, and every runtime-enumerated configuration value such as `mode`,
+`inputMode`, `layout`, `feedbackMode`, and `register`. Fix all failures at the
+object source. Return the validated exercise object and, only when useful, a
+short note explaining slide selection or a blocker.
 
 ## Stop conditions
 
@@ -91,6 +96,7 @@ Also run the repository-required `k2-skill-architecture` validator.
 
 - Validate the `slides.sequence` envelope, supported slide allowlist, unique IDs, and terminal-final invariant.
 - Validate required per-type fields and basic referential integrity.
+- Reject configuration values that are not supported by the registered slide's runtime contract.
 - Reject correctness fields on unscored `selection` slides.
 - Validate this skill's files, routing, references, interface metadata, and focused tests.
 

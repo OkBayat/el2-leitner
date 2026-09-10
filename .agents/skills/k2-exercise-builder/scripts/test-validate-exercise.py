@@ -95,6 +95,46 @@ class ExerciseValidatorTests(unittest.TestCase):
         }
         self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
 
+    def test_accepts_target_grammar_rewrite_mode(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0] = {
+            "id": "habit-rewrite",
+            "type": "rewrite",
+            "data": {
+                "mode": "target-grammar",
+                "original": "Tom's normal Saturday activity is football.",
+                "instruction": "Rewrite the idea as a present simple habit.",
+                "modelAnswer": "Tom plays football every Saturday.",
+                "acceptedAnswers": ["Tom plays football every Saturday."],
+            },
+        }
+
+        self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
+
+    def test_rejects_every_unsupported_runtime_enum_value(self) -> None:
+        for slide_type, fields in MODULE.ENUM_FIELDS.items():
+            for field in fields:
+                data = {
+                    required_field: sorted(allowed)[0]
+                    for required_field, (allowed, required) in fields.items()
+                    if required
+                }
+                data[field] = "not-a-runtime-value"
+                with self.subTest(slide_type=slide_type, field=field):
+                    with self.assertRaisesRegex(ValueError, "unsupported"):
+                        MODULE.validate_enum_fields(slide_type, data)
+
+    def test_rejects_an_unsupported_teaching_block_kind(self) -> None:
+        with self.assertRaisesRegex(ValueError, "Teaching block kind is unsupported"):
+            MODULE.validate_slide_data(
+                "teaching-card",
+                {
+                    "mode": "rule",
+                    "title": "Rule",
+                    "blocks": [{"kind": "unknown", "content": "Read."}],
+                },
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,82 @@ SLIDE_TYPES = {
     "short-answer", "word-formation", "error-correction", "rewrite",
     "pronunciation", "dictation", "speaking-response", "writing-response",
 }
+ENUM_FIELDS = {
+    "teaching-card": {
+        "mode": ({"word", "usage", "contrast", "rule", "warning", "tip"}, True),
+    },
+    "selection": {"mode": ({"single", "multiple"}, True)},
+    "choice": {
+        "mode": ({
+            "single", "multiple", "meaning", "part-of-speech", "synonym",
+            "antonym", "correct-spelling", "best-word", "odd-one-out",
+        }, False),
+    },
+    "truth": {
+        "mode": ({
+            "true-false", "true-false-not-given", "yes-no-not-given",
+            "agree-disagree",
+        }, True),
+    },
+    "matching": {
+        "mode": ({
+            "definition", "synonym", "antonym", "collocation", "word-family",
+            "person-opinion", "sentence-ending", "heading-section", "term-example",
+        }, False),
+        "feedbackMode": ({"immediate", "on-complete"}, False),
+    },
+    "classification": {
+        "mode": ({
+            "positive-negative", "formal-informal", "countable-uncountable",
+            "part-of-speech", "possible-impossible", "linking-word-function",
+            "letter-language-function", "sound", "custom",
+        }, False),
+    },
+    "ordering": {
+        "mode": ({"sequence", "chronology", "severity", "adjective-order", "process"}, False),
+    },
+    "cloze": {"inputMode": ({"text", "word-bank", "select"}, False)},
+    "structured-completion": {
+        "layout": ({"form", "table", "notes", "flowchart", "timeline"}, True),
+    },
+    "word-formation": {
+        "mode": ({
+            "family", "target-part-of-speech", "prefix", "suffix", "negative-form",
+            "base-word", "transitive-intransitive",
+        }, False),
+    },
+    "error-correction": {
+        "mode": ({
+            "select-and-replace", "inline-edit", "sentence-correction",
+            "paragraph-correction",
+        }, False),
+    },
+    "rewrite": {
+        "mode": ({
+            "paraphrase", "target-grammar", "target-vocabulary",
+            "sentence-transformation", "noun-to-verb", "verb-to-noun", "formalize",
+            "linking-word", "synonym-replacement",
+        }, False),
+    },
+    "pronunciation": {
+        "mode": ({
+            "phoneme-match", "sound-choice", "word-stress", "listen-and-identify",
+            "ipa-match", "repeat",
+        }, True),
+    },
+    "dictation": {"mode": ({"word", "phrase", "sentence"}, False)},
+    "speaking-response": {
+        "mode": ({"part1", "cue-card", "part3", "vocabulary-production"}, True),
+    },
+    "writing-response": {
+        "mode": ({
+            "sentence", "paragraph", "task1-chart", "task1-process", "task2-essay",
+            "general-letter",
+        }, True),
+        "register": ({"formal", "informal", "neutral"}, False),
+    },
+}
+TEACHING_BLOCK_KINDS = {"word", "comparison", "correction", "patterns", "example", "note"}
 
 
 def record(value: Any, label: str) -> dict:
@@ -28,6 +104,15 @@ def text(source: dict, key: str, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{label} is required.")
     return value.strip()
+
+
+def validate_enum_fields(slide_type: str, data: dict) -> None:
+    for field, (allowed, required) in ENUM_FIELDS.get(slide_type, {}).items():
+        if field not in data and not required:
+            continue
+        value = text(data, field, f"{slide_type} {field}")
+        if value not in allowed:
+            raise ValueError(f"{slide_type} {field} is unsupported: {value}.")
 
 
 def array(source: dict, key: str, label: str, minimum: int = 1) -> list:
@@ -69,12 +154,17 @@ def validate_answer_fields(data: dict, key: str) -> None:
 
 
 def validate_slide_data(slide_type: str, data: dict) -> None:
+    validate_enum_fields(slide_type, data)
     if slide_type in {"message", "summary"}:
         return
     if slide_type == "teaching-card":
         text(data, "title", "Teaching card title")
         for candidate in array(data, "blocks", "Teaching card blocks"):
-            text(record(candidate, "teaching block"), "content", "Teaching block content")
+            block = record(candidate, "teaching block")
+            kind = text(block, "kind", "Teaching block kind")
+            if kind not in TEACHING_BLOCK_KINDS:
+                raise ValueError(f"Teaching block kind is unsupported: {kind}.")
+            text(block, "content", "Teaching block content")
         return
     if slide_type == "selection":
         mode = text(data, "mode", "Selection mode")
