@@ -26,10 +26,10 @@ const required = [
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.html',
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.scss',
   'src/app/features/bbc-listening/bbc-listening-pages.spec.ts',
-  'src/app/features/bbc-listening/listening-audio-player.component.ts',
-  'src/app/features/bbc-listening/listening-audio-player.component.html',
-  'src/app/features/bbc-listening/listening-audio-player.component.scss',
-  'src/app/features/bbc-listening/listening-audio-player.component.spec.ts',
+  'src/app/shared/listening-audio-player/listening-audio-player.component.ts',
+  'src/app/shared/listening-audio-player/listening-audio-player.component.html',
+  'src/app/shared/listening-audio-player/listening-audio-player.component.scss',
+  'src/app/shared/listening-audio-player/listening-audio-player.component.spec.ts',
 ];
 for (const file of required) assert.ok(exists(file), `${file} is required for BBC listening practice.`);
 
@@ -55,7 +55,7 @@ assert.ok(
 for (const component of [
   'src/app/features/bbc-listening/bbc-lessons-page.component.ts',
   'src/app/features/bbc-listening/bbc-listening-practice-page.component.ts',
-  'src/app/features/bbc-listening/listening-audio-player.component.ts',
+  'src/app/shared/listening-audio-player/listening-audio-player.component.ts',
 ]) {
   const source = read(component);
   assert.match(source, /templateUrl:/u, `${component} must use a separate HTML file.`);
@@ -130,9 +130,9 @@ assert.match(template, /\[disabled\]="submitted\(\)"/u, 'Choice answers must be 
 assert.match(template, /result\.score\.correct/u, 'The server score must be rendered after submission.');
 assert.match(template, /feedback\?\.correct/u, 'Every answer must show correct or incorrect feedback.');
 
-const audioPlayerComponent = read('src/app/features/bbc-listening/listening-audio-player.component.ts');
-const audioPlayer = read('src/app/features/bbc-listening/listening-audio-player.component.html');
-const audioStyles = read('src/app/features/bbc-listening/listening-audio-player.component.scss');
+const audioPlayerComponent = read('src/app/shared/listening-audio-player/listening-audio-player.component.ts');
+const audioPlayer = read('src/app/shared/listening-audio-player/listening-audio-player.component.html');
+const audioStyles = read('src/app/shared/listening-audio-player/listening-audio-player.component.scss');
 assert.match(audioPlayer, /<audio/u, 'The player must use the browser audio element.');
 assert.doesNotMatch(audioPlayer, /autoplay/u, 'Listening audio must never autoplay.');
 assert.match(audioPlayer, /audio-play/u, 'The player must expose Play/Pause.');

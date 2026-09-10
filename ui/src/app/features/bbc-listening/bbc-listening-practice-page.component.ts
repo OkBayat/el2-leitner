@@ -18,7 +18,7 @@ import {
   countAnsweredListeningQuestions,
   splitListeningBlankPrompt,
 } from '../../domain/listening-practice/listening-practice';
-import { ListeningAudioPlayerComponent } from './listening-audio-player.component';
+import { ListeningAudioPlayerComponent } from '../../shared/listening-audio-player/listening-audio-player.component';
 
 @Component({
   selector: 'app-bbc-listening-practice-page',

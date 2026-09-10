@@ -6,10 +6,14 @@
   [class.is-mirrored]="mirrored()"
 >
   <header class="lesson__header">
-    <div class="lesson__heading">
+    <a
+      class="lesson__heading"
+      data-testid="lesson-title-link"
+      [routerLink]="['/learning-paths', pathId(), 'lessons', lesson().id]"
+    >
       <p>Lesson {{ lesson().position }} · {{ stateLabel() }}</p>
       <h2>{{ lesson().title }}</h2>
-    </div>
+    </a>
   </header>
 
   <div class="lesson__trail" data-testid="lesson-trail">

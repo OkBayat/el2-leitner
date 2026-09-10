@@ -1,0 +1,37 @@
+<main class="lesson-podcast-page" [attr.aria-busy]="loading()">
+  <nav class="lesson-podcast-page__nav" aria-label="Lesson navigation">
+    <a
+      mat-stroked-button
+      class="vocora-button vocora-button--secondary"
+      data-testid="lesson-podcast-back"
+      [routerLink]="['/learning-paths', pathId()]"
+    >
+      <span aria-hidden="true">←</span>
+      <span>Back</span>
+    </a>
+  </nav>
+
+  <section class="lesson-podcast-page__content">
+    @if (loading()) {
+      <p aria-live="polite">Loading lesson audio…</p>
+    } @else if (error()) {
+      <div class="lesson-podcast-page__error" role="alert">
+        <h1>Lesson audio unavailable</h1>
+        <p>{{ error() }}</p>
+        <button
+          mat-flat-button
+          type="button"
+          class="vocora-button vocora-button--primary"
+          (click)="retry()"
+        >Try again</button>
+      </div>
+    } @else if (lesson(); as currentLesson) {
+      <h1>{{ currentLesson.title }}</h1>
+      <app-listening-audio-player
+        [src]="audioSrc()"
+        title="Lesson audio"
+        description=""
+      />
+    }
+  </section>
+</main>

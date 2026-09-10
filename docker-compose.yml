@@ -158,6 +158,7 @@ services:
     volumes:
       - ./back/data/listening/audio:/app/back/data/listening/audio:ro
       - ./back/data/listening/episodes:/app/back/data/listening/episodes:ro
+      - ./back/data/learning-paths/podcasts:/app/ui/data/learning-path-podcasts:ro
       - tts_audio_cache:/app/back/data/tts-cache
     ports:
       - "${APP_HOST:-0.0.0.0}:${APP_PORT:-3000}:3000"

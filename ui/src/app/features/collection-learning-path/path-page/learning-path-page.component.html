@@ -30,6 +30,7 @@
     <section class="lesson-list" aria-label="Course lessons">
       @for (lesson of visibleLessons(); track lesson.id) {
         <app-learning-path-lesson-node
+          [pathId]="view.path.id"
           [lesson]="lesson"
           [startExerciseId]="startExerciseId()"
           (selectExercise)="openExercise($event)"

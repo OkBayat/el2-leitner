@@ -16,6 +16,19 @@ describe('ListeningAudioPlayerComponent', () => {
     return fixture;
   }
 
+  it('accepts reusable audio copy while preserving the supplied media source', () => {
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/data/learning-path-podcasts/gfi-unit-01.m4a');
+    fixture.componentRef.setInput('title', 'Lesson audio');
+    fixture.componentRef.setInput('description', '');
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('strong')?.textContent).toBe('Lesson audio');
+    expect(element.querySelector('.sticky-hint')).toBeNull();
+    expect(element.querySelector('audio')?.getAttribute('src')).toBe('/data/learning-path-podcasts/gfi-unit-01.m4a');
+  });
+
   it('does not autoplay and supports play, pause, stop, five-second skips, and direct seeking', async () => {
     const play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
     const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined);

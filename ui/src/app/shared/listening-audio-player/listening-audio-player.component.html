@@ -2,7 +2,7 @@
   class="audio-player"
   [class.is-collapsed]="collapsed()"
   data-testid="listening-audio-player"
-  aria-label="Episode audio player"
+  [attr.aria-label]="title() + ' player'"
 >
   <audio
     #audio
@@ -28,8 +28,10 @@
               </svg>
             </span>
             <div class="audio-copy">
-              <strong>Episode audio</strong>
-              <span class="sticky-hint">Sticky while scrolling <span aria-hidden="true">ⓘ</span></span>
+              <strong>{{ title() }}</strong>
+              @if (description()) {
+                <span class="sticky-hint">{{ description() }} <span aria-hidden="true">ⓘ</span></span>
+              }
             </div>
             <span class="audio-time" data-testid="audio-time">
               {{ formatTime(currentTime()) }} / {{ formatTime(duration()) }}
@@ -43,7 +45,7 @@
               type="button"
               class="play-toggle"
               data-testid="audio-play"
-              [attr.aria-label]="playing() ? 'Pause episode audio' : 'Play episode audio'"
+              [attr.aria-label]="(playing() ? 'Pause ' : 'Play ') + title()"
               (click)="togglePlayback()"
             >
               <span aria-hidden="true">{{ playing() ? 'Ⅱ' : '▶' }}</span>
@@ -83,7 +85,7 @@
     class="collapsed-progress"
     data-testid="audio-collapsed-progress"
     role="progressbar"
-    aria-label="Episode playback progress"
+    [attr.aria-label]="title() + ' playback progress'"
     aria-valuemin="0"
     aria-valuemax="100"
     [attr.aria-valuenow]="progressPercent()"

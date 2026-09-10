@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   learningPathStateLabel,
   type LearningPathExerciseSelection,
@@ -12,12 +13,13 @@ const LESSON_TRAIL_PALETTES: readonly LessonTrailPalette[] = ['green', 'purple',
 @Component({
   selector: 'app-learning-path-lesson-node',
   standalone: true,
-  imports: [ExerciseNodeComponent],
+  imports: [RouterLink, ExerciseNodeComponent],
   templateUrl: './lesson-node.component.html',
   styleUrl: './lesson-node.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LessonNodeComponent {
+  readonly pathId = input.required<string>();
   readonly lesson = input.required<LearningPathLessonView>();
   readonly startExerciseId = input<string | null>(null);
   readonly selectExercise = output<LearningPathExerciseSelection>();

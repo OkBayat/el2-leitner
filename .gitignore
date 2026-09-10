@@ -14,9 +14,13 @@ ui/.nvmrc
 ui/proxy.conf.json
 ui/playwright-report/
 ui/test-results/
+ui/data/learning-path-podcast-catalog.json
 
 # Episode audio is installed locally from an episode bundle, never committed or baked into images.
 **/data/listening/episodes/**/*.mp3
+
+# Learning Path podcasts are installed locally by managed lesson id and never committed.
+back/data/learning-paths/podcasts/*.m4a
 
 # Local episode preparation products
 back/data/listening/episodes/**/*.tmp

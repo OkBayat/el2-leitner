@@ -21,6 +21,7 @@ COPY ui/assets ./assets
 COPY ui/fonts ./fonts
 COPY ui/data ./data
 COPY ui/tools ./tools
+COPY back/data/learning-paths/*.json /app/back/data/learning-paths/
 RUN npm run build:production
 
 FROM node:22-bookworm-slim AS runtime

@@ -16,6 +16,7 @@ export const appRoutes: Routes = [
   { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },
   { path: 'shadowing', canActivate: [authGuard], loadComponent: () => import('./features/shadowing-practice/shadowing-page.component').then((m) => m.ShadowingPageComponent) },
   { path: 'bbc-6-minute-english/:lessonSlug/tests/:testId/practice', canActivate: [authGuard], loadComponent: () => import('./features/bbc-listening/bbc-listening-practice-page.component').then((m) => m.BbcListeningPracticePageComponent) },
+  { path: 'learning-paths/:pathId/lessons/:lessonId', canActivate: [authGuard], loadComponent: () => import('./features/collection-learning-path/lesson-podcast/lesson-podcast-page.component').then((m) => m.LessonPodcastPageComponent) },
   { path: 'learning-paths/:pathId/lessons/:lessonId/exercises/:exerciseId', canActivate: [authGuard], loadComponent: () => import('./features/collection-learning-path/exercise-runner/exercise-runner-page.component').then((m) => m.ExerciseRunnerPageComponent) },
   { path: 'learning-path/:pathId/lessons/:lessonId/exercises/:exerciseId', canActivate: [authGuard, legacyLearningPathExerciseRouteGuard], loadComponent: () => import('./features/collection-learning-path/exercise-runner/exercise-runner-page.component').then((m) => m.ExerciseRunnerPageComponent) },
   {
