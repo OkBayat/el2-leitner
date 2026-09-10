@@ -139,6 +139,15 @@ slide results before emitting its completed outcome, and keeps completion
 retryable if persistence fails. This callback is runtime application behavior;
 never serialize it into exercise or slide JSON.
 
+When standalone learner progress must be durable before the sequence ends, the
+application parent may additionally supply `slideResult`. The runtime invokes
+that handler as soon as each first slide result is recorded, deduplicates
+successful delivery by slide ID, and retries only failed or still-pending
+delivery before completion. The application handler remains responsible for
+domain-level idempotency such as treating retry slides for the same vocabulary
+item as one first attempt. `sequenceCompletion` may then close the session
+without resending successfully persisted item results.
+
 Every returned slide must use a registered catalog type, have a unique stable
 non-terminal ID, and be fully configured from authoritative source data. The
 configured terminal `summary` remains last because the deck insertion contract

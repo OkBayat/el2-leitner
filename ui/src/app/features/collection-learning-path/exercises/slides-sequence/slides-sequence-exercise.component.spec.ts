@@ -337,4 +337,46 @@ describe("SlidesSequenceExerciseComponent", () => {
 		expect(outcomes).not.toHaveBeenCalled();
 		expect(fixture.componentInstance.error()).toBe("Could not save practice.");
 	});
+
+	it("sends each first recorded slide result immediately and does not resend it at completion", async () => {
+		TestBed.configureTestingModule({
+			imports: [SlidesSequenceExerciseComponent],
+			providers: [{
+				provide: ReviewAnswerSoundService,
+				useValue: { play: vi.fn(), stop: vi.fn() },
+			}],
+		});
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		const slideResult = vi.fn().mockResolvedValue(undefined);
+		fixture.componentInstance.load({
+			...context,
+			slideResult,
+			config: {
+				slides: [
+					{ id: "choice", itemId: "word-1", type: "choice", data: {} },
+					{ id: "summary", type: "summary", terminal: true, data: {} },
+				],
+			},
+		});
+		fixture.detectChanges();
+		const slideExercise = fixture.debugElement.query(
+			By.directive(SlideExerciseComponent),
+		).componentInstance as SlideExerciseComponent;
+
+		slideExercise.onContentEvent({
+			type: "answered",
+			data: { selectedOptionIds: ["correct"], correct: true },
+		});
+		await vi.waitFor(() => expect(slideResult).toHaveBeenCalledOnce());
+		expect(slideResult).toHaveBeenCalledWith(expect.objectContaining({
+			slideId: "choice",
+			itemId: "word-1",
+			eventType: "answered",
+		}));
+
+		slideExercise.next();
+		await fixture.componentInstance.finish("summary");
+
+		expect(slideResult).toHaveBeenCalledOnce();
+	});
 });

@@ -53,10 +53,11 @@ describe('LeitnerSlideSessionService', () => {
 		const service = TestBed.inject(LeitnerSlideSessionService);
 
 		await service.start('new', ['correct', 'wrong']);
-		await service.complete([
-			result('correct', 'persistent', true),
-			result('wrong', 'progres', false),
-		]);
+		await service.record(result('correct', 'persistent', true));
+		expect(persist).toHaveBeenCalledOnce();
+		await service.record(result('wrong', 'progres', false));
+		expect(persist).toHaveBeenCalledTimes(2);
+		await service.complete();
 
 		expect(state.words.find((word) => word.id === 'correct')?.box).toBe(2);
 		expect(state.words.find((word) => word.id === 'wrong')?.box).toBe(1);
@@ -92,11 +93,47 @@ describe('LeitnerSlideSessionService', () => {
 		] });
 		const service = TestBed.inject(LeitnerSlideSessionService);
 		await service.start('review', ['due']);
-		const results = [result('due', 'schedule', true)];
-		await service.complete(results);
-		await service.complete(results);
+		const answer = result('due', 'schedule', true);
+		await service.record(answer);
+		await service.record(answer);
+		await service.complete();
+		await service.complete();
 
 		expect(state.words[0].box).toBe(4);
 		expect(persist).toHaveBeenCalledOnce();
+	});
+
+	it('retries a failed immediate result without applying the transition twice', async () => {
+		let revision = 1;
+		let state = createFreshState([
+			{ id: 'due', term: 'schedule', accepted: ['schedule'], box: 2, due: localDay(), introducedOn: '2026-09-01' },
+		]);
+		const persist = vi.fn()
+			.mockRejectedValueOnce(new Error('offline'))
+			.mockImplementation(async () => revision + 1);
+		TestBed.configureTestingModule({ providers: [
+			LeitnerSlideSessionService,
+			{ provide: LearningStoreService, useValue: {
+				initialize: vi.fn(async () => state), snapshot: () => structuredClone(state), revision: () => revision,
+				replaceLocal: (next: typeof state, nextRevision: number) => { state = next; revision = nextRevision; },
+				update: vi.fn(async () => state),
+			} },
+			{ provide: ReviewPersistenceService, useValue: { persist } },
+			{ provide: LearningApiService, useValue: {
+				startSession: vi.fn().mockResolvedValue({ session: { id: 'session-3' } }),
+				completeSession: vi.fn(), abandonSession: vi.fn(),
+			} },
+		] });
+		const service = TestBed.inject(LeitnerSlideSessionService);
+		const answer = result('due', 'schedule', true);
+
+		await service.start('review', ['due']);
+		await expect(service.record(answer)).rejects.toThrow('offline');
+		expect(state.words[0].box).toBe(2);
+		await service.record(answer);
+
+		expect(state.words[0].box).toBe(3);
+		expect(state.history).toHaveLength(1);
+		expect(persist).toHaveBeenCalledTimes(2);
 	});
 });

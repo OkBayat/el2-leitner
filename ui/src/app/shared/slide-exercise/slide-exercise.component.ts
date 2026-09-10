@@ -68,6 +68,7 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 	@Output() readonly action = new EventEmitter<SlideExerciseActionEvent>();
 	@Output() readonly contentEvent =
 		new EventEmitter<SlideExerciseContentEvent>();
+	@Output() readonly resultRecorded = new EventEmitter<SlideExerciseResult>();
 	@Output() readonly slideChange =
 		new EventEmitter<SlideExerciseSlideChange>();
 	@Output() readonly completed = new EventEmitter<void>();
@@ -213,14 +214,16 @@ export class SlideExerciseComponent implements OnChanges, OnDestroy {
 			(event.type === "answered" || event.type === "submitted") &&
 			!this.recordedResults.some((result) => result.slideId === slide.id)
 		) {
-			this.recordedResults.push({
+			const recordedResult: SlideExerciseResult = {
 				slideId: slide.id,
 				rootSlideId: slide.rootSlideId?.trim() || slide.id,
 				slideType: slide.type,
 				eventType: event.type,
 				itemId: slide.itemId,
 				data: event.data,
-			});
+			};
+			this.recordedResults.push(recordedResult);
+			this.resultRecorded.emit(recordedResult);
 			if (
 				event.type === "answered" &&
 				event.data !== null &&

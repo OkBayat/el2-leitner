@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeitnerDictationSlideBuilderService } from '../../application/review/leitner-dictation-slide-builder.service';
 import { LeitnerSlideSessionService } from '../../application/review/leitner-slide-session.service';
+import { LeitnerWordDefinitionsService } from '../../application/review/leitner-word-definitions.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { getDueWords } from '../../domain/learning/learning-rules';
 import type { LearningWord } from '../../domain/learning/models';
@@ -61,6 +62,7 @@ export class LeitnerSlidePracticePageComponent implements OnInit, OnDestroy {
 	private readonly store = inject(LearningStoreService);
 	private readonly slideBuilder = inject(LeitnerDictationSlideBuilderService);
 	private readonly session = inject(LeitnerSlideSessionService);
+	private readonly definitions = inject(LeitnerWordDefinitionsService);
 	private readonly mode = this.route.snapshot.data['practiceMode'] as LeitnerSlidePracticeMode;
 	private exercise?: SlidesSequenceExerciseComponent;
 	private finished = false;
@@ -133,7 +135,8 @@ export class LeitnerSlidePracticePageComponent implements OnInit, OnDestroy {
 			if (activated.activated.length !== request.value) {
 				throw new Error('Not every requested word could be added to House 1.');
 			}
-			const slides = this.slideBuilder.build(request.slideId, activated.activated);
+			const definitions = await this.definitions.load(activated.activated);
+			const slides = this.slideBuilder.build(request.slideId, activated.activated, definitions);
 			await this.session.start('new', wordIds(slides, request.value));
 			return { slides };
 		};
@@ -164,7 +167,8 @@ export class LeitnerSlidePracticePageComponent implements OnInit, OnDestroy {
 	private async dailyReviewContext(): Promise<ExerciseContext> {
 		const due = getDueWords(this.store.snapshot());
 		if (!due.length) throw new Error("Today's scheduled review is already complete.");
-		const slides = this.slideBuilder.build('daily-review', due);
+		const definitions = await this.definitions.load(due);
+		const slides = this.slideBuilder.build('daily-review', due, definitions);
 		await this.session.start('review', wordIds(slides, due.length));
 		return this.context('daily-review', { slides: [...slides, summarySlide('daily-review')] });
 	}
@@ -182,7 +186,8 @@ export class LeitnerSlidePracticePageComponent implements OnInit, OnDestroy {
 			completionPolicy: 'slide-sequence',
 			payload: null,
 			numberInputExpansion: values.numberInputExpansion,
-			sequenceCompletion: (results) => this.session.complete(results),
+			slideResult: (result) => result.slideType === 'dictation' ? this.session.record(result) : Promise.resolve(),
+			sequenceCompletion: () => this.session.complete(),
 			config: { slides: values.slides },
 		};
 	}

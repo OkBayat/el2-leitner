@@ -19,6 +19,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly selectionExpansion?: SelectionSlideExpansionHandler;
   readonly numberInputExpansion?: NumberInputSlideExpansionHandler;
   readonly pronunciationPractice?: PronunciationPracticeController;
+  readonly slideResult?: (result: SlideExerciseResult) => Promise<void>;
   readonly sequenceCompletion?: (results: readonly SlideExerciseResult[]) => Promise<void>;
 }
 
