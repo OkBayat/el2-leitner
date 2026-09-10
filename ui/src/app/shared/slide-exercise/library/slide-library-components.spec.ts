@@ -25,12 +25,18 @@ import {
 
 function load(
 	component: {
-		load(context: { slideId: string; type: string; data: unknown }): void;
+		load(context: {
+			slideId: string;
+			type: string;
+			data: unknown;
+			environment?: unknown;
+		}): void;
 	},
 	type: string,
 	data: unknown,
+	environment?: unknown,
 ): void {
-	component.load({ slideId: 'slide-1', type, data });
+	component.load({ slideId: 'slide-1', type, data, environment });
 }
 
 function configure(): {
@@ -64,31 +70,57 @@ function configure(): {
 }
 
 describe('reusable slide library behavior', () => {
-	it('loads repeat-mode pronunciation as a single acknowledgement action', () => {
-		configure();
+	it('autoplays repeat-mode pronunciation and starts recording when playback ends', () => {
+		const speech = configure();
+		let playbackObserver: { onEnd?: () => void } | undefined;
+		speech.speak.mockImplementation(
+			(_text: string, _rate: number, observer: { onEnd?: () => void }) => {
+				playbackObserver = observer;
+				return true;
+			},
+		);
+		const practice = {
+			supported: true,
+			phase: signal('ready'),
+			levels: signal<readonly number[]>(Array(28).fill(4)),
+			seconds: signal(0),
+			assessment: signal(null),
+			result: signal(null),
+			error: signal(''),
+			selectPrompt: vi.fn().mockReturnValue(true),
+			record: vi.fn().mockResolvedValue(undefined),
+			stop: vi.fn().mockResolvedValue(undefined),
+			pause: vi.fn(),
+		};
 		const component = TestBed.runInInjectionContext(
 			() => new PronunciationSlideComponent(),
 		);
 
-		expect(() =>
-			load(component, 'pronunciation', {
+		load(
+			component,
+			'pronunciation',
+			{
 				mode: 'repeat',
 				instruction: 'Listen, then repeat the complete sentence aloud.',
 				question: 'She is persistent.',
 				word: 'persistent',
-				stimulus: {
-					type: 'dialogue',
-					turns: [
-						{ speaker: 'Sentence', text: 'She is persistent.' },
-					],
-				},
-			}),
-		).not.toThrow();
-		expect(component.content()).toMatchObject({
-			question: 'She is persistent.',
-			options: [{ id: 'repeated', label: 'I repeated it aloud' }],
-			correctOptionIds: ['repeated'],
-		});
+				speech: { text: 'She is persistent.' },
+				recording: { itemId: 'word-2', promptId: 'sentence-2' },
+			},
+			{ pronunciationPractice: practice },
+		);
+
+		expect(practice.selectPrompt).toHaveBeenCalledWith(
+			'word-2',
+			'sentence-2',
+		);
+		expect(speech.speak).toHaveBeenCalledWith(
+			'She is persistent.',
+			0.95,
+			expect.objectContaining({ onEnd: expect.any(Function) }),
+		);
+		playbackObserver?.onEnd?.();
+		expect(practice.record).toHaveBeenCalledOnce();
 	});
 
 	it('submits general single and multiple selections without correctness', () => {

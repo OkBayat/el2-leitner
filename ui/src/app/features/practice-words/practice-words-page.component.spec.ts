@@ -1,16 +1,74 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
 import { PracticeWordsSlideBuilderService } from '../../application/practice-words/practice-words-slide-builder.service';
 import { PracticeWordsSessionService } from '../../application/practice-words/practice-words-session.service';
+import { ShadowingSessionService } from '../../application/shadowing-practice/shadowing-session.service';
 import { CollectionLearningPathApiService } from '../../core/collection-learning-path/collection-learning-path-api.service';
+import { PcmRecorderService } from '../../core/shadowing-practice/pcm-recorder.service';
 import { PracticeWordsPageComponent } from './practice-words-page.component';
 
 @Component({ template: '' })
 class EmptyPage {}
 
 describe('PracticeWordsPageComponent', () => {
+	it('uses one shared shadowing session for the third practice mode', async () => {
+		const slideBuilder = {
+			build: vi.fn().mockResolvedValue([
+				{ id: 'generated-shadowing', type: 'pronunciation', data: {} },
+			]),
+		};
+		const practiceSession = {
+			start: vi.fn(),
+			complete: vi.fn(),
+			abandon: vi.fn(),
+		};
+		const shadowingSession = {
+			start: vi.fn().mockResolvedValue(undefined),
+			phase: signal('ready'),
+			error: signal(''),
+			complete: vi.fn().mockResolvedValue('session-1'),
+			dispose: vi.fn(),
+		};
+		await TestBed.configureTestingModule({
+			imports: [PracticeWordsPageComponent],
+			providers: [
+				provideRouter([]),
+				{ provide: CollectionLearningPathApiService, useValue: {} },
+				{ provide: PracticeWordsSlideBuilderService, useValue: slideBuilder },
+				{ provide: PracticeWordsSessionService, useValue: practiceSession },
+			],
+		})
+			.overrideComponent(PracticeWordsPageComponent, {
+				set: {
+					providers: [
+						{ provide: ShadowingSessionService, useValue: shadowingSession },
+						{ provide: PcmRecorderService, useValue: {} },
+					],
+				},
+			})
+			.compileComponents();
+		const fixture = TestBed.createComponent(PracticeWordsPageComponent);
+		const component = fixture.componentInstance;
+
+		const expanded = await component.exerciseContext.selectionExpansion?.({
+			expansionId: 'house-one-practice',
+			slideId: 'practice-mode',
+			selectedOptionIds: ['sentence-shadowing'],
+		});
+
+		expect(expanded?.slides).toHaveLength(1);
+		expect(shadowingSession.start).toHaveBeenCalledOnce();
+		expect(practiceSession.start).not.toHaveBeenCalled();
+		expect(component.exerciseContext.pronunciationPractice).toBe(shadowingSession);
+		await component.exerciseContext.sequenceCompletion?.([]);
+		expect(shadowingSession.complete).toHaveBeenCalledOnce();
+		expect(practiceSession.complete).not.toHaveBeenCalled();
+		fixture.destroy();
+		expect(shadowingSession.dispose).toHaveBeenCalledOnce();
+	});
+
   it('expands the selected practice mode before the final Finish slide', async () => {
     const slideBuilder = {
       build: vi.fn().mockResolvedValue([

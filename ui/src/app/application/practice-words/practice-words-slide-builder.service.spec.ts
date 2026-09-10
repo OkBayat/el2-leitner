@@ -221,14 +221,11 @@ describe("PracticeWordsSlideBuilderService", () => {
 			data: {
 				mode: "repeat",
 				question: "She is persistent.",
-				stimulus: {
-					type: "dialogue",
-					turns: [
-						{ speaker: "Sentence", text: "She is persistent." },
-					],
-				},
+				speech: { text: "She is persistent." },
+				recording: { itemId: "word-2", promptId: "sentence-2" },
 			},
 		});
+		expect(slides[1].data).not.toHaveProperty("stimulus");
 	});
 
 	it("fails closed when a sentence mode cannot cover every House 1 word", async () => {

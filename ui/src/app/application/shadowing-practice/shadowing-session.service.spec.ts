@@ -45,6 +45,17 @@ describe('ShadowingSessionService', () => {
     expect(microphone.open).not.toHaveBeenCalled();
     expect(service.phase()).toBe('ready');
   });
+  it('starts a reusable session and selects an exact prompt without playing it', async () => {
+    await service.start();
+    expect(service.prompt()).toBeNull();
+    expect(service.phase()).toBe('ready');
+    expect(speech.speak).not.toHaveBeenCalled();
+
+    expect(service.selectPrompt('w', 'sentence')).toBe(true);
+    expect(service.prompt()?.sentence.text).toBe('Hello.');
+    expect(service.assessment()?.words[0]?.matched).toBe(false);
+    expect(speech.speak).not.toHaveBeenCalled();
+  });
   it('shows partial recognition but grades only after stopping and ignores duplicate stop clicks', async () => {
     await service.load(); await service.record(); handlers.pcm(new ArrayBuffer(16000));
     await vi.waitFor(() => expect(service.assessment()?.matchedCount).toBe(1));

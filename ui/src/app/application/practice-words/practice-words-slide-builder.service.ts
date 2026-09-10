@@ -204,10 +204,8 @@ export class PracticeWordsSlideBuilderService {
 						"Listen, then repeat the complete sentence aloud.",
 					question: sentence.text,
 					word: word.term,
-					stimulus: {
-						type: "dialogue",
-						turns: [{ speaker: "Sentence", text: sentence.text }],
-					},
+					speech: { text: sentence.text },
+					recording: { itemId: word.id, promptId: sentence.id },
 				} satisfies PronunciationSlideData,
 			};
 		});

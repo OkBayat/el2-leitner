@@ -13,6 +13,7 @@ import {
 	ClozeSlideComponent,
 	DictationSlideComponent,
 	MatchingSlideComponent,
+	PronunciationSlideComponent,
 	TeachingCardSlideComponent,
 } from './slide-library.components';
 
@@ -583,6 +584,93 @@ describe('reusable slide renderer contract', () => {
 
 		button?.click();
 		expect(speech.speak).toHaveBeenCalledTimes(2);
+	});
+
+	it('renders repeat pronunciation with inline playback and automatic recording states', () => {
+		let observer: { onWordBoundary: (charIndex: number) => void; onEnd: () => void } | undefined;
+		const speech = {
+			speak: vi.fn().mockImplementation(
+				(_text: string, _rate: number, playbackObserver: typeof observer) => {
+					observer = playbackObserver;
+					return true;
+				},
+			),
+			cancel: vi.fn(),
+		};
+		const phase = signal<'ready' | 'recording'>('ready');
+		const result = signal<{
+			transcript: string;
+			matchedCount: number;
+			totalCount: number;
+			score: number;
+			passed: boolean;
+		} | null>(null);
+		const practice = {
+			supported: true,
+			phase,
+			levels: signal<readonly number[]>([4, 12, 24, 8]),
+			seconds: signal(1.4),
+			assessment: signal(null),
+			result,
+			error: signal(''),
+			selectPrompt: vi.fn().mockReturnValue(true),
+			record: vi.fn().mockResolvedValue(undefined),
+			stop: vi.fn().mockResolvedValue(undefined),
+			pause: vi.fn(),
+		};
+		TestBed.configureTestingModule({
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(PronunciationSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'repeat-sentence',
+			type: 'pronunciation',
+			data: {
+				mode: 'repeat',
+				instruction: 'Listen and repeat.',
+				question: 'The meeting is on Thursday.',
+				speech: { text: 'The meeting is on Thursday.' },
+				recording: { itemId: 'word-1', promptId: 'sentence-1' },
+			},
+			environment: { pronunciationPractice: practice },
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const sentence = element.querySelector('.pronunciation-sentence');
+		const replay = element.querySelector<HTMLButtonElement>('[data-testid="pronunciation-sentence-replay"]');
+		const recordButton = element.querySelector<HTMLButtonElement>('[data-testid="pronunciation-record"]');
+		expect(element.querySelector('app-slide-stimulus')).toBeNull();
+		expect(sentence?.firstElementChild).toBe(replay);
+		expect(replay?.hasAttribute('mat-icon-button')).toBe(true);
+		expect(replay?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		expect(element.querySelectorAll('.cloze-playback-token--word')).toHaveLength(5);
+		expect(recordButton?.textContent).toContain('Tap to speak');
+
+		observer?.onWordBoundary(0);
+		fixture.detectChanges();
+		expect(element.querySelector('.cloze-playback-token--word')?.classList).toContain('is-spoken');
+		observer?.onEnd();
+		expect(practice.record).toHaveBeenCalledOnce();
+
+		phase.set('recording');
+		fixture.detectChanges();
+		expect(recordButton?.getAttribute('aria-pressed')).toBe('true');
+		expect(element.querySelectorAll('.pronunciation-waveform span')).toHaveLength(4);
+		expect(recordButton?.textContent).toContain('Listening · 1.4s');
+
+		const answered = vi.fn();
+		fixture.componentInstance.event.subscribe(answered);
+		result.set({ transcript: 'The meeting is on Thursday.', matchedCount: 5, totalCount: 5, score: 100, passed: true });
+		fixture.detectChanges();
+		expect(fixture.componentInstance.interactionState()).toBe('answered-correct');
+		expect(answered).toHaveBeenCalledWith(expect.objectContaining({ type: 'answered' }));
 	});
 
 	it('opens vocabulary details from an answered free-text cloze field', async () => {

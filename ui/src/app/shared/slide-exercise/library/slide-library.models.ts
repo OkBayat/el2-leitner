@@ -293,6 +293,11 @@ export interface PronunciationSlideData extends SlideTypeData {
 	readonly word?: string;
 	readonly options?: readonly SlideOption[];
 	readonly correctOptionId?: string;
+	readonly speech?: Pick<SpeechPlaybackConfig, 'text'>;
+	readonly recording?: {
+		readonly itemId: string;
+		readonly promptId: string;
+	};
 }
 
 export interface DictationSlideData extends SlideTypeData {
