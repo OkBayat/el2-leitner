@@ -139,6 +139,12 @@
   border-radius: var(--vocora-radius-md);
 }
 
+.review-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--vocora-space-3);
+}
+
 .review-illustration {
   position: absolute;
   right: var(--vocora-space-6);

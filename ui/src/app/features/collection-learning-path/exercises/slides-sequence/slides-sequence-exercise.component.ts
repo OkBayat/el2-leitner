@@ -50,6 +50,7 @@ function learnerResponse(
 	) {
 		return { selectedOptionIds: data["selectedOptionIds"] };
 	}
+	if (slideType === "number-input") return { value: data["value"] };
 	if (slideType === "classification")
 		return { assignments: data["assignments"] };
 	if (slideType === "matching")

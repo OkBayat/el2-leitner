@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { PronunciationPracticeController, SelectionSlideExpansionHandler, SlideExerciseResult } from '../../../../shared/slide-exercise';
+import type { NumberInputSlideExpansionHandler, PronunciationPracticeController, SelectionSlideExpansionHandler, SlideExerciseResult } from '../../../../shared/slide-exercise';
 import type {
   CompletedLearningPathExerciseOutcome,
   LearningPathNodeState,
@@ -17,6 +17,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly payload: TPayload;
   readonly ensureStarted?: () => Promise<boolean>;
   readonly selectionExpansion?: SelectionSlideExpansionHandler;
+  readonly numberInputExpansion?: NumberInputSlideExpansionHandler;
   readonly pronunciationPractice?: PronunciationPracticeController;
   readonly sequenceCompletion?: (results: readonly SlideExerciseResult[]) => Promise<void>;
 }

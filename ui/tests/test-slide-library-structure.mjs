@@ -8,6 +8,7 @@ const libraryRoot = join(uiRoot, 'src/app/shared/slide-exercise/library');
 const componentTypes = [
 	'teaching-card',
 	'selection',
+	'number-input',
 	'choice',
 	'truth',
 	'matching',

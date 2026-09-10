@@ -1,11 +1,12 @@
 # Registered Slide Catalog
 
-Select a slide from the learner action and evidence required. The 17 reusable families below are registered by the application. `message` and `summary` are flow-shell types, not reusable interaction families.
+Select a slide from the learner action and evidence required. The 18 reusable families below are registered by the application. `message` and `summary` are flow-shell types, not reusable interaction families.
 
 | Type | Learner action and evidence | Essential data | Important boundary |
 | --- | --- | --- | --- |
 | `teaching-card` | Read a word, contrast, rule, warning, or tip | `mode`, `title`, constrained `markdown`, and `chrome.header.progress: null`; legacy `blocks[]` remains readable | Markdown supports paragraphs, line breaks, `###`/`####` headings, bold, italic, numbered lists, and bullet lists. Configure exactly one content format. Presentation only; hide its progress indicator and do not treat it as mastery evidence. |
 | `selection` | Choose one or several unscored preferences, paths, or settings | `mode: single|multiple`, `question`, at least two `options`; optional registered `expansionId` | No correct answer or scoring fields. Emits selected IDs. A dynamic expansion must be handled outside JSON by the owning application parent. |
+| `number-input` | Enter one bounded numeric setting for an unscored runtime decision | `question`, `min`, `max`, `step`, `initialValue`; optional `label` and registered `expansionId` | Emits the validated numeric value. A dynamic expansion must be handled outside JSON by the owning application parent. |
 | `choice` | Recognize one or several correct alternatives | `question`, `options`, `correctOptionIds`; optional recognition `mode` and `speech` | Options cue the answer; use recall slides when cues are inappropriate. |
 | `truth` | Judge a statement | `mode`, `statement`, `correctOptionId`; optional `options` | Use not-given modes only when the source supports absence as evidence. |
 | `matching` | Map related items | `pairs` with `id`, `left`, `right`; optional mode and feedback policy | Allow many-to-one only when the relation permits it. |

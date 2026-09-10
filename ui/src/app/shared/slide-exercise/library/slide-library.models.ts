@@ -97,6 +97,16 @@ export interface SelectionSlideData extends SlideTypeData {
 	readonly expansionId?: string;
 }
 
+export interface NumberInputSlideData extends SlideTypeData {
+	readonly question: string;
+	readonly label?: string;
+	readonly min: number;
+	readonly max: number;
+	readonly step: number;
+	readonly initialValue: number;
+	readonly expansionId?: string;
+}
+
 export interface SpeechPlaybackConfig {
 	readonly text: string;
 	readonly autoplay?: boolean;
@@ -342,6 +352,7 @@ export interface WritingResponseSlideData extends SlideTypeData {
 export const REUSABLE_SLIDE_TYPES = [
 	'teaching-card',
 	'selection',
+	'number-input',
 	'choice',
 	'truth',
 	'matching',

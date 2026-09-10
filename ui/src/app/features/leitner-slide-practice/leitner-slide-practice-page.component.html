@@ -1,0 +1,10 @@
+@if (loading()) {
+	<main class="practice-state" role="status">Preparing your spelling practice…</main>
+} @else if (error()) {
+	<main class="practice-state practice-state--error">
+		<p role="alert">{{ error() }}</p>
+		<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="load()">Try again</button>
+	</main>
+} @else {
+	<app-slides-sequence-exercise (outcome)="onOutcome($event)" />
+}

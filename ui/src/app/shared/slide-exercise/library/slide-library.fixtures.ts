@@ -40,6 +40,19 @@ export const REUSABLE_SLIDE_FIXTURES: readonly SlideExerciseSlide[] = [
 		},
 	},
 	{
+		id: 'showcase-number-input',
+		type: 'number-input',
+		data: {
+			instruction: 'Choose the size of this practice.',
+			question: 'How many words would you like to practice?',
+			label: 'Number of words',
+			min: 1,
+			max: 50,
+			step: 1,
+			initialValue: 10,
+		},
+	},
+	{
 		id: 'showcase-choice',
 		type: 'choice',
 		data: {

@@ -20,6 +20,20 @@ export type SelectionSlideExpansionHandler = (
   request: SelectionSlideExpansionRequest,
 ) => SelectionSlideExpansionResult | Promise<SelectionSlideExpansionResult>;
 
+export interface NumberInputSlideExpansionRequest {
+  readonly expansionId: string;
+  readonly slideId: string;
+  readonly value: number;
+}
+
+export interface NumberInputSlideExpansionResult {
+  readonly slides: readonly SlideExerciseSlide[];
+}
+
+export type NumberInputSlideExpansionHandler = (
+  request: NumberInputSlideExpansionRequest,
+) => NumberInputSlideExpansionResult | Promise<NumberInputSlideExpansionResult>;
+
 export type PronunciationPracticePhase =
   | 'loading'
   | 'load-error'

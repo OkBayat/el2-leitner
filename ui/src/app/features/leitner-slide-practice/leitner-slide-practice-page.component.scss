@@ -1,0 +1,22 @@
+:host {
+	display: block;
+	min-height: 100dvh;
+}
+
+.practice-state {
+	display: grid;
+	min-height: 100dvh;
+	place-content: center;
+	gap: var(--vocora-space-4);
+	padding: var(--vocora-space-6);
+	color: var(--vocora-text-secondary);
+	text-align: center;
+}
+
+.practice-state p {
+	margin: 0;
+}
+
+.practice-state--error {
+	color: var(--vocora-error);
+}

@@ -10,6 +10,8 @@ export const appRoutes: Routes = [
   { path: 'welcome', canActivate: [authGuard], loadComponent: () => import('./features/welcome/welcome-page.component').then((m) => m.WelcomePageComponent) },
   { path: 'offline', loadComponent: () => import('./features/offline/offline-page.component').then((m) => m.OfflinePageComponent) },
   { path: 'practice-words', canActivate: [authGuard], loadComponent: () => import('./features/practice-words/practice-words-page.component').then((m) => m.PracticeWordsPageComponent) },
+  { path: 'add-new-words', canActivate: [authGuard], data: { practiceMode: 'add-new' }, loadComponent: () => import('./features/leitner-slide-practice/leitner-slide-practice-page.component').then((m) => m.LeitnerSlidePracticePageComponent) },
+  { path: 'daily-review', canActivate: [authGuard], data: { practiceMode: 'daily-review' }, loadComponent: () => import('./features/leitner-slide-practice/leitner-slide-practice-page.component').then((m) => m.LeitnerSlidePracticePageComponent) },
   { path: 'review', canActivate: [authGuard], loadComponent: () => import('./features/review/review-page.component').then((m) => m.ReviewPageComponent) },
   { path: 'sentence', canActivate: [authGuard], loadComponent: () => import('./features/sentence-practice/sentence-practice-page.component').then((m) => m.SentencePracticePageComponent) },
   { path: 'shadowing', canActivate: [authGuard], loadComponent: () => import('./features/shadowing-practice/shadowing-page.component').then((m) => m.ShadowingPageComponent) },

@@ -8,10 +8,10 @@ import type {
 import type { ShadowingCard } from "../../domain/shadowing-practice/shadowing";
 import type {
 	ClozeSlideData,
-	DictationSlideData,
 	PronunciationSlideData,
 	SlideExerciseSlide,
 } from "../../shared/slide-exercise";
+import { LeitnerDictationSlideBuilderService } from "../review/leitner-dictation-slide-builder.service";
 
 export type PracticeWordsMode =
 	"vocabulary-dictation" | "sentence-completion" | "sentence-shadowing";
@@ -106,6 +106,7 @@ function slideId(
 export class PracticeWordsSlideBuilderService {
 	private readonly learningApi = inject(LearningApiService);
 	private readonly sentenceApi = inject(SentencePracticeApiService);
+	private readonly dictationBuilder = inject(LeitnerDictationSlideBuilderService);
 
 	async build(
 		anchorId: string,
@@ -139,36 +140,14 @@ export class PracticeWordsSlideBuilderService {
 		}
 		const deck = await this.sentenceApi.getDeck(1);
 		if (mode === "vocabulary-dictation")
-			return this.dictationSlides(
+			return this.dictationBuilder.build(
 				anchorId,
 				words,
 				wordDefinitions(deck, words),
+				false,
 			);
 		const cards = sentenceCards(deck, words);
 		return this.completionSlides(anchorId, words, cards);
-	}
-
-	private dictationSlides(
-		anchorId: string,
-		words: readonly HouseOneWord[],
-		definitions: ReadonlyMap<string, string>,
-	): readonly SlideExerciseSlide[] {
-		return words.map((word) => ({
-			id: slideId(anchorId, "vocabulary-dictation", word.id),
-			rootSlideId: slideId(anchorId, "vocabulary-dictation", word.id),
-			itemId: word.id,
-			type: "dictation",
-			data: {
-				mode: "phrase",
-				instruction: "Listen and type the word or collocation.",
-				speech: { text: word.term, autoplay: true, replay: true },
-				answer: word.term,
-				definition: definitions.get(word.id)!,
-				acceptedAnswers: acceptedAnswers(word),
-				caseSensitive: false,
-				punctuationSensitive: false,
-			} satisfies DictationSlideData,
-		}));
 	}
 
 	private completionSlides(

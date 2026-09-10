@@ -13,6 +13,7 @@ import {
 	DictationSlideComponent,
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
+	NumberInputSlideComponent,
 	PronunciationSlideComponent,
 	RewriteSlideComponent,
 	SelectionSlideComponent,
@@ -233,6 +234,55 @@ describe('reusable slide library behavior', () => {
 			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
 		});
 		expect(events).toEqual([{ type: 'submitted', data: { selectedOptionIds: ['second'] } }]);
+	});
+
+	it('submits a bounded number through an external expansion handler before advancing', async () => {
+		const insertSlides = vi.fn();
+		const next = vi.fn();
+		const expansion = vi.fn().mockResolvedValue({
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		const component = new NumberInputSlideComponent();
+		const states: unknown[] = [];
+		const events: unknown[] = [];
+		component.stateChange.subscribe((state) => states.push(state));
+		component.event.subscribe((event) => events.push(event));
+		component.load({
+			slideId: 'word-count',
+			type: 'number-input',
+			data: {
+				instruction: 'Choose the size of this practice.',
+				question: 'How many new words would you like to add?',
+				label: 'Number of words',
+				min: 1,
+				max: 20,
+				step: 1,
+				initialValue: 10,
+				expansionId: 'new-word-practice',
+			},
+			environment: { numberInputExpansion: expansion },
+			deck: { insertSlides, next, results: () => [] },
+		});
+
+		expect(component.value()).toBe(10);
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: false } } } });
+		component.setValue('21');
+		expect(states.at(-1)).toEqual({ chrome: { footer: { primary: { disabled: true } } } });
+		component.setValue('12');
+		component.handleAction('continue');
+
+		await vi.waitFor(() => expect(next).toHaveBeenCalledOnce());
+		expect(expansion).toHaveBeenCalledWith({
+			expansionId: 'new-word-practice',
+			slideId: 'word-count',
+			value: 12,
+		});
+		expect(insertSlides).toHaveBeenCalledWith({
+			anchorId: 'word-count',
+			gap: 0,
+			slides: [{ id: 'generated-one', type: 'message', data: { title: 'One' } }],
+		});
+		expect(events).toEqual([{ type: 'submitted', data: { value: 12 } }]);
 	});
 
 	it('keeps an expanded selection open when generation fails', async () => {

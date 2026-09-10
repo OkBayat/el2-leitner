@@ -157,6 +157,15 @@ completion evidence.
 
 Use `choice` when options form an assessment question. Configure `correctOptionIds`; its result is graded by the backend.
 
+## Numeric setup input
+
+Use `number-input` for one unscored bounded numeric setting. Configure finite
+`min`, `max`, `step`, and `initialValue` values, with the default inside the
+inclusive range. It emits `{ value }`. When that value determines a
+runtime-sized path, configure `expansionId`; the application parent supplies a
+matching `numberInputExpansion` handler that returns registered non-terminal
+slides before the component advances. Keep services and callbacks out of JSON.
+
 ## Rewrite locality
 
 Use `rewrite` only for a short, unambiguous correction whose exact model and
