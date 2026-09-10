@@ -27,10 +27,29 @@
       </div>
     }
 
+    @if (currentLesson(); as lesson) {
+      <header
+        class="lesson-context-header"
+        data-testid="current-lesson-header"
+        [attr.data-palette]="currentLessonPalette()"
+      >
+        <a
+          class="lesson-context-header__heading"
+          data-testid="lesson-title-link"
+          [routerLink]="['/learning-paths', view.path.id, 'lessons', lesson.id]"
+        >
+          <p>Lesson {{ lesson.position }} · {{ currentLessonStateLabel() }}</p>
+          <h2>{{ lesson.title }}</h2>
+        </a>
+      </header>
+    }
+
     <section class="lesson-list" aria-label="Course lessons">
       @for (lesson of visibleLessons(); track lesson.id) {
         <app-learning-path-lesson-node
-          [pathId]="view.path.id"
+          class="lesson-section"
+          data-testid="lesson-section"
+          [attr.data-lesson-id]="lesson.id"
           [lesson]="lesson"
           [startExerciseId]="startExerciseId()"
           (selectExercise)="openExercise($event)"

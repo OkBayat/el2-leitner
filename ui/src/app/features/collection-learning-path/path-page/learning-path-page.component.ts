@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CollectionLearningPathFacade } from '../../../application/collection-learning-path/collection-learning-path.facade';
 import {
   isCanonicalLearningPathPublicId,
+  learningPathStateLabel,
   learningPathStartExerciseId,
   type LearningPathExerciseSelection,
 } from '../../../domain/collection-learning-path/learning-path';
+import { lessonTrailPalette } from '../components/lesson-palette';
 import { LessonNodeComponent } from '../components/lesson-node/lesson-node.component';
 import { ProgressHeaderComponent } from '../components/progress-header/progress-header.component';
 
@@ -25,8 +27,10 @@ export class LearningPathPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly collectionId = signal('');
   readonly pathId = signal('');
+  readonly currentLessonId = signal('');
   readonly requestedVisibleLessonCount = signal(LESSON_BATCH_SIZE);
   readonly visibleLessonCount = computed(() => {
     const view = this.facade.view();
@@ -44,6 +48,15 @@ export class LearningPathPageComponent {
     );
   });
   readonly visibleLessons = computed(() => this.facade.view()?.lessons.slice(0, this.visibleLessonCount()) ?? []);
+  readonly currentLesson = computed(() => {
+    const lessons = this.visibleLessons();
+    return lessons.find((lesson) => lesson.id === this.currentLessonId()) ?? lessons[0] ?? null;
+  });
+  readonly currentLessonStateLabel = computed(() => {
+    const lesson = this.currentLesson();
+    return lesson ? learningPathStateLabel(lesson.state) : '';
+  });
+  readonly currentLessonPalette = computed(() => lessonTrailPalette(this.currentLesson()?.position ?? 1));
   readonly startExerciseId = computed(() => learningPathStartExerciseId(this.facade.view()?.lessons ?? []));
   readonly remainingLessonCount = computed(() => Math.max(
     0,
@@ -71,6 +84,26 @@ export class LearningPathPageComponent {
   showMoreLessons(): void {
     const total = this.facade.view()?.lessons.length ?? 0;
     this.requestedVisibleLessonCount.set(Math.min(total, this.visibleLessonCount() + LESSON_BATCH_SIZE));
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  syncCurrentLessonHeader(): void {
+    const root = this.element.nativeElement;
+    const header = root.querySelector<HTMLElement>('[data-testid="current-lesson-header"]');
+    const sections = Array.from(root.querySelectorAll<HTMLElement>('.lesson-section[data-lesson-id]'));
+    if (!header || sections.length === 0) return;
+
+    const headerBottom = header.getBoundingClientRect().bottom;
+    let currentLessonId = sections[0].dataset['lessonId'] ?? '';
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top > headerBottom) break;
+      currentLessonId = section.dataset['lessonId'] ?? currentLessonId;
+    }
+
+    if (currentLessonId && currentLessonId !== this.currentLessonId()) {
+      this.currentLessonId.set(currentLessonId);
+    }
   }
 
   async openExercise(selection: LearningPathExerciseSelection): Promise<void> {
