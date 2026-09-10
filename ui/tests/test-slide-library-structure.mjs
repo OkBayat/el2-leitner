@@ -122,6 +122,11 @@ assert.match(
 	sharedStyles,
 	/\.choice-option\[data-state='selected'\][\s\S]*box-shadow:[^;]*var\(--vocora-information-border\)/u,
 );
+assert.match(
+	sharedStyles,
+	/:host ::ng-deep \.teaching-markdown \.teaching-markdown__known\s*\{[\s\S]*color:\s*var\(--vocora-action-primary\);/u,
+	'Teaching-card strong text must use the scoped primary action color.',
+);
 assert.match(clozeTemplate, /<textarea\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<input\s+[\s\S]*class="cloze-input"/u);
 assert.doesNotMatch(clozeTemplate, /<textarea\s+[\s\S]*matInput/u);

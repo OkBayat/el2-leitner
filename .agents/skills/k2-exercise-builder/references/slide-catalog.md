@@ -4,7 +4,7 @@ Select a slide from the learner action and evidence required. The 17 reusable fa
 
 | Type | Learner action and evidence | Essential data | Important boundary |
 | --- | --- | --- | --- |
-| `teaching-card` | Read a word, contrast, rule, warning, or tip | `mode`, `title`, `blocks[]` with `kind` and `content` | Presentation only; no mastery evidence. |
+| `teaching-card` | Read a word, contrast, rule, warning, or tip | `mode`, `title`, constrained `markdown`, and `chrome.header.progress: null`; legacy `blocks[]` remains readable | Markdown supports paragraphs, line breaks, `###`/`####` headings, bold, italic, numbered lists, and bullet lists. Configure exactly one content format. Presentation only; hide its progress indicator and do not treat it as mastery evidence. |
 | `selection` | Choose one or several unscored preferences, paths, or settings | `mode: single|multiple`, `question`, at least two `options`; optional registered `expansionId` | No correct answer or scoring fields. Emits selected IDs. A dynamic expansion must be handled outside JSON by the owning application parent. |
 | `choice` | Recognize one or several correct alternatives | `question`, `options`, `correctOptionIds`; optional recognition `mode` and `speech` | Options cue the answer; use recall slides when cues are inappropriate. |
 | `truth` | Judge a statement | `mode`, `statement`, `correctOptionId`; optional `options` | Use not-given modes only when the source supports absence as evidence. |
@@ -16,7 +16,7 @@ Select a slide from the learner action and evidence required. The 17 reusable fa
 | `short-answer` | Retrieve one brief answer without options | `question`, `answers`; optional hints and exact spelling | Hints reduce retrieval difficulty. |
 | `word-formation` | Produce a derived form from a base | `baseWord`, `fields` with `partOfSpeech`; optional mode | Use matching when production is not required. |
 | `error-correction` | Detect and replace faulty language | `original`, `answers`; optional mode and category | Accepted answers must not reject other valid corrections accidentally. |
-| `rewrite` | Transform a supplied utterance | `original`; accepted answers, required fragments, target words, or model answer as appropriate | Open rewrites are submitted work unless deterministic constraints exist. |
+| `rewrite` | Correct one or two local word-level errors in a supplied utterance | `original`, exact `acceptedAnswers`, and `modelAnswer`; optional target words | Keep the correction unambiguous and within one or two word edits. Use `writing-response` for open paraphrase or substantial restructuring. |
 | `pronunciation` | Discriminate or repeat a spoken form | `mode`, `question`; optional word, options, and correct option | Repeat is practice, not automatic pronunciation-quality judgment. |
 | `dictation` | Convert heard language into written form | `answer` and exactly one `audio` or `speech`; optional mode and constraints | Tests sound-to-form production, not broad comprehension. |
 | `speaking-response` | Record an oral response | `mode`, `prompt`; optional bullets, timing, vocabulary, notes | Submission proves a recording exists; semantic evaluation is separate. |

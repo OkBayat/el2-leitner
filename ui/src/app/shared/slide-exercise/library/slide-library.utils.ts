@@ -27,6 +27,18 @@ export function strings(value: unknown): readonly string[] {
 	return Array.isArray(value) ? value.map(text).filter(Boolean) : [];
 }
 
+export function shuffled<T>(
+	values: readonly T[],
+	random: () => number = Math.random,
+): readonly T[] {
+	const result = [...values];
+	for (let index = result.length - 1; index > 0; index -= 1) {
+		const target = Math.floor(random() * (index + 1));
+		[result[index], result[target]] = [result[target], result[index]];
+	}
+	return result;
+}
+
 export function options(
 	value: unknown,
 	label = 'options',

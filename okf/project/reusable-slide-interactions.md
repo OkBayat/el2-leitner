@@ -3,7 +3,7 @@ type: Concept
 title: Reusable Slide Interactions
 description: Select and compose Vocora reusable slide families by learner action, evidence type, and assessment boundary.
 tags: [learning-path, slides, exercises, angular, interaction-design]
-timestamp: 2026-09-09T20:49:00Z
+timestamp: 2026-09-10T00:30:00Z
 ---
 
 Vocora provides 17 reusable interaction families for lesson exercises. Select a
@@ -16,7 +16,7 @@ recall, correction, transformation, or independent production.
 
 | Family | Best used for | Supported modes | Useful stimuli and combinations | Limits and cautions |
 | --- | --- | --- | --- | --- |
-| `teaching-card` | Presenting a word, usage distinction, rule, warning, or study tip before practice | `word`, `usage`, `contrast`, `rule`, `warning`, `tip`; blocks: `word`, `comparison`, `correction`, `patterns`, `example`, `note` | Text, image, chart, or diagram; often precedes a scored recognition or recall slide | It presents information and does not prove mastery. Do not use it as an assessment substitute. |
+| `teaching-card` | Presenting a word, usage distinction, rule, warning, or study tip before practice | `word`, `usage`, `contrast`, `rule`, `warning`, `tip`; constrained Markdown is preferred and legacy typed blocks remain readable | Markdown paragraphs, line breaks, level-three/four headings, emphasis, and short ordered or bullet lists; text, image, chart, or diagram stimuli remain available | Configure exactly one content format. Raw HTML is escaped. It presents information and does not prove mastery. |
 | `selection` | Choosing a learner preference, path, category, or configuration when no option is correct | `single`, `multiple` | A question with two or more object-configured options; each option has an ID, label, and optional description. A registered `expansionId` can request runtime-sized follow-up slides. | It emits selected option IDs as submitted evidence. It is not scored and must not contain correctness fields. Dynamic handlers live in the application runtime, never in JSON. Use `choice` for assessment. |
 | `choice` | Recognition among explicit alternatives | `single`, `multiple`, `meaning`, `part-of-speech`, `synonym`, `antonym`, `correct-spelling`, `best-word`, `odd-one-out` | Text or visual prompts; speech playback supports sound-to-option recognition | Options can cue the answer, so use constructed response when unaided recall is required. |
 | `truth` | Judging a statement against a source, claim, or opinion | `true-false`, `true-false-not-given`, `yes-no-not-given`, `agree-disagree` | Text, audio, chart, or diagram followed by one or more judgments | Use `not-given` only when source coverage genuinely makes absence distinguishable from falsehood. |
@@ -28,7 +28,7 @@ recall, correction, transformation, or independent production.
 | `short-answer` | Brief unaided retrieval of one answer | no mode; optional first-letter and character-count hints | Text, audio, image, chart, or diagram questions | Hints reduce retrieval difficulty. Use exact spelling only when orthographic accuracy is part of the objective. |
 | `word-formation` | Producing a derived form from a supplied base word | `family`, `target-part-of-speech`, `prefix`, `suffix`, `negative-form`, `base-word`, `transitive-intransitive` | Sentential context or a teaching card showing a word family | This tests production of form, not recognition of a word-family relation. Use matching when production is not required. |
 | `error-correction` | Detecting and replacing faulty language | `select-and-replace`, `inline-edit`, `sentence-correction`, `paragraph-correction` | Sentences or paragraphs containing a purposeful error; often follows a rule card | Accepted corrections must reflect the intended error category and avoid rejecting other valid rewrites accidentally. |
-| `rewrite` | Transforming meaning, register, grammar, or target vocabulary | `paraphrase`, `target-vocabulary`, `sentence-transformation`, `noun-to-verb`, `verb-to-noun`, `formalize`, `linking-word`, `synonym-replacement` | Source sentence plus targets; useful before independent writing | Exact accepted answers or required fragments can score constrained tasks. Open transformations should provide a model answer and be treated as submitted work rather than pretending to have exhaustive automatic scoring. |
+| `rewrite` | Transforming meaning, register, grammar, or target vocabulary | `paraphrase`, `target-grammar`, `target-vocabulary`, `sentence-transformation`, `noun-to-verb`, `verb-to-noun`, `formalize`, `linking-word`, `synonym-replacement` | Source sentence plus targets; useful before independent writing | Exact accepted answers or required fragments can score constrained tasks. Open transformations should provide a model answer and be treated as submitted work rather than pretending to have exhaustive automatic scoring. |
 | `pronunciation` | Discriminating or practising a sound, stress pattern, or spoken form | `phoneme-match`, `sound-choice`, `word-stress`, `listen-and-identify`, `ipa-match`, `repeat` | Speech playback, audio, IPA, and choice options; can precede dictation | Choice-like modes assess perception. `repeat` provides practice but does not by itself perform semantic or pronunciation-quality judging. |
 | `dictation` | Converting heard language into written form | `word`, `phrase`, `sentence` | Exactly one playback source: audio or speech; useful after pronunciation work | Configure replay count, accepted answers, case, and punctuation according to the objective. This is sound-to-form production, not general listening comprehension. |
 | `speaking-response` | Capturing planned or spontaneous oral production | `part1`, `cue-card`, `part3`, `vocabulary-production` | Prompt bullets, preparation time, response time, target vocabulary, and optional notes | The component captures a local recording and submission state. Mastery claims require a separate evaluation policy or human/automated judge. |
@@ -123,7 +123,7 @@ exercise flow but are not members of the 17 reusable interaction families.
 * Spelling and spoken-form practice: `pronunciation` -> `choice` with speech
   playback -> `dictation`. Keep the final dictation constraints aligned with
   whether spelling, case, or punctuation is being assessed.
-* Grammar or usage repair: `teaching-card` with contrast/correction blocks ->
+* Grammar or usage repair: `teaching-card` with contrast/correction Markdown ->
   `error-correction` -> constrained `rewrite`.
 * Source-based IELTS completion: one source stimulus ->
   `structured-completion`; preserve the form, table, notes, flowchart, or
@@ -142,3 +142,4 @@ exercise flow but are not members of the 17 reusable interaction families.
 [9] [House 1 practice slide builder](../../ui/src/app/application/practice-words/practice-words-slide-builder.service.ts)
 [10] [Practice Words session persistence](../../ui/src/app/application/practice-words/practice-words-session.service.ts)
 [11] [Sequence completion boundary](../../ui/src/app/features/collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component.ts)
+[12] [Teaching-card Markdown parser](../../ui/src/app/shared/slide-exercise/library/components/teaching-card/teaching-card-markdown.ts)

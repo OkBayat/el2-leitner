@@ -57,6 +57,29 @@ All reusable slides may declare `instruction`, `stimulus`, and `explanation` whe
 
 Options are objects with a stable `id`, visible `label`, and optional `description`. Answer fields use an `id`, one or more `answers`, and optional constraints such as `wordLimit`, `caseSensitive`, `punctuationSensitive`, or `exactSpelling`.
 
+### Teaching-card Markdown
+
+New `teaching-card` slides put instructional content in one non-empty
+`markdown` string. The constrained renderer supports paragraphs, explicit line
+breaks, `###` and `####` headings, `**bold**`, `*italic*`, numbered lists, and
+bullet lists. Raw HTML, links, images, tables, and arbitrary Markdown extensions
+are not part of this contract. The renderer escapes raw HTML before rendering.
+
+Legacy `blocks` configurations remain supported so existing courses continue to
+load. Configure exactly one of `markdown` or `blocks`; new or materially revised
+teaching cards use `markdown`.
+
+Every `teaching-card` is instructional content rather than a scored response,
+so its slide object must hide header progress with:
+
+```json
+{
+  "chrome": {
+    "header": { "progress": null }
+  }
+}
+```
+
 ## Chrome and evidence
 
 Registry defaults normally own buttons:
@@ -68,11 +91,12 @@ Registry defaults normally own buttons:
 
 Use `chrome` only for deliberate changes such as a finish-only terminal summary. Scored slides emit `answered`; unscored decision and open-production slides emit `submitted`. A submitted event proves completion, not correctness.
 
-When the first slide is setup rather than an exercise step, set
-`chrome.header.progress` to `null` on that slide. The sequence runtime hides its
-progress bar and excludes that leading slide from later progress labels and
-totals. Do not use this override on a slide that should count toward exercise
-progress.
+Every `teaching-card` must set `chrome.header.progress` to `null`, which hides
+progress on that instructional card. When the card is also the first slide, the
+sequence runtime excludes that leading setup slide from later progress labels
+and totals. A non-leading card still counts toward the sequence total even
+though its own progress is hidden. A non-teaching leading setup slide may use
+the same override only when it also should not count toward exercise progress.
 
 ## Selection versus choice
 
@@ -132,6 +156,25 @@ as Practice Words does; otherwise stop instead of publishing unverifiable
 completion evidence.
 
 Use `choice` when options form an assessment question. Configure `correctOptionIds`; its result is graded by the backend.
+
+## Rewrite locality
+
+Use `rewrite` only for a short, unambiguous correction whose exact model and
+accepted answers differ from `original` by one or two word insertions,
+deletions, substitutions, or word-order edits. Give a direct instruction that
+identifies the intended grammar or vocabulary target. An inline alternative
+such as `He go/goes to the gym every day.` may be used when additional support
+is helpful; the accepted answer is `He goes to the gym every day.`
+
+Good local corrections include `Tom play football every Saturday.` to `Tom
+plays football every Saturday.`, or `She always is late.` to `She is always
+late.` Do not ask learners to infer a substantially different sentence such as
+changing `Tom's normal Saturday activity is football.` into `Tom plays football
+every Saturday.` Use `writing-response` for open paraphrase or restructuring.
+
+Every runtime-ready rewrite authored through this skill provides non-empty
+`modelAnswer` and exact `acceptedAnswers`. Do not use `requiredFragments` as the
+scoring contract because unrelated text could contain the same fragments.
 
 ## Validation boundary
 

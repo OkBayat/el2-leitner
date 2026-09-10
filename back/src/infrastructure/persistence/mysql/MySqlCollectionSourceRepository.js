@@ -46,7 +46,7 @@ export class MySqlCollectionSourceRepository {
       const nextVersion = Number(collection.content_version) + 1;
       const sectionIds = await this.#syncSections(connection, collection.id, source.parsed.sections);
       const seenVocabularyIds = new Set();
-      const usedSectionIds = new Set();
+      const usedSectionIds = new Set([...sectionIds.values()].map((id) => String(id)));
       const staleFormIds = new Set();
       const staleSentenceIds = new Set();
       let definitions = 0;

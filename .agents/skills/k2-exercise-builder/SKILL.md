@@ -29,6 +29,8 @@ It does not own Angular component implementation, backend persistence, lesson-le
 8. Preserve source wording and answer constraints. Do not invent facts, answer keys, audio URLs, or unsupported accepted answers.
 9. Prefer the fewest slides that achieve the objective. Do not add interaction variety for its own sake.
 10. For runtime-sized paths, a `selection` may declare `expansionId`; the application parent must own a matching runtime handler that returns only registered, non-terminal slide objects. Keep functions and services out of the exercise JSON.
+11. Author new `teaching-card` content in its constrained `markdown` field. Use legacy `blocks` only when preserving an existing configuration, and never configure both formats together. Every `teaching-card` must set `chrome.header.progress` to `null` so its instructional screen does not display progress.
+12. Keep every `rewrite` slide as one unambiguous local correction. Its model and accepted answers must differ from the displayed original by exactly one or two word insertions, deletions, substitutions, or word-order edits. Use exact `acceptedAnswers`; do not score a rewrite only through permissive fragments.
 
 ## Workflow
 
@@ -52,14 +54,19 @@ When a selection determines a runtime-sized path, follow the dynamic expansion c
 
 ### 4. Validate and return
 
-Write the candidate object to a temporary JSON file and run:
+Write every candidate or materially revised exercise object to a temporary JSON
+file and run:
 
 ```bash
 rtk python3 .agents/skills/k2-exercise-builder/scripts/validate-exercise.py \
   --input <exercise.json>
 ```
 
-Fix all failures at the object source. Return the validated exercise object and, only when useful, a short note explaining slide selection or a blocker.
+The validator checks the sequence envelope, per-slide required data, answer
+references, and every runtime-enumerated configuration value such as `mode`,
+`inputMode`, `layout`, `feedbackMode`, and `register`. Fix all failures at the
+object source. Return the validated exercise object and, only when useful, a
+short note explaining slide selection or a blocker.
 
 ## Stop conditions
 
@@ -91,6 +98,8 @@ Also run the repository-required `k2-skill-architecture` validator.
 
 - Validate the `slides.sequence` envelope, supported slide allowlist, unique IDs, and terminal-final invariant.
 - Validate required per-type fields and basic referential integrity.
+- Reject configuration values that are not supported by the registered slide's runtime contract.
+- Require every `teaching-card` to configure `chrome.header.progress: null`.
 - Reject correctness fields on unscored `selection` slides.
 - Validate this skill's files, routing, references, interface metadata, and focused tests.
 

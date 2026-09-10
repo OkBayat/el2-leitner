@@ -230,6 +230,7 @@ describe('reusable slide library behavior', () => {
 		const component = TestBed.runInInjectionContext(
 			() => new ChoiceSlideComponent(),
 		);
+		const random = vi.spyOn(Math, 'random').mockReturnValue(0);
 		load(component, 'choice', {
 			question: 'Choose the correct spelling.',
 			options: [
@@ -238,8 +239,13 @@ describe('reusable slide library behavior', () => {
 			],
 			correctOptionIds: ['b'],
 		});
+		random.mockRestore();
 
-		component.handleShortcut('1');
+		expect(component.content()?.options.map((option) => option.id)).toEqual([
+			'b',
+			'a',
+		]);
+		component.handleShortcut('2');
 		expect(component.selectedOptionIds()).toEqual(['a']);
 		component.handleAction('check');
 
@@ -375,6 +381,7 @@ describe('reusable slide library behavior', () => {
 		const component = TestBed.runInInjectionContext(
 			() => new ClassificationSlideComponent(),
 		);
+		const random = vi.spyOn(Math, 'random').mockReturnValue(0);
 		load(component, 'classification', {
 			instruction: 'Classify the words.',
 			categories: [
@@ -386,6 +393,11 @@ describe('reusable slide library behavior', () => {
 				{ id: 'root', label: 'root', correctCategoryId: 'plant' },
 			],
 		});
+		random.mockRestore();
+		expect(component.content()?.items.map((item) => item.id)).toEqual([
+			'root',
+			'paw',
+		]);
 		component.selectItem('paw');
 		expect(speech.speak).toHaveBeenCalledWith('paw', 0.95);
 		component.assignSelected('animal');
@@ -633,6 +645,21 @@ describe('reusable slide library behavior', () => {
 			type: 'submitted',
 			data: { response: 'Energy use has fallen.' },
 		});
+	});
+
+	it('loads target-grammar RewriteSlide configurations', () => {
+		const component = new RewriteSlideComponent();
+
+		expect(() =>
+			load(component, 'rewrite', {
+				mode: 'target-grammar',
+				original: "Tom's normal Saturday activity is football.",
+				instruction: 'Rewrite the idea as a present simple habit.',
+				modelAnswer: 'Tom plays football every Saturday.',
+				acceptedAnswers: ['Tom plays football every Saturday.'],
+			}),
+		).not.toThrow();
+		expect(component.content()?.mode).toBe('target-grammar');
 	});
 
 	it('moves SpeakingResponseSlide through recording and enables submission after stopping', async () => {

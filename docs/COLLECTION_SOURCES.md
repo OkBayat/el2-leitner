@@ -34,6 +34,7 @@ Rules:
 
 - One `#` heading is required for the book title.
 - Each `##` heading is a lesson or source section.
+- A repository-managed course-only collection may contain sections without vocabulary items. Interactive vocabulary imports still require at least one item.
 - Each top-level `-` line is one vocabulary identity.
 - The first form is the source's primary display form; forms after ` / ` are accepted spellings/forms of the same vocabulary identity, not synonyms.
 - Every vocabulary item requires at least one `definition:`.

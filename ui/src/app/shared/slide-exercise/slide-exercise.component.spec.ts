@@ -4,6 +4,7 @@ import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
 import { describe, expect, it, vi } from "vitest";
 import { ReviewAnswerSoundService } from "../../core/sound/review-answer-sound.service";
+import { SlideContentRegistry } from "./slide-content-registry";
 import { SlideExerciseComponent } from "./slide-exercise.component";
 import type { SlideExerciseSlide } from "./slide-exercise.models";
 
@@ -257,6 +258,46 @@ describe("SlideExerciseComponent", () => {
 		expect(
 			fixture.nativeElement.querySelector('[role="progressbar"]'),
 		).toBeNull();
+	});
+
+	it("offers a skip action when the active slide renderer cannot load", async () => {
+		TestBed.configureTestingModule({
+			imports: [SlideExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		const registry = new SlideContentRegistry();
+		registry.register({
+			type: "broken",
+			loadComponent: async () => {
+				throw new Error("renderer failed");
+			},
+		});
+		fixture.componentRef.setInput("registry", registry);
+		fixture.componentRef.setInput("slides", [
+			slide("broken", "broken"),
+			slide("next", "message"),
+		]);
+		fixture.detectChanges();
+		await fixture.whenStable();
+		fixture.detectChanges();
+
+		const skip = fixture.nativeElement.querySelector(
+			'[data-testid="skip-unavailable-slide"]',
+		) as HTMLButtonElement | null;
+		expect(skip?.textContent).toContain("Skip");
+		expect(skip?.classList).toContain("mat-mdc-outlined-button");
+
+		skip?.click();
+		fixture.detectChanges();
+
+		expect(fixture.componentInstance.currentSlide?.id).toBe("next");
+		expect(fixture.componentInstance.results()).toEqual([]);
 	});
 
 	it("maps Enter to the current primary action", () => {
