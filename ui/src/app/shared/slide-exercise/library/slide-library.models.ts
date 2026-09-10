@@ -263,6 +263,7 @@ export interface ErrorCorrectionSlideData extends SlideTypeData {
 export interface RewriteSlideData extends SlideTypeData {
 	readonly mode?:
 		| 'paraphrase'
+		| 'target-grammar'
 		| 'target-vocabulary'
 		| 'sentence-transformation'
 		| 'noun-to-verb'

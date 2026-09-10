@@ -635,6 +635,21 @@ describe('reusable slide library behavior', () => {
 		});
 	});
 
+	it('loads target-grammar RewriteSlide configurations', () => {
+		const component = new RewriteSlideComponent();
+
+		expect(() =>
+			load(component, 'rewrite', {
+				mode: 'target-grammar',
+				original: "Tom's normal Saturday activity is football.",
+				instruction: 'Rewrite the idea as a present simple habit.',
+				modelAnswer: 'Tom plays football every Saturday.',
+				acceptedAnswers: ['Tom plays football every Saturday.'],
+			}),
+		).not.toThrow();
+		expect(component.content()?.mode).toBe('target-grammar');
+	});
+
 	it('moves SpeakingResponseSlide through recording and enables submission after stopping', async () => {
 		configure();
 		const component = TestBed.runInInjectionContext(

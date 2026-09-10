@@ -14,6 +14,7 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
 import type { SlideContentComponent, SlideContentEvent } from './slide-content-contracts';
 import type { SlideContentRegistry } from './slide-content-registry';
@@ -22,6 +23,7 @@ import type { SlideExerciseDeckController, SlideExerciseRuntimeState, SlideExerc
 @Component({
   selector: 'app-slide-content-host',
   standalone: true,
+  imports: [MatButtonModule],
   templateUrl: './slide-content-host.component.html',
   styleUrl: './slide-content-host.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,7 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input() environment?: unknown;
   @Output() readonly stateChange = new EventEmitter<SlideExerciseRuntimeState>();
   @Output() readonly event = new EventEmitter<SlideContentEvent>();
+  @Output() readonly skipUnavailable = new EventEmitter<void>();
   @ViewChild('outlet', { read: ViewContainerRef, static: true }) private outlet!: ViewContainerRef;
 
   rendererLoading = false;
@@ -61,6 +64,10 @@ export class SlideContentHostComponent implements OnInit, OnChanges, OnDestroy {
 
   retry(): void {
     void this.render();
+  }
+
+  requestSkip(): void {
+    this.skipUnavailable.emit();
   }
 
   handleAction(actionId: string): void {

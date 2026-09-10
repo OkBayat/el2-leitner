@@ -40,6 +40,7 @@ function parseRewrite(value: unknown): RewriteSlideData {
 			source['mode'],
 			[
 				'paraphrase',
+				'target-grammar',
 				'target-vocabulary',
 				'sentence-transformation',
 				'noun-to-verb',

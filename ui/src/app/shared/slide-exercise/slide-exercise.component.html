@@ -25,6 +25,7 @@
 						[environment]="environment"
 						(stateChange)="onContentState($event)"
 						(event)="onContentEvent($event)"
+						(skipUnavailable)="next()"
 					/>
 				</div>
 				@if (guideSlide; as guide) {
@@ -36,6 +37,7 @@
 							[registry]="registry"
 							[deck]="deckController"
 							[environment]="environment"
+							(skipUnavailable)="closeGuide()"
 						/>
 					</div>
 				}
