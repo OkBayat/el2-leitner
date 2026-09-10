@@ -28,13 +28,13 @@ describe('LeitnerWordDefinitionsService', () => {
 		]);
 	});
 
-	it('fails closed when any requested word has no definition', async () => {
+	it('uses an empty string when a requested word has no definition', async () => {
 		TestBed.configureTestingModule({ providers: [
 			LeitnerWordDefinitionsService,
 			{ provide: VocabularyApiService, useValue: { sources: vi.fn().mockResolvedValue([]) } },
 		] });
 
 		await expect(TestBed.inject(LeitnerWordDefinitionsService).load([{ id: 'missing' }]))
-			.rejects.toThrow('Definitions are unavailable for 1 word.');
+			.resolves.toEqual(new Map([['missing', '']]));
 	});
 });

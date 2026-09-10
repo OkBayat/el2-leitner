@@ -15,6 +15,7 @@ describe('LeitnerDictationSlideBuilderService', () => {
 
 		expect(slides.map((slide) => slide.itemId)).toEqual(['word-2', 'word-1']);
 		expect(slides).toHaveLength(2);
+		expect(slides[0].data).toMatchObject({ definition: '' });
 		expect(slides[1]).toMatchObject({
 			id: 'daily-review-vocabulary-dictation-word-1',
 			rootSlideId: 'daily-review-vocabulary-dictation-word-1',

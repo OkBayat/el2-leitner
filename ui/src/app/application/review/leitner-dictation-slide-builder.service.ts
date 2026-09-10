@@ -31,7 +31,6 @@ export class LeitnerDictationSlideBuilderService {
 		const ordered = shuffle ? shuffled(words) : words;
 		return ordered.map((word) => {
 			const id = `${anchorId}-vocabulary-dictation-${word.id}`;
-			const definition = definitions.get(word.id)?.trim();
 			return {
 				id,
 				rootSlideId: id,
@@ -42,7 +41,7 @@ export class LeitnerDictationSlideBuilderService {
 					instruction: 'Listen and type the word or collocation.',
 					speech: { text: word.term, autoplay: true, replay: true },
 					answer: word.term,
-					...(definition ? { definition } : {}),
+					definition: definitions.get(word.id)?.trim() ?? '',
 					acceptedAnswers: acceptedAnswers(word),
 					caseSensitive: false,
 					punctuationSensitive: false,

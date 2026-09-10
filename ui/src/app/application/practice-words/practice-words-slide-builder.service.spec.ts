@@ -164,7 +164,7 @@ describe("PracticeWordsSlideBuilderService", () => {
 		]);
 	});
 
-	it("does not build a dictation deck when any House 1 definition is unavailable", async () => {
+	it("uses an empty definition when a House 1 definition is unavailable", async () => {
 		const { builder } = setup({
 			...sentences,
 			cards: sentences.cards.map((card) =>
@@ -172,9 +172,12 @@ describe("PracticeWordsSlideBuilderService", () => {
 			),
 		});
 
-		await expect(
-			builder.build("practice-mode", "vocabulary-dictation"),
-		).rejects.toThrow("Definitions are unavailable for 1 House 1 word.");
+		const slides = await builder.build("practice-mode", "vocabulary-dictation");
+
+		expect(slides).toHaveLength(2);
+		expect(slides.find((slide) => slide.itemId === "word-2")?.data).toMatchObject({
+			definition: "",
+		});
 	});
 
 	it("builds dictation for a defined House 1 word without a matching sentence", async () => {

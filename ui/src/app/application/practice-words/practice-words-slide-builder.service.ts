@@ -77,7 +77,7 @@ function wordDefinitions(
 	deck: SentencePracticeDeck,
 	words: readonly HouseOneWord[],
 ): ReadonlyMap<string, string> {
-	const definitions = new Map(
+	const available = new Map(
 		deck.cards.map((card) => [
 			card.id,
 			card.definitions
@@ -85,13 +85,7 @@ function wordDefinitions(
 				.find(Boolean) ?? "",
 		]),
 	);
-	const missing = words.filter((word) => !definitions.get(word.id));
-	if (missing.length) {
-		throw new Error(
-			`Definitions are unavailable for ${missing.length} House 1 ${missing.length === 1 ? "word" : "words"}.`,
-		);
-	}
-	return definitions;
+	return new Map(words.map((word) => [word.id, available.get(word.id) ?? ""]));
 }
 
 function slideId(
