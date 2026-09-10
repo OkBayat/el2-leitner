@@ -321,6 +321,7 @@ blockquote {
 }
 
 .pronunciation-record {
+	--mat-button-outlined-label-text-color: var(--vocora-action-primary);
 	display: flex;
 	align-items: center;
 	justify-content: center;

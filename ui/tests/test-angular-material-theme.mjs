@@ -252,6 +252,16 @@ for (const token of ["disabled-background", "disabled-foreground"]) {
 	);
 }
 
+assert.equal(
+	[
+		...designSystem.matchAll(
+			/--vocora-action-warning-foreground:\s*(?:var\(--color-paper-white\)|#ffffff);/gu,
+		),
+	].length,
+	2,
+	"Warning actions must use white labels in both light and dark themes.",
+);
+
 assert.match(
 	components,
 	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*44px;/u,
@@ -322,10 +332,15 @@ assert.match(
 	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
 	"Incorrect feedback must use a matching rounded cross SVG at 35px.",
 );
+assert.match(
+	exerciseFooterTemplate,
+	/@case \('warning'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-action-warning\)"[\s\S]*?<path[^>]*stroke="white"[^>]*stroke-width="3"/u,
+	"Warning feedback must use a matching rounded SVG at 35px.",
+);
 assert.doesNotMatch(
 	exerciseFooterTemplate,
-	/<span>[✓×]<\/span>/u,
-	"Scored feedback must not fall back to text glyph icons.",
+	/<span>[✓×!]<\/span>/u,
+	"Semantic feedback must not fall back to text glyph icons.",
 );
 
 console.log("Angular Material theme contract passed.");

@@ -5,6 +5,7 @@ import {
 	effect,
 	inject,
 	signal,
+	untracked,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -89,10 +90,11 @@ export class PronunciationSlideComponent
 	readonly tokens = signal<readonly PlaybackToken[]>([]);
 	readonly playbackActive = signal(false);
 	readonly playbackCharIndex = signal<number | null>(null);
+	private readonly recognizedWordIndexes = signal<ReadonlySet<number>>(new Set());
 
 	constructor() {
 		super();
-		effect(() => {
+			effect(() => {
 			const result = this.controller()?.result();
 			if (!result || result === this.lastResult || this.interactionState() !== 'idle') return;
 			this.lastResult = result;
@@ -115,6 +117,18 @@ export class PronunciationSlideComponent
 			}
 			this.finish(false, data, detail);
 		});
+		effect(() => {
+			const assessment = this.controller()?.assessment();
+			if (!assessment) return;
+			const matched = assessment.words
+				.map((word, index) => word.matched ? index : -1)
+				.filter((index) => index >= 0);
+			const current = untracked(this.recognizedWordIndexes);
+			const additions = matched.filter((index) => !current.has(index));
+			if (additions.length) {
+				this.recognizedWordIndexes.set(new Set([...current, ...additions]));
+			}
+		});
 	}
 
 	override load(context: SlideContentContext): void {
@@ -123,6 +137,7 @@ export class PronunciationSlideComponent
 		this.resetPlayback();
 		this.lastResult = null;
 		this.failedAttempts = 0;
+		this.recognizedWordIndexes.set(new Set());
 		const source = record(context.data);
 		const mode = stringMode(
 			source['mode'],
@@ -216,11 +231,9 @@ export class PronunciationSlideComponent
 	}
 
 	isTokenRecognized(token: PlaybackToken): boolean {
-		const controller = this.controller();
 		return Boolean(
 			token.wordIndex !== null &&
-				controller?.phase() === 'recording' &&
-				controller.assessment()?.words[token.wordIndex]?.matched,
+				this.recognizedWordIndexes().has(token.wordIndex),
 		);
 	}
 
@@ -261,6 +274,7 @@ export class PronunciationSlideComponent
 			!['ready', 'feedback', 'evaluation-error'].includes(controller.phase()) ||
 			this.interactionState() !== 'idle'
 		) return;
+		this.recognizedWordIndexes.set(new Set());
 		this.hideFooterAction();
 		await controller.record();
 	}

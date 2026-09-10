@@ -597,7 +597,7 @@ describe('reusable slide renderer contract', () => {
 			),
 			cancel: vi.fn(),
 		};
-		const phase = signal<'ready' | 'recording'>('ready');
+		const phase = signal<'ready' | 'recording' | 'feedback'>('ready');
 		const result = signal<{
 			words: readonly { text: string; matched: boolean }[];
 			transcript: string;
@@ -689,9 +689,43 @@ describe('reusable slide renderer contract', () => {
 		const recognizedWords = element.querySelectorAll('.cloze-playback-token--word.is-recognized');
 		expect(recognizedWords).toHaveLength(1);
 		expect(recognizedWords[0]?.textContent).toBe('The');
+		practice.assessment.set({
+			words: [
+				{ text: 'The', matched: false },
+				{ text: 'meeting', matched: true },
+				{ text: 'is', matched: false },
+				{ text: 'on', matched: false },
+				{ text: 'Thursday', matched: false },
+			],
+			transcript: 'meeting',
+			matchedCount: 1,
+			totalCount: 5,
+			score: 20,
+			passed: false,
+		});
+		fixture.detectChanges();
+		expect(element.querySelectorAll('.cloze-playback-token--word.is-recognized')).toHaveLength(2);
 
 		const answered = vi.fn();
 		fixture.componentInstance.event.subscribe(answered);
+		phase.set('feedback');
+		result.set({
+			words: [
+				{ text: 'The', matched: true },
+				{ text: 'meeting', matched: false },
+				{ text: 'is', matched: false },
+				{ text: 'on', matched: false },
+				{ text: 'Thursday', matched: false },
+			],
+			transcript: 'The',
+			matchedCount: 1,
+			totalCount: 5,
+			score: 20,
+			passed: false,
+		});
+		fixture.detectChanges();
+		expect(element.querySelectorAll('.cloze-playback-token--word.is-recognized')).toHaveLength(2);
+
 		result.set({
 			words: [
 				{ text: 'The', matched: true },

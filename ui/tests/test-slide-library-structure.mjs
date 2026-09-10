@@ -185,6 +185,11 @@ assert.doesNotMatch(
 	/border-bottom-width/u,
 	'Pronunciation recording must use only the canonical Material lower edge.',
 );
+assert.match(
+	pronunciationRecordStyles,
+	/--mat-button-outlined-label-text-color:\s*var\(--vocora-action-primary\);/u,
+	'Pronunciation recording must keep its label and waveform primary blue.',
+);
 const activePronunciationRecordStyles = sharedStyles.match(
 	/\.pronunciation-record\[aria-pressed='true'\]\s*\{([\s\S]*?)\n\}/u,
 )?.[1] ?? '';
