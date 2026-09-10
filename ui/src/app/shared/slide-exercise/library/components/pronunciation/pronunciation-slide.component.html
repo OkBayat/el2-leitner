@@ -26,6 +26,7 @@
 							class="cloze-playback-token"
 							[class.cloze-playback-token--word]="token.word"
 							[class.is-spoken]="isTokenSpoken(token)"
+							[class.is-recognized]="isTokenRecognized(token)"
 							>{{ token.text }}</span
 						>
 					}

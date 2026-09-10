@@ -175,12 +175,13 @@ export class ShadowingSessionService implements PronunciationPracticeController 
     try {
       const result = await this.api.finish(this.sessionId, this.recordingId);
       if (generation !== this.generation) return;
-      this.assessment.set(result); this.result.set(result); this.counts.set(result.counts);
+      this.recordingId = null;
+      this.assessment.set(result); this.counts.set(result.counts);
       const state = this.store.snapshot();
       const { day, ...daily } = result.daily;
       state.daily[day] = daily;
       this.store.replaceLocal(state);
-      this.phase.set('feedback'); this.error.set('');
+      this.phase.set('feedback'); this.error.set(''); this.result.set(result);
       this.sound.play(result.passed ? 'correct' : 'incorrect');
     } catch (error) {
       if (generation !== this.generation) return;

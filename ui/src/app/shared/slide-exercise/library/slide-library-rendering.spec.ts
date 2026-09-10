@@ -599,6 +599,7 @@ describe('reusable slide renderer contract', () => {
 		};
 		const phase = signal<'ready' | 'recording'>('ready');
 		const result = signal<{
+			words: readonly { text: string; matched: boolean }[];
 			transcript: string;
 			matchedCount: number;
 			totalCount: number;
@@ -610,7 +611,14 @@ describe('reusable slide renderer contract', () => {
 			phase,
 			levels: signal<readonly number[]>([4, 12, 24, 8]),
 			seconds: signal(1.4),
-			assessment: signal(null),
+			assessment: signal<{
+				words: readonly { text: string; matched: boolean }[];
+				transcript: string;
+				matchedCount: number;
+				totalCount: number;
+				score: number;
+				passed: boolean;
+			} | null>(null),
 			result,
 			error: signal(''),
 			selectPrompt: vi.fn().mockReturnValue(true),
@@ -660,17 +668,124 @@ describe('reusable slide renderer contract', () => {
 		expect(practice.record).toHaveBeenCalledOnce();
 
 		phase.set('recording');
+		practice.assessment.set({
+			words: [
+				{ text: 'The', matched: true },
+				{ text: 'meeting', matched: false },
+				{ text: 'is', matched: false },
+				{ text: 'on', matched: false },
+				{ text: 'Thursday', matched: false },
+			],
+			transcript: 'the',
+			matchedCount: 1,
+			totalCount: 5,
+			score: 20,
+			passed: false,
+		});
 		fixture.detectChanges();
 		expect(recordButton?.getAttribute('aria-pressed')).toBe('true');
 		expect(element.querySelectorAll('.pronunciation-waveform span')).toHaveLength(4);
 		expect(recordButton?.textContent).toContain('Listening · 1.4s');
+		const recognizedWords = element.querySelectorAll('.cloze-playback-token--word.is-recognized');
+		expect(recognizedWords).toHaveLength(1);
+		expect(recognizedWords[0]?.textContent).toBe('The');
 
 		const answered = vi.fn();
 		fixture.componentInstance.event.subscribe(answered);
-		result.set({ transcript: 'The meeting is on Thursday.', matchedCount: 5, totalCount: 5, score: 100, passed: true });
+		result.set({
+			words: [
+				{ text: 'The', matched: true },
+				{ text: 'meeting', matched: true },
+				{ text: 'is', matched: true },
+				{ text: 'on', matched: true },
+				{ text: 'Thursday', matched: true },
+			],
+			transcript: 'The meeting is on Thursday.',
+			matchedCount: 5,
+			totalCount: 5,
+			score: 100,
+			passed: true,
+		});
 		fixture.detectChanges();
 		expect(fixture.componentInstance.interactionState()).toBe('answered-correct');
 		expect(answered).toHaveBeenCalledWith(expect.objectContaining({ type: 'answered' }));
+	});
+
+	it('offers three warning retries before final pronunciation failure', () => {
+		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
+		const phase = signal<'ready' | 'feedback'>('ready');
+		const result = signal<{
+			words: readonly { text: string; matched: boolean }[];
+			transcript: string;
+			matchedCount: number;
+			totalCount: number;
+			score: number;
+			passed: boolean;
+		} | null>(null);
+		const practice = {
+			supported: true,
+			phase,
+			levels: signal<readonly number[]>(Array(4).fill(4)),
+			seconds: signal(0),
+			assessment: signal(null),
+			result,
+			error: signal(''),
+			selectPrompt: vi.fn().mockReturnValue(true),
+			record: vi.fn().mockResolvedValue(undefined),
+			stop: vi.fn().mockResolvedValue(undefined),
+			pause: vi.fn(),
+		};
+		TestBed.configureTestingModule({
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{ provide: LearningStoreService, useValue: { state: signal({ settings: { voiceRate: 0.9 } }) } },
+			],
+		});
+		const fixture = TestBed.createComponent(PronunciationSlideComponent);
+		const states: Array<{ chrome?: { footer?: { tone?: string; title?: string; primary?: { id?: string; label?: string } | false } } }> = [];
+		fixture.componentInstance.stateChange.subscribe((state) => states.push(state));
+		fixture.componentInstance.load({
+			slideId: 'repeat-sentence',
+			type: 'pronunciation',
+			data: {
+				mode: 'repeat',
+				question: 'Try this sentence.',
+				speech: { text: 'Try this sentence.' },
+				recording: { itemId: 'word-1', promptId: 'sentence-1' },
+			},
+			environment: { pronunciationPractice: practice },
+		});
+		fixture.detectChanges();
+
+		for (let attempt = 1; attempt <= 3; attempt += 1) {
+			phase.set('feedback');
+			result.set({
+				words: [{ text: 'Try', matched: false }],
+				transcript: '', matchedCount: 0, totalCount: 3, score: 0, passed: false,
+			});
+			fixture.detectChanges();
+			expect(fixture.componentInstance.interactionState()).toBe('idle');
+			expect(states.at(-1)?.chrome?.footer).toMatchObject({
+				tone: 'warning',
+				title: 'Try again',
+				primary: { id: 'retry-pronunciation', label: 'Try again' },
+			});
+		}
+
+		fixture.componentInstance.handleAction('retry-pronunciation');
+		expect(practice.record).toHaveBeenCalledOnce();
+		(fixture.nativeElement as HTMLElement)
+			.querySelector<HTMLButtonElement>('[data-testid="pronunciation-record"]')
+			?.click();
+		expect(practice.record).toHaveBeenCalledTimes(2);
+
+		result.set({
+			words: [{ text: 'Try', matched: false }],
+			transcript: '', matchedCount: 0, totalCount: 3, score: 0, passed: false,
+		});
+		fixture.detectChanges();
+		expect(fixture.componentInstance.interactionState()).toBe('answered-incorrect');
+		expect(states.at(-1)?.chrome?.footer?.tone).toBe('error');
 	});
 
 	it('opens vocabulary details from an answered free-text cloze field', async () => {

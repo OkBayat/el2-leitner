@@ -33,6 +33,10 @@ export type PronunciationPracticePhase =
   | 'complete';
 
 export interface PronunciationPracticeAssessment {
+  readonly words: readonly {
+    readonly text: string;
+    readonly matched: boolean;
+  }[];
   readonly transcript: string;
   readonly matchedCount: number;
   readonly totalCount: number;

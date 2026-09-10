@@ -316,6 +316,10 @@ blockquote {
 	overflow-wrap: anywhere;
 }
 
+.pronunciation-sentence .cloze-playback-token--word.is-recognized {
+	color: var(--vocora-action-primary);
+}
+
 .pronunciation-record {
 	display: flex;
 	align-items: center;

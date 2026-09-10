@@ -189,7 +189,7 @@ function actionView(
 function primaryActionTone(
   feedbackTone: SlideExerciseFeedbackTone,
 ): SlideExerciseActionTone {
-  return feedbackTone === 'success' || feedbackTone === 'error'
+  return feedbackTone === 'success' || feedbackTone === 'warning' || feedbackTone === 'error'
     ? feedbackTone
     : 'primary';
 }

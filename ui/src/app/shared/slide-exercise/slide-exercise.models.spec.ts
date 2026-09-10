@@ -114,6 +114,26 @@ describe('slide exercise model', () => {
     expect(resolveSlideExerciseActionState('warning', false, true)).toBe('disabled');
   });
 
+  it('uses the warning action tone for warning feedback', () => {
+    const presentation = resolveSlideExercisePresentation({
+      slide: slide('retry', 'pronunciation'),
+      index: 0,
+      total: 1,
+      runtime: {
+        chrome: {
+          footer: {
+            tone: 'warning',
+            title: 'Try again',
+            primary: { id: 'retry-pronunciation', label: 'Try again', behavior: 'content' },
+          },
+        },
+      },
+    });
+
+    expect(presentation.footer).toMatchObject({ tone: 'warning', title: 'Try again' });
+    expect(presentation.footer.primary).toMatchObject({ tone: 'warning', label: 'Try again' });
+  });
+
   it('aggregates first, all, and latest attempts by root slide identity', () => {
     const results = [
       { slideId: 'word-1', rootSlideId: 'word-1', slideType: 'dictation', eventType: 'answered' as const, data: { correct: true } },

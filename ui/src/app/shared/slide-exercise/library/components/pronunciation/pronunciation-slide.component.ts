@@ -26,14 +26,23 @@ interface PlaybackToken {
 	readonly text: string;
 	readonly start: number;
 	readonly word: boolean;
+	readonly wordIndex: number | null;
 }
 
 function playbackTokens(text: string): readonly PlaybackToken[] {
-	return [...text.matchAll(/\s+|[^\s]+/gu)].map((match) => ({
-		text: match[0],
-		start: match.index ?? 0,
-		word: /\S/u.test(match[0]),
-	}));
+	let wordIndex = 0;
+	return [...text.matchAll(/\s+|[^\s]+/gu)].map((match) => {
+		const word = /\S/u.test(match[0]);
+		const assessmentWord = /[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/u.test(
+			match[0],
+		);
+		return {
+			text: match[0],
+			start: match.index ?? 0,
+			word,
+			wordIndex: assessmentWord ? wordIndex++ : null,
+		};
+	});
 }
 
 function practiceController(environment: unknown): PronunciationPracticeController {
@@ -75,6 +84,7 @@ export class PronunciationSlideComponent
 	private readonly sentenceStore = inject(LearningStoreService);
 	private readonly controller = signal<PronunciationPracticeController | null>(null);
 	private lastResult: unknown = null;
+	private failedAttempts = 0;
 	readonly repeatMode = signal(false);
 	readonly tokens = signal<readonly PlaybackToken[]>([]);
 	readonly playbackActive = signal(false);
@@ -86,17 +96,24 @@ export class PronunciationSlideComponent
 			const result = this.controller()?.result();
 			if (!result || result === this.lastResult || this.interactionState() !== 'idle') return;
 			this.lastResult = result;
-			this.finish(
-				result.passed,
-				{
-					correct: result.passed,
-					score: result.score,
-					transcript: result.transcript,
-					matchedCount: result.matchedCount,
-					totalCount: result.totalCount,
-				},
-				`${result.matchedCount} of ${result.totalCount} words recognized · ${result.score}%`,
-			);
+			const data = {
+				correct: result.passed,
+				score: result.score,
+				transcript: result.transcript,
+				matchedCount: result.matchedCount,
+				totalCount: result.totalCount,
+			};
+			const detail = `${result.matchedCount} of ${result.totalCount} words recognized · ${result.score}%`;
+			if (result.passed) {
+				this.finish(true, data, detail);
+				return;
+			}
+			this.failedAttempts += 1;
+			if (this.failedAttempts <= 3) {
+				this.showRetry(detail);
+				return;
+			}
+			this.finish(false, data, detail);
 		});
 	}
 
@@ -105,6 +122,7 @@ export class PronunciationSlideComponent
 		this.controller()?.pause();
 		this.resetPlayback();
 		this.lastResult = null;
+		this.failedAttempts = 0;
 		const source = record(context.data);
 		const mode = stringMode(
 			source['mode'],
@@ -159,6 +177,7 @@ export class PronunciationSlideComponent
 			speech: { text: sentence, replay: true },
 		});
 		this.selectedOptionIds.set([]);
+		this.hideFooterAction();
 		this.playSentence();
 	}
 
@@ -196,6 +215,15 @@ export class PronunciationSlideComponent
 		return token.word && charIndex !== null && charIndex >= token.start;
 	}
 
+	isTokenRecognized(token: PlaybackToken): boolean {
+		const controller = this.controller();
+		return Boolean(
+			token.wordIndex !== null &&
+				controller?.phase() === 'recording' &&
+				controller.assessment()?.words[token.wordIndex]?.matched,
+		);
+	}
+
 	practice(): PronunciationPracticeController | null {
 		return this.controller();
 	}
@@ -211,6 +239,14 @@ export class PronunciationSlideComponent
 		else await this.startRecording();
 	}
 
+	override handleAction(actionId: string): void {
+		if (this.repeatMode() && actionId === 'retry-pronunciation') {
+			void this.startRecording();
+			return;
+		}
+		super.handleAction(actionId);
+	}
+
 	override ngOnDestroy(): void {
 		this.controller()?.pause();
 		this.sentenceSpeech.cancel();
@@ -220,8 +256,44 @@ export class PronunciationSlideComponent
 
 	private async startRecording(): Promise<void> {
 		const controller = this.controller();
-		if (!controller?.supported || controller.phase() !== 'ready' || this.interactionState() !== 'idle') return;
+		if (
+			!controller?.supported ||
+			!['ready', 'feedback', 'evaluation-error'].includes(controller.phase()) ||
+			this.interactionState() !== 'idle'
+		) return;
+		this.hideFooterAction();
 		await controller.record();
+	}
+
+	private showRetry(detail: string): void {
+		this.stateChanges.next({
+			chrome: {
+				footer: {
+					tone: 'warning',
+					title: 'Try again',
+					detail,
+					primary: {
+						id: 'retry-pronunciation',
+						label: 'Try again',
+						behavior: 'content',
+						disabled: false,
+					},
+				},
+			},
+		});
+	}
+
+	private hideFooterAction(): void {
+		this.stateChanges.next({
+			chrome: {
+				footer: {
+					tone: 'neutral',
+					title: '',
+					detail: '',
+					primary: false,
+				},
+			},
+		});
 	}
 
 	private resetPlayback(): void {
