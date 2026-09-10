@@ -1,0 +1,132 @@
+.review-context-badge {
+	--review-context-accent: #ff9600;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 18px;
+	color: var(--review-context-accent);
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: 0.035em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.review-context-badge-label {
+	margin: 0;
+	font: inherit;
+	letter-spacing: inherit;
+	line-height: inherit;
+	text-transform: inherit;
+	color: inherit;
+}
+
+.review-context-badge-icon {
+	width: 24px;
+	height: 24px;
+	flex: 0 0 24px;
+	display: grid;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--review-context-accent);
+	color: #fff;
+}
+
+.review-context-badge-icon svg {
+	width: 15px;
+	height: 15px;
+	display: block;
+}
+
+.spelling-comparison {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	margin: 16px 0 10px;
+}
+
+.spelling-row {
+	min-width: 0;
+	border: 1px solid var(--mat-sys-outline-variant);
+	border-radius: 16px;
+	padding: 14px 16px;
+	text-align: left;
+}
+
+.user-spelling-row {
+	border-color: color-mix(in srgb, var(--mat-sys-error) 35%, var(--mat-sys-outline-variant));
+	background: var(--mat-sys-error-container);
+	color: var(--mat-sys-on-error-container);
+}
+
+.correct-spelling-row {
+	border-color: color-mix(in srgb, var(--mat-sys-primary) 35%, var(--mat-sys-outline-variant));
+	background: var(--mat-sys-primary-container);
+	color: var(--mat-sys-on-primary-container);
+}
+
+.spelling-label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--mat-sys-on-surface-variant);
+}
+
+.spelling-text {
+	min-height: 36px;
+	overflow-wrap: anywhere;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: clamp(20px, 4vw, 28px);
+	font-weight: 750;
+	line-height: 1.35;
+	unicode-bidi: isolate;
+}
+
+.spelling-token {
+	display: inline-block;
+	min-width: 0.5ch;
+	border-radius: 5px;
+	padding: 0 1px;
+}
+
+.spelling-correct {
+	color: inherit;
+}
+
+.user-spelling-row .spelling-changed,
+.user-spelling-row .spelling-extra {
+	background: color-mix(in srgb, var(--mat-sys-error) 18%, transparent);
+	color: var(--mat-sys-error);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+}
+
+.correct-spelling-row .spelling-changed,
+.correct-spelling-row .spelling-missing {
+	background: color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
+	color: var(--mat-sys-primary);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+}
+
+.spelling-empty {
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--mat-sys-on-error-container);
+}
+
+@media (max-width: 600px) {
+	.review-context-badge {
+		margin-bottom: 14px;
+		font-size: 12px;
+	}
+
+	.spelling-comparison {
+		grid-template-columns: 1fr;
+	}
+}

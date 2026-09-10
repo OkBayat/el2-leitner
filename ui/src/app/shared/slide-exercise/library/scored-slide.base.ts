@@ -50,7 +50,12 @@ export abstract class ScoredSlideBase<TData> {
 		});
 	}
 
-	protected finish(correct: boolean, data: unknown, explanation = ''): void {
+	protected finish(
+		correct: boolean,
+		data: unknown,
+		explanation = '',
+		continueBehavior: 'next' | 'content' = 'next',
+	): void {
 		this.interactionState.set(
 			correct ? 'answered-correct' : 'answered-incorrect',
 		);
@@ -63,7 +68,7 @@ export abstract class ScoredSlideBase<TData> {
 					primary: {
 						id: 'continue',
 						label: 'Continue',
-						behavior: 'next',
+						behavior: continueBehavior,
 						disabled: false,
 					},
 				},
