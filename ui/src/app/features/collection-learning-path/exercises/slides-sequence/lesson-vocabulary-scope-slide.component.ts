@@ -138,6 +138,7 @@ export function buildLessonVocabularySlides(
           instruction: config.instruction,
           speech: { text: item.term, ...config.speech },
           answer: item.term,
+          definition: item.definitions[0],
           caseSensitive: config.caseSensitive,
           punctuationSensitive: config.punctuationSensitive,
         } satisfies DictationSlideData,

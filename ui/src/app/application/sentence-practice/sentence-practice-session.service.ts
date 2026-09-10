@@ -1,7 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LearningApiService, PracticeDailyStats } from '../../core/learning/learning-api.service';
 import { SentencePracticeApiService } from '../../core/sentence-practice/sentence-practice-api.service';
-import { SpeechService } from '../../core/speech/speech.service';
+import {
+	SpeechService,
+	type SpeechPlaybackMode,
+} from '../../core/speech/speech.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
 import { localDay } from '../../domain/learning/learning-rules';
 import {
@@ -88,21 +91,18 @@ export class SentencePracticeSessionService {
 		return true;
 	}
 
-	pronounce(multiplier = 1): boolean {
+	pronounce(mode: SpeechPlaybackMode = 'normal'): boolean {
 		const prompt = this.currentPromptSignal();
 		if (!prompt) return false;
 		const sentenceText = prompt.sentence.text.trim();
 		this.resetPlaybackState();
-		const started = this.speech.speak(
-			sentenceText || prompt.card.term,
-			this.store.snapshot().settings.voiceRate * multiplier,
-			{
+		const observer = {
 				onStart: () => {
 					if (this.currentPromptSignal() !== prompt) return;
 					this.playbackActiveSignal.set(true);
 					this.playbackCharIndexSignal.set(null);
 				},
-				onWordBoundary: (charIndex) => {
+				onWordBoundary: (charIndex: number) => {
 					if (this.currentPromptSignal() !== prompt) return;
 					this.playbackActiveSignal.set(true);
 					this.playbackCharIndexSignal.set(charIndex);
@@ -112,8 +112,13 @@ export class SentencePracticeSessionService {
 					this.playbackActiveSignal.set(false);
 					this.playbackCharIndexSignal.set(sentenceText.length);
 				},
-			},
-		);
+			};
+		const text = sentenceText || prompt.card.term;
+		const rate = this.store.snapshot().settings.voiceRate;
+		const started =
+			mode === 'normal'
+				? this.speech.speak(text, rate, observer)
+				: this.speech.speak(text, rate, observer, undefined, mode);
 		if (!started) this.resetPlaybackState();
 		return started;
 	}

@@ -8,6 +8,8 @@ export interface SpeechPlaybackObserver {
 	onError?: () => void;
 }
 
+export type SpeechPlaybackMode = "normal" | "slow";
+
 interface SpeechWordRange {
 	charIndex: number;
 	charLength: number;
@@ -20,6 +22,7 @@ const KOKORO_DIALOGUE_VOICES = [
 	"af_bella",
 	"af_sky",
 ] as const;
+const SLOW_PLAYBACK_MULTIPLIER = 0.85;
 
 function speechWordRanges(text: string): SpeechWordRange[] {
 	return [...text.matchAll(/\S+/gu)].map((match) => ({
@@ -72,6 +75,7 @@ export class SpeechService {
 		rate = 0.85,
 		observer?: SpeechPlaybackObserver,
 		voiceIndex?: number,
+		mode: SpeechPlaybackMode = "normal",
 	): boolean {
 		const AudioConstructor = globalThis.Audio;
 		const backendAvailable =
@@ -87,7 +91,11 @@ export class SpeechService {
 		this.cancel();
 		const playbackSequence = ++this.playbackSequence;
 		this.boundarySequence = playbackSequence;
-		const normalizedRate = clamp(rate, 0.45, 1.2);
+		const selectedRate =
+			mode === "slow"
+				? Math.round(rate * SLOW_PLAYBACK_MULTIPLIER * 10_000) / 10_000
+				: rate;
+		const normalizedRate = clamp(selectedRate, 0.45, 1.2);
 		if (!backendAvailable) {
 			this.browserFallbackSequence = playbackSequence;
 			const started = this.playBrowserSpeech(

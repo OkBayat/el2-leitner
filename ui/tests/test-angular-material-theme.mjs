@@ -40,6 +40,17 @@ const exerciseFooter = fs.readFileSync(
 	),
 	"utf8",
 );
+const exerciseFooterTemplate = fs.readFileSync(
+	path.join(
+		uiRoot,
+		"src",
+		"app",
+		"shared",
+		"slide-exercise",
+		"slide-exercise-footer.component.html",
+	),
+	"utf8",
+);
 
 const expectedTokens = [
 	"primary",
@@ -295,6 +306,26 @@ assert.doesNotMatch(
 	exerciseFooter,
 	/data-tone='error'[^}]*\.slide-exercise-action/u,
 	"Error feedback must not override the primary action colors.",
+);
+assert.match(
+	exerciseFooter,
+	/\.slide-exercise-footer__copy span\s*\{[^}]*color:\s*var\(--slide-exercise-footer-accent\);/u,
+	"Feedback detail text must inherit the semantic event color.",
+);
+assert.match(
+	exerciseFooterTemplate,
+	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="#58A700"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
+	"Successful feedback must use the supplied rounded check SVG at 35px.",
+);
+assert.match(
+	exerciseFooterTemplate,
+	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
+	"Incorrect feedback must use a matching rounded cross SVG at 35px.",
+);
+assert.doesNotMatch(
+	exerciseFooterTemplate,
+	/<span>[✓×]<\/span>/u,
+	"Scored feedback must not fall back to text glyph icons.",
 );
 
 console.log("Angular Material theme contract passed.");

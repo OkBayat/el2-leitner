@@ -43,6 +43,7 @@ describe('lesson vocabulary scope slide generation', () => {
         mode: 'phrase',
         instruction: 'Listen and type every target exactly.',
         answer: 'childhood',
+        definition: 'the period when a person is a child',
         speech: { text: 'childhood', autoplay: false, replay: true },
         caseSensitive: true,
         punctuationSensitive: true,

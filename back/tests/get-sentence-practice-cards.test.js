@@ -110,6 +110,33 @@ describe("GetSentencePracticeCards", () => {
     });
   });
 
+  it("keeps definition-only cards when no sentence matches the word", async () => {
+    const definition = {
+      id: "definition-1",
+      text: "A label used to identify a person.",
+      languageCode: "en",
+      collectionTitle: "People"
+    };
+    const repository = new StubSentencePracticeRepository({
+      words: [word({ definitions: [definition] })],
+      sentences: [sentence({ text: "This sentence has no matching term." })]
+    });
+    const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository });
+
+    const result = await query.execute("user-1", 1);
+
+    assert.deepEqual(result.summary, { totalWords: 1, totalSentences: 0 });
+    assert.deepEqual(result.cards, [{
+      id: "word-name",
+      term: "name",
+      accepted: ["name"],
+      definitions: [definition],
+      box: 1,
+      mistakes: 2,
+      sentences: []
+    }]);
+  });
+
   it("does not scan the sentence catalog when the selected house has no active words", async () => {
     const repository = new StubSentencePracticeRepository();
     const query = new GetSentencePracticeCards({ sentencePracticeRepository: repository });

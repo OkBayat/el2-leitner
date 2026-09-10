@@ -84,15 +84,17 @@ describe('SentencePracticeSessionService', () => {
 			}),
 		);
 
-		expect(service.pronounce(.75)).toBe(true);
+		expect(service.pronounce('slow')).toBe(true);
 		expect(speech.speak).toHaveBeenLastCalledWith(
 			prompt.sentence.text,
-			.85 * .75,
+			.85,
 			expect.objectContaining({
 				onStart: expect.any(Function),
 				onWordBoundary: expect.any(Function),
 				onEnd: expect.any(Function),
 			}),
+			undefined,
+			'slow',
 		);
 	});
 

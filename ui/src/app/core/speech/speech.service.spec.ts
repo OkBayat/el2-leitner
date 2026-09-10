@@ -162,6 +162,41 @@ describe("SpeechService backend playback", () => {
 		});
 	});
 
+	it("applies the shared slower playback rate", async () => {
+		const backend = installBackend();
+		const service = new SpeechService();
+
+		service.speak("Listen slowly", 0.85, undefined, undefined, "slow");
+		await vi.waitFor(() => expect(FakeAudio.latest).not.toBeNull());
+
+		const request = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(JSON.parse(String(request.body))).toEqual({
+			text: "Listen slowly",
+			speed: 0.7225,
+			format: "mp3",
+		});
+	});
+
+	it("sends isolated words and phrases to Kokoro unchanged", async () => {
+		const backend = installBackend();
+		const service = new SpeechService();
+
+		service.speak("Saturday", 0.85);
+		await vi.waitFor(() => expect(FakeAudio.latest).not.toBeNull());
+
+		const isolatedWordRequest = backend.fetch.mock.calls[0][1] as RequestInit;
+		expect(JSON.parse(String(isolatedWordRequest.body))).toMatchObject({
+			text: "Saturday",
+		});
+
+		service.speak("renewable energy", 0.85);
+		await vi.waitFor(() => expect(backend.fetch).toHaveBeenCalledTimes(2));
+		const phraseRequest = backend.fetch.mock.calls[1][1] as RequestInit;
+		expect(JSON.parse(String(phraseRequest.body))).toMatchObject({
+			text: "renewable energy",
+		});
+	});
+
 	it("aborts an in-flight backend request without starting fallback", async () => {
 		installBackend();
 		let requestSignal: AbortSignal | undefined;

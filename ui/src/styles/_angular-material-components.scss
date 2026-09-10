@@ -285,6 +285,94 @@
 		color: var(--vocora-action-secondary-foreground);
 	}
 
+	.mat-mdc-unelevated-button.vocora-audio-action {
+		--mat-button-filled-container-color: var(--vocora-action-primary);
+		--mat-button-filled-label-text-color: var(
+			--vocora-action-primary-foreground
+		);
+		--mat-button-filled-container-shape: 24px;
+		--vocora-material-button-edge: var(--vocora-action-primary-edge);
+		width: 80px;
+		height: 80px;
+		min-width: 80px;
+		min-height: 80px;
+		padding: 0;
+		border-radius: 24px;
+		background: var(--vocora-action-primary);
+		color: var(--vocora-action-primary-foreground);
+	}
+
+	.mat-mdc-unelevated-button.vocora-audio-action--large {
+		--mat-button-filled-container-shape: 32px;
+		width: 112px;
+		height: 112px;
+		min-width: 112px;
+		min-height: 112px;
+		border-radius: 32px;
+	}
+
+	.mat-mdc-form-field {
+		--mdc-outlined-text-field-container-shape: var(--vocora-radius-md);
+		--mdc-outlined-text-field-outline-color: var(
+			--vocora-action-secondary-border
+		);
+		--mdc-outlined-text-field-hover-outline-color: var(--vocora-border);
+		--mdc-outlined-text-field-focus-outline-color: var(
+			--vocora-information
+		);
+		--mdc-outlined-text-field-input-text-color: var(--vocora-text-primary);
+		--mdc-outlined-text-field-input-text-placeholder-color: var(
+			--vocora-text-disabled
+		);
+		--mat-form-field-outlined-container-shape: var(--vocora-radius-md);
+		--mat-form-field-outlined-outline-color: var(
+			--vocora-action-secondary-border
+		);
+		--mat-form-field-outlined-hover-outline-color: var(--vocora-border);
+		--mat-form-field-outlined-focus-outline-color: var(--vocora-information);
+	}
+
+	.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+		border-radius: var(--vocora-radius-md);
+		background: color-mix(
+			in srgb,
+			var(--vocora-surface-base) 92%,
+			var(--vocora-border)
+		);
+		box-shadow: none;
+	}
+
+	.mat-mdc-form-field .mat-mdc-input-element {
+		font-size: 1.2rem;
+		font-weight: 500;
+		transform: translateY(-2px);
+	}
+
+	.mat-mdc-form-field textarea.mat-mdc-input-element[rows='1'] {
+		resize: none;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.mat-mdc-form-field .mat-mdc-input-element:focus,
+	.mat-mdc-form-field .mat-mdc-input-element:focus-visible {
+		outline-style: none;
+	}
+
+	.mat-mdc-form-field[data-state='correct'] {
+		--mdc-outlined-text-field-outline-color: var(--vocora-success);
+		--mdc-outlined-text-field-hover-outline-color: var(--vocora-success);
+		--mdc-outlined-text-field-focus-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-hover-outline-color: var(--vocora-success);
+		--mat-form-field-outlined-focus-outline-color: var(--vocora-success);
+	}
+
+	.mat-mdc-form-field[data-state='correct']
+		.mat-mdc-text-field-wrapper {
+		background: var(--vocora-success-surface);
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.mat-mdc-unelevated-button.vocora-button,
 		.mat-mdc-raised-button.vocora-button,

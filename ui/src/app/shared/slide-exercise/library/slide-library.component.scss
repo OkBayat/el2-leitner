@@ -33,6 +33,19 @@ blockquote {
 	font-weight: 600;
 }
 
+.dictation-audio-actions {
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	gap: var(--vocora-space-5);
+	padding-block: var(--vocora-space-4) var(--vocora-space-6);
+}
+
+.dictation-audio-actions img {
+	width: 48%;
+	height: 48%;
+}
+
 .slide-interaction h1 {
 	font-size: clamp(24px, 5vw, 36px);
 	line-height: 1.2;
@@ -119,21 +132,15 @@ blockquote {
 	color: var(--vocora-information-foreground);
 }
 
-[data-state='correct'] {
+.choice-option[data-state='correct'] {
 	border-color: var(--vocora-success) !important;
 	background: var(--vocora-success-surface) !important;
-}
-
-[data-state='incorrect'] {
-	border-color: var(--vocora-error) !important;
-	background: var(--vocora-error-surface) !important;
-}
-
-.choice-option[data-state='correct'] {
-	box-shadow: 0 3px 0 var(--vocora-action-primary-edge);
+	box-shadow: 0 3px 0 var(--vocora-action-success-edge);
 }
 
 .choice-option[data-state='incorrect'] {
+	border-color: var(--vocora-error) !important;
+	background: var(--vocora-error-surface) !important;
 	box-shadow: 0 3px 0 var(--vocora-error-edge);
 }
 

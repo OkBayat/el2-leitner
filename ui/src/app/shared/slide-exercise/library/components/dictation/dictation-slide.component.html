@@ -4,6 +4,37 @@
 			<app-slide-stimulus [stimulus]="data.stimulus" />
 		}
 		<section class="slide-interaction">
+			@if (remediationBadge(); as badge) {
+				<div
+					class="review-context-badge"
+					data-testid="dictation-remediation-badge"
+					aria-live="polite"
+				>
+					<span class="review-context-badge-icon" aria-hidden="true">
+						@switch (badge.icon) {
+							@case ('mistake') {
+								<svg viewBox="0 0 24 24">
+									<path d="M7.4 7H4V3.6M4.5 6.8A8 8 0 0 1 18.6 5.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M16.6 17H20v3.4M19.5 17.2A8 8 0 0 1 5.4 18.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" />
+								</svg>
+							}
+							@case ('memory') {
+								<svg viewBox="0 0 24 24">
+									<path d="M9.2 18.2V16.4C7.3 15.4 6 13.4 6 11.1A6 6 0 0 1 18 11c0 2.1-1.1 4-2.8 5.1v2.1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M9.3 20.5h5.4M10 8.8c.7-1 1.8-1.5 3-1.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+								</svg>
+							}
+							@case ('copy') {
+								<svg viewBox="0 0 24 24">
+									<rect x="8" y="7" width="10" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.2" />
+									<path d="M15 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+								</svg>
+							}
+						}
+					</span>
+					<h3 class="review-context-badge-label">{{ badge.label }}</h3>
+				</div>
+			}
 			<p class="slide-instruction">
 				{{ data.instruction || 'Listen and type what you hear.' }}
 			</p>
@@ -11,41 +42,103 @@
 				<app-slide-audio-control
 					[src]="data.audio"
 					[maxReplays]="data.maxReplays"
-					buttonLabel="Play audio"
+					[speedControls]="true"
 					playLabel="Play dictation audio"
+					slowPlayLabel="Play dictation audio slowly"
 					audioLabel="Dictation audio"
 					(replayCountChange)="replayCount.set($event)"
 				/>
 			} @else if (data.speech?.replay) {
-				<button
-					mat-stroked-button
-					type="button"
-					[disabled]="!canReplay()"
-					aria-label="Play dictation pronunciation"
-					(click)="playSpeech()"
-				>
-					Play pronunciation
-				</button>
+				<div class="dictation-audio-actions" role="group" aria-label="Dictation pronunciation controls">
+					<button
+						mat-flat-button
+						appShortcutClick="Alt+R"
+						class="vocora-audio-action vocora-audio-action--large"
+						type="button"
+						[disabled]="!canReplay()"
+						aria-label="Play dictation pronunciation"
+						data-testid="dictation-play-normal"
+						(click)="playSpeech()"
+					>
+						<img src="/assets/icons/normal-speed.svg" alt="" aria-hidden="true" />
+					</button>
+					<button
+						mat-flat-button
+						class="vocora-audio-action"
+						type="button"
+						[disabled]="!canReplay()"
+						aria-label="Play dictation pronunciation slowly"
+						data-testid="dictation-play-slow"
+						(click)="playSpeech('slow')"
+					>
+						<img src="/assets/icons/slow-speed.svg" alt="" aria-hidden="true" />
+					</button>
+				</div>
 			}
-			<mat-form-field
-				appearance="outline"
-				[attr.data-state]="answerState()"
-				><mat-label>Your answer</mat-label
-				><input
-					matInput
-					[value]="answer()"
-					[disabled]="interactionState() !== 'idle'"
-					(input)="setAnswer(inputFrom($event))"
-			/></mat-form-field>
-			<div
-				class="answer-review"
-				[class.answer-review--hidden]="
-					interactionState() !== 'answered-incorrect'
-				"
-			>
-				<strong>Answer</strong>
-				<p>{{ data.answer }}</p>
-			</div>
+			@if (showComparison()) {
+				@if (remediation(); as remediation) {
+					<div class="spelling-comparison" role="group" aria-label="Spelling comparison">
+						<div class="spelling-row correct-spelling-row">
+							<span class="spelling-label">Correct spelling</span>
+							<div class="spelling-text" data-testid="correct-spelling">
+								@for (token of remediation.comparison.targetTokens; track $index) {
+									<span
+										class="spelling-token"
+										[class.spelling-correct]="token.status === 'correct'"
+										[class.spelling-changed]="token.status === 'changed'"
+										[class.spelling-missing]="token.status === 'missing'"
+									>{{ tokenValue(token.value) }}</span>
+								}
+							</div>
+						</div>
+						<div class="spelling-row user-spelling-row">
+							<span class="spelling-label">Your answer</span>
+							<div class="spelling-text" data-testid="user-spelling">
+								@if (remediation.comparison.answerTokens.length) {
+									@for (token of remediation.comparison.answerTokens; track $index) {
+										<span
+											class="spelling-token"
+											[class.spelling-correct]="token.status === 'correct'"
+											[class.spelling-changed]="token.status === 'changed'"
+											[class.spelling-extra]="token.status === 'extra'"
+										>{{ tokenValue(token.value) }}</span>
+									}
+								} @else {
+									<span class="spelling-empty">No answer</span>
+								}
+							</div>
+						</div>
+					</div>
+				}
+			}
+			@if (showAnswerInput()) {
+				<mat-form-field
+					appearance="outline"
+					subscriptSizing="dynamic"
+					[attr.data-state]="answerState()"
+				>
+					<mat-label>{{ answerLabel() }}</mat-label>
+					<textarea
+						#answerInput
+						data-testid="dictation-answer-input"
+						matInput
+						[value]="answer()"
+						[disabled]="answerDisabled()"
+						[readonly]="answerReadOnly()"
+						[attr.aria-label]="answerLabel()"
+						autocomplete="off"
+						lang="en"
+						aria-multiline="false"
+						enterkeyhint="go"
+						wrap="off"
+						rows="1"
+						autocapitalize="off"
+						autocorrect="off"
+						spellcheck="false"
+						(input)="setAnswer(inputFrom($event))"
+					></textarea>
+				</mat-form-field>
+			}
 		</section>
 	</article>
 }

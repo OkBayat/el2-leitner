@@ -80,7 +80,6 @@ export class GetSentencePracticeCards {
         if (match) matches.push(projectSentence(sentence, match));
       }
 
-      if (!matches.length) continue;
       const { acceptedSet: _acceptedSet, ...card } = grouped;
       cards.push({
         ...card,

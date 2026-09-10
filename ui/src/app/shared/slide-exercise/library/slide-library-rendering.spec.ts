@@ -11,11 +11,165 @@ import { REUSABLE_SLIDE_TYPES } from './slide-library.models';
 import {
 	ClassificationSlideComponent,
 	ClozeSlideComponent,
+	DictationSlideComponent,
 	MatchingSlideComponent,
 	TeachingCardSlideComponent,
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
+	it('renders dictation playback controls and a soft single-line answer field', () => {
+		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
+		TestBed.configureTestingModule({
+			providers: [
+				{ provide: SpeechService, useValue: speech },
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(DictationSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'dictation-controls',
+			type: 'dictation',
+			data: {
+				speech: { text: 'renewable energy', replay: true },
+				answer: 'renewable energy',
+				maxReplays: 2,
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const normal = element.querySelector<HTMLButtonElement>(
+			'[data-testid="dictation-play-normal"]',
+		);
+		const slow = element.querySelector<HTMLButtonElement>(
+			'[data-testid="dictation-play-slow"]',
+		);
+		expect(normal?.getAttribute('aria-label')).toBe(
+			'Play dictation pronunciation',
+		);
+		expect(slow?.getAttribute('aria-label')).toBe(
+			'Play dictation pronunciation slowly',
+		);
+		expect(normal?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/normal-speed.svg',
+		);
+		expect(slow?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/slow-speed.svg',
+		);
+		expect(normal?.querySelector('svg')).toBeNull();
+		expect(slow?.querySelector('svg')).toBeNull();
+
+		const answerField = element.querySelector('mat-form-field');
+		const answer = answerField?.querySelector('textarea');
+		expect(document.activeElement).toBe(answer);
+		expect(answerField?.classList).not.toContain('vocora-form-field--soft');
+		expect(answerField?.classList).not.toContain('vocora-form-field--raised');
+		expect(answerField?.querySelector('input')).toBeNull();
+		expect(answerField?.querySelector('mat-label')?.textContent).toContain(
+			'Your answer',
+		);
+		expect(answer?.classList).not.toContain('dictation-answer-input');
+		expect(answer?.getAttribute('placeholder')).toBeNull();
+		expect(answer?.getAttribute('aria-label')).toBe('Your answer');
+		for (const [name, value] of Object.entries({
+			autocomplete: 'off',
+			lang: 'en',
+			'aria-multiline': 'false',
+			enterkeyhint: 'go',
+			wrap: 'off',
+			rows: '1',
+			autocapitalize: 'off',
+			autocorrect: 'off',
+			spellcheck: 'false',
+		})) {
+			expect(answer?.getAttribute(name)).toBe(value);
+		}
+		expect(normal?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		document.dispatchEvent(
+			new KeyboardEvent('keydown', {
+				key: 'r',
+				altKey: true,
+				bubbles: true,
+				cancelable: true,
+			}),
+		);
+		slow?.click();
+		expect(speech.speak).toHaveBeenNthCalledWith(1, 'renewable energy', 0.9);
+		expect(speech.speak).toHaveBeenNthCalledWith(
+			2,
+			'renewable energy',
+			0.9,
+			undefined,
+			undefined,
+			'slow',
+		);
+		fixture.detectChanges();
+		expect(normal?.disabled).toBe(true);
+		expect(slow?.disabled).toBe(true);
+
+		fixture.destroy();
+		expect(speech.cancel).toHaveBeenCalledOnce();
+	});
+
+	it('renders the same normal and slow controls for audio-backed dictation', () => {
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: SpeechService,
+					useValue: { speak: vi.fn(), cancel: vi.fn() },
+				},
+				{
+					provide: LearningStoreService,
+					useValue: { state: signal({ settings: { voiceRate: 0.9 } }) },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(DictationSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'audio-dictation-controls',
+			type: 'dictation',
+			data: {
+				audio: '/audio/example.mp3',
+				answer: 'environment',
+				maxReplays: 1,
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const normal = element.querySelector<HTMLButtonElement>(
+			'[data-testid="slide-audio-play-normal"]',
+		);
+		const slow = element.querySelector<HTMLButtonElement>(
+			'[data-testid="slide-audio-play-slow"]',
+		);
+		expect(normal?.getAttribute('aria-label')).toBe('Play dictation audio');
+		expect(slow?.getAttribute('aria-label')).toBe(
+			'Play dictation audio slowly',
+		);
+		expect(normal?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
+		expect(normal?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/normal-speed.svg',
+		);
+		expect(slow?.querySelector('img')?.getAttribute('src')).toBe(
+			'/assets/icons/slow-speed.svg',
+		);
+
+		const audio = element.querySelector('audio')!;
+		audio.play = vi.fn().mockResolvedValue(undefined);
+		slow?.click();
+		fixture.detectChanges();
+
+		expect(audio.playbackRate).toBe(0.85);
+		expect(audio.preservesPitch).toBe(true);
+		expect(normal?.disabled).toBe(true);
+		expect(slow?.disabled).toBe(true);
+		fixture.destroy();
+	});
+
 	it('constructs and renders every registered reusable slide type from configuration', async () => {
 		TestBed.configureTestingModule({
 			providers: [

@@ -5,10 +5,20 @@
         @if (tone() !== 'neutral') {
           <span class="slide-exercise-footer__icon" aria-hidden="true">
             @switch (tone()) {
-              @case ('success') { <span>✓</span> }
+              @case ('success') {
+                <svg width="35" height="35" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="15" cy="15" r="15" fill="#58A700" />
+                  <path d="M10.5 15.5L14 19.5L21 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              }
               @case ('information') { <span>i</span> }
               @case ('warning') { <span>!</span> }
-              @case ('error') { <span>×</span> }
+              @case ('error') {
+                <svg width="35" height="35" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="15" cy="15" r="15" fill="var(--vocora-error)" />
+                  <path d="M10.5 10.5L19.5 19.5M19.5 10.5L10.5 19.5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              }
             }
           </span>
         }

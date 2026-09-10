@@ -225,7 +225,7 @@ describe('reusable slide library behavior', () => {
 		expect(footerDetail).toBe('Correct answer: bond');
 	});
 
-	it('selects ChoiceSlide options by number and preserves wrong and correct states after checking', () => {
+	it('preserves the selected wrong and correct ChoiceSlide states after checking', () => {
 		configure();
 		const component = TestBed.runInInjectionContext(
 			() => new ChoiceSlideComponent(),
@@ -252,6 +252,20 @@ describe('reusable slide library behavior', () => {
 		expect(component.interactionState()).toBe('answered-incorrect');
 		expect(component.optionState('a')).toBe('incorrect');
 		expect(component.optionState('b')).toBe('correct');
+
+		load(component, 'choice', {
+			question: 'Choose the correct spelling.',
+			options: [
+				{ id: 'a', label: 'enviroment' },
+				{ id: 'b', label: 'environment' },
+			],
+			correctOptionIds: ['b'],
+		});
+		component.selectOption('b');
+		component.handleAction('check');
+
+		expect(component.optionState('a')).toBe('neutral');
+		expect(component.optionState('b')).toBe('correct');
 	});
 
 	it('supports multiple ChoiceSlide selection and a correct result', () => {
@@ -259,6 +273,10 @@ describe('reusable slide library behavior', () => {
 		const component = TestBed.runInInjectionContext(
 			() => new ChoiceSlideComponent(),
 		);
+		let footerTitle = '';
+		component.stateChange.subscribe((state) => {
+			footerTitle = state.chrome?.footer?.title ?? footerTitle;
+		});
 		load(component, 'choice', {
 			mode: 'multiple',
 			question: 'Choose both formal words.',
@@ -273,6 +291,7 @@ describe('reusable slide library behavior', () => {
 		component.selectOption('c');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
+		expect(footerTitle).toBe('Nice!');
 	});
 
 	it('supports optional generic speech autoplay and replay for ChoiceSlide', () => {
@@ -588,15 +607,17 @@ describe('reusable slide library behavior', () => {
 		const audioControl = new SlideAudioControlComponent();
 		audioControl.maxReplays = 1;
 		const play = vi.fn().mockResolvedValue(undefined);
-		audioControl.play({
+		const audio = {
 			play,
 			currentTime: 2,
-		} as unknown as HTMLAudioElement);
-		audioControl.play({
-			play,
-			currentTime: 2,
-		} as unknown as HTMLAudioElement);
+			playbackRate: 1,
+			preservesPitch: false,
+		} as unknown as HTMLAudioElement;
+		audioControl.play(audio, 0.85);
+		audioControl.play(audio);
 		expect(play).toHaveBeenCalledTimes(1);
+		expect(audio.playbackRate).toBe(0.85);
+		expect(audio.preservesPitch).toBe(true);
 
 		const component = TestBed.runInInjectionContext(
 			() => new DictationSlideComponent(),
@@ -624,9 +645,46 @@ describe('reusable slide library behavior', () => {
 		});
 
 		expect(speech.speak).toHaveBeenCalledWith('environment', 0.95);
+		expect(component.playSpeech('slow')).toBe(true);
+		expect(speech.speak).toHaveBeenLastCalledWith(
+			'environment',
+			0.95,
+			undefined,
+			undefined,
+			'slow',
+		);
 		component.setAnswer('Environment');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
+	});
+
+	it('shows the configured dictation definition in the footer after any checked answer', () => {
+		configure();
+		const definition = 'the natural world in which people, animals, and plants live';
+
+		for (const { answer, tone } of [
+			{ answer: 'environment', tone: 'success' },
+			{ answer: 'enviroment', tone: 'error' },
+		] as const) {
+			const component = TestBed.runInInjectionContext(
+				() => new DictationSlideComponent(),
+			);
+			const states: unknown[] = [];
+			component.stateChange.subscribe((state) => states.push(state));
+			load(component, 'dictation', {
+				audio: '/audio/environment.mp3',
+				answer: 'environment',
+				definition: `  ${definition}  `,
+			});
+
+			component.setAnswer(answer);
+			component.handleAction('check');
+
+			expect(states.at(-1)).toMatchObject({
+				chrome: { footer: { tone, detail: definition } },
+			});
+			component.ngOnDestroy();
+		}
 	});
 
 	it('submits model-only RewriteSlide responses without false scoring', () => {
