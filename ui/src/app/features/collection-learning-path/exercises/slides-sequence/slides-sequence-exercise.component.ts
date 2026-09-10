@@ -115,6 +115,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 	private readonly sourceSlides = new Map<string, SlideExerciseSlide>();
 	private readonly retryCounts = new Map<string, number>();
 	private readonly savedResultIds = new Set<string>();
+	private readonly failedResultIds = new Set<string>();
 	private readonly resultSaves = new Map<string, Promise<void>>();
 	private loadGeneration = 0;
 
@@ -127,6 +128,7 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 		this.sourceSlides.clear();
 		this.retryCounts.clear();
 		this.savedResultIds.clear();
+		this.failedResultIds.clear();
 		this.resultSaves.clear();
 		this.loadGeneration += 1;
 		try {
@@ -235,8 +237,13 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 			.then(() => {
 				if (generation === this.loadGeneration) {
 					this.savedResultIds.add(result.slideId);
-					this.error.set("");
+					this.failedResultIds.delete(result.slideId);
+					if (!this.failedResultIds.size) this.error.set("");
 				}
+			})
+			.catch((error) => {
+				if (generation === this.loadGeneration) this.failedResultIds.add(result.slideId);
+				throw error;
 			})
 			.finally(() => {
 				if (this.resultSaves.get(result.slideId) === save) this.resultSaves.delete(result.slideId);

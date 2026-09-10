@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CollectionLearningPathApiService } from "../../../../core/collection-learning-path/collection-learning-path-api.service";
 import { ReviewAnswerSoundService } from "../../../../core/sound/review-answer-sound.service";
 import { SlideExerciseComponent } from "../../../../shared/slide-exercise";
+import type { SlideExerciseResult } from "../../../../shared/slide-exercise";
 import type { ExerciseContext } from "../exercise-runtime/exercise-contracts";
 import { SlidesSequenceExerciseComponent } from "./slides-sequence-exercise.component";
 
@@ -378,5 +379,41 @@ describe("SlidesSequenceExerciseComponent", () => {
 		await fixture.componentInstance.finish("summary");
 
 		expect(slideResult).toHaveBeenCalledOnce();
+	});
+
+	it("keeps an earlier immediate-save error visible until that exact result is retried successfully", async () => {
+		TestBed.configureTestingModule({
+			imports: [SlidesSequenceExerciseComponent],
+			providers: [{ provide: ReviewAnswerSoundService, useValue: { play: vi.fn(), stop: vi.fn() } }],
+		});
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		let firstAttempts = 0;
+		const slideResult = vi.fn(async (result: SlideExerciseResult) => {
+			if (result.slideId === "first" && firstAttempts++ === 0) throw new Error("First result was not saved.");
+		});
+		fixture.componentInstance.load({
+			...context,
+			slideResult,
+			config: { slides: [
+				{ id: "first", itemId: "word-1", type: "choice", data: {} },
+				{ id: "second", itemId: "word-2", type: "choice", data: {} },
+				{ id: "summary", type: "summary", terminal: true, data: {} },
+			] },
+		});
+		fixture.detectChanges();
+		const slideExercise = fixture.debugElement.query(By.directive(SlideExerciseComponent)).componentInstance as SlideExerciseComponent;
+
+		slideExercise.onContentEvent({ type: "answered", data: { selectedOptionIds: ["a"], correct: true } });
+		await vi.waitFor(() => expect(fixture.componentInstance.error()).toBe("First result was not saved."));
+		slideExercise.next();
+		slideExercise.onContentEvent({ type: "answered", data: { selectedOptionIds: ["b"], correct: true } });
+		await vi.waitFor(() => expect(slideResult).toHaveBeenCalledTimes(2));
+
+		expect(fixture.componentInstance.error()).toBe("First result was not saved.");
+		slideExercise.next();
+		await fixture.componentInstance.finish("summary");
+
+		expect(slideResult).toHaveBeenCalledTimes(3);
+		expect(fixture.componentInstance.error()).toBe("");
 	});
 });

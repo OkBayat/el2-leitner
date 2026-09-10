@@ -5,6 +5,7 @@ export interface VocabularySourceInfo {
   vocabularyId: string;
   term: string;
   collections: Array<{ id: string; title: string }>;
+  definitions?: Array<{ id: string; languageCode: string; text: string; collectionTitle: string }>;
 }
 
 export interface VocabularyEditInput {
@@ -58,8 +59,12 @@ export class VocabularyApiService {
 
   async sources(ids: string[]): Promise<VocabularySourceInfo[]> {
     if (!ids.length) return [];
-    const response = await this.api.get<{ sources: VocabularySourceInfo[] }>(`/api/library/vocabulary-sources?ids=${encodeURIComponent(ids.slice(0, 50).join(','))}`);
-    return response.sources || [];
+    const pages: string[][] = [];
+    for (let index = 0; index < ids.length; index += 50) pages.push(ids.slice(index, index + 50));
+    const responses = await Promise.all(pages.map((page) => this.api.get<{ sources: VocabularySourceInfo[] }>(
+      `/api/library/vocabulary-sources?ids=${encodeURIComponent(page.join(','))}`,
+    )));
+    return responses.flatMap((response) => response.sources || []);
   }
 
   private requireNextRevision(next: number, current: number): number {

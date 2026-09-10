@@ -1,22 +1,20 @@
 import { Injectable, inject } from '@angular/core';
-import { SentencePracticeApiService } from '../../core/sentence-practice/sentence-practice-api.service';
+import { VocabularyApiService } from '../../core/learning/vocabulary-api.service';
 
 export interface LeitnerDefinitionWord {
 	readonly id: string;
-	readonly box: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class LeitnerWordDefinitionsService {
-	private readonly sentenceApi = inject(SentencePracticeApiService);
+	private readonly vocabularyApi = inject(VocabularyApiService);
 
 	async load(words: readonly LeitnerDefinitionWord[]): Promise<ReadonlyMap<string, string>> {
 		const requested = [...new Map(words.map((word) => [word.id, word])).values()];
-		const houses = [...new Set(requested.map((word) => word.box))];
-		const decks = await Promise.all(houses.map((house) => this.sentenceApi.getDeck(house)));
-		const available = new Map(decks.flatMap((deck) => deck.cards).map((card) => [
-			card.id,
-			card.definitions?.map((definition) => definition.text.trim()).find(Boolean) ?? '',
+		const sources = await this.vocabularyApi.sources(requested.map((word) => word.id));
+		const available = new Map(sources.map((source) => [
+			source.vocabularyId,
+			source.definitions?.map((definition) => definition.text.trim()).find(Boolean) ?? '',
 		]));
 		const definitions = new Map<string, string>();
 		for (const word of requested) {

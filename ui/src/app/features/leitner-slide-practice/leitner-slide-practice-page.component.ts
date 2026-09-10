@@ -131,14 +131,20 @@ export class LeitnerSlidePracticePageComponent implements OnInit, OnDestroy {
 			if (currentAvailable.length < request.value) {
 				throw new Error('The available new-word list changed. Choose a smaller number and try again.');
 			}
-			const activated = await this.store.activateWords(currentAvailable.slice(0, request.value), 'home-selection');
-			if (activated.activated.length !== request.value) {
-				throw new Error('Not every requested word could be added to House 1.');
-			}
-			const definitions = await this.definitions.load(activated.activated);
-			const slides = this.slideBuilder.build(request.slideId, activated.activated, definitions);
+			const selected = currentAvailable.slice(0, request.value);
+			const definitions = await this.definitions.load(selected);
+			const slides = this.slideBuilder.build(request.slideId, selected, definitions);
 			await this.session.start('new', wordIds(slides, request.value));
-			return { slides };
+			try {
+				const activated = await this.store.activateWords(selected, 'home-selection');
+				if (activated.activated.length !== request.value) {
+					throw new Error('Not every requested word could be added to House 1.');
+				}
+				return { slides };
+			} catch (error) {
+				await this.session.abandon();
+				throw error;
+			}
 		};
 
 		return this.context('add-new-words', {

@@ -10,7 +10,8 @@ class PatternPool {
     return [[{
       vocabulary_public_id: "vocab-2",
       primary_form: "ability",
-      source_pairs: "ielts\u001e1500 IELTS Listening Words"
+      source_pairs: "ielts\u001e1500 IELTS Listening Words",
+      definition_pairs: "definition-1\u001een\u001ethe power or skill to do something\u001e1500 IELTS Listening Words"
     }], []];
   }
 }
@@ -28,7 +29,13 @@ describe("MySqlVocabularySourceRepository", () => {
     assert.deepEqual(sources, [{
       vocabularyId: "vocab-2",
       term: "ability",
-      collections: [{ id: "ielts", title: "1500 IELTS Listening Words" }]
+      collections: [{ id: "ielts", title: "1500 IELTS Listening Words" }],
+      definitions: [{
+        id: "definition-1",
+        languageCode: "en",
+        text: "the power or skill to do something",
+        collectionTitle: "1500 IELTS Listening Words"
+      }]
     }]);
   });
 

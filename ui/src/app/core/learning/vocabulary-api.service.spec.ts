@@ -64,4 +64,21 @@ describe('VocabularyApiService compact persistence', () => {
     TestBed.configureTestingModule({ providers: [VocabularyApiService, { provide: ApiClientService, useValue: api }] });
     await expect(TestBed.inject(VocabularyApiService).activate(7, 'a', '2026-09-01')).rejects.toThrow(/revision/u);
   });
+
+  it('loads source details for every requested vocabulary id in bounded pages', async () => {
+    const get = vi.fn(async (url: string) => {
+      const ids = decodeURIComponent(url.split('ids=')[1] ?? '').split(',').filter(Boolean);
+      return { sources: ids.map((vocabularyId) => ({ vocabularyId, term: vocabularyId, collections: [] })) };
+    });
+    TestBed.configureTestingModule({ providers: [
+      VocabularyApiService,
+      { provide: ApiClientService, useValue: { get } },
+    ] });
+    const ids = Array.from({ length: 51 }, (_, index) => `word-${index + 1}`);
+
+    const sources = await TestBed.inject(VocabularyApiService).sources(ids);
+
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(sources.map((source) => source.vocabularyId)).toEqual(ids);
+  });
 });
