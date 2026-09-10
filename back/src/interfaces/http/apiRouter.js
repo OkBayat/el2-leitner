@@ -2,6 +2,7 @@ import { resolveListeningAsset } from "./resolveListeningAsset.js";
 import { Router } from "express";
 import { rateLimit } from "express-rate-limit";
 import { createAuthMiddleware } from "./authMiddleware.js";
+import { streamAudioFile } from "./streamAudioFile.js";
 
 const LISTENING_IMAGE_CACHE_CONTROL = "private, max-age=604800";
 
@@ -79,15 +80,8 @@ export function createApiRouter({
 
   router.post("/tts/speech", authenticate, async (req, res, next) => {
     const audio = await useCases.synthesizeSpeech.execute(req.body ?? {});
-    res.type(audio.contentType);
     res.set("X-Vocora-TTS-Cache", audio.cacheStatus);
-    res.sendFile(
-      audio.filePath,
-      { acceptRanges: true, cacheControl: false, lastModified: false },
-      (error) => {
-        if (error && !res.headersSent) next(error);
-      }
-    );
+    streamAudioFile({ res, next, absolutePath: audio.filePath, contentType: audio.contentType });
   });
 
   router.get("/listening/bbc/lessons", authenticate, async (req, res) => {
@@ -106,10 +100,7 @@ export function createApiRouter({
       if (error.code !== "LISTENING_AUDIO_NOT_FOUND" || !assetDirectory || !legacyFileName) throw error;
       absolutePath = await resolveListeningAsset(listeningAudioDirectory, [legacyFileName], "AUDIO");
     }
-    res.type("audio/mpeg");
-    res.sendFile(absolutePath, { acceptRanges: true, cacheControl: false, lastModified: false }, (error) => {
-      if (error && !res.headersSent) next(error);
-    });
+    streamAudioFile({ res, next, absolutePath, contentType: "audio/mpeg" });
   });
 
   router.get("/listening/bbc/lessons/:lessonSlug/image", authenticate, async (req, res, next) => {

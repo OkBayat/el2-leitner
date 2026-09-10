@@ -117,7 +117,10 @@ export function createApp({
     });
     app.use(
       "/api/learning-paths",
-      container.collectionLearningPath.createHttpRouter({ authenticate })
+      container.collectionLearningPath.createHttpRouter({
+        authenticate,
+        audioDirectory: container.listeningAudioDirectory,
+      })
     );
   }
 

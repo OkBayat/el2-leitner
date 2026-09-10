@@ -1,6 +1,8 @@
 import { Router, raw } from "express";
 
 import { ValidationError } from "../../../domain/errors.js";
+import { resolveListeningAsset } from "../resolveListeningAsset.js";
+import { streamAudioFile } from "../streamAudioFile.js";
 import {
   collectionId,
   exerciseId,
@@ -26,7 +28,7 @@ function completionOutcome(value) {
   return value;
 }
 
-export function createCollectionLearningPathRouter({ queries, commands, authenticate }) {
+export function createCollectionLearningPathRouter({ queries, commands, authenticate, audioDirectory }) {
   const router = Router();
 
   router.use((_req, res, next) => {
@@ -76,6 +78,20 @@ export function createCollectionLearningPathRouter({ queries, commands, authenti
       lessonRouteId(req.params.lessonId),
     );
     res.status(200).json({ lesson: lessonDto(result) });
+  });
+
+  router.get("/:pathId/lessons/:lessonId/audio", async (req, res, next) => {
+    const lesson = await queries.getLearningPathLesson.execute(
+      req.auth.userId,
+      learningPathRouteId(req.params.pathId),
+      lessonRouteId(req.params.lessonId),
+    );
+    const absolutePath = await resolveListeningAsset(
+      audioDirectory,
+      [`${lesson.id}.m4a`],
+      "AUDIO",
+    );
+    streamAudioFile({ res, next, absolutePath, contentType: "audio/mp4" });
   });
 
   router.get("/:pathId/lessons/:lessonId/exercises/:exerciseId", async (req, res) => {

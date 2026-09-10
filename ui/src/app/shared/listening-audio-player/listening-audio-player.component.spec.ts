@@ -18,7 +18,7 @@ describe('ListeningAudioPlayerComponent', () => {
 
   it('accepts reusable audio copy while preserving the supplied media source', () => {
     const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
-    fixture.componentRef.setInput('src', '/data/learning-path-podcasts/gfi-unit-01.m4a');
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
     fixture.componentRef.setInput('title', 'Lesson audio');
     fixture.componentRef.setInput('description', '');
     fixture.detectChanges();
@@ -26,12 +26,12 @@ describe('ListeningAudioPlayerComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector('strong')?.textContent).toBe('Lesson audio');
     expect(element.querySelector('.sticky-hint')).toBeNull();
-    expect(element.querySelector('audio')?.getAttribute('src')).toBe('/data/learning-path-podcasts/gfi-unit-01.m4a');
+    expect(element.querySelector('audio')?.getAttribute('src')).toBe('/api/learning-paths/4/lessons/64/audio');
   });
 
   it('keeps controls visible when scroll collapsing is disabled by the host page', () => {
     const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
-    fixture.componentRef.setInput('src', '/data/learning-path-podcasts/gfi-unit-01.m4a');
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
     fixture.componentRef.setInput('collapseOnScroll', false);
     fixture.detectChanges();
 

@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CollectionLearningPathApiService } from '../../../core/collection-learning-path/collection-learning-path-api.service';
-import { LearningPathPodcastCatalogService } from '../../../core/collection-learning-path/learning-path-podcast-catalog.service';
 import type { LearningPathLessonView } from '../../../domain/collection-learning-path/learning-path';
 import { ListeningAudioPlayerComponent } from '../../../shared/listening-audio-player/listening-audio-player.component';
 
@@ -28,7 +27,6 @@ function errorMessage(error: unknown): string {
 })
 export class LessonPodcastPageComponent {
   private readonly api = inject(CollectionLearningPathApiService);
-  private readonly catalog = inject(LearningPathPodcastCatalogService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private requestVersion = 0;
@@ -68,13 +66,11 @@ export class LessonPodcastPageComponent {
       const view = await this.api.queryLearningPath(state.pathId);
       const lesson = view.lessons.find((candidate) => candidate.id === state.lessonId);
       if (!lesson) throw new Error('The requested lesson is not available.');
-      const managedLessonId = await this.catalog.resolveLessonId(view.path.collectionId, {
-        position: lesson.position,
-        title: lesson.title,
-      });
       if (request !== this.requestVersion) return;
       this.lesson.set(lesson);
-      this.audioSrc.set(`/data/learning-path-podcasts/${encodeURIComponent(managedLessonId)}.m4a`);
+      this.audioSrc.set(
+        `/api/learning-paths/${encodeURIComponent(state.pathId)}/lessons/${encodeURIComponent(state.lessonId)}/audio`,
+      );
     } catch (error) {
       if (request === this.requestVersion) this.error.set(errorMessage(error));
     } finally {

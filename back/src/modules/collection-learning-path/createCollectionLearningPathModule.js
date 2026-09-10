@@ -218,8 +218,8 @@ export function createCollectionLearningPathModule({ pool, adapters = {} }) {
   return {
     queries,
     commands,
-    createHttpRouter({ authenticate }) {
-      return createCollectionLearningPathRouter({ queries, commands, authenticate });
+    createHttpRouter({ authenticate, audioDirectory }) {
+      return createCollectionLearningPathRouter({ queries, commands, authenticate, audioDirectory });
     },
   };
 }
