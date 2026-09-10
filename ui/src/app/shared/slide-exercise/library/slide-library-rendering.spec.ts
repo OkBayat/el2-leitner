@@ -155,6 +155,9 @@ describe('reusable slide renderer contract', () => {
 		expect(markdown?.querySelector('h3')?.textContent).toBe('Form');
 		expect(markdown?.querySelector('h4')?.textContent).toBe('Steps');
 		expect(markdown?.querySelector('strong')?.textContent).toBe('does not');
+		expect(markdown?.querySelector('strong')?.classList).toContain(
+			'teaching-markdown__known',
+		);
 		expect(markdown?.querySelectorAll('em')).toHaveLength(2);
 		expect(markdown?.querySelectorAll('ol li')).toHaveLength(2);
 		expect(markdown?.querySelectorAll('ul li')).toHaveLength(2);
@@ -388,6 +391,7 @@ describe('reusable slide renderer contract', () => {
 			],
 		});
 		const fixture = TestBed.createComponent(SlideExerciseComponent);
+		const random = vi.spyOn(Math, 'random').mockReturnValue(0.999);
 		const slide = REUSABLE_SLIDE_FIXTURES.find(
 			(candidate) => candidate.type === 'choice',
 		)!;
@@ -401,6 +405,7 @@ describe('reusable slide renderer contract', () => {
 				),
 			).not.toBeNull();
 		});
+		random.mockRestore();
 
 		const preventNumber = vi.fn();
 		fixture.componentInstance.handleKeyboard({

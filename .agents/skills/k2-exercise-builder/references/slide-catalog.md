@@ -16,7 +16,7 @@ Select a slide from the learner action and evidence required. The 17 reusable fa
 | `short-answer` | Retrieve one brief answer without options | `question`, `answers`; optional hints and exact spelling | Hints reduce retrieval difficulty. |
 | `word-formation` | Produce a derived form from a base | `baseWord`, `fields` with `partOfSpeech`; optional mode | Use matching when production is not required. |
 | `error-correction` | Detect and replace faulty language | `original`, `answers`; optional mode and category | Accepted answers must not reject other valid corrections accidentally. |
-| `rewrite` | Transform a supplied utterance | `original`; accepted answers, required fragments, target words, or model answer as appropriate | Open rewrites are submitted work unless deterministic constraints exist. |
+| `rewrite` | Correct one or two local word-level errors in a supplied utterance | `original`, exact `acceptedAnswers`, and `modelAnswer`; optional target words | Keep the correction unambiguous and within one or two word edits. Use `writing-response` for open paraphrase or substantial restructuring. |
 | `pronunciation` | Discriminate or repeat a spoken form | `mode`, `question`; optional word, options, and correct option | Repeat is practice, not automatic pronunciation-quality judgment. |
 | `dictation` | Convert heard language into written form | `answer` and exactly one `audio` or `speech`; optional mode and constraints | Tests sound-to-form production, not broad comprehension. |
 | `speaking-response` | Record an oral response | `mode`, `prompt`; optional bullets, timing, vocabulary, notes | Submission proves a recording exists; semantic evaluation is separate. |

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -91,6 +92,26 @@ ENUM_FIELDS = {
     },
 }
 TEACHING_BLOCK_KINDS = {"word", "comparison", "correction", "patterns", "example", "note"}
+
+
+def word_tokens(value: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+(?:'[a-z0-9]+)?", value.casefold())
+
+
+def word_edit_distance(left: str, right: str) -> int:
+    source = word_tokens(left)
+    target = word_tokens(right)
+    row = list(range(len(target) + 1))
+    for source_index, source_word in enumerate(source, start=1):
+        next_row = [source_index]
+        for target_index, target_word in enumerate(target, start=1):
+            next_row.append(min(
+                next_row[target_index - 1] + 1,
+                row[target_index] + 1,
+                row[target_index - 1] + (source_word != target_word),
+            ))
+        row = next_row
+    return row[-1]
 
 
 def record(value: Any, label: str) -> dict:
@@ -238,7 +259,15 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         string_array(data, "answers", "Error correction answers")
         return
     if slide_type == "rewrite":
-        text(data, "original", "Rewrite original")
+        original = text(data, "original", "Rewrite original")
+        model_answer = text(data, "modelAnswer", "Rewrite modelAnswer")
+        accepted_answers = string_array(data, "acceptedAnswers", "Rewrite acceptedAnswers")
+        if "requiredFragments" in data:
+            raise ValueError("Rewrite slides use exact acceptedAnswers, not requiredFragments.")
+        for answer in {model_answer, *accepted_answers}:
+            distance = word_edit_distance(original, answer)
+            if distance < 1 or distance > 2:
+                raise ValueError("Rewrite answers must require exactly one or two word edits.")
         return
     if slide_type == "pronunciation":
         text(data, "mode", "Pronunciation mode")

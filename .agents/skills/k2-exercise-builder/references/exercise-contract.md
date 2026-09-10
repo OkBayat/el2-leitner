@@ -145,6 +145,25 @@ completion evidence.
 
 Use `choice` when options form an assessment question. Configure `correctOptionIds`; its result is graded by the backend.
 
+## Rewrite locality
+
+Use `rewrite` only for a short, unambiguous correction whose exact model and
+accepted answers differ from `original` by one or two word insertions,
+deletions, substitutions, or word-order edits. Give a direct instruction that
+identifies the intended grammar or vocabulary target. An inline alternative
+such as `He go/goes to the gym every day.` may be used when additional support
+is helpful; the accepted answer is `He goes to the gym every day.`
+
+Good local corrections include `Tom play football every Saturday.` to `Tom
+plays football every Saturday.`, or `She always is late.` to `She is always
+late.` Do not ask learners to infer a substantially different sentence such as
+changing `Tom's normal Saturday activity is football.` into `Tom plays football
+every Saturday.` Use `writing-response` for open paraphrase or restructuring.
+
+Every runtime-ready rewrite authored through this skill provides non-empty
+`modelAnswer` and exact `acceptedAnswers`. Do not use `requiredFragments` as the
+scoring contract because unrelated text could contain the same fragments.
+
 ## Validation boundary
 
 `validate-exercise.py` checks deterministic structure and the minimum safe contract. It cannot establish factual correctness, distractor quality, teaching value, or source fidelity. Those remain agent-owned and must be reviewed against the supplied source while authoring.

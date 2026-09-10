@@ -102,14 +102,38 @@ class ExerciseValidatorTests(unittest.TestCase):
             "type": "rewrite",
             "data": {
                 "mode": "target-grammar",
-                "original": "Tom's normal Saturday activity is football.",
-                "instruction": "Rewrite the idea as a present simple habit.",
+                "original": "Tom play football every Saturday.",
+                "instruction": "Correct one word.",
                 "modelAnswer": "Tom plays football every Saturday.",
                 "acceptedAnswers": ["Tom plays football every Saturday."],
             },
         }
 
         self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
+
+    def test_rejects_rewrite_answers_that_need_more_than_two_word_edits(self) -> None:
+        with self.assertRaisesRegex(ValueError, "one or two word edits"):
+            MODULE.validate_slide_data(
+                "rewrite",
+                {
+                    "mode": "target-grammar",
+                    "original": "Tom's normal Saturday activity is football.",
+                    "modelAnswer": "Tom plays football every Saturday.",
+                    "acceptedAnswers": ["Tom plays football every Saturday."],
+                },
+            )
+
+    def test_rejects_fragment_scoring_for_rewrite_slides(self) -> None:
+        with self.assertRaisesRegex(ValueError, "exact acceptedAnswers"):
+            MODULE.validate_slide_data(
+                "rewrite",
+                {
+                    "original": "Tom play football every Saturday.",
+                    "modelAnswer": "Tom plays football every Saturday.",
+                    "acceptedAnswers": ["Tom plays football every Saturday."],
+                    "requiredFragments": ["plays"],
+                },
+            )
 
     def test_rejects_every_unsupported_runtime_enum_value(self) -> None:
         for slide_type, fields in MODULE.ENUM_FIELDS.items():

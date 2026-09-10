@@ -615,6 +615,10 @@ td mat-form-field {
 	margin-top: var(--vocora-space-2);
 }
 
+:host ::ng-deep .teaching-markdown .teaching-markdown__known {
+	color: var(--vocora-action-primary);
+}
+
 .teaching-block,
 .answer-review,
 blockquote {

@@ -16,8 +16,14 @@ function escapeHtml(value: string): string {
 
 function inlineMarkdown(value: string): string {
 	return escapeHtml(value)
-		.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
-		.replace(/__([^_\n]+)__/g, '<strong>$1</strong>')
+		.replace(
+			/\*\*([^*\n]+)\*\*/g,
+			'<strong class="teaching-markdown__known">$1</strong>',
+		)
+		.replace(
+			/__([^_\n]+)__/g,
+			'<strong class="teaching-markdown__known">$1</strong>',
+		)
 		.replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s.,!?;:)])/g, '$1<em>$2</em>')
 		.replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s.,!?;:)])/g, '$1<em>$2</em>');
 }

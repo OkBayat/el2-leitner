@@ -197,9 +197,9 @@
                 "id": "gfi-u01-habits-rewrite",
                 "type": "rewrite",
                 "data": {
-                  "instruction": "Use these exact words to make a present simple sentence: Tom / play / football / every Saturday.",
+                  "instruction": "Correct one verb to make the present simple form agree with Tom.",
                   "mode": "target-grammar",
-                  "original": "Tom's normal Saturday activity is football.",
+                  "original": "Tom play football every Saturday.",
                   "acceptedAnswers": ["Tom plays football every Saturday."],
                   "modelAnswer": "Tom plays football every Saturday."
                 }
@@ -774,7 +774,7 @@
                 "id": "gfi-u01-always-rewrite",
                 "type": "rewrite",
                 "data": {
-                  "instruction": "Rewrite the sentence to make the annoyance explicit with the present continuous.",
+                  "instruction": "Correct the verb phrase to show an annoying repeated action.",
                   "mode": "target-grammar",
                   "original": "My neighbour constantly plays loud music at night!",
                   "acceptedAnswers": ["My neighbour is constantly playing loud music at night!", "My neighbour's constantly playing loud music at night!"],

@@ -288,3 +288,23 @@ Every exercise must include:
 - `evidence.sequence_reason` explaining why the exercise sits at that point in the path.
 
 The coverage audit must partition the lesson's source target IDs into covered and uncovered sets. Any uncovered target requires `validation.status: blocked` and an explicit blocker that records why the target cannot be covered; a warning or authorization alone is not sufficient.
+
+## Local rewrite rule
+
+Use `rewrite` only when the displayed incorrect sentence and every correct
+answer differ by exactly one or two word insertions, deletions, substitutions,
+or word-order edits. The prompt must name the intended grammar or vocabulary
+target so the learner never has to guess a hidden paraphrase.
+
+Good examples:
+
+- form: `He go to the gym every day.` → `He goes to the gym every day.`;
+- tense/helper: `She works right now.` → `She is working right now.`;
+- order: `She always is late.` → `She is always late.`;
+- supported choice: `He go/goes to the gym every day.` → `He goes to the gym every day.`.
+
+Do not transform `Tom's normal Saturday activity is football.` into `Tom plays
+football every Saturday.` because the learner must invent a different
+structure. Route open paraphrase or substantial restructuring to
+`writing-response`. The later runtime-ready handoff must give
+`k2-exercise-builder` exact accepted answers.
