@@ -290,6 +290,13 @@ describe("SlideExerciseComponent", () => {
 		const skip = fixture.nativeElement.querySelector(
 			'[data-testid="skip-unavailable-slide"]',
 		) as HTMLButtonElement | null;
+		expect(
+			[
+				...fixture.nativeElement.querySelectorAll(
+					'.slide-content-host__status--error button',
+				),
+			].map((button: HTMLButtonElement) => button.textContent?.trim()),
+		).toEqual(['Skip', 'Try again']);
 		expect(skip?.textContent).toContain("Skip");
 		expect(skip?.classList).toContain("mat-mdc-outlined-button");
 

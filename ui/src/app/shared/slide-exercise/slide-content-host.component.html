@@ -24,12 +24,6 @@
       <strong>Slide could not load</strong>
       <div class="d-flex flex-wrap justify-content-center gap-3">
         <button
-          mat-flat-button
-          type="button"
-          class="vocora-button vocora-button--primary"
-          (click)="retry()"
-        >Try again</button>
-        <button
           mat-stroked-button
           type="button"
           class="vocora-button vocora-button--secondary"
@@ -37,6 +31,12 @@
           aria-label="Skip the unavailable slide"
           (click)="requestSkip()"
         >Skip</button>
+        <button
+          mat-flat-button
+          type="button"
+          class="vocora-button vocora-button--primary"
+          (click)="retry()"
+        >Try again</button>
       </div>
     </div>
   }

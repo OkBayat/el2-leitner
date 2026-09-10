@@ -13,6 +13,7 @@ import {
 	DictationSlideComponent,
 	ErrorCorrectionSlideComponent,
 	MatchingSlideComponent,
+	PronunciationSlideComponent,
 	RewriteSlideComponent,
 	SelectionSlideComponent,
 	ShortAnswerSlideComponent,
@@ -63,6 +64,33 @@ function configure(): {
 }
 
 describe('reusable slide library behavior', () => {
+	it('loads repeat-mode pronunciation as a single acknowledgement action', () => {
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new PronunciationSlideComponent(),
+		);
+
+		expect(() =>
+			load(component, 'pronunciation', {
+				mode: 'repeat',
+				instruction: 'Listen, then repeat the complete sentence aloud.',
+				question: 'She is persistent.',
+				word: 'persistent',
+				stimulus: {
+					type: 'dialogue',
+					turns: [
+						{ speaker: 'Sentence', text: 'She is persistent.' },
+					],
+				},
+			}),
+		).not.toThrow();
+		expect(component.content()).toMatchObject({
+			question: 'She is persistent.',
+			options: [{ id: 'repeated', label: 'I repeated it aloud' }],
+			correctOptionIds: ['repeated'],
+		});
+	});
+
 	it('submits general single and multiple selections without correctness', () => {
 		const next = vi.fn();
 		const component = new SelectionSlideComponent();

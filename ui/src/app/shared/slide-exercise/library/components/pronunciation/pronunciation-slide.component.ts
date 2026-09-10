@@ -33,25 +33,28 @@ export class PronunciationSlideComponent extends ChoiceSlideComponent {
 			mode === 'repeat'
 				? [{ id: 'repeated', label: 'I repeated it aloud' }]
 				: options(source['options']);
-		super.load({
-			...context,
-			data: {
-				...common(source),
-				mode: 'single',
-				question: requiredText(
-					source['question'],
-					'Pronunciation question',
-				),
-				options: parsedOptions,
-				correctOptionIds: [
-					mode === 'repeat'
-						? 'repeated'
-						: requiredText(
-								source['correctOptionId'],
-								'Pronunciation answer',
-							),
-				],
-			},
-		});
+		const data = {
+			...common(source),
+			mode: 'single' as const,
+			question: requiredText(
+				source['question'],
+				'Pronunciation question',
+			),
+			options: parsedOptions,
+			correctOptionIds: [
+				mode === 'repeat'
+					? 'repeated'
+					: requiredText(
+							source['correctOptionId'],
+							'Pronunciation answer',
+						),
+			],
+		};
+		if (mode === 'repeat') {
+			this.begin(context.slideId, data);
+			this.selectedOptionIds.set([]);
+			return;
+		}
+		super.load({ ...context, data });
 	}
 }
