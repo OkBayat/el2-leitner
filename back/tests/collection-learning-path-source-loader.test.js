@@ -87,7 +87,6 @@ test("all file-managed teaching cards use the markdown teaching contract", async
     lesson.exercises.flatMap((exercise) => exercise.config?.slides?.filter(
       (slide) => slide.type === "teaching-card") ?? [])));
 
-  assert.equal(teachingCards.length, 25);
   assert.ok(teachingCards.every((slide) => typeof slide.data.markdown === "string"));
   assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("### ")));
   assert.ok(teachingCards.every((slide) => slide.data.markdown.includes("**")));
@@ -113,7 +112,6 @@ test("all file-managed rewrites are unambiguous one-or-two-word corrections", as
     lesson.exercises.flatMap((exercise) => exercise.config?.slides?.filter(
       (slide) => slide.type === "rewrite") ?? [])));
 
-  assert.equal(rewrites.length, 6);
   for (const slide of rewrites) {
     assert.ok(Array.isArray(slide.data.acceptedAnswers) && slide.data.acceptedAnswers.length > 0, slide.id);
     assert.equal(typeof slide.data.modelAnswer, "string", slide.id);

@@ -3037,6 +3037,3746 @@
           }
         }
       ]
+    },
+    {
+      "id": "gfi-unit-02",
+      "title": "Unit 2 — Past tenses 1",
+      "position": 2,
+      "source": {
+        "kind": "collection-section",
+        "collectionId": "grammar-for-ielts",
+        "sectionTitle": "Unit 2 — Past tenses 1"
+      },
+      "exercises": [
+        {
+          "id": "gfi-u02-past-simple-forms",
+          "position": 10,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Build the past simple",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-ps-forms-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn the positive, negative and question forms.",
+                  "title": "Past simple form",
+                  "markdown": "### Build the past simple\n\n#### Positive\nUse **verb + -ed** or **verb + -d** for regular verbs: *work → worked*, *live → lived*. Learn common irregular forms: *go → went*, *write → wrote*. The verb **be** becomes *was* or *were*.\n\n#### Negative\nUse **did not + base verb**: *She did not work.* With *be*, use *was not* or *were not*.\n\n#### Question\nUse **Did + subject + base verb?**: *Did they work?* With *be*, use *Was/Were + subject?*"
+                }
+              },
+              {
+                "id": "gfi-u02-ps-regular",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct past simple sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Mina visit her aunt yesterday."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Mina visited her aunt yesterday."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Mina was visit her aunt yesterday."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Visited is the regular past form of visit."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-spelling",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct past form of live.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "liveed"
+                    },
+                    {
+                      "id": "b",
+                      "label": "lived"
+                    },
+                    {
+                      "id": "c",
+                      "label": "lives"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "A regular verb already ending in e takes -d."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-irregular",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete: Last night, Ali ___ home early.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "come"
+                    },
+                    {
+                      "id": "b",
+                      "label": "came"
+                    },
+                    {
+                      "id": "c",
+                      "label": "comed"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Came is the irregular past form of come."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-be",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete: We ___ tired after the trip.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "was"
+                    },
+                    {
+                      "id": "b",
+                      "label": "were"
+                    },
+                    {
+                      "id": "c",
+                      "label": "did be"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Use were with we, you and they."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct negative sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "She did not called me."
+                    },
+                    {
+                      "id": "b",
+                      "label": "She did not call me."
+                    },
+                    {
+                      "id": "c",
+                      "label": "She not called me."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "After did not, use the base verb call."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct question.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did Leo went by bus?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Was Leo go by bus?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Did Leo go by bus?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "After Did, use the base verb go."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-forms-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete each sentence with the past simple form.",
+                  "content": "I {{worked}} late. Sara {{wrote}} an email. The room {{was}} quiet. We {{were_not}} ready. He {{did_not_take}} the train. {{did_you_see}} the message?",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "worked",
+                      "answers": [
+                        "worked"
+                      ]
+                    },
+                    {
+                      "id": "wrote",
+                      "answers": [
+                        "wrote"
+                      ]
+                    },
+                    {
+                      "id": "was",
+                      "answers": [
+                        "was"
+                      ]
+                    },
+                    {
+                      "id": "were_not",
+                      "answers": [
+                        "were not",
+                        "weren't"
+                      ]
+                    },
+                    {
+                      "id": "did_not_take",
+                      "answers": [
+                        "did not take",
+                        "didn't take"
+                      ]
+                    },
+                    {
+                      "id": "did_you_see",
+                      "answers": [
+                        "Did you see"
+                      ]
+                    }
+                  ],
+                  "explanation": "Regular, irregular, be, negative and question forms all follow their own clear pattern."
+                }
+              },
+              {
+                "id": "gfi-u02-ps-did-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after Did.",
+                  "mode": "sentence-correction",
+                  "category": "past simple question",
+                  "original": "Did she went to class?",
+                  "answers": [
+                    "Did she go to class?"
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-ps-forms-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Forms complete",
+                  "title": "You can build the past simple",
+                  "subtitle": "Next, connect the form to completed past actions."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-completed-actions",
+          "position": 20,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Completed past actions",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-completed-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Learn when a single completed action needs the past simple.",
+                  "title": "Single completed actions",
+                  "markdown": "### One completed past action\n\nUse the **past simple** for an action that started and finished in the past.\n\n- A time is often stated: *I called her yesterday.*\n- A time is not necessary when the listener already knows the past context: *How did the burglar enter?*\n- Common time phrases include *last week*, *yesterday*, *in 2020* and *two days ago*."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each sentence by time meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "past",
+                      "label": "Completed in the past"
+                    },
+                    {
+                      "id": "not-past",
+                      "label": "Not a completed past action"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "arrived",
+                      "label": "The train arrived at six.",
+                      "correctCategoryId": "past"
+                    },
+                    {
+                      "id": "called",
+                      "label": "I called her last night.",
+                      "correctCategoryId": "past"
+                    },
+                    {
+                      "id": "opened",
+                      "label": "He opened the window.",
+                      "correctCategoryId": "past"
+                    },
+                    {
+                      "id": "is-reading",
+                      "label": "She is reading now.",
+                      "correctCategoryId": "not-past"
+                    },
+                    {
+                      "id": "works",
+                      "label": "Omar works here every day.",
+                      "correctCategoryId": "not-past"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-completed-time",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence about one completed action.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Nora visits the museum every week."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Nora visited the museum yesterday."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Nora is visiting the museum now."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Visited shows a completed visit in the past."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-known",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "You are already talking about last night's burglary. Which question is correct?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "How did the burglar enter?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "How does the burglar enter?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "How is the burglar entering?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "The past context is already known, so no extra time phrase is needed."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the past simple form of each verb.",
+                  "content": "Last Saturday, I {{walked}} to the library. I {{found}} the book and {{borrowed}} it. My friend {{called}} me two hours ago, so I {{returned}} home.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "walked",
+                      "answers": [
+                        "walked"
+                      ]
+                    },
+                    {
+                      "id": "found",
+                      "answers": [
+                        "found"
+                      ]
+                    },
+                    {
+                      "id": "borrowed",
+                      "answers": [
+                        "borrowed"
+                      ]
+                    },
+                    {
+                      "id": "called",
+                      "answers": [
+                        "called"
+                      ]
+                    },
+                    {
+                      "id": "returned",
+                      "answers": [
+                        "returned"
+                      ]
+                    }
+                  ],
+                  "explanation": "Every verb describes a completed past action."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one verb to show a completed action yesterday.",
+                  "mode": "target-grammar",
+                  "original": "Yesterday, I visit the new library.",
+                  "acceptedAnswers": [
+                    "Yesterday, I visited the new library."
+                  ],
+                  "modelAnswer": "Yesterday, I visited the new library."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-see-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after did.",
+                  "mode": "sentence-correction",
+                  "category": "completed past action",
+                  "original": "Where did you saw the accident?",
+                  "answers": [
+                    "Where did you see the accident?"
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-completed-no-time",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which statement about past time phrases is correct?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "A past simple sentence must always contain yesterday."
+                    },
+                    {
+                      "id": "b",
+                      "label": "A time phrase is optional when the past context is already clear."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Past simple cannot use a stated time."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Past context can come from the conversation instead of the same sentence."
+                }
+              },
+              {
+                "id": "gfi-u02-completed-recall",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Write one word in the past simple.",
+                  "question": "A few minutes ago, Sam ___ (call) the police.",
+                  "answers": [
+                    "called"
+                  ],
+                  "wordLimit": 1
+                }
+              },
+              {
+                "id": "gfi-u02-completed-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Use complete",
+                  "title": "You can identify completed past actions",
+                  "subtitle": "Next, put completed actions into a clear sequence."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-action-sequences",
+          "position": 30,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Sequences of past actions",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-sequence-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn how the past simple tells events in order.",
+                  "title": "A series of completed actions",
+                  "markdown": "### Tell events in order\n\nUse the **past simple** for each completed action in a sequence. The order of the verbs normally shows the order of events.\n\n1. He entered the room.\n2. He opened the cupboard.\n3. He took the bag.\n\nUse **then** or **next** when you want the sequence to be extra clear."
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-order",
+                "type": "ordering",
+                "data": {
+                  "instruction": "Put the events into the stated story order.",
+                  "mode": "chronology",
+                  "items": [
+                    {
+                      "id": "entered",
+                      "label": "Lina entered the office."
+                    },
+                    {
+                      "id": "opened",
+                      "label": "She opened her laptop."
+                    },
+                    {
+                      "id": "sent",
+                      "label": "She sent the report."
+                    }
+                  ],
+                  "correctOrderIds": [
+                    "entered",
+                    "opened",
+                    "sent"
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the sequence with past simple verbs.",
+                  "content": "The visitor {{came}} in, {{put}} his coat on a chair, {{sat}} down and {{asked}} a question.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "came",
+                      "answers": [
+                        "came"
+                      ]
+                    },
+                    {
+                      "id": "put",
+                      "answers": [
+                        "put"
+                      ]
+                    },
+                    {
+                      "id": "sat",
+                      "answers": [
+                        "sat"
+                      ]
+                    },
+                    {
+                      "id": "asked",
+                      "answers": [
+                        "asked"
+                      ]
+                    }
+                  ],
+                  "explanation": "Each verb is a separate completed step."
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-next",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the best word to mark the next event.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Now"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Then"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Usually"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Then introduces the following event in a past sequence."
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-form",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sequence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "He unlocked the door and walks inside."
+                    },
+                    {
+                      "id": "b",
+                      "label": "He was unlocking the door and walks inside."
+                    },
+                    {
+                      "id": "c",
+                      "label": "He unlocked the door and walked inside."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "Both completed actions use the past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one verb so both events are in the past.",
+                  "mode": "target-grammar",
+                  "original": "Maya picked up the key and opens the door.",
+                  "acceptedAnswers": [
+                    "Maya picked up the key and opened the door."
+                  ],
+                  "modelAnswer": "Maya picked up the key and opened the door."
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the second past verb.",
+                  "mode": "sentence-correction",
+                  "category": "past action sequence",
+                  "original": "First we ate dinner; then we leaved the restaurant.",
+                  "answers": [
+                    "First we ate dinner; then we left the restaurant."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-match",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each sequence word to its job.",
+                  "mode": "term-example",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "first",
+                      "left": "first",
+                      "right": "starts the sequence"
+                    },
+                    {
+                      "id": "then",
+                      "left": "then",
+                      "right": "adds the following event"
+                    },
+                    {
+                      "id": "next",
+                      "left": "next",
+                      "right": "moves to another event"
+                    },
+                    {
+                      "id": "finally",
+                      "left": "finally",
+                      "right": "marks the last event"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each example.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "series",
+                      "label": "Series of actions"
+                    },
+                    {
+                      "id": "single",
+                      "label": "One action"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "series-a",
+                      "label": "She arrived, sat down and called us.",
+                      "correctCategoryId": "series"
+                    },
+                    {
+                      "id": "single-a",
+                      "label": "She arrived at noon.",
+                      "correctCategoryId": "single"
+                    },
+                    {
+                      "id": "series-b",
+                      "label": "He opened the box, looked inside and smiled.",
+                      "correctCategoryId": "series"
+                    },
+                    {
+                      "id": "single-b",
+                      "label": "He smiled yesterday.",
+                      "correctCategoryId": "single"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-sequence-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Sequence complete",
+                  "title": "You can tell completed events in order",
+                  "subtitle": "Next, use the past simple for repeated actions and past situations."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-repeated-long-term",
+          "position": 40,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Repeated actions and past situations",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-repeated-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Learn two more past simple uses.",
+                  "title": "Repeated actions and long-term situations",
+                  "markdown": "### Repeated past actions\n\nUse the **past simple** for actions that happened many times: *She often visited her cousins after school.*\n\n### Long-term past situations\n\nUse the past simple for a situation that continued in the past and is now finished: *He worked there for 17 years.*\n\nA duration such as **for 17 years** is especially natural with the past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each past simple use.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "repeated",
+                      "label": "Repeated action"
+                    },
+                    {
+                      "id": "long",
+                      "label": "Long-term past situation"
+                    },
+                    {
+                      "id": "single",
+                      "label": "Single completed action"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "often-played",
+                      "label": "We often played outside after school.",
+                      "correctCategoryId": "repeated"
+                    },
+                    {
+                      "id": "lived-ten",
+                      "label": "She lived in Rome for ten years.",
+                      "correctCategoryId": "long"
+                    },
+                    {
+                      "id": "called-once",
+                      "label": "I called him last night.",
+                      "correctCategoryId": "single"
+                    },
+                    {
+                      "id": "every-summer",
+                      "label": "Every summer, they travelled north.",
+                      "correctCategoryId": "repeated"
+                    },
+                    {
+                      "id": "worked-years",
+                      "label": "My father worked there for 20 years.",
+                      "correctCategoryId": "long"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-marker",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence clearly describes a repeated past action?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I met her once in 2019."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I usually met her after class."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I am meeting her now."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Usually shows that the action repeated."
+                }
+              },
+              {
+                "id": "gfi-u02-long-term",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the finished long-term past situation.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Nadia worked at the hospital for 12 years."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Nadia works at the hospital now."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Nadia is working today."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Worked ... for 12 years describes a finished period."
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the past simple.",
+                  "content": "As a child, I often {{walked}} to school. We {{visited}} our grandparents every month. My mother {{worked}} in a bank for eight years, and we {{lived}} near the city centre.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "walked",
+                      "answers": [
+                        "walked"
+                      ]
+                    },
+                    {
+                      "id": "visited",
+                      "answers": [
+                        "visited"
+                      ]
+                    },
+                    {
+                      "id": "worked",
+                      "answers": [
+                        "worked"
+                      ]
+                    },
+                    {
+                      "id": "lived",
+                      "answers": [
+                        "lived"
+                      ]
+                    }
+                  ],
+                  "explanation": "Frequency phrases show repetition; for + duration shows a past period."
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one verb to describe a past habit.",
+                  "mode": "target-grammar",
+                  "original": "At school, Ben often plays chess at lunch.",
+                  "acceptedAnswers": [
+                    "At school, Ben often played chess at lunch."
+                  ],
+                  "modelAnswer": "At school, Ben often played chess at lunch."
+                }
+              },
+              {
+                "id": "gfi-u02-long-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb for a finished 15-year period.",
+                  "mode": "sentence-correction",
+                  "category": "past long-term situation",
+                  "original": "She works in Madrid for 15 years before moving away.",
+                  "answers": [
+                    "She worked in Madrid for 15 years before moving away."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-duration-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "You want to say exactly how long a finished job lasted. Which sentence is best?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "He used to work there for exactly nine years."
+                    },
+                    {
+                      "id": "b",
+                      "label": "He worked there for exactly nine years."
+                    },
+                    {
+                      "id": "c",
+                      "label": "He would work there for exactly nine years."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Past simple is the clear choice when the duration is stated."
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-match",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each time phrase to its most direct meaning.",
+                  "mode": "term-example",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "often",
+                      "left": "often after class",
+                      "right": "repeated past action"
+                    },
+                    {
+                      "id": "every",
+                      "left": "every winter",
+                      "right": "repeated past action"
+                    },
+                    {
+                      "id": "for",
+                      "left": "for 12 years",
+                      "right": "duration of a past situation"
+                    },
+                    {
+                      "id": "once",
+                      "left": "once in 2020",
+                      "right": "single completed action"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-repeated-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Past uses complete",
+                  "title": "You can describe past repetition and duration",
+                  "subtitle": "Next, build the past continuous."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-past-continuous-forms",
+          "position": 50,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Build the past continuous",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-pc-forms-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn the three past continuous patterns.",
+                  "title": "Past continuous form",
+                  "markdown": "### Build the past continuous\n\n#### Positive\nUse **was/were + verb-ing**: *She was watching.* *They were watching.*\n\n#### Negative\nUse **was not / were not + verb-ing**: *They were not watching.*\n\n#### Question\nPut *was* or *were* before the subject: **Were they watching?**"
+                }
+              },
+              {
+                "id": "gfi-u02-pc-positive",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct positive form.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "He was watch the news."
+                    },
+                    {
+                      "id": "b",
+                      "label": "He watching the news."
+                    },
+                    {
+                      "id": "c",
+                      "label": "He was watching the news."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "Past continuous uses was plus the -ing form."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-plural",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete: We ___ dinner at seven.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "was cooking"
+                    },
+                    {
+                      "id": "b",
+                      "label": "were cooking"
+                    },
+                    {
+                      "id": "c",
+                      "label": "did cooking"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Use were with we."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct negative sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "They were not sleeping."
+                    },
+                    {
+                      "id": "b",
+                      "label": "They did not sleeping."
+                    },
+                    {
+                      "id": "c",
+                      "label": "They not were sleeping."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Place not after were."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct question.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did you studying?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Were you studying?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "You were studying?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "A past continuous question begins with was or were."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-forms-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete with the past continuous.",
+                  "content": "I {{was_reading}}. You {{were_listening}}. Sara {{was_not_sleeping}}. We {{were_working}}. {{was_he_waiting}} outside?",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "was_reading",
+                      "answers": [
+                        "was reading"
+                      ]
+                    },
+                    {
+                      "id": "were_listening",
+                      "answers": [
+                        "were listening"
+                      ]
+                    },
+                    {
+                      "id": "was_not_sleeping",
+                      "answers": [
+                        "was not sleeping",
+                        "wasn't sleeping"
+                      ]
+                    },
+                    {
+                      "id": "were_working",
+                      "answers": [
+                        "were working"
+                      ]
+                    },
+                    {
+                      "id": "was_he_waiting",
+                      "answers": [
+                        "Was he waiting"
+                      ]
+                    }
+                  ],
+                  "explanation": "Choose was or were, then add the -ing form."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-ing-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb form after was.",
+                  "mode": "sentence-correction",
+                  "category": "past continuous form",
+                  "original": "Mina was write an email.",
+                  "answers": [
+                    "Mina was writing an email."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-pc-agreement",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one word so the verb agrees with They.",
+                  "mode": "target-grammar",
+                  "original": "They was studying in the library.",
+                  "acceptedAnswers": [
+                    "They were studying in the library."
+                  ],
+                  "modelAnswer": "They were studying in the library."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-be-order",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete the question: ___ Sara waiting outside?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Was"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Were"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Use Was with Sara."
+                }
+              },
+              {
+                "id": "gfi-u02-pc-forms-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Forms complete",
+                  "title": "You can build the past continuous",
+                  "subtitle": "Next, combine a background action with a completed event."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-background-events",
+          "position": 60,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Background actions and events",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-background-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Learn how two past tenses work together.",
+                  "title": "Background and main event",
+                  "markdown": "### Background + event\n\nUse the **past continuous** for an action already in progress. Use the **past simple** for the shorter event that happens during it.\n\n- *I was cooking when the phone rang.*\n- *While she was watching TV, the lights went out.*\n\nWords such as **when**, **while** and **as** connect the two parts."
+                }
+              },
+              {
+                "id": "gfi-u02-background-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each verb phrase in the same story.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "background",
+                      "label": "Background in progress"
+                    },
+                    {
+                      "id": "event",
+                      "label": "Completed event"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "was-walking",
+                      "label": "was walking home",
+                      "correctCategoryId": "background"
+                    },
+                    {
+                      "id": "started",
+                      "label": "it started to rain",
+                      "correctCategoryId": "event"
+                    },
+                    {
+                      "id": "were-sleeping",
+                      "label": "were sleeping",
+                      "correctCategoryId": "background"
+                    },
+                    {
+                      "id": "rang",
+                      "label": "the alarm rang",
+                      "correctCategoryId": "event"
+                    },
+                    {
+                      "id": "was-driving",
+                      "label": "was driving to work",
+                      "correctCategoryId": "background"
+                    },
+                    {
+                      "id": "saw",
+                      "label": "saw an accident",
+                      "correctCategoryId": "event"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-background-correct",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I cooked when the phone was ringing."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I was cooking when the phone rang."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I did cooking when the phone rang."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Was cooking is the background; rang is the shorter event."
+                }
+              },
+              {
+                "id": "gfi-u02-background-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use past continuous for the background and past simple for the event.",
+                  "content": "While we {{were_waiting}} for the bus, it {{began}} to snow. I {{was_reading}} when Maya {{called}}. As they {{were_leaving}}, the lights {{went}} out.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "were_waiting",
+                      "answers": [
+                        "were waiting"
+                      ]
+                    },
+                    {
+                      "id": "began",
+                      "answers": [
+                        "began"
+                      ]
+                    },
+                    {
+                      "id": "was_reading",
+                      "answers": [
+                        "was reading"
+                      ]
+                    },
+                    {
+                      "id": "called",
+                      "answers": [
+                        "called"
+                      ]
+                    },
+                    {
+                      "id": "were_leaving",
+                      "answers": [
+                        "were leaving"
+                      ]
+                    },
+                    {
+                      "id": "went",
+                      "answers": [
+                        "went"
+                      ]
+                    }
+                  ],
+                  "explanation": "The longer scene uses past continuous; the event uses past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-background-while",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete: ___ Leo was sleeping, the door opened.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Every day"
+                    },
+                    {
+                      "id": "b",
+                      "label": "While"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Next"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "While introduces the background action."
+                }
+              },
+              {
+                "id": "gfi-u02-background-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Add the missing past continuous helper.",
+                  "mode": "target-grammar",
+                  "original": "I cooking when the phone rang.",
+                  "acceptedAnswers": [
+                    "I was cooking when the phone rang."
+                  ],
+                  "modelAnswer": "I was cooking when the phone rang."
+                }
+              },
+              {
+                "id": "gfi-u02-background-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the background verb.",
+                  "mode": "sentence-correction",
+                  "category": "background action",
+                  "original": "While I walked home, it started to rain.",
+                  "answers": [
+                    "While I was walking home, it started to rain."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-background-identify",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "In “He was studying when the burglar entered,” which action is the background?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "the burglar entered"
+                    },
+                    {
+                      "id": "b",
+                      "label": "he was studying"
+                    },
+                    {
+                      "id": "c",
+                      "label": "both actions are completed steps"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Was studying was already in progress."
+                }
+              },
+              {
+                "id": "gfi-u02-background-link",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which pair can introduce a background action?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "then and next"
+                    },
+                    {
+                      "id": "b",
+                      "label": "while and as"
+                    },
+                    {
+                      "id": "c",
+                      "label": "often and usually"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "While and as commonly introduce the continuing background."
+                }
+              },
+              {
+                "id": "gfi-u02-background-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Contrast complete",
+                  "title": "You can combine a background with an event",
+                  "subtitle": "Next, describe two actions continuing at the same time."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-simultaneous-background",
+          "position": 70,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Simultaneous past actions",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-simultaneous-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "usage",
+                  "instruction": "Learn how to show two actions in progress together.",
+                  "title": "Two background actions",
+                  "markdown": "### Two actions at the same time\n\nUse the **past continuous** for two activities that were both in progress.\n\n- *I was listening to music while I was working.*\n- *As Mina was cooking, Leo was setting the table.*\n\nNeither verb is presented as the short interrupting event."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each sentence pattern.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "same-time",
+                      "label": "Two actions in progress"
+                    },
+                    {
+                      "id": "interrupted",
+                      "label": "Background + short event"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "music-work",
+                      "label": "She was listening while she was working.",
+                      "correctCategoryId": "same-time"
+                    },
+                    {
+                      "id": "cook-set",
+                      "label": "He was cooking as I was setting the table.",
+                      "correctCategoryId": "same-time"
+                    },
+                    {
+                      "id": "read-ring",
+                      "label": "I was reading when the bell rang.",
+                      "correctCategoryId": "interrupted"
+                    },
+                    {
+                      "id": "walk-fall",
+                      "label": "They were walking when Sam fell.",
+                      "correctCategoryId": "interrupted"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-correct",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence with two simultaneous activities.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Maya cooked while Ben was setting the table."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Maya was cooking while Ben was setting the table."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Maya was cooking when Ben arrived."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Both activities use the past continuous."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Put both activities in the past continuous.",
+                  "content": "While I {{was_writing}}, my sister {{was_reading}}. As the children {{were_playing}}, their parents {{were_talking}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "was_writing",
+                      "answers": [
+                        "was writing"
+                      ]
+                    },
+                    {
+                      "id": "was_reading",
+                      "answers": [
+                        "was reading"
+                      ]
+                    },
+                    {
+                      "id": "were_playing",
+                      "answers": [
+                        "were playing"
+                      ]
+                    },
+                    {
+                      "id": "were_talking",
+                      "answers": [
+                        "were talking"
+                      ]
+                    }
+                  ],
+                  "explanation": "Both sides describe ongoing activities at the same time."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the second activity so both were in progress.",
+                  "mode": "target-grammar",
+                  "original": "I was reading while Maya watched TV.",
+                  "acceptedAnswers": [
+                    "I was reading while Maya was watching TV."
+                  ],
+                  "modelAnswer": "I was reading while Maya was watching TV."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the first simultaneous activity.",
+                  "mode": "sentence-correction",
+                  "category": "simultaneous activities",
+                  "original": "While we drove, the children were sleeping.",
+                  "answers": [
+                    "While we were driving, the children were sleeping."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-meaning",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "What does “They were talking while they were walking” mean?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Talking finished before walking started."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Both actions were in progress together."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Walking interrupted talking."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "While connects the two continuing activities."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-as",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct completion: As Sara was washing the dishes, Tom ___.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "was drying them"
+                    },
+                    {
+                      "id": "b",
+                      "label": "dried them yesterday"
+                    },
+                    {
+                      "id": "c",
+                      "label": "does dry them"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Was drying presents a second simultaneous activity."
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-match",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match the pattern to its meaning.",
+                  "mode": "term-example",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "two-cont",
+                      "left": "was reading + was listening",
+                      "right": "two continuing actions"
+                    },
+                    {
+                      "id": "cont-simple",
+                      "left": "was reading + rang",
+                      "right": "background plus short event"
+                    },
+                    {
+                      "id": "two-simple",
+                      "left": "opened + entered",
+                      "right": "ordered completed events"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-simultaneous-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Timing complete",
+                  "title": "You can show simultaneous past actions",
+                  "subtitle": "Next, contrast activity in progress with completed results."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-process-completion",
+          "position": 80,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Activity or completed result?",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-process-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Compare activity focus with completed-action focus.",
+                  "title": "Past continuous or past simple?",
+                  "markdown": "### Focus on the activity\n\nUse the **past continuous** when you focus on an activity in progress and do not say whether it finished: *For a while, I was writing a report.*\n\n### Focus on completion\n\nUse the **past simple** when the action is complete: *Last year, I wrote the report.* A list of past simple verbs often suggests completed actions in order."
+                }
+              },
+              {
+                "id": "gfi-u02-process-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify the speaker's focus.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "activity",
+                      "label": "Activity in progress; completion unclear"
+                    },
+                    {
+                      "id": "complete",
+                      "label": "Completed result"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "was-writing",
+                      "label": "I was writing the report for a while.",
+                      "correctCategoryId": "activity"
+                    },
+                    {
+                      "id": "wrote",
+                      "label": "I wrote the report last week.",
+                      "correctCategoryId": "complete"
+                    },
+                    {
+                      "id": "was-studying",
+                      "label": "She was studying at the library that afternoon.",
+                      "correctCategoryId": "activity"
+                    },
+                    {
+                      "id": "finished-course",
+                      "label": "She finished the course in June.",
+                      "correctCategoryId": "complete"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-process-unclear",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence does not tell us whether the work finished?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I completed the task yesterday."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I was working on the task for a while."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I sent the finished task."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Past continuous focuses on the activity, not its completion."
+                }
+              },
+              {
+                "id": "gfi-u02-process-order",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which sentence suggests all three jobs were completed, probably in order?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I was cooking, reading and cleaning."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I cooked, read and cleaned."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I am cooking, reading and cleaning."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Past simple presents the actions as completed."
+                }
+              },
+              {
+                "id": "gfi-u02-process-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Choose the tense that matches the meaning.",
+                  "content": "For a while, I {{was_working}} at a café. Last summer, I {{worked}} there for three months and {{saved}} enough money for a trip. One evening, I {{was_closing}} the shop when an old friend {{arrived}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "was_working",
+                      "answers": [
+                        "was working"
+                      ]
+                    },
+                    {
+                      "id": "worked",
+                      "answers": [
+                        "worked"
+                      ]
+                    },
+                    {
+                      "id": "saved",
+                      "answers": [
+                        "saved"
+                      ]
+                    },
+                    {
+                      "id": "was_closing",
+                      "answers": [
+                        "was closing"
+                      ]
+                    },
+                    {
+                      "id": "arrived",
+                      "answers": [
+                        "arrived"
+                      ]
+                    }
+                  ],
+                  "explanation": "Use continuous for activity focus and simple for completion or a short event."
+                }
+              },
+              {
+                "id": "gfi-u02-process-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Change the verb to focus on the activity, not completion.",
+                  "mode": "target-grammar",
+                  "original": "For a while, I worked on the report.",
+                  "acceptedAnswers": [
+                    "For a while, I was working on the report."
+                  ],
+                  "modelAnswer": "For a while, I was working on the report."
+                }
+              },
+              {
+                "id": "gfi-u02-process-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Remove the unnecessary continuous helper.",
+                  "mode": "sentence-correction",
+                  "category": "completed action",
+                  "original": "Last year, I was completed the course.",
+                  "answers": [
+                    "Last year, I completed the course."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-process-complete",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "You know the essay was finished yesterday. Choose the best sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I wrote the essay yesterday."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I was writing the essay yesterday."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I write the essay yesterday."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Wrote clearly presents a completed result."
+                }
+              },
+              {
+                "id": "gfi-u02-process-focus",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Why might a speaker say “For a while, I was studying for my degree”?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "To focus on the activity without confirming completion."
+                    },
+                    {
+                      "id": "b",
+                      "label": "To describe a permanent fact now."
+                    },
+                    {
+                      "id": "c",
+                      "label": "To give a present routine."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Past continuous emphasizes the activity in progress."
+                }
+              },
+              {
+                "id": "gfi-u02-process-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Contrast complete",
+                  "title": "You can choose activity or completion focus",
+                  "subtitle": "Next, keep state verbs out of unnecessary continuous forms."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-state-verbs",
+          "position": 90,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "State verbs in past time",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-state-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "warning",
+                  "instruction": "Avoid continuous forms with state verbs.",
+                  "title": "State verbs",
+                  "markdown": "### States normally use the past simple\n\n**State verbs** describe knowledge, feelings, possession or appearance. They do not generally use a continuous form.\n\n- *I knew the answer.*\n- *She wanted some help.*\n- *They believed the story.*\n- *The bag belonged to Leo.*\n\nDo not normally say *I was knowing* or *she was wanting*."
+                }
+              },
+              {
+                "id": "gfi-u02-state-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each verb by its meaning here.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "state",
+                      "label": "State verb"
+                    },
+                    {
+                      "id": "action",
+                      "label": "Action verb"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "know",
+                      "label": "know",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "believe",
+                      "label": "believe",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "want",
+                      "label": "want",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "belong",
+                      "label": "belong",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "run",
+                      "label": "run",
+                      "correctCategoryId": "action"
+                    },
+                    {
+                      "id": "write",
+                      "label": "write",
+                      "correctCategoryId": "action"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-state-know",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I was knowing the answer."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I knew the answer."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I did knowing the answer."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Know is a state verb, so use knew."
+                }
+              },
+              {
+                "id": "gfi-u02-state-want",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Complete: At first, she ___ to go home.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "was wanting"
+                    },
+                    {
+                      "id": "b",
+                      "label": "wanted"
+                    },
+                    {
+                      "id": "c",
+                      "label": "were wanting"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Want normally uses the past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-state-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use the past simple for each state.",
+                  "content": "We {{believed}} him. I {{understood}} the question. Sara {{wanted}} tea. The red bag {{belonged}} to Amir. The plan {{seemed}} easy.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "believed",
+                      "answers": [
+                        "believed"
+                      ]
+                    },
+                    {
+                      "id": "understood",
+                      "answers": [
+                        "understood"
+                      ]
+                    },
+                    {
+                      "id": "wanted",
+                      "answers": [
+                        "wanted"
+                      ]
+                    },
+                    {
+                      "id": "belonged",
+                      "answers": [
+                        "belonged"
+                      ]
+                    },
+                    {
+                      "id": "seemed",
+                      "answers": [
+                        "seemed"
+                      ]
+                    }
+                  ],
+                  "explanation": "These verbs describe states, not activities in progress."
+                }
+              },
+              {
+                "id": "gfi-u02-state-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the state verb.",
+                  "mode": "target-grammar",
+                  "original": "I was knowing the answer.",
+                  "acceptedAnswers": [
+                    "I knew the answer."
+                  ],
+                  "modelAnswer": "I knew the answer."
+                }
+              },
+              {
+                "id": "gfi-u02-state-want-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the state verb.",
+                  "mode": "sentence-correction",
+                  "category": "state verb",
+                  "original": "She was wanting a quiet room.",
+                  "answers": [
+                    "She wanted a quiet room."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-state-notice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct sentence about one completed moment of noticing.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "We were noticing the smoke."
+                    },
+                    {
+                      "id": "b",
+                      "label": "We noticed the smoke."
+                    },
+                    {
+                      "id": "c",
+                      "label": "We did noticed the smoke."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Noticed presents the completed moment when we became aware."
+                }
+              },
+              {
+                "id": "gfi-u02-state-rule-choice",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which rule is correct?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Every past verb should use was or were."
+                    },
+                    {
+                      "id": "b",
+                      "label": "State verbs do not generally use continuous forms."
+                    },
+                    {
+                      "id": "c",
+                      "label": "State verbs cannot describe the past."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "State verbs normally use a simple form."
+                }
+              },
+              {
+                "id": "gfi-u02-state-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "State verbs complete",
+                  "title": "You can choose natural past forms for states",
+                  "subtitle": "Next, learn the form and meaning of used to."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-used-to-forms",
+          "position": 100,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Build used to",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-used-forms-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Learn positive, negative and question forms with used to.",
+                  "title": "Used to form",
+                  "markdown": "### Positive\n\nUse **used to + base verb**: *She used to lock the door.*\n\n### Negative\n\nUse **did not use to + base verb**: *She did not use to lock it.*\n\n### Question\n\nUse **Did + subject + use to + base verb?**: *Did they use to lock it?*\n\nThe pattern describes a past habit or state that is usually no longer true."
+                }
+              },
+              {
+                "id": "gfi-u02-used-positive",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct positive form.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "We used to walked to school."
+                    },
+                    {
+                      "id": "b",
+                      "label": "We use to walk to school."
+                    },
+                    {
+                      "id": "c",
+                      "label": "We used to walk to school."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "Used to is followed by the base verb walk."
+                }
+              },
+              {
+                "id": "gfi-u02-used-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct negative form.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I didn't used to cook."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I didn't use to cook."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I not used to cook."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "After did not, write use to."
+                }
+              },
+              {
+                "id": "gfi-u02-used-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct question.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did you used to live here?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Did you use to live here?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Used you to live here?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "After Did, use the form use to."
+                }
+              },
+              {
+                "id": "gfi-u02-used-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete each used to pattern.",
+                  "content": "I {{used_to_play}} outside. We {{did_not_use_to_have}} a car. {{did_she_use_to_visit}} often? Amir {{used_to_be}} shy.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "used_to_play",
+                      "answers": [
+                        "used to play"
+                      ]
+                    },
+                    {
+                      "id": "did_not_use_to_have",
+                      "answers": [
+                        "did not use to have",
+                        "didn't use to have"
+                      ]
+                    },
+                    {
+                      "id": "did_she_use_to_visit",
+                      "answers": [
+                        "Did she use to visit"
+                      ]
+                    },
+                    {
+                      "id": "used_to_be",
+                      "answers": [
+                        "used to be"
+                      ]
+                    }
+                  ],
+                  "explanation": "Keep the following verb in its base form."
+                }
+              },
+              {
+                "id": "gfi-u02-used-base",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the verb after used to.",
+                  "mode": "target-grammar",
+                  "original": "Sam used to played tennis after school.",
+                  "acceptedAnswers": [
+                    "Sam used to play tennis after school."
+                  ],
+                  "modelAnswer": "Sam used to play tennis after school."
+                }
+              },
+              {
+                "id": "gfi-u02-used-negative-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the form after didn't.",
+                  "mode": "sentence-correction",
+                  "category": "used to negative",
+                  "original": "We didn't used to own a car.",
+                  "answers": [
+                    "We didn't use to own a car."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-used-meaning",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "What does “Mina used to live here” normally suggest?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "She probably does not live here now."
+                    },
+                    {
+                      "id": "b",
+                      "label": "She is living here at this moment."
+                    },
+                    {
+                      "id": "c",
+                      "label": "She will live here next year."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Used to normally contrasts the past with the present."
+                }
+              },
+              {
+                "id": "gfi-u02-used-action",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the sentence about a repeated past action.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Every Saturday, we used to visit our aunt."
+                    },
+                    {
+                      "id": "b",
+                      "label": "We used to visited our aunt once."
+                    },
+                    {
+                      "id": "c",
+                      "label": "We are used to visit our aunt."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Used to visit can describe the repeated Saturday habit."
+                }
+              },
+              {
+                "id": "gfi-u02-used-forms-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Form complete",
+                  "title": "You can build used to accurately",
+                  "subtitle": "Next, compare used to with would."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-used-to-would",
+          "position": 110,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Used to or would?",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-would-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Compare two ways to describe repeated past actions.",
+                  "title": "Used to and would",
+                  "markdown": "### Repeated past actions\n\nBoth **used to + base verb** and **would + base verb** can describe actions that happened repeatedly.\n\n- *We used to visit our aunt every Sunday.*\n- *We would visit our aunt every Sunday.*\n\nIn spoken English, **would** is often contracted to **'d**: *We'd visit every Sunday.* Would is most natural in affirmative descriptions after the past context is clear. It is unusual in negative forms and Yes/No questions; use **used to** there."
+                }
+              },
+              {
+                "id": "gfi-u02-would-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Decide whether both forms work or only used to is the safe choice.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "both",
+                      "label": "Used to or would"
+                    },
+                    {
+                      "id": "used",
+                      "label": "Used to only"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "visit",
+                      "label": "visit our aunt every Sunday",
+                      "correctCategoryId": "both"
+                    },
+                    {
+                      "id": "play",
+                      "label": "play outside after school",
+                      "correctCategoryId": "both"
+                    },
+                    {
+                      "id": "be-shy",
+                      "label": "be shy",
+                      "correctCategoryId": "used"
+                    },
+                    {
+                      "id": "own-car",
+                      "label": "own a car",
+                      "correctCategoryId": "used"
+                    },
+                    {
+                      "id": "know",
+                      "label": "know the neighbours",
+                      "correctCategoryId": "used"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-would-action",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "The past context is clear. Choose a natural repeated action.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Every evening, Grandad would tell us a story."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Every evening, Grandad would told us a story."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Every evening, Grandad was tell us a story."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Would is followed by the base verb tell."
+                }
+              },
+              {
+                "id": "gfi-u02-would-alternative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which contracted sentence has the same repeated-action meaning as “We would walk there every day”?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "We'd walk there every day."
+                    },
+                    {
+                      "id": "b",
+                      "label": "We'd walked there every day."
+                    },
+                    {
+                      "id": "c",
+                      "label": "We're walk there every day."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "We'd means we would here, and would is followed by the base verb walk."
+                }
+              },
+              {
+                "id": "gfi-u02-would-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Use would plus the base verb.",
+                  "content": "During summer holidays, we {{would_wake}} early, {{would_pack}} some food and {{would_cycle}} to the lake. In the evening, Dad {{would_cook}} outside.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "would_wake",
+                      "answers": [
+                        "would wake"
+                      ]
+                    },
+                    {
+                      "id": "would_pack",
+                      "answers": [
+                        "would pack"
+                      ]
+                    },
+                    {
+                      "id": "would_cycle",
+                      "answers": [
+                        "would cycle"
+                      ]
+                    },
+                    {
+                      "id": "would_cook",
+                      "answers": [
+                        "would cook"
+                      ]
+                    }
+                  ],
+                  "explanation": "Each verb describes a repeated past action in an established past context."
+                }
+              },
+              {
+                "id": "gfi-u02-would-base",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the verb after would.",
+                  "mode": "target-grammar",
+                  "original": "On Sundays, we would visited our cousins.",
+                  "acceptedAnswers": [
+                    "On Sundays, we would visit our cousins."
+                  ],
+                  "modelAnswer": "On Sundays, we would visit our cousins."
+                }
+              },
+              {
+                "id": "gfi-u02-would-go-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after would.",
+                  "mode": "sentence-correction",
+                  "category": "would for repeated action",
+                  "original": "Every summer, they would went camping.",
+                  "answers": [
+                    "Every summer, they would go camping."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-would-negative",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which negative sentence is the clearest and most usual?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "We wouldn't use to play outside."
+                    },
+                    {
+                      "id": "b",
+                      "label": "We didn't use to play outside."
+                    },
+                    {
+                      "id": "c",
+                      "label": "We did not used to play outside."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Used to is normally preferred for this negative past-habit question."
+                }
+              },
+              {
+                "id": "gfi-u02-would-question",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which Yes/No question is the usual choice for a past habit?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Would you play here as a child?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Did you use to play here as a child?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Did you used to play here as a child?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Use Did ... use to for a clear Yes/No question about a past habit."
+                }
+              },
+              {
+                "id": "gfi-u02-would-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Habit contrast complete",
+                  "title": "You can choose used to or would for actions",
+                  "subtitle": "Next, handle states and exact durations correctly."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-states-duration",
+          "position": 120,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Past states and exact duration",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-duration-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "warning",
+                  "instruction": "Learn the limits of used to and would.",
+                  "title": "States, would and duration",
+                  "markdown": "### Past states no longer true\n\nUse **used to** for a past state: *He used to own a shop.* Do **not** use *would* with state verbs such as *be, know, own, believe* or *like*.\n\n### Exact duration\n\nWhen you say how long a past situation lasted, use the **past simple**: *He worked there for 17 years.* Do not use *used to* when the duration itself is the point."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-classify",
+                "type": "classification",
+                "data": {
+                  "instruction": "Choose the best grammar group for each idea.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "action",
+                      "label": "Repeated action: used to or would"
+                    },
+                    {
+                      "id": "state",
+                      "label": "Past state: used to"
+                    },
+                    {
+                      "id": "duration",
+                      "label": "Exact duration: past simple"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "visit",
+                      "label": "visit friends every Friday",
+                      "correctCategoryId": "action"
+                    },
+                    {
+                      "id": "own",
+                      "label": "own a small shop",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "be",
+                      "label": "be very shy",
+                      "correctCategoryId": "state"
+                    },
+                    {
+                      "id": "work-years",
+                      "label": "work there for 17 years",
+                      "correctCategoryId": "duration"
+                    },
+                    {
+                      "id": "live-years",
+                      "label": "live in Cairo for six years",
+                      "correctCategoryId": "duration"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-duration-state",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural sentence about a past state.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Bill would own a small shop."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Bill used to own a small shop."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Bill was owning a small shop."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Own is a state verb, so used to is the correct habit structure."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-period",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the best sentence when the exact period matters.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Mira used to work there for eight years."
+                    },
+                    {
+                      "id": "b",
+                      "label": "Mira would work there for eight years."
+                    },
+                    {
+                      "id": "c",
+                      "label": "Mira worked there for eight years."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "Use past simple with an exact completed duration."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Choose used to for states and past simple for exact durations.",
+                  "content": "I {{used_to_be}} shy, and I {{used_to_like}} quiet places. My father {{worked}} abroad for ten years. We {{lived}} in Dubai for exactly four years.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "used_to_be",
+                      "answers": [
+                        "used to be"
+                      ]
+                    },
+                    {
+                      "id": "used_to_like",
+                      "answers": [
+                        "used to like"
+                      ]
+                    },
+                    {
+                      "id": "worked",
+                      "answers": [
+                        "worked"
+                      ]
+                    },
+                    {
+                      "id": "lived",
+                      "answers": [
+                        "lived"
+                      ]
+                    }
+                  ],
+                  "explanation": "State contrast uses used to; stated duration uses past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-would-state",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Replace would with the correct past-state form.",
+                  "mode": "target-grammar",
+                  "original": "Sara would own a red bicycle.",
+                  "acceptedAnswers": [
+                    "Sara used to own a red bicycle."
+                  ],
+                  "modelAnswer": "Sara used to own a red bicycle."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Use past simple because the exact duration is stated.",
+                  "mode": "sentence-correction",
+                  "category": "exact past duration",
+                  "original": "He used to work there for exactly 17 years.",
+                  "answers": [
+                    "He worked there for exactly 17 years."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-duration-would-rule",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Which verb should not normally follow would for a past habit?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "visit"
+                    },
+                    {
+                      "id": "b",
+                      "label": "play"
+                    },
+                    {
+                      "id": "c",
+                      "label": "know"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "c"
+                  ],
+                  "explanation": "Know is a state verb."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-used-rule",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "What does “I used to be shy” normally mean?",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I was shy in the past, but probably not now."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I was shy for exactly two hours."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I will be shy later."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Used to presents a past state as no longer true."
+                }
+              },
+              {
+                "id": "gfi-u02-duration-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Limits complete",
+                  "title": "You can handle states and duration accurately",
+                  "subtitle": "Next, repair the most common Unit 2 errors."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-error-repair",
+          "position": 130,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Repair common past-tense errors",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-errors-rule",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "warning",
+                  "instruction": "Use a short checklist to repair common errors.",
+                  "title": "Unit 2 repair checklist",
+                  "markdown": "### Check one point at a time\n\n1. After **did**, use the base verb.\n2. Past continuous needs **was/were + -ing**.\n3. State verbs normally use a simple form.\n4. After **used to** or **would**, use the base verb.\n5. Use **used to**, not *would*, for past states.\n6. Use past simple when an exact duration is stated."
+                }
+              },
+              {
+                "id": "gfi-u02-errors-did",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after did.",
+                  "mode": "sentence-correction",
+                  "category": "past simple question",
+                  "original": "Did they arrived on time?",
+                  "answers": [
+                    "Did they arrive on time?"
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-cont",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the past continuous form.",
+                  "mode": "sentence-correction",
+                  "category": "past continuous form",
+                  "original": "We were wait for the bus.",
+                  "answers": [
+                    "We were waiting for the bus."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-state",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the state verb.",
+                  "mode": "sentence-correction",
+                  "category": "state verb",
+                  "original": "I was understanding the question.",
+                  "answers": [
+                    "I understood the question."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-used",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after used to.",
+                  "mode": "sentence-correction",
+                  "category": "used to form",
+                  "original": "She used to going there every week.",
+                  "answers": [
+                    "She used to go there every week."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-would",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the verb after would.",
+                  "mode": "sentence-correction",
+                  "category": "would form",
+                  "original": "Every night, Dad would readed to us.",
+                  "answers": [
+                    "Every night, Dad would read to us."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-state-would",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Use used to for the past state.",
+                  "mode": "sentence-correction",
+                  "category": "would with a state verb",
+                  "original": "My uncle would own this house.",
+                  "answers": [
+                    "My uncle used to own this house."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-duration",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Use past simple because the exact duration is stated.",
+                  "mode": "sentence-correction",
+                  "category": "exact duration",
+                  "original": "She used to live there for exactly six years.",
+                  "answers": [
+                    "She lived there for exactly six years."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-errors-event",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct one word for the short completed event.",
+                  "mode": "target-grammar",
+                  "original": "While we were driving, the snow was stopping.",
+                  "acceptedAnswers": [
+                    "While we were driving, the snow stopped."
+                  ],
+                  "modelAnswer": "While we were driving, the snow stopped."
+                }
+              },
+              {
+                "id": "gfi-u02-errors-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Repair complete",
+                  "title": "You can fix common Unit 2 errors",
+                  "subtitle": "Finish with a cumulative mastery check."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "gfi-u02-mastery-check",
+          "position": 140,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Unit 2 mastery check",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "gfi-u02-mastery-form",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct past simple sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did Sara wrote the email?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Did Sara write the email?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Did Sara writing the email?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "After Did, use the base verb write."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-uses",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each past simple use.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "single",
+                      "label": "Single completed action"
+                    },
+                    {
+                      "id": "series",
+                      "label": "Series of actions"
+                    },
+                    {
+                      "id": "repeated",
+                      "label": "Repeated action"
+                    },
+                    {
+                      "id": "long",
+                      "label": "Long-term situation"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "called",
+                      "label": "I called her last night.",
+                      "correctCategoryId": "single"
+                    },
+                    {
+                      "id": "entered",
+                      "label": "He entered, sat down and spoke.",
+                      "correctCategoryId": "series"
+                    },
+                    {
+                      "id": "often",
+                      "label": "We often walked home together.",
+                      "correctCategoryId": "repeated"
+                    },
+                    {
+                      "id": "worked",
+                      "label": "She worked there for 12 years.",
+                      "correctCategoryId": "long"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-order",
+                "type": "ordering",
+                "data": {
+                  "instruction": "Put the completed events in story order.",
+                  "mode": "chronology",
+                  "items": [
+                    {
+                      "id": "wake",
+                      "label": "The alarm rang."
+                    },
+                    {
+                      "id": "dress",
+                      "label": "I got dressed."
+                    },
+                    {
+                      "id": "leave",
+                      "label": "I left the house."
+                    }
+                  ],
+                  "correctOrderIds": [
+                    "wake",
+                    "dress",
+                    "leave"
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-pc-form",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct past continuous question.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Were they waiting outside?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Did they waiting outside?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "They were waiting outside?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "a"
+                  ],
+                  "explanation": "Use Were + subject + verb-ing."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-background",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the background and event.",
+                  "content": "While I {{was_walking}} home, I {{saw}} an old friend. As we {{were_talking}}, the bus {{arrived}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "was_walking",
+                      "answers": [
+                        "was walking"
+                      ]
+                    },
+                    {
+                      "id": "saw",
+                      "answers": [
+                        "saw"
+                      ]
+                    },
+                    {
+                      "id": "were_talking",
+                      "answers": [
+                        "were talking"
+                      ]
+                    },
+                    {
+                      "id": "arrived",
+                      "answers": [
+                        "arrived"
+                      ]
+                    }
+                  ],
+                  "explanation": "Continuing backgrounds use past continuous; completed events use past simple."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-focus",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify the tense focus.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "activity",
+                      "label": "Activity or background"
+                    },
+                    {
+                      "id": "complete",
+                      "label": "Completed action or result"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "was-writing",
+                      "label": "I was writing for a while.",
+                      "correctCategoryId": "activity"
+                    },
+                    {
+                      "id": "wrote",
+                      "label": "I wrote the report yesterday.",
+                      "correctCategoryId": "complete"
+                    },
+                    {
+                      "id": "was-cooking",
+                      "label": "She was cooking when I arrived.",
+                      "correctCategoryId": "activity"
+                    },
+                    {
+                      "id": "arrived",
+                      "label": "I arrived at eight.",
+                      "correctCategoryId": "complete"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-state",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the natural state-verb sentence.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "I was knowing the answer."
+                    },
+                    {
+                      "id": "b",
+                      "label": "I knew the answer."
+                    },
+                    {
+                      "id": "c",
+                      "label": "I would know the answer as a child."
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "Know normally uses a simple form."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-used-form",
+                "type": "choice",
+                "data": {
+                  "mode": "single",
+                  "question": "Choose the correct used to question.",
+                  "options": [
+                    {
+                      "id": "a",
+                      "label": "Did you used to walk to school?"
+                    },
+                    {
+                      "id": "b",
+                      "label": "Did you use to walk to school?"
+                    },
+                    {
+                      "id": "c",
+                      "label": "Would you used to walk to school?"
+                    }
+                  ],
+                  "correctOptionIds": [
+                    "b"
+                  ],
+                  "explanation": "After Did, use use to + base verb."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-used-would",
+                "type": "classification",
+                "data": {
+                  "instruction": "Choose the safest structure for each meaning.",
+                  "mode": "custom",
+                  "categories": [
+                    {
+                      "id": "both",
+                      "label": "Used to or would"
+                    },
+                    {
+                      "id": "used",
+                      "label": "Used to only"
+                    },
+                    {
+                      "id": "simple",
+                      "label": "Past simple"
+                    }
+                  ],
+                  "items": [
+                    {
+                      "id": "habit",
+                      "label": "play outside every evening",
+                      "correctCategoryId": "both"
+                    },
+                    {
+                      "id": "state",
+                      "label": "own a small shop in the past",
+                      "correctCategoryId": "used"
+                    },
+                    {
+                      "id": "negative",
+                      "label": "not play outside as a child",
+                      "correctCategoryId": "used"
+                    },
+                    {
+                      "id": "duration",
+                      "label": "work there for exactly 11 years",
+                      "correctCategoryId": "simple"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-error",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the two-word past continuous form.",
+                  "mode": "sentence-correction",
+                  "category": "past continuous form",
+                  "original": "They was study when I called.",
+                  "answers": [
+                    "They were studying when I called."
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Correct the verb after would.",
+                  "mode": "target-grammar",
+                  "original": "Every winter, we would visited our grandparents.",
+                  "acceptedAnswers": [
+                    "Every winter, we would visit our grandparents."
+                  ],
+                  "modelAnswer": "Every winter, we would visit our grandparents."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-match",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each grammar form to its main job.",
+                  "mode": "term-example",
+                  "shuffleRight": true,
+                  "pairs": [
+                    {
+                      "id": "past-simple",
+                      "left": "past simple",
+                      "right": "completed action or finished past period"
+                    },
+                    {
+                      "id": "past-cont",
+                      "left": "past continuous",
+                      "right": "background or activity in progress"
+                    },
+                    {
+                      "id": "used-to",
+                      "left": "used to",
+                      "right": "past habit or state normally no longer true"
+                    },
+                    {
+                      "id": "would",
+                      "left": "would",
+                      "right": "repeated past action in a clear past context"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-mixed",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the short story with the best forms.",
+                  "content": "When I was a child, I {{used_to_live}} near the sea. Every morning, my father {{would_walk}} along the beach. One day, we {{were_walking}} home when we {{found}} a lost dog. We {{took}} it to the police station.",
+                  "inputMode": "text",
+                  "blanks": [
+                    {
+                      "id": "used_to_live",
+                      "answers": [
+                        "used to live"
+                      ]
+                    },
+                    {
+                      "id": "would_walk",
+                      "answers": [
+                        "would walk",
+                        "used to walk"
+                      ]
+                    },
+                    {
+                      "id": "were_walking",
+                      "answers": [
+                        "were walking"
+                      ]
+                    },
+                    {
+                      "id": "found",
+                      "answers": [
+                        "found"
+                      ]
+                    },
+                    {
+                      "id": "took",
+                      "answers": [
+                        "took"
+                      ]
+                    }
+                  ],
+                  "explanation": "The story combines a past state, a repeated action, a background action and completed events."
+                }
+              },
+              {
+                "id": "gfi-u02-mastery-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Unit 2 complete",
+                  "title": "You have practised every Past tenses 1 target",
+                  "subtitle": "You can now choose and form past simple, past continuous, used to and would in clear past contexts."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
