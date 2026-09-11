@@ -7,13 +7,88 @@
 			<p class="slide-instruction">
 				{{ data.instruction || 'Place each item in a category.' }}
 			</p>
+			<div class="bucket-grid">
+				@for (category of data.categories; track category.id) {
+					<div
+						class="bucket"
+						role="group"
+						[attr.data-category-id]="category.id"
+						cdkDropList
+						[cdkDropListSortingDisabled]="true"
+						[cdkDropListDisabled]="interactionState() !== 'idle'"
+						(cdkDropListDropped)="
+							assignDropped($event.item.data, category.id)
+						"
+						[attr.aria-label]="category.label"
+						[attr.data-drop-ready]="
+							selectedItemId() && interactionState() === 'idle'
+								? 'true'
+								: null
+						"
+					>
+						<button
+							mat-button
+							type="button"
+							class="bucket__header"
+							[attr.aria-label]="
+								classificationBucketAriaLabel(
+									category.id,
+									category.label
+								)
+							"
+							[disabled]="
+								!selectedItemId() || interactionState() !== 'idle'
+							"
+							(click)="assignSelected(category.id)"
+						>
+							<strong>{{ category.label }}</strong>
+							<span class="bucket__count" aria-hidden="true">
+								{{ assignedItems(category.id).length }}
+							</span>
+						</button>
+						<div class="bucket__items">
+							@for (
+								item of assignedItems(category.id);
+								track item.id
+							) {
+								<button
+									mat-stroked-button
+									type="button"
+									class="classification-item"
+									cdkDrag
+									[cdkDragData]="item.id"
+									[cdkDragDisabled]="interactionState() !== 'idle'"
+									[attr.data-item-id]="item.id"
+									[attr.data-state]="itemState(item.id)"
+									[attr.aria-pressed]="selectedItemId() === item.id"
+									[attr.aria-label]="
+										classificationItemAriaLabel(item.id, item.label)
+									"
+									[disabled]="interactionState() !== 'idle'"
+									(click)="selectItem(item.id)"
+								>
+									{{ item.label }}
+								</button>
+							} @empty {
+								<span class="bucket__placeholder">
+									@if (selectedItemLabel()) {
+										Place “{{ selectedItemLabel() }}” here
+									} @else {
+										Drop an item here
+									}
+								</span>
+							}
+						</div>
+					</div>
+				}
+			</div>
 			<div
 				class="chip-list"
 				aria-label="Items to classify"
 				cdkDropList
 				[cdkDropListSortingDisabled]="true"
 			>
-				@for (item of data.items; track item.id) {
+				@for (item of unassignedItems(); track item.id) {
 					<button
 						mat-stroked-button
 						type="button"
@@ -21,6 +96,7 @@
 						cdkDrag
 						[cdkDragData]="item.id"
 						[cdkDragDisabled]="interactionState() !== 'idle'"
+						[attr.data-item-id]="item.id"
 						[attr.data-state]="itemState(item.id)"
 						[attr.aria-pressed]="selectedItemId() === item.id"
 						[attr.aria-label]="
@@ -31,66 +107,6 @@
 					>
 						{{ item.label }}
 					</button>
-				}
-			</div>
-			<div class="bucket-grid">
-				@for (category of data.categories; track category.id) {
-					<div
-						class="bucket"
-						role="button"
-						cdkDropList
-						[cdkDropListSortingDisabled]="true"
-						[cdkDropListDisabled]="interactionState() !== 'idle'"
-						(cdkDropListDropped)="
-							assignDropped($event.item.data, category.id)
-						"
-						[attr.aria-label]="
-							classificationBucketAriaLabel(
-								category.id,
-								category.label
-							)
-						"
-						[attr.aria-disabled]="
-							!selectedItemId() || interactionState() !== 'idle'
-						"
-						[attr.tabindex]="
-							selectedItemId() && interactionState() === 'idle'
-								? 0
-								: -1
-						"
-						[attr.data-drop-ready]="
-							selectedItemId() && interactionState() === 'idle'
-								? 'true'
-								: null
-						"
-						(click)="assignSelected(category.id)"
-						(keydown)="handleBucketKeydown($event, category.id)"
-					>
-						<div class="bucket__header">
-							<strong>{{ category.label }}</strong>
-							<span class="bucket__count" aria-hidden="true">
-								{{ assignedItems(category.id).length }}
-							</span>
-						</div>
-						<div class="bucket__items">
-							@for (
-								item of assignedItems(category.id);
-								track item.id
-							) {
-								<span class="bucket__item">{{
-									item.label
-								}}</span>
-							} @empty {
-								<span class="bucket__placeholder">
-									@if (selectedItemLabel()) {
-										Place “{{ selectedItemLabel() }}” here
-									} @else {
-										Select a word above
-									}
-								</span>
-							}
-						</div>
-					</div>
 				}
 			</div>
 		</section>

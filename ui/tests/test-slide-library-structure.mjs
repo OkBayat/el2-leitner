@@ -221,6 +221,27 @@ assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
 assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
 assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
+assert.ok(
+	classificationTemplate.indexOf('class="bucket-grid"') <
+		classificationTemplate.indexOf('class="chip-list"'),
+	'Classification categories must render above the remaining items.',
+);
+assert.equal(
+	classificationTemplate.match(/class="classification-item"/gu)?.length,
+	2,
+	'Unassigned and placed classification items must use the same visual control.',
+);
+const incorrectClassificationStyles = sharedStyles.match(
+	/\.classification-item\[data-state='incorrect'\]\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(
+	incorrectClassificationStyles,
+	/border-color:\s*var\(--vocora-error\)\s*!important;/u,
+);
+assert.match(
+	incorrectClassificationStyles,
+	/background:\s*var\(--vocora-error-surface\)\s*!important;/u,
+);
 assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
 assert.match(clozeTemplate, /class="choice-option"/u);
 assert.match(

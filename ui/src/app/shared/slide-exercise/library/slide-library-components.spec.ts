@@ -554,17 +554,34 @@ describe('reusable slide library behavior', () => {
 				{ id: 'root', label: 'root', correctCategoryId: 'plant' },
 			],
 		});
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'paw',
+			'root',
+		]);
 
 		component.assignDropped('paw', 'plant');
 		expect(component.assignments()).toEqual({ paw: 'plant' });
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'root',
+		]);
+		expect(component.assignedItems('plant').map((item) => item.id)).toEqual([
+			'paw',
+		]);
 		expect(component.interactionState()).toBe('idle');
 
 		component.assignDropped('paw', 'animal');
-		component.assignDropped('root', 'plant');
-		expect(component.assignments()).toEqual({ paw: 'animal', root: 'plant' });
+		expect(component.assignedItems('plant')).toEqual([]);
+		expect(component.assignedItems('animal').map((item) => item.id)).toEqual([
+			'paw',
+		]);
+		component.assignDropped('root', 'animal');
+		expect(component.assignments()).toEqual({ paw: 'animal', root: 'animal' });
 		expect(states.at(-1)).toMatchObject({
 			chrome: { footer: { primary: { disabled: false } } },
 		});
+		component.handleAction('check');
+		expect(component.assignmentState('paw')).toBe('correct');
+		expect(component.assignmentState('root')).toBe('incorrect');
 	});
 
 	it('validates ClozeSlide blanks independently, including variants and word limits', () => {

@@ -64,7 +64,8 @@ blockquote {
 
 .choice-option,
 .matching-column button,
-.chip-list button {
+.chip-list button,
+.classification-item {
 	min-height: var(--vocora-touch-target-min);
 	justify-content: flex-start;
 	border-color: var(--vocora-border);
@@ -194,6 +195,12 @@ blockquote {
 	opacity: 0.35;
 }
 
+.classification-item[data-state='incorrect'] {
+	border-color: var(--vocora-error) !important;
+	background: var(--vocora-error-surface) !important;
+	color: var(--vocora-error-foreground) !important;
+}
+
 .bucket {
 	min-height: 120px;
 	display: flex;
@@ -217,7 +224,6 @@ blockquote {
 .bucket[data-drop-ready='true'] {
 	border-color: var(--vocora-information-border);
 	background: var(--vocora-information-surface);
-	cursor: pointer;
 }
 
 .bucket.cdk-drop-list-receiving {
@@ -231,10 +237,14 @@ blockquote {
 
 .bucket__header {
 	width: 100%;
+	min-height: var(--vocora-touch-target-min);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--vocora-space-2);
+	padding-inline: 0;
+	color: var(--vocora-text-primary);
+	text-align: left;
 }
 
 .bucket__count {
@@ -255,16 +265,6 @@ blockquote {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--vocora-space-2);
-}
-
-.bucket__item {
-	padding: var(--vocora-space-1) var(--vocora-space-3);
-	border: 1px solid var(--vocora-border);
-	border-radius: var(--vocora-radius-pill);
-	background: var(--vocora-surface-base);
-	color: var(--vocora-text-primary);
-	font-size: 14px;
-	font-weight: 600;
 }
 
 .bucket__placeholder,

@@ -137,16 +137,16 @@ export class ClassificationSlideComponent
 			(item) => this.assignments()[item.id] === categoryId,
 		);
 	}
+	unassignedItems(): readonly ClassificationItem[] {
+		return this.data().items.filter(
+			(item) => this.assignments()[item.id] === undefined,
+		);
+	}
 	selectedItemLabel(): string {
 		return (
 			this.data().items.find((item) => item.id === this.selectedItemId())
 				?.label ?? ''
 		);
-	}
-	handleBucketKeydown(event: KeyboardEvent, categoryId: string): void {
-		if (event.key !== 'Enter' && event.key !== ' ') return;
-		event.preventDefault();
-		this.assignSelected(categoryId);
 	}
 	assignmentState(id: string): string {
 		if (this.interactionState() === 'idle')
