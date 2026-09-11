@@ -134,8 +134,8 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
             feature = repo / "ui/src/app/features/example/example.component.scss"
             feature.parent.mkdir(parents=True)
             feature.write_text(
-                ":host { --bs-primary: red; --mat-sys-primary: blue; "
-                "--color-spark-blue: green; }",
+                ":host { --bs-light-rgb: 1, 2, 3; --mat-sys-primary: blue; "
+                "--color-feature-blue: green; }",
                 encoding="utf-8",
             )
             errors: list[str] = []
@@ -145,7 +145,7 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
             self.assertIn(
                 "Bootstrap semantic variables must be defined only in "
                 "ui/src/styles/_bootstrap-theme.scss: "
-                "ui/src/app/features/example/example.component.scss defines --bs-primary",
+                "ui/src/app/features/example/example.component.scss defines --bs-light-rgb",
                 errors,
             )
             self.assertIn(
@@ -157,7 +157,7 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
             self.assertIn(
                 "Vocora foundation colors must be defined only in "
                 "ui/src/styles/_vocora-design-system.scss: "
-                "ui/src/app/features/example/example.component.scss defines --color-spark-blue",
+                "ui/src/app/features/example/example.component.scss defines --color-feature-blue",
                 errors,
             )
 
@@ -177,28 +177,114 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
 
             self.assertIn(
                 "Untracked !important debt in "
-                "ui/src/app/features/example/example.component.scss: expected 0, found 1",
+                "ui/src/app/features/example/example.component.scss: "
+                ".mat-mdc-example => color:red!important",
                 errors,
             )
             self.assertIn(
                 "Untracked feature Material-internal selector debt in "
-                "ui/src/app/features/example/example.component.scss: expected 0, found 1",
+                "ui/src/app/features/example/example.component.scss: .mat-mdc-example",
+                errors,
+            )
+
+    def test_frontend_architecture_scans_angular_inline_styles(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            component = repo / "ui/src/app/features/example/example.component.ts"
+            component.parent.mkdir(parents=True)
+            component.write_text(
+                "@Component({styles: [`"
+                ".danger { color: red !important; --bs-border-color: red; "
+                "--color-feature-red: red; }`]}) export class Example {}",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Untracked !important debt in "
+                "ui/src/app/features/example/example.component.ts: "
+                ".danger => color:red!important",
+                errors,
+            )
+            self.assertTrue(
+                any("defines --bs-border-color" in error for error in errors)
+            )
+            self.assertTrue(
+                any("defines --color-feature-red" in error for error in errors)
+            )
+
+    def test_frontend_debt_baseline_rejects_substitution_and_allows_deletion(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            relative = "ui/src/app/features/example/example.component.scss"
+            self._write_baseline(
+                repo,
+                important={relative: [".legacy => color:blue!important"]},
+            )
+            feature = repo / relative
+            feature.parent.mkdir(parents=True)
+            feature.write_text(".example { color: blue !important; }", encoding="utf-8")
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                f"Untracked !important debt in {relative}: "
+                ".example => color:blue!important",
+                errors,
+            )
+
+            feature.write_text(".example { color: red; }", encoding="utf-8")
+            errors = []
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+            self.assertFalse(
+                any("!important debt" in error for error in errors),
+                errors,
+            )
+
+    def test_frontend_architecture_rejects_a_giant_shared_module(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            shared_module = repo / "ui/src/app/shared/shared.module.ts"
+            shared_module.write_text("export class SharedModule {}", encoding="utf-8")
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Standalone frontend architecture must not introduce a giant "
+                "SharedModule: ui/src/app/shared/shared.module.ts",
                 errors,
             )
 
     @staticmethod
-    def _write_baseline(repo: Path) -> None:
+    def _write_baseline(
+        repo: Path,
+        important: dict[str, list[str]] | None = None,
+        material: dict[str, list[str]] | None = None,
+    ) -> None:
         baseline = (
             repo
             / ".agents/skills/k2-design-system/references/legacy-style-baseline.json"
         )
         baseline.parent.mkdir(parents=True)
+        (repo / "ui/src/app/shared").mkdir(parents=True)
         baseline.write_text(
             json.dumps(
                 {
                     "schema_version": 1,
-                    "important_declaration_counts": {},
-                    "feature_material_internal_selector_counts": {},
+                    "important_declarations": {
+                        path: {"occurrences": occurrences, "reason": "Test debt."}
+                        for path, occurrences in (important or {}).items()
+                    },
+                    "feature_material_internal_selectors": {
+                        path: {"occurrences": occurrences, "reason": "Test debt."}
+                        for path, occurrences in (material or {}).items()
+                    },
                 }
             ),
             encoding="utf-8",

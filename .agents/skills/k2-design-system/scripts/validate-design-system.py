@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -69,8 +70,8 @@ CANONICAL_ACTION_ROLES = {
 BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
 THEME_GROUPS = ("surface", "text", "action")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
-BOOTSTRAP_SEMANTIC_VARIABLE = re.compile(
-    r"(--bs-(?:primary|secondary|success|info|warning|danger)(?:-rgb)?)\s*:",
+BOOTSTRAP_VARIABLE = re.compile(
+    r"(--bs-[a-z0-9-]+)\s*:",
     flags=re.IGNORECASE,
 )
 MATERIAL_SYSTEM_VARIABLE = re.compile(
@@ -78,7 +79,7 @@ MATERIAL_SYSTEM_VARIABLE = re.compile(
     flags=re.IGNORECASE,
 )
 FOUNDATION_COLOR_VARIABLE = re.compile(
-    rf"(--color-(?:{'|'.join(re.escape(name) for name in CANONICAL_COLORS)}))\s*:",
+    r"(--color-[a-z0-9-]+)\s*:",
     flags=re.IGNORECASE,
 )
 
@@ -87,6 +88,7 @@ FRONTEND_STYLE_OWNERS = {
     "material": "ui/src/styles/_angular-material-theme.scss",
     "foundation": "ui/src/styles/_vocora-design-system.scss",
 }
+STYLE_EXTENSIONS = frozenset({".css", ".less", ".sass", ".scss"})
 
 
 def skill_root() -> Path:
@@ -362,49 +364,129 @@ def load_style_baseline(repo_root: Path, errors: list[str]) -> dict[str, Any] | 
     return data
 
 
-def baseline_counts(
+def baseline_occurrences(
     data: dict[str, Any],
     key: str,
     errors: list[str],
-) -> dict[str, int]:
+) -> dict[str, Counter[str]]:
     entries = data.get(key)
     if not isinstance(entries, dict):
         errors.append(f"Frontend style baseline {key} must be an object")
         return {}
 
-    counts: dict[str, int] = {}
+    occurrences: dict[str, Counter[str]] = {}
     for relative, entry in entries.items():
         if (
             not isinstance(relative, str)
             or not isinstance(entry, dict)
-            or not isinstance(entry.get("count"), int)
-            or entry["count"] < 0
+            or not isinstance(entry.get("occurrences"), list)
+            or any(
+                not isinstance(item, str) or not item
+                for item in entry["occurrences"]
+            )
             or not isinstance(entry.get("reason"), str)
             or not entry["reason"].strip()
         ):
             errors.append(
                 f"Frontend style baseline {key}.{relative} must define a "
-                "non-negative count and non-empty reason"
+                "string occurrence list and non-empty reason"
             )
             continue
-        counts[relative] = entry["count"]
-    return counts
+        occurrences[relative] = Counter(entry["occurrences"])
+    return occurrences
 
 
-def validate_debt_counts(
-    actual: dict[str, int],
-    expected: dict[str, int],
+def validate_debt_occurrences(
+    actual: dict[str, Counter[str]],
+    expected: dict[str, Counter[str]],
     label: str,
     errors: list[str],
 ) -> None:
-    for relative in sorted(set(actual) | set(expected)):
-        actual_count = actual.get(relative, 0)
-        expected_count = expected.get(relative, 0)
-        if actual_count != expected_count:
-            errors.append(
-                f"Untracked {label} debt in {relative}: "
-                f"expected {expected_count}, found {actual_count}"
-            )
+    for relative in sorted(actual):
+        additions = actual[relative] - expected.get(relative, Counter())
+        for occurrence in sorted(additions.elements()):
+            errors.append(f"Untracked {label} debt in {relative}: {occurrence}")
+
+
+def extract_inline_styles(text: str) -> list[str]:
+    if "@Component" not in text:
+        return []
+
+    styles: list[str] = []
+    for match in re.finditer(r"\bstyles\s*:\s*\[", text):
+        index = match.end()
+        depth = 1
+        quote: str | None = None
+        escaped = False
+        buffer: list[str] = []
+        while index < len(text) and depth:
+            character = text[index]
+            index += 1
+            if quote is not None:
+                if escaped:
+                    buffer.append(character)
+                    escaped = False
+                elif character == "\\":
+                    buffer.append(character)
+                    escaped = True
+                elif character == quote:
+                    styles.append("".join(buffer))
+                    buffer = []
+                    quote = None
+                else:
+                    buffer.append(character)
+                continue
+            if character in ("'", '"', "`"):
+                quote = character
+            elif character == "[":
+                depth += 1
+            elif character == "]":
+                depth -= 1
+    return styles
+
+
+def extract_important_declarations(text: str) -> list[str]:
+    declarations: list[str] = []
+    for match in re.finditer(
+        r"([a-z-]+)\s*:\s*([^;{}]+?)\s*!important\b",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        property_name = match.group(1).lower()
+        value = re.sub(r"\s+", " ", match.group(2)).strip()
+        block_start = text.rfind("{", 0, match.start())
+        previous_boundary = max(
+            text.rfind("{", 0, block_start),
+            text.rfind("}", 0, block_start),
+        )
+        selector = re.sub(
+            r"\s+", " ", text[previous_boundary + 1 : block_start]
+        ).strip()
+        declarations.append(f"{selector} => {property_name}:{value}!important")
+    return declarations
+
+
+def extract_material_internal_selectors(text: str) -> list[str]:
+    selectors: list[str] = []
+    for match in re.finditer(r"([^{}]+)\{", text):
+        selector = re.sub(r"\s+", " ", match.group(1)).strip()
+        if re.search(r"\.mat-mdc-[a-z0-9_-]+", selector, flags=re.IGNORECASE):
+            selectors.append(selector)
+    return selectors
+
+
+def frontend_style_sources(repo_root: Path) -> list[tuple[str, str]]:
+    ui_source = repo_root / "ui" / "src"
+    sources: list[tuple[str, str]] = []
+    for path in sorted(item for item in ui_source.rglob("*") if item.is_file()):
+        relative = path.relative_to(repo_root).as_posix()
+        if path.suffix.lower() in STYLE_EXTENSIONS:
+            sources.append((relative, path.read_text(encoding="utf-8")))
+        elif path.suffix.lower() == ".ts":
+            inline_styles = extract_inline_styles(path.read_text(encoding="utf-8"))
+            if inline_styles:
+                sources.append((relative, "\n".join(inline_styles)))
+    return sources
 
 
 def validate_frontend_architecture(repo_root: Path, errors: list[str]) -> None:
@@ -414,23 +496,34 @@ def validate_frontend_architecture(repo_root: Path, errors: list[str]) -> None:
 
     shared_root = ui_source / "app" / "shared"
     if not shared_root.is_dir():
-        errors.append("Reusable frontend primitives must have ui/src/app/shared ownership")
+        errors.append(
+            "Reusable frontend primitives must have ui/src/app/shared ownership"
+        )
     for shared_module in (ui_source / "app").rglob("shared.module.ts"):
         errors.append(
             "Standalone frontend architecture must not introduce a giant SharedModule: "
             f"{shared_module.relative_to(repo_root).as_posix()}"
         )
 
-    important_counts: dict[str, int] = {}
-    material_internal_counts: dict[str, int] = {}
-    for path in sorted(ui_source.rglob("*.scss")):
-        relative = path.relative_to(repo_root).as_posix()
-        text = path.read_text(encoding="utf-8")
-
+    important_occurrences: dict[str, Counter[str]] = {}
+    material_internal_occurrences: dict[str, Counter[str]] = {}
+    for relative, text in frontend_style_sources(repo_root):
         for pattern, owner_label, owner_path in (
-            (BOOTSTRAP_SEMANTIC_VARIABLE, "Bootstrap semantic variables", FRONTEND_STYLE_OWNERS["bootstrap"]),
-            (MATERIAL_SYSTEM_VARIABLE, "Material system variables", FRONTEND_STYLE_OWNERS["material"]),
-            (FOUNDATION_COLOR_VARIABLE, "Vocora foundation colors", FRONTEND_STYLE_OWNERS["foundation"]),
+            (
+                BOOTSTRAP_VARIABLE,
+                "Bootstrap semantic variables",
+                FRONTEND_STYLE_OWNERS["bootstrap"],
+            ),
+            (
+                MATERIAL_SYSTEM_VARIABLE,
+                "Material system variables",
+                FRONTEND_STYLE_OWNERS["material"],
+            ),
+            (
+                FOUNDATION_COLOR_VARIABLE,
+                "Vocora foundation colors",
+                FRONTEND_STYLE_OWNERS["foundation"],
+            ),
         ):
             if relative == owner_path:
                 continue
@@ -440,30 +533,28 @@ def validate_frontend_architecture(repo_root: Path, errors: list[str]) -> None:
                     f"{relative} defines {match.group(1)}"
                 )
 
-        important_count = len(re.findall(r"!important\b", text, flags=re.IGNORECASE))
-        if important_count:
-            important_counts[relative] = important_count
+        important = extract_important_declarations(text)
+        if important:
+            important_occurrences[relative] = Counter(important)
         if relative.startswith("ui/src/app/"):
-            material_count = len(
-                re.findall(r"\.mat-mdc-[a-z0-9_-]+", text, flags=re.IGNORECASE)
-            )
-            if material_count:
-                material_internal_counts[relative] = material_count
+            material = extract_material_internal_selectors(text)
+            if material:
+                material_internal_occurrences[relative] = Counter(material)
 
     baseline = load_style_baseline(repo_root, errors)
     if baseline is None:
         return
-    expected_important = baseline_counts(
-        baseline, "important_declaration_counts", errors
+    expected_important = baseline_occurrences(
+        baseline, "important_declarations", errors
     )
-    expected_material = baseline_counts(
-        baseline, "feature_material_internal_selector_counts", errors
+    expected_material = baseline_occurrences(
+        baseline, "feature_material_internal_selectors", errors
     )
-    validate_debt_counts(
-        important_counts, expected_important, "!important", errors
+    validate_debt_occurrences(
+        important_occurrences, expected_important, "!important", errors
     )
-    validate_debt_counts(
-        material_internal_counts,
+    validate_debt_occurrences(
+        material_internal_occurrences,
         expected_material,
         "feature Material-internal selector",
         errors,
