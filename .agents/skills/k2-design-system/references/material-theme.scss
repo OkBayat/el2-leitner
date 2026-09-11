@@ -1,9 +1,10 @@
-// Reference mirror of the centralized Angular Material semantic adapter.
+// Non-normative excerpt of the centralized Angular Material semantic adapter.
 @mixin apply-vocora-material-semantic-overrides() {
   --mat-sys-primary: var(--vocora-primary);
   --mat-sys-on-primary: var(--vocora-text-on-primary);
-  --mat-sys-primary-container: var(--vocora-state-information-surface);
-  --mat-sys-on-primary-container: var(--vocora-state-information-foreground);
+  --mat-sys-primary-container: var(--vocora-state-primary-surface);
+  --mat-sys-on-primary-container: var(--vocora-state-primary-foreground);
+  --mat-sys-inverse-primary: var(--vocora-inverse-primary);
   --mat-sys-secondary: var(--vocora-secondary);
   --mat-sys-on-secondary: var(--vocora-text-on-secondary);
   --mat-sys-secondary-container: var(--vocora-surface-subtle);

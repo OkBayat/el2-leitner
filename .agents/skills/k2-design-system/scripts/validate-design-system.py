@@ -52,6 +52,8 @@ CANONICAL_ACTION_ROLES = {
         "primaryHover": "#1CB0F6",
         "success": "#58CC02",
         "successHover": "#58CC02",
+        "successEdge": "#46A302",
+        "warningEdge": "#E5A100",
         "secondaryForeground": "#4B4B4B",
         "secondaryBorder": "#E5E5E5",
         "secondaryDisabledForeground": "#D9D9D9",
@@ -71,6 +73,7 @@ CANONICAL_ACTION_ROLES = {
 CANONICAL_SEMANTIC_ROLES = {
     "light": {
         "primary": "#1CB0F6",
+        "inversePrimary": "#1CB0F6",
         "secondary": "#000437",
         "success": "#58CC02",
         "information": "#1CB0F6",
@@ -79,6 +82,7 @@ CANONICAL_SEMANTIC_ROLES = {
     },
     "dark": {
         "primary": "#49C0F8",
+        "inversePrimary": "#063F5C",
         "secondary": "#A98BFF",
         "success": "#72D72B",
         "information": "#49C0F8",
@@ -271,6 +275,7 @@ def validate_variable_reference(root: Path, errors: list[str]) -> None:
                 "--vocora-border",
                 "--vocora-border-subtle",
                 "--vocora-primary",
+                "--vocora-inverse-primary",
                 "--vocora-secondary",
                 "--vocora-success",
                 "--vocora-information",
@@ -335,6 +340,9 @@ def validate_material_reference(root: Path, errors: list[str]) -> None:
         "--mat-sys-outline-variant": "--vocora-border-subtle",
         "--mat-sys-primary": "--vocora-primary",
         "--mat-sys-on-primary": "--vocora-text-on-primary",
+        "--mat-sys-primary-container": "--vocora-state-primary-surface",
+        "--mat-sys-on-primary-container": "--vocora-state-primary-foreground",
+        "--mat-sys-inverse-primary": "--vocora-inverse-primary",
         "--mat-sys-secondary": "--vocora-secondary",
         "--mat-sys-error": "--vocora-error",
     }
@@ -381,6 +389,8 @@ def validate_frontend_guidance(root: Path, errors: list[str]) -> None:
     ):
         if heading not in text:
             errors.append(f"DESIGN.md is missing required architecture section: {heading}")
+    if "runtime parity is enforced by the frontend theme contract test" not in text:
+        errors.append("DESIGN.md must identify the enforced runtime token mirror")
 
 
 def validate(root: Path) -> list[str]:

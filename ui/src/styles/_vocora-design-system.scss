@@ -27,6 +27,8 @@
 		--color-error-surface: #ffdfe0;
 		--color-error-ink: #4a0000;
 		--color-primary-edge: #1899d6;
+		--color-success-edge: #46a302;
+		--color-warning-edge: #e5a100;
 
 		--color-dark-page: #0f1611;
 		--color-dark-surface: #161f19;
@@ -175,6 +177,7 @@
 
 		--vocora-primary: var(--color-spark-blue);
 		--vocora-primary-rgb: var(--color-spark-blue-rgb);
+		--vocora-inverse-primary: var(--color-spark-blue);
 		--vocora-secondary: var(--color-night-ink);
 		--vocora-secondary-rgb: var(--color-night-ink-rgb);
 		--vocora-success: var(--color-eager-green);
@@ -186,6 +189,9 @@
 		--vocora-error: var(--color-answer-red);
 		--vocora-error-rgb: var(--color-answer-red-rgb);
 
+		--vocora-state-primary-surface: var(--color-information-surface);
+		--vocora-state-primary-foreground: var(--color-information-ink);
+		--vocora-state-primary-border: var(--color-information-border);
 		--vocora-state-success-surface: var(--color-storybook-green);
 		--vocora-state-success-foreground: var(--color-success-ink);
 		--vocora-state-success-border: var(--color-eager-green);
@@ -215,11 +221,11 @@
 		--vocora-action-secondary-disabled-border: var(--color-button-border-gray);
 		--vocora-action-success: var(--vocora-success);
 		--vocora-action-success-hover: var(--vocora-success);
-		--vocora-action-success-edge: var(--vocora-success);
+		--vocora-action-success-edge: var(--color-success-edge);
 		--vocora-action-success-foreground: var(--vocora-text-on-strong);
 		--vocora-action-warning: var(--vocora-warning);
 		--vocora-action-warning-hover: var(--vocora-warning);
-		--vocora-action-warning-edge: var(--vocora-warning);
+		--vocora-action-warning-edge: var(--color-warning-edge);
 		--vocora-action-warning-foreground: var(--vocora-text-on-strong);
 		--vocora-action-error: var(--vocora-error);
 		--vocora-action-error-hover: var(--vocora-error);
@@ -294,6 +300,7 @@
 
 		--vocora-primary: var(--color-dark-primary);
 		--vocora-primary-rgb: var(--color-dark-primary-rgb);
+		--vocora-inverse-primary: var(--color-information-ink);
 		--vocora-secondary: var(--color-purple-light);
 		--vocora-secondary-rgb: var(--color-purple-light-rgb);
 		--vocora-success: var(--color-dark-success);
@@ -305,6 +312,9 @@
 		--vocora-error: var(--color-dark-error);
 		--vocora-error-rgb: var(--color-dark-error-rgb);
 
+		--vocora-state-primary-surface: var(--color-dark-information-surface);
+		--vocora-state-primary-foreground: var(--color-dark-information-ink);
+		--vocora-state-primary-border: var(--color-dark-primary-edge);
 		--vocora-state-success-surface: var(--color-dark-success-surface);
 		--vocora-state-success-foreground: var(--color-storybook-green);
 		--vocora-state-success-border: var(--color-dark-success);

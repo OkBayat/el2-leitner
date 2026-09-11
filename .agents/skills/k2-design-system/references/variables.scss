@@ -1,4 +1,4 @@
-// Reference mirror of the runtime source at ui/src/styles/_vocora-design-system.scss.
+// Non-normative excerpt. Runtime authority lives in ui/src/styles/_vocora-design-system.scss.
 :root {
   --color-eager-green: #58cc02;
   --color-storybook-green: #d7ffb8;
@@ -62,6 +62,7 @@ html[data-theme='light'] {
   --vocora-text-on-error: var(--color-paper-white);
   --vocora-text-on-inverse: var(--color-paper-white);
   --vocora-primary: var(--color-spark-blue);
+  --vocora-inverse-primary: var(--color-spark-blue);
   --vocora-secondary: var(--color-night-ink);
   --vocora-success: var(--color-eager-green);
   --vocora-information: var(--color-spark-blue);
@@ -100,6 +101,7 @@ html[data-theme='dark'] {
   --vocora-text-on-error: var(--color-error-ink);
   --vocora-text-on-inverse: var(--color-charcoal);
   --vocora-primary: var(--color-dark-primary);
+  --vocora-inverse-primary: var(--color-information-ink);
   --vocora-secondary: var(--color-purple-light);
   --vocora-success: var(--color-dark-success);
   --vocora-information: var(--color-dark-primary);

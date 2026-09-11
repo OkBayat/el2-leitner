@@ -3,32 +3,20 @@
 	:root {
 		--mat-sys-primary: var(--vocora-primary);
 		--mat-sys-on-primary: var(--vocora-text-on-primary);
-		--mat-sys-primary-container: var(--vocora-state-information-surface);
-		--mat-sys-on-primary-container: var(--vocora-state-information-foreground);
-		--mat-sys-primary-fixed: var(--vocora-primary);
-		--mat-sys-on-primary-fixed: var(--vocora-text-on-primary);
-		--mat-sys-on-primary-fixed-variant: var(--vocora-state-information-foreground);
-		--mat-sys-primary-fixed-dim: var(--vocora-action-primary-hover);
-		--mat-sys-inverse-primary: var(--vocora-primary);
+		--mat-sys-primary-container: var(--vocora-state-primary-surface);
+		--mat-sys-on-primary-container: var(--vocora-state-primary-foreground);
+		--mat-sys-inverse-primary: var(--vocora-inverse-primary);
 
 		--mat-sys-secondary: var(--vocora-secondary);
 		--mat-sys-on-secondary: var(--vocora-text-on-secondary);
 		--mat-sys-secondary-container: var(--vocora-surface-subtle);
 		--mat-sys-on-secondary-container: var(--vocora-text-primary);
-		--mat-sys-secondary-fixed: var(--vocora-secondary);
-		--mat-sys-on-secondary-fixed: var(--vocora-text-on-secondary);
-		--mat-sys-on-secondary-fixed-variant: var(--vocora-text-secondary);
-		--mat-sys-secondary-fixed-dim: var(--vocora-secondary);
 
 		// Material tertiary is the framework expression of Vocora information.
 		--mat-sys-tertiary: var(--vocora-information);
 		--mat-sys-on-tertiary: var(--vocora-text-on-primary);
 		--mat-sys-tertiary-container: var(--vocora-state-information-surface);
 		--mat-sys-on-tertiary-container: var(--vocora-state-information-foreground);
-		--mat-sys-tertiary-fixed: var(--vocora-information);
-		--mat-sys-on-tertiary-fixed: var(--vocora-text-on-primary);
-		--mat-sys-on-tertiary-fixed-variant: var(--vocora-state-information-foreground);
-		--mat-sys-tertiary-fixed-dim: var(--vocora-action-primary-hover);
 
 		--mat-sys-error: var(--vocora-error);
 		--mat-sys-on-error: var(--vocora-text-on-error);

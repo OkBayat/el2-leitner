@@ -69,29 +69,17 @@ const exerciseFooterTemplate = fs.readFileSync(
 const expectedMappings = new Map([
 	["primary", "primary"],
 	["on-primary", "text-on-primary"],
-	["primary-container", "state-information-surface"],
-	["on-primary-container", "state-information-foreground"],
-	["primary-fixed", "primary"],
-	["on-primary-fixed", "text-on-primary"],
-	["on-primary-fixed-variant", "state-information-foreground"],
-	["primary-fixed-dim", "action-primary-hover"],
-	["inverse-primary", "primary"],
+	["primary-container", "state-primary-surface"],
+	["on-primary-container", "state-primary-foreground"],
+	["inverse-primary", "inverse-primary"],
 	["secondary", "secondary"],
 	["on-secondary", "text-on-secondary"],
 	["secondary-container", "surface-subtle"],
 	["on-secondary-container", "text-primary"],
-	["secondary-fixed", "secondary"],
-	["on-secondary-fixed", "text-on-secondary"],
-	["on-secondary-fixed-variant", "text-secondary"],
-	["secondary-fixed-dim", "secondary"],
 	["tertiary", "information"],
 	["on-tertiary", "text-on-primary"],
 	["tertiary-container", "state-information-surface"],
 	["on-tertiary-container", "state-information-foreground"],
-	["tertiary-fixed", "information"],
-	["on-tertiary-fixed", "text-on-primary"],
-	["on-tertiary-fixed-variant", "state-information-foreground"],
-	["tertiary-fixed-dim", "action-primary-hover"],
 	["error", "error"],
 	["on-error", "text-on-error"],
 	["error-container", "state-error-surface"],
@@ -143,6 +131,11 @@ assert.doesNotMatch(
 	/\.mat-mdc-/u,
 	"Material component geometry must live outside the semantic adapter.",
 );
+assert.doesNotMatch(
+	theme,
+	/--mat-sys-[a-z-]*fixed(?:-dim|-variant)?:/u,
+	"Theme-changing Vocora roles must not override Material fixed-color roles.",
+);
 const materialDefinitionOwners = fs.readdirSync(path.join(uiRoot, "src", "styles"))
 	.filter((name) => name.endsWith(".scss"))
 	.filter((name) =>
@@ -169,6 +162,12 @@ assert.ok(
 	styles.indexOf("@include angular-material-theme.apply();") >
 		styles.indexOf("@include mat.theme(("),
 	"Vocora Angular Material color overrides must be applied after the base Material theme.",
+);
+assert.ok(
+	styles.indexOf("@include vocora-design-system.apply();") >= 0 &&
+		styles.indexOf("@include vocora-design-system.apply();") <
+			styles.indexOf("@include angular-material-theme.apply();"),
+	"The Material adapter must be applied after the Vocora semantic layer.",
 );
 assert.match(
 	styles,
@@ -261,7 +260,32 @@ for (const themeName of ["light", "dark"]) {
 			);
 		}
 	}
+
+	const hexToRgb = (hex) => [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16));
+	const relativeLuminance = (hex) => {
+		const channels = hexToRgb(hex).map((channel) => {
+			const normalized = channel / 255;
+			return normalized <= 0.04045
+				? normalized / 12.92
+				: ((normalized + 0.055) / 1.055) ** 2.4;
+		});
+		return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2]);
+	};
+	const inverseSurface = resolve("--vocora-surface-inverse");
+	const inversePrimary = resolve("--vocora-inverse-primary");
+	const lighter = Math.max(relativeLuminance(inverseSurface), relativeLuminance(inversePrimary));
+	const darker = Math.min(relativeLuminance(inverseSurface), relativeLuminance(inversePrimary));
+	assert.ok(
+		(lighter + 0.05) / (darker + 0.05) >= 4.5,
+		`${themeName} inverse-primary must meet 4.5:1 contrast on inverse-surface.`,
+	);
 }
+
+assert.doesNotMatch(
+	components,
+	/\.mat-mdc-icon-button\s*\{[\s\S]*?vertical-align:\s*middle;/u,
+	"Material component integration must not add unowned global icon-button geometry.",
+);
 assert.match(components, /\.mat-mdc-unelevated-button/u);
 assert.match(
 	components,

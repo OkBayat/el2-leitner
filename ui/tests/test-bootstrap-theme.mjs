@@ -9,6 +9,18 @@ const styles = fs.readFileSync(path.join(uiRoot, 'src', 'styles.scss'), 'utf8');
 const stylesRoot = path.join(uiRoot, 'src', 'styles');
 const bootstrapTheme = fs.readFileSync(path.join(stylesRoot, '_bootstrap-theme.scss'), 'utf8');
 const designSystem = fs.readFileSync(path.join(stylesRoot, '_vocora-design-system.scss'), 'utf8');
+const classificationTemplate = fs.readFileSync(
+  path.join(
+    uiRoot,
+    'src/app/shared/slide-exercise/library/components/classification/classification-slide.component.html'
+  ),
+  'utf8'
+);
+const featureThemeConsumers = [
+  'src/app/features/collection-learning-path/exercises/scoped-vocabulary-practice/scoped-vocabulary-practice-exercise.component.scss',
+  'src/app/features/collection-learning-path/exercises/vocabulary-mastery-check/vocabulary-mastery-check-exercise.component.scss',
+  'src/app/features/review/review-page.component.scss',
+].map((relativePath) => fs.readFileSync(path.join(uiRoot, relativePath), 'utf8'));
 
 const designInclude = '@include vocora-design-system.apply();';
 const bootstrapInclude = '@include bootstrap-theme.apply();';
@@ -81,7 +93,7 @@ for (const [bootstrapName, vocoraName] of publicVariableMappings) {
 }
 
 for (const [bootstrapName, vocoraName] of [
-  ['primary', 'information'],
+	['primary', 'primary'],
   ['success', 'success'],
   ['info', 'information'],
   ['warning', 'warning'],
@@ -98,6 +110,93 @@ for (const [bootstrapName, vocoraName] of [
       `Bootstrap ${bootstrapName} ${suffix} must use the corresponding Vocora state role.`
     );
   }
+}
+
+const declarationMap = (source) => new Map(
+  [...source.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/giu)]
+    .map(([, name, value]) => [name, value.trim()])
+);
+const foundation = declarationMap(designSystem.split('// Layer B: Vocora semantic tokens')[0]);
+const rgbCompanions = [...foundation]
+  .filter(([name]) => name.endsWith('-rgb'));
+assert.ok(rgbCompanions.length > 0, 'Foundation RGB companions must be present.');
+for (const [rgbName, channels] of rgbCompanions) {
+  const colorName = rgbName.slice(0, -4);
+  const hex = foundation.get(colorName);
+  assert.match(hex ?? '', /^#[0-9a-f]{6}$/iu, `${rgbName} must have a hex color companion.`);
+  const expectedChannels = [1, 3, 5]
+    .map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16))
+    .join(', ');
+  assert.equal(channels, expectedChannels, `${rgbName} must match ${colorName}.`);
+}
+
+const semanticThemeBlock = (themeName) => {
+  const pattern = themeName === 'light'
+    ? /:root,\s*html\[data-theme="light"\]\s*\{([\s\S]*?)\n\t\}/u
+    : /html\[data-theme="dark"\]\s*\{([\s\S]*?)\n\t\}/u;
+  const match = designSystem.match(pattern);
+  assert.ok(match, `Runtime design system must define the ${themeName} theme.`);
+  return match[1];
+};
+for (const themeName of ['light', 'dark']) {
+  const declarations = new Map([
+    ...foundation,
+    ...declarationMap(semanticThemeBlock(themeName)),
+  ]);
+  const resolve = (name, seen = new Set()) => {
+    assert.ok(!seen.has(name), `Token reference cycle detected at ${name}.`);
+    const value = declarations.get(name);
+    assert.ok(value, `Missing RGB contract token ${name}.`);
+    const reference = value.match(/^var\((--[a-z0-9-]+)\)$/iu);
+    return reference ? resolve(reference[1], new Set([...seen, name])) : value;
+  };
+  for (const token of [
+    'surface-page',
+    'surface-base',
+    'surface-raised',
+    'surface-subtle',
+    'surface-inverse',
+    'text-primary',
+    'text-secondary',
+    'text-disabled',
+    'primary',
+    'secondary',
+    'success',
+    'information',
+    'warning',
+    'error',
+    'action-primary',
+    'action-primary-hover',
+  ]) {
+    const hex = resolve(`--vocora-${token}`);
+    const channels = resolve(`--vocora-${token}-rgb`);
+    const expectedChannels = [1, 3, 5]
+      .map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16))
+      .join(', ');
+    assert.equal(
+      channels,
+      expectedChannels,
+      `${themeName} --vocora-${token}-rgb must match its full-color token.`
+    );
+  }
+}
+
+assert.doesNotMatch(
+  classificationTemplate,
+  /\bborder-secondary\b/u,
+  'Routine classification borders must not use the brand-secondary utility.'
+);
+for (const consumer of featureThemeConsumers) {
+  assert.doesNotMatch(
+    consumer,
+    /--v-(?:muted|border|surface|primary)\b/u,
+    'Feature styles must not retain a competing semantic palette.'
+  );
+  assert.doesNotMatch(
+    consumer,
+    /#[0-9a-f]{3,8}\b|\brgba?\(/iu,
+    'Migrated feature styles must consume canonical semantic colors.'
+  );
 }
 
 assert.doesNotMatch(

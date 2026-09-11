@@ -145,10 +145,11 @@ The runtime source of truth is
 
 The runtime file is included before both Layer C adapters. The Bootstrap and
 Angular Material adapters reference only Vocora semantic tokens; neither owns
-a palette. `references/tokens.json`, `references/variables.scss`, and
-`references/material-theme.scss` are documentation and tooling mirrors whose
-validators must detect drift from the runtime source. They are not independent
-runtime inputs.
+a palette. `references/tokens.json` is the resolved documentation mirror and
+its runtime parity is enforced by the frontend theme contract test.
+`references/variables.scss` and `references/material-theme.scss` are
+non-normative implementation examples whose required roles are validated;
+they are not complete mirrors or independent runtime inputs.
 
 ThemeService owns theme changes and writes one root `data-theme` value. The
 early paint bootstrap resolves that same stored mode before Angular starts.
@@ -172,6 +173,7 @@ not add `data-bs-theme`, a Material theme service, or another observable.
 | Muted text | `--bs-secondary-color` | `--mat-sys-on-surface-variant` |
 | Default border | `--bs-border-color`; `border` | `--mat-sys-outline` |
 | Subtle border | `--bs-border-color-translucent` | `--mat-sys-outline-variant` |
+| Inverse primary | Product inverse action treatment | `--mat-sys-inverse-primary` |
 | Focus | Product focus treatment | Product focus treatment |
 
 Bootstrap `secondary` means the real Vocora secondary emphasis role. Muted
