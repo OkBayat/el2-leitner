@@ -1,7 +1,6 @@
-// Navigation surfaces use the canonical Vocora light/dark palette. The small
-// illustration palette is shared by every navigation SVG, never feature-local.
+// Navigation component tokens consume canonical semantic and illustration roles.
 @mixin apply() {
-	:root, html[data-theme='light'] {
+	:root {
 		--vocora-nav-surface: var(--vocora-surface-base);
 		--vocora-nav-border: var(--vocora-border-subtle);
 		--vocora-nav-text: var(--vocora-text-primary);
@@ -12,43 +11,18 @@
 		--vocora-nav-active-border: var(--vocora-information-border);
 		--vocora-nav-active-surface: var(--vocora-information-surface);
 		--vocora-nav-hover: var(--vocora-surface-subtle);
-		--vocora-nav-art-gold: #ffb51b;
-		--vocora-nav-art-orange: #d96a12;
-		--vocora-nav-art-coral: var(--vocora-error);
-		--vocora-nav-art-rose: #ff7b7b;
-		--vocora-nav-art-blue: #2563eb;
-		--vocora-nav-art-sky: #6ea8fe;
-		--vocora-nav-art-purple: #7c4ddb;
-		--vocora-nav-art-teal: #086f6b;
-		--vocora-nav-art-green: #4fc66a;
-		--vocora-nav-art-mint: #c8f3d5;
-		--vocora-nav-art-paper: #ffffff;
-		--vocora-nav-art-ink: #404943;
-		--vocora-nav-art-skin: #ffb26b;
-	}
-	html[data-theme='dark'] {
-		--vocora-nav-surface: var(--vocora-surface-base);
-		--vocora-nav-border: var(--vocora-border-subtle);
-		--vocora-nav-text: var(--vocora-text-primary);
-		--vocora-nav-muted: var(--vocora-text-secondary);
-		--vocora-nav-brand: var(--vocora-primary);
-		--vocora-nav-focus: var(--vocora-focus-ring);
-		--vocora-nav-active-text: var(--vocora-information-foreground);
-		--vocora-nav-active-border: var(--vocora-information-border);
-		--vocora-nav-active-surface: var(--vocora-information-surface);
-		--vocora-nav-hover: var(--vocora-surface-subtle);
-		--vocora-nav-art-gold: #ffc15a;
-		--vocora-nav-art-orange: #ffb26b;
-		--vocora-nav-art-coral: var(--vocora-error);
-		--vocora-nav-art-rose: var(--vocora-error-edge);
-		--vocora-nav-art-blue: #2563eb;
-		--vocora-nav-art-sky: #6ea8fe;
-		--vocora-nav-art-purple: #a98bff;
-		--vocora-nav-art-teal: #42bdb4;
-		--vocora-nav-art-green: #65d780;
-		--vocora-nav-art-mint: #c8f3d5;
-		--vocora-nav-art-paper: #ffffff;
-		--vocora-nav-art-ink: #29312c;
-		--vocora-nav-art-skin: #ffb26b;
+		--vocora-nav-art-gold: var(--vocora-art-gold);
+		--vocora-nav-art-orange: var(--vocora-art-orange);
+		--vocora-nav-art-coral: var(--vocora-art-coral);
+		--vocora-nav-art-rose: var(--vocora-art-rose);
+		--vocora-nav-art-blue: var(--vocora-art-blue);
+		--vocora-nav-art-sky: var(--vocora-art-sky);
+		--vocora-nav-art-purple: var(--vocora-art-purple);
+		--vocora-nav-art-teal: var(--vocora-art-teal);
+		--vocora-nav-art-green: var(--vocora-art-green);
+		--vocora-nav-art-mint: var(--vocora-art-mint);
+		--vocora-nav-art-paper: var(--vocora-art-paper);
+		--vocora-nav-art-ink: var(--vocora-art-ink);
+		--vocora-nav-art-skin: var(--vocora-art-skin);
 	}
 }

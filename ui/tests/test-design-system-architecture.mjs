@@ -12,13 +12,16 @@ const sharedMarker = [
 	"export class ExampleComponent {}",
 ];
 const emptyBaseline = () => ({
-	schema_version: 2,
+	schema_version: 3,
 	legacy_debt: {
 		important_declarations: {},
 		feature_material_internal_selectors: {},
+		raw_colors: {},
+		theme_selectors: {},
 	},
 	integration_exceptions: {
 		important_declarations: {},
+		raw_colors: {},
 	},
 });
 
@@ -167,6 +170,59 @@ function validateFixture({
 		errors.includes(
 			`Stale !important baseline debt in ${relative}: .legacy => color:red!important`,
 		),
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/local-theme.component.scss";
+	const errors = validateFixture({
+		files: [
+			[
+				relative,
+				":host { --feature-accent: #123456; color: rgb(1 2 3); } :host-context([data-theme='dark']) { --feature-accent: oklch(70% .1 250); }",
+			],
+		],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		3,
+	);
+	assert.ok(
+		errors.some((error) => error.includes("local theme-selector debt")),
+	);
+}
+
+{
+	const foundation = "ui/src/styles/_vocora-design-system.scss";
+	assert.deepEqual(
+		validateFixture({
+			files: [[foundation, ":root, html[data-theme='light'] { --color-example: #123456; }"]],
+		}),
+		[],
+	);
+
+	const exception = "ui/src/pwa.scss";
+	const baseline = emptyBaseline();
+	baseline.integration_exceptions.raw_colors[exception] = {
+		occurrences: ["#ffffff"],
+		reason: "Early paint needs a deterministic fallback.",
+		upstream_constraint: "The semantic runtime is not initialized yet.",
+	};
+	assert.deepEqual(
+		validateFixture({ files: [[exception, "html { background: #ffffff; }"]], baseline }),
+		[],
+	);
+
+	const feature = "ui/src/app/features/example/example.component.scss";
+	baseline.integration_exceptions.raw_colors = {
+		[feature]: baseline.integration_exceptions.raw_colors[exception],
+	};
+	const errors = validateFixture({
+		files: [[feature, ":host { background: #ffffff; }"]],
+		baseline,
+	});
+	assert.ok(
+		errors.some((error) => error.includes("is not approved for raw_colors")),
 	);
 }
 
@@ -413,7 +469,7 @@ function validateFixture({
 	});
 	assert.ok(
 		errors.some((error) =>
-			error.includes("is not an approved framework integration owner"),
+			error.includes("is not approved for important_declarations"),
 		),
 	);
 }

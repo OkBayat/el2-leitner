@@ -389,7 +389,7 @@ def validate_frontend_guidance(root: Path, errors: list[str]) -> None:
     ):
         if heading not in text:
             errors.append(f"DESIGN.md is missing required architecture section: {heading}")
-    if "runtime parity is enforced by the frontend theme contract test" not in text:
+    if "runtime parity for every listed role is enforced" not in text:
         errors.append("DESIGN.md must identify the enforced runtime token mirror")
 
 

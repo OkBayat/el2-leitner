@@ -1,10 +1,9 @@
 .review-context-badge {
-	--review-context-accent: #ff9600;
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 	margin-bottom: 18px;
-	color: var(--review-context-accent);
+	color: var(--vocora-state-warning-foreground);
 	font-size: 13px;
 	font-weight: 800;
 	letter-spacing: 0.035em;
@@ -28,8 +27,8 @@
 	display: grid;
 	place-items: center;
 	border-radius: 50%;
-	background: var(--review-context-accent);
-	color: #fff;
+	background: var(--vocora-action-warning);
+	color: var(--vocora-action-warning-foreground);
 }
 
 .review-context-badge-icon svg {

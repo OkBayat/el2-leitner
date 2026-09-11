@@ -19,6 +19,7 @@
 		--color-mist: #f1f5f2;
 		--color-soft-border: #e4eae6;
 		--color-success-ink: #335f00;
+		--color-success-icon: #58a700;
 		--color-information-border: #84d8ff;
 		--color-information-surface: #ddf4ff;
 		--color-information-ink: #063f5c;
@@ -85,6 +86,13 @@
 		--color-dark-brand-mint-light: #1f3327;
 		--color-brand-orange: #ffb51b;
 		--color-dark-brand-orange: #ffc15a;
+		--color-art-rose: #ff7b7b;
+		--color-art-ink: #404943;
+		--color-dark-art-ink: #29312c;
+		--color-google-blue: rgb(66 133 244);
+		--color-google-green: rgb(52 168 83);
+		--color-google-yellow: rgb(251 188 4);
+		--color-google-red: rgb(234 67 53);
 
 		// Bootstrap's compiled utilities require channel-list companions.
 		--color-paper-white-rgb: 255, 255, 255;
@@ -147,6 +155,7 @@
 	// Layer B: Vocora semantic tokens. Framework names do not belong here.
 	:root,
 	html[data-theme="light"] {
+		color-scheme: light;
 		--vocora-surface-page: var(--color-paper-white);
 		--vocora-surface-page-rgb: var(--color-paper-white-rgb);
 		--vocora-surface-base: var(--color-paper-white);
@@ -195,6 +204,7 @@
 		--vocora-state-success-surface: var(--color-storybook-green);
 		--vocora-state-success-foreground: var(--color-success-ink);
 		--vocora-state-success-border: var(--color-eager-green);
+		--vocora-state-success-icon: var(--color-success-icon);
 		--vocora-state-information-surface: var(--color-information-surface);
 		--vocora-state-information-foreground: var(--color-information-ink);
 		--vocora-state-information-border: var(--color-information-border);
@@ -267,9 +277,25 @@
 		--vocora-brand-mint-light: var(--color-brand-mint-light);
 		--vocora-brand-teal: var(--color-teal);
 		--vocora-brand-orange: var(--color-brand-orange);
+
+		// Shared illustration roles are theme-aware without owning another palette.
+		--vocora-art-gold: var(--color-brand-orange);
+		--vocora-art-orange: var(--color-orange);
+		--vocora-art-coral: var(--vocora-error);
+		--vocora-art-rose: var(--color-art-rose);
+		--vocora-art-blue: var(--color-blue);
+		--vocora-art-sky: var(--color-blue-light);
+		--vocora-art-purple: var(--color-purple);
+		--vocora-art-teal: var(--color-teal);
+		--vocora-art-green: var(--color-brand-green);
+		--vocora-art-mint: var(--color-brand-mint);
+		--vocora-art-paper: var(--color-paper-white);
+		--vocora-art-ink: var(--color-art-ink);
+		--vocora-art-skin: var(--color-orange-light);
 	}
 
 	html[data-theme="dark"] {
+		color-scheme: dark;
 		--vocora-surface-page: var(--color-dark-page);
 		--vocora-surface-page-rgb: var(--color-dark-page-rgb);
 		--vocora-surface-base: var(--color-dark-surface);
@@ -318,6 +344,7 @@
 		--vocora-state-success-surface: var(--color-dark-success-surface);
 		--vocora-state-success-foreground: var(--color-storybook-green);
 		--vocora-state-success-border: var(--color-dark-success);
+		--vocora-state-success-icon: var(--color-dark-success);
 		--vocora-state-information-surface: var(--color-dark-information-surface);
 		--vocora-state-information-foreground: var(--color-dark-information-ink);
 		--vocora-state-information-border: var(--color-dark-primary-edge);
@@ -389,5 +416,19 @@
 		--vocora-brand-mint-light: var(--color-dark-brand-mint-light);
 		--vocora-brand-teal: var(--color-teal-light);
 		--vocora-brand-orange: var(--color-dark-brand-orange);
+
+		--vocora-art-gold: var(--color-dark-brand-orange);
+		--vocora-art-orange: var(--color-orange-light);
+		--vocora-art-coral: var(--vocora-error);
+		--vocora-art-rose: var(--vocora-error-edge);
+		--vocora-art-blue: var(--color-blue);
+		--vocora-art-sky: var(--color-blue-light);
+		--vocora-art-purple: var(--color-purple-light);
+		--vocora-art-teal: var(--color-teal-light);
+		--vocora-art-green: var(--color-forest-light);
+		--vocora-art-mint: var(--color-brand-mint);
+		--vocora-art-paper: var(--color-paper-white);
+		--vocora-art-ink: var(--color-dark-art-ink);
+		--vocora-art-skin: var(--color-orange-light);
 	}
 }

@@ -6,6 +6,7 @@ import ts from "typescript";
 
 const BASELINE_PATH = "ui/tests/design-system-architecture-baseline.json";
 const STYLE_EXTENSIONS = new Set([".css", ".less", ".sass", ".scss"]);
+const FOUNDATION_COLOR_OWNER = "ui/src/styles/_vocora-design-system.scss";
 const STYLE_OWNERS = [
 	[
 		/(--bs-[a-z0-9-]+)\s*:/giu,
@@ -20,12 +21,23 @@ const STYLE_OWNERS = [
 	[
 		/(--color-[a-z0-9-]+)\s*:/giu,
 		"Vocora foundation colors",
-		"ui/src/styles/_vocora-design-system.scss",
+		FOUNDATION_COLOR_OWNER,
 	],
 ];
-const INTEGRATION_OWNERS = new Set([
-	"ui/src/styles/_angular-material-components.scss",
-	"ui/src/styles/_bootstrap-theme.scss",
+const INTEGRATION_OWNERS = new Map([
+	[
+		"important_declarations",
+		new Set([
+			"ui/src/styles/_angular-material-components.scss",
+			"ui/src/styles/_bootstrap-theme.scss",
+		]),
+	],
+	[
+		"raw_colors",
+		new Set([
+			"ui/src/pwa.scss",
+		]),
+	],
 ]);
 
 function normalizeRoot(repoRoot) {
@@ -413,6 +425,25 @@ export function extractMaterialInternalSelectors(
 		.map((match) => text.slice(...match.indices[1]).trim());
 }
 
+export function extractRawColors(syntax) {
+	return [
+		...syntax.matchAll(
+			/#[0-9a-f]{3,8}\b|\b(?:color|hsl|hsla|hwb|lab|lch|oklab|oklch|rgb|rgba)\([^)]*\)/giu,
+		),
+	].map((match) => normalizeWhitespace(match[0]).toLowerCase());
+}
+
+export function extractThemeSelectors(text, syntax = text) {
+	return [...syntax.matchAll(/([^{}]+)\{/dgu)]
+		.filter((match) => /\[data-theme\s*=/iu.test(match[1]))
+		.flatMap((match) => [
+			...text
+				.slice(...match.indices[1])
+				.matchAll(/\[data-theme\s*=\s*(?:"[^"]+"|'[^']+'|[a-z-]+)\]/giu),
+		])
+		.map((match) => normalizeWhitespace(match[0]));
+}
+
 function styleUnits(sources, errors) {
 	const units = [];
 	for (const [relative, text] of sources) {
@@ -458,6 +489,8 @@ function increment(target, relative, occurrence) {
 function scanDebt(units) {
 	const important = new Map();
 	const material = new Map();
+	const rawColors = new Map();
+	const themeSelectors = new Map();
 	for (const { relative, text, syntax, indentedSass } of units) {
 		for (const occurrence of extractImportantDeclarations(text, {
 			indentedSass,
@@ -473,8 +506,16 @@ function scanDebt(units) {
 				increment(material, relative, occurrence);
 			}
 		}
+		if (relative !== FOUNDATION_COLOR_OWNER) {
+			for (const occurrence of extractRawColors(syntax)) {
+				increment(rawColors, relative, occurrence);
+			}
+			for (const occurrence of extractThemeSelectors(text, syntax)) {
+				increment(themeSelectors, relative, occurrence);
+			}
+		}
 	}
-	return { important, material };
+	return { important, material, rawColors, themeSelectors };
 }
 
 function baselineEntries(baseline, section, category, errors) {
@@ -502,9 +543,9 @@ function baselineEntries(baseline, section, category, errors) {
 			continue;
 		}
 		if (section === "integration_exceptions") {
-			if (!INTEGRATION_OWNERS.has(relative)) {
+			if (!INTEGRATION_OWNERS.get(category)?.has(relative)) {
 				errors.push(
-					`Integration exception owner ${relative} is not an approved framework integration owner`,
+					`Integration exception owner ${relative} is not approved for ${category}`,
 				);
 			}
 			if (
@@ -639,9 +680,9 @@ export function validateArchitectureSnapshot({
 	baseline,
 }) {
 	const errors = [];
-	if (baseline?.schema_version !== 2)
+	if (baseline?.schema_version !== 3)
 		errors.push(
-			"Design-system architecture baseline must use schema_version 2",
+			"Design-system architecture baseline must use schema_version 3",
 		);
 
 	if (
@@ -692,10 +733,28 @@ export function validateArchitectureSnapshot({
 		"feature_material_internal_selectors",
 		errors,
 	);
+	const legacyRawColors = baselineEntries(
+		baseline,
+		"legacy_debt",
+		"raw_colors",
+		errors,
+	);
+	const legacyThemeSelectors = baselineEntries(
+		baseline,
+		"legacy_debt",
+		"theme_selectors",
+		errors,
+	);
 	const integrationImportant = baselineEntries(
 		baseline,
 		"integration_exceptions",
 		"important_declarations",
+		errors,
+	);
+	const integrationRawColors = baselineEntries(
+		baseline,
+		"integration_exceptions",
+		"raw_colors",
 		errors,
 	);
 	const declaredImportant = addMaps(
@@ -703,6 +762,12 @@ export function validateArchitectureSnapshot({
 		integrationImportant,
 		errors,
 		"!important debt",
+	);
+	const declaredRawColors = addMaps(
+		legacyRawColors,
+		integrationRawColors,
+		errors,
+		"raw color debt",
 	);
 
 	compareExact(actual.important, declaredImportant, "!important", errors);
@@ -712,10 +777,29 @@ export function validateArchitectureSnapshot({
 		"feature Material-internal selector",
 		errors,
 	);
+	compareExact(actual.rawColors, declaredRawColors, "raw color", errors);
+	compareExact(
+		actual.themeSelectors,
+		legacyThemeSelectors,
+		"local theme-selector",
+		errors,
+	);
 	compareLegacyToBase(
 		legacyImportant,
 		baseActual.important,
 		"!important",
+		errors,
+	);
+	compareLegacyToBase(
+		legacyRawColors,
+		baseActual.rawColors,
+		"raw color",
+		errors,
+	);
+	compareLegacyToBase(
+		legacyThemeSelectors,
+		baseActual.themeSelectors,
+		"local theme-selector",
 		errors,
 	);
 	compareLegacyToBase(
@@ -752,6 +836,8 @@ function legacyPaths(baseline) {
 		...Object.keys(
 			baseline?.legacy_debt?.feature_material_internal_selectors ?? {},
 		),
+		...Object.keys(baseline?.legacy_debt?.raw_colors ?? {}),
+		...Object.keys(baseline?.legacy_debt?.theme_selectors ?? {}),
 	]);
 }
 

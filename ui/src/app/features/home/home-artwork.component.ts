@@ -46,7 +46,7 @@ export class PathIconComponent {
   styles: `
     :host{position:relative;display:block;width:100%;height:100%}
     img{position:relative;z-index:1;display:block;width:100%;height:100%;object-fit:contain;user-select:none}
-    .mascot-shadow{position:absolute;z-index:0;left:50%;bottom:8px;width:58%;height:10px;transform:translateX(-50%);border-radius:50%;background:#202a37;opacity:.10;filter:blur(1px);pointer-events:none}
+    .mascot-shadow{position:absolute;z-index:0;left:50%;bottom:8px;width:58%;height:10px;transform:translateX(-50%);border-radius:50%;background:var(--vocora-shadow);opacity:.10;filter:blur(1px);pointer-events:none}
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

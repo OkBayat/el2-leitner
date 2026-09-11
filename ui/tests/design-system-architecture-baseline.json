@@ -1,5 +1,5 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "legacy_debt": {
         "important_declarations": {
             "ui/src/app/features/review/review-answer-feedback.scss": {
@@ -102,7 +102,9 @@
                 ],
                 "reason": "Legacy review field selectors retained until the supported Material API or central adapter can replace them."
             }
-        }
+        },
+        "raw_colors": {},
+        "theme_selectors": {}
     },
     "integration_exceptions": {
         "important_declarations": {
@@ -112,6 +114,13 @@
                 ],
                 "reason": "The central Material adapter disables upstream button transitions to enforce the canonical immediate interaction contract.",
                 "upstream_constraint": "Angular Material button transitions cannot be disabled through a supported theme token."
+            }
+        },
+        "raw_colors": {
+            "ui/src/pwa.scss": {
+                "occurrences": ["#ffffff"],
+                "reason": "The standalone-mode shell needs a light fallback before the application design system is available.",
+                "upstream_constraint": "This stylesheet can paint before Angular and the runtime token layer have initialized."
             }
         }
     }

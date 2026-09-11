@@ -271,13 +271,23 @@ for (const themeName of ["light", "dark"]) {
 		});
 		return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2]);
 	};
+	const contrastRatio = (first, second) => {
+		const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+		const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+		return (lighter + 0.05) / (darker + 0.05);
+	};
 	const inverseSurface = resolve("--vocora-surface-inverse");
 	const inversePrimary = resolve("--vocora-inverse-primary");
-	const lighter = Math.max(relativeLuminance(inverseSurface), relativeLuminance(inversePrimary));
-	const darker = Math.min(relativeLuminance(inverseSurface), relativeLuminance(inversePrimary));
 	assert.ok(
-		(lighter + 0.05) / (darker + 0.05) >= 4.5,
+		contrastRatio(inverseSurface, inversePrimary) >= 4.5,
 		`${themeName} inverse-primary must meet 4.5:1 contrast on inverse-surface.`,
+	);
+	assert.ok(
+		contrastRatio(
+			resolve("--vocora-state-primary-surface"),
+			resolve("--vocora-text-primary"),
+		) >= 4.5,
+		`${themeName} primary state surfaces must remain readable with primary text.`,
 	);
 }
 
@@ -484,8 +494,8 @@ assert.match(
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="#58A700"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
-	"Successful feedback must use the supplied rounded check SVG at 35px.",
+	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-success-icon\)"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
+	"Successful feedback must use the rounded check SVG and theme-aware success icon role.",
 );
 assert.match(
 	exerciseFooterTemplate,
