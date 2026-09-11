@@ -255,6 +255,7 @@ function extractInlineStyleMetadata(text) {
 		ts.ScriptKind.TS,
 	);
 	const styles = [];
+	const templates = [];
 	let unsupported = 0;
 	const componentNames = new Set(["Component"]);
 	const angularNamespaces = new Set();
@@ -331,17 +332,22 @@ function extractInlineStyleMetadata(text) {
 					}
 					if (!ts.isPropertyAssignment(property)) continue;
 					const name = property.name;
-					const isStyles =
+					const propertyName =
 						(ts.isIdentifier(name) || ts.isStringLiteral(name)) &&
-						name.text === "styles";
-					if (!isStyles) continue;
+						name.text;
+					if (propertyName !== "styles" && propertyName !== "template") {
+						continue;
+					}
 
 					const scalar = literalValue(property.initializer);
 					if (scalar !== null) {
-						styles.push(scalar);
+						(propertyName === "styles" ? styles : templates).push(scalar);
 						continue;
 					}
-					if (ts.isArrayLiteralExpression(property.initializer)) {
+					if (
+						propertyName === "styles" &&
+						ts.isArrayLiteralExpression(property.initializer)
+					) {
 						const values =
 							property.initializer.elements.map(literalValue);
 						if (values.every((value) => value !== null)) {
@@ -356,7 +362,7 @@ function extractInlineStyleMetadata(text) {
 		ts.forEachChild(node, visit);
 	}
 	visit(source);
-	return { styles, unsupported };
+	return { styles, templates, unsupported };
 }
 
 export function extractInlineStyles(text) {
@@ -457,17 +463,17 @@ export function extractRawColors(syntax) {
 	]
 		.map((match) => normalizeWhitespace(match[0]).toLowerCase())
 		.filter((value) => !/\bvar\(/iu.test(value));
-	for (const match of syntax.matchAll(/(--[a-z0-9-]+|[a-z-]+)\s*:\s*([^;{}]+)/giu)) {
+	for (const match of syntax.matchAll(/([$@][a-z0-9_-]+|--[a-z0-9-]+|[a-z-]+)\s*:\s*([^;{}]+)/giu)) {
 		const property = match[1].toLowerCase();
 		if (
-			!property.startsWith("--") &&
+			!/^[$@]|^--/u.test(property) &&
 			!/^(?:accent-color|background(?:-color)?|border(?:-[a-z-]+)?|box-shadow|caret-color|color|fill|outline(?:-color)?|stroke|text-shadow)$/u.test(property)
 		) {
 			continue;
 		}
 		const literalValue = match[2]
 			.replace(/var\([^)]*\)/giu, "")
-			.replace(/\$[a-z0-9_-]+/giu, "");
+			.replace(/[$@][a-z0-9_-]+/giu, "");
 		for (const word of literalValue.toLowerCase().match(/[a-z]+/gu) ?? []) {
 			if (CSS_NAMED_COLORS.has(word)) colors.push(word);
 		}
@@ -516,7 +522,59 @@ function extractTemplateStyles(text) {
 	)) {
 		styles.push(`${match[1]}: ${match[3]};`);
 	}
+	for (const match of withoutComments.matchAll(
+		/\[(style|attr)\.([a-z-]+)(?:\.[a-z-]+)?\]\s*=\s*(["'])([\s\S]*?)\3/giu,
+	)) {
+		const property = match[2].toLowerCase();
+		if (
+			match[1].toLowerCase() === "attr" &&
+			!["bgcolor", "color", "fill", "stroke"].includes(property)
+		) {
+			continue;
+		}
+		const expression = match[4].trim();
+		const literal = expression.match(/^(["'])([\s\S]*)\1$/u);
+		if (literal) styles.push(`${property}: ${literal[2]};`);
+	}
 	return styles.join("\n");
+}
+
+function extractImperativeColorStyles(text) {
+	const source = ts.createSourceFile(
+		"colors.ts",
+		text,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TS,
+	);
+	const styles = [];
+	const literalValue = (node) =>
+		ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)
+			? node.text
+			: null;
+	function visit(node) {
+		if (
+			ts.isBinaryExpression(node) &&
+			node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+			ts.isPropertyAccessExpression(node.left) &&
+			["fillStyle", "shadowColor", "strokeStyle"].includes(node.left.name.text)
+		) {
+			const value = literalValue(node.right);
+			if (value !== null) styles.push(`color: ${value};`);
+		}
+		if (
+			ts.isCallExpression(node) &&
+			ts.isPropertyAccessExpression(node.expression) &&
+			node.expression.name.text === "addColorStop" &&
+			node.arguments.length > 1
+		) {
+			const value = literalValue(node.arguments[1]);
+			if (value !== null) styles.push(`color: ${value};`);
+		}
+		ts.forEachChild(node, visit);
+	}
+	visit(source);
+	return styles;
 }
 
 function styleUnits(sources, errors) {
@@ -534,8 +592,13 @@ function styleUnits(sources, errors) {
 				indentedSass: extension === ".sass",
 			});
 		} else if (extension === ".ts") {
-			const { styles: inlineStyles, unsupported } =
+			const { styles: inlineStyles, templates, unsupported } =
 				extractInlineStyleMetadata(text);
+			inlineStyles.push(...extractImperativeColorStyles(text));
+			for (const template of templates) {
+				const templateStyles = extractTemplateStyles(template);
+				if (templateStyles) inlineStyles.push(templateStyles);
+			}
 			for (let index = 0; index < unsupported; index += 1) {
 				errors?.push(
 					`Unsupported Angular inline styles expression in ${relative}; use a literal string or literal string array`,

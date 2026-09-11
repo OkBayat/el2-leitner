@@ -52,6 +52,25 @@ function validateFixture({
 }
 
 {
+	for (const [relative, source] of [
+		[
+			"ui/src/app/features/example/preprocessor.component.scss",
+			"$feature-color: red;",
+		],
+		[
+			"ui/src/app/features/example/preprocessor.component.less",
+			"@feature-color: red;",
+		],
+	]) {
+		assert.ok(
+			validateFixture({files: [[relative, source]]}).some((error) =>
+				error.includes("raw color debt"),
+			),
+		);
+	}
+}
+
+{
 	assert.deepEqual(
 		validateFixture({
 			files: [[
@@ -69,6 +88,45 @@ function validateFixture({
 		files: [[
 			relative,
 			'<svg fill="#123456"><path stroke="white" /></svg><div style="color: var(--vocora-text-primary)"></div>',
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/bound-template.component.html";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			`<div [style.color]="'#123456'"></div><svg [attr.fill]="'red'"></svg>`,
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/inline-template.component.ts";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			`import {Component} from '@angular/core'; @Component({template: \`<svg [attr.stroke]="'white'"></svg>\`}) export class Example {}`,
+		]],
+	});
+	assert.ok(errors.some((error) => error.includes("raw color debt")));
+}
+
+{
+	const relative = "ui/src/app/shared/example-canvas.component.ts";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			"function paint(ctx, gradient) { ctx.fillStyle = '#123456'; gradient.addColorStop(0, 'red'); }",
 		]],
 	});
 	assert.equal(

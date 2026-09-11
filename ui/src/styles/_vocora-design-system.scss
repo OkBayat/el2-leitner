@@ -89,6 +89,10 @@
 		--color-art-rose: #ff7b7b;
 		--color-art-ink: #404943;
 		--color-dark-art-ink: #29312c;
+		--color-story-lavender: #e8def8;
+		--color-story-blue-haze: #d3e4ff;
+		--color-story-ink: #1d1b20;
+		--color-story-panel: rgb(255 255 255 / 68%);
 		--color-google-blue: rgb(66 133 244);
 		--color-google-green: rgb(52 168 83);
 		--color-google-yellow: rgb(251 188 4);
@@ -297,6 +301,12 @@
 		--vocora-art-paper: var(--color-paper-white);
 		--vocora-art-ink: var(--color-art-ink);
 		--vocora-art-skin: var(--color-orange-light);
+		// Share exports are branded artifacts, so these semantic roles intentionally
+		// retain the same palette in both application themes.
+		--vocora-share-story-gradient-start: var(--color-story-lavender);
+		--vocora-share-story-gradient-end: var(--color-story-blue-haze);
+		--vocora-share-story-ink: var(--color-story-ink);
+		--vocora-share-story-panel: var(--color-story-panel);
 	}
 
 	html[data-theme="dark"] {
@@ -440,5 +450,9 @@
 		--vocora-art-paper: var(--color-paper-white);
 		--vocora-art-ink: var(--color-dark-art-ink);
 		--vocora-art-skin: var(--color-orange-light);
+		--vocora-share-story-gradient-start: var(--color-story-lavender);
+		--vocora-share-story-gradient-end: var(--color-story-blue-haze);
+		--vocora-share-story-ink: var(--color-story-ink);
+		--vocora-share-story-panel: var(--color-story-panel);
 	}
 }

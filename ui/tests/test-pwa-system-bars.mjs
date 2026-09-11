@@ -18,6 +18,7 @@ const installManifest = JSON.parse(read('src/vocora-v4.webmanifest'));
 const themeService = read('src/app/core/theme/theme.service.ts');
 const themeBootstrap = read('src/theme-bootstrap.js');
 const pwaStyles = read('src/pwa.scss');
+const designSystem = read('src/styles/_vocora-design-system.scss');
 
 function runThemeBootstrap(savedMode, prefersDark = false) {
 	const properties = new Map();
@@ -64,15 +65,17 @@ for (const manifest of [compatibilityManifest, installManifest]) {
 	assert.notEqual(manifest.theme_color, manifest.background_color, 'Splash branding and runtime system chrome must remain separate concerns.');
 }
 
-assert.match(themeService, /LIGHT_SYSTEM_CHROME_COLOR = '#ffffff'/u, 'Light mode should use the exact active light page surface for system chrome.');
-assert.match(themeService, /DARK_SYSTEM_CHROME_COLOR = '#0f1611'/u, 'Dark mode should use the exact active dark page surface for system chrome.');
+assert.match(designSystem, /--color-paper-white:\s*#ffffff/u, 'The pre-paint light fallback must match the Layer A light page color.');
+assert.match(designSystem, /--color-dark-page:\s*#0f1611/u, 'The pre-paint dark fallback must match the Layer A dark page color.');
+assert.doesNotMatch(themeService, /#[0-9a-f]{3,8}\b/iu, 'Runtime theme ownership must not duplicate raw page colors.');
 assert.match(themeService, /THEME_MODE_STORAGE_KEY = 'vocora-theme-mode-v1'/u, 'Runtime theme changes must share one cache key with first-paint restoration.');
 assert.match(themeService, /localStorage\?\.setItem\(THEME_MODE_STORAGE_KEY, mode\)/u, 'Every accepted theme change must cache the mode for the next first paint.');
 assert.match(themeService, /SYSTEM_THEME_MEDIA/u, 'Runtime theme selection must preserve the device-aware WebAPK metadata contract.');
 assert.doesNotMatch(themeService, /updateMeta\('theme-color'/u, 'Runtime updates must not collapse device-aware theme-color tags into one static color.');
 assert.match(themeService, /updateMeta\('color-scheme', resolved\)/u, 'Changing Vocora theme must update the native control and navigation-bar color scheme.');
-assert.match(themeService, /root\.style\.backgroundColor = chromeColor/u, 'The root surface behind transparent Android system bars must follow the app theme.');
-assert.match(themeService, /body\.style\.backgroundColor = chromeColor/u, 'The body surface behind transparent Android navigation chrome must follow the app theme.');
+assert.match(themeService, /getPropertyValue\('--vocora-surface-page'\)/u, 'Runtime system chrome must derive from the canonical page-surface token.');
+assert.match(themeService, /root\.style\.removeProperty\('background-color'\)/u, 'Angular runtime ownership must release the pre-paint root background override.');
+assert.match(themeService, /body\.style\.removeProperty\('background-color'\)/u, 'Angular runtime ownership must leave the body background to canonical CSS.');
 assert.match(themeService, /body\.style\.colorScheme = resolved/u, 'The body must explicitly opt into the app-selected color scheme instead of the phone theme.');
 assert.match(themeService, /activeMode !== 'system'/u, 'OS theme changes must only drive system chrome while Vocora follows the system theme.');
 

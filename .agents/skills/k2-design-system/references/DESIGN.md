@@ -156,6 +156,14 @@ ThemeService owns theme changes and writes one root `data-theme` value. The
 early paint bootstrap resolves that same stored mode before Angular starts.
 Both adapters follow the semantic custom properties under that root state; do
 not add `data-bs-theme`, a Material theme service, or another observable.
+The bootstrap and static theme-color metadata may carry raw page-color
+fallbacks only for the pre-CSS paint window. Once Angular applies a theme,
+ThemeService clears the bootstrap's inline background and derives system
+chrome from the computed `--vocora-surface-page` role.
+
+Branded share-image exports consume the `--vocora-share-story-*` semantic
+roles. Their palette intentionally remains stable across the application
+themes, but its raw values still belong exclusively to Layer A.
 
 ### Semantic equivalence
 
