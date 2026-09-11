@@ -216,6 +216,51 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
                 any("defines --color-feature-red" in error for error in errors)
             )
 
+    def test_frontend_architecture_scans_scalar_angular_inline_styles(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            component = repo / "ui/src/app/features/example/example.component.ts"
+            component.parent.mkdir(parents=True)
+            component.write_text(
+                "@Component({styles: '.one { color: red !important; }'}) "
+                "export class One {}\n"
+                "@Component({styles: `.two { --bs-border-color: red; }`}) "
+                "export class Two {}",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Untracked !important debt in "
+                "ui/src/app/features/example/example.component.ts: "
+                ".one => color:red!important",
+                errors,
+            )
+            self.assertTrue(
+                any("defines --bs-border-color" in error for error in errors)
+            )
+
+    def test_frontend_architecture_rejects_unparsed_indented_sass(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            stylesheet = repo / "ui/src/app/features/example/example.component.sass"
+            stylesheet.parent.mkdir(parents=True)
+            stylesheet.write_text(".example\n  color: red", encoding="utf-8")
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Indented Sass is not supported by the frontend architecture "
+                "guardrail; use CSS, Less, or SCSS: "
+                "ui/src/app/features/example/example.component.sass",
+                errors,
+            )
+
     def test_frontend_debt_baseline_rejects_substitution_and_allows_deletion(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory)

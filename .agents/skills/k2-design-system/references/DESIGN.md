@@ -142,6 +142,11 @@ reason in the tracked legacy-style baseline. Never edit Bootstrap's generated
 or internal CSS. Existing baseline entries are migration debt, not precedent;
 touch-to-refactor should reduce them when the owning surface changes.
 
+The deterministic guardrail scans CSS, Less, SCSS, and Angular inline `styles`
+in scalar or array form. Brace-free `.sass` files are prohibited because their
+selector structure is not supported by the occurrence-level baseline; use SCSS
+when Sass features are required.
+
 ## Angular Material internals
 
 Feature code must not target undocumented implementation selectors such as

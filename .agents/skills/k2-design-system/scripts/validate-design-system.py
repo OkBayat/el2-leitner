@@ -88,7 +88,7 @@ FRONTEND_STYLE_OWNERS = {
     "material": "ui/src/styles/_angular-material-theme.scss",
     "foundation": "ui/src/styles/_vocora-design-system.scss",
 }
-STYLE_EXTENSIONS = frozenset({".css", ".less", ".sass", ".scss"})
+STYLE_EXTENSIONS = frozenset({".css", ".less", ".scss"})
 
 
 def skill_root() -> Path:
@@ -408,40 +408,58 @@ def validate_debt_occurrences(
             errors.append(f"Untracked {label} debt in {relative}: {occurrence}")
 
 
+def read_typescript_string(text: str, start: int) -> tuple[str | None, int]:
+    quote = text[start]
+    index = start + 1
+    escaped = False
+    buffer: list[str] = []
+    while index < len(text):
+        character = text[index]
+        index += 1
+        if escaped:
+            buffer.append(character)
+            escaped = False
+        elif character == "\\":
+            buffer.append(character)
+            escaped = True
+        elif character == quote:
+            return "".join(buffer), index
+        else:
+            buffer.append(character)
+    return None, index
+
+
 def extract_inline_styles(text: str) -> list[str]:
     if "@Component" not in text:
         return []
 
     styles: list[str] = []
-    for match in re.finditer(r"\bstyles\s*:\s*\[", text):
+    for match in re.finditer(r"\bstyles\s*:\s*", text):
         index = match.end()
+        if index >= len(text):
+            continue
+        if text[index] in ("'", '"', "`"):
+            value, _ = read_typescript_string(text, index)
+            if value is not None:
+                styles.append(value)
+            continue
+        if text[index] != "[":
+            continue
+
+        index += 1
         depth = 1
-        quote: str | None = None
-        escaped = False
-        buffer: list[str] = []
         while index < len(text) and depth:
             character = text[index]
-            index += 1
-            if quote is not None:
-                if escaped:
-                    buffer.append(character)
-                    escaped = False
-                elif character == "\\":
-                    buffer.append(character)
-                    escaped = True
-                elif character == quote:
-                    styles.append("".join(buffer))
-                    buffer = []
-                    quote = None
-                else:
-                    buffer.append(character)
-                continue
             if character in ("'", '"', "`"):
-                quote = character
-            elif character == "[":
-                depth += 1
-            elif character == "]":
-                depth -= 1
+                value, index = read_typescript_string(text, index)
+                if value is not None:
+                    styles.append(value)
+            else:
+                index += 1
+                if character == "[":
+                    depth += 1
+                elif character == "]":
+                    depth -= 1
     return styles
 
 
@@ -503,6 +521,12 @@ def validate_frontend_architecture(repo_root: Path, errors: list[str]) -> None:
         errors.append(
             "Standalone frontend architecture must not introduce a giant SharedModule: "
             f"{shared_module.relative_to(repo_root).as_posix()}"
+        )
+    for sass_path in ui_source.rglob("*.sass"):
+        errors.append(
+            "Indented Sass is not supported by the frontend architecture "
+            "guardrail; use CSS, Less, or SCSS: "
+            f"{sass_path.relative_to(repo_root).as_posix()}"
         )
 
     important_occurrences: dict[str, Counter[str]] = {}
