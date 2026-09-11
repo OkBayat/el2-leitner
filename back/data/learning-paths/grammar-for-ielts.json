@@ -3444,8 +3444,8 @@
                 "id": "gfi-u02-completed-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use the past simple form of each verb.",
-                  "content": "Last Saturday, I {{walked}} to the library. I {{found}} the book and {{borrowed}} it. My friend {{called}} me two hours ago, so I {{returned}} home.",
+                  "instruction": "Use the verb cues in parentheses in the past simple.",
+                  "content": "Last Saturday, I (walk) {{walked}} to the library. I (find) {{found}} the book and (borrow) {{borrowed}} it. My friend (call) {{called}} me two hours ago, so I (return) {{returned}} home.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -3627,8 +3627,8 @@
                 "id": "gfi-u02-sequence-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete the sequence with past simple verbs.",
-                  "content": "The visitor {{came}} in, {{put}} his coat on a chair, {{sat}} down and {{asked}} a question.",
+                  "instruction": "Use the verb cues in parentheses in the past simple.",
+                  "content": "The visitor (come) {{came}} in, (put) {{put}} his coat on a chair, (sit) {{sat}} down and (ask) {{asked}} a question.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -3963,8 +3963,8 @@
                 "id": "gfi-u02-repeated-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use the past simple.",
-                  "content": "As a child, I often {{walked}} to school. We {{visited}} our grandparents every month. My mother {{worked}} in a bank for eight years, and we {{lived}} near the city centre.",
+                  "instruction": "Use the verb cues in parentheses in the past simple.",
+                  "content": "As a child, I often (walk) {{walked}} to school. We (visit) {{visited}} our grandparents every month. My mother (work) {{worked}} in a bank for eight years, and we (live) {{lived}} near the city centre.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -4457,8 +4457,8 @@
                 "id": "gfi-u02-background-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use past continuous for the background and past simple for the event.",
-                  "content": "While we {{were_waiting}} for the bus, it {{began}} to snow. I {{was_reading}} when Maya {{called}}. As they {{were_leaving}}, the lights {{went}} out.",
+                  "instruction": "Use each verb cue: past continuous for the background and past simple for the event.",
+                  "content": "While we (wait) {{were_waiting}} for the bus, it (begin) {{began}} to snow. I (read) {{was_reading}} when Maya (call) {{called}}. As they (leave) {{were_leaving}}, the lights (go) {{went}} out.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -4547,7 +4547,7 @@
                   "instruction": "Correct the background verb.",
                   "mode": "sentence-correction",
                   "category": "background action",
-                  "original": "While I walked home, it started to rain.",
+                  "original": "While I walking home, it started to rain.",
                   "answers": [
                     "While I was walking home, it started to rain."
                   ]
@@ -4725,8 +4725,8 @@
                 "id": "gfi-u02-simultaneous-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Put both activities in the past continuous.",
-                  "content": "While I {{was_writing}}, my sister {{was_reading}}. As the children {{were_playing}}, their parents {{were_talking}}.",
+                  "instruction": "Use each verb cue in the past continuous.",
+                  "content": "While I (write) {{was_writing}}, my sister (read) {{was_reading}}. As the children (play) {{were_playing}}, their parents (talk) {{were_talking}}.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -4777,7 +4777,7 @@
                   "instruction": "Correct the first simultaneous activity.",
                   "mode": "sentence-correction",
                   "category": "simultaneous activities",
-                  "original": "While we drove, the children were sleeping.",
+                  "original": "While we driving, the children were sleeping.",
                   "answers": [
                     "While we were driving, the children were sleeping."
                   ]
@@ -5007,8 +5007,8 @@
                 "id": "gfi-u02-process-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use past continuous in blanks 1 and 4 to focus on activities in progress. Use past simple for completed actions.",
-                  "content": "For a while, I {{was_working}} at a café. Last summer, I {{worked}} there for three months and {{saved}} enough money for a trip. One evening, I {{was_closing}} the shop when an old friend {{arrived}}.",
+                  "instruction": "Use each verb cue. Use past continuous in blanks 1 and 4 for activities in progress, and past simple for completed actions.",
+                  "content": "For a while, I (work) {{was_working}} at a café. Last summer, I (work) {{worked}} there for three months and (save) {{saved}} enough money for a trip. One evening, I (close) {{was_closing}} the shop when an old friend (arrive) {{arrived}}.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -5279,8 +5279,8 @@
                 "id": "gfi-u02-state-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use the past simple for each state.",
-                  "content": "We {{believed}} him. I {{understood}} the question. Sara {{wanted}} tea. The red bag {{belonged}} to Amir. The plan {{seemed}} easy.",
+                  "instruction": "Use each state-verb cue in the past simple.",
+                  "content": "We (believe) {{believed}} him. I (understand) {{understood}} the question. Sara (want) {{wanted}} tea. The red bag (belong) {{belonged}} to Amir. The plan (seem) {{seemed}} easy.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -5789,8 +5789,8 @@
                 "id": "gfi-u02-would-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Use would plus the base verb.",
-                  "content": "During summer holidays, we {{would_wake}} early, {{would_pack}} some food and {{would_cycle}} to the lake. In the evening, Dad {{would_cook}} outside.",
+                  "instruction": "Use each verb cue with would.",
+                  "content": "During summer holidays, we (wake) {{would_wake}} early, (pack) {{would_pack}} some food and (cycle) {{would_cycle}} to the lake. In the evening, Dad (cook) {{would_cook}} outside.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -6054,8 +6054,8 @@
                 "id": "gfi-u02-duration-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Choose used to for states and past simple for exact durations.",
-                  "content": "I {{used_to_be}} shy, and I {{used_to_like}} quiet places. My father {{worked}} abroad for ten years. We {{lived}} in Dubai for exactly four years.",
+                  "instruction": "Use each verb cue: used to for states and past simple for exact durations.",
+                  "content": "I (be) {{used_to_be}} shy, and I (like) {{used_to_like}} quiet places. My father (work) {{worked}} abroad for ten years. We (live) {{lived}} in Dubai for exactly four years.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -6484,8 +6484,8 @@
                 "id": "gfi-u02-mastery-background",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete the background and event.",
-                  "content": "While I {{was_walking}} home, I {{saw}} an old friend. As we {{were_talking}}, the bus {{arrived}}.",
+                  "instruction": "Use each verb cue: past continuous for the background and past simple for the event.",
+                  "content": "While I (walk) {{was_walking}} home, I (see) {{saw}} an old friend. As we (talk) {{were_talking}}, the bus (arrive) {{arrived}}.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -6717,8 +6717,8 @@
                 "id": "gfi-u02-mastery-mixed",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete the short story with the best forms.",
-                  "content": "When I was a child, I {{used_to_live}} near the sea. Every morning, my father {{would_walk}} along the beach. One day, we {{were_walking}} home when we {{found}} a lost dog. We {{took}} it to the police station.",
+                  "instruction": "Use each verb cue with the best past form.",
+                  "content": "When I was a child, I (live) {{used_to_live}} near the sea. Every morning, my father (walk) {{would_walk}} along the beach. One day, we (walk) {{were_walking}} home when we (find) {{found}} a lost dog. We (take) {{took}} it to the police station.",
                   "inputMode": "text",
                   "blanks": [
                     {
