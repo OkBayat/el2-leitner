@@ -259,11 +259,10 @@ tokens first when a genuinely new semantic role is required.
 
 `ui/tests/test-design-system-architecture.mjs` enforces this boundary across
 stylesheets and Angular inline styles, and also rejects feature-owned
-`data-theme` selectors. The only raw stylesheet exception is the documented
-standalone-shell fallback in `ui/src/pwa.scss`, which can paint before the
-runtime token layer exists. External-brand and illustration colors still live
-in Layer A; consumers reference their foundation or theme-aware illustration
-roles rather than copying values.
+`data-theme` selectors. PWA styling references the Layer A page-color token;
+no stylesheet outside Layer A owns a raw page color. External-brand and
+illustration colors still live in Layer A; consumers reference their foundation
+or theme-aware illustration roles rather than copying values.
 
 ### Dark-theme semantic palette
 
