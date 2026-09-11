@@ -174,6 +174,16 @@ assert.match(
 	"The shared secondary icon button must map its Material icon color to the Vocora secondary action token.",
 );
 assert.match(
+	components,
+	/\.mat-mdc-icon-button\.vocora-plain-icon-action\b/u,
+	"Plain Material icon actions must have one reusable central variant.",
+);
+assert.match(
+	components,
+	/\.mat-mdc-icon-button\.vocora-primary-icon-action\b/u,
+	"Filled primary Material icon actions must have one reusable central variant.",
+);
+assert.match(
 	theme,
 	/--mat-sys-error-container:\s*var\(--vocora-error-surface\);/u,
 );

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -37,6 +37,7 @@ export class LessonPodcastPageComponent {
   readonly audioSrc = signal('');
   readonly loading = signal(false);
   readonly error = signal('');
+  readonly pageTitle = computed(() => this.lesson()?.title ?? 'Lesson audio');
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {

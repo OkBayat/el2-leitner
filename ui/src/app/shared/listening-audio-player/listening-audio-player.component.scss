@@ -47,6 +47,158 @@ audio {
   display: none;
 }
 
+.audio-player--immersive {
+  height: 100%;
+  min-height: 0;
+}
+
+.immersive-player {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  gap: clamp(var(--vocora-space-5), 4vh, var(--vocora-space-10));
+  padding: var(--vocora-space-4) 0 calc(var(--vocora-space-4) + var(--safe-area-bottom));
+}
+
+.immersive-waveform {
+  display: grid;
+  flex: 1 1 220px;
+  width: 100%;
+  overflow-x: clip;
+  overflow-y: visible;
+  place-items: center;
+}
+
+.immersive-waveform svg {
+  display: block;
+  width: 100%;
+  height: clamp(112px, 15vh, 160px);
+  overflow: visible;
+}
+
+.wave-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.wave-line--depth {
+  stroke: var(--vocora-border);
+  stroke-width: 2px;
+  opacity: 0.65;
+}
+
+.wave-line--success {
+  stroke: var(--vocora-action-success);
+  stroke-width: 3px;
+}
+
+.wave-line--primary {
+  stroke: var(--vocora-action-primary);
+  stroke-width: 3px;
+}
+
+.immersive-secondary-controls {
+  display: grid;
+  grid-template-columns: repeat(3, var(--vocora-touch-target-min));
+  width: min(100%, 360px);
+  justify-content: space-between;
+  align-items: center;
+  margin-inline: auto;
+}
+
+.immersive-secondary-controls svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2px;
+}
+
+.speed-control {
+  font-family: var(--vocora-font-body);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.immersive-timeline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  width: min(calc(100% - var(--vocora-space-8)), 520px);
+  align-items: center;
+  gap: var(--vocora-space-4);
+  margin-inline: auto;
+  color: var(--vocora-text-primary);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.immersive-scrubber {
+  margin-top: 0;
+}
+
+.immersive-transport {
+  display: grid;
+  grid-template-columns: 76px 124px 76px;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(var(--vocora-space-4), 6vw, var(--vocora-space-10));
+}
+
+.immersive-play-toggle {
+  position: relative;
+}
+
+.immersive-play-toggle__icon {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.immersive-play-toggle__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.skip-icon {
+  width: 54px;
+  height: 54px;
+  overflow: visible;
+}
+
+.skip-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6px;
+}
+
+.skip-icon text {
+  fill: currentColor;
+  font-family: var(--vocora-font-body);
+  font-size: 13px;
+  font-weight: 800;
+  stroke: none;
+}
+
+.immersive-error {
+  margin: 0;
+  text-align: center;
+}
+
 .audio-main {
   min-width: 0;
 }
@@ -324,6 +476,42 @@ audio {
     height: 42px;
     justify-self: center;
   }
+
+  .immersive-player {
+    gap: clamp(var(--vocora-space-4), 3vh, var(--vocora-space-8));
+  }
+
+  .immersive-timeline {
+    width: calc(100% - var(--vocora-space-6));
+    gap: var(--vocora-space-3);
+    font-size: 14px;
+  }
+
+  .immersive-transport {
+    grid-template-columns: 64px 104px 64px;
+    gap: var(--vocora-space-6);
+  }
+
+}
+
+@media (max-height: 720px) {
+  .immersive-player {
+    gap: var(--vocora-space-3);
+    padding-block: 0 var(--safe-area-bottom);
+  }
+
+  .immersive-waveform {
+    flex-basis: 140px;
+  }
+
+  .immersive-waveform svg {
+    height: 100px;
+  }
+
+  .immersive-transport {
+    grid-template-columns: 56px 84px 56px;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ListeningAudioPlayerComponent } from './listening-audio-player.component';
 
 describe('ListeningAudioPlayerComponent', () => {
@@ -7,6 +7,10 @@ describe('ListeningAudioPlayerComponent', () => {
     TestBed.resetTestingModule();
     vi.restoreAllMocks();
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   function createFixture() {
@@ -39,6 +43,84 @@ describe('ListeningAudioPlayerComponent', () => {
     fixture.componentInstance.onWindowScroll();
 
     expect(fixture.componentInstance.collapsed()).toBe(false);
+  });
+
+  it('renders immersive controls and animates three waves from live audio energy', () => {
+    const animationFrames: FrameRequestCallback[] = [];
+    const analyser = {
+      fftSize: 0,
+      smoothingTimeConstant: 0,
+      frequencyBinCount: 32,
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      getByteTimeDomainData: vi.fn((samples: Uint8Array) => {
+        samples.forEach((_value, index) => { samples[index] = index % 2 === 0 ? 64 : 192; });
+      }),
+    };
+    const source = { connect: vi.fn(), disconnect: vi.fn() };
+    const audioContext = {
+      state: 'running',
+      destination: {},
+      createAnalyser: vi.fn(() => analyser),
+      createMediaElementSource: vi.fn(() => source),
+      resume: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn().mockResolvedValue(undefined),
+    };
+    vi.stubGlobal('AudioContext', vi.fn(function AudioContextMock() { return audioContext; }));
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      animationFrames.push(callback);
+      return animationFrames.length;
+    });
+    const cancelAnimationFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => undefined);
+
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
+    fixture.componentRef.setInput('mode', 'immersive');
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const initialPath = element.querySelector('[data-testid="audio-waveform"] path')?.getAttribute('d');
+    const audio = element.querySelector('audio') as HTMLAudioElement;
+    Object.defineProperty(audio, 'paused', { configurable: true, value: false });
+    fixture.componentInstance.syncState();
+    expect(fixture.componentInstance.playing()).toBe(true);
+    expect(audioContext.createAnalyser).toHaveBeenCalledTimes(1);
+    expect(animationFrames.length).toBeGreaterThan(0);
+    animationFrames.splice(0).forEach((frame) => frame(16));
+    fixture.detectChanges();
+
+    expect(element.querySelectorAll('[data-testid="audio-waveform"] path')).toHaveLength(3);
+    expect(element.querySelector('[data-testid="audio-play"] > .immersive-play-toggle__icon')).not.toBeNull();
+    expect(analyser.getByteTimeDomainData).toHaveBeenCalledTimes(1);
+    expect(element.querySelector('[data-testid="audio-waveform"] path')?.getAttribute('d')).not.toBe(initialPath);
+
+    Object.defineProperty(audio, 'paused', { configurable: true, value: true });
+    fixture.componentInstance.syncState();
+    expect(cancelAnimationFrame).toHaveBeenCalled();
+  });
+
+  it('cycles immersive playback speed and keeps one local reaction selected', () => {
+    const fixture = TestBed.createComponent(ListeningAudioPlayerComponent);
+    fixture.componentRef.setInput('src', '/api/learning-paths/4/lessons/64/audio');
+    fixture.componentRef.setInput('mode', 'immersive');
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const audio = element.querySelector('audio') as HTMLAudioElement;
+    element.querySelector<HTMLButtonElement>('[data-testid="audio-speed"]')?.click();
+    fixture.detectChanges();
+    expect(audio.playbackRate).toBe(1.25);
+    expect(element.querySelector('[data-testid="audio-speed"]')?.textContent).toContain('1.25');
+
+    const like = element.querySelector<HTMLButtonElement>('[data-testid="audio-like"]') as HTMLButtonElement;
+    const dislike = element.querySelector<HTMLButtonElement>('[data-testid="audio-dislike"]') as HTMLButtonElement;
+    like.click();
+    fixture.detectChanges();
+    expect(like.getAttribute('aria-pressed')).toBe('true');
+    dislike.click();
+    fixture.detectChanges();
+    expect(like.getAttribute('aria-pressed')).toBe('false');
+    expect(dislike.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('does not autoplay and supports play, pause, stop, five-second skips, and direct seeking', async () => {
