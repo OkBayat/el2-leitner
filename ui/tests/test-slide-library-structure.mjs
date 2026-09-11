@@ -266,6 +266,11 @@ assert.equal(
 	2,
 	'Classification items must use the shared Material secondary button primitive.',
 );
+assert.match(
+	sharedStyles,
+	/\.choice-option,\s*\.matching-column button,\s*\.chip-list button,\s*\.classification-item\s*\{[^}]*border-color:\s*var\(--vocora-border\);[^}]*color:\s*var\(--vocora-text-primary\);[^}]*background:\s*var\(--vocora-surface-base\);/u,
+	'Classification items must retain the same neutral colors inside and outside buckets.',
+);
 const incorrectClassificationStyles = sharedStyles.match(
 	/\.classification-item\[data-state='incorrect'\]\s*\{([\s\S]*?)\n\}/u,
 )?.[1] ?? '';
