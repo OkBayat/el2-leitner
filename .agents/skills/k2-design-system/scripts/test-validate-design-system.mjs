@@ -65,6 +65,41 @@ withFixture(
 );
 
 withFixture(
+  (root) => {
+    const materialPath = path.join(root, "references", "material-theme.scss");
+    fs.writeFileSync(
+      materialPath,
+      fs
+        .readFileSync(materialPath, "utf8")
+        .replace(
+          "--mat-sys-inverse-primary: var(--vocora-inverse-primary);",
+          "--mat-sys-inverse-primary: var(--vocora-primary);",
+        ),
+    );
+  },
+  ({ output }) =>
+    assert.match(
+      output,
+      /material-theme\.scss must map --mat-sys-inverse-primary to --vocora-inverse-primary/u,
+    ),
+);
+
+withFixture(
+  (root) =>
+    mutateTokens(root, (tokens) => {
+      delete tokens.themes.dark.border.default;
+      tokens.themes.light.semantic.secondary = tokens.themes.light.text.secondary;
+    }),
+  ({ output }) => {
+    assert.match(output, /Theme key parity failed for group 'border'/u);
+    assert.match(
+      output,
+      /themes\.light\.semantic\.secondary must equal #000437/u,
+    );
+  },
+);
+
+withFixture(
   (root) =>
     mutateTokens(root, (tokens) => {
       tokens.themes.light.action.primary = "#58CC02";

@@ -6,6 +6,31 @@ import ts from "typescript";
 
 const BASELINE_PATH = "ui/tests/design-system-architecture-baseline.json";
 const STYLE_EXTENSIONS = new Set([".css", ".less", ".sass", ".scss"]);
+const FOUNDATION_COLOR_OWNER = "ui/src/styles/_vocora-design-system.scss";
+const CSS_NAMED_COLORS = new Set(
+	("aliceblue antiquewhite aqua aquamarine azure beige bisque black " +
+		"blanchedalmond blue blueviolet brown burlywood cadetblue chartreuse " +
+		"chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan " +
+		"darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta " +
+		"darkolivegreen darkorange darkorchid darkred darksalmon darkseagreen " +
+		"darkslateblue darkslategray darkslategrey darkturquoise darkviolet " +
+		"deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite " +
+		"forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green " +
+		"greenyellow grey honeydew hotpink indianred indigo ivory khaki lavender " +
+		"lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan " +
+		"lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon " +
+		"lightseagreen lightskyblue lightslategray lightslategrey lightsteelblue " +
+		"lightyellow lime limegreen linen magenta maroon mediumaquamarine " +
+		"mediumblue mediumorchid mediumpurple mediumseagreen mediumslateblue " +
+		"mediumspringgreen mediumturquoise mediumvioletred midnightblue mintcream " +
+		"mistyrose moccasin navajowhite navy oldlace olive olivedrab orange " +
+		"orangered orchid palegoldenrod palegreen paleturquoise palevioletred " +
+		"papayawhip peachpuff peru pink plum powderblue purple rebeccapurple red " +
+		"rosybrown royalblue saddlebrown salmon sandybrown seagreen seashell " +
+		"sienna silver skyblue slateblue slategray slategrey snow springgreen " +
+		"steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke " +
+		"yellow yellowgreen").split(" "),
+);
 const STYLE_OWNERS = [
 	[
 		/(--bs-[a-z0-9-]+)\s*:/giu,
@@ -20,12 +45,23 @@ const STYLE_OWNERS = [
 	[
 		/(--color-[a-z0-9-]+)\s*:/giu,
 		"Vocora foundation colors",
-		"ui/src/styles/_vocora-design-system.scss",
+		FOUNDATION_COLOR_OWNER,
 	],
 ];
-const INTEGRATION_OWNERS = new Set([
-	"ui/src/styles/_angular-material-components.scss",
-	"ui/src/styles/_bootstrap-theme.scss",
+const INTEGRATION_OWNERS = new Map([
+	[
+		"important_declarations",
+		new Set([
+			"ui/src/styles/_angular-material-components.scss",
+			"ui/src/styles/_bootstrap-theme.scss",
+		]),
+	],
+	[
+		"raw_colors",
+		new Set([
+			"ui/src/pwa.scss",
+		]),
+	],
 ]);
 
 function normalizeRoot(repoRoot) {
@@ -219,6 +255,7 @@ function extractInlineStyleMetadata(text) {
 		ts.ScriptKind.TS,
 	);
 	const styles = [];
+	const templates = [];
 	let unsupported = 0;
 	const componentNames = new Set(["Component"]);
 	const angularNamespaces = new Set();
@@ -295,17 +332,22 @@ function extractInlineStyleMetadata(text) {
 					}
 					if (!ts.isPropertyAssignment(property)) continue;
 					const name = property.name;
-					const isStyles =
+					const propertyName =
 						(ts.isIdentifier(name) || ts.isStringLiteral(name)) &&
-						name.text === "styles";
-					if (!isStyles) continue;
+						name.text;
+					if (propertyName !== "styles" && propertyName !== "template") {
+						continue;
+					}
 
 					const scalar = literalValue(property.initializer);
 					if (scalar !== null) {
-						styles.push(scalar);
+						(propertyName === "styles" ? styles : templates).push(scalar);
 						continue;
 					}
-					if (ts.isArrayLiteralExpression(property.initializer)) {
+					if (
+						propertyName === "styles" &&
+						ts.isArrayLiteralExpression(property.initializer)
+					) {
 						const values =
 							property.initializer.elements.map(literalValue);
 						if (values.every((value) => value !== null)) {
@@ -320,7 +362,7 @@ function extractInlineStyleMetadata(text) {
 		ts.forEachChild(node, visit);
 	}
 	visit(source);
-	return { styles, unsupported };
+	return { styles, templates, unsupported };
 }
 
 export function extractInlineStyles(text) {
@@ -413,6 +455,158 @@ export function extractMaterialInternalSelectors(
 		.map((match) => text.slice(...match.indices[1]).trim());
 }
 
+export function extractRawColors(syntax) {
+	const colors = [...syntax.matchAll(/#[0-9a-f]{3,8}\b/giu)]
+		.map((match) => match[0].toLowerCase());
+	const colorFunction = /\b(?:color|hsl|hsla|hwb|lab|lch|oklab|oklch|rgb|rgba)\s*\(/giu;
+	for (const match of syntax.matchAll(colorFunction)) {
+		const opening = match.index + match[0].lastIndexOf("(");
+		let depth = 1;
+		let end = opening + 1;
+		while (end < syntax.length && depth > 0) {
+			if (syntax[end] === "(") depth += 1;
+			else if (syntax[end] === ")") depth -= 1;
+			end += 1;
+		}
+		if (depth !== 0) {
+			colors.push(normalizeWhitespace(syntax.slice(match.index)).toLowerCase());
+			continue;
+		}
+
+		const body = syntax.slice(opening + 1, end - 1);
+		let channelEnd = body.length;
+		let nestedDepth = 0;
+		for (let index = 0; index < body.length; index += 1) {
+			if (body[index] === "(") nestedDepth += 1;
+			else if (body[index] === ")") nestedDepth -= 1;
+			else if (body[index] === "/" && nestedDepth === 0) {
+				channelEnd = index;
+				break;
+			}
+		}
+		const channels = body.slice(0, channelEnd).trim();
+		const usesCanonicalChannels =
+			/^var\(\s*--(?:vocora|color)-[a-z0-9-]+-rgb\s*\)$/iu.test(channels);
+		if (!usesCanonicalChannels) {
+			colors.push(
+				normalizeWhitespace(syntax.slice(match.index, end)).toLowerCase(),
+			);
+		}
+	}
+	for (const match of syntax.matchAll(/([$@][a-z0-9_-]+|--[a-z0-9-]+|[a-z-]+)\s*:\s*([^;{}]+)/giu)) {
+		const property = match[1].toLowerCase();
+		if (
+			!/^[$@]|^--/u.test(property) &&
+			!/^(?:accent-color|background(?:-color)?|border(?:-[a-z-]+)?|box-shadow|caret-color|color|fill|outline(?:-color)?|stroke|text-shadow)$/u.test(property)
+		) {
+			continue;
+		}
+		const literalValue = match[2]
+			.replace(/var\([^)]*\)/giu, "")
+			.replace(/[$@][a-z0-9_-]+/giu, "");
+		for (const word of literalValue.toLowerCase().match(/[a-z]+/gu) ?? []) {
+			if (CSS_NAMED_COLORS.has(word)) colors.push(word);
+		}
+	}
+	return colors;
+}
+
+export function extractThemeSelectors(
+	text,
+	syntax = text,
+	{ indentedSass = false } = {},
+) {
+	if (indentedSass) {
+		const textLines = text.split(/\r?\n/u);
+		return syntax
+			.split(/\r?\n/u)
+			.map((line, index) => ({ line, index }))
+			.filter(({ line }) => /\[data-theme\s*=/iu.test(line))
+			.flatMap(({ index }) => [
+				...textLines[index].matchAll(
+					/\[data-theme\s*=\s*(?:"[^"]+"|'[^']+'|[a-z-]+)\]/giu,
+				),
+			])
+			.map((match) => normalizeWhitespace(match[0]));
+	}
+	return [...syntax.matchAll(/([^{}]+)\{/dgu)]
+		.filter((match) => /\[data-theme\s*=/iu.test(match[1]))
+		.flatMap((match) => [
+			...text
+				.slice(...match.indices[1])
+				.matchAll(/\[data-theme\s*=\s*(?:"[^"]+"|'[^']+'|[a-z-]+)\]/giu),
+		])
+		.map((match) => normalizeWhitespace(match[0]));
+}
+
+function extractTemplateStyles(text) {
+	const withoutComments = text.replace(/<!--[\s\S]*?-->/gu, "");
+	const styles = [
+		...[...withoutComments.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/giu)]
+			.map((match) => match[1]),
+		...[...withoutComments.matchAll(/\bstyle\s*=\s*(["'])([\s\S]*?)\1/giu)]
+			.map((match) => match[2]),
+	];
+	for (const match of withoutComments.matchAll(
+		/\b(fill|stroke|color|bgcolor)\s*=\s*(["'])([\s\S]*?)\2/giu,
+	)) {
+		styles.push(`${match[1]}: ${match[3]};`);
+	}
+	for (const match of withoutComments.matchAll(
+		/\[(style|attr)\.([a-z-]+)(?:\.[a-z-]+)?\]\s*=\s*(["'])([\s\S]*?)\3/giu,
+	)) {
+		const property = match[2].toLowerCase();
+		if (
+			match[1].toLowerCase() === "attr" &&
+			!["bgcolor", "color", "fill", "stroke"].includes(property)
+		) {
+			continue;
+		}
+		const expression = match[4].trim();
+		const literal = expression.match(/^(["'])([\s\S]*)\1$/u);
+		if (literal) styles.push(`${property}: ${literal[2]};`);
+	}
+	return styles.join("\n");
+}
+
+function extractImperativeColorStyles(text) {
+	const source = ts.createSourceFile(
+		"colors.ts",
+		text,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TS,
+	);
+	const styles = [];
+	const literalValue = (node) =>
+		ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)
+			? node.text
+			: null;
+	function visit(node) {
+		if (
+			ts.isBinaryExpression(node) &&
+			node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+			ts.isPropertyAccessExpression(node.left) &&
+			["fillStyle", "shadowColor", "strokeStyle"].includes(node.left.name.text)
+		) {
+			const value = literalValue(node.right);
+			if (value !== null) styles.push(`color: ${value};`);
+		}
+		if (
+			ts.isCallExpression(node) &&
+			ts.isPropertyAccessExpression(node.expression) &&
+			node.expression.name.text === "addColorStop" &&
+			node.arguments.length > 1
+		) {
+			const value = literalValue(node.arguments[1]);
+			if (value !== null) styles.push(`color: ${value};`);
+		}
+		ts.forEachChild(node, visit);
+	}
+	visit(source);
+	return styles;
+}
+
 function styleUnits(sources, errors) {
 	const units = [];
 	for (const [relative, text] of sources) {
@@ -428,8 +622,13 @@ function styleUnits(sources, errors) {
 				indentedSass: extension === ".sass",
 			});
 		} else if (extension === ".ts") {
-			const { styles: inlineStyles, unsupported } =
+			const { styles: inlineStyles, templates, unsupported } =
 				extractInlineStyleMetadata(text);
+			inlineStyles.push(...extractImperativeColorStyles(text));
+			for (const template of templates) {
+				const templateStyles = extractTemplateStyles(template);
+				if (templateStyles) inlineStyles.push(templateStyles);
+			}
 			for (let index = 0; index < unsupported; index += 1) {
 				errors?.push(
 					`Unsupported Angular inline styles expression in ${relative}; use a literal string or literal string array`,
@@ -437,6 +636,17 @@ function styleUnits(sources, errors) {
 			}
 			if (inlineStyles.length) {
 				const views = maskCssSyntax(inlineStyles.join("\n"));
+				units.push({
+					relative,
+					text: views.cleaned,
+					syntax: views.syntax,
+					indentedSass: false,
+				});
+			}
+		} else if (extension === ".html") {
+			const templateStyles = extractTemplateStyles(text);
+			if (templateStyles) {
+				const views = maskCssSyntax(templateStyles);
 				units.push({
 					relative,
 					text: views.cleaned,
@@ -458,6 +668,8 @@ function increment(target, relative, occurrence) {
 function scanDebt(units) {
 	const important = new Map();
 	const material = new Map();
+	const rawColors = new Map();
+	const themeSelectors = new Map();
 	for (const { relative, text, syntax, indentedSass } of units) {
 		for (const occurrence of extractImportantDeclarations(text, {
 			indentedSass,
@@ -473,8 +685,18 @@ function scanDebt(units) {
 				increment(material, relative, occurrence);
 			}
 		}
+		if (relative !== FOUNDATION_COLOR_OWNER) {
+			for (const occurrence of extractRawColors(syntax)) {
+				increment(rawColors, relative, occurrence);
+			}
+			for (const occurrence of extractThemeSelectors(text, syntax, {
+				indentedSass,
+			})) {
+				increment(themeSelectors, relative, occurrence);
+			}
+		}
 	}
-	return { important, material };
+	return { important, material, rawColors, themeSelectors };
 }
 
 function baselineEntries(baseline, section, category, errors) {
@@ -502,9 +724,9 @@ function baselineEntries(baseline, section, category, errors) {
 			continue;
 		}
 		if (section === "integration_exceptions") {
-			if (!INTEGRATION_OWNERS.has(relative)) {
+			if (!INTEGRATION_OWNERS.get(category)?.has(relative)) {
 				errors.push(
-					`Integration exception owner ${relative} is not an approved framework integration owner`,
+					`Integration exception owner ${relative} is not approved for ${category}`,
 				);
 			}
 			if (
@@ -639,9 +861,9 @@ export function validateArchitectureSnapshot({
 	baseline,
 }) {
 	const errors = [];
-	if (baseline?.schema_version !== 2)
+	if (baseline?.schema_version !== 3)
 		errors.push(
-			"Design-system architecture baseline must use schema_version 2",
+			"Design-system architecture baseline must use schema_version 3",
 		);
 
 	if (
@@ -692,10 +914,28 @@ export function validateArchitectureSnapshot({
 		"feature_material_internal_selectors",
 		errors,
 	);
+	const legacyRawColors = baselineEntries(
+		baseline,
+		"legacy_debt",
+		"raw_colors",
+		errors,
+	);
+	const legacyThemeSelectors = baselineEntries(
+		baseline,
+		"legacy_debt",
+		"theme_selectors",
+		errors,
+	);
 	const integrationImportant = baselineEntries(
 		baseline,
 		"integration_exceptions",
 		"important_declarations",
+		errors,
+	);
+	const integrationRawColors = baselineEntries(
+		baseline,
+		"integration_exceptions",
+		"raw_colors",
 		errors,
 	);
 	const declaredImportant = addMaps(
@@ -703,6 +943,12 @@ export function validateArchitectureSnapshot({
 		integrationImportant,
 		errors,
 		"!important debt",
+	);
+	const declaredRawColors = addMaps(
+		legacyRawColors,
+		integrationRawColors,
+		errors,
+		"raw color debt",
 	);
 
 	compareExact(actual.important, declaredImportant, "!important", errors);
@@ -712,10 +958,29 @@ export function validateArchitectureSnapshot({
 		"feature Material-internal selector",
 		errors,
 	);
+	compareExact(actual.rawColors, declaredRawColors, "raw color", errors);
+	compareExact(
+		actual.themeSelectors,
+		legacyThemeSelectors,
+		"local theme-selector",
+		errors,
+	);
 	compareLegacyToBase(
 		legacyImportant,
 		baseActual.important,
 		"!important",
+		errors,
+	);
+	compareLegacyToBase(
+		legacyRawColors,
+		baseActual.rawColors,
+		"raw color",
+		errors,
+	);
+	compareLegacyToBase(
+		legacyThemeSelectors,
+		baseActual.themeSelectors,
+		"local theme-selector",
 		errors,
 	);
 	compareLegacyToBase(
@@ -752,6 +1017,8 @@ function legacyPaths(baseline) {
 		...Object.keys(
 			baseline?.legacy_debt?.feature_material_internal_selectors ?? {},
 		),
+		...Object.keys(baseline?.legacy_debt?.raw_colors ?? {}),
+		...Object.keys(baseline?.legacy_debt?.theme_selectors ?? {}),
 	]);
 }
 
