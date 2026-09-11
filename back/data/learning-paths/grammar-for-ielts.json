@@ -4700,7 +4700,7 @@
                 "type": "choice",
                 "data": {
                   "mode": "single",
-                  "question": "Choose the sentence with two simultaneous activities.",
+                  "question": "Choose the sentence that presents both activities as in progress.",
                   "options": [
                     {
                       "id": "a",
@@ -5007,7 +5007,7 @@
                 "id": "gfi-u02-process-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Choose the tense that matches the meaning.",
+                  "instruction": "Use past continuous in blanks 1 and 4 to focus on activities in progress. Use past simple for completed actions.",
                   "content": "For a while, I {{was_working}} at a café. Last summer, I {{worked}} there for three months and {{saved}} enough money for a trip. One evening, I {{was_closing}} the shop when an old friend {{arrived}}.",
                   "inputMode": "text",
                   "blanks": [
@@ -6021,7 +6021,7 @@
                   "correctOptionIds": [
                     "b"
                   ],
-                  "explanation": "Own is a state verb, so used to is the correct habit structure."
+                  "explanation": "Own is a state verb, so used to is the correct past-state structure."
                 }
               },
               {
