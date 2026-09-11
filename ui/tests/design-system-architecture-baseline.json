@@ -112,14 +112,6 @@
                 ],
                 "reason": "The central Material adapter disables upstream button transitions to enforce the canonical immediate interaction contract.",
                 "upstream_constraint": "Angular Material button transitions cannot be disabled through a supported theme token."
-            },
-            "ui/src/styles/_bootstrap-theme.scss": {
-                "occurrences": [
-                    ".bg-light => background:color-mix( in srgb, var(--vocora-surface-base) 92%, var(--vocora-border) )!important",
-                    ".text-body => color:var(--vocora-text-primary)!important"
-                ],
-                "reason": "The central Bootstrap adapter must override generated utility declarations at the framework integration boundary.",
-                "upstream_constraint": "Bootstrap generates these utilities with important specificity."
             }
         }
     }

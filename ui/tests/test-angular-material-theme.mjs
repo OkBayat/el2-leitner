@@ -18,6 +18,20 @@ const designSystem = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_vocora-design-system.scss"),
 	"utf8",
 );
+const referenceTokens = JSON.parse(
+	fs.readFileSync(
+		path.join(
+			uiRoot,
+			"..",
+			".agents",
+			"skills",
+			"k2-design-system",
+			"references",
+			"tokens.json",
+		),
+		"utf8",
+	),
+);
 const exerciseAction = fs.readFileSync(
 	path.join(
 		uiRoot,
@@ -52,65 +66,65 @@ const exerciseFooterTemplate = fs.readFileSync(
 	"utf8",
 );
 
-const expectedTokens = [
-	"primary",
-	"on-primary",
-	"primary-container",
-	"on-primary-container",
-	"primary-fixed",
-	"on-primary-fixed",
-	"on-primary-fixed-variant",
-	"primary-fixed-dim",
-	"inverse-primary",
-	"secondary",
-	"on-secondary",
-	"secondary-container",
-	"on-secondary-container",
-	"secondary-fixed",
-	"on-secondary-fixed",
-	"on-secondary-fixed-variant",
-	"secondary-fixed-dim",
-	"tertiary",
-	"on-tertiary",
-	"tertiary-container",
-	"on-tertiary-container",
-	"tertiary-fixed",
-	"on-tertiary-fixed",
-	"on-tertiary-fixed-variant",
-	"tertiary-fixed-dim",
-	"error",
-	"on-error",
-	"error-container",
-	"on-error-container",
-	"surface",
-	"on-surface",
-	"on-surface-variant",
-	"surface-bright",
-	"surface-container",
-	"surface-container-high",
-	"surface-container-highest",
-	"surface-container-low",
-	"surface-container-lowest",
-	"surface-dim",
-	"surface-tint",
-	"surface-variant",
-	"inverse-surface",
-	"inverse-on-surface",
-	"background",
-	"on-background",
-	"neutral-variant20",
-	"neutral10",
-	"outline",
-	"outline-variant",
-	"scrim",
-	"shadow",
-];
+const expectedMappings = new Map([
+	["primary", "primary"],
+	["on-primary", "text-on-primary"],
+	["primary-container", "state-information-surface"],
+	["on-primary-container", "state-information-foreground"],
+	["primary-fixed", "primary"],
+	["on-primary-fixed", "text-on-primary"],
+	["on-primary-fixed-variant", "state-information-foreground"],
+	["primary-fixed-dim", "action-primary-hover"],
+	["inverse-primary", "primary"],
+	["secondary", "secondary"],
+	["on-secondary", "text-on-secondary"],
+	["secondary-container", "surface-subtle"],
+	["on-secondary-container", "text-primary"],
+	["secondary-fixed", "secondary"],
+	["on-secondary-fixed", "text-on-secondary"],
+	["on-secondary-fixed-variant", "text-secondary"],
+	["secondary-fixed-dim", "secondary"],
+	["tertiary", "information"],
+	["on-tertiary", "text-on-primary"],
+	["tertiary-container", "state-information-surface"],
+	["on-tertiary-container", "state-information-foreground"],
+	["tertiary-fixed", "information"],
+	["on-tertiary-fixed", "text-on-primary"],
+	["on-tertiary-fixed-variant", "state-information-foreground"],
+	["tertiary-fixed-dim", "action-primary-hover"],
+	["error", "error"],
+	["on-error", "text-on-error"],
+	["error-container", "state-error-surface"],
+	["on-error-container", "state-error-foreground"],
+	["surface", "surface-page"],
+	["on-surface", "text-primary"],
+	["on-surface-variant", "text-secondary"],
+	["surface-bright", "surface-base"],
+	["surface-container", "surface-raised"],
+	["surface-container-high", "surface-subtle"],
+	["surface-container-highest", "surface-subtle"],
+	["surface-container-low", "surface-base"],
+	["surface-container-lowest", "surface-base"],
+	["surface-dim", "surface-subtle"],
+	["surface-tint", "primary"],
+	["surface-variant", "surface-subtle"],
+	["inverse-surface", "surface-inverse"],
+	["inverse-on-surface", "text-on-inverse"],
+	["background", "surface-page"],
+	["on-background", "text-primary"],
+	["neutral-variant20", "text-secondary"],
+	["neutral10", "text-primary"],
+	["outline", "border"],
+	["outline-variant", "border-subtle"],
+	["scrim", "scrim"],
+	["shadow", "shadow"],
+]);
 
-for (const token of expectedTokens) {
+for (const [token, vocoraToken] of expectedMappings) {
 	assert.match(
 		theme,
-		new RegExp(`--mat-sys-${token}:\\s*var\\(--vocora-[^)]+\\);`),
-		`Material token ${token} must map to a Vocora design token.`,
+		new RegExp(`--mat-sys-${token}:\\s*var\\(--vocora-${vocoraToken}\\);`),
+		`Material token ${token} must map to Vocora ${vocoraToken}.`,
 	);
 }
 
@@ -124,9 +138,26 @@ assert.doesNotMatch(
 	/--(?:mdc|mat-(?!sys-))[^:]+:/u,
 	"Component-specific Material color overrides must not live in the system color adapter.",
 );
+assert.doesNotMatch(
+	theme,
+	/\.mat-mdc-/u,
+	"Material component geometry must live outside the semantic adapter.",
+);
+const materialDefinitionOwners = fs.readdirSync(path.join(uiRoot, "src", "styles"))
+	.filter((name) => name.endsWith(".scss"))
+	.filter((name) =>
+		/--mat-sys-[a-z0-9-]+\s*:/iu.test(
+			fs.readFileSync(path.join(uiRoot, "src", "styles", name), "utf8"),
+		),
+	);
+assert.deepEqual(
+	materialDefinitionOwners,
+	["_angular-material-theme.scss"],
+	"The Material adapter must be the only application-owned Material system-token owner.",
+);
 assert.match(
 	designSystem,
-	/--vocora-neutral-black:\s*#[0-9a-f]{6};/iu,
+	/--color-neutral-black:\s*#000000;[\s\S]*--vocora-shadow:\s*var\(--color-neutral-black\);/iu,
 	"Shared shadow/scrim color must live in the Vocora design system.",
 );
 assert.doesNotMatch(
@@ -148,6 +179,89 @@ assert.ok(
 		styles.indexOf("@include angular-material-theme.apply();"),
 	"Shared Material component styles must be applied after semantic Material colors.",
 );
+const semanticSection = designSystem.split("// Layer B: Vocora semantic tokens")[1];
+assert.ok(semanticSection, "The runtime token source must identify its semantic layer.");
+assert.doesNotMatch(
+	semanticSection,
+	/#[0-9a-f]{3,8}\b|\brgba?\(|:\s*\d+\s*,\s*\d+\s*,\s*\d+/iu,
+	"Semantic tokens must derive from the canonical foundation layer rather than own raw colors.",
+);
+for (const semanticToken of [
+	"surface-page",
+	"surface-base",
+	"surface-raised",
+	"surface-subtle",
+	"surface-inverse",
+	"text-primary",
+	"text-secondary",
+	"text-disabled",
+	"border",
+	"border-subtle",
+	"border-strong",
+	"border-disabled",
+	"primary",
+	"secondary",
+	"success",
+	"information",
+	"warning",
+	"error",
+	"focus-ring",
+]) {
+	assert.equal(
+		(designSystem.match(new RegExp(`--vocora-${semanticToken}:`, "gu")) ?? []).length,
+		2,
+		`Vocora ${semanticToken} must have light and dark definitions.`,
+	);
+}
+
+function declarations(source) {
+	return new Map(
+		[...source.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/giu)].map(
+			([, name, value]) => [name, value.trim()],
+		),
+	);
+}
+
+function themeBlock(themeName) {
+	const pattern = themeName === "light"
+		? /:root,\s*html\[data-theme="light"\]\s*\{([\s\S]*?)\n\t\}/u
+		: /html\[data-theme="dark"\]\s*\{([\s\S]*?)\n\t\}/u;
+	const match = designSystem.match(pattern);
+	assert.ok(match, `Runtime design system must define the ${themeName} theme.`);
+	return match[1];
+}
+
+const foundation = declarations(
+	designSystem.split("// Layer B: Vocora semantic tokens")[0],
+);
+const toKebab = (value) => value.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+const runtimeTokenName = (group, key) => {
+	if (group === "border" && key === "default") return "--vocora-border";
+	if (group === "semantic") return `--vocora-${toKebab(key)}`;
+	return `--vocora-${group}-${toKebab(key)}`;
+};
+
+for (const themeName of ["light", "dark"]) {
+	const semantic = declarations(themeBlock(themeName));
+	const allDeclarations = new Map([...foundation, ...semantic]);
+	const resolve = (name, seen = new Set()) => {
+		assert.ok(!seen.has(name), `Token reference cycle detected at ${name}.`);
+		const value = allDeclarations.get(name);
+		assert.ok(value, `Runtime token ${name} is required by the reference mirror.`);
+		const reference = value.match(/^var\((--[a-z0-9-]+)\)$/iu);
+		return reference ? resolve(reference[1], new Set([...seen, name])) : value.toUpperCase();
+	};
+
+	for (const [group, values] of Object.entries(referenceTokens.themes[themeName])) {
+		for (const [key, expected] of Object.entries(values)) {
+			assert.equal(
+				resolve(runtimeTokenName(group, key)),
+				expected,
+				`Runtime ${themeName} ${group}.${key} must match tokens.json.`,
+			);
+		}
+	}
+}
 assert.match(components, /\.mat-mdc-unelevated-button/u);
 assert.match(
 	components,
@@ -183,10 +297,7 @@ assert.match(
 	/\.mat-mdc-icon-button\.vocora-primary-icon-action\b/u,
 	"Filled primary Material icon actions must have one reusable central variant.",
 );
-assert.match(
-	theme,
-	/--mat-sys-error-container:\s*var\(--vocora-error-surface\);/u,
-);
+assert.match(theme, /--mat-sys-error-container:\s*var\(--vocora-state-error-surface\);/u);
 assert.match(designSystem, /--color-eager-green:\s*#58cc02;/iu);
 assert.match(designSystem, /--color-spark-blue:\s*#1cb0f6;/iu);
 assert.match(designSystem, /--color-paper-white:\s*#ffffff;/iu);
@@ -195,16 +306,16 @@ assert.match(designSystem, /--color-pencil-gray:\s*#777777;/iu);
 assert.match(designSystem, /--color-faded-gray:\s*#afafaf;/iu);
 assert.match(
 	designSystem,
-	/--vocora-action-primary:\s*var\(--color-spark-blue\);/iu,
+	/--vocora-primary:\s*var\(--color-spark-blue\);[\s\S]*--vocora-action-primary:\s*var\(--vocora-primary\);/iu,
 );
 assert.match(
 	designSystem,
-	/--vocora-action-success:\s*var\(--color-eager-green\);/iu,
+	/--vocora-success:\s*var\(--color-eager-green\);[\s\S]*--vocora-action-success:\s*var\(--vocora-success\);/iu,
 	"Success actions must retain the canonical Eager Green role.",
 );
 assert.match(
 	designSystem,
-	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#49c0f8;[^}]*--vocora-action-success:\s*#72d72b;/iu,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-primary:\s*var\(--color-dark-primary\);[^}]*--vocora-success:\s*var\(--color-dark-success\);[^}]*--vocora-action-primary:\s*var\(--vocora-primary\);[^}]*--vocora-action-success:\s*var\(--vocora-success\);/iu,
 	"The new button language must define independently tuned dark-theme actions.",
 );
 assert.match(
@@ -220,11 +331,11 @@ assert.match(designSystem, /--vocora-action-disabled-background:\s*var\(--color-
 assert.match(designSystem, /--vocora-action-disabled-foreground:\s*var\(--color-pencil-gray\);/iu);
 assert.match(
 	designSystem,
-	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*#ffffff;[^}]*--vocora-action-secondary-foreground:\s*#4b4b4b;/iu,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*var\(--color-paper-white\);[^}]*--vocora-action-secondary-foreground:\s*var\(--color-charcoal\);/iu,
 	"Dark secondary buttons must preserve the white surface and Charcoal label pairing.",
 );
-assert.match(designSystem, /--vocora-error:\s*#ff4b4b;/iu);
-assert.match(designSystem, /--vocora-information-surface:\s*#ddf4ff;/iu);
+assert.match(designSystem, /--vocora-error:\s*var\(--color-answer-red\);/iu);
+assert.match(designSystem, /--vocora-information-surface:\s*var\(--vocora-state-information-surface\);/iu);
 
 for (const intent of ["primary", "secondary", "success", "warning", "error"]) {
 	assert.match(
@@ -265,7 +376,7 @@ for (const token of ["disabled-background", "disabled-foreground"]) {
 assert.equal(
 	[
 		...designSystem.matchAll(
-			/--vocora-action-warning-foreground:\s*(?:var\(--color-paper-white\)|#ffffff);/gu,
+			/--vocora-action-warning-foreground:\s*var\(--(?:vocora-text-on-strong|color-paper-white)\);/gu,
 		),
 	].length,
 	2,

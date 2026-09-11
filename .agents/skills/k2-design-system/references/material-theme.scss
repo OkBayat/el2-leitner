@@ -1,31 +1,35 @@
-// Angular Material bridge for the canonical Vocora semantic themes.
-// Component geometry belongs in the central application Material component
-// override, not inside feature styles.
-
+// Reference mirror of the centralized Angular Material semantic adapter.
 @mixin apply-vocora-material-semantic-overrides() {
-  --mat-sys-surface: var(--vocora-surface-base);
+  --mat-sys-primary: var(--vocora-primary);
+  --mat-sys-on-primary: var(--vocora-text-on-primary);
+  --mat-sys-primary-container: var(--vocora-state-information-surface);
+  --mat-sys-on-primary-container: var(--vocora-state-information-foreground);
+  --mat-sys-secondary: var(--vocora-secondary);
+  --mat-sys-on-secondary: var(--vocora-text-on-secondary);
+  --mat-sys-secondary-container: var(--vocora-surface-subtle);
+  --mat-sys-on-secondary-container: var(--vocora-text-primary);
+  --mat-sys-tertiary: var(--vocora-information);
+  --mat-sys-on-tertiary: var(--vocora-text-on-primary);
+  --mat-sys-tertiary-container: var(--vocora-state-information-surface);
+  --mat-sys-on-tertiary-container: var(--vocora-state-information-foreground);
+  --mat-sys-error: var(--vocora-error);
+  --mat-sys-on-error: var(--vocora-text-on-error);
+  --mat-sys-error-container: var(--vocora-state-error-surface);
+  --mat-sys-on-error-container: var(--vocora-state-error-foreground);
+  --mat-sys-surface: var(--vocora-surface-page);
   --mat-sys-surface-container: var(--vocora-surface-raised);
+  --mat-sys-surface-container-high: var(--vocora-surface-subtle);
   --mat-sys-on-surface: var(--vocora-text-primary);
   --mat-sys-on-surface-variant: var(--vocora-text-secondary);
   --mat-sys-outline: var(--vocora-border);
-  --mat-sys-outline-variant: var(--vocora-border);
-
-  --mat-sys-primary: var(--vocora-action-primary);
-  --mat-sys-on-primary: var(--vocora-action-primary-foreground);
-  --mat-sys-primary-container: var(--vocora-surface-subtle);
-  --mat-sys-on-primary-container: var(--vocora-text-primary);
-
-  --mat-sys-secondary: var(--vocora-action-secondary-foreground);
-  --mat-sys-on-secondary: var(--vocora-action-secondary);
-
-  --mat-sys-error: var(--vocora-action-error);
-  --mat-sys-on-error: var(--vocora-action-error-foreground);
+  --mat-sys-outline-variant: var(--vocora-border-subtle);
+  --mat-sys-inverse-surface: var(--vocora-surface-inverse);
+  --mat-sys-inverse-on-surface: var(--vocora-text-on-inverse);
+  --mat-sys-background: var(--vocora-surface-page);
+  --mat-sys-on-background: var(--vocora-text-primary);
+  --mat-sys-scrim: var(--vocora-scrim);
+  --mat-sys-shadow: var(--vocora-shadow);
 }
 
-// Product buttons compose a Material directive with the central classes:
-//
-// <button mat-flat-button
-//   class="vocora-button vocora-button--primary">Continue</button>
-//
-// Supported intents: primary, success, error, warning, and secondary.
-// The native disabled attribute owns disabled behavior.
+// Product button geometry and interaction live in the central application
+// Material component integration, never in this semantic adapter.

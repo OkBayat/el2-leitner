@@ -2,16 +2,16 @@
 // illustration palette is shared by every navigation SVG, never feature-local.
 @mixin apply() {
 	:root, html[data-theme='light'] {
-		--vocora-nav-surface: #ffffff;
-		--vocora-nav-border: #e4eae6;
-		--vocora-nav-text: #18201b;
-		--vocora-nav-muted: #59635c;
-		--vocora-nav-brand: var(--vocora-action-primary);
-		--vocora-nav-focus: #086f6b;
+		--vocora-nav-surface: var(--vocora-surface-base);
+		--vocora-nav-border: var(--vocora-border-subtle);
+		--vocora-nav-text: var(--vocora-text-primary);
+		--vocora-nav-muted: var(--vocora-text-secondary);
+		--vocora-nav-brand: var(--vocora-primary);
+		--vocora-nav-focus: var(--vocora-focus-ring);
 		--vocora-nav-active-text: var(--vocora-information-foreground);
 		--vocora-nav-active-border: var(--vocora-information-border);
 		--vocora-nav-active-surface: var(--vocora-information-surface);
-		--vocora-nav-hover: #f1f5f2;
+		--vocora-nav-hover: var(--vocora-surface-subtle);
 		--vocora-nav-art-gold: #ffb51b;
 		--vocora-nav-art-orange: #d96a12;
 		--vocora-nav-art-coral: var(--vocora-error);
@@ -27,16 +27,16 @@
 		--vocora-nav-art-skin: #ffb26b;
 	}
 	html[data-theme='dark'] {
-		--vocora-nav-surface: #161f19;
-		--vocora-nav-border: #2a392f;
-		--vocora-nav-text: #f0f7f2;
-		--vocora-nav-muted: #a9b8ad;
-		--vocora-nav-brand: var(--vocora-action-primary);
-		--vocora-nav-focus: #42bdb4;
+		--vocora-nav-surface: var(--vocora-surface-base);
+		--vocora-nav-border: var(--vocora-border-subtle);
+		--vocora-nav-text: var(--vocora-text-primary);
+		--vocora-nav-muted: var(--vocora-text-secondary);
+		--vocora-nav-brand: var(--vocora-primary);
+		--vocora-nav-focus: var(--vocora-focus-ring);
 		--vocora-nav-active-text: var(--vocora-information-foreground);
 		--vocora-nav-active-border: var(--vocora-information-border);
 		--vocora-nav-active-surface: var(--vocora-information-surface);
-		--vocora-nav-hover: #223027;
+		--vocora-nav-hover: var(--vocora-surface-subtle);
 		--vocora-nav-art-gold: #ffc15a;
 		--vocora-nav-art-orange: #ffb26b;
 		--vocora-nav-art-coral: var(--vocora-error);

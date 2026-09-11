@@ -67,6 +67,21 @@ withFixture(
 withFixture(
   (root) =>
     mutateTokens(root, (tokens) => {
+      delete tokens.themes.dark.border.default;
+      tokens.themes.light.semantic.secondary = tokens.themes.light.text.secondary;
+    }),
+  ({ output }) => {
+    assert.match(output, /Theme key parity failed for group 'border'/u);
+    assert.match(
+      output,
+      /themes\.light\.semantic\.secondary must equal #000437/u,
+    );
+  },
+);
+
+withFixture(
+  (root) =>
+    mutateTokens(root, (tokens) => {
       tokens.themes.light.action.primary = "#58CC02";
       tokens.themes.light.action.secondaryForeground = "#1CB0F6";
       tokens.themes.light.action.disabledBackground = "#AFAFAF";

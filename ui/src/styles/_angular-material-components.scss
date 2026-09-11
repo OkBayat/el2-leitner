@@ -1,4 +1,20 @@
 @mixin apply() {
+	.mat-mdc-icon-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		vertical-align: middle;
+	}
+
+	.mat-mdc-icon-button .mat-mdc-button-touch-target,
+	.mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+	.mat-mdc-icon-button .mat-icon,
+	.mat-mdc-icon-button svg {
+		display: block;
+		flex: 0 0 auto;
+		margin: 0;
+	}
+
 	.mat-mdc-button,
 	.mat-mdc-unelevated-button,
 	.mat-mdc-raised-button,

@@ -134,6 +134,52 @@ feature, hard-code copies of design-system palette colors, or create a one-off
 semantic color system. The same semantic role across Material and Bootstrap
 must resolve to the same Vocora meaning.
 
+### Three token layers
+
+The runtime source of truth is
+`ui/src/styles/_vocora-design-system.scss`. It has two explicit sections:
+
+1. **Foundation tokens** own every raw palette value, type family, spacing,
+   radius, and motion value.
+2. **Vocora semantic tokens** assign product meaning for light and dark themes.
+
+The runtime file is included before both Layer C adapters. The Bootstrap and
+Angular Material adapters reference only Vocora semantic tokens; neither owns
+a palette. `references/tokens.json`, `references/variables.scss`, and
+`references/material-theme.scss` are documentation and tooling mirrors whose
+validators must detect drift from the runtime source. They are not independent
+runtime inputs.
+
+ThemeService owns theme changes and writes one root `data-theme` value. The
+early paint bootstrap resolves that same stored mode before Angular starts.
+Both adapters follow the semantic custom properties under that root state; do
+not add `data-bs-theme`, a Material theme service, or another observable.
+
+### Semantic equivalence
+
+| Vocora role | Bootstrap public role | Material system role |
+| --- | --- | --- |
+| Primary | `--bs-primary`; `bg-primary`, `text-primary`, `border-primary` | `--mat-sys-primary` |
+| Secondary | `--bs-secondary`; `bg-secondary`, `text-secondary`, `border-secondary` | `--mat-sys-secondary` |
+| Success | `--bs-success`; `bg-success`, `text-success`, `border-success` | Product success tokens; no Material system success role |
+| Information | `--bs-info`; `bg-info`, `text-info`, `border-info` | `--mat-sys-tertiary` |
+| Warning | `--bs-warning`; `bg-warning`, `text-warning`, `border-warning` | Product warning tokens; no Material system warning role |
+| Error | `--bs-danger`; `bg-danger`, `text-danger`, `border-danger` | `--mat-sys-error` |
+| Page surface | `--bs-body-bg` | `--mat-sys-surface`, `--mat-sys-background` |
+| Raised surface | `--bs-tertiary-bg` | `--mat-sys-surface-container` |
+| Subtle surface | `--bs-secondary-bg`, `--bs-light` | `--mat-sys-surface-container-high` |
+| Primary text | `--bs-body-color` | `--mat-sys-on-surface` |
+| Muted text | `--bs-secondary-color` | `--mat-sys-on-surface-variant` |
+| Default border | `--bs-border-color`; `border` | `--mat-sys-outline` |
+| Subtle border | `--bs-border-color-translucent` | `--mat-sys-outline-variant` |
+| Focus | Product focus treatment | Product focus treatment |
+
+Bootstrap `secondary` means the real Vocora secondary emphasis role. Muted
+copy maps through Bootstrap's separate `--bs-secondary-color` body role, so
+framework terminology cannot collapse two product meanings. Material has no
+native success or warning system roles; shared product components consume the
+Vocora roles directly instead of misusing another Material color slot.
+
 ## Specificity and `!important`
 
 Do not solve theme or component conflicts by escalating selector specificity,
@@ -175,16 +221,18 @@ Only the following foundation colors may establish new product patterns:
 | Token           |     Value | Role                                                        |
 | --------------- | --------: | ----------------------------------------------------------- |
 | Eager Green     | `#58CC02` | Success, progress, correct answers, large green accents     |
-| Storybook Green | `#D7FFB8` | Soft highlight wash                                         |
+| Storybook Green | `#D7FFB8` | Soft success-state wash                                     |
 | Spark Blue      | `#1CB0F6` | Primary CTA and links                                        |
 | Fresh Leaf      | `#A5ED6E` | Supporting short green accents                              |
-| Night Ink       | `#000437` | Deep violet emphasis                                        |
+| Night Ink       | `#000437` | Light-theme secondary emphasis                              |
 | Paper White     | `#FFFFFF` | Page canvas, surfaces, and text on strong fills             |
 | Charcoal        | `#4B4B4B` | Headings and primary copy                                   |
 | Pencil Gray     | `#777777` | Secondary copy                                              |
 | Faded Gray      | `#AFAFAF` | Disabled content and control borders                        |
 | Button Disabled Gray | `#D9D9D9` | Disabled button faces and secondary labels              |
 | Button Border Gray | `#E5E5E5` | Secondary button borders                                   |
+| Mist             | `#F1F5F2` | Neutral subtle surfaces                                      |
+| Soft Border      | `#E4EAE6` | Light-theme subtle borders                                   |
 
 Vocora additionally defines two semantic feedback colors required by the
 exercise domain:
@@ -210,6 +258,7 @@ that identity rather than inverting it:
 | Primary text | `#F0F7F2` |
 | Secondary text | `#A9B8AD` |
 | Primary action | `#49C0F8` |
+| Secondary semantic | `#A98BFF` |
 | Success action | `#72D72B` |
 | Secondary action surface | `#FFFFFF` |
 | Secondary action text | `#4B4B4B` |

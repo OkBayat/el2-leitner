@@ -36,6 +36,9 @@ CANONICAL_COLORS = {
     "button-border-gray": "#E5E5E5",
     "attention-yellow": "#FFC800",
     "answer-red": "#FF4B4B",
+    "mist": "#F1F5F2",
+    "soft-border": "#E4EAE6",
+    "purple-light": "#A98BFF",
 }
 
 CANONICAL_FONTS = {
@@ -65,8 +68,27 @@ CANONICAL_ACTION_ROLES = {
     },
 }
 
+CANONICAL_SEMANTIC_ROLES = {
+    "light": {
+        "primary": "#1CB0F6",
+        "secondary": "#000437",
+        "success": "#58CC02",
+        "information": "#1CB0F6",
+        "warning": "#FFC800",
+        "error": "#FF4B4B",
+    },
+    "dark": {
+        "primary": "#49C0F8",
+        "secondary": "#A98BFF",
+        "success": "#72D72B",
+        "information": "#49C0F8",
+        "warning": "#FFC45A",
+        "error": "#FF6B6B",
+    },
+}
+
 BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
-THEME_GROUPS = ("surface", "text", "action")
+THEME_GROUPS = ("surface", "text", "border", "semantic", "state", "action", "focus")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 def skill_root() -> Path:
     return Path(__file__).resolve().parents[1]
@@ -175,6 +197,16 @@ def validate_tokens(data: dict[str, Any], errors: list[str]) -> None:
                             f"themes.{theme_name}.action.{name} must equal {expected}"
                         )
 
+            for theme_name, expected_roles in CANONICAL_SEMANTIC_ROLES.items():
+                semantic = themes[theme_name].get("semantic")
+                if not isinstance(semantic, dict):
+                    continue
+                for name, expected in expected_roles.items():
+                    if semantic.get(name) != expected:
+                        errors.append(
+                            f"themes.{theme_name}.semantic.{name} must equal {expected}"
+                        )
+
     extensions = data.get("$extensions")
     if not isinstance(extensions, dict):
         errors.append("$extensions must be an object")
@@ -187,6 +219,13 @@ def validate_tokens(data: dict[str, Any], errors: list[str]) -> None:
         errors.append("The default design-system theme must be light")
     if vocora.get("themes") != ["light", "dark"]:
         errors.append("The design system must declare light and dark themes")
+    if vocora.get("runtimeSource") != "ui/src/styles/_vocora-design-system.scss":
+        errors.append("The runtime token source must be the Vocora design-system SCSS")
+    if vocora.get("frameworkAdapters") != [
+        "ui/src/styles/_bootstrap-theme.scss",
+        "ui/src/styles/_angular-material-theme.scss",
+    ]:
+        errors.append("The design system must declare exactly two framework adapters")
     if vocora.get("buttonRadius") != "13px":
         errors.append("The canonical button radius must be 13px")
     if vocora.get("minimumTouchTarget") != "44px":
@@ -223,6 +262,26 @@ def validate_variable_reference(root: Path, errors: list[str]) -> None:
                 errors.append("variables.scss must define the light theme")
             if "html[data-theme='dark']" not in text:
                 errors.append("variables.scss must define the dark theme")
+            for variable in (
+                "--vocora-surface-page",
+                "--vocora-surface-subtle",
+                "--vocora-surface-inverse",
+                "--vocora-text-primary",
+                "--vocora-text-secondary",
+                "--vocora-border",
+                "--vocora-border-subtle",
+                "--vocora-primary",
+                "--vocora-secondary",
+                "--vocora-success",
+                "--vocora-information",
+                "--vocora-warning",
+                "--vocora-error",
+                "--vocora-focus-ring",
+            ):
+                if text.count(f"{variable}:") != 2:
+                    errors.append(
+                        f"variables.scss must define {variable} once per theme"
+                    )
 
 
 def validate_skill_contract(root: Path, errors: list[str]) -> None:
@@ -270,12 +329,14 @@ def validate_material_reference(root: Path, errors: list[str]) -> None:
 
     text = path.read_text(encoding="utf-8")
     required_mappings = {
-        "--mat-sys-surface": "--vocora-surface-base",
+        "--mat-sys-surface": "--vocora-surface-page",
         "--mat-sys-on-surface": "--vocora-text-primary",
-        "--mat-sys-primary": "--vocora-action-primary",
-        "--mat-sys-on-primary": "--vocora-action-primary-foreground",
-        "--mat-sys-secondary": "--vocora-action-secondary-foreground",
-        "--mat-sys-error": "--vocora-action-error",
+        "--mat-sys-outline": "--vocora-border",
+        "--mat-sys-outline-variant": "--vocora-border-subtle",
+        "--mat-sys-primary": "--vocora-primary",
+        "--mat-sys-on-primary": "--vocora-text-on-primary",
+        "--mat-sys-secondary": "--vocora-secondary",
+        "--mat-sys-error": "--vocora-error",
     }
     for material, foundation in required_mappings.items():
         pattern = rf"{re.escape(material)}:\s*var\({re.escape(foundation)}\);"
@@ -315,6 +376,8 @@ def validate_frontend_guidance(root: Path, errors: list[str]) -> None:
         "## Theme and color ownership",
         "## Specificity and `!important`",
         "## Angular Material internals",
+        "### Three token layers",
+        "### Semantic equivalence",
     ):
         if heading not in text:
             errors.append(f"DESIGN.md is missing required architecture section: {heading}")

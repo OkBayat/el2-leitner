@@ -1,167 +1,5 @@
 @mixin apply() {
-	:root,
-	html[data-theme="light"] {
-		--vocora-surface-page: var(--color-paper-white);
-		--vocora-surface-base: var(--color-paper-white);
-		--vocora-surface-raised: var(--color-paper-white);
-		--vocora-surface-subtle: var(--color-storybook-green);
-		--vocora-border: var(--color-faded-gray);
-
-		--vocora-text-primary: var(--color-charcoal);
-		--vocora-text-secondary: var(--color-pencil-gray);
-		--vocora-text-secondary-rgb: 119, 119, 119;
-		--vocora-text-disabled: var(--color-faded-gray);
-		--vocora-text-on-primary: var(--color-paper-white);
-		--vocora-text-on-strong: var(--color-paper-white);
-
-		--vocora-action-primary: var(--color-spark-blue);
-		--vocora-action-primary-rgb: 28, 176, 246;
-		--vocora-action-primary-hover: var(--color-spark-blue);
-		--vocora-action-primary-edge: #1899d6;
-		--vocora-action-primary-foreground: var(--color-paper-white);
-		--vocora-action-secondary: var(--color-paper-white);
-		--vocora-action-secondary-hover: var(--color-paper-white);
-		--vocora-action-secondary-edge: var(--color-button-border-gray);
-		--vocora-action-secondary-border: var(--color-button-border-gray);
-		--vocora-action-secondary-foreground: var(--color-charcoal);
-		--vocora-action-secondary-disabled-background: var(--color-paper-white);
-		--vocora-action-secondary-disabled-foreground: var(--color-button-disabled-gray);
-		--vocora-action-secondary-disabled-border: var(--color-button-border-gray);
-		--vocora-action-success: var(--color-eager-green);
-		--vocora-action-success-hover: var(--color-eager-green);
-		--vocora-action-success-edge: var(--color-eager-green);
-		--vocora-action-success-foreground: var(--color-paper-white);
-		--vocora-action-warning: var(--color-attention-yellow);
-		--vocora-action-warning-hover: var(--color-attention-yellow);
-		--vocora-action-warning-edge: var(--color-attention-yellow);
-		--vocora-action-warning-foreground: var(--color-paper-white);
-		--vocora-action-error: var(--color-answer-red);
-		--vocora-action-error-hover: var(--color-answer-red);
-		--vocora-action-error-edge: var(--color-answer-red);
-		--vocora-action-error-foreground: var(--color-paper-white);
-		--vocora-action-disabled-background: var(--color-button-disabled-gray);
-		--vocora-action-disabled-foreground: var(--color-pencil-gray);
-		--vocora-action-disabled-border: var(--color-button-disabled-gray);
-		--vocora-focus-ring: var(--color-spark-blue);
-
-		--vocora-success: #58cc02;
-		--vocora-success-rgb: 88, 204, 2;
-		--vocora-success-surface: #d7ffb8;
-		--vocora-success-foreground: #335f00;
-		--vocora-information: #1cb0f6;
-		--vocora-information-rgb: 28, 176, 246;
-		--vocora-information-border: #84d8ff;
-		--vocora-information-surface: #ddf4ff;
-		--vocora-information-foreground: #063f5c;
-		--vocora-warning: #e99a00;
-		--vocora-warning-rgb: 233, 154, 0;
-		--vocora-error: #ff4b4b;
-		--vocora-error-rgb: 255, 75, 75;
-		--vocora-error-edge: #ea2b2b;
-		--vocora-error-surface: #ffdfe0;
-		--vocora-error-foreground: #4a0000;
-		--vocora-mastered: #258a49;
-		--vocora-leitner-active: #2563eb;
-		--vocora-not-started: #7c4ddb;
-		--vocora-future: #d2dad5;
-		--vocora-disabled: #a7b2aa;
-
-		--vocora-activity-vocabulary: #258a49;
-		--vocora-activity-listening: #2563eb;
-		--vocora-activity-shadowing: #086f6b;
-		--vocora-activity-reading: #7c4ddb;
-		--vocora-activity-writing: #d96a12;
-		--vocora-activity-grammar: #4f46e5;
-
-		--vocora-brand-green: #4fc66a;
-		--vocora-brand-green-strong: #258a49;
-		--vocora-brand-mint: #c8f3d5;
-		--vocora-brand-mint-light: #effbf3;
-		--vocora-brand-teal: #086f6b;
-		--vocora-brand-orange: #ffb51b;
-	}
-
-	html[data-theme="dark"] {
-		--vocora-surface-page: #0f1611;
-		--vocora-surface-base: #161f19;
-		--vocora-surface-raised: #1d2921;
-		--vocora-surface-subtle: #223027;
-		--vocora-border: #536159;
-
-		--vocora-text-primary: #f0f7f2;
-		--vocora-text-secondary: #a9b8ad;
-		--vocora-text-secondary-rgb: 169, 184, 173;
-		--vocora-text-disabled: #6f7d73;
-		--vocora-text-on-primary: #063f5c;
-		--vocora-text-on-strong: #f6fff8;
-
-		--vocora-action-primary: #49c0f8;
-		--vocora-action-primary-rgb: 73, 192, 248;
-		--vocora-action-primary-hover: #5cc8fa;
-		--vocora-action-primary-edge: #2879a0;
-		--vocora-action-primary-foreground: #063f5c;
-		--vocora-action-secondary: #ffffff;
-		--vocora-action-secondary-hover: #ffffff;
-		--vocora-action-secondary-edge: #afafaf;
-		--vocora-action-secondary-border: #afafaf;
-		--vocora-action-secondary-foreground: #4b4b4b;
-		--vocora-action-secondary-disabled-background: #ffffff;
-		--vocora-action-secondary-disabled-foreground: #6f7d73;
-		--vocora-action-secondary-disabled-border: #afafaf;
-		--vocora-action-success: #72d72b;
-		--vocora-action-success-hover: #83e640;
-		--vocora-action-success-edge: #489b0c;
-		--vocora-action-success-foreground: #0f2900;
-		--vocora-action-warning: #ffc45a;
-		--vocora-action-warning-hover: #ffd178;
-		--vocora-action-warning-edge: #c47b00;
-		--vocora-action-warning-foreground: #ffffff;
-		--vocora-action-error: #ff6b6b;
-		--vocora-action-error-hover: #ff8585;
-		--vocora-action-error-edge: #cf3c3c;
-		--vocora-action-error-foreground: #4a0000;
-		--vocora-action-disabled-background: #344239;
-		--vocora-action-disabled-foreground: #829087;
-		--vocora-action-disabled-border: #46564b;
-		--vocora-focus-ring: #49c0f8;
-
-		--vocora-success: #72d72b;
-		--vocora-success-rgb: 114, 215, 43;
-		--vocora-success-surface: #294217;
-		--vocora-success-foreground: #d7ffb8;
-		--vocora-information: #49c0f8;
-		--vocora-information-rgb: 73, 192, 248;
-		--vocora-information-border: #2879a0;
-		--vocora-information-surface: #17384a;
-		--vocora-information-foreground: #c8ecff;
-		--vocora-warning: #ffc45a;
-		--vocora-warning-rgb: 255, 196, 90;
-		--vocora-error: #ff6b6b;
-		--vocora-error-rgb: 255, 107, 107;
-		--vocora-error-edge: #cf3c3c;
-		--vocora-error-surface: #4a2023;
-		--vocora-error-foreground: #ffd5d5;
-		--vocora-mastered: #65d780;
-		--vocora-leitner-active: #6ea8fe;
-		--vocora-not-started: #a98bff;
-		--vocora-future: #536159;
-		--vocora-disabled: #6f7d73;
-
-		--vocora-activity-vocabulary: #65d780;
-		--vocora-activity-listening: #6ea8fe;
-		--vocora-activity-shadowing: #42bdb4;
-		--vocora-activity-reading: #a98bff;
-		--vocora-activity-writing: #ffb26b;
-		--vocora-activity-grammar: #8f8bff;
-
-		--vocora-brand-green: #65d780;
-		--vocora-brand-green-strong: #4fc66a;
-		--vocora-brand-mint: #274b35;
-		--vocora-brand-mint-light: #1f3327;
-		--vocora-brand-teal: #42bdb4;
-		--vocora-brand-orange: #ffc15a;
-	}
-
+	// Layer A: foundation tokens. Raw palette values are owned only here.
 	:root {
 		--color-eager-green: #58cc02;
 		--color-storybook-green: #d7ffb8;
@@ -176,6 +14,100 @@
 		--color-button-border-gray: #e5e5e5;
 		--color-attention-yellow: #ffc800;
 		--color-answer-red: #ff4b4b;
+		--color-neutral-black: #000000;
+
+		--color-mist: #f1f5f2;
+		--color-soft-border: #e4eae6;
+		--color-success-ink: #335f00;
+		--color-information-border: #84d8ff;
+		--color-information-surface: #ddf4ff;
+		--color-information-ink: #063f5c;
+		--color-warning-surface: #fff4cc;
+		--color-error-edge: #ea2b2b;
+		--color-error-surface: #ffdfe0;
+		--color-error-ink: #4a0000;
+		--color-primary-edge: #1899d6;
+
+		--color-dark-page: #0f1611;
+		--color-dark-surface: #161f19;
+		--color-dark-raised: #1d2921;
+		--color-dark-subtle: #223027;
+		--color-dark-border-subtle: #2a392f;
+		--color-dark-border: #536159;
+		--color-dark-text: #f0f7f2;
+		--color-dark-text-secondary: #a9b8ad;
+		--color-dark-text-disabled: #6f7d73;
+		--color-dark-on-strong: #f6fff8;
+		--color-dark-primary: #49c0f8;
+		--color-dark-primary-hover: #5cc8fa;
+		--color-dark-primary-edge: #2879a0;
+		--color-dark-success: #72d72b;
+		--color-dark-success-hover: #83e640;
+		--color-dark-success-edge: #489b0c;
+		--color-dark-success-ink: #0f2900;
+		--color-dark-success-surface: #294217;
+		--color-dark-warning: #ffc45a;
+		--color-dark-warning-hover: #ffd178;
+		--color-dark-warning-edge: #c47b00;
+		--color-dark-warning-surface: #493710;
+		--color-dark-warning-ink: #ffe6ad;
+		--color-dark-error: #ff6b6b;
+		--color-dark-error-hover: #ff8585;
+		--color-dark-error-edge: #cf3c3c;
+		--color-dark-error-surface: #4a2023;
+		--color-dark-error-ink: #ffd5d5;
+		--color-dark-information-surface: #17384a;
+		--color-dark-information-ink: #c8ecff;
+		--color-dark-disabled-background: #344239;
+		--color-dark-disabled-foreground: #829087;
+		--color-dark-disabled-border: #46564b;
+
+		--color-forest: #258a49;
+		--color-forest-light: #65d780;
+		--color-blue: #2563eb;
+		--color-blue-light: #6ea8fe;
+		--color-purple: #7c4ddb;
+		--color-purple-light: #a98bff;
+		--color-future: #d2dad5;
+		--color-disabled: #a7b2aa;
+		--color-teal: #086f6b;
+		--color-teal-light: #42bdb4;
+		--color-orange: #d96a12;
+		--color-orange-light: #ffb26b;
+		--color-indigo: #4f46e5;
+		--color-indigo-light: #8f8bff;
+		--color-brand-green: #4fc66a;
+		--color-brand-mint: #c8f3d5;
+		--color-brand-mint-light: #effbf3;
+		--color-dark-brand-mint: #274b35;
+		--color-dark-brand-mint-light: #1f3327;
+		--color-brand-orange: #ffb51b;
+		--color-dark-brand-orange: #ffc15a;
+
+		// Bootstrap's compiled utilities require channel-list companions.
+		--color-paper-white-rgb: 255, 255, 255;
+		--color-night-ink-rgb: 0, 4, 55;
+		--color-charcoal-rgb: 75, 75, 75;
+		--color-pencil-gray-rgb: 119, 119, 119;
+		--color-faded-gray-rgb: 175, 175, 175;
+		--color-mist-rgb: 241, 245, 242;
+		--color-spark-blue-rgb: 28, 176, 246;
+		--color-eager-green-rgb: 88, 204, 2;
+		--color-attention-yellow-rgb: 255, 200, 0;
+		--color-answer-red-rgb: 255, 75, 75;
+		--color-dark-page-rgb: 15, 22, 17;
+		--color-dark-surface-rgb: 22, 31, 25;
+		--color-dark-raised-rgb: 29, 41, 33;
+		--color-dark-subtle-rgb: 34, 48, 39;
+		--color-dark-text-rgb: 240, 247, 242;
+		--color-dark-text-secondary-rgb: 169, 184, 173;
+		--color-dark-text-disabled-rgb: 111, 125, 115;
+		--color-dark-primary-rgb: 73, 192, 248;
+		--color-dark-primary-hover-rgb: 92, 200, 250;
+		--color-dark-success-rgb: 114, 215, 43;
+		--color-dark-warning-rgb: 255, 196, 90;
+		--color-dark-error-rgb: 255, 107, 107;
+		--color-purple-light-rgb: 169, 139, 255;
 
 		--vocora-font-display:
 			"feather", "Nunito Black", ui-sans-serif, system-ui, -apple-system,
@@ -183,8 +115,6 @@
 		--vocora-font-body:
 			"duolingo-sans", "Inter", "Nunito Sans", ui-sans-serif, system-ui,
 			-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-		--vocora-neutral-black: #000000;
 
 		--vocora-space-1: 4px;
 		--vocora-space-2: 8px;
@@ -210,5 +140,244 @@
 		--vocora-motion-normal: 180ms;
 		--vocora-motion-slow: 240ms;
 		--vocora-touch-target-min: 44px;
+	}
+
+	// Layer B: Vocora semantic tokens. Framework names do not belong here.
+	:root,
+	html[data-theme="light"] {
+		--vocora-surface-page: var(--color-paper-white);
+		--vocora-surface-page-rgb: var(--color-paper-white-rgb);
+		--vocora-surface-base: var(--color-paper-white);
+		--vocora-surface-base-rgb: var(--color-paper-white-rgb);
+		--vocora-surface-raised: var(--color-paper-white);
+		--vocora-surface-raised-rgb: var(--color-paper-white-rgb);
+		--vocora-surface-subtle: var(--color-mist);
+		--vocora-surface-subtle-rgb: var(--color-mist-rgb);
+		--vocora-surface-inverse: var(--color-night-ink);
+		--vocora-surface-inverse-rgb: var(--color-night-ink-rgb);
+
+		--vocora-text-primary: var(--color-charcoal);
+		--vocora-text-primary-rgb: var(--color-charcoal-rgb);
+		--vocora-text-secondary: var(--color-pencil-gray);
+		--vocora-text-secondary-rgb: var(--color-pencil-gray-rgb);
+		--vocora-text-disabled: var(--color-faded-gray);
+		--vocora-text-disabled-rgb: var(--color-faded-gray-rgb);
+		--vocora-text-on-primary: var(--color-paper-white);
+		--vocora-text-on-secondary: var(--color-paper-white);
+		--vocora-text-on-error: var(--color-paper-white);
+		--vocora-text-on-inverse: var(--color-paper-white);
+		--vocora-text-on-strong: var(--color-paper-white);
+
+		--vocora-border: var(--color-faded-gray);
+		--vocora-border-subtle: var(--color-soft-border);
+		--vocora-border-strong: var(--color-pencil-gray);
+		--vocora-border-disabled: var(--color-faded-gray);
+
+		--vocora-primary: var(--color-spark-blue);
+		--vocora-primary-rgb: var(--color-spark-blue-rgb);
+		--vocora-secondary: var(--color-night-ink);
+		--vocora-secondary-rgb: var(--color-night-ink-rgb);
+		--vocora-success: var(--color-eager-green);
+		--vocora-success-rgb: var(--color-eager-green-rgb);
+		--vocora-information: var(--color-spark-blue);
+		--vocora-information-rgb: var(--color-spark-blue-rgb);
+		--vocora-warning: var(--color-attention-yellow);
+		--vocora-warning-rgb: var(--color-attention-yellow-rgb);
+		--vocora-error: var(--color-answer-red);
+		--vocora-error-rgb: var(--color-answer-red-rgb);
+
+		--vocora-state-success-surface: var(--color-storybook-green);
+		--vocora-state-success-foreground: var(--color-success-ink);
+		--vocora-state-success-border: var(--color-eager-green);
+		--vocora-state-information-surface: var(--color-information-surface);
+		--vocora-state-information-foreground: var(--color-information-ink);
+		--vocora-state-information-border: var(--color-information-border);
+		--vocora-state-warning-surface: var(--color-warning-surface);
+		--vocora-state-warning-foreground: var(--color-charcoal);
+		--vocora-state-warning-border: var(--color-attention-yellow);
+		--vocora-state-error-surface: var(--color-error-surface);
+		--vocora-state-error-foreground: var(--color-error-ink);
+		--vocora-state-error-border: var(--color-answer-red);
+
+		--vocora-action-primary: var(--vocora-primary);
+		--vocora-action-primary-rgb: var(--vocora-primary-rgb);
+		--vocora-action-primary-hover: var(--vocora-primary);
+		--vocora-action-primary-hover-rgb: var(--vocora-primary-rgb);
+		--vocora-action-primary-edge: var(--color-primary-edge);
+		--vocora-action-primary-foreground: var(--vocora-text-on-primary);
+		--vocora-action-secondary: var(--color-paper-white);
+		--vocora-action-secondary-hover: var(--color-paper-white);
+		--vocora-action-secondary-edge: var(--color-button-border-gray);
+		--vocora-action-secondary-border: var(--color-button-border-gray);
+		--vocora-action-secondary-foreground: var(--color-charcoal);
+		--vocora-action-secondary-disabled-background: var(--color-paper-white);
+		--vocora-action-secondary-disabled-foreground: var(--color-button-disabled-gray);
+		--vocora-action-secondary-disabled-border: var(--color-button-border-gray);
+		--vocora-action-success: var(--vocora-success);
+		--vocora-action-success-hover: var(--vocora-success);
+		--vocora-action-success-edge: var(--vocora-success);
+		--vocora-action-success-foreground: var(--vocora-text-on-strong);
+		--vocora-action-warning: var(--vocora-warning);
+		--vocora-action-warning-hover: var(--vocora-warning);
+		--vocora-action-warning-edge: var(--vocora-warning);
+		--vocora-action-warning-foreground: var(--vocora-text-on-strong);
+		--vocora-action-error: var(--vocora-error);
+		--vocora-action-error-hover: var(--vocora-error);
+		--vocora-action-error-edge: var(--color-error-edge);
+		--vocora-action-error-foreground: var(--vocora-text-on-error);
+		--vocora-action-disabled-background: var(--color-button-disabled-gray);
+		--vocora-action-disabled-foreground: var(--color-pencil-gray);
+		--vocora-action-disabled-border: var(--color-button-disabled-gray);
+
+		--vocora-focus-ring: var(--vocora-primary);
+		--vocora-shadow: var(--color-neutral-black);
+		--vocora-scrim: var(--color-neutral-black);
+
+		// Compatibility aliases for existing product consumers.
+		--vocora-success-surface: var(--vocora-state-success-surface);
+		--vocora-success-foreground: var(--vocora-state-success-foreground);
+		--vocora-information-border: var(--vocora-state-information-border);
+		--vocora-information-surface: var(--vocora-state-information-surface);
+		--vocora-information-foreground: var(--vocora-state-information-foreground);
+		--vocora-error-edge: var(--color-error-edge);
+		--vocora-error-surface: var(--vocora-state-error-surface);
+		--vocora-error-foreground: var(--vocora-state-error-foreground);
+		--vocora-neutral-black: var(--color-neutral-black);
+
+		--vocora-mastered: var(--color-forest);
+		--vocora-leitner-active: var(--color-blue);
+		--vocora-not-started: var(--color-purple);
+		--vocora-future: var(--color-future);
+		--vocora-disabled: var(--color-disabled);
+		--vocora-activity-vocabulary: var(--color-forest);
+		--vocora-activity-listening: var(--color-blue);
+		--vocora-activity-shadowing: var(--color-teal);
+		--vocora-activity-reading: var(--color-purple);
+		--vocora-activity-writing: var(--color-orange);
+		--vocora-activity-grammar: var(--color-indigo);
+		--vocora-brand-green: var(--color-brand-green);
+		--vocora-brand-green-strong: var(--color-forest);
+		--vocora-brand-mint: var(--color-brand-mint);
+		--vocora-brand-mint-light: var(--color-brand-mint-light);
+		--vocora-brand-teal: var(--color-teal);
+		--vocora-brand-orange: var(--color-brand-orange);
+	}
+
+	html[data-theme="dark"] {
+		--vocora-surface-page: var(--color-dark-page);
+		--vocora-surface-page-rgb: var(--color-dark-page-rgb);
+		--vocora-surface-base: var(--color-dark-surface);
+		--vocora-surface-base-rgb: var(--color-dark-surface-rgb);
+		--vocora-surface-raised: var(--color-dark-raised);
+		--vocora-surface-raised-rgb: var(--color-dark-raised-rgb);
+		--vocora-surface-subtle: var(--color-dark-subtle);
+		--vocora-surface-subtle-rgb: var(--color-dark-subtle-rgb);
+		--vocora-surface-inverse: var(--color-paper-white);
+		--vocora-surface-inverse-rgb: var(--color-paper-white-rgb);
+
+		--vocora-text-primary: var(--color-dark-text);
+		--vocora-text-primary-rgb: var(--color-dark-text-rgb);
+		--vocora-text-secondary: var(--color-dark-text-secondary);
+		--vocora-text-secondary-rgb: var(--color-dark-text-secondary-rgb);
+		--vocora-text-disabled: var(--color-dark-text-disabled);
+		--vocora-text-disabled-rgb: var(--color-dark-text-disabled-rgb);
+		--vocora-text-on-primary: var(--color-information-ink);
+		--vocora-text-on-secondary: var(--color-dark-page);
+		--vocora-text-on-error: var(--color-error-ink);
+		--vocora-text-on-inverse: var(--color-charcoal);
+		--vocora-text-on-strong: var(--color-dark-on-strong);
+
+		--vocora-border: var(--color-dark-border);
+		--vocora-border-subtle: var(--color-dark-border-subtle);
+		--vocora-border-strong: var(--color-dark-disabled-foreground);
+		--vocora-border-disabled: var(--color-dark-text-disabled);
+
+		--vocora-primary: var(--color-dark-primary);
+		--vocora-primary-rgb: var(--color-dark-primary-rgb);
+		--vocora-secondary: var(--color-purple-light);
+		--vocora-secondary-rgb: var(--color-purple-light-rgb);
+		--vocora-success: var(--color-dark-success);
+		--vocora-success-rgb: var(--color-dark-success-rgb);
+		--vocora-information: var(--color-dark-primary);
+		--vocora-information-rgb: var(--color-dark-primary-rgb);
+		--vocora-warning: var(--color-dark-warning);
+		--vocora-warning-rgb: var(--color-dark-warning-rgb);
+		--vocora-error: var(--color-dark-error);
+		--vocora-error-rgb: var(--color-dark-error-rgb);
+
+		--vocora-state-success-surface: var(--color-dark-success-surface);
+		--vocora-state-success-foreground: var(--color-storybook-green);
+		--vocora-state-success-border: var(--color-dark-success);
+		--vocora-state-information-surface: var(--color-dark-information-surface);
+		--vocora-state-information-foreground: var(--color-dark-information-ink);
+		--vocora-state-information-border: var(--color-dark-primary-edge);
+		--vocora-state-warning-surface: var(--color-dark-warning-surface);
+		--vocora-state-warning-foreground: var(--color-dark-warning-ink);
+		--vocora-state-warning-border: var(--color-dark-warning);
+		--vocora-state-error-surface: var(--color-dark-error-surface);
+		--vocora-state-error-foreground: var(--color-dark-error-ink);
+		--vocora-state-error-border: var(--color-dark-error);
+
+		--vocora-action-primary: var(--vocora-primary);
+		--vocora-action-primary-rgb: var(--vocora-primary-rgb);
+		--vocora-action-primary-hover: var(--color-dark-primary-hover);
+		--vocora-action-primary-hover-rgb: var(--color-dark-primary-hover-rgb);
+		--vocora-action-primary-edge: var(--color-dark-primary-edge);
+		--vocora-action-primary-foreground: var(--vocora-text-on-primary);
+		--vocora-action-secondary: var(--color-paper-white);
+		--vocora-action-secondary-hover: var(--color-paper-white);
+		--vocora-action-secondary-edge: var(--color-faded-gray);
+		--vocora-action-secondary-border: var(--color-faded-gray);
+		--vocora-action-secondary-foreground: var(--color-charcoal);
+		--vocora-action-secondary-disabled-background: var(--color-paper-white);
+		--vocora-action-secondary-disabled-foreground: var(--color-dark-text-disabled);
+		--vocora-action-secondary-disabled-border: var(--color-faded-gray);
+		--vocora-action-success: var(--vocora-success);
+		--vocora-action-success-hover: var(--color-dark-success-hover);
+		--vocora-action-success-edge: var(--color-dark-success-edge);
+		--vocora-action-success-foreground: var(--color-dark-success-ink);
+		--vocora-action-warning: var(--vocora-warning);
+		--vocora-action-warning-hover: var(--color-dark-warning-hover);
+		--vocora-action-warning-edge: var(--color-dark-warning-edge);
+		--vocora-action-warning-foreground: var(--color-paper-white);
+		--vocora-action-error: var(--vocora-error);
+		--vocora-action-error-hover: var(--color-dark-error-hover);
+		--vocora-action-error-edge: var(--color-dark-error-edge);
+		--vocora-action-error-foreground: var(--vocora-text-on-error);
+		--vocora-action-disabled-background: var(--color-dark-disabled-background);
+		--vocora-action-disabled-foreground: var(--color-dark-disabled-foreground);
+		--vocora-action-disabled-border: var(--color-dark-disabled-border);
+
+		--vocora-focus-ring: var(--vocora-primary);
+		--vocora-shadow: var(--color-neutral-black);
+		--vocora-scrim: var(--color-neutral-black);
+
+		--vocora-success-surface: var(--vocora-state-success-surface);
+		--vocora-success-foreground: var(--vocora-state-success-foreground);
+		--vocora-information-border: var(--vocora-state-information-border);
+		--vocora-information-surface: var(--vocora-state-information-surface);
+		--vocora-information-foreground: var(--vocora-state-information-foreground);
+		--vocora-error-edge: var(--color-dark-error-edge);
+		--vocora-error-surface: var(--vocora-state-error-surface);
+		--vocora-error-foreground: var(--vocora-state-error-foreground);
+		--vocora-neutral-black: var(--color-neutral-black);
+
+		--vocora-mastered: var(--color-forest-light);
+		--vocora-leitner-active: var(--color-blue-light);
+		--vocora-not-started: var(--color-purple-light);
+		--vocora-future: var(--color-dark-border);
+		--vocora-disabled: var(--color-dark-text-disabled);
+		--vocora-activity-vocabulary: var(--color-forest-light);
+		--vocora-activity-listening: var(--color-blue-light);
+		--vocora-activity-shadowing: var(--color-teal-light);
+		--vocora-activity-reading: var(--color-purple-light);
+		--vocora-activity-writing: var(--color-orange-light);
+		--vocora-activity-grammar: var(--color-indigo-light);
+		--vocora-brand-green: var(--color-forest-light);
+		--vocora-brand-green-strong: var(--color-brand-green);
+		--vocora-brand-mint: var(--color-dark-brand-mint);
+		--vocora-brand-mint-light: var(--color-dark-brand-mint-light);
+		--vocora-brand-teal: var(--color-teal-light);
+		--vocora-brand-orange: var(--color-dark-brand-orange);
 	}
 }
