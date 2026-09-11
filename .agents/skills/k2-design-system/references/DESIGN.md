@@ -51,6 +51,10 @@ application's standalone component/import architecture.
 
 This shared ownership includes reusable dialog shells, action primitives,
 drag/drop behavior, menus, focus management, and other low-level interactions.
+Future product component names use the `Voco` family and `voco-*` selectors,
+for example `VocoButtonComponent` and `voco-button`. The governance contract
+does not itself introduce a Voco Button; that implementation belongs to
+dedicated component work.
 
 ### Angular Material
 
@@ -107,8 +111,10 @@ Before adding custom CSS, check in this order:
 1. Is there an existing Vocora shared component or shared style?
 2. Does Angular Material provide the component interaction?
 3. Does Angular CDK provide the required behavior?
-4. Does Bootstrap provide the exact utility?
-5. Does an existing Vocora semantic token or shared pattern represent it?
+4. Is this a reusable product-specific primitive that belongs under
+   `ui/src/app/shared` and should compose Material and/or CDK?
+5. Does Bootstrap provide the exact utility?
+6. Does an existing Vocora semantic token or shared pattern represent it?
 
 Only then add the minimal custom CSS. The declaration must have a concrete
 component-specific reason to exist.
@@ -137,15 +143,21 @@ prohibited by default.
 
 If an upstream constraint makes `!important` genuinely unavoidable, first
 verify that the framework's supported token or theme API cannot solve it. Keep
-the exception in the single relevant integration boundary and document its
-reason in the tracked legacy-style baseline. Never edit Bootstrap's generated
-or internal CSS. Existing baseline entries are migration debt, not precedent;
-touch-to-refactor should reduce them when the owning surface changes.
+the exception in the single relevant integration boundary and document both
+its reason and upstream constraint in the dedicated integration-exception
+section. Never edit Bootstrap's generated or internal CSS.
 
-The deterministic guardrail scans CSS, Less, SCSS, and Angular inline `styles`
-in scalar or array form. Brace-free `.sass` files are prohibited because their
-selector structure is not supported by the occurrence-level baseline; use SCSS
-when Sass features are required.
+`ui/tests/test-design-system-architecture.mjs` is the canonical frontend source
+guardrail. It scans CSS, Less, SCSS, indented Sass, and Angular inline `styles`
+in scalar or array form. It requires actual legacy debt to equal the declared
+baseline in `ui/tests/design-system-architecture-baseline.json`, so stale
+entries fail and must be removed with the source debt. It also compares each
+legacy entry with the pull request base source: legacy debt may stay the same
+or shrink, but an ordinary change cannot add a new occurrence and bless it as
+legacy. A genuinely unavoidable new framework exception uses the separate
+integration-boundary section, which is restricted to canonical framework
+owners and requires an explicit upstream constraint. This is not permission
+for feature or application-owned exceptions.
 
 ## Angular Material internals
 

@@ -82,7 +82,8 @@ legacy UI, apply the bounded touch-to-refactor rule from the design reference.
 9. Define and verify light and dark behavior together.
 10. Verify responsive layout, wrapped labels, focus, disabled state, and reduced
    motion for the changed surface.
-11. Run the skill validator, its focused tests, and the affected product test.
+11. Run the skill validator, its Node focused tests, and the frontend
+    design-system architecture check when UI source is affected.
 
 ## Angular Material button rule
 
@@ -141,7 +142,7 @@ avoid routine mascot decoration in dense study surfaces.
 
 ### Script-owned
 
-The validator owns deterministic checks for:
+The Python skill validator owns deterministic checks for:
 
 - required skill structure and reference files;
 - valid Design Tokens JSON;
@@ -149,11 +150,18 @@ The validator owns deterministic checks for:
 - complete light/dark semantic token parity;
 - required CSS variable parity with the token source;
 - required Material semantic mappings;
-- documented five-intent button contract and native disabled rule.
+- documented five-intent button contract and native disabled rule;
 - the documented UI primitive decision hierarchy;
+
+The canonical Node check at
+`ui/tests/test-design-system-architecture.mjs` exclusively owns frontend source
+scanning for:
+
 - single-owner framework theme and foundation color definitions;
-- the tracked non-increasing baseline for legacy `!important` and feature-level
-  Material-internal selector debt;
+- exact current legacy `!important` and feature Material-internal selector
+  debt, plus base/head monotonicity;
+- documented central framework integration exceptions;
+- Angular inline styles and supported stylesheet formats, including `.sass`;
 - the shared standalone-component ownership boundary.
 
 ### Codex-owned
@@ -174,8 +182,9 @@ Codex owns semantic visual judgment, including:
 ### No manual fallback
 
 - Do not bypass deterministic validation.
-- If the validator fails, fix the canonical source, mapping, or validator; do
-  not replace it with prose-only inspection.
+- If either validator fails, fix its canonical source, mapping, baseline, or
+  implementation; do not replace it with prose-only inspection or duplicate
+  frontend scanning in the Python skill validator.
 
 ## Stop conditions
 
@@ -198,6 +207,6 @@ authorized, validate it, and only then implement the product surface.
 - `references/variables.scss` — CSS custom properties and semantic aliases.
 - `references/theme.css` — `@theme` bridge.
 - `references/material-theme.scss` — Angular Material semantic bridge.
-- `references/legacy-style-baseline.json` — exact legacy specificity and
-  Material-internal selector debt; it is a migration baseline, not permission
-  for new violations.
+- `ui/tests/design-system-architecture-baseline.json` — frontend-owned exact
+  current legacy specificity and Material-internal selector debt plus narrowly
+  documented central integration exceptions.
