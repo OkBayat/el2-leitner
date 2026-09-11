@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 
 import {
 	validateArchitectureSnapshot,
@@ -80,6 +82,26 @@ function validateFixture({
 }
 
 {
+	const relative = "ui/src/app/features/example/identifier.component.ts";
+	const errors = validateFixture({
+		files: [
+			[
+				relative,
+				"const BAD = '.mat-mdc-example { color: red !important; }';\n" +
+					"@Component({styles: BAD}) export class Scalar {}\n" +
+					"@Component({styles: [BAD]}) export class ArrayValue {}",
+			],
+		],
+	});
+	assert.equal(
+		errors.filter((error) =>
+			error.includes("Unsupported Angular inline styles expression"),
+		).length,
+		2,
+	);
+}
+
+{
 	const relative = "ui/src/app/features/example/example.component.scss";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.important_declarations[relative] = {
@@ -118,6 +140,42 @@ function validateFixture({
 		baseline,
 	});
 	assert.deepEqual(passingErrors, []);
+}
+
+{
+	const relative = "ui/src/app/features/example/example.component.scss";
+	const occurrence = ".legacy, .second => color:red!important";
+	const baseline = emptyBaseline();
+	baseline.legacy_debt.important_declarations[relative] = {
+		occurrences: [occurrence],
+		reason: "Existing test debt.",
+	};
+	assert.deepEqual(
+		validateFixture({
+			files: [[relative, ".legacy, .second { color: red !important; }"]],
+			baseFiles: [
+				[
+					relative,
+					".legacy,.second /* formatting note */ { color: red !important; }",
+				],
+			],
+			baseline,
+		}),
+		[],
+	);
+
+	const substitutionErrors = validateFixture({
+		files: [[relative, ".legacy, .second { color: red !important; }"]],
+		baseFiles: [
+			[relative, ".legacy, .different { color: red !important; }"],
+		],
+		baseline,
+	});
+	assert.ok(
+		substitutionErrors.some((error) =>
+			error.includes("baseline grew beyond base source debt"),
+		),
+	);
 }
 
 {
@@ -217,5 +275,29 @@ const repositoryErrors = validateRepository({
 	baseRef: process.env.VOCORA_UI_BASE_SHA || undefined,
 });
 assert.deepEqual(repositoryErrors, [], repositoryErrors.join("\n"));
+
+const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+const packageJson = JSON.parse(
+	fs.readFileSync(`${repoRoot}/ui/package.json`, "utf8"),
+);
+assert.equal(
+	packageJson.scripts["check:design-system-architecture"],
+	"node tests/test-design-system-architecture.mjs",
+);
+assert.match(
+	packageJson.scripts.test,
+	/check:architecture.*check:design-system-architecture.*ng test/u,
+);
+const workflow = fs.readFileSync(
+	`${repoRoot}/.github/workflows/test.yml`,
+	"utf8",
+);
+assert.match(workflow, /pull_request:[\s\S]*- 'ui\/\*\*'/u);
+assert.match(workflow, /fetch-depth:\s*0/u);
+assert.match(
+	workflow,
+	/VOCORA_UI_BASE_SHA:\s*\$\{\{ github\.event\.pull_request\.base\.sha \}\}/u,
+);
+assert.match(workflow, /run:\s*npm test/u);
 
 console.log("Design-system architecture contract passed.");

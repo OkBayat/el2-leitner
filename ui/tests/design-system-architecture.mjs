@@ -60,10 +60,11 @@ function readTypeScriptString(text, start) {
 	return [null, index];
 }
 
-export function extractInlineStyles(text) {
-	if (!text.includes("@Component")) return [];
+function extractInlineStyleMetadata(text) {
+	if (!text.includes("@Component")) return { styles: [], unsupported: 0 };
 
 	const styles = [];
+	let unsupported = 0;
 	for (const match of text.matchAll(/\bstyles\s*:\s*/gu)) {
 		let index = match.index + match[0].length;
 		if (index >= text.length) continue;
@@ -72,10 +73,14 @@ export function extractInlineStyles(text) {
 			if (value !== null) styles.push(value);
 			continue;
 		}
-		if (text[index] !== "[") continue;
+		if (text[index] !== "[") {
+			unsupported += 1;
+			continue;
+		}
 
 		index += 1;
 		let depth = 1;
+		let unsupportedArray = false;
 		while (index < text.length && depth > 0) {
 			const character = text[index];
 			if (["'", '"', "`"].includes(character)) {
@@ -86,10 +91,21 @@ export function extractInlineStyles(text) {
 				index += 1;
 				if (character === "[") depth += 1;
 				if (character === "]") depth -= 1;
+				if (
+					depth > 0 &&
+					![",", " ", "\t", "\r", "\n"].includes(character)
+				) {
+					unsupportedArray = true;
+				}
 			}
 		}
+		if (unsupportedArray) unsupported += 1;
 	}
-	return styles;
+	return { styles, unsupported };
+}
+
+export function extractInlineStyles(text) {
+	return extractInlineStyleMetadata(text).styles;
 }
 
 function extractBracedImportantDeclarations(text) {
@@ -168,14 +184,20 @@ export function extractMaterialInternalSelectors(
 		.filter((selector) => /\.mat-mdc-[a-z0-9_-]+/iu.test(selector));
 }
 
-function styleUnits(sources) {
+function styleUnits(sources, errors) {
 	const units = [];
 	for (const [relative, text] of sources) {
 		const extension = path.extname(relative).toLowerCase();
 		if (STYLE_EXTENSIONS.has(extension)) {
 			units.push({ relative, text, indentedSass: extension === ".sass" });
 		} else if (extension === ".ts") {
-			const inlineStyles = extractInlineStyles(text);
+			const { styles: inlineStyles, unsupported } =
+				extractInlineStyleMetadata(text);
+			for (let index = 0; index < unsupported; index += 1) {
+				errors?.push(
+					`Unsupported Angular inline styles expression in ${relative}; use a literal string or literal string array`,
+				);
+			}
 			if (inlineStyles.length)
 				units.push({
 					relative,
@@ -193,10 +215,10 @@ function increment(target, relative, occurrence) {
 	target.set(relative, occurrences);
 }
 
-function scanDebt(sources) {
+function scanDebt(units) {
 	const important = new Map();
 	const material = new Map();
-	for (const { relative, text, indentedSass } of styleUnits(sources)) {
+	for (const { relative, text, indentedSass } of units) {
 		for (const occurrence of extractImportantDeclarations(text, {
 			indentedSass,
 		})) {
@@ -309,10 +331,12 @@ function compareExact(actual, declared, label, errors) {
 }
 
 function compareLegacyToBase(declared, baseActual, label, errors) {
+	const canonicalBase = canonicalizeOccurrences(baseActual);
 	for (const [relative, occurrences] of declared) {
-		const baseItems = baseActual.get(relative) ?? new Map();
+		const baseItems = canonicalBase.get(relative) ?? new Map();
 		for (const [occurrence, count] of occurrences) {
-			const baseCount = baseItems.get(occurrence) ?? 0;
+			const baseCount =
+				baseItems.get(canonicalOccurrence(occurrence)) ?? 0;
 			for (let index = baseCount; index < count; index += 1) {
 				errors.push(
 					`Legacy ${label} baseline grew beyond base source debt in ${relative}: ${occurrence}`,
@@ -320,6 +344,36 @@ function compareLegacyToBase(declared, baseActual, label, errors) {
 			}
 		}
 	}
+}
+
+function canonicalOccurrence(occurrence) {
+	const withoutComments = occurrence.replace(/\/\*[\s\S]*?\*\//gu, " ");
+	const match = withoutComments.match(
+		/^(.*?)\s*=>\s*([a-z-]+):(.*)!important$/iu,
+	);
+	if (!match) return normalizeWhitespace(withoutComments);
+	const selector = normalizeWhitespace(match[1]).replace(
+		/\s*([,>+~])\s*/gu,
+		"$1",
+	);
+	const value = normalizeWhitespace(match[3])
+		.replace(/\(\s+/gu, "(")
+		.replace(/\s+\)/gu, ")")
+		.replace(/\s*,\s*/gu, ",");
+	return `${selector} => ${match[2].toLowerCase()}:${value}!important`;
+}
+
+function canonicalizeOccurrences(occurrencesByPath) {
+	const result = new Map();
+	for (const [relative, occurrences] of occurrencesByPath) {
+		const canonical = new Map();
+		for (const [occurrence, count] of occurrences) {
+			const key = canonicalOccurrence(occurrence);
+			canonical.set(key, (canonical.get(key) ?? 0) + count);
+		}
+		result.set(relative, canonical);
+	}
+	return result;
 }
 
 export function validateArchitectureSnapshot({
@@ -353,7 +407,9 @@ export function validateArchitectureSnapshot({
 		}
 	}
 
-	for (const { relative, text } of styleUnits(currentSources)) {
+	const currentUnits = styleUnits(currentSources, errors);
+	const baseUnits = styleUnits(baseSources);
+	for (const { relative, text } of currentUnits) {
 		for (const [pattern, label, owner] of STYLE_OWNERS) {
 			if (relative === owner) continue;
 			pattern.lastIndex = 0;
@@ -365,8 +421,8 @@ export function validateArchitectureSnapshot({
 		}
 	}
 
-	const actual = scanDebt(currentSources);
-	const baseActual = scanDebt(baseSources);
+	const actual = scanDebt(currentUnits);
+	const baseActual = scanDebt(baseUnits);
 	const legacyImportant = baselineEntries(
 		baseline,
 		"legacy_debt",

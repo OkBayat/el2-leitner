@@ -149,8 +149,9 @@ section. Never edit Bootstrap's generated or internal CSS.
 
 `ui/tests/test-design-system-architecture.mjs` is the canonical frontend source
 guardrail. It scans CSS, Less, SCSS, indented Sass, and Angular inline `styles`
-in scalar or array form. It requires actual legacy debt to equal the declared
-baseline in `ui/tests/design-system-architecture-baseline.json`, so stale
+in literal scalar or literal array form; unsupported expressions fail closed.
+It requires actual legacy debt to equal the declared baseline in
+`ui/tests/design-system-architecture-baseline.json`, so stale
 entries fail and must be removed with the source debt. It also compares each
 legacy entry with the pull request base source: legacy debt may stay the same
 or shrink, but an ordinary change cannot add a new occurrence and bless it as
