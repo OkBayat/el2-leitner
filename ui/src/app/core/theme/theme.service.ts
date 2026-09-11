@@ -12,12 +12,20 @@ export const SYSTEM_THEME_MEDIA = {
   dark: '(prefers-color-scheme: dark)',
 } as const;
 
+function storedThemeMode(): ThemeMode {
+  try {
+    const mode = globalThis.localStorage?.getItem(THEME_MODE_STORAGE_KEY);
+    if (mode === 'light' || mode === 'dark' || mode === 'system') return mode;
+  } catch { /* Browser storage can be unavailable. */ }
+  return 'system';
+}
+
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
   private readonly systemThemeQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
-  private activeMode: ThemeMode = 'system';
+  private activeMode: ThemeMode = storedThemeMode();
 
   constructor() {
     const query = this.systemThemeQuery;

@@ -120,4 +120,21 @@ describe('ThemeService system chrome', () => {
 		changeListener();
 		expect(document.documentElement.dataset['theme']).toBe('dark');
 	});
+
+	it('preserves a cached explicit theme before account state hydration', () => {
+		let changeListener: () => void = () => undefined;
+		const query = {
+			matches: true,
+			addEventListener: vi.fn((_type: string, listener: () => void) => { changeListener = listener; }),
+			removeEventListener: vi.fn(),
+		};
+		vi.stubGlobal('matchMedia', vi.fn(() => query));
+		localStorage.setItem(THEME_MODE_STORAGE_KEY, 'light');
+		document.documentElement.dataset['theme'] = 'light';
+
+		TestBed.inject(ThemeService);
+		changeListener();
+
+		expect(document.documentElement.dataset['theme']).toBe('light');
+	});
 });
