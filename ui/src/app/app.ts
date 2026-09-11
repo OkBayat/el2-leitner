@@ -4,6 +4,8 @@ import { PwaInstallService } from './core/pwa/pwa-install.service';
 import { PwaUpdateService } from './core/pwa/pwa-update.service';
 import { ThemeService } from './core/theme/theme.service';
 import { PwaStatusComponent } from './shared/pwa/pwa-status.component';
+import { NativeLifecycleService } from './core/platform/native-lifecycle.service';
+import { AppUpdateService } from './core/update/app-update.service';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +17,8 @@ export class App {
   private readonly pwaInstallation = inject(PwaInstallService);
   private readonly pwaUpdates = inject(PwaUpdateService);
   private readonly theme = inject(ThemeService);
+  private readonly nativeLifecycle = inject(NativeLifecycleService);
+  private readonly appUpdates = inject(AppUpdateService);
 
   constructor() {
     // Keep theme and system chrome synchronized on routes outside AppShell.
@@ -23,5 +27,7 @@ export class App {
     // beforeinstallprompt event is captured before the user opens Settings.
     void this.pwaInstallation.mode();
     this.pwaUpdates.start();
+    this.nativeLifecycle.start();
+    this.appUpdates.start();
   }
 }

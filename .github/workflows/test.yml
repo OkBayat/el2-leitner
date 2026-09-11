@@ -10,6 +10,7 @@ on:
       - '.env.example'
       - 'docker-compose.yml'
       - '.github/workflows/test.yml'
+      - '.github/workflows/mobile-release.yml'
   push:
     branches:
       - main
@@ -22,6 +23,7 @@ on:
       - '.env.example'
       - 'docker-compose.yml'
       - '.github/workflows/test.yml'
+      - '.github/workflows/mobile-release.yml'
 
 permissions:
   contents: read

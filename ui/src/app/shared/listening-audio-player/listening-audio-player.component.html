@@ -7,7 +7,8 @@
 >
   <audio
     #audio
-    [src]="src()"
+    [src]="resolvedSrc()"
+    crossorigin="use-credentials"
     preload="metadata"
     (loadedmetadata)="syncState()"
     (durationchange)="syncState()"

@@ -17,8 +17,8 @@
 				<small>Reload once to switch to the updated app files.</small>
 			</div>
 			<div class="status-actions">
-				<button type="button" (click)="updates.dismissUpdate()">Later</button>
-				<button class="primary" type="button" [disabled]="updates.activating()" (click)="updates.reloadForUpdate()">
+				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="updates.dismissUpdate()">Later</button>
+				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="updates.activating()" (click)="updates.reloadForUpdate()">
 					{{ updates.activating() ? 'Updating…' : 'Reload' }}
 				</button>
 			</div>
@@ -46,9 +46,9 @@
 				}
 			</div>
 			<div class="status-actions">
-				<button type="button" (click)="dismissInstall()">Later</button>
+				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="dismissInstall()">Later</button>
 				@if (install.mode() === 'prompt') {
-					<button class="primary" type="button" [disabled]="installing()" (click)="requestInstall()">
+					<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="installing()" (click)="requestInstall()">
 						{{ installing() ? 'Opening…' : 'Install' }}
 					</button>
 				}
@@ -63,7 +63,50 @@
 				<strong>App support needs attention</strong>
 				<small>{{ updates.errorMessage() }}</small>
 			</div>
-			<button type="button" (click)="updates.clearError()">Dismiss</button>
+			<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="updates.clearError()">Dismiss</button>
+		</div>
+	}
+
+	@if (appUpdates.liveUpdateReady()) {
+		<div class="pwa-status update" role="status" data-testid="native-live-update-ready">
+			<span class="status-mark" aria-hidden="true">↻</span>
+			<div>
+				<strong>A new version of Vocora is ready</strong>
+				<small>Your current session is safe. Restart now or apply it after you leave the app.</small>
+			</div>
+			<div class="status-actions">
+				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.postponeLiveUpdate()">Later</button>
+				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="appUpdates.activating()" (click)="appUpdates.restartForLiveUpdate()">
+					{{ appUpdates.activating() ? 'Updating…' : 'Restart & Update' }}
+				</button>
+			</div>
+		</div>
+	}
+
+	@if (appUpdates.binaryUpdate() !== 'none') {
+		<div class="pwa-status update" [class.required-update]="appUpdates.binaryUpdate() === 'required'" role="alert" data-testid="native-binary-update">
+			<span class="status-mark" aria-hidden="true">↑</span>
+			<div>
+				<strong>{{ appUpdates.binaryUpdate() === 'required' ? 'Vocora must be updated' : 'A newer Vocora app is available' }}</strong>
+				<small>This update contains native app changes and is installed from your app store.</small>
+			</div>
+			<div class="status-actions">
+				@if (appUpdates.binaryUpdate() === 'optional') {
+					<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.dismissOptionalBinaryUpdate()">Later</button>
+				}
+				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" (click)="appUpdates.openStore()">Open Store</button>
+			</div>
+		</div>
+	}
+
+	@if (appUpdates.errorMessage()) {
+		<div class="pwa-status error" role="alert" data-testid="native-update-error">
+			<span class="status-mark" aria-hidden="true">!</span>
+			<div>
+				<strong>Update check needs attention</strong>
+				<small>{{ appUpdates.errorMessage() }}</small>
+			</div>
+			<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.clearError()">Dismiss</button>
 		</div>
 	}
 </section>

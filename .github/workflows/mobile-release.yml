@@ -1,0 +1,290 @@
+name: Mobile Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      signed_release:
+        description: Build signed APK, AAB, and IPA artifacts
+        type: boolean
+        default: true
+      publish_github_release:
+        description: Attach signed artifacts to a GitHub Release
+        type: boolean
+        default: false
+      enable_live_update:
+        description: Publish a guarded web-only bundle to Capgo
+        type: boolean
+        default: false
+      live_update_channel:
+        description: Capgo channel
+        type: choice
+        options: [development, staging, production]
+        default: staging
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 22.22.3
+  CAPACITOR_APP_ID: ir.vocora
+  VOCORA_LIVE_UPDATES_ENABLED: ${{ inputs.enable_live_update && 'true' || 'false' }}
+  VOCORA_LIVE_UPDATE_CHANNEL: ${{ inputs.live_update_channel || 'production' }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release request
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_github_release && !inputs.signed_release
+        run: |
+          echo 'A GitHub Release requires signed Android and iOS artifacts. Enable signed_release.' >&2
+          exit 1
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            back/package-lock.json
+            ui/package-lock.json
+      - name: Test backend
+        working-directory: back
+        run: npm ci && npm test
+      - name: Test web and native contracts
+        working-directory: ui
+        env:
+          VOCORA_REQUIRE_NATIVE_PROJECTS: 'true'
+        run: npm ci && npm test && npm run mobile:build && npm run check:mobile-bundle && npx cap sync
+      - name: Package deployable web bundle
+        working-directory: ui
+        run: tar -czf vocora-web-${{ github.sha }}.tar.gz -C dist/browser .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Vocora-Web
+          path: ui/vocora-web-${{ github.sha }}.tar.gz
+          if-no-files-found: error
+
+  android:
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_REQUESTED: ${{ github.ref_type == 'tag' || inputs.signed_release }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Prepare native project
+        working-directory: ui
+        run: |
+          npm ci
+          npm run mobile:version -- --build-number "$GITHUB_RUN_NUMBER"
+          npm run mobile:sync
+      - name: Build Android debug smoke APK
+        working-directory: ui/android
+        run: ./gradlew assembleDebug
+      - name: Require complete Android signing inputs
+        if: env.RELEASE_REQUESTED == 'true'
+        run: |
+          for value in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!value}" ]; then
+              echo "Signed Android release requested, but $value is not configured." >&2
+              exit 1
+            fi
+          done
+      - name: Restore temporary Android keystore
+        if: env.RELEASE_REQUESTED == 'true'
+        run: |
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/vocora-release.jks" >> "$GITHUB_ENV"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/vocora-release.jks"
+      - name: Build signed Android APK and AAB
+        if: env.RELEASE_REQUESTED == 'true'
+        working-directory: ui/android
+        run: ./gradlew assembleRelease bundleRelease
+      - name: Name Android release artifacts
+        if: env.RELEASE_REQUESTED == 'true'
+        working-directory: ui
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          cp android/app/build/outputs/apk/release/app-release.apk "vocora-android-${VERSION}.apk"
+          cp android/app/build/outputs/bundle/release/app-release.aab "vocora-android-${VERSION}.aab"
+      - uses: actions/upload-artifact@v4
+        if: env.RELEASE_REQUESTED == 'true'
+        with:
+          name: Vocora-Android-APK
+          path: ui/vocora-android-*.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.RELEASE_REQUESTED == 'true'
+        with:
+          name: Vocora-Android-AAB
+          path: ui/vocora-android-*.aab
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.RELEASE_REQUESTED != 'true'
+        with:
+          name: Vocora-Android-Debug
+          path: ui/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Remove temporary Android keystore
+        if: always()
+        run: if [ -n "${ANDROID_KEYSTORE_PATH:-}" ]; then rm -f "$ANDROID_KEYSTORE_PATH"; fi
+
+  ios:
+    needs: validate
+    runs-on: macos-26
+    env:
+      RELEASE_REQUESTED: ${{ github.ref_type == 'tag' || inputs.signed_release }}
+      IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+      IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      IOS_EXPORT_METHOD: ${{ vars.IOS_EXPORT_METHOD || 'app-store-connect' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Prepare native project
+        working-directory: ui
+        run: |
+          npm ci
+          npm run mobile:version -- --build-number "$GITHUB_RUN_NUMBER"
+          npm run mobile:sync
+      - name: Build iOS Simulator smoke app
+        working-directory: ui/ios/App
+        run: xcodebuild -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/VocoraDerivedData" CODE_SIGNING_ALLOWED=NO build
+      - name: Package iOS Simulator artifact
+        run: ditto -c -k --sequesterRsrc --keepParent "$RUNNER_TEMP/VocoraDerivedData/Build/Products/Debug-iphonesimulator/App.app" "ui/vocora-ios-simulator-${GITHUB_RUN_NUMBER}.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Vocora-iOS-Simulator
+          path: ui/vocora-ios-simulator-*.zip
+          if-no-files-found: error
+      - name: Require complete Apple signing inputs
+        if: env.RELEASE_REQUESTED == 'true'
+        run: |
+          for value in IOS_DISTRIBUTION_CERTIFICATE_BASE64 IOS_DISTRIBUTION_CERTIFICATE_PASSWORD IOS_PROVISIONING_PROFILE_BASE64 IOS_TEAM_ID; do
+            if [ -z "${!value}" ]; then
+              echo "Signed IPA requested, but $value is not configured." >&2
+              exit 1
+            fi
+          done
+      - name: Install temporary Apple signing identity
+        if: env.RELEASE_REQUESTED == 'true'
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/vocora-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(openssl rand -hex 24)
+          CERTIFICATE_PATH="$RUNNER_TEMP/vocora-distribution.p12"
+          PROFILE_PATH="$RUNNER_TEMP/vocora.mobileprovision"
+          echo "VOCORA_KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+          printf '%s' "$IOS_DISTRIBUTION_CERTIFICATE_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          printf '%s' "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$IOS_DISTRIBUTION_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          security cms -D -i "$PROFILE_PATH" > "$RUNNER_TEMP/profile.plist"
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print UUID' "$RUNNER_TEMP/profile.plist")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print Name' "$RUNNER_TEMP/profile.plist")
+          echo "VOCORA_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+          echo "VOCORA_PROFILE_NAME=$PROFILE_NAME" >> "$GITHUB_ENV"
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_UUID}.mobileprovision"
+      - name: Archive and export signed IPA
+        if: env.RELEASE_REQUESTED == 'true'
+        working-directory: ui/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Vocora.xcarchive" DEVELOPMENT_TEAM="$IOS_TEAM_ID" CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="$VOCORA_PROFILE_NAME" archive
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>${IOS_EXPORT_METHOD}</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>teamID</key><string>${IOS_TEAM_ID}</string>
+            <key>provisioningProfiles</key><dict><key>ir.vocora</key><string>${VOCORA_PROFILE_NAME}</string></dict>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Vocora.xcarchive" -exportPath "$RUNNER_TEMP/VocoraExport" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+          VERSION=$(node -p "require('../../package.json').version")
+          cp "$RUNNER_TEMP/VocoraExport"/*.ipa "../../vocora-ios-${VERSION}.ipa"
+      - uses: actions/upload-artifact@v4
+        if: env.RELEASE_REQUESTED == 'true'
+        with:
+          name: Vocora-iOS-IPA
+          path: ui/vocora-ios-*.ipa
+          if-no-files-found: error
+      - name: Remove temporary Apple signing material
+        if: always()
+        run: |
+          if [ -n "${VOCORA_PROFILE_UUID:-}" ]; then rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/${VOCORA_PROFILE_UUID}.mobileprovision"; fi
+          if [ -n "${VOCORA_KEYCHAIN_PATH:-}" ]; then security delete-keychain "$VOCORA_KEYCHAIN_PATH" || true; fi
+          rm -f "$RUNNER_TEMP/vocora-distribution.p12" "$RUNNER_TEMP/vocora.mobileprovision" "$RUNNER_TEMP/profile.plist"
+
+  live-update:
+    if: inputs.enable_live_update
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      CAPGO_API_KEY: ${{ secrets.CAPGO_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Build guarded native web bundle
+        working-directory: ui
+        run: npm ci && npm run mobile:build
+      - name: Require Capgo credential
+        run: test -n "$CAPGO_API_KEY" || { echo 'CAPGO_API_KEY is required for an intentional live update.' >&2; exit 1; }
+      - name: Publish compatible live update
+        working-directory: ui
+        run: npx --yes @capgo/cli@8.50.3 bundle upload "$CAPACITOR_APP_ID" --apikey "$CAPGO_API_KEY" --path dist/browser --channel "$VOCORA_LIVE_UPDATE_CHANNEL" --fail-on-incompatible --auto-min-update-version
+
+  github-release:
+    if: github.ref_type == 'tag' || inputs.publish_github_release
+    needs: [android, ios]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: Vocora-Android-*
+          path: release-assets
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: Vocora-iOS-IPA
+          path: release-assets
+      - name: Publish GitHub Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "$GITHUB_REF_TYPE" != 'tag' ]; then TAG="v$(date -u +%Y%m%d)-${GITHUB_RUN_NUMBER}"; fi
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "Vocora $TAG" --generate-notes
+          gh release upload "$TAG" release-assets/* --clobber

@@ -27,7 +27,9 @@ const container = createContainer({ pool, config });
 const app = createApp({
   container,
   nodeEnv: config.nodeEnv,
-  trustProxy: config.trustProxy
+  trustProxy: config.trustProxy,
+  corsAllowedOrigins: config.corsAllowedOrigins,
+  mobileReleases: config.mobileReleases
 });
 
 const server = app.listen(config.port, () => {

@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { clamp } from "../../domain/learning/learning-rules";
+import { runtimeApiUrl, runtimeRequestHeaders } from "../platform/runtime-platform.service";
 
 export interface SpeechPlaybackObserver {
 	onStart?: () => void;
@@ -150,10 +151,10 @@ export class SpeechService {
 	): Promise<void> {
 		try {
 			const voice = dialogueVoice(voiceIndex);
-			const response = await globalThis.fetch("/api/tts/speech", {
+			const response = await globalThis.fetch(runtimeApiUrl("/api/tts/speech"), {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "same-origin",
+				headers: { "Content-Type": "application/json", ...runtimeRequestHeaders() },
+				credentials: "include",
 				body: JSON.stringify({
 					text,
 					speed: rate,

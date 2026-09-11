@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { RuntimePlatformService } from '../platform/runtime-platform.service';
 
 export class ApiError extends Error {
   constructor(message: string, readonly status = 0, readonly code = 'API_ERROR') {
@@ -12,6 +13,7 @@ export class ApiError extends Error {
 @Injectable({ providedIn: 'root' })
 export class ApiClientService {
   private readonly http = inject(HttpClient);
+  private readonly runtime = inject(RuntimePlatformService);
 
   async get<T>(path: string): Promise<T> { return this.request<T>('GET', path); }
   async post<T>(path: string, body?: unknown, headers?: Record<string, string>): Promise<T> { return this.request<T>('POST', path, body, headers); }
@@ -20,9 +22,9 @@ export class ApiClientService {
 
   private async request<T>(method: string, path: string, body?: unknown, headers?: Record<string, string>): Promise<T> {
     try {
-      return await firstValueFrom(this.http.request<T>(method, path, {
+      return await firstValueFrom(this.http.request<T>(method, this.runtime.apiUrl(path), {
         body,
-        headers: new HttpHeaders(headers || {}),
+        headers: new HttpHeaders({ ...this.runtime.requestHeaders(), ...(headers || {}) }),
         withCredentials: true,
       }));
     } catch (error) {

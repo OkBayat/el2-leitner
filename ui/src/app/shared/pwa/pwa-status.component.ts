@@ -2,10 +2,13 @@ import {ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter} from 'rxjs';
+import {MatButtonModule} from '@angular/material/button';
 import {PwaConnectivityService} from '../../core/pwa/pwa-connectivity.service';
 import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 import type {PwaInstallMode} from '../../core/pwa/pwa-platform';
 import {PwaUpdateService} from '../../core/pwa/pwa-update.service';
+import {RuntimePlatformService} from '../../core/platform/runtime-platform.service';
+import {AppUpdateService} from '../../core/update/app-update.service';
 
 const INSTALL_SUGGESTION_MODES = new Set<PwaInstallMode>([
 	'prompt',
@@ -28,6 +31,7 @@ export function shouldShowPwaInstallSuggestion(
 
 @Component({
 	selector: 'app-pwa-status',
+	imports: [MatButtonModule],
 	templateUrl: 'pwa-status.component.html',
 	styleUrl: 'pwa-status.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,13 +45,15 @@ export class PwaStatusComponent {
 	readonly connectivity = inject(PwaConnectivityService);
 	readonly install = inject(PwaInstallService);
 	readonly updates = inject(PwaUpdateService);
+	readonly appUpdates = inject(AppUpdateService);
+	readonly runtime = inject(RuntimePlatformService);
 	readonly installing = signal(false);
 	readonly showInstallSuggestion = computed(() => shouldShowPwaInstallSuggestion(
 		this.routeUrl(),
 		this.install.mode(),
 		this.installDismissed(),
 		this.updates.updateReady(),
-		this.connectivity.online(),
+		this.connectivity.online() && !this.runtime.native,
 	));
 
 	constructor() {

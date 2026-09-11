@@ -8,6 +8,7 @@ import { createApiRouter } from "./interfaces/http/apiRouter.js";
 import { createAuthMiddleware } from "./interfaces/http/authMiddleware.js";
 import { createShadowingRouter } from "./interfaces/http/shadowingRouter.js";
 import { createErrorHandler } from "./interfaces/http/errorHandler.js";
+import { createCredentialedCors } from "./interfaces/http/corsMiddleware.js";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_STATIC_DIRECTORY = path.resolve(currentDirectory, "../../ui");
@@ -82,12 +83,15 @@ export function createApp({
   staticDirectory = DEFAULT_STATIC_DIRECTORY,
   logger = console,
   nodeEnv = "development",
-  trustProxy = false
+  trustProxy = false,
+  corsAllowedOrigins = [],
+  mobileReleases = {}
 }) {
   const app = express();
 
   if (trustProxy) app.set("trust proxy", 1);
   app.disable("x-powered-by");
+  app.use(createCredentialedCors({ allowedOrigins: corsAllowedOrigins }));
   app.use(installOriginTiming);
   app.use(
     helmet({
@@ -103,6 +107,13 @@ export function createApp({
   );
   app.use(express.json({ limit: "10mb", strict: true }));
   app.use(cookieParser());
+  app.get('/api/mobile/releases/:platform', (req, res) => {
+    const policy = mobileReleases[req.params.platform];
+    if (!policy) {
+      return res.status(404).json({ error: { code: 'PLATFORM_NOT_FOUND', message: 'Mobile platform was not found.' } });
+    }
+    return res.status(200).json(policy);
+  });
   app.use("/api/shadowing", createShadowingRouter(container));
 
   // Production containers always expose the Learning Path module through

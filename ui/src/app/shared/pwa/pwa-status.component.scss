@@ -82,31 +82,8 @@
 	pointer-events: auto;
 }
 
-button {
-	min-height: 34px;
-	padding: 0 11px;
-	border: 0;
-	border-radius: 999px;
-	background: transparent;
-	color: var(--mat-sys-primary);
-	font: inherit;
-	font-size: 11px;
-	font-weight: 700;
-	cursor: pointer;
-}
-
-button:hover {
-	background: var(--mat-sys-surface-container-highest);
-}
-
-button.primary {
-	background: var(--mat-sys-primary);
-	color: var(--mat-sys-on-primary);
-}
-
-button:disabled {
-	opacity: .55;
-	cursor: wait;
+.required-update {
+	border-color: var(--vocora-action-warning);
 }
 
 @media (max-width: 560px) {
