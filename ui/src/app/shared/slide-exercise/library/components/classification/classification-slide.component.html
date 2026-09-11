@@ -10,7 +10,7 @@
 			<div class="bucket-grid">
 				@for (category of data.categories; track category.id) {
 					<div
-						class="bucket"
+						class="bucket d-flex flex-column align-items-start gap-3 p-3 border border-2 border-secondary rounded-4 bg-light text-body text-wrap"
 						role="group"
 						[attr.data-category-id]="category.id"
 						cdkDropList
@@ -21,10 +21,10 @@
 						"
 						[attr.aria-label]="category.label"
 					>
-						<div class="bucket__header">
+						<div class="d-flex align-items-center w-100">
 							<strong>{{ category.label }}</strong>
 						</div>
-						<div class="bucket__items" role="list">
+						<div class="d-flex flex-wrap gap-2 w-100" role="list">
 							@for (
 								item of assignedItems(category.id);
 								track item.id
@@ -47,7 +47,7 @@
 									{{ item.label }}
 								</button>
 							} @empty {
-								<span class="bucket__placeholder">
+								<span class="text-secondary small">
 									Drop an item here
 								</span>
 							}

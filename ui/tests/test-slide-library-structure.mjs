@@ -219,8 +219,13 @@ for (const attribute of [
 assert.match(clozeTemplate, /class="cloze-input-measure"/u);
 assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
-assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
-assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
+assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u);
+assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u);
+assert.match(
+	classificationTemplate,
+	/class="bucket d-flex flex-column align-items-start gap-3 p-3 border border-2 border-secondary rounded-4 bg-light text-body text-wrap"/u,
+	'Classification buckets must use Bootstrap layout, spacing, border, radius, background, and text utilities.',
+);
 assert.doesNotMatch(
 	classificationTemplate,
 	/\(click\)|\(keydown\)|aria-pressed/u,
@@ -266,6 +271,16 @@ assert.match(
 assert.match(
 	incorrectClassificationStyles,
 	/background:\s*var\(--vocora-error-surface\)\s*!important;/u,
+);
+const classificationBucketStyles = sharedStyles.match(
+	/\.bucket\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(classificationBucketStyles, /min-height:\s*120px;/u);
+assert.match(classificationBucketStyles, /border-style:\s*dashed\s*!important;/u);
+assert.doesNotMatch(
+	classificationBucketStyles,
+	/(?:display|flex-direction|align-items|gap|padding|border-color|border-radius|background|color|white-space|cursor|transition):/u,
+	'Bootstrap utilities must own standard classification bucket presentation.',
 );
 assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
 assert.match(clozeTemplate, /class="choice-option"/u);

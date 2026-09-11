@@ -213,53 +213,14 @@ blockquote {
 
 .bucket {
 	min-height: 120px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: var(--vocora-space-3);
-	padding: var(--vocora-space-4);
-	border: 2px dashed var(--vocora-border);
-	border-radius: var(--vocora-radius-lg);
-	outline: 0;
-	background: var(--vocora-surface-subtle);
-	color: var(--vocora-text-primary);
-	white-space: normal;
-	cursor: default;
-	transition:
-		border-color var(--vocora-motion-fast),
-		background var(--vocora-motion-fast),
-		box-shadow var(--vocora-motion-fast);
+	border-style: dashed !important;
 }
 
 .bucket.cdk-drop-list-receiving {
-	border-color: var(--vocora-information-border);
-	background: var(--vocora-information-surface);
+	border-color: var(--vocora-information-border) !important;
+	background: var(--vocora-information-surface) !important;
 }
 
-.bucket:focus-visible {
-	box-shadow: 0 0 0 3px var(--vocora-focus-ring);
-}
-
-.bucket__header {
-	width: 100%;
-	min-height: var(--vocora-touch-target-min);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--vocora-space-2);
-	padding-inline: 0;
-	color: var(--vocora-text-primary);
-	text-align: left;
-}
-
-.bucket__items {
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--vocora-space-2);
-}
-
-.bucket__placeholder,
 .hint-row,
 .replay-status {
 	color: var(--vocora-text-secondary);
@@ -850,8 +811,7 @@ input:focus-visible,
 	.cloze-choice-blank,
 	.cloze-playback-token,
 	.cloze-content--spoken .inline-field,
-	.pronunciation-waveform span,
-	.bucket {
+	.pronunciation-waveform span {
 		transition: none;
 	}
 }
