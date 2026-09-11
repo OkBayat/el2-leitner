@@ -181,6 +181,19 @@ blockquote {
 	gap: var(--vocora-space-2);
 }
 
+.classification-item.cdk-drag:not(.cdk-drag-disabled) {
+	cursor: grab;
+	touch-action: none;
+}
+
+.classification-item.cdk-drag-dragging {
+	cursor: grabbing;
+}
+
+.classification-item.cdk-drag-placeholder {
+	opacity: 0.35;
+}
+
 .bucket {
 	min-height: 120px;
 	display: flex;
@@ -205,6 +218,11 @@ blockquote {
 	border-color: var(--vocora-information-border);
 	background: var(--vocora-information-surface);
 	cursor: pointer;
+}
+
+.bucket.cdk-drop-list-receiving {
+	border-color: var(--vocora-information-border);
+	background: var(--vocora-information-surface);
 }
 
 .bucket:focus-visible {

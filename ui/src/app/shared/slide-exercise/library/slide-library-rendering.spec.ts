@@ -363,6 +363,18 @@ describe('reusable slide renderer contract', () => {
 				],
 			},
 		});
+		classificationFixture.detectChanges();
+		const classificationElement =
+			classificationFixture.nativeElement as HTMLElement;
+		expect(classificationElement.querySelector('.chip-list')?.classList).toContain(
+			'cdk-drop-list',
+		);
+		expect(
+			classificationElement.querySelector('.chip-list button')?.classList,
+		).toContain('cdk-drag');
+		expect(
+			classificationElement.querySelectorAll('.bucket.cdk-drop-list'),
+		).toHaveLength(2);
 		classificationFixture.componentInstance.selectItem('paw');
 		classificationFixture.componentInstance.assignSelected('plant');
 		classificationFixture.componentInstance.handleAction('check');

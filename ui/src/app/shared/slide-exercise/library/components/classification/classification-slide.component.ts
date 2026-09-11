@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SpeechService } from '../../../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
@@ -81,7 +82,12 @@ function parseClassification(value: unknown): ClassificationSlideData {
 @Component({
 	selector: 'app-classification-slide',
 	standalone: true,
-	imports: [MatButtonModule, MatChipsModule, SlideStimulusComponent],
+	imports: [
+		DragDropModule,
+		MatButtonModule,
+		MatChipsModule,
+		SlideStimulusComponent,
+	],
 	templateUrl: './classification-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,8 +114,19 @@ export class ClassificationSlideComponent
 	}
 	assignSelected(categoryId: string): void {
 		const id = this.selectedItemId();
-		if (!id || this.interactionState() !== 'idle') return;
-		this.assignments.update((value) => ({ ...value, [id]: categoryId }));
+		this.assignItem(id, categoryId);
+	}
+	assignDropped(itemId: string, categoryId: string): void {
+		this.assignItem(itemId, categoryId);
+	}
+	private assignItem(itemId: string, categoryId: string): void {
+		if (
+			this.interactionState() !== 'idle' ||
+			!this.data().items.some((item) => item.id === itemId) ||
+			!this.data().categories.some((category) => category.id === categoryId)
+		)
+			return;
+		this.assignments.update((value) => ({ ...value, [itemId]: categoryId }));
 		this.selectedItemId.set('');
 		this.setReady(
 			Object.keys(this.assignments()).length === this.data().items.length,

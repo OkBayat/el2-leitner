@@ -537,6 +537,36 @@ describe('reusable slide library behavior', () => {
 		expect(component.assignmentState('paw')).toBe('correct');
 	});
 
+	it('assigns and reassigns ClassificationSlide items dropped into categories', () => {
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClassificationSlideComponent(),
+		);
+		const states: unknown[] = [];
+		component.stateChange.subscribe((state) => states.push(state));
+		load(component, 'classification', {
+			categories: [
+				{ id: 'animal', label: 'Animal' },
+				{ id: 'plant', label: 'Plant' },
+			],
+			items: [
+				{ id: 'paw', label: 'paw', correctCategoryId: 'animal' },
+				{ id: 'root', label: 'root', correctCategoryId: 'plant' },
+			],
+		});
+
+		component.assignDropped('paw', 'plant');
+		expect(component.assignments()).toEqual({ paw: 'plant' });
+		expect(component.interactionState()).toBe('idle');
+
+		component.assignDropped('paw', 'animal');
+		component.assignDropped('root', 'plant');
+		expect(component.assignments()).toEqual({ paw: 'animal', root: 'plant' });
+		expect(states.at(-1)).toMatchObject({
+			chrome: { footer: { primary: { disabled: false } } },
+		});
+	});
+
 	it('validates ClozeSlide blanks independently, including variants and word limits', () => {
 		configure();
 		const component = TestBed.runInInjectionContext(

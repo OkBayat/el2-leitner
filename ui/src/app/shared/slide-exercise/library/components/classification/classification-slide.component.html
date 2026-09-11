@@ -3,15 +3,24 @@
 		@if (data.stimulus) {
 			<app-slide-stimulus [stimulus]="data.stimulus" />
 		}
-		<section class="slide-interaction">
+		<section class="slide-interaction" cdkDropListGroup>
 			<p class="slide-instruction">
 				{{ data.instruction || 'Place each item in a category.' }}
 			</p>
-			<div class="chip-list" aria-label="Items to classify">
+			<div
+				class="chip-list"
+				aria-label="Items to classify"
+				cdkDropList
+				[cdkDropListSortingDisabled]="true"
+			>
 				@for (item of data.items; track item.id) {
 					<button
 						mat-stroked-button
 						type="button"
+						class="classification-item"
+						cdkDrag
+						[cdkDragData]="item.id"
+						[cdkDragDisabled]="interactionState() !== 'idle'"
 						[attr.data-state]="itemState(item.id)"
 						[attr.aria-pressed]="selectedItemId() === item.id"
 						[attr.aria-label]="
@@ -29,6 +38,12 @@
 					<div
 						class="bucket"
 						role="button"
+						cdkDropList
+						[cdkDropListSortingDisabled]="true"
+						[cdkDropListDisabled]="interactionState() !== 'idle'"
+						(cdkDropListDropped)="
+							assignDropped($event.item.data, category.id)
+						"
 						[attr.aria-label]="
 							classificationBucketAriaLabel(
 								category.id,
