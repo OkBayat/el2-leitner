@@ -6720,14 +6720,16 @@
                     {
                       "id": "used_to_live",
                       "answers": [
-                        "used to live"
+                        "used to live",
+                        "lived"
                       ]
                     },
                     {
                       "id": "would_walk",
                       "answers": [
                         "would walk",
-                        "used to walk"
+                        "used to walk",
+                        "walked"
                       ]
                     },
                     {
