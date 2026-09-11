@@ -166,6 +166,11 @@ assert.match(
   /\.immersive-play-toggle__icon\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*50% auto auto 50%;[^}]*transform:\s*translate\(-50%, -50%\);/u,
   'The immersive play and pause glyphs must be centered independently of Material icon-button layout.',
 );
+assert.doesNotMatch(
+  audioStyles,
+  /\.immersive-play-toggle \.play-icon\s*\{[^}]*transform:/u,
+  'The play glyph must not be shifted away from the shared geometric center.',
+);
 assert.match(audioStyles, /\.immersive-waveform svg[\s\S]*?overflow:\s*visible/u, 'The taller center waveform must remain unclipped.');
 assert.match(audioStyles, /\.immersive-waveform\s*\{[^}]*overflow-x:\s*clip;[^}]*overflow-y:\s*visible;/u, 'The amplified waveform must remain vertically visible without horizontal overflow.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
