@@ -19,7 +19,7 @@ REQUIRED_FILES = (
     "references/theme.css",
     "references/material-theme.scss",
     "scripts/validate-design-system.py",
-    "scripts/test_validate_design_system.py",
+    "scripts/test-validate-design-system.mjs",
 )
 
 CANONICAL_COLORS = {
@@ -68,8 +68,6 @@ CANONICAL_ACTION_ROLES = {
 BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
 THEME_GROUPS = ("surface", "text", "action")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
-
-
 def skill_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -240,6 +238,11 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
         "### Codex-owned",
         "### No manual fallback",
         "## Stop conditions",
+        "existing Vocora shared primitive",
+        "Angular CDK",
+        "Bootstrap is the utility layer",
+        "Custom CSS is last",
+        "ui/tests/test-design-system-architecture.mjs",
     )
     for phrase in required_phrases:
         if phrase not in text:
@@ -282,6 +285,41 @@ def validate_material_reference(root: Path, errors: list[str]) -> None:
             )
 
 
+def validate_frontend_guidance(root: Path, errors: list[str]) -> None:
+    path = root / "references" / "DESIGN.md"
+    if not path.is_file():
+        return
+
+    text = path.read_text(encoding="utf-8")
+    hierarchy = (
+        "Existing Vocora shared primitive?",
+        "Standard interactive primitive in Angular Material?",
+        "Required behavior available in Angular CDK?",
+        "Reusable product-specific primitive?",
+        "Layout, spacing, display, or semantic utility in Bootstrap?",
+        "Existing shared style or semantic token?",
+        "Otherwise",
+    )
+    positions: list[int] = []
+    for step in hierarchy:
+        position = text.find(step)
+        if position < 0:
+            errors.append(f"DESIGN.md is missing decision-tree step: {step}")
+        positions.append(position)
+    if all(position >= 0 for position in positions) and positions != sorted(positions):
+        errors.append("DESIGN.md must keep the UI decision tree in canonical order")
+
+    for heading in (
+        "## Touch-to-refactor",
+        "## Custom CSS last",
+        "## Theme and color ownership",
+        "## Specificity and `!important`",
+        "## Angular Material internals",
+    ):
+        if heading not in text:
+            errors.append(f"DESIGN.md is missing required architecture section: {heading}")
+
+
 def validate(root: Path) -> list[str]:
     errors: list[str] = []
     validate_required_files(root, errors)
@@ -297,6 +335,7 @@ def validate(root: Path) -> list[str]:
     validate_skill_contract(root, errors)
     validate_button_contract(root, errors)
     validate_material_reference(root, errors)
+    validate_frontend_guidance(root, errors)
     return errors
 
 

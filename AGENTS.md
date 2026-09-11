@@ -73,16 +73,13 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 
 ## Frontend styling
 
-- Prefer Angular Material components and directives whenever Material provides the standard interactive primitive needed by the UI, including buttons, icon buttons, dialogs/popups, menus, form fields and inputs, selects, checkboxes, radios, tabs, tooltips, snackbars, and progress indicators.
-- Do not hand-roll a replacement for an Angular Material primitive unless Material cannot satisfy a concrete functional or product requirement. Domain-specific composite components should compose Material primitives where applicable.
-- If an Angular Material component needs a project-wide visual change, define the override centrally so every instance inherits the same styling. Do not reskin Material primitives independently in feature or component-local styles.
-- Angular Material system colors must be mapped centrally in `ui/src/styles/_angular-material-theme.scss` to Vocora design-system tokens. Do not introduce raw Material palette colors or component-local color overrides for Material primitives.
-- Prefer Bootstrap utility classes whenever they can express layout, spacing, alignment, display, sizing, color, and similar presentational rules (for example `d-flex`, `justify-content-center`, `align-items-center`, `gap-2`, `pt-5`, `w-100`, `bg-primary`, `text-primary`, and `border-success`).
-- For semantic colors, prefer Bootstrap color utilities such as `bg-primary`, `text-primary`, `border-primary`, `bg-success`, `text-warning`, and `text-danger` instead of hard-coded colors or component-local color helpers.
-- Bootstrap semantic colors must be mapped centrally in `ui/src/styles/_bootstrap-theme.scss` to Vocora design-system tokens. Do not redefine Bootstrap semantic colors in component styles.
-- Keep raw palette values in the Vocora design system; Bootstrap and Angular Material theme adapters must reference those tokens rather than own duplicate hex/RGB colors.
-- Prefer, in order: Angular Material for standard interactive components, Bootstrap utilities for presentational helpers, existing shared project styles/components, then custom CSS or custom UI primitives.
-- Do not add custom CSS when an equivalent Bootstrap utility or centralized Angular Material override already exists; keep frontend styling consistent across the application.
+- Apply `k2-design-system` before product-facing UI work. Its detailed design reference is the canonical contract; use this concise order: existing Vocora shared primitive, Angular Material standard interactive component, Angular CDK behavior, a reusable Vocora primitive under `ui/src/app/shared`, an exact Bootstrap presentation utility, an existing shared style/token, then minimal custom code.
+- Keep the standalone Angular architecture. Do not create a giant `SharedModule`, clone reusable primitives inside features, assemble a lower-level CDK replacement when Material already provides the component, or hand-roll framework interaction/accessibility behavior.
+- Bootstrap is the utility/layout layer, not the interactive component library. Prefer its exact display, flex, grid, alignment, spacing, sizing, text, border, and semantic-color utilities; do not introduce Bootstrap JavaScript widgets in place of Angular/Vocora components.
+- When touching a component/template/style, safely replace nearby legacy CSS with exact Bootstrap utilities and remove the unused declarations. Keep this owner-local; do not force approximate utilities or unrelated repository-wide churn.
+- Vocora semantic tokens own product colors. The central Angular Material and Bootstrap adapters map their frameworks to those tokens; feature styles consume the mappings and must not define alternative palettes or framework semantic variables.
+- Material product customization uses the supported theming/token API first, then the single central integration layer. Feature SCSS must not redesign undocumented `.mat-mdc-*` internals.
+- Custom CSS is last and needs a concrete reason. Do not escalate specificity or add application-owned `!important`; a genuinely unavoidable upstream exception belongs at a documented central integration boundary.
 
 ## Testing
 

@@ -38,6 +38,8 @@ jobs:
         working-directory: ${{ matrix.component }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22.23.2
@@ -45,6 +47,8 @@ jobs:
           cache-dependency-path: ${{ matrix.component }}/package-lock.json
       - run: npm ci
       - run: npm test
+        env:
+          VOCORA_UI_BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
   docker-smoke:
     runs-on: ubuntu-latest

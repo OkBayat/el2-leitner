@@ -30,6 +30,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.2
       - name: Validate skill architecture
         if: github.event_name == 'pull_request'
         run: |
@@ -49,6 +52,10 @@ jobs:
       - name: Validate changed skill architecture
         if: github.event_name == 'pull_request'
         run: node .agents/skills/k2-skill-architecture/scripts/validate-skill-architecture.js --base "${{ github.event.pull_request.base.sha }}" --head HEAD
+      - name: Validate K2 Design System skill
+        run: python3 .agents/skills/k2-design-system/scripts/validate-design-system.py
+      - name: Run K2 Design System validator tests
+        run: node .agents/skills/k2-design-system/scripts/test-validate-design-system.mjs
       - name: Validate lesson exercise design skill architecture
         run: python3 .agents/skills/k2-lesson-exercise-design/scripts/validate-skill.py
       - name: Run lesson exercise design skill tests
