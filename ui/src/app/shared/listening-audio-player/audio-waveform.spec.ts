@@ -16,4 +16,13 @@ describe('audio waveform', () => {
     expect(active).not.toEqual(idle);
     expect(active.join(' ')).not.toMatch(/NaN|Infinity/u);
   });
+
+  it('uses most of the waveform viewport at peak audio energy', () => {
+    const [primaryWave] = createAudioWaveformPaths(1, 0);
+    const yCoordinates = [...primaryWave.matchAll(/[ML] [\d.]+ ([\d.]+)/gu)]
+      .map((match) => Number(match[1]));
+
+    expect(Math.min(...yCoordinates)).toBeLessThan(15);
+    expect(Math.max(...yCoordinates)).toBeGreaterThan(145);
+  });
 });

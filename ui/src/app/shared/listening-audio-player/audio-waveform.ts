@@ -35,8 +35,8 @@ function wavePath(amplitude: number, frequency: number, phase: number): string {
 export function createAudioWaveformPaths(energy: number, phase: number): AudioWaveformPaths {
   const response = 0.22 + clamp(energy, 0, 1) * 0.78;
   return [
-    wavePath(42 * response, 4.15, phase),
-    wavePath(30 * response, 3.05, phase * -0.82 + 1.15),
-    wavePath(22 * response, 1.8, phase * 0.56 + 2.4),
+    wavePath(60 * response, 4.15, phase),
+    wavePath(46 * response, 3.05, phase * -0.82 + 1.15),
+    wavePath(34 * response, 1.8, phase * 0.56 + 2.4),
   ];
 }
