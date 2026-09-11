@@ -188,6 +188,10 @@ blockquote {
 	gap: var(--vocora-space-2);
 }
 
+.classification-item-bank {
+	min-height: 50px;
+}
+
 .classification-item.cdk-drag:not(.cdk-drag-disabled) {
 	cursor: grab;
 	touch-action: none;

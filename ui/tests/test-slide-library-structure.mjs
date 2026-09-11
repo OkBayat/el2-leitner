@@ -233,12 +233,17 @@ assert.doesNotMatch(
 );
 assert.match(
 	classificationTemplate,
-	/class="chip-list"[\s\S]*\(cdkDropListDropped\)="unassignDropped\(\$event\.item\.data\)"/u,
+	/class="chip-list classification-item-bank"[\s\S]*\(cdkDropListDropped\)="unassignDropped\(\$event\.item\.data\)"/u,
 	'Classification items must be droppable back into the unassigned item list.',
+);
+assert.match(
+	sharedStyles,
+	/\.classification-item-bank\s*\{[^}]*min-height:\s*50px;/u,
+	'The classification item bank must remain a visible drop target when empty.',
 );
 assert.ok(
 	classificationTemplate.indexOf('class="bucket-grid"') <
-		classificationTemplate.indexOf('class="chip-list"'),
+		classificationTemplate.indexOf('class="chip-list classification-item-bank"'),
 	'Classification categories must render above the remaining items.',
 );
 assert.equal(
