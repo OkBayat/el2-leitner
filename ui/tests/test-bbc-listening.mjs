@@ -159,6 +159,7 @@ assert.match(audioPlayer, /data-testid="audio-back-10"/u, 'Immersive playback mu
 assert.match(audioPlayer, /data-testid="audio-forward-10"/u, 'Immersive playback must expose ten-second forward seek.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
 assert.match(audioStyles, /\.audio-player--immersive/u, 'The shared player must own the immersive presentation variant.');
+assert.match(audioStyles, /\.immersive-waveform svg[\s\S]*?overflow:\s*visible/u, 'The taller center waveform must remain unclipped.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
 assert.match(audioStyles, /\.collapsed-progress[\s\S]*?position:\s*absolute/u, 'Collapsed progress must float inside the stable sticky shell instead of changing layout height.');
 assert.match(audioStyles, /\.collapsed-progress[\s\S]*?top:\s*-10px/u, 'Collapsed progress must align exactly with the top edge of the viewport when the sticky shell is active.');

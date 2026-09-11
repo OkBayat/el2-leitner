@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createAudioWaveformPaths, normalizedAudioEnergy } from './audio-waveform';
+import {
+  audioWaveformPhaseAdvance,
+  createAudioWaveformPaths,
+  normalizedAudioEnergy,
+} from './audio-waveform';
 
 function yCoordinates(path: string): number[] {
   return [...path.matchAll(/[ML] [\d.]+ ([\d.]+)/gu)].map((match) => Number(match[1]));
@@ -31,6 +35,14 @@ describe('audio waveform', () => {
 
     expect(Math.min(...values)).toBeLessThan(15);
     expect(Math.max(...values)).toBeGreaterThan(145);
+  });
+
+  it('uses at least twice the previous center amplitude and phase speed', () => {
+    const [primaryWave] = createAudioWaveformPaths(1, 0);
+    const centerValues = yCoordinates(primaryWave).slice(20, 45);
+
+    expect(maximumDeviation(centerValues)).toBeGreaterThan(130);
+    expect(audioWaveformPhaseAdvance(16, 0.5)).toBeCloseTo(0.1248, 4);
   });
 
   it('keeps edge movement subtle while concentrating amplitude near the center', () => {

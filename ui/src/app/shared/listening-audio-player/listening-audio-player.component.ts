@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  audioWaveformPhaseAdvance,
   createAudioWaveformPaths,
   normalizedAudioEnergy,
   type AudioWaveformPaths,
@@ -256,7 +257,7 @@ export class ListeningAudioPlayerComponent implements OnInit, OnDestroy {
     this.previousFrameTime = timestamp;
     const sampledEnergy = normalizedAudioEnergy(this.analyserSamples);
     this.waveformEnergy += (sampledEnergy - this.waveformEnergy) * 0.28;
-    this.waveformPhase += Math.max(0, elapsed) * (0.0028 + this.waveformEnergy * 0.0022);
+    this.waveformPhase += audioWaveformPhaseAdvance(elapsed, this.waveformEnergy);
     this.waveformPaths.set(createAudioWaveformPaths(this.waveformEnergy, this.waveformPhase));
   }
 

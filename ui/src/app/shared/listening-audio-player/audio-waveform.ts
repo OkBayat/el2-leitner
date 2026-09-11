@@ -19,6 +19,10 @@ export function normalizedAudioEnergy(samples: Uint8Array): number {
   return clamp(Math.sqrt(sum / samples.length) * 3.2, 0, 1);
 }
 
+export function audioWaveformPhaseAdvance(elapsedMilliseconds: number, energy: number): number {
+  return Math.max(0, elapsedMilliseconds) * (0.0056 + clamp(energy, 0, 1) * 0.0044);
+}
+
 function wavePath(amplitude: number, frequency: number, phase: number): string {
   const points: string[] = [];
   for (let index = 0; index <= SEGMENT_COUNT; index += 1) {
@@ -36,8 +40,8 @@ function wavePath(amplitude: number, frequency: number, phase: number): string {
 export function createAudioWaveformPaths(energy: number, phase: number): AudioWaveformPaths {
   const response = 0.22 + clamp(energy, 0, 1) * 0.78;
   return [
-    wavePath(60 * response, 4.15, phase),
-    wavePath(46 * response, 3.05, phase * -0.82 + 1.15),
-    wavePath(34 * response, 1.8, phase * 0.56 + 2.4),
+    wavePath(120 * response, 4.15, phase),
+    wavePath(92 * response, 3.05, phase * -0.82 + 1.15),
+    wavePath(68 * response, 1.8, phase * 0.56 + 2.4),
   ];
 }
