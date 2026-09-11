@@ -3235,7 +3235,7 @@
                 "type": "cloze",
                 "data": {
                   "instruction": "Use each verb cue and the stated positive, negative or question form.",
-                  "content": "(work, positive) I {{worked}} late. (write, positive) Sara {{wrote}} an email. (be, positive) The room {{was}} quiet. (be, negative) We {{were_not}} ready. (take, negative) He {{did_not_take}} the train. (see, question) {{did_you_see}} the message?",
+                  "content": "(work, positive) I {{worked}} late. (write, positive) Sara {{wrote}} an email. (be, positive) The room {{was}} quiet. (be, negative) We {{were_not}} ready. (take, negative) He {{did_not_take}} the train. (see, question) {{did_you_see}} the message? (be, question) {{was_the_room}} quiet?",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -3274,6 +3274,12 @@
                       "id": "did_you_see",
                       "answers": [
                         "Did you see"
+                      ]
+                    },
+                    {
+                      "id": "was_the_room",
+                      "answers": [
+                        "Was the room"
                       ]
                     }
                   ],
@@ -4814,7 +4820,7 @@
                 "type": "choice",
                 "data": {
                   "mode": "single",
-                  "question": "Choose the correct completion: As Sara was washing the dishes, Tom ___.",
+                  "question": "Choose the completion that presents Tom's activity as simultaneously in progress: As Sara was washing the dishes, Tom ___.",
                   "options": [
                     {
                       "id": "a",
