@@ -75,11 +75,28 @@ function validateFixture({
 		validateFixture({
 			files: [[
 				"ui/src/app/features/example/semantic-colors.component.scss",
-				":host { color: var(--vocora-brand-green); background: rgb(var(--vocora-primary-rgb) / .5); }",
+				":host { color: var(--vocora-brand-green); background: rgb(var(--vocora-primary-rgb) / .5); border-color: rgb(var(--vocora-primary-rgb) / var(--alpha)); }",
 			]],
 		}),
 		[],
 	);
+}
+
+{
+	for (const source of [
+		":host { color: rgb(255 0 0 / var(--opacity)); }",
+		":host { color: hsl(0 100% 50% / var(--alpha)); }",
+	]) {
+		assert.ok(
+			validateFixture({
+				files: [[
+					"ui/src/app/features/example/raw-channels.component.scss",
+					source,
+				]],
+			}).some((error) => error.includes("raw color debt")),
+			`Raw color channels must not be hidden by a variable alpha: ${source}`,
+		);
+	}
 }
 
 {

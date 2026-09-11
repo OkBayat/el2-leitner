@@ -92,6 +92,17 @@ for (const [bootstrapName, vocoraName] of publicVariableMappings) {
   );
 }
 
+assert.match(
+  bootstrapTheme,
+  /--bs-focus-ring-color:\s*color-mix\(\s*in srgb,\s*var\(--vocora-focus-ring\) 25%,\s*transparent\s*\);/u,
+  'Bootstrap focus rings must derive their alpha-bearing color from the canonical Vocora focus role.'
+);
+assert.equal(
+  designSystem.match(/--vocora-focus-ring:\s*var\(--vocora-primary\);/gu)?.length,
+  2,
+  'The canonical focus role must resolve independently in both runtime themes.'
+);
+
 for (const [bootstrapName, vocoraName] of [
 	['primary', 'primary'],
   ['success', 'success'],

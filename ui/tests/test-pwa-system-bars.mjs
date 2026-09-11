@@ -1,15 +1,19 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
+
+import {
+	extractFirstPaintThemeColors,
+	inspectFirstPaintThemeArtifacts,
+} from '../tools/sync-first-paint-theme-colors.mjs';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const uiRoot = path.resolve(testDirectory, '..');
 const read = (relative) => fs.readFileSync(path.join(uiRoot, relative), 'utf8');
 const INSTALL_BRAND_COLOR = '#48BF68';
-const LIGHT_PAGE_COLOR = '#ffffff';
-const DARK_PAGE_COLOR = '#0f1611';
 const THEME_MODE_STORAGE_KEY = 'vocora-theme-mode-v1';
 
 const index = read('src/index.html');
@@ -19,6 +23,7 @@ const themeService = read('src/app/core/theme/theme.service.ts');
 const themeBootstrap = read('src/theme-bootstrap.js');
 const pwaStyles = read('src/pwa.scss');
 const designSystem = read('src/styles/_vocora-design-system.scss');
+const {light: LIGHT_PAGE_COLOR, dark: DARK_PAGE_COLOR} = extractFirstPaintThemeColors(designSystem);
 
 function runThemeBootstrap(savedMode, prefersDark = false) {
 	const properties = new Map();
@@ -49,9 +54,9 @@ function runThemeBootstrap(savedMode, prefersDark = false) {
 
 const themeColorTags = index.match(/<meta name="theme-color"[^>]*>/gu) || [];
 assert.equal(themeColorTags.length, 2, 'Installed PWA must expose separate light and dark system-chrome colors to Android WebAPK metadata.');
-assert.match(themeColorTags[0], /content="#ffffff"/u, 'Light system chrome must exactly match the light page surface.');
+assert.ok(themeColorTags[0].includes(`content="${LIGHT_PAGE_COLOR}"`), 'Light system chrome must exactly match the light page surface.');
 assert.match(themeColorTags[0], /media="\(prefers-color-scheme: light\)"/u, 'Light system chrome must follow the device light preference before Angular starts.');
-assert.match(themeColorTags[1], /content="#0f1611"/u, 'Dark system chrome must exactly match the dark page surface.');
+assert.ok(themeColorTags[1].includes(`content="${DARK_PAGE_COLOR}"`), 'Dark system chrome must exactly match the dark page surface.');
 assert.match(themeColorTags[1], /media="\(prefers-color-scheme: dark\)"/u, 'Dark system chrome must follow the device dark preference before Angular starts.');
 assert.match(index, /<meta name="color-scheme" content="light dark">/u, 'The browser must know both supported schemes before CSS loads.');
 assert.match(index, /<meta name="msapplication-TileColor" content="#48BF68">/u, 'Windows tile fallback must keep the Vocora brand color.');
@@ -65,8 +70,48 @@ for (const manifest of [compatibilityManifest, installManifest]) {
 	assert.notEqual(manifest.theme_color, manifest.background_color, 'Splash branding and runtime system chrome must remain separate concerns.');
 }
 
-assert.match(designSystem, /--color-paper-white:\s*#ffffff/u, 'The pre-paint light fallback must match the Layer A light page color.');
-assert.match(designSystem, /--color-dark-page:\s*#0f1611/u, 'The pre-paint dark fallback must match the Layer A dark page color.');
+assert.deepEqual(
+	inspectFirstPaintThemeArtifacts(uiRoot),
+	[],
+	'Every static first-paint artifact must be mechanically synchronized from Layer A.',
+);
+
+const changedCanonicalColors = extractFirstPaintThemeColors(
+	designSystem.replace(`--color-paper-white: ${LIGHT_PAGE_COLOR};`, '--color-paper-white: #fefefe;'),
+);
+assert.equal(changedCanonicalColors.light, '#fefefe', 'A Layer A page-color change must be detected deterministically.');
+assert.notEqual(changedCanonicalColors.light, LIGHT_PAGE_COLOR, 'Tests must derive page colors instead of owning a duplicate palette.');
+
+const staleFixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'vocora-first-paint-'));
+try {
+	for (const relativePath of [
+		'src/styles/_vocora-design-system.scss',
+		'src/theme-bootstrap.js',
+		'src/index.html',
+		'src/manifest.webmanifest',
+		'src/vocora-v4.webmanifest',
+	]) {
+		const target = path.join(staleFixtureRoot, relativePath);
+		fs.mkdirSync(path.dirname(target), {recursive: true});
+		fs.copyFileSync(path.join(uiRoot, relativePath), target);
+	}
+	fs.writeFileSync(
+		path.join(staleFixtureRoot, 'src/styles/_vocora-design-system.scss'),
+		designSystem.replace(`--color-paper-white: ${LIGHT_PAGE_COLOR};`, '--color-paper-white: #fefefe;'),
+	);
+	assert.deepEqual(
+		inspectFirstPaintThemeArtifacts(staleFixtureRoot),
+		[
+			'src/theme-bootstrap.js',
+			'src/index.html',
+			'src/manifest.webmanifest',
+			'src/vocora-v4.webmanifest',
+		],
+		'A Layer A page-color change must fail every stale first-paint artifact deterministically.',
+	);
+} finally {
+	fs.rmSync(staleFixtureRoot, {recursive: true});
+}
 assert.doesNotMatch(themeService, /#[0-9a-f]{3,8}\b/iu, 'Runtime theme ownership must not duplicate raw page colors.');
 assert.match(themeService, /THEME_MODE_STORAGE_KEY = 'vocora-theme-mode-v1'/u, 'Runtime theme changes must share one cache key with first-paint restoration.');
 assert.match(themeService, /localStorage\?\.setItem\(THEME_MODE_STORAGE_KEY, mode\)/u, 'Every accepted theme change must cache the mode for the next first paint.');

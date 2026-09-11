@@ -456,13 +456,43 @@ export function extractMaterialInternalSelectors(
 }
 
 export function extractRawColors(syntax) {
-	const colors = [
-		...syntax.matchAll(
-			/#[0-9a-f]{3,8}\b|\b(?:color|hsl|hsla|hwb|lab|lch|oklab|oklch|rgb|rgba)\([^)]*\)/giu,
-		),
-	]
-		.map((match) => normalizeWhitespace(match[0]).toLowerCase())
-		.filter((value) => !/\bvar\(/iu.test(value));
+	const colors = [...syntax.matchAll(/#[0-9a-f]{3,8}\b/giu)]
+		.map((match) => match[0].toLowerCase());
+	const colorFunction = /\b(?:color|hsl|hsla|hwb|lab|lch|oklab|oklch|rgb|rgba)\s*\(/giu;
+	for (const match of syntax.matchAll(colorFunction)) {
+		const opening = match.index + match[0].lastIndexOf("(");
+		let depth = 1;
+		let end = opening + 1;
+		while (end < syntax.length && depth > 0) {
+			if (syntax[end] === "(") depth += 1;
+			else if (syntax[end] === ")") depth -= 1;
+			end += 1;
+		}
+		if (depth !== 0) {
+			colors.push(normalizeWhitespace(syntax.slice(match.index)).toLowerCase());
+			continue;
+		}
+
+		const body = syntax.slice(opening + 1, end - 1);
+		let channelEnd = body.length;
+		let nestedDepth = 0;
+		for (let index = 0; index < body.length; index += 1) {
+			if (body[index] === "(") nestedDepth += 1;
+			else if (body[index] === ")") nestedDepth -= 1;
+			else if (body[index] === "/" && nestedDepth === 0) {
+				channelEnd = index;
+				break;
+			}
+		}
+		const channels = body.slice(0, channelEnd).trim();
+		const usesCanonicalChannels =
+			/^var\(\s*--(?:vocora|color)-[a-z0-9-]+-rgb\s*\)$/iu.test(channels);
+		if (!usesCanonicalChannels) {
+			colors.push(
+				normalizeWhitespace(syntax.slice(match.index, end)).toLowerCase(),
+			);
+		}
+	}
 	for (const match of syntax.matchAll(/([$@][a-z0-9_-]+|--[a-z0-9-]+|[a-z-]+)\s*:\s*([^;{}]+)/giu)) {
 		const property = match[1].toLowerCase();
 		if (

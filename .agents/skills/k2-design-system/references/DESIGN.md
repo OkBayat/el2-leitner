@@ -157,9 +157,12 @@ early paint bootstrap resolves that same stored mode before Angular starts.
 Both adapters follow the semantic custom properties under that root state; do
 not add `data-bs-theme`, a Material theme service, or another observable.
 The bootstrap and static theme-color metadata may carry raw page-color
-fallbacks only for the pre-CSS paint window. Once Angular applies a theme,
-ThemeService clears the bootstrap's inline background and derives system
-chrome from the computed `--vocora-surface-page` role.
+fallbacks only for the pre-CSS paint window. These values are synchronized
+from the Layer A page colors by `ui/tools/sync-first-paint-theme-colors.mjs`;
+build and test validation fails when an artifact is stale, so bootstrap code,
+HTML metadata, manifests, and tests never become palette owners. Once Angular
+applies a theme, ThemeService clears the bootstrap's inline background and
+derives system chrome from the computed `--vocora-surface-page` role.
 
 Branded share-image exports consume the `--vocora-share-story-*` semantic
 roles. Their palette intentionally remains stable across the application
@@ -183,7 +186,7 @@ themes, but its raw values still belong exclusively to Layer A.
 | Default border | `--bs-border-color`; `border` | `--mat-sys-outline` |
 | Subtle border | `--bs-border-color-translucent` | `--mat-sys-outline-variant` |
 | Inverse primary | Product inverse action treatment | `--mat-sys-inverse-primary` |
-| Focus | Product focus treatment | Product focus treatment |
+| Focus | `--bs-focus-ring-color`, derived from `--vocora-focus-ring` | Product focus treatment |
 
 Bootstrap `secondary` means the real Vocora secondary emphasis role. Muted
 copy maps through Bootstrap's separate `--bs-secondary-color` body role, so
