@@ -38,9 +38,99 @@ function normalizeWhitespace(value) {
 	return value.replace(/\s+/gu, " ").trim();
 }
 
-function extractInlineStyleMetadata(text) {
-	if (!text.includes("@Component")) return { styles: [], unsupported: 0 };
+function transformCssOutsideProtected(
+	value,
+	transform,
+	{ lineComments = true } = {},
+) {
+	const protectedTokens = [];
+	let unprotected = "";
+	let index = 0;
+	const protect = (end) => {
+		const marker = `__VOCORA_CSS_PROTECTED_${protectedTokens.length}__`;
+		protectedTokens.push(value.slice(index, end));
+		unprotected += marker;
+		index = end;
+	};
 
+	while (index < value.length) {
+		const character = value[index];
+		if (["'", '"'].includes(character)) {
+			let end = index + 1;
+			let escaped = false;
+			while (end < value.length) {
+				const current = value[end];
+				end += 1;
+				if (!escaped && current === character) break;
+				escaped = !escaped && current === "\\";
+				if (current !== "\\") escaped = false;
+			}
+			protect(end);
+			continue;
+		}
+		const startsUrl =
+			value.slice(index, index + 4).toLowerCase() === "url(" &&
+			(index === 0 || !/[a-z0-9_-]/iu.test(value[index - 1]));
+		if (startsUrl) {
+			let end = index + 4;
+			let depth = 1;
+			let quote = null;
+			let escaped = false;
+			while (end < value.length && depth > 0) {
+				const current = value[end];
+				end += 1;
+				if (escaped) {
+					escaped = false;
+					continue;
+				}
+				if (current === "\\") {
+					escaped = true;
+					continue;
+				}
+				if (quote) {
+					if (current === quote) quote = null;
+					continue;
+				}
+				if (["'", '"'].includes(current)) quote = current;
+				else if (current === "(") depth += 1;
+				else if (current === ")") depth -= 1;
+			}
+			protect(end);
+			continue;
+		}
+		if (character === "/" && value[index + 1] === "*") {
+			const close = value.indexOf("*/", index + 2);
+			index = close < 0 ? value.length : close + 2;
+			continue;
+		}
+		if (lineComments && character === "/" && value[index + 1] === "/") {
+			const newline = value.indexOf("\n", index + 2);
+			index = newline < 0 ? value.length : newline;
+			continue;
+		}
+		unprotected += character;
+		index += 1;
+	}
+
+	let result = transform(unprotected);
+	for (const [tokenIndex, token] of protectedTokens.entries()) {
+		result = result.replace(
+			`__VOCORA_CSS_PROTECTED_${tokenIndex}__`,
+			token,
+		);
+	}
+	return result;
+}
+
+function stripCssComments(value, options) {
+	return transformCssOutsideProtected(
+		value,
+		(unprotected) => unprotected,
+		options,
+	);
+}
+
+function extractInlineStyleMetadata(text) {
 	const source = ts.createSourceFile(
 		"component.ts",
 		text,
@@ -50,6 +140,29 @@ function extractInlineStyleMetadata(text) {
 	);
 	const styles = [];
 	let unsupported = 0;
+	const componentNames = new Set(["Component"]);
+	const angularNamespaces = new Set();
+	for (const statement of source.statements) {
+		if (
+			!ts.isImportDeclaration(statement) ||
+			!ts.isStringLiteral(statement.moduleSpecifier) ||
+			statement.moduleSpecifier.text !== "@angular/core"
+		) {
+			continue;
+		}
+		const bindings = statement.importClause?.namedBindings;
+		if (bindings && ts.isNamespaceImport(bindings)) {
+			angularNamespaces.add(bindings.name.text);
+		} else if (bindings && ts.isNamedImports(bindings)) {
+			for (const element of bindings.elements) {
+				if (
+					(element.propertyName ?? element.name).text === "Component"
+				) {
+					componentNames.add(element.name.text);
+				}
+			}
+		}
+	}
 
 	function literalValue(node) {
 		return ts.isStringLiteral(node) ||
@@ -59,11 +172,23 @@ function extractInlineStyleMetadata(text) {
 	}
 
 	function visit(node) {
+		const decoratorTarget =
+			ts.isDecorator(node) && ts.isCallExpression(node.expression)
+				? node.expression.expression
+				: null;
+		const isComponentDecorator =
+			(decoratorTarget &&
+				ts.isIdentifier(decoratorTarget) &&
+				componentNames.has(decoratorTarget.text)) ||
+			(decoratorTarget &&
+				ts.isPropertyAccessExpression(decoratorTarget) &&
+				ts.isIdentifier(decoratorTarget.expression) &&
+				angularNamespaces.has(decoratorTarget.expression.text) &&
+				decoratorTarget.name.text === "Component");
 		if (
-			ts.isDecorator(node) &&
+			isComponentDecorator &&
 			ts.isCallExpression(node.expression) &&
-			ts.isIdentifier(node.expression.expression) &&
-			node.expression.expression.text === "Component"
+			node.expression.arguments.length > 0
 		) {
 			const metadata = node.expression.arguments[0];
 			if (!metadata || !ts.isObjectLiteralExpression(metadata)) {
@@ -71,6 +196,20 @@ function extractInlineStyleMetadata(text) {
 			} else {
 				for (const property of metadata.properties) {
 					if (ts.isSpreadAssignment(property)) {
+						unsupported += 1;
+						continue;
+					}
+					if (
+						ts.isShorthandPropertyAssignment(property) &&
+						property.name.text === "styles"
+					) {
+						unsupported += 1;
+						continue;
+					}
+					if (
+						"name" in property &&
+						ts.isComputedPropertyName(property.name)
+					) {
 						unsupported += 1;
 						continue;
 					}
@@ -189,7 +328,14 @@ function styleUnits(sources, errors) {
 	for (const [relative, text] of sources) {
 		const extension = path.extname(relative).toLowerCase();
 		if (STYLE_EXTENSIONS.has(extension)) {
-			units.push({ relative, text, indentedSass: extension === ".sass" });
+			units.push({
+				relative,
+				text: stripCssComments(text, {
+					lineComments:
+						extension === ".sass" || extension === ".scss",
+				}),
+				indentedSass: extension === ".sass",
+			});
 		} else if (extension === ".ts") {
 			const { styles: inlineStyles, unsupported } =
 				extractInlineStyleMetadata(text);
@@ -201,7 +347,9 @@ function styleUnits(sources, errors) {
 			if (inlineStyles.length)
 				units.push({
 					relative,
-					text: inlineStyles.join("\n"),
+					text: stripCssComments(inlineStyles.join("\n"), {
+						lineComments: false,
+					}),
 					indentedSass: false,
 				});
 		}
@@ -352,23 +500,27 @@ function compareLegacyToBase(declared, baseActual, label, errors) {
 }
 
 function canonicalOccurrence(occurrence) {
-	const withoutComments = occurrence
-		.replace(/\/\*[\s\S]*?\*\//gu, "")
-		.replace(/\/\/.*$/gmu, "");
-	const match = withoutComments.match(
-		/^(.*?)\s*=>\s*([a-z-]+)\s*:\s*(.*?)\s*!important$/iu,
+	const separator = occurrence.indexOf(" => ");
+	if (separator < 0) return canonicalSelector(occurrence);
+	const selector = canonicalSelector(occurrence.slice(0, separator));
+	const declaration = occurrence.slice(separator + 4);
+	const match = declaration.match(
+		/^([a-z-]+)\s*:\s*([\s\S]*?)\s*!important$/iu,
 	);
-	if (!match) return canonicalSelector(withoutComments);
-	const selector = canonicalSelector(match[1]);
-	const value = normalizeWhitespace(match[3])
-		.replace(/\(\s+/gu, "(")
-		.replace(/\s+\)/gu, ")")
-		.replace(/\s*,\s*/gu, ",");
-	return `${selector} => ${match[2].toLowerCase()}:${value}!important`;
+	if (!match) return canonicalSelector(occurrence);
+	const value = transformCssOutsideProtected(match[2], (unprotected) =>
+		normalizeWhitespace(unprotected)
+			.replace(/\(\s+/gu, "(")
+			.replace(/\s+\)/gu, ")")
+			.replace(/\s*,\s*/gu, ","),
+	);
+	return `${selector} => ${match[1].toLowerCase()}:${value}!important`;
 }
 
 function canonicalSelector(selector) {
-	return normalizeWhitespace(selector).replace(/\s*([,>+~])\s*/gu, "$1");
+	return transformCssOutsideProtected(selector, (unprotected) =>
+		normalizeWhitespace(unprotected).replace(/\s*([,>+~])\s*/gu, "$1"),
+	);
 }
 
 function canonicalizeOccurrences(occurrencesByPath) {

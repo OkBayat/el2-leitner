@@ -87,13 +87,18 @@ function validateFixture({
 		files: [
 			[
 				relative,
-				"const BAD = '.mat-mdc-example { color: red !important; }';\n" +
+				"import { Component as NgComponent } from '@angular/core';\n" +
+					"const BAD = '.mat-mdc-example { color: red !important; }';\n" +
+					"const styles = [BAD];\n" +
 					"// @Component({styles: BAD}) export class CommentedOut {}\n" +
 					"@Component({styles: BAD}) export class Scalar {}\n" +
 					"@Component({styles: [BAD]}) export class ArrayValue {}\n" +
 					"@Component({styles: '.safe {}' + BAD}) export class ConcatenatedScalar {}\n" +
 					"@Component({styles: ['.safe {}'] + BAD}) export class ConcatenatedArray {}\n" +
 					"@Component({styles: `.safe { color: ${BAD}; }`}) export class Interpolated {}\n" +
+					"@Component({styles}) export class Shorthand {}\n" +
+					"@NgComponent({styles: BAD}) export class Aliased {}\n" +
+					"@ Component({styles: BAD}) export class SpacedDecorator {}\n" +
 					"@Component({styles: [/* allowed note */ '.safe {}']}) export class CommentedLiteralArray {}",
 			],
 		],
@@ -102,7 +107,22 @@ function validateFixture({
 		errors.filter((error) =>
 			error.includes("Unsupported Angular inline styles expression"),
 		).length,
-		5,
+		8,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/commented.component.scss";
+	assert.deepEqual(
+		validateFixture({
+			files: [
+				[
+					relative,
+					"/* .mat-mdc-commented { color: red !important; --bs-primary: red; } */",
+				],
+			],
+		}),
+		[],
 	);
 }
 
@@ -118,6 +138,46 @@ function validateFixture({
 		errors.includes(
 			`Stale !important baseline debt in ${relative}: .legacy => color:red!important`,
 		),
+	);
+}
+
+{
+	const relative =
+		"ui/src/app/features/example/semantic-values.component.scss";
+	const currentOccurrences = [
+		".image => background:url(https://new.example/b.png)!important",
+		'.label => content:"a, b"!important',
+		'.comment-label => content:"/*new*/"!important',
+	];
+	const baseline = emptyBaseline();
+	baseline.legacy_debt.important_declarations[relative] = {
+		occurrences: currentOccurrences,
+		reason: "Existing semantic value test debt.",
+	};
+	const errors = validateFixture({
+		files: [
+			[
+				relative,
+				".image { background: url(https://new.example/b.png) !important; }\n" +
+					'.label { content: "a, b" !important; }\n' +
+					'.comment-label { content: "/*new*/" !important; }',
+			],
+		],
+		baseFiles: [
+			[
+				relative,
+				".image { background: url(https://old.example/a.png) !important; }\n" +
+					'.label { content: "a,b" !important; }\n' +
+					'.comment-label { content: "/*old*/" !important; }',
+			],
+		],
+		baseline,
+	});
+	assert.equal(
+		errors.filter((error) =>
+			error.includes("baseline grew beyond base source debt"),
+		).length,
+		3,
 	);
 }
 
@@ -145,6 +205,30 @@ function validateFixture({
 		baseline,
 	});
 	assert.deepEqual(passingErrors, []);
+}
+
+{
+	const relative =
+		"ui/src/app/features/example/semantic-selector.component.scss";
+	const baseline = emptyBaseline();
+	baseline.legacy_debt.feature_material_internal_selectors[relative] = {
+		occurrences: ['[data-label="a, b"] .mat-mdc-example'],
+		reason: "Existing semantic selector test debt.",
+	};
+	const errors = validateFixture({
+		files: [
+			[relative, '[data-label="a, b"] .mat-mdc-example { color: red; }'],
+		],
+		baseFiles: [
+			[relative, '[data-label="a,b"] .mat-mdc-example { color: red; }'],
+		],
+		baseline,
+	});
+	assert.ok(
+		errors.some((error) =>
+			error.includes("baseline grew beyond base source debt"),
+		),
+	);
 }
 
 {
