@@ -7,6 +7,30 @@ import ts from "typescript";
 const BASELINE_PATH = "ui/tests/design-system-architecture-baseline.json";
 const STYLE_EXTENSIONS = new Set([".css", ".less", ".sass", ".scss"]);
 const FOUNDATION_COLOR_OWNER = "ui/src/styles/_vocora-design-system.scss";
+const CSS_NAMED_COLORS = new Set(
+	("aliceblue antiquewhite aqua aquamarine azure beige bisque black " +
+		"blanchedalmond blue blueviolet brown burlywood cadetblue chartreuse " +
+		"chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan " +
+		"darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta " +
+		"darkolivegreen darkorange darkorchid darkred darksalmon darkseagreen " +
+		"darkslateblue darkslategray darkslategrey darkturquoise darkviolet " +
+		"deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite " +
+		"forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green " +
+		"greenyellow grey honeydew hotpink indianred indigo ivory khaki lavender " +
+		"lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan " +
+		"lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon " +
+		"lightseagreen lightskyblue lightslategray lightslategrey lightsteelblue " +
+		"lightyellow lime limegreen linen magenta maroon mediumaquamarine " +
+		"mediumblue mediumorchid mediumpurple mediumseagreen mediumslateblue " +
+		"mediumspringgreen mediumturquoise mediumvioletred midnightblue mintcream " +
+		"mistyrose moccasin navajowhite navy oldlace olive olivedrab orange " +
+		"orangered orchid palegoldenrod palegreen paleturquoise palevioletred " +
+		"papayawhip peachpuff peru pink plum powderblue purple rebeccapurple red " +
+		"rosybrown royalblue saddlebrown salmon sandybrown seagreen seashell " +
+		"sienna silver skyblue slateblue slategray slategrey snow springgreen " +
+		"steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke " +
+		"yellow yellowgreen").split(" "),
+);
 const STYLE_OWNERS = [
 	[
 		/(--bs-[a-z0-9-]+)\s*:/giu,
@@ -426,14 +450,49 @@ export function extractMaterialInternalSelectors(
 }
 
 export function extractRawColors(syntax) {
-	return [
+	const colors = [
 		...syntax.matchAll(
 			/#[0-9a-f]{3,8}\b|\b(?:color|hsl|hsla|hwb|lab|lch|oklab|oklch|rgb|rgba)\([^)]*\)/giu,
 		),
-	].map((match) => normalizeWhitespace(match[0]).toLowerCase());
+	]
+		.map((match) => normalizeWhitespace(match[0]).toLowerCase())
+		.filter((value) => !/\bvar\(/iu.test(value));
+	for (const match of syntax.matchAll(/(--[a-z0-9-]+|[a-z-]+)\s*:\s*([^;{}]+)/giu)) {
+		const property = match[1].toLowerCase();
+		if (
+			!property.startsWith("--") &&
+			!/^(?:accent-color|background(?:-color)?|border(?:-[a-z-]+)?|box-shadow|caret-color|color|fill|outline(?:-color)?|stroke|text-shadow)$/u.test(property)
+		) {
+			continue;
+		}
+		const literalValue = match[2]
+			.replace(/var\([^)]*\)/giu, "")
+			.replace(/\$[a-z0-9_-]+/giu, "");
+		for (const word of literalValue.toLowerCase().match(/[a-z]+/gu) ?? []) {
+			if (CSS_NAMED_COLORS.has(word)) colors.push(word);
+		}
+	}
+	return colors;
 }
 
-export function extractThemeSelectors(text, syntax = text) {
+export function extractThemeSelectors(
+	text,
+	syntax = text,
+	{ indentedSass = false } = {},
+) {
+	if (indentedSass) {
+		const textLines = text.split(/\r?\n/u);
+		return syntax
+			.split(/\r?\n/u)
+			.map((line, index) => ({ line, index }))
+			.filter(({ line }) => /\[data-theme\s*=/iu.test(line))
+			.flatMap(({ index }) => [
+				...textLines[index].matchAll(
+					/\[data-theme\s*=\s*(?:"[^"]+"|'[^']+'|[a-z-]+)\]/giu,
+				),
+			])
+			.map((match) => normalizeWhitespace(match[0]));
+	}
 	return [...syntax.matchAll(/([^{}]+)\{/dgu)]
 		.filter((match) => /\[data-theme\s*=/iu.test(match[1]))
 		.flatMap((match) => [
@@ -442,6 +501,22 @@ export function extractThemeSelectors(text, syntax = text) {
 				.matchAll(/\[data-theme\s*=\s*(?:"[^"]+"|'[^']+'|[a-z-]+)\]/giu),
 		])
 		.map((match) => normalizeWhitespace(match[0]));
+}
+
+function extractTemplateStyles(text) {
+	const withoutComments = text.replace(/<!--[\s\S]*?-->/gu, "");
+	const styles = [
+		...[...withoutComments.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/giu)]
+			.map((match) => match[1]),
+		...[...withoutComments.matchAll(/\bstyle\s*=\s*(["'])([\s\S]*?)\1/giu)]
+			.map((match) => match[2]),
+	];
+	for (const match of withoutComments.matchAll(
+		/\b(fill|stroke|color|bgcolor)\s*=\s*(["'])([\s\S]*?)\2/giu,
+	)) {
+		styles.push(`${match[1]}: ${match[3]};`);
+	}
+	return styles.join("\n");
 }
 
 function styleUnits(sources, errors) {
@@ -468,6 +543,17 @@ function styleUnits(sources, errors) {
 			}
 			if (inlineStyles.length) {
 				const views = maskCssSyntax(inlineStyles.join("\n"));
+				units.push({
+					relative,
+					text: views.cleaned,
+					syntax: views.syntax,
+					indentedSass: false,
+				});
+			}
+		} else if (extension === ".html") {
+			const templateStyles = extractTemplateStyles(text);
+			if (templateStyles) {
+				const views = maskCssSyntax(templateStyles);
 				units.push({
 					relative,
 					text: views.cleaned,
@@ -510,7 +596,9 @@ function scanDebt(units) {
 			for (const occurrence of extractRawColors(syntax)) {
 				increment(rawColors, relative, occurrence);
 			}
-			for (const occurrence of extractThemeSelectors(text, syntax)) {
+			for (const occurrence of extractThemeSelectors(text, syntax, {
+				indentedSass,
+			})) {
 				increment(themeSelectors, relative, occurrence);
 			}
 		}

@@ -67,6 +67,7 @@ describe('ThemeService system chrome', () => {
 		expect(darkThemeColor?.media).toBe('not all');
 		expect(colorScheme?.content).toBe('light');
 		expect(document.documentElement.dataset['theme']).toBe('light');
+		expect(service.resolvedTheme()).toBe('light');
 		expect(document.documentElement.style.colorScheme).toBe('light');
 		expect(document.body.style.colorScheme).toBe('light');
 		expect(document.documentElement.style.backgroundColor).toBe(normalizedBackground(LIGHT_SYSTEM_CHROME_COLOR));
@@ -84,6 +85,7 @@ describe('ThemeService system chrome', () => {
 		expect(themeColorMeta('dark')?.media).toBe('all');
 		expect(document.head.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')?.content).toBe('dark');
 		expect(document.documentElement.dataset['theme']).toBe('dark');
+		expect(service.resolvedTheme()).toBe('dark');
 		expect(document.documentElement.style.colorScheme).toBe('dark');
 		expect(document.body.style.colorScheme).toBe('dark');
 		expect(document.documentElement.style.backgroundColor).toBe(normalizedBackground(DARK_SYSTEM_CHROME_COLOR));
@@ -110,10 +112,12 @@ describe('ThemeService system chrome', () => {
 		query.matches = false;
 		changeListener();
 		expect(document.documentElement.dataset['theme']).toBe('light');
+		expect(service.resolvedTheme()).toBe('light');
 
 		query.matches = true;
 		document.dispatchEvent(new Event('visibilitychange'));
 		expect(document.documentElement.dataset['theme']).toBe('dark');
+		expect(service.resolvedTheme()).toBe('dark');
 
 		service.apply('dark');
 		query.matches = false;

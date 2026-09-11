@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { DestroyRef, Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge } from 'rxjs';
 import { ThemeMode } from '../../domain/learning/models';
@@ -26,6 +26,10 @@ export class ThemeService {
   private readonly destroyRef = inject(DestroyRef);
   private readonly systemThemeQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
   private activeMode: ThemeMode = storedThemeMode();
+  private readonly resolvedThemeState = signal<'light' | 'dark'>(
+    this.document.documentElement.dataset['theme'] === 'dark' ? 'dark' : 'light',
+  );
+  readonly resolvedTheme = this.resolvedThemeState.asReadonly();
 
   constructor() {
     const query = this.systemThemeQuery;
@@ -66,6 +70,7 @@ export class ThemeService {
 
     this.updateThemeColorMetadata(resolved);
     this.updateMeta('color-scheme', resolved);
+    this.resolvedThemeState.set(resolved);
   }
 
   private updateThemeColorMetadata(resolved: 'light' | 'dark'): void {

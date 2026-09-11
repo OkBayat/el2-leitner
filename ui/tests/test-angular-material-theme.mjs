@@ -289,6 +289,15 @@ for (const themeName of ["light", "dark"]) {
 		) >= 4.5,
 		`${themeName} primary state surfaces must remain readable with primary text.`,
 	);
+	for (const intent of ["success", "warning", "error"]) {
+		assert.ok(
+			contrastRatio(
+				resolve(`--vocora-state-${intent}-icon`),
+				resolve(`--vocora-state-${intent}-icon-foreground`),
+			) >= 3,
+			`${themeName} ${intent} feedback icons must meet 3:1 graphical contrast.`,
+		);
+	}
 }
 
 assert.doesNotMatch(
@@ -494,17 +503,17 @@ assert.match(
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-success-icon\)"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
+	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-success-icon\)"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke="var\(--vocora-state-success-icon-foreground\)"[^>]*stroke-width="3"/u,
 	"Successful feedback must use the rounded check SVG and theme-aware success icon role.",
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
+	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-error-icon\)"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke="var\(--vocora-state-error-icon-foreground\)"[^>]*stroke-width="3"/u,
 	"Incorrect feedback must use a matching rounded cross SVG at 35px.",
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('warning'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-action-warning\)"[\s\S]*?<path[^>]*stroke="white"[^>]*stroke-width="3"/u,
+	/@case \('warning'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-warning-icon\)"[\s\S]*?<path[^>]*stroke="var\(--vocora-state-warning-icon-foreground\)"[^>]*stroke-width="3"/u,
 	"Warning feedback must use a matching rounded SVG at 35px.",
 );
 assert.doesNotMatch(

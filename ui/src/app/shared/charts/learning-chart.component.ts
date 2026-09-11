@@ -14,6 +14,7 @@ import {
 	Tooltip,
 	type TooltipItem,
 } from 'chart.js';
+import {ThemeService} from '../../core/theme/theme.service';
 
 export type LearningChartType = 'bar' | 'line' | 'doughnut';
 type LearningChartConfiguration = ChartConfiguration<any, any[], unknown>;
@@ -187,6 +188,7 @@ export function doughnutPercent(points: LearningChartPoint[]): number {
 export class LearningChartComponent implements AfterViewInit, OnDestroy {
 	@ViewChild('canvas', {static: true}) private canvas!: ElementRef<HTMLCanvasElement>;
 	private readonly host = inject(ElementRef<HTMLElement>);
+	private readonly theme = inject(ThemeService);
 	private readonly ready = signal(false);
 	private chart: Chart | null = null;
 
@@ -201,6 +203,7 @@ export class LearningChartComponent implements AfterViewInit, OnDestroy {
 
 	constructor() {
 		effect(() => {
+			this.theme.resolvedTheme();
 			if (!this.ready()) return;
 			this.render(
 				this.type(),

@@ -31,8 +31,8 @@
 	display: grid;
 	place-items: center;
 	border-radius: 50%;
-	background: var(--vocora-action-warning);
-	color: var(--vocora-action-warning-foreground);
+	background: var(--vocora-state-warning-icon);
+	color: var(--vocora-state-warning-icon-foreground);
 }
 
 .review-context-badge-icon svg {

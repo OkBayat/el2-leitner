@@ -1,5 +1,8 @@
-import {describe, expect, it} from 'vitest';
-import {buildLearningChartConfig, doughnutPercent, type LearningChartPoint} from './learning-chart.component';
+import {signal} from '@angular/core';
+import {TestBed} from '@angular/core/testing';
+import {afterEach, describe, expect, it, vi} from 'vitest';
+import {ThemeService} from '../../core/theme/theme.service';
+import {buildLearningChartConfig, doughnutPercent, LearningChartComponent, type LearningChartPoint} from './learning-chart.component';
 
 const points: LearningChartPoint[] = [
 	{key: 'a', label: 'Aug 20', value: 10},
@@ -14,6 +17,8 @@ const palette = {
 };
 
 describe('Chart.js learning chart adapter', () => {
+	afterEach(() => TestBed.resetTestingModule());
+
 	it('builds the dashboard activity with the configured primary color', () => {
 		const config = buildLearningChartConfig(points, 'bar', null, null, '', palette);
 		expect(config.type).toBe('bar');
@@ -54,5 +59,26 @@ describe('Chart.js learning chart adapter', () => {
 			{key: 'entered', label: 'In Leitner', value: 0},
 			{key: 'remaining', label: 'Not yet added', value: 0},
 		])).toBe(0);
+	});
+
+	it('repaints an existing canvas when the resolved application theme changes', () => {
+		const resolvedTheme = signal<'light' | 'dark'>('light');
+		TestBed.configureTestingModule({
+			imports: [LearningChartComponent],
+			providers: [{provide: ThemeService, useValue: {resolvedTheme}}],
+		});
+		const fixture = TestBed.createComponent(LearningChartComponent);
+		const render = vi.spyOn(
+			fixture.componentInstance as unknown as {render: (...args: unknown[]) => void},
+			'render',
+		).mockImplementation(() => undefined);
+		fixture.componentRef.setInput('type', 'bar');
+		fixture.componentRef.setInput('points', points);
+		fixture.detectChanges();
+
+		expect(render).toHaveBeenCalledTimes(1);
+		resolvedTheme.set('dark');
+		fixture.detectChanges();
+		expect(render).toHaveBeenCalledTimes(2);
 	});
 });

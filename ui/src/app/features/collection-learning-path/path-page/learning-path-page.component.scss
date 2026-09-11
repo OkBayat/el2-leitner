@@ -91,7 +91,7 @@
 
 .lesson-context-header {
   --lesson-tone: var(--vocora-activity-vocabulary);
-  --lesson-side: color-mix(in srgb, var(--lesson-tone) 74%, black);
+  --lesson-side: color-mix(in srgb, var(--lesson-tone) 74%, var(--vocora-shadow));
   --lesson-ink: var(--vocora-text-on-strong);
   position: sticky;
   top: calc(var(--shell-header-height, 64px) + 8px);

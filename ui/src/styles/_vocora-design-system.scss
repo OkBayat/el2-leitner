@@ -205,15 +205,20 @@
 		--vocora-state-success-foreground: var(--color-success-ink);
 		--vocora-state-success-border: var(--color-eager-green);
 		--vocora-state-success-icon: var(--color-success-icon);
+		--vocora-state-success-icon-foreground: var(--color-paper-white);
 		--vocora-state-information-surface: var(--color-information-surface);
 		--vocora-state-information-foreground: var(--color-information-ink);
 		--vocora-state-information-border: var(--color-information-border);
 		--vocora-state-warning-surface: var(--color-warning-surface);
 		--vocora-state-warning-foreground: var(--color-charcoal);
 		--vocora-state-warning-border: var(--color-attention-yellow);
+		--vocora-state-warning-icon: var(--color-attention-yellow);
+		--vocora-state-warning-icon-foreground: var(--color-charcoal);
 		--vocora-state-error-surface: var(--color-error-surface);
 		--vocora-state-error-foreground: var(--color-error-ink);
 		--vocora-state-error-border: var(--color-answer-red);
+		--vocora-state-error-icon: var(--color-answer-red);
+		--vocora-state-error-icon-foreground: var(--color-paper-white);
 
 		--vocora-action-primary: var(--vocora-primary);
 		--vocora-action-primary-rgb: var(--vocora-primary-rgb);
@@ -344,16 +349,21 @@
 		--vocora-state-success-surface: var(--color-dark-success-surface);
 		--vocora-state-success-foreground: var(--color-storybook-green);
 		--vocora-state-success-border: var(--color-dark-success);
-		--vocora-state-success-icon: var(--color-dark-success);
+		--vocora-state-success-icon: var(--color-dark-success-edge);
+		--vocora-state-success-icon-foreground: var(--color-paper-white);
 		--vocora-state-information-surface: var(--color-dark-information-surface);
 		--vocora-state-information-foreground: var(--color-dark-information-ink);
 		--vocora-state-information-border: var(--color-dark-primary-edge);
 		--vocora-state-warning-surface: var(--color-dark-warning-surface);
 		--vocora-state-warning-foreground: var(--color-dark-warning-ink);
 		--vocora-state-warning-border: var(--color-dark-warning);
+		--vocora-state-warning-icon: var(--color-dark-warning);
+		--vocora-state-warning-icon-foreground: var(--color-dark-page);
 		--vocora-state-error-surface: var(--color-dark-error-surface);
 		--vocora-state-error-foreground: var(--color-dark-error-ink);
 		--vocora-state-error-border: var(--color-dark-error);
+		--vocora-state-error-icon: var(--color-dark-error);
+		--vocora-state-error-icon-foreground: var(--color-error-ink);
 
 		--vocora-action-primary: var(--vocora-primary);
 		--vocora-action-primary-rgb: var(--vocora-primary-rgb);
