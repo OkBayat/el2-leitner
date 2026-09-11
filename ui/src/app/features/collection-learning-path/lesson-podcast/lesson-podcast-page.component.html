@@ -1,22 +1,43 @@
 <main class="lesson-podcast-page" [attr.aria-busy]="loading()">
-  <nav class="lesson-podcast-page__nav" aria-label="Lesson navigation">
+  <header class="lesson-podcast-page__header">
     <a
-      mat-stroked-button
-      class="vocora-button vocora-button--secondary"
+      mat-icon-button
+      class="lesson-podcast-page__header-action"
       data-testid="lesson-podcast-back"
       [routerLink]="['/learning-paths', pathId()]"
+      aria-label="Back to Learning Path"
     >
-      <span aria-hidden="true">←</span>
-      <span>Back</span>
+      <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <path d="M27 16H6m8-8-8 8 8 8" />
+      </svg>
     </a>
-  </nav>
+
+    <h1>{{ pageTitle() }}</h1>
+
+    @if (audioSrc()) {
+      <a
+        mat-icon-button
+        class="lesson-podcast-page__header-action"
+        data-testid="lesson-podcast-download"
+        [href]="audioSrc()"
+        [attr.download]="downloadFileName()"
+        aria-label="Download lesson audio"
+      >
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M16 4v16m-6-6 6 6 6-6M6 23v4h20v-4" />
+        </svg>
+      </a>
+    } @else {
+      <span class="lesson-podcast-page__header-placeholder" aria-hidden="true"></span>
+    }
+  </header>
 
   <section class="lesson-podcast-page__content">
     @if (loading()) {
       <p aria-live="polite">Loading lesson audio…</p>
     } @else if (error()) {
       <div class="lesson-podcast-page__error" role="alert">
-        <h1>Lesson audio unavailable</h1>
+        <h2>Lesson audio unavailable</h2>
         <p>{{ error() }}</p>
         <button
           mat-flat-button
@@ -25,13 +46,13 @@
           (click)="retry()"
         >Try again</button>
       </div>
-    } @else if (lesson(); as currentLesson) {
-      <h1>{{ currentLesson.title }}</h1>
+    } @else if (lesson()) {
       <app-listening-audio-player
         [src]="audioSrc()"
-        title="Lesson audio"
+        [title]="pageTitle()"
         description=""
         [collapseOnScroll]="false"
+        mode="immersive"
       />
     }
   </section>

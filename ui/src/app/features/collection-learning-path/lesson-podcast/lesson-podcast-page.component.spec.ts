@@ -58,10 +58,20 @@ describe('LessonPodcastPageComponent', () => {
     expect(api.queryLearningPath).toHaveBeenCalledWith('4');
     expect(element.textContent).toContain('Unit 1 — Present tenses');
     expect(element.querySelector('app-app-shell')).toBeNull();
+    expect(element.querySelector('.lesson-podcast-page__header h1')?.textContent).toContain('Unit 1 — Present tenses');
     expect(element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-back"]')?.getAttribute('href'))
       .toBe('/learning-paths/4');
+    const download = element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-download"]');
+    expect(download?.getAttribute('href')).toBe('/api/learning-paths/4/lessons/64/audio');
+    expect(download?.getAttribute('download')).toBe('64.m4a');
     expect(element.querySelector<HTMLAudioElement>('audio')?.getAttribute('src'))
       .toBe('/api/learning-paths/4/lessons/64/audio');
+    expect(element.querySelector('[data-testid="listening-audio-player"]')?.classList)
+      .toContain('audio-player--immersive');
+    expect(element.querySelectorAll('[data-testid="audio-waveform"] path')).toHaveLength(3);
+    expect(element.querySelector('[data-testid="audio-speed"]')).not.toBeNull();
+    expect(element.querySelector('[data-testid="audio-back-10"]')).not.toBeNull();
+    expect(element.querySelector('[data-testid="audio-forward-10"]')).not.toBeNull();
 
     element.querySelector<HTMLButtonElement>('[data-testid="audio-play"]')?.click();
     await fixture.whenStable();

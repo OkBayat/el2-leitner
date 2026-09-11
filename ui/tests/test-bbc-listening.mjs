@@ -152,7 +152,13 @@ assert.doesNotMatch(audioPlayerComponent, /lastScrollY/u, 'The old per-event dir
 assert.doesNotMatch(audioPlayerComponent, /ListeningTest|buildListeningAudioProgress/u, 'Player TypeScript must contain no question-range mapping dependency.');
 assert.match(audioPlayerComponent, /seekTo\(/u, 'The player must support direct left/right scrubbing.');
 assert.match(audioPlayerComponent, /togglePlayback\(/u, 'The primary playback control must toggle Play and Pause.');
+assert.match(audioPlayerComponent, /AudioContext/u, 'Immersive playback must analyze the actual media signal.');
+assert.match(audioPlayerComponent, /requestAnimationFrame/u, 'Audio-reactive waves must update on animation frames.');
+assert.match(audioPlayer, /data-testid="audio-waveform"/u, 'Immersive playback must expose its three-line waveform.');
+assert.match(audioPlayer, /data-testid="audio-back-10"/u, 'Immersive playback must expose ten-second rewind.');
+assert.match(audioPlayer, /data-testid="audio-forward-10"/u, 'Immersive playback must expose ten-second forward seek.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
+assert.match(audioStyles, /\.audio-player--immersive/u, 'The shared player must own the immersive presentation variant.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');
 assert.match(audioStyles, /\.collapsed-progress[\s\S]*?position:\s*absolute/u, 'Collapsed progress must float inside the stable sticky shell instead of changing layout height.');
 assert.match(audioStyles, /\.collapsed-progress[\s\S]*?top:\s*-10px/u, 'Collapsed progress must align exactly with the top edge of the viewport when the sticky shell is active.');
