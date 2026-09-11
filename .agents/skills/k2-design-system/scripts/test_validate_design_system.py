@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -106,6 +108,101 @@ class K2DesignSystemValidatorTests(unittest.TestCase):
         )
         for name, value in VALIDATOR.CANONICAL_COLORS.items():
             self.assertEqual(variables[f"--color-{name}"].lower(), value.lower())
+
+    def test_frontend_contract_defines_the_complete_decision_hierarchy(self) -> None:
+        design = (self.root / "references" / "DESIGN.md").read_text(
+            encoding="utf-8"
+        )
+        hierarchy = (
+            "Existing Vocora shared primitive?",
+            "Standard interactive primitive in Angular Material?",
+            "Required behavior available in Angular CDK?",
+            "Layout, spacing, display, or semantic utility in Bootstrap?",
+            "Existing shared style or semantic token?",
+            "Otherwise",
+        )
+        positions = [design.index(item) for item in hierarchy]
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn("## Touch-to-refactor", design)
+        self.assertIn("## Custom CSS last", design)
+        self.assertIn("## Specificity and `!important`", design)
+
+    def test_frontend_architecture_rejects_non_owner_theme_definitions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            feature = repo / "ui/src/app/features/example/example.component.scss"
+            feature.parent.mkdir(parents=True)
+            feature.write_text(
+                ":host { --bs-primary: red; --mat-sys-primary: blue; "
+                "--color-spark-blue: green; }",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Bootstrap semantic variables must be defined only in "
+                "ui/src/styles/_bootstrap-theme.scss: "
+                "ui/src/app/features/example/example.component.scss defines --bs-primary",
+                errors,
+            )
+            self.assertIn(
+                "Material system variables must be defined only in "
+                "ui/src/styles/_angular-material-theme.scss: "
+                "ui/src/app/features/example/example.component.scss defines --mat-sys-primary",
+                errors,
+            )
+            self.assertIn(
+                "Vocora foundation colors must be defined only in "
+                "ui/src/styles/_vocora-design-system.scss: "
+                "ui/src/app/features/example/example.component.scss defines --color-spark-blue",
+                errors,
+            )
+
+    def test_frontend_architecture_rejects_unbaselined_specificity_debt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            self._write_baseline(repo)
+            feature = repo / "ui/src/app/features/example/example.component.scss"
+            feature.parent.mkdir(parents=True)
+            feature.write_text(
+                ".mat-mdc-example { color: red !important; }",
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+
+            VALIDATOR.validate_frontend_architecture(repo, errors)
+
+            self.assertIn(
+                "Untracked !important debt in "
+                "ui/src/app/features/example/example.component.scss: expected 0, found 1",
+                errors,
+            )
+            self.assertIn(
+                "Untracked feature Material-internal selector debt in "
+                "ui/src/app/features/example/example.component.scss: expected 0, found 1",
+                errors,
+            )
+
+    @staticmethod
+    def _write_baseline(repo: Path) -> None:
+        baseline = (
+            repo
+            / ".agents/skills/k2-design-system/references/legacy-style-baseline.json"
+        )
+        baseline.parent.mkdir(parents=True)
+        baseline.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "important_declaration_counts": {},
+                    "feature_material_internal_selector_counts": {},
+                }
+            ),
+            encoding="utf-8",
+        )
 
 
 if __name__ == "__main__":

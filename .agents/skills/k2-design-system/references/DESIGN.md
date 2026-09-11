@@ -8,6 +8,148 @@ Light is the default theme. Dark is a first-class equivalent: it keeps the same
 semantic roles and component geometry while using independently tuned surfaces,
 text, controls, and feedback pairs.
 
+## UI implementation architecture
+
+Use this decision tree for every product-facing UI change:
+
+```text
+Need UI?
+|
++-- Existing Vocora shared primitive? -> use it
+|
++-- Standard interactive primitive in Angular Material? -> use Material
+|
++-- Required behavior available in Angular CDK? -> build a shared Vocora primitive on CDK
+|
++-- Reusable product-specific primitive? -> build it in ui/src/app/shared on Material and/or CDK
+|
++-- Layout, spacing, display, or semantic utility in Bootstrap? -> use the Bootstrap utility
+|
++-- Existing shared style or semantic token? -> use it
+|
++-- Otherwise -> add the minimal custom implementation and record why it is needed
+```
+
+Material wins over assembling the same higher-level control from CDK pieces.
+Bootstrap utilities and semantic tokens still style the layout around a
+Material, CDK, or shared component; they are not competing component systems.
+
+### Vocora shared primitives
+
+An existing reusable Vocora component or design-system primitive is the first
+choice. Feature code must not bypass it with a parallel implementation. One UI
+concept has one shared owner.
+
+New reusable product-specific primitives belong under `ui/src/app/shared`, not
+inside a feature folder. They use Material and/or CDK foundations when those
+foundations apply, keep domain behavior outside the presentation primitive, and
+expose a small, semantic, typed, stable API. Feature components compose shared
+primitives instead of cloning them. If two or more features need substantially
+the same low-level UI behavior, consolidate it unless that would create a false
+abstraction. Do not introduce a giant legacy-style `SharedModule`; preserve the
+application's standalone component/import architecture.
+
+This shared ownership includes reusable dialog shells, action primitives,
+drag/drop behavior, menus, focus management, and other low-level interactions.
+
+### Angular Material
+
+When no Vocora primitive exists, use Angular Material for a suitable standard
+interactive component, including dialogs, menus, form fields, inputs, selects,
+checkboxes, radio buttons, tabs, tooltips, snackbars, and progress indicators.
+Do not hand-roll equivalent interaction or accessibility semantics with raw
+HTML, CSS, or JavaScript. Material owns the interaction primitive and its
+accessibility behavior; Vocora owns product styling and semantic tokens.
+
+### Angular CDK
+
+When Material has no appropriate visual component but Angular CDK provides the
+needed behavior, build the reusable Vocora component on that CDK primitive.
+Use CDK DragDrop, Overlay, A11y, Portal, and scrolling infrastructure where
+appropriate instead of homemade DOM listeners, absolute-positioning systems,
+focus traps, portals, or duplicated interaction logic.
+
+### Bootstrap utilities
+
+Bootstrap is Vocora's utility and layout layer. Prefer an exact built-in
+utility for common display, grid, flex, alignment, wrapping, spacing, sizing,
+visibility, text alignment, borders, and semantically correct color roles.
+Examples include `d-flex`, `d-grid`, `justify-content-*`, `align-items-*`,
+`flex-column`, `flex-wrap`, `m-*`, `p-*`, `gap-*`, `w-100`, `h-100`,
+`text-primary`, `bg-success`, and `border-danger`.
+
+Do not write component CSS for `display: flex`, `justify-content: center`, a
+standard spacing increment, or `width: 100%` when the corresponding Bootstrap
+utility expresses the exact requirement. Do not force an approximate utility
+when the design requires a different value.
+
+Bootstrap is not Vocora's interactive component library. Do not introduce
+Bootstrap JavaScript widgets or Bootstrap buttons, modals, or dropdowns in
+place of Vocora, Material, or CDK components.
+
+## Touch-to-refactor
+
+Whenever an existing component, template, or style file changes, inspect the
+portion being touched. If nearby legacy CSS duplicates an obvious exact
+Bootstrap utility, move that presentation to the template utility and remove
+the now-unused declaration. Do not add new custom declarations beside an
+equivalent legacy declaration.
+
+This is progressive, owner-local cleanup. Do not create unrelated
+repository-wide churn, force approximate utility substitutions, or distort
+component geometry, animation, pseudo-elements, and genuinely custom visual
+behavior merely to avoid CSS.
+
+## Custom CSS last
+
+Before adding custom CSS, check in this order:
+
+1. Is there an existing Vocora shared component or shared style?
+2. Does Angular Material provide the component interaction?
+3. Does Angular CDK provide the required behavior?
+4. Does Bootstrap provide the exact utility?
+5. Does an existing Vocora semantic token or shared pattern represent it?
+
+Only then add the minimal custom CSS. The declaration must have a concrete
+component-specific reason to exist.
+
+## Theme and color ownership
+
+- Vocora semantic tokens own product colors and semantic visual roles.
+- `ui/src/styles/_angular-material-theme.scss` maps Material system semantics
+  to Vocora tokens.
+- `ui/src/styles/_bootstrap-theme.scss` maps Bootstrap semantic utilities to
+  Vocora tokens.
+- Feature and component SCSS consumes semantic tokens, framework utilities,
+  and shared patterns; it does not create an alternative global palette.
+
+Do not redefine Bootstrap semantic variables or Material system colors in a
+feature, hard-code copies of design-system palette colors, or create a one-off
+semantic color system. The same semantic role across Material and Bootstrap
+must resolve to the same Vocora meaning.
+
+## Specificity and `!important`
+
+Do not solve theme or component conflicts by escalating selector specificity,
+adding wrapper after wrapper, scattering framework internals through features,
+or adding application-owned `!important` declarations. New `!important` is
+prohibited by default.
+
+If an upstream constraint makes `!important` genuinely unavoidable, first
+verify that the framework's supported token or theme API cannot solve it. Keep
+the exception in the single relevant integration boundary and document its
+reason in the tracked legacy-style baseline. Never edit Bootstrap's generated
+or internal CSS. Existing baseline entries are migration debt, not precedent;
+touch-to-refactor should reduce them when the owning surface changes.
+
+## Angular Material internals
+
+Feature code must not target undocumented implementation selectors such as
+`.mat-mdc-*` for visual redesign. Use the official Material theming or token API
+first. If that cannot express a product-level customization, keep the override
+in the single centralized Vocora Material integration layer. Never scatter
+Material-internal selectors through feature SCSS.
+
 ## 1. Foundation palette
 
 Only the following foundation colors may establish new product patterns:

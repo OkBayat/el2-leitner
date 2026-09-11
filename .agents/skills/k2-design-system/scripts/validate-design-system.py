@@ -18,6 +18,7 @@ REQUIRED_FILES = (
     "references/variables.scss",
     "references/theme.css",
     "references/material-theme.scss",
+    "references/legacy-style-baseline.json",
     "scripts/validate-design-system.py",
     "scripts/test_validate_design_system.py",
 )
@@ -68,6 +69,24 @@ CANONICAL_ACTION_ROLES = {
 BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
 THEME_GROUPS = ("surface", "text", "action")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
+BOOTSTRAP_SEMANTIC_VARIABLE = re.compile(
+    r"(--bs-(?:primary|secondary|success|info|warning|danger)(?:-rgb)?)\s*:",
+    flags=re.IGNORECASE,
+)
+MATERIAL_SYSTEM_VARIABLE = re.compile(
+    r"(--mat-sys-[a-z0-9-]+)\s*:",
+    flags=re.IGNORECASE,
+)
+FOUNDATION_COLOR_VARIABLE = re.compile(
+    rf"(--color-(?:{'|'.join(re.escape(name) for name in CANONICAL_COLORS)}))\s*:",
+    flags=re.IGNORECASE,
+)
+
+FRONTEND_STYLE_OWNERS = {
+    "bootstrap": "ui/src/styles/_bootstrap-theme.scss",
+    "material": "ui/src/styles/_angular-material-theme.scss",
+    "foundation": "ui/src/styles/_vocora-design-system.scss",
+}
 
 
 def skill_root() -> Path:
@@ -240,6 +259,10 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
         "### Codex-owned",
         "### No manual fallback",
         "## Stop conditions",
+        "existing Vocora shared primitive",
+        "Angular CDK",
+        "Bootstrap is the utility layer",
+        "Custom CSS is last",
     )
     for phrase in required_phrases:
         if phrase not in text:
@@ -282,6 +305,171 @@ def validate_material_reference(root: Path, errors: list[str]) -> None:
             )
 
 
+def validate_frontend_guidance(root: Path, errors: list[str]) -> None:
+    path = root / "references" / "DESIGN.md"
+    if not path.is_file():
+        return
+
+    text = path.read_text(encoding="utf-8")
+    hierarchy = (
+        "Existing Vocora shared primitive?",
+        "Standard interactive primitive in Angular Material?",
+        "Required behavior available in Angular CDK?",
+        "Layout, spacing, display, or semantic utility in Bootstrap?",
+        "Existing shared style or semantic token?",
+        "Otherwise",
+    )
+    positions: list[int] = []
+    for step in hierarchy:
+        position = text.find(step)
+        if position < 0:
+            errors.append(f"DESIGN.md is missing decision-tree step: {step}")
+        positions.append(position)
+    if all(position >= 0 for position in positions) and positions != sorted(positions):
+        errors.append("DESIGN.md must keep the UI decision tree in canonical order")
+
+    for heading in (
+        "## Touch-to-refactor",
+        "## Custom CSS last",
+        "## Theme and color ownership",
+        "## Specificity and `!important`",
+        "## Angular Material internals",
+    ):
+        if heading not in text:
+            errors.append(f"DESIGN.md is missing required architecture section: {heading}")
+
+
+def load_style_baseline(repo_root: Path, errors: list[str]) -> dict[str, Any] | None:
+    path = (
+        repo_root
+        / ".agents/skills/k2-design-system/references/legacy-style-baseline.json"
+    )
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        errors.append(
+            "Missing frontend style baseline: "
+            ".agents/skills/k2-design-system/references/legacy-style-baseline.json"
+        )
+        return None
+    except json.JSONDecodeError as exc:
+        errors.append(f"Invalid frontend style baseline JSON: {exc}")
+        return None
+
+    if not isinstance(data, dict) or data.get("schema_version") != 1:
+        errors.append("Frontend style baseline must use schema_version 1")
+        return None
+    return data
+
+
+def baseline_counts(
+    data: dict[str, Any],
+    key: str,
+    errors: list[str],
+) -> dict[str, int]:
+    entries = data.get(key)
+    if not isinstance(entries, dict):
+        errors.append(f"Frontend style baseline {key} must be an object")
+        return {}
+
+    counts: dict[str, int] = {}
+    for relative, entry in entries.items():
+        if (
+            not isinstance(relative, str)
+            or not isinstance(entry, dict)
+            or not isinstance(entry.get("count"), int)
+            or entry["count"] < 0
+            or not isinstance(entry.get("reason"), str)
+            or not entry["reason"].strip()
+        ):
+            errors.append(
+                f"Frontend style baseline {key}.{relative} must define a "
+                "non-negative count and non-empty reason"
+            )
+            continue
+        counts[relative] = entry["count"]
+    return counts
+
+
+def validate_debt_counts(
+    actual: dict[str, int],
+    expected: dict[str, int],
+    label: str,
+    errors: list[str],
+) -> None:
+    for relative in sorted(set(actual) | set(expected)):
+        actual_count = actual.get(relative, 0)
+        expected_count = expected.get(relative, 0)
+        if actual_count != expected_count:
+            errors.append(
+                f"Untracked {label} debt in {relative}: "
+                f"expected {expected_count}, found {actual_count}"
+            )
+
+
+def validate_frontend_architecture(repo_root: Path, errors: list[str]) -> None:
+    ui_source = repo_root / "ui" / "src"
+    if not ui_source.is_dir():
+        return
+
+    shared_root = ui_source / "app" / "shared"
+    if not shared_root.is_dir():
+        errors.append("Reusable frontend primitives must have ui/src/app/shared ownership")
+    for shared_module in (ui_source / "app").rglob("shared.module.ts"):
+        errors.append(
+            "Standalone frontend architecture must not introduce a giant SharedModule: "
+            f"{shared_module.relative_to(repo_root).as_posix()}"
+        )
+
+    important_counts: dict[str, int] = {}
+    material_internal_counts: dict[str, int] = {}
+    for path in sorted(ui_source.rglob("*.scss")):
+        relative = path.relative_to(repo_root).as_posix()
+        text = path.read_text(encoding="utf-8")
+
+        for pattern, owner_label, owner_path in (
+            (BOOTSTRAP_SEMANTIC_VARIABLE, "Bootstrap semantic variables", FRONTEND_STYLE_OWNERS["bootstrap"]),
+            (MATERIAL_SYSTEM_VARIABLE, "Material system variables", FRONTEND_STYLE_OWNERS["material"]),
+            (FOUNDATION_COLOR_VARIABLE, "Vocora foundation colors", FRONTEND_STYLE_OWNERS["foundation"]),
+        ):
+            if relative == owner_path:
+                continue
+            for match in pattern.finditer(text):
+                errors.append(
+                    f"{owner_label} must be defined only in {owner_path}: "
+                    f"{relative} defines {match.group(1)}"
+                )
+
+        important_count = len(re.findall(r"!important\b", text, flags=re.IGNORECASE))
+        if important_count:
+            important_counts[relative] = important_count
+        if relative.startswith("ui/src/app/"):
+            material_count = len(
+                re.findall(r"\.mat-mdc-[a-z0-9_-]+", text, flags=re.IGNORECASE)
+            )
+            if material_count:
+                material_internal_counts[relative] = material_count
+
+    baseline = load_style_baseline(repo_root, errors)
+    if baseline is None:
+        return
+    expected_important = baseline_counts(
+        baseline, "important_declaration_counts", errors
+    )
+    expected_material = baseline_counts(
+        baseline, "feature_material_internal_selector_counts", errors
+    )
+    validate_debt_counts(
+        important_counts, expected_important, "!important", errors
+    )
+    validate_debt_counts(
+        material_internal_counts,
+        expected_material,
+        "feature Material-internal selector",
+        errors,
+    )
+
+
 def validate(root: Path) -> list[str]:
     errors: list[str] = []
     validate_required_files(root, errors)
@@ -297,6 +485,8 @@ def validate(root: Path) -> list[str]:
     validate_skill_contract(root, errors)
     validate_button_contract(root, errors)
     validate_material_reference(root, errors)
+    validate_frontend_guidance(root, errors)
+    validate_frontend_architecture(root.parents[2], errors)
     return errors
 
 

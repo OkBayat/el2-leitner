@@ -1,6 +1,6 @@
 ---
 name: k2-design-system
-description: Mandatory Vocora visual design system for palette, typography, spacing, layout, Angular Material controls, responsive behavior, accessibility, branding, and semantic feedback. Use before creating or changing any product-facing UI.
+description: Mandatory Vocora visual and frontend-primitive contract for shared UI, Angular Material, Angular CDK, Bootstrap utilities, custom CSS, themes, accessibility, and branding. Use before creating or changing any product-facing UI.
 ---
 
 # K2 Design System
@@ -46,6 +46,27 @@ with no visual effect.
   and lower-edge changes are all immediate.
 - Feature code consumes semantic variables and shared classes, never local raw
   colors or Material reskins.
+- An existing Vocora shared primitive is always the first implementation choice.
+- Angular Material owns standard interaction semantics when no Vocora primitive
+  exists; Angular CDK owns lower-level behavior when Material has no suitable
+  higher-level component.
+- Bootstrap is the utility layer, not the interactive component library.
+- Custom CSS is last and must have a concrete reason to exist.
+
+## UI implementation hierarchy
+
+Apply the complete decision tree and ownership rules in
+`references/DESIGN.md`. In order: reuse an existing Vocora shared primitive;
+use Angular Material for a suitable standard interactive component; use Angular
+CDK for lower-level behavior; create a reusable product-specific primitive in
+`ui/src/app/shared` when needed; use Bootstrap for exact built-in presentation
+utilities; reuse shared styles and semantic tokens; then add only the minimal
+custom implementation.
+
+Do not introduce Bootstrap JavaScript widgets, feature-local reusable
+primitives, a giant `SharedModule`, feature-owned framework theme variables, or
+feature selectors that redesign undocumented Material internals. When touching
+legacy UI, apply the bounded touch-to-refactor rule from the design reference.
 
 ## Required workflow
 
@@ -54,12 +75,14 @@ with no visual effect.
 3. Read `references/variables.scss` before implementing CSS variables.
 4. Read `references/theme.css` when a Tailwind theme bridge is relevant.
 5. Read `references/material-theme.scss` for Angular Material integration.
-6. Reuse the existing token and component pattern.
-7. Add a new token only when the requested semantic role is genuinely absent.
-8. Define and verify light and dark behavior together.
-9. Verify responsive layout, wrapped labels, focus, disabled state, and reduced
+6. Inspect `ui/src/app/shared` and apply the UI implementation hierarchy before
+   choosing a primitive or adding CSS.
+7. Reuse the existing token and component pattern.
+8. Add a new token only when the requested semantic role is genuinely absent.
+9. Define and verify light and dark behavior together.
+10. Verify responsive layout, wrapped labels, focus, disabled state, and reduced
    motion for the changed surface.
-10. Run the skill validator, its focused tests, and the affected product test.
+11. Run the skill validator, its focused tests, and the affected product test.
 
 ## Angular Material button rule
 
@@ -127,6 +150,11 @@ The validator owns deterministic checks for:
 - required CSS variable parity with the token source;
 - required Material semantic mappings;
 - documented five-intent button contract and native disabled rule.
+- the documented UI primitive decision hierarchy;
+- single-owner framework theme and foundation color definitions;
+- the tracked non-increasing baseline for legacy `!important` and feature-level
+  Material-internal selector debt;
+- the shared standalone-component ownership boundary.
 
 ### Codex-owned
 
@@ -138,6 +166,10 @@ Codex owns semantic visual judgment, including:
 - appropriate mascot or illustration use;
 - whether a genuinely new semantic extension is justified.
 - whether light and dark variants preserve the same meaning and hierarchy.
+- whether nearby legacy CSS can be safely replaced by an exact Bootstrap
+  utility without creating unrelated churn.
+- whether a new reusable product-specific primitive is a true shared concept
+  rather than a false abstraction.
 
 ### No manual fallback
 
@@ -166,3 +198,6 @@ authorized, validate it, and only then implement the product surface.
 - `references/variables.scss` — CSS custom properties and semantic aliases.
 - `references/theme.css` — `@theme` bridge.
 - `references/material-theme.scss` — Angular Material semantic bridge.
+- `references/legacy-style-baseline.json` — exact legacy specificity and
+  Material-internal selector debt; it is a migration baseline, not permission
+  for new violations.

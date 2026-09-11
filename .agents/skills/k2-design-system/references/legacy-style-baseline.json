@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "important_declaration_counts": {
+    "ui/src/app/features/review/review-answer-feedback.scss": {
+      "count": 2,
+      "reason": "Legacy feature override retained until the review field is migrated to the central Material integration layer."
+    },
+    "ui/src/app/features/review/review-page.component.scss": {
+      "count": 5,
+      "reason": "Legacy review control overrides retained for progressive touch-to-refactor cleanup."
+    },
+    "ui/src/app/shared/app-shell/course-menu.component.scss": {
+      "count": 11,
+      "reason": "Legacy Material menu sizing overrides retained until the shared menu integration is centralized."
+    },
+    "ui/src/app/shared/pwa/pwa-status.component.scss": {
+      "count": 1,
+      "reason": "Existing reduced-motion override retained as baseline debt."
+    },
+    "ui/src/app/shared/slide-exercise/library/slide-library.component.scss": {
+      "count": 15,
+      "reason": "Legacy slide-state overrides retained for progressive touch-to-refactor cleanup."
+    },
+    "ui/src/styles.scss": {
+      "count": 9,
+      "reason": "Existing application integration overrides retained until they move to their owning central adapters."
+    },
+    "ui/src/styles/_angular-material-components.scss": {
+      "count": 1,
+      "reason": "The central Material adapter disables upstream button transitions to enforce the canonical immediate interaction contract."
+    },
+    "ui/src/styles/_bootstrap-theme.scss": {
+      "count": 2,
+      "reason": "The central Bootstrap adapter must override generated utility declarations at the framework integration boundary."
+    },
+    "ui/src/styles/_table-design.scss": {
+      "count": 1,
+      "reason": "Existing centralized table integration override retained as baseline debt."
+    }
+  },
+  "feature_material_internal_selector_counts": {
+    "ui/src/app/features/review/review-answer-feedback.scss": {
+      "count": 2,
+      "reason": "Legacy review field selectors retained until the supported Material API or central adapter can replace them."
+    }
+  }
+}
