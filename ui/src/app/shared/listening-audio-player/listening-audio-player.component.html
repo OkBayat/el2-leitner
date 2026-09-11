@@ -32,7 +32,7 @@
         <button
           mat-icon-button
           type="button"
-          class="speed-control"
+          class="speed-control vocora-plain-icon-action"
           data-testid="audio-speed"
           [attr.aria-label]="'Playback speed ' + playbackRateLabel()"
           (click)="cyclePlaybackRate()"
@@ -40,10 +40,11 @@
         <button
           mat-icon-button
           type="button"
+          class="vocora-plain-icon-action"
           data-testid="audio-like"
           aria-label="Like this lesson audio"
           [attr.aria-pressed]="reaction() === 'like'"
-          [class.is-selected]="reaction() === 'like'"
+          [class.vocora-plain-icon-action--selected]="reaction() === 'like'"
           (click)="setReaction('like')"
         >
           <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -53,10 +54,11 @@
         <button
           mat-icon-button
           type="button"
+          class="vocora-plain-icon-action"
           data-testid="audio-dislike"
           aria-label="Dislike this lesson audio"
           [attr.aria-pressed]="reaction() === 'dislike'"
-          [class.is-selected]="reaction() === 'dislike'"
+          [class.vocora-plain-icon-action--selected]="reaction() === 'dislike'"
           (click)="setReaction('dislike')"
         >
           <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -88,7 +90,7 @@
       </div>
 
       <div class="immersive-transport" aria-label="Audio controls">
-        <button mat-icon-button type="button" data-testid="audio-back-10" aria-label="Rewind 10 seconds" (click)="skip(-10)">
+        <button mat-icon-button type="button" class="vocora-plain-icon-action vocora-plain-icon-action--large" data-testid="audio-back-10" aria-label="Rewind 10 seconds" (click)="skip(-10)">
           <svg class="skip-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <path d="M15.2 13.5V6.8L8.5 13.5l6.7 6.7v-6.7A15 15 0 1 1 9 25.7" />
             <text x="24" y="31" text-anchor="middle">10</text>
@@ -97,7 +99,7 @@
         <button
           mat-icon-button
           type="button"
-          class="immersive-play-toggle"
+          class="immersive-play-toggle vocora-primary-icon-action vocora-primary-icon-action--hero"
           data-testid="audio-play"
           [attr.aria-label]="(playing() ? 'Pause ' : 'Play ') + title()"
           (click)="togglePlayback()"
@@ -112,7 +114,7 @@
             </svg>
           }
         </button>
-        <button mat-icon-button type="button" data-testid="audio-forward-10" aria-label="Forward 10 seconds" (click)="skip(10)">
+        <button mat-icon-button type="button" class="vocora-plain-icon-action vocora-plain-icon-action--large" data-testid="audio-forward-10" aria-label="Forward 10 seconds" (click)="skip(10)">
           <svg class="skip-icon skip-icon--forward" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
             <path d="M32.8 13.5V6.8l6.7 6.7-6.7 6.7v-6.7A15 15 0 1 0 39 25.7" />
             <text x="24" y="31" text-anchor="middle">10</text>

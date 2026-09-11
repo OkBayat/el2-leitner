@@ -6,7 +6,7 @@ import {
 } from './audio-waveform';
 
 function yCoordinates(path: string): number[] {
-  return [...path.matchAll(/[ML] [\d.]+ ([\d.]+)/gu)].map((match) => Number(match[1]));
+  return [...path.matchAll(/[ML] [\d.]+ (-?[\d.]+)/gu)].map((match) => Number(match[1]));
 }
 
 function maximumDeviation(values: number[]): number {
@@ -39,8 +39,10 @@ describe('audio waveform', () => {
 
   it('uses at least twice the previous center amplitude and phase speed', () => {
     const [primaryWave] = createAudioWaveformPaths(1, 0);
-    const centerValues = yCoordinates(primaryWave).slice(20, 45);
+    const values = yCoordinates(primaryWave);
+    const centerValues = values.slice(20, 45);
 
+    expect(values).toHaveLength(65);
     expect(maximumDeviation(centerValues)).toBeGreaterThan(130);
     expect(audioWaveformPhaseAdvance(16, 0.5)).toBeCloseTo(0.1248, 4);
   });

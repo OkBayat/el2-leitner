@@ -64,7 +64,8 @@ audio {
   display: grid;
   flex: 1 1 220px;
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   place-items: center;
 }
 
@@ -107,20 +108,6 @@ audio {
   margin-inline: auto;
 }
 
-.immersive-secondary-controls button,
-.immersive-transport button {
-  color: var(--vocora-text-secondary);
-}
-
-.immersive-secondary-controls button {
-  width: var(--vocora-touch-target-min);
-  height: var(--vocora-touch-target-min);
-}
-
-.immersive-secondary-controls button.is-selected {
-  color: var(--vocora-action-primary);
-}
-
 .immersive-secondary-controls svg {
   width: 30px;
   height: 30px;
@@ -161,18 +148,6 @@ audio {
   justify-content: center;
   align-items: center;
   gap: clamp(var(--vocora-space-4), 6vw, var(--vocora-space-10));
-}
-
-.immersive-transport > button:not(.immersive-play-toggle) {
-  width: 76px;
-  height: 76px;
-}
-
-.immersive-transport .immersive-play-toggle {
-  width: 124px;
-  height: 124px;
-  color: var(--vocora-action-primary-foreground);
-  background: var(--vocora-action-primary);
 }
 
 .immersive-play-toggle svg {
@@ -505,15 +480,6 @@ audio {
     gap: var(--vocora-space-6);
   }
 
-  .immersive-transport > button:not(.immersive-play-toggle) {
-    width: 64px;
-    height: 64px;
-  }
-
-  .immersive-transport .immersive-play-toggle {
-    width: 104px;
-    height: 104px;
-  }
 }
 
 @media (max-height: 720px) {
@@ -534,15 +500,6 @@ audio {
     grid-template-columns: 56px 84px 56px;
   }
 
-  .immersive-transport > button:not(.immersive-play-toggle) {
-    width: 56px;
-    height: 56px;
-  }
-
-  .immersive-transport .immersive-play-toggle {
-    width: 84px;
-    height: 84px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
