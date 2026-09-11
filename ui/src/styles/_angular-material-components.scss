@@ -49,33 +49,10 @@
 	.mat-mdc-outlined-button {
 		--mat-button-outlined-container-shape: var(--vocora-radius-button);
 		border-width: 2px;
-		background: var(--vocora-action-secondary) !important;
 		--vocora-material-button-edge: var(
 			--mat-button-outlined-outline-color,
 			var(--mat-sys-outline)
 		);
-	}
-
-	.mat-mdc-outlined-button:not(:disabled) {
-		--mat-button-outlined-label-text-color: var(
-			--vocora-action-secondary-foreground
-		);
-		color: var(--vocora-action-secondary-foreground);
-	}
-
-	.mat-mdc-outlined-button:disabled {
-		--mat-button-outlined-disabled-label-text-color: var(
-			--vocora-action-secondary-disabled-foreground
-		);
-		--mat-button-outlined-disabled-outline-color: var(
-			--vocora-action-secondary-disabled-border
-		);
-		border-color: var(--vocora-action-secondary-disabled-border) !important;
-		background: var(
-			--vocora-action-secondary-disabled-background
-		) !important;
-		color: var(--vocora-action-secondary-disabled-foreground) !important;
-		opacity: 1;
 	}
 
 	.mat-tonal-button {
