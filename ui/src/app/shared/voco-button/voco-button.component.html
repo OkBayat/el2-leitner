@@ -4,7 +4,7 @@
   <a
     #control
     mat-flat-button
-    class="voco-button voco-button--{{ variant() }}"
+    class="voco-button voco-button--{{ variant }}"
     [routerLink]="routerLink()"
     [target]="target()"
     [rel]="rel()"
@@ -13,12 +13,13 @@
     [attr.aria-describedby]="ariaDescribedBy()"
     [attr.aria-current]="ariaCurrent()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></a>
 } @else if (kind === 'link') {
   <a
     #control
     mat-flat-button
-    class="voco-button voco-button--{{ variant() }}"
+    class="voco-button voco-button--{{ variant }}"
     [href]="href()"
     [target]="target()"
     [rel]="rel()"
@@ -27,6 +28,7 @@
     [attr.aria-describedby]="ariaDescribedBy()"
     [attr.aria-current]="ariaCurrent()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></a>
 } @else if (kind === 'icon-link' && routerLink() !== null) {
   <a
@@ -42,6 +44,7 @@
     [attr.aria-describedby]="ariaDescribedBy()"
     [attr.aria-current]="ariaCurrent()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></a>
 } @else if (kind === 'icon-link') {
   <a
@@ -57,6 +60,7 @@
     [attr.aria-describedby]="ariaDescribedBy()"
     [attr.aria-current]="ariaCurrent()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></a>
 } @else if (kind === 'icon') {
   <button
@@ -73,6 +77,7 @@
     [attr.aria-expanded]="ariaExpanded()"
     [attr.aria-pressed]="ariaPressed()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></button>
 } @else if (kind === 'audio') {
   <button
@@ -86,12 +91,13 @@
     [attr.aria-busy]="ariaBusy()"
     [attr.aria-pressed]="ariaPressed()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></button>
 } @else {
   <button
     #control
     mat-flat-button
-    class="voco-button voco-button--{{ variant() }}"
+    class="voco-button voco-button--{{ variant }}"
     [type]="type()"
     [disabled]="disabled()"
     [attr.aria-label]="ariaLabel()"
@@ -101,5 +107,6 @@
     [attr.aria-expanded]="ariaExpanded()"
     [attr.aria-pressed]="ariaPressed()"
     [attr.title]="title()"
+    (click)="onControlClick($event)"
   ><ng-container [ngTemplateOutlet]="content" /></button>
 }

@@ -197,14 +197,10 @@
 							</voco-warning-button>
 						}
 
-						<voco-primary-button
-							class="review-action-primary"
-							type="button"
-							[intent]="footer.tone === 'success' ? 'success' : footer.tone === 'error' ? 'error' : 'primary'"
+						<app-review-footer-primary-button class="review-action-primary"
+							[tone]="footer.tone" [label]="footer.primaryLabel"
 							[disabled]="isFooterPrimaryDisabled(footer)"
-							(click)="handleFooterPrimary(footer.primaryAction)">
-							{{ footer.primaryLabel }}
-						</voco-primary-button>
+							(pressed)="handleFooterPrimary(footer.primaryAction)"/>
 					</div>
 				</footer>
 			}

@@ -3,6 +3,10 @@
   max-width: 100%;
 }
 
+:host.voco-button-host--disabled {
+  pointer-events: none;
+}
+
 .voco-button,
 .voco-audio-button {
   --voco-button-background: var(--vocora-component-action-background, var(--voco-button-default-background));
@@ -120,7 +124,7 @@
   outline-offset: 3px;
 }
 
-.voco-icon-button {
+:host > .voco-icon-button {
   display: inline-grid;
   place-items: center;
   width: 44px;
@@ -170,7 +174,7 @@
   height: 124px;
 }
 
-.voco-audio-button {
+:host > .voco-audio-button {
   --voco-button-default-background: var(--vocora-action-primary);
   --voco-button-default-foreground: var(--vocora-action-primary-foreground);
   --voco-button-default-edge: var(--vocora-action-primary-edge);

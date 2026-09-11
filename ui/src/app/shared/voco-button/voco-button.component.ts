@@ -3,9 +3,9 @@ import {
   Component,
   ElementRef,
   booleanAttribute,
-  computed,
   inject,
   input,
+  output,
   viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
@@ -55,6 +55,7 @@ const IDENTITIES: Readonly<Record<string, VocoButtonIdentity>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.aria-disabled]': 'disabled() ? "true" : null',
+    '[class.voco-button-host--disabled]': 'disabled()',
   },
 })
 export class VocoButtonComponent {
@@ -64,7 +65,6 @@ export class VocoButtonComponent {
   });
 
   readonly type = input<VocoNativeButtonType>('button');
-  readonly intent = input<VocoButtonVariant | null>(null);
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input<string | null>(null, { alias: 'aria-label' });
   readonly ariaDescribedBy = input<string | null>(null, { alias: 'aria-describedby' });
@@ -82,9 +82,19 @@ export class VocoButtonComponent {
   readonly iconSize = input<VocoIconButtonSize>('default');
   readonly selected = input(false, { transform: booleanAttribute });
   readonly audioSize = input<VocoAudioButtonSize>('default');
+  readonly activated = output<MouseEvent>({ alias: 'click' });
 
   protected readonly kind = this.identity.kind;
-  protected readonly variant = computed(() => this.intent() ?? this.identity.variant);
+  protected readonly variant = this.identity.variant;
+
+  protected onControlClick(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    if (this.disabled()) {
+      event.preventDefault();
+      return;
+    }
+    this.activated.emit(event);
+  }
 
   focus(options?: FocusOptions): void {
     this.control()?.nativeElement.focus(options);

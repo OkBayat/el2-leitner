@@ -40,8 +40,11 @@ for (const variant of ['primary', 'secondary', 'success', 'warning', 'error', 'n
   assert.match(componentStyles, new RegExp(`voco-button--${variant}`, 'u'));
 }
 assert.match(componentSource, /@angular\/material\/button/u);
+assert.doesNotMatch(componentSource, /readonly intent\s*=/u, 'semantic variant selection must stay in the voco selector');
 assert.doesNotMatch(componentStyles, /#[\da-f]{3,8}\b/iu, 'voco button styles must use semantic tokens, not raw colors');
 assert.match(componentStyles, /min-height:\s*44px/u);
+assert.match(componentStyles, /\.voco-icon-button\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;/su);
+assert.match(componentStyles, /\.voco-audio-button\s*\{[^}]*min-width:\s*80px;[^}]*min-height:\s*80px;/su);
 assert.match(componentStyles, /\.voco-button--navigation\s*\{[^}]*background:\s*transparent;[^}]*border:\s*0;[^}]*box-shadow:\s*none;/su);
 
 console.log('voco button architecture checks passed');

@@ -172,7 +172,7 @@ export class LibraryEntryDialogComponent {
         <p>{{ c.description || 'A vocabulary collection for your learning journey.' }}</p>
         <mat-chip-set><mat-chip>{{ kindLabel(c.kind) }}</mat-chip><mat-chip>{{ level(c) }}</mat-chip><mat-chip>{{ c.status }}</mat-chip><mat-chip>version {{ c.contentVersion }}</mat-chip></mat-chip-set>
         <div class="progress"><span>{{ progress(c).entered }} of {{ progress(c).total }} words are in Leitner</span><mat-progress-bar mode="determinate" [value]="progress(c).percent" /></div>
-        <div class="actions"><voco-error-button (click)="toggleSubscription()">{{ c.subscribed ? 'Remove from box' : 'Add to box' }}</voco-error-button>@if(data.canManage){<voco-secondary-button (click)="editCollection()"
+        <div class="actions">@if(c.subscribed){<voco-error-button (click)="toggleSubscription()">Remove from box</voco-error-button>}@else{<voco-primary-button (click)="toggleSubscription()">Add to box</voco-primary-button>}@if(data.canManage){<voco-secondary-button (click)="editCollection()"
 							>Edit collection</voco-secondary-button><voco-secondary-button (click)="importEntries()"
 							>Import file</voco-secondary-button><voco-secondary-button (click)="editEntry()"
 							>Add word</voco-secondary-button>}</div>
