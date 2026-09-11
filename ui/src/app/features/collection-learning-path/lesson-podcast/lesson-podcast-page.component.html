@@ -14,22 +14,7 @@
 
     <h1>{{ pageTitle() }}</h1>
 
-    @if (audioSrc()) {
-      <a
-        mat-icon-button
-        class="lesson-podcast-page__header-action"
-        data-testid="lesson-podcast-download"
-        [href]="audioSrc()"
-        [attr.download]="downloadFileName()"
-        aria-label="Download lesson audio"
-      >
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path d="M16 4v16m-6-6 6 6 6-6M6 23v4h20v-4" />
-        </svg>
-      </a>
-    } @else {
-      <span class="lesson-podcast-page__header-placeholder" aria-hidden="true"></span>
-    }
+    <span class="lesson-podcast-page__header-placeholder" aria-hidden="true"></span>
   </header>
 
   <section class="lesson-podcast-page__content">

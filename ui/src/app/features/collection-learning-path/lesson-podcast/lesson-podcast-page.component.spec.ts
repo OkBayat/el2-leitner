@@ -61,9 +61,7 @@ describe('LessonPodcastPageComponent', () => {
     expect(element.querySelector('.lesson-podcast-page__header h1')?.textContent).toContain('Unit 1 — Present tenses');
     expect(element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-back"]')?.getAttribute('href'))
       .toBe('/learning-paths/4');
-    const download = element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-download"]');
-    expect(download?.getAttribute('href')).toBe('/api/learning-paths/4/lessons/64/audio');
-    expect(download?.getAttribute('download')).toBe('64.m4a');
+    expect(element.querySelector('[data-testid="lesson-podcast-download"]')).toBeNull();
     expect(element.querySelector<HTMLAudioElement>('audio')?.getAttribute('src'))
       .toBe('/api/learning-paths/4/lessons/64/audio');
     expect(element.querySelector('[data-testid="listening-audio-player"]')?.classList)

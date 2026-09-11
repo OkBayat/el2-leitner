@@ -38,7 +38,6 @@ export class LessonPodcastPageComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly pageTitle = computed(() => this.lesson()?.title ?? 'Lesson audio');
-  readonly downloadFileName = computed(() => `${this.lesson()?.id ?? 'lesson-audio'}.m4a`);
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
