@@ -1,7 +1,5 @@
 @mixin apply() {
   :root {
-    --bs-light: var(--vocora-surface-raised);
-    --bs-light-rgb: var(--vocora-surface-raised-rgb);
     --bs-primary: var(--vocora-action-primary);
     --bs-primary-rgb: var(--vocora-action-primary-rgb);
     --bs-secondary: var(--vocora-text-secondary);
@@ -14,5 +12,17 @@
     --bs-warning-rgb: var(--vocora-warning-rgb);
     --bs-danger: var(--vocora-error);
     --bs-danger-rgb: var(--vocora-error-rgb);
+  }
+
+  .bg-light {
+    background-color: color-mix(
+      in srgb,
+      var(--vocora-surface-base) 96%,
+      var(--vocora-text-primary)
+    ) !important;
+  }
+
+  .text-body {
+    color: var(--vocora-text-primary) !important;
   }
 }

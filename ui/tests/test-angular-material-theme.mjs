@@ -309,6 +309,11 @@ assert.match(
 );
 assert.match(
 	components,
+	/\.mat-mdc-outlined-button:disabled\s*\{[^}]*--mat-button-outlined-disabled-label-text-color:\s*var\(\s*--vocora-action-secondary-disabled-foreground\s*\);[^}]*--mat-button-outlined-disabled-outline-color:\s*var\(\s*--vocora-action-secondary-disabled-border\s*\);[^}]*background:\s*var\(\s*--vocora-action-secondary-disabled-background\s*\)\s*!important;[^}]*color:\s*var\(\s*--vocora-action-secondary-disabled-foreground\s*\)\s*!important;[^}]*opacity:\s*1;/u,
+	"Disabled Material outlined buttons must keep readable secondary colors in both themes.",
+);
+assert.match(
+	components,
 	/:disabled[^{]*\{[^}]*--mat-button-filled-disabled-container-color:/u,
 	"Every button intent must inherit a deterministic disabled treatment.",
 );

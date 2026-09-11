@@ -19,7 +19,6 @@ assert.ok(
 );
 
 const semanticMappings = [
-  ['light', 'surface-raised'],
   ['primary', 'action-primary'],
   ['secondary', 'text-secondary'],
   ['success', 'success'],
@@ -47,6 +46,17 @@ for (const [bootstrapName, vocoraName] of semanticMappings) {
     `Vocora ${vocoraName} must provide RGB companions for both light and dark themes.`
   );
 }
+
+assert.match(
+  bootstrapTheme,
+  /\.bg-light\s*\{[^}]*background-color:\s*color-mix\(\s*in srgb,\s*var\(--vocora-surface-base\) 96%,\s*var\(--vocora-text-primary\)\s*\)\s*!important;/u,
+  'Bootstrap bg-light must remain distinct from bg-white while following the active Vocora theme.'
+);
+assert.match(
+  bootstrapTheme,
+  /\.text-body\s*\{[^}]*color:\s*var\(--vocora-text-primary\)\s*!important;/u,
+  'Bootstrap text-body must retain readable Vocora text contrast in both themes.'
+);
 
 assert.doesNotMatch(
   bootstrapTheme,

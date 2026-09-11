@@ -63,6 +63,21 @@
 		color: var(--vocora-action-secondary-foreground);
 	}
 
+	.mat-mdc-outlined-button:disabled {
+		--mat-button-outlined-disabled-label-text-color: var(
+			--vocora-action-secondary-disabled-foreground
+		);
+		--mat-button-outlined-disabled-outline-color: var(
+			--vocora-action-secondary-disabled-border
+		);
+		border-color: var(--vocora-action-secondary-disabled-border) !important;
+		background: var(
+			--vocora-action-secondary-disabled-background
+		) !important;
+		color: var(--vocora-action-secondary-disabled-foreground) !important;
+		opacity: 1;
+	}
+
 	.mat-tonal-button {
 		--mat-button-tonal-container-shape: var(--vocora-radius-button);
 		border-width: 0;
