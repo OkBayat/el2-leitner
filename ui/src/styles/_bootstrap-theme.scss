@@ -15,10 +15,10 @@
   }
 
   .bg-light {
-    background-color: color-mix(
+    background: color-mix(
       in srgb,
-      var(--vocora-surface-base) 96%,
-      var(--vocora-text-primary)
+      var(--vocora-surface-base) 92%,
+      var(--vocora-border)
     ) !important;
   }
 

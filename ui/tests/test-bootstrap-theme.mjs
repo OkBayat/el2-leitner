@@ -49,7 +49,7 @@ for (const [bootstrapName, vocoraName] of semanticMappings) {
 
 assert.match(
   bootstrapTheme,
-  /\.bg-light\s*\{[^}]*background-color:\s*color-mix\(\s*in srgb,\s*var\(--vocora-surface-base\) 96%,\s*var\(--vocora-text-primary\)\s*\)\s*!important;/u,
+  /\.bg-light\s*\{[^}]*background:\s*color-mix\(\s*in srgb,\s*var\(--vocora-surface-base\) 92%,\s*var\(--vocora-border\)\s*\)\s*!important;/u,
   'Bootstrap bg-light must remain distinct from bg-white while following the active Vocora theme.'
 );
 assert.match(
