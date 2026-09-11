@@ -304,7 +304,7 @@ assert.match(
 );
 assert.match(
 	components,
-	/\.mat-mdc-outlined-button\s*\{[^}]*background:\s*var\(--vocora-action-secondary\);/u,
+	/\.mat-mdc-outlined-button\s*\{[^}]*background:\s*var\(--vocora-action-secondary\)\s*!important;/u,
 	"Every Material outlined button must use the white secondary surface in both themes.",
 );
 assert.match(

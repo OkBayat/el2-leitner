@@ -49,7 +49,7 @@
 	.mat-mdc-outlined-button {
 		--mat-button-outlined-container-shape: var(--vocora-radius-button);
 		border-width: 2px;
-		background: var(--vocora-action-secondary);
+		background: var(--vocora-action-secondary) !important;
 		--vocora-material-button-edge: var(
 			--mat-button-outlined-outline-color,
 			var(--mat-sys-outline)

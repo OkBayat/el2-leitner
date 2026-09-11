@@ -223,8 +223,13 @@ assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u)
 assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u);
 assert.match(
 	classificationTemplate,
-	/class="bucket d-flex flex-column align-items-start gap-3 p-3 border border-2 border-secondary rounded-4 bg-light text-body text-wrap"/u,
+	/class="bucket d-flex flex-column align-items-start gap-3 p-3 border border-secondary rounded-4 bg-light text-body text-wrap"/u,
 	'Classification buckets must use Bootstrap layout, spacing, border, radius, background, and text utilities.',
+);
+assert.doesNotMatch(
+	classificationTemplate,
+	/\bborder-2\b/u,
+	'Classification buckets must use the default Bootstrap border width.',
 );
 assert.doesNotMatch(
 	classificationTemplate,

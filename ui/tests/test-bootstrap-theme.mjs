@@ -19,6 +19,7 @@ assert.ok(
 );
 
 const semanticMappings = [
+  ['light', 'surface-raised'],
   ['primary', 'action-primary'],
   ['secondary', 'text-secondary'],
   ['success', 'success'],

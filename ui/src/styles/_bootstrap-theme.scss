@@ -1,5 +1,7 @@
 @mixin apply() {
   :root {
+    --bs-light: var(--vocora-surface-raised);
+    --bs-light-rgb: var(--vocora-surface-raised-rgb);
     --bs-primary: var(--vocora-action-primary);
     --bs-primary-rgb: var(--vocora-action-primary-rgb);
     --bs-secondary: var(--vocora-text-secondary);
