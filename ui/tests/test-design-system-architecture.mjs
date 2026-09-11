@@ -88,8 +88,13 @@ function validateFixture({
 			[
 				relative,
 				"const BAD = '.mat-mdc-example { color: red !important; }';\n" +
+					"// @Component({styles: BAD}) export class CommentedOut {}\n" +
 					"@Component({styles: BAD}) export class Scalar {}\n" +
-					"@Component({styles: [BAD]}) export class ArrayValue {}",
+					"@Component({styles: [BAD]}) export class ArrayValue {}\n" +
+					"@Component({styles: '.safe {}' + BAD}) export class ConcatenatedScalar {}\n" +
+					"@Component({styles: ['.safe {}'] + BAD}) export class ConcatenatedArray {}\n" +
+					"@Component({styles: `.safe { color: ${BAD}; }`}) export class Interpolated {}\n" +
+					"@Component({styles: [/* allowed note */ '.safe {}']}) export class CommentedLiteralArray {}",
 			],
 		],
 	});
@@ -97,7 +102,7 @@ function validateFixture({
 		errors.filter((error) =>
 			error.includes("Unsupported Angular inline styles expression"),
 		).length,
-		2,
+		5,
 	);
 }
 
@@ -144,7 +149,8 @@ function validateFixture({
 
 {
 	const relative = "ui/src/app/features/example/example.component.scss";
-	const occurrence = ".legacy, .second => color:red!important";
+	const occurrence =
+		".legacy,.second /* baseline note */ => color: red !important";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.important_declarations[relative] = {
 		occurrences: [occurrence],
@@ -200,6 +206,39 @@ function validateFixture({
 	assert.ok(
 		growthErrors.includes(
 			`Legacy feature Material-internal selector baseline grew beyond base source debt in ${relative}: ${occurrence}`,
+		),
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/example.component.scss";
+	const baseline = emptyBaseline();
+	baseline.legacy_debt.feature_material_internal_selectors[relative] = {
+		occurrences: [".host,.mat-mdc-example /* baseline note */"],
+		reason: "Existing Material selector debt.",
+	};
+	assert.deepEqual(
+		validateFixture({
+			files: [[relative, ".host, .mat-mdc-example { color: red; }"]],
+			baseFiles: [
+				[
+					relative,
+					".host,.mat-mdc-example /* formatting note */ { color: red; }",
+				],
+			],
+			baseline,
+		}),
+		[],
+	);
+
+	const substitutionErrors = validateFixture({
+		files: [[relative, ".host, .mat-mdc-example { color: red; }"]],
+		baseFiles: [[relative, ".host, .mat-mdc-different { color: red; }"]],
+		baseline,
+	});
+	assert.ok(
+		substitutionErrors.some((error) =>
+			error.includes("baseline grew beyond base source debt"),
 		),
 	);
 }

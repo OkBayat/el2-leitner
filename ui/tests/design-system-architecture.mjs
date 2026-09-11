@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import ts from "typescript";
 
 const BASELINE_PATH = "ui/tests/design-system-architecture-baseline.json";
 const STYLE_EXTENSIONS = new Set([".css", ".less", ".sass", ".scss"]);
@@ -37,70 +38,69 @@ function normalizeWhitespace(value) {
 	return value.replace(/\s+/gu, " ").trim();
 }
 
-function readTypeScriptString(text, start) {
-	const quote = text[start];
-	let index = start + 1;
-	let escaped = false;
-	let value = "";
-	while (index < text.length) {
-		const character = text[index];
-		index += 1;
-		if (escaped) {
-			value += character;
-			escaped = false;
-		} else if (character === "\\") {
-			value += character;
-			escaped = true;
-		} else if (character === quote) {
-			return [value, index];
-		} else {
-			value += character;
-		}
-	}
-	return [null, index];
-}
-
 function extractInlineStyleMetadata(text) {
 	if (!text.includes("@Component")) return { styles: [], unsupported: 0 };
 
+	const source = ts.createSourceFile(
+		"component.ts",
+		text,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TS,
+	);
 	const styles = [];
 	let unsupported = 0;
-	for (const match of text.matchAll(/\bstyles\s*:\s*/gu)) {
-		let index = match.index + match[0].length;
-		if (index >= text.length) continue;
-		if (["'", '"', "`"].includes(text[index])) {
-			const [value] = readTypeScriptString(text, index);
-			if (value !== null) styles.push(value);
-			continue;
-		}
-		if (text[index] !== "[") {
-			unsupported += 1;
-			continue;
-		}
 
-		index += 1;
-		let depth = 1;
-		let unsupportedArray = false;
-		while (index < text.length && depth > 0) {
-			const character = text[index];
-			if (["'", '"', "`"].includes(character)) {
-				const [value, nextIndex] = readTypeScriptString(text, index);
-				index = nextIndex;
-				if (value !== null) styles.push(value);
+	function literalValue(node) {
+		return ts.isStringLiteral(node) ||
+			ts.isNoSubstitutionTemplateLiteral(node)
+			? node.text
+			: null;
+	}
+
+	function visit(node) {
+		if (
+			ts.isDecorator(node) &&
+			ts.isCallExpression(node.expression) &&
+			ts.isIdentifier(node.expression.expression) &&
+			node.expression.expression.text === "Component"
+		) {
+			const metadata = node.expression.arguments[0];
+			if (!metadata || !ts.isObjectLiteralExpression(metadata)) {
+				unsupported += 1;
 			} else {
-				index += 1;
-				if (character === "[") depth += 1;
-				if (character === "]") depth -= 1;
-				if (
-					depth > 0 &&
-					![",", " ", "\t", "\r", "\n"].includes(character)
-				) {
-					unsupportedArray = true;
+				for (const property of metadata.properties) {
+					if (ts.isSpreadAssignment(property)) {
+						unsupported += 1;
+						continue;
+					}
+					if (!ts.isPropertyAssignment(property)) continue;
+					const name = property.name;
+					const isStyles =
+						(ts.isIdentifier(name) || ts.isStringLiteral(name)) &&
+						name.text === "styles";
+					if (!isStyles) continue;
+
+					const scalar = literalValue(property.initializer);
+					if (scalar !== null) {
+						styles.push(scalar);
+						continue;
+					}
+					if (ts.isArrayLiteralExpression(property.initializer)) {
+						const values =
+							property.initializer.elements.map(literalValue);
+						if (values.every((value) => value !== null)) {
+							styles.push(...values);
+							continue;
+						}
+					}
+					unsupported += 1;
 				}
 			}
 		}
-		if (unsupportedArray) unsupported += 1;
+		ts.forEachChild(node, visit);
 	}
+	visit(source);
 	return { styles, unsupported };
 }
 
@@ -305,10 +305,15 @@ function addMaps(left, right, errors, label) {
 }
 
 function compareExact(actual, declared, label, errors) {
-	const paths = new Set([...actual.keys(), ...declared.keys()]);
+	const canonicalActual = canonicalizeOccurrences(actual);
+	const canonicalDeclared = canonicalizeOccurrences(declared);
+	const paths = new Set([
+		...canonicalActual.keys(),
+		...canonicalDeclared.keys(),
+	]);
 	for (const relative of [...paths].sort()) {
-		const actualItems = actual.get(relative) ?? new Map();
-		const declaredItems = declared.get(relative) ?? new Map();
+		const actualItems = canonicalActual.get(relative) ?? new Map();
+		const declaredItems = canonicalDeclared.get(relative) ?? new Map();
 		const occurrences = new Set([
 			...actualItems.keys(),
 			...declaredItems.keys(),
@@ -347,20 +352,23 @@ function compareLegacyToBase(declared, baseActual, label, errors) {
 }
 
 function canonicalOccurrence(occurrence) {
-	const withoutComments = occurrence.replace(/\/\*[\s\S]*?\*\//gu, " ");
+	const withoutComments = occurrence
+		.replace(/\/\*[\s\S]*?\*\//gu, "")
+		.replace(/\/\/.*$/gmu, "");
 	const match = withoutComments.match(
-		/^(.*?)\s*=>\s*([a-z-]+):(.*)!important$/iu,
+		/^(.*?)\s*=>\s*([a-z-]+)\s*:\s*(.*?)\s*!important$/iu,
 	);
-	if (!match) return normalizeWhitespace(withoutComments);
-	const selector = normalizeWhitespace(match[1]).replace(
-		/\s*([,>+~])\s*/gu,
-		"$1",
-	);
+	if (!match) return canonicalSelector(withoutComments);
+	const selector = canonicalSelector(match[1]);
 	const value = normalizeWhitespace(match[3])
 		.replace(/\(\s+/gu, "(")
 		.replace(/\s+\)/gu, ")")
 		.replace(/\s*,\s*/gu, ",");
 	return `${selector} => ${match[2].toLowerCase()}:${value}!important`;
+}
+
+function canonicalSelector(selector) {
+	return normalizeWhitespace(selector).replace(/\s*([,>+~])\s*/gu, "$1");
 }
 
 function canonicalizeOccurrences(occurrencesByPath) {
