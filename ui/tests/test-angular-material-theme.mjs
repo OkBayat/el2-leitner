@@ -304,6 +304,11 @@ assert.match(
 );
 assert.match(
 	components,
+	/\.mat-mdc-outlined-button\s*\{[^}]*background:\s*var\(--vocora-action-secondary\);/u,
+	"Every Material outlined button must use the white secondary surface in both themes.",
+);
+assert.match(
+	components,
 	/:disabled[^{]*\{[^}]*--mat-button-filled-disabled-container-color:/u,
 	"Every button intent must inherit a deterministic disabled treatment.",
 );
