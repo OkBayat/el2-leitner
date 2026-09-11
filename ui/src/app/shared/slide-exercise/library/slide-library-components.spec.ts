@@ -541,6 +541,7 @@ describe('reusable slide library behavior', () => {
 		);
 		const states: unknown[] = [];
 		component.stateChange.subscribe((state) => states.push(state));
+		const random = vi.spyOn(Math, 'random').mockReturnValue(0.999);
 		load(component, 'classification', {
 			categories: [
 				{ id: 'animal', label: 'Animal' },
@@ -551,6 +552,7 @@ describe('reusable slide library behavior', () => {
 				{ id: 'root', label: 'root', correctCategoryId: 'plant' },
 			],
 		});
+		random.mockRestore();
 		expect(component.unassignedItems().map((item) => item.id)).toEqual([
 			'paw',
 			'root',
