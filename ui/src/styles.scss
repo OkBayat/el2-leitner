@@ -61,6 +61,12 @@ html.native-keyboard-open body {
 	min-height: 100%;
 }
 
+// Required native store updates supersede every body-level CDK dialog/menu.
+.cdk-overlay-container.vocora-required-update-blocked {
+	visibility: hidden;
+	pointer-events: none;
+}
+
 button, input, textarea, select {
 	font: inherit;
 }

@@ -8,6 +8,7 @@ const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.me
 const generatedVersion = readFileSync(new URL('../src/generated/app-version.ts', import.meta.url), 'utf8');
 const appTemplate = readFileSync(new URL('../src/app/app.html', import.meta.url), 'utf8');
 const updateStatusTemplate = readFileSync(new URL('../src/app/shared/pwa/pwa-status.component.html', import.meta.url), 'utf8');
+const globalStyles = readFileSync(new URL('../src/styles.scss', import.meta.url), 'utf8');
 const mobileWorkflow = readFileSync(new URL('../../.github/workflows/mobile-release.yml', import.meta.url), 'utf8');
 const mobileDocumentation = readFileSync(new URL('../../docs/mobile/CAPACITOR.md', import.meta.url), 'utf8');
 const scripts = packageJson.scripts;
@@ -30,6 +31,7 @@ assert.equal(scripts['mobile:sync'], 'npm run mobile:build && cap sync');
 assert.match(appTemplate, /\[attr\.inert\]="appUpdates\.binaryUpdate\(\) === 'required'/u);
 assert.match(updateStatusTemplate, /role="alertdialog"/u);
 assert.match(updateStatusTemplate, /data-testid="native-required-update-screen"/u);
+assert.match(globalStyles, /\.cdk-overlay-container\.vocora-required-update-blocked[\s\S]*visibility:\s*hidden/u);
 assert.match(mobileDocumentation, /allow_device_self_set/u);
 assert.match(mobileDocumentation, /--state default --prod --device --no-dev --no-emulator --no-self-assign/u);
 assert.match(mobileWorkflow, /Release tag \$GITHUB_REF_NAME must match ui\/package\.json version/u);
