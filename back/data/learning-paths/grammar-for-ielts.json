@@ -5870,7 +5870,7 @@
                   "correctOptionIds": [
                     "b"
                   ],
-                  "explanation": "Used to is normally preferred for this negative past-habit question."
+                  "explanation": "Used to is normally preferred for this negative past-habit statement."
                 }
               },
               {
@@ -6620,8 +6620,12 @@
                       "label": "Repeated action: used to or would"
                     },
                     {
-                      "id": "state-negative",
-                      "label": "State or negative habit: used to, not would"
+                      "id": "past-state",
+                      "label": "Past state: used to, not would"
+                    },
+                    {
+                      "id": "negative-habit",
+                      "label": "Negative habit: used to is usual"
                     },
                     {
                       "id": "exact-duration",
@@ -6637,12 +6641,12 @@
                     {
                       "id": "state",
                       "label": "own a small shop in the past",
-                      "correctCategoryId": "state-negative"
+                      "correctCategoryId": "past-state"
                     },
                     {
                       "id": "negative",
                       "label": "not play outside as a child",
-                      "correctCategoryId": "state-negative"
+                      "correctCategoryId": "negative-habit"
                     },
                     {
                       "id": "duration",
