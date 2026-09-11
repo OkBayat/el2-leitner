@@ -3234,8 +3234,8 @@
                 "id": "gfi-u02-ps-forms-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete each sentence with the past simple form.",
-                  "content": "I {{worked}} late. Sara {{wrote}} an email. The room {{was}} quiet. We {{were_not}} ready. He {{did_not_take}} the train. {{did_you_see}} the message?",
+                  "instruction": "Use each verb cue and the stated positive, negative or question form.",
+                  "content": "(work, positive) I {{worked}} late. (write, positive) Sara {{wrote}} an email. (be, positive) The room {{was}} quiet. (be, negative) We {{were_not}} ready. (take, negative) He {{did_not_take}} the train. (see, question) {{did_you_see}} the message?",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -4236,8 +4236,8 @@
                 "id": "gfi-u02-pc-forms-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete with the past continuous.",
-                  "content": "I {{was_reading}}. You {{were_listening}}. Sara {{was_not_sleeping}}. We {{were_working}}. {{was_he_waiting}} outside?",
+                  "instruction": "Use each verb cue and the stated positive, negative or question form.",
+                  "content": "(read, positive) I {{was_reading}} a book. (listen, positive) You {{were_listening}} to music. (sleep, negative) Sara {{was_not_sleeping}}. (work, positive) We {{were_working}}. (wait, question) {{was_he_waiting}} outside?",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -4432,7 +4432,7 @@
                 "type": "choice",
                 "data": {
                   "mode": "single",
-                  "question": "Choose the correct sentence.",
+                  "question": "Choose the sentence where cooking is the background and the phone ringing is the shorter event.",
                   "options": [
                     {
                       "id": "a",
@@ -5527,8 +5527,8 @@
                 "id": "gfi-u02-used-cloze",
                 "type": "cloze",
                 "data": {
-                  "instruction": "Complete each used to pattern.",
-                  "content": "I {{used_to_play}} outside. We {{did_not_use_to_have}} a car. {{did_she_use_to_visit}} often? Amir {{used_to_be}} shy.",
+                  "instruction": "Use each verb cue and the stated positive, negative or question form.",
+                  "content": "(play, positive) I {{used_to_play}} outside. (have, negative) We {{did_not_use_to_have}} a car. (visit, question) {{did_she_use_to_visit}} often? (be, positive) Amir {{used_to_be}} shy.",
                   "inputMode": "text",
                   "blanks": [
                     {
@@ -6612,42 +6612,42 @@
                 "id": "gfi-u02-mastery-used-would",
                 "type": "classification",
                 "data": {
-                  "instruction": "Choose the safest structure for each meaning.",
+                  "instruction": "Classify each meaning by the specific Unit 2 contrast rule it tests.",
                   "mode": "custom",
                   "categories": [
                     {
-                      "id": "both",
-                      "label": "Used to or would"
+                      "id": "repeated-action",
+                      "label": "Repeated action: used to or would"
                     },
                     {
-                      "id": "used",
-                      "label": "Used to only"
+                      "id": "state-negative",
+                      "label": "State or negative habit: used to, not would"
                     },
                     {
-                      "id": "simple",
-                      "label": "Past simple"
+                      "id": "exact-duration",
+                      "label": "Exact duration: past simple, not used to"
                     }
                   ],
                   "items": [
                     {
                       "id": "habit",
                       "label": "play outside every evening",
-                      "correctCategoryId": "both"
+                      "correctCategoryId": "repeated-action"
                     },
                     {
                       "id": "state",
                       "label": "own a small shop in the past",
-                      "correctCategoryId": "used"
+                      "correctCategoryId": "state-negative"
                     },
                     {
                       "id": "negative",
                       "label": "not play outside as a child",
-                      "correctCategoryId": "used"
+                      "correctCategoryId": "state-negative"
                     },
                     {
                       "id": "duration",
                       "label": "work there for exactly 11 years",
-                      "correctCategoryId": "simple"
+                      "correctCategoryId": "exact-duration"
                     }
                   ]
                 }
