@@ -35,7 +35,7 @@
 					class="speed-control"
 					data-testid="audio-speed"
 					[ariaLabel]="'Playback speed ' + playbackRateLabel()"
-					(click)="cyclePlaybackRate()"
+					(activated)="cyclePlaybackRate()"
 					>{{ playbackRateLabel() }}</voco-icon-button>
         <voco-icon-button
 					type="button"
@@ -43,7 +43,7 @@
 					aria-label="Like this lesson audio"
 					[ariaPressed]="reaction() === 'like'"
 					[selected]="reaction() === 'like'"
-					(click)="setReaction('like')"
+					(activated)="setReaction('like')"
 				>
           <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
             <path d="M11.5 27H6.8V13.7h4.7V27Zm3.2 0c-1.1 0-2-.9-2-2V14.3l5.1-8.2c.6-1 2-1.4 3-.7.7.5 1 1.3.8 2.1l-1.1 5h5.8c1.6 0 2.8 1.5 2.4 3l-2.3 9.6c-.3 1.1-1.3 1.9-2.4 1.9h-9.3Z" />
@@ -55,7 +55,7 @@
 					aria-label="Dislike this lesson audio"
 					[ariaPressed]="reaction() === 'dislike'"
 					[selected]="reaction() === 'dislike'"
-					(click)="setReaction('dislike')"
+					(activated)="setReaction('dislike')"
 				>
           <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
             <path d="M20.5 5h4.7v13.3h-4.7V5Zm-3.2 0c1.1 0 2 .9 2 2v10.7l-5.1 8.2c-.6 1-2 1.4-3 .7-.7-.5-1-1.3-.8-2.1l1.1-5H5.7c-1.6 0-2.8-1.5-2.4-3l2.3-9.6C5.9 5.8 6.9 5 8 5h9.3Z" />
@@ -90,7 +90,7 @@
 					type="button"
 					data-testid="audio-back-10"
 					aria-label="Rewind 10 seconds"
-					(click)="skip(-10)"
+					(activated)="skip(-10)"
 					iconSize="large"
 				>
           <svg class="skip-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
@@ -103,7 +103,7 @@
 					class="immersive-play-toggle"
 					data-testid="audio-play"
 					[ariaLabel]="(playing() ? 'Pause ' : 'Play ') + title()"
-					(click)="togglePlayback()"
+					(activated)="togglePlayback()"
 					iconTone="primary"
 					iconSize="hero"
 				>
@@ -123,7 +123,7 @@
 					type="button"
 					data-testid="audio-forward-10"
 					aria-label="Forward 10 seconds"
-					(click)="skip(10)"
+					(activated)="skip(10)"
 					iconSize="large"
 				>
           <svg class="skip-icon skip-icon--forward" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
@@ -163,7 +163,7 @@
               <voco-secondary-button
 								type="button"
 								data-testid="audio-back-5"
-								(click)="skip(-5)"
+								(activated)="skip(-5)"
 								>−5 sec</voco-secondary-button>
               <voco-icon-button
 								type="button"
@@ -172,7 +172,7 @@
 								[ariaLabel]="
 									(playing() ? 'Pause ' : 'Play ') + title()
 								"
-								(click)="togglePlayback()"
+								(activated)="togglePlayback()"
 								iconTone="primary"
 							>
                 <span aria-hidden="true">{{ playing() ? 'Ⅱ' : '▶' }}</span>
@@ -181,12 +181,12 @@
               <voco-secondary-button
 								type="button"
 								data-testid="audio-stop"
-								(click)="stop()"
+								(activated)="stop()"
 								>Stop</voco-secondary-button>
               <voco-secondary-button
 								type="button"
 								data-testid="audio-forward-5"
-								(click)="skip(5)"
+								(activated)="skip(5)"
 								>+5 sec</voco-secondary-button>
             </div>
           </div>

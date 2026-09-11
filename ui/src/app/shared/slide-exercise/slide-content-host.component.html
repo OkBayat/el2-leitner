@@ -14,7 +14,7 @@
 				type="button"
 				data-testid="skip-unavailable-slide"
 				aria-label="Skip the unavailable slide"
-				(click)="requestSkip()"
+				(activated)="requestSkip()"
 				>Skip</voco-secondary-button>
     </div>
   } @else if (rendererLoadFailed) {
@@ -25,9 +25,9 @@
 					type="button"
 					data-testid="skip-unavailable-slide"
 					aria-label="Skip the unavailable slide"
-					(click)="requestSkip()"
+					(activated)="requestSkip()"
 					>Skip</voco-secondary-button>
-        <voco-primary-button type="button" (click)="retry()"
+        <voco-primary-button type="button" (activated)="retry()"
 					>Try again</voco-primary-button>
       </div>
     </div>

@@ -346,10 +346,14 @@ application API.
 Example:
 
 ```html
-<voco-primary-button type="submit" [disabled]="saving()">
+<voco-primary-button type="submit" [disabled]="saving()" (activated)="save()">
   Continue
 </voco-primary-button>
 ```
+
+`(activated)` is the public action event. Feature code must not bind to the
+custom-element host's native `(click)` event; keeping those event names
+separate ensures disabled controls cannot bypass the native Material control.
 
 Use the corresponding `voco-primary-link`, `voco-secondary-link`, or
 `voco-navigation-link` when native anchor behavior, `href`, `target`, or

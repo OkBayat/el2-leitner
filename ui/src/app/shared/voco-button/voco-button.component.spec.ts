@@ -11,11 +11,13 @@ import { VocoButtonComponent } from './voco-button.component';
   standalone: true,
   imports: [VocoButtonComponent, VocoButtonInteractionDirective],
   template: `
-    <voco-primary-button type="submit" aria-label="Save changes" (click)="recordClick()">Save</voco-primary-button>
+    <div (click)="recordAncestorClick()">
+      <voco-primary-button type="submit" aria-label="Save changes" (activated)="recordClick()">Save</voco-primary-button>
+    </div>
     <voco-secondary-button>Cancel</voco-secondary-button>
     <voco-success-button>Continue</voco-success-button>
     <voco-warning-button>Leave</voco-warning-button>
-    <voco-error-button [disabled]="disabled" (click)="recordClick()">Delete</voco-error-button>
+    <voco-error-button [disabled]="disabled" (activated)="recordClick()">Delete</voco-error-button>
     <voco-navigation-button>Back</voco-navigation-button>
     <voco-icon-button aria-label="Edit word">✎</voco-icon-button>
     <voco-audio-button aria-label="Play pronunciation" [disabled]="disabled">▶</voco-audio-button>
@@ -27,9 +29,14 @@ import { VocoButtonComponent } from './voco-button.component';
 class TestHostComponent {
   disabled = true;
   clicks = 0;
+  ancestorClicks = 0;
 
   recordClick(): void {
     this.clicks += 1;
+  }
+
+  recordAncestorClick(): void {
+    this.ancestorClicks += 1;
   }
 }
 
@@ -75,15 +82,17 @@ describe('VocoButtonComponent', () => {
     expect(internal.getAttribute('href')).toBe('/library');
   });
 
-  it('emits one public click from the native control and blocks disabled activation', () => {
+  it('emits one public activation, lets the native event reach ancestors, and blocks disabled host activation', () => {
     const primary = fixture.nativeElement.querySelector('voco-primary-button button') as HTMLButtonElement;
     const errorHost = fixture.nativeElement.querySelector('voco-error-button') as HTMLElement;
     const error = errorHost.querySelector('button') as HTMLButtonElement;
 
+    errorHost.click();
     primary.click();
     error.click();
 
     expect(fixture.componentInstance.clicks).toBe(1);
+    expect(fixture.componentInstance.ancestorClicks).toBe(1);
     expect(errorHost.getAttribute('aria-disabled')).toBe('true');
     expect(errorHost.classList).toContain('voco-button-host--disabled');
     expect(error.disabled).toBe(true);

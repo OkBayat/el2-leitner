@@ -134,7 +134,7 @@ describe('LibraryDetailPageComponent', () => {
     const fixture = await render(item);
     const host: HTMLElement = fixture.nativeElement;
 
-    host.querySelector<HTMLButtonElement>('[data-testid="start-course-action"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="start-course-action"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(enter).toHaveBeenCalledWith(item);
@@ -153,7 +153,7 @@ describe('LibraryDetailPageComponent', () => {
     const fixture = await render(item);
     const host: HTMLElement = fixture.nativeElement;
 
-    host.querySelector<HTMLButtonElement>('[data-testid="leitner-only-action"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="leitner-only-action"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -174,7 +174,7 @@ describe('LibraryDetailPageComponent', () => {
     expect(host.textContent).toContain('Import file');
     expect(host.textContent).toContain('Add word');
 
-    host.querySelector<HTMLButtonElement>('[data-testid="leitner-only-action"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="leitner-only-action"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(api.subscribe).toHaveBeenCalledWith(item.id);
@@ -190,7 +190,7 @@ describe('LibraryDetailPageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
 
     expect(host.querySelector('[data-testid="leitner-only-action"]')?.textContent).toContain('Remove from Leitner');
-    host.querySelector<HTMLButtonElement>('[data-testid="leitner-only-action"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="leitner-only-action"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(api.unsubscribe).toHaveBeenCalledWith(item.id);
@@ -214,7 +214,7 @@ describe('LibraryDetailPageComponent', () => {
     expect(host.querySelector('[role="alert"]')?.textContent).toContain('Courses could not load');
     expect(host.querySelector('[data-testid="leitner-only-action"]')).toBeNull();
 
-    host.querySelector<HTMLButtonElement>('[data-testid="course-detail-retry"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="course-detail-retry"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -231,7 +231,7 @@ describe('LibraryDetailPageComponent', () => {
     const fixture = await render(item);
     const host: HTMLElement = fixture.nativeElement;
 
-    host.querySelector<HTMLButtonElement>('[data-testid="remove-course-action"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="remove-course-action"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(removeEnrollment).toHaveBeenCalledWith('path-1');

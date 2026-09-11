@@ -240,7 +240,7 @@ describe("SlideExerciseComponent", () => {
 			"mat-mdc-unelevated-button",
 		);
 
-		guideAction.click();
+		(guideAction.querySelector('button') as HTMLButtonElement | null)?.click();
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.currentSlide?.id).toBe("question");
@@ -297,7 +297,7 @@ describe("SlideExerciseComponent", () => {
 		expect(skip?.textContent).toContain("Skip");
 		expect(skip?.querySelector(".mat-mdc-button-base")).not.toBeNull();
 
-		skip?.click();
+		(skip?.querySelector('button') as HTMLButtonElement | null)?.click();
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.currentSlide?.id).toBe("next");

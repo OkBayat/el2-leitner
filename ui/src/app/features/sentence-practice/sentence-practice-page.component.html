@@ -9,7 +9,7 @@
 				class="review-close"
 				type="button"
 				aria-label="Back to dashboard"
-				(click)="router.navigateByUrl('/dashboard')"
+				(activated)="router.navigateByUrl('/dashboard')"
 			>
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
@@ -26,7 +26,7 @@
 				<mat-card-actions>
 					<voco-navigation-button
 						type="button"
-						(click)="router.navigateByUrl('/dashboard')"
+						(activated)="router.navigateByUrl('/dashboard')"
 						>Back home</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>
@@ -40,7 +40,7 @@
 					class="session-close"
 					type="button"
 					aria-label="Exit sentence practice"
-					(click)="exit()"
+					(activated)="exit()"
 				>
 					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
@@ -70,13 +70,13 @@
 						<voco-audio-button
 							class="play-pronunciation"
 							type="button"
-							(click)="session.pronounce()"
+							(activated)="session.pronounce()"
 						>
 							▶ Play pronunciation
 						</voco-audio-button>
 						<voco-secondary-button
 							type="button"
-							(click)="session.pronounce('slow')"
+							(activated)="session.pronounce('slow')"
 							>Slower</voco-secondary-button>
 					</div>
 
@@ -138,7 +138,7 @@
 								saving() ||
 								(!session.feedback() && !answer.value.trim())
 							"
-							(click)="handlePrimary()"
+							(activated)="handlePrimary()"
 						>
 							{{ state.label }}
 						</voco-primary-button>
@@ -161,11 +161,11 @@
 					<p class="practice-note">Practice totals were counted for today; no Leitner house or daily-review due date was changed.</p>
 				</mat-card-content>
 				<mat-card-actions>
-					<voco-primary-button type="button" (click)="restart()"
+					<voco-primary-button type="button" (activated)="restart()"
 						>Practice again</voco-primary-button>
 					<voco-navigation-button
 						type="button"
-						(click)="router.navigateByUrl('/dashboard')"
+						(activated)="router.navigateByUrl('/dashboard')"
 						>Back home</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>

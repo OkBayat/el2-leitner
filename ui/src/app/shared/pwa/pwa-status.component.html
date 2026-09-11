@@ -16,7 +16,7 @@
 				<voco-primary-button
 					#requiredUpdateAction
 					type="button"
-					(click)="appUpdates.openStore()"
+					(activated)="appUpdates.openStore()"
 					>Open Store</voco-primary-button>
 			</div>
 		</section>
@@ -44,12 +44,12 @@
 			<div class="status-actions">
 				<voco-secondary-button
 					type="button"
-					(click)="updates.dismissUpdate()"
+					(activated)="updates.dismissUpdate()"
 					>Later</voco-secondary-button>
 				<voco-primary-button
 					type="button"
 					[disabled]="updates.activating()"
-					(click)="updates.reloadForUpdate()"
+					(activated)="updates.reloadForUpdate()"
 				>
 					{{ updates.activating() ? 'Updating…' : 'Reload' }}
 				</voco-primary-button>
@@ -78,13 +78,13 @@
 				}
 			</div>
 			<div class="status-actions">
-				<voco-secondary-button type="button" (click)="dismissInstall()"
+				<voco-secondary-button type="button" (activated)="dismissInstall()"
 					>Later</voco-secondary-button>
 				@if (install.mode() === 'prompt') {
 					<voco-primary-button
 						type="button"
 						[disabled]="installing()"
-						(click)="requestInstall()"
+						(activated)="requestInstall()"
 					>
 						{{ installing() ? 'Opening…' : 'Install' }}
 					</voco-primary-button>
@@ -100,7 +100,7 @@
 				<strong>App support needs attention</strong>
 				<small>{{ updates.errorMessage() }}</small>
 			</div>
-			<voco-secondary-button type="button" (click)="updates.clearError()"
+			<voco-secondary-button type="button" (activated)="updates.clearError()"
 				>Dismiss</voco-secondary-button>
 		</div>
 	}
@@ -115,12 +115,12 @@
 			<div class="status-actions">
 				<voco-secondary-button
 					type="button"
-					(click)="appUpdates.postponeLiveUpdate()"
+					(activated)="appUpdates.postponeLiveUpdate()"
 					>Later</voco-secondary-button>
 				<voco-primary-button
 					type="button"
 					[disabled]="appUpdates.activating()"
-					(click)="appUpdates.restartForLiveUpdate()"
+					(activated)="appUpdates.restartForLiveUpdate()"
 				>
 					{{ appUpdates.activating() ? 'Updating…' : 'Restart & Update' }}
 				</voco-primary-button>
@@ -138,11 +138,11 @@
 			<div class="status-actions">
 				<voco-secondary-button
 					type="button"
-					(click)="appUpdates.dismissOptionalBinaryUpdate()"
+					(activated)="appUpdates.dismissOptionalBinaryUpdate()"
 					>Later</voco-secondary-button>
 				<voco-primary-button
 					type="button"
-					(click)="appUpdates.openStore()"
+					(activated)="appUpdates.openStore()"
 					>Open Store</voco-primary-button>
 			</div>
 		</div>
@@ -157,7 +157,7 @@
 			</div>
 			<voco-secondary-button
 				type="button"
-				(click)="appUpdates.clearError()"
+				(activated)="appUpdates.clearError()"
 				>Dismiss</voco-secondary-button>
 		</div>
 	}

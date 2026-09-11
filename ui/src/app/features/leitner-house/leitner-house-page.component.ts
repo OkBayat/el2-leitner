@@ -26,7 +26,7 @@ interface HouseModel {
   template: `
     <section class="page">
       <header><voco-navigation-button
-					(click)="router.navigateByUrl('/dashboard')"
+					(activated)="router.navigateByUrl('/dashboard')"
 					>← Back</voco-navigation-button><div><p>Leitner box</p><h1>Box {{ house() }} words</h1></div></header>
       @if (error()) { <div class="error" role="alert">{{ error() }}</div> }
       @if (model(); as model) {

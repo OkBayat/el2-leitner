@@ -206,4 +206,23 @@ withFixture(
   },
 );
 
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replace("`(activated)` is the public action event", "The public action event"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md must document the public voco activated event/u,
+    );
+  },
+);
+
 console.log("K2 design-system validator tests passed.");

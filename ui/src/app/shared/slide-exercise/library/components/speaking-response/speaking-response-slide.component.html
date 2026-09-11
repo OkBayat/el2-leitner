@@ -51,7 +51,7 @@
 							recordingState() === 'requesting' || !supported
 						"
 						aria-label="Start recording"
-						(click)="startRecording()"
+						(activated)="startRecording()"
 					>
 						{{
 							recordingState() === 'recorded'
@@ -63,7 +63,7 @@
 					<voco-primary-button
 						type="button"
 						aria-label="Stop recording"
-						(click)="stopRecording()"
+						(activated)="stopRecording()"
 					>
 						Stop recording
 					</voco-primary-button>

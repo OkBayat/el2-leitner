@@ -9,9 +9,9 @@
           <p role="status">{{ session.phase() === 'empty' ? 'Add words to Box 1 that have an available practice sentence, then come back here.' : session.error() }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <voco-primary-button type="button" (click)="session.load()"
+          <voco-primary-button type="button" (activated)="session.load()"
 						>Try again</voco-primary-button>
-          <voco-navigation-button type="button" (click)="back()"
+          <voco-navigation-button type="button" (activated)="back()"
 						>Back home</voco-navigation-button>
         </mat-card-actions>
       </mat-card>
@@ -30,9 +30,9 @@
           @if (session.error()) { <p role="alert">{{ session.error() }}</p> }
         </mat-card-content>
         <mat-card-actions>
-          <voco-primary-button type="button" (click)="session.load()"
+          <voco-primary-button type="button" (activated)="session.load()"
 						>Practice again</voco-primary-button>
-          <voco-navigation-button type="button" (click)="back()"
+          <voco-navigation-button type="button" (activated)="back()"
 						>Back home</voco-navigation-button>
         </mat-card-actions>
       </mat-card>
@@ -44,7 +44,7 @@
 					class="session-close"
 					type="button"
 					aria-label="Exit shadowing"
-					(click)="exit()"
+					(activated)="exit()"
 				>
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
         </voco-icon-button>
@@ -66,7 +66,7 @@
 							class="play-pronunciation"
 							type="button"
 							[disabled]="session.busy()"
-							(click)="session.listen()"
+							(activated)="session.listen()"
 						>
               <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9H7L12 5V19L7 15H3Z" fill="currentColor"/><path d="M16 8Q21 12 16 16M18 4Q27 12 18 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
               Play sentence
@@ -74,7 +74,7 @@
             <voco-secondary-button
 							type="button"
 							[disabled]="session.busy()"
-							(click)="session.listen('slow')"
+							(activated)="session.listen('slow')"
 							>Slower</voco-secondary-button>
           </div>
           <p class="audio-hint">{{ session.audioNotice() || 'If audio does not start automatically, press Play sentence.' }}</p>
@@ -101,7 +101,7 @@
               @if (session.errorCode() === 'SHADOWING_SESSION_EXPIRED' || session.errorCode() === 'SHADOWING_WORD_MOVED') {
                 <voco-secondary-button
 									type="button"
-									(click)="session.load()"
+									(activated)="session.load()"
 									>Start a new session</voco-secondary-button>
               }
             </div>
@@ -128,13 +128,13 @@
               <voco-primary-button
 								class="review-action-primary"
 								type="button"
-								(click)="session.retryEvaluation()"
+								(activated)="session.retryEvaluation()"
 								>Retry evaluation</voco-primary-button>
             } @else if (session.result()) {
               <voco-primary-button
 								class="review-action-primary"
 								type="button"
-								(click)="
+								(activated)="
 									session.result()?.passed
 										? session.next()
 										: session.record()
@@ -144,12 +144,12 @@
             <voco-secondary-button
 							type="button"
 							[disabled]="session.busy()"
-							(click)="session.next()"
+							(activated)="session.next()"
 							>Skip sentence</voco-secondary-button>
             @if (session.counts().completedCount) { <voco-secondary-button
 								type="button"
 								[disabled]="session.busy()"
-								(click)="finish()"
+								(activated)="finish()"
 								>Finish practice</voco-secondary-button> }
           </div>
         </div>

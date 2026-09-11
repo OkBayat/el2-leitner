@@ -34,7 +34,7 @@ import {
   template: `
     @if (collection(); as c) {
       <section class="detail-page" data-testid="library-detail-page">
-        <voco-navigation-button class="back-action" (click)="back()"
+        <voco-navigation-button class="back-action" (activated)="back()"
 					>← Back to library</voco-navigation-button>
 
         <div class="detail-content">
@@ -60,7 +60,7 @@ import {
                 <p>{{ learningPaths.error() }}</p>
                 <voco-secondary-button
 									data-testid="course-detail-retry"
-									(click)="reload()"
+									(activated)="reload()"
 									>Retry</voco-secondary-button>
               </div>
             } @else if (course(); as courseView) {
@@ -70,7 +70,7 @@ import {
 									[disabled]="
 										learningPaths.enteringId() === c.id
 									"
-									(click)="startCourse()"
+									(activated)="startCourse()"
 								>
                   @if (learningPaths.enteringId() === c.id) { Opening… } @else { {{ courseActionLabel(courseView.path.learnerStatus) }} }
                 </voco-primary-button>
@@ -78,7 +78,7 @@ import {
                 @if (courseView.path.learnerStatus !== 'available') {
                   <voco-error-button
 										data-testid="remove-course-action"
-										(click)="removeCourse()"
+										(activated)="removeCourse()"
 									>
                     Remove Course
                   </voco-error-button>
@@ -87,7 +87,7 @@ import {
               <div class="action-option">
                 <voco-secondary-button
 									data-testid="leitner-only-action"
-									(click)="toggleSubscription()"
+									(activated)="toggleSubscription()"
 								>
                   {{ leitnerActionLabel(c) }}
                 </voco-secondary-button>
@@ -97,7 +97,7 @@ import {
               <div class="action-option">
                 <voco-primary-button
 									data-testid="leitner-only-action"
-									(click)="toggleSubscription()"
+									(activated)="toggleSubscription()"
 								>
                   {{ leitnerActionLabel(c) }}
                 </voco-primary-button>
@@ -108,11 +108,11 @@ import {
 
           @if (canManage()) {
             <div class="management-actions">
-              <voco-secondary-button (click)="editCollection()"
+              <voco-secondary-button (activated)="editCollection()"
 								>Edit collection</voco-secondary-button>
-              <voco-secondary-button (click)="importEntries()"
+              <voco-secondary-button (activated)="importEntries()"
 								>Import file</voco-secondary-button>
-              <voco-secondary-button (click)="editEntry()"
+              <voco-secondary-button (activated)="editEntry()"
 								>Add word</voco-secondary-button>
             </div>
           }
@@ -135,12 +135,12 @@ import {
                   <td mat-cell *matCellDef="let entry" class="entry-actions">
                     @if (canManage()) {
                       <voco-icon-button
-												(click)="editEntry(entry)"
+												(activated)="editEntry(entry)"
 												title="Edit word"
 												aria-label="Edit word"
 												>✎</voco-icon-button>
                       <voco-icon-button
-												(click)="removeEntry(entry)"
+												(activated)="removeEntry(entry)"
 												title="Delete word"
 												aria-label="Delete word"
 												>×</voco-icon-button>

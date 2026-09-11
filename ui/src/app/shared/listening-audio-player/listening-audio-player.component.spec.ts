@@ -107,17 +107,17 @@ describe('ListeningAudioPlayerComponent', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     const audio = element.querySelector('audio') as HTMLAudioElement;
-    element.querySelector<HTMLButtonElement>('[data-testid="audio-speed"]')?.click();
+    element.querySelector<HTMLElement>('[data-testid="audio-speed"]')?.querySelector<HTMLButtonElement>('button')?.click();
     fixture.detectChanges();
     expect(audio.playbackRate).toBe(1.25);
     expect(element.querySelector('[data-testid="audio-speed"]')?.textContent).toContain('1.25');
 
     const like = element.querySelector<HTMLButtonElement>('[data-testid="audio-like"]') as HTMLButtonElement;
     const dislike = element.querySelector<HTMLButtonElement>('[data-testid="audio-dislike"]') as HTMLButtonElement;
-    like.click();
+    like.querySelector<HTMLButtonElement>('button')?.click();
     fixture.detectChanges();
     expect(like.getAttribute('aria-pressed')).toBe('true');
-    dislike.click();
+    dislike.querySelector<HTMLButtonElement>('button')?.click();
     fixture.detectChanges();
     expect(like.getAttribute('aria-pressed')).toBe('false');
     expect(dislike.getAttribute('aria-pressed')).toBe('true');

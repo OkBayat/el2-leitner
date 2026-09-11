@@ -8,7 +8,7 @@
       <voco-secondary-button
 				type="button"
 				data-testid="welcome-skip"
-				(click)="finish()"
+				(activated)="finish()"
 			>
         Skip tour
       </voco-secondary-button>
@@ -53,7 +53,7 @@
         <voco-navigation-button
 					type="button"
 					data-testid="welcome-back"
-					(click)="previous()"
+					(activated)="previous()"
 				>
           Back
         </voco-navigation-button>
@@ -71,7 +71,7 @@
 						'Go to step ' + (index + 1) + ': ' + item.eyebrow
 					"
 					[ariaCurrent]="index === currentIndex() ? 'step' : null"
-					(click)="goTo(index)"
+					(activated)="goTo(index)"
 				>
           <span class="step-dot"></span>
         </voco-icon-button>
@@ -82,7 +82,7 @@
       <voco-primary-button
 				type="button"
 				data-testid="welcome-finish"
-				(click)="finish()"
+				(activated)="finish()"
 			>
         Go to home
       </voco-primary-button>
@@ -90,7 +90,7 @@
       <voco-primary-button
 				type="button"
 				data-testid="welcome-next"
-				(click)="next()"
+				(activated)="next()"
 			>
         Next
       </voco-primary-button>

@@ -20,7 +20,7 @@ import type { DialogueStimulusTurn } from './slide-library.models';
 			<voco-secondary-button
 				type="button"
 				[disabled]="playing() || !canReplay()"
-				(click)="play()"
+				(activated)="play()"
 			>
 				{{ playing() ? 'Playing dialogue' : 'Play dialogue' }}
 			</voco-secondary-button>

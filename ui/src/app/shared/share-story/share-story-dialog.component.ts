@@ -21,12 +21,12 @@ import { ShareMomentKind, buildShareMoment } from './share-story.model';
       <p class="privacy">The story only shows aggregate stats; your email, typed answers, and missed-word names are never shared.</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <voco-secondary-button (click)="copyCaption()"
+      <voco-secondary-button (activated)="copyCaption()"
 				>Copy caption</voco-secondary-button>
-      <voco-secondary-button (click)="download()"
+      <voco-secondary-button (activated)="download()"
 				>Download PNG</voco-secondary-button>
-      <voco-primary-button (click)="share()">Share</voco-primary-button>
-      <voco-navigation-button (click)="dialog.close()"
+      <voco-primary-button (activated)="share()">Share</voco-primary-button>
+      <voco-navigation-button (activated)="dialog.close()"
 				>Close</voco-navigation-button>
     </mat-dialog-actions>
   `,

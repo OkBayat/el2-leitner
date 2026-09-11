@@ -253,7 +253,7 @@ describe('HomePageComponent', () => {
         return recovered;
       });
       const host: HTMLElement = fixture.nativeElement;
-      host.querySelector<HTMLElement>('[data-testid="review-load-error"] + voco-secondary-button')?.click();
+      host.querySelector<HTMLElement>('[data-testid="review-load-error"] + voco-secondary-button')?.querySelector<HTMLButtonElement>('button')?.click();
       await Promise.resolve();
       await Promise.resolve();
       fixture.detectChanges();

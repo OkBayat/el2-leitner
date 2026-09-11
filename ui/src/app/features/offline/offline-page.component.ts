@@ -19,7 +19,7 @@ import {AuthService} from '../../core/auth/auth.service';
 				<voco-primary-button
 					type="button"
 					[disabled]="retrying()"
-					(click)="retry()"
+					(activated)="retry()"
 				>
 					{{ retrying() ? 'Checking connection…' : 'Try again' }}
 				</voco-primary-button>

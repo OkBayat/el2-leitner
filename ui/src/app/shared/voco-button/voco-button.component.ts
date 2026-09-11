@@ -82,15 +82,15 @@ export class VocoButtonComponent {
   readonly iconSize = input<VocoIconButtonSize>('default');
   readonly selected = input(false, { transform: booleanAttribute });
   readonly audioSize = input<VocoAudioButtonSize>('default');
-  readonly activated = output<MouseEvent>({ alias: 'click' });
+  readonly activated = output<MouseEvent>();
 
   protected readonly kind = this.identity.kind;
   protected readonly variant = this.identity.variant;
 
   protected onControlClick(event: MouseEvent): void {
-    event.stopImmediatePropagation();
     if (this.disabled()) {
       event.preventDefault();
+      event.stopImmediatePropagation();
       return;
     }
     this.activated.emit(event);

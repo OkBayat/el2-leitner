@@ -2,7 +2,7 @@
 	@if (!session.active() && !session.completed()) {
 		<div class="review-center">
 			<voco-icon-button class="review-close" type="button" aria-label="Back to dashboard"
-			        (click)="router.navigateByUrl('/dashboard')">
+			        (activated)="router.navigateByUrl('/dashboard')">
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 					      stroke-linecap="round"/>
@@ -29,8 +29,8 @@
 					</mat-form-field>
 				</mat-card-content>
 				<mat-card-actions>
-					<voco-primary-button (click)="start('review')">Start session</voco-primary-button>
-					<voco-secondary-button (click)="start('box1')">Free practice: Box 1</voco-secondary-button>
+					<voco-primary-button (activated)="start('review')">Start session</voco-primary-button>
+					<voco-secondary-button (activated)="start('box1')">Free practice: Box 1</voco-secondary-button>
 				</mat-card-actions>
 			</mat-card>
 		</div>
@@ -39,7 +39,7 @@
 	@if (session.active() && session.currentWord(); as word) {
 		<div class="review-session" data-testid="review-session">
 			<div class="session-bar" data-testid="review-session-bar">
-				<voco-icon-button class="session-close" type="button" aria-label="Exit review" (click)="exit()">
+				<voco-icon-button class="session-close" type="button" aria-label="Exit review" (activated)="exit()">
 					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 						      stroke-linecap="round"/>
@@ -75,10 +75,10 @@
 					<div class="listen">
 						<voco-audio-button
 							class="play-pronunciation"
-							(click)="session.pronounce()">
+							(activated)="session.pronounce()">
 							▶ Play pronunciation
 						</voco-audio-button>
-						<voco-secondary-button (click)="session.pronounce('slow')">Slower</voco-secondary-button>
+						<voco-secondary-button (activated)="session.pronounce('slow')">Slower</voco-secondary-button>
 					</div>
 
 					@if (session.remediation(); as remediation) {
@@ -192,7 +192,7 @@
 								</div>
 							</div>
 						} @else if (footer.secondaryLabel) {
-							<voco-warning-button class="review-action-secondary" type="button" (click)="dontKnow()">
+							<voco-warning-button class="review-action-secondary" type="button" (activated)="dontKnow()">
 								{{ footer.secondaryLabel }}
 							</voco-warning-button>
 						}
@@ -219,9 +219,9 @@
 					</div>
 				</mat-card-content>
 				<mat-card-actions>
-					<voco-primary-button (click)="share.open()">Create result story</voco-primary-button>
-					<voco-navigation-button (click)="router.navigateByUrl('/dashboard')">Back home</voco-navigation-button>
-					<voco-navigation-button (click)="start('box1')">Continue free practice</voco-navigation-button>
+					<voco-primary-button (activated)="share.open()">Create result story</voco-primary-button>
+					<voco-navigation-button (activated)="router.navigateByUrl('/dashboard')">Back home</voco-navigation-button>
+					<voco-navigation-button (activated)="start('box1')">Continue free practice</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>
 		</div>

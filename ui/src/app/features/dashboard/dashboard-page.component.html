@@ -21,21 +21,21 @@
 
 				<div class="today-actions">
 					@if (dueCount()) {
-						<voco-primary-button type="button" (click)="goReview()"
+						<voco-primary-button type="button" (activated)="goReview()"
 							>Start today's review</voco-primary-button>
 					}
-					<voco-secondary-button type="button" (click)="startBoxOne()"
+					<voco-secondary-button type="button" (activated)="startBoxOne()"
 						>Free practice: Box 1</voco-secondary-button>
 					<voco-secondary-button
 						type="button"
 						data-testid="start-sentence-practice"
-						(click)="startSentencePractice()"
+						(activated)="startSentencePractice()"
 						>Sentence practice: Box 1</voco-secondary-button>
 					<voco-secondary-link
 						routerLink="/shadowing"
 						data-testid="start-shadowing"
 						>Shadowing: Box 1</voco-secondary-link>
-					<voco-secondary-button type="button" (click)="addNewWords()"
+					<voco-secondary-button type="button" (activated)="addNewWords()"
 						>Add new words</voco-secondary-button>
 					<voco-secondary-link
 						routerLink="/bbc-6-minute-english"
@@ -124,7 +124,7 @@
 									? 'Copy all Box 1 words with mistake counts'
 									: 'Box 1 has no words to copy'
 							"
-							(click)="copyHouseOne()"
+							(activated)="copyHouseOne()"
 						>
 							<svg viewBox="0 0 24 24" aria-hidden="true">
 								<rect x="8" y="8" width="11" height="11" rx="2" />
@@ -174,7 +174,7 @@
 					</div>
 					<voco-navigation-button
 						type="button"
-						(click)="router.navigateByUrl('/words')"
+						(activated)="router.navigateByUrl('/words')"
 						>View all</voco-navigation-button>
 				</header>
 

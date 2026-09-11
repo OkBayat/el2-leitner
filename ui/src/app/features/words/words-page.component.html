@@ -6,9 +6,9 @@
     </div>
     <div class="header-actions">
       <input #fileInput hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="importFile($event)">
-      <voco-secondary-button (click)="fileInput.click()"
+      <voco-secondary-button (activated)="fileInput.click()"
 				>Import MD / TXT</voco-secondary-button>
-      <voco-primary-button (click)="editWord()"
+      <voco-primary-button (activated)="editWord()"
 				>Add word</voco-primary-button>
     </div>
   </header>
@@ -60,7 +60,7 @@
 							type="button"
 							class="add-to-leitner"
 							[disabled]="activatingId() !== ''"
-							(click)="activate(word)"
+							(activated)="activate(word)"
 						>
               {{ activatingId() === word.id ? 'Adding…' : 'Add to Leitner' }}
             </voco-secondary-button>

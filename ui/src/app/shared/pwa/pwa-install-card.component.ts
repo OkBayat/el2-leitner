@@ -59,7 +59,7 @@ import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 						type="button"
 						data-testid="install-vocora"
 						[disabled]="installing()"
-						(click)="requestInstall()"
+						(activated)="requestInstall()"
 					>
 						{{ installing() ? 'Opening installer…' : 'Install on this device' }}
 					</voco-primary-button>

@@ -190,7 +190,7 @@ describe('LibraryPageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
 
     expect(host.querySelector('[role="alert"]')?.textContent).toContain('Some courses could not load');
-    host.querySelector<HTMLButtonElement>('[data-testid="course-load-retry"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="course-load-retry"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(loadCatalog).toHaveBeenCalledTimes(3);

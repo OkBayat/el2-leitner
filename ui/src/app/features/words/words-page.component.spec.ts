@@ -52,7 +52,7 @@ describe('WordsPageComponent', () => {
     expect(element.querySelectorAll('.word-link')).toHaveLength(40);
     expect(getComputedStyle(element.querySelector<HTMLButtonElement>('.add-to-leitner')!).whiteSpace).toBe('nowrap');
 
-    element.querySelector<HTMLButtonElement>('.add-to-leitner')?.click();
+    element.querySelector<HTMLElement>('.add-to-leitner')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
     expect(activateWord).toHaveBeenCalledWith(state.words[0]);
   });

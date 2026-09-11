@@ -19,7 +19,7 @@
   } @else if (error()) {
     <section class="status error" role="alert">
       <p>{{ error() }}</p>
-      <voco-secondary-button type="button" (click)="load()"
+      <voco-secondary-button type="button" (activated)="load()"
 				>Try again</voco-secondary-button>
     </section>
   } @else if (lessons().length === 0) {

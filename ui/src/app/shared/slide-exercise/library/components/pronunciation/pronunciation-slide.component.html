@@ -18,7 +18,7 @@
 						aria-label="Replay sentence"
 						data-testid="pronunciation-sentence-replay"
 						[disabled]="practiceBusy()"
-						(click)="playSentence()"
+						(activated)="playSentence()"
 					>
 						<span
 							class="cloze-sentence-replay__icon"
@@ -53,7 +53,7 @@
 								? 'Stop recording'
 								: 'Record your voice'
 						"
-						(click)="toggleRecording()"
+						(activated)="toggleRecording()"
 					>
 						@if (recording.phase() === "recording") {
 							<span

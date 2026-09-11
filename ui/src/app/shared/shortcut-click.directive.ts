@@ -33,7 +33,13 @@ export class ShortcutClickDirective {
 		}
 
 		event.preventDefault();
-		this.host.nativeElement.click();
+		this.activationTarget().click();
+	}
+
+	private activationTarget(): HTMLElement {
+		const element = this.host.nativeElement;
+		if (element.matches('button, a')) return element;
+		return element.querySelector<HTMLElement>('button, a') ?? element;
 	}
 
 	private isDisabled(): boolean {

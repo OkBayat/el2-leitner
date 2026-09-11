@@ -62,8 +62,8 @@ export interface CollectionPayload {
         </div>
       </form>
     </mat-dialog-content>
-    <mat-dialog-actions align="end"><voco-navigation-button (click)="dialog.close()"
-				>Cancel</voco-navigation-button><voco-primary-button [disabled]="form.invalid" (click)="save()"
+    <mat-dialog-actions align="end"><voco-navigation-button (activated)="dialog.close()"
+				>Cancel</voco-navigation-button><voco-primary-button [disabled]="form.invalid" (activated)="save()"
 				>Save</voco-primary-button></mat-dialog-actions>
   `,
   styles: [`.form{display:grid;min-width:min(75vw,650px);padding-top:8px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.row{grid-template-columns:1fr}}`],
@@ -108,15 +108,15 @@ export interface LibraryImportValue { text: string; mode: 'replace' | 'append' }
     <h2 mat-dialog-title>Import words</h2>
     <mat-dialog-content>
       <input #file hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="loadFile($event)">
-      <voco-secondary-button (click)="file.click()"
+      <voco-secondary-button (activated)="file.click()"
 				>Choose MD / TXT file</voco-secondary-button>
       <mat-form-field appearance="outline" class="wide"><mat-label>Word text</mat-label><textarea matInput rows="12" [formControl]="text"></textarea></mat-form-field>
       <mat-form-field appearance="outline"><mat-label>Import mode</mat-label><mat-select [formControl]="mode"><mat-option value="replace">Replace content</mat-option><mat-option value="append">Append to content</mat-option></mat-select></mat-form-field>
     </mat-dialog-content>
-    <mat-dialog-actions align="end"><voco-navigation-button (click)="dialog.close()"
+    <mat-dialog-actions align="end"><voco-navigation-button (activated)="dialog.close()"
 				>Cancel</voco-navigation-button><voco-primary-button
 				[disabled]="!text.value.trim()"
-				(click)="submit()"
+				(activated)="submit()"
 				>Import</voco-primary-button></mat-dialog-actions>
   `,
   styles: [`.wide{display:block;width:min(75vw,700px);margin-top:14px}`],
@@ -141,10 +141,10 @@ export class LibraryImportDialogComponent {
       <mat-form-field appearance="outline"><mat-label>Section / lesson</mat-label><input matInput formControlName="section"></mat-form-field>
       <mat-form-field appearance="outline"><mat-label>Note</mat-label><textarea matInput rows="3" formControlName="note"></textarea></mat-form-field>
     </form></mat-dialog-content>
-    <mat-dialog-actions align="end"><voco-navigation-button (click)="dialog.close()"
+    <mat-dialog-actions align="end"><voco-navigation-button (activated)="dialog.close()"
 				>Cancel</voco-navigation-button><voco-primary-button
 				[disabled]="form.invalid"
-				(click)="dialog.close(payload())"
+				(activated)="dialog.close(payload())"
 				>Save</voco-primary-button></mat-dialog-actions>
   `,
   styles: [`.form{display:grid;min-width:min(70vw,520px);padding-top:8px}`],
@@ -172,23 +172,23 @@ export class LibraryEntryDialogComponent {
         <p>{{ c.description || 'A vocabulary collection for your learning journey.' }}</p>
         <mat-chip-set><mat-chip>{{ kindLabel(c.kind) }}</mat-chip><mat-chip>{{ level(c) }}</mat-chip><mat-chip>{{ c.status }}</mat-chip><mat-chip>version {{ c.contentVersion }}</mat-chip></mat-chip-set>
         <div class="progress"><span>{{ progress(c).entered }} of {{ progress(c).total }} words are in Leitner</span><mat-progress-bar mode="determinate" [value]="progress(c).percent" /></div>
-        <div class="actions">@if(c.subscribed){<voco-error-button (click)="toggleSubscription()">Remove from box</voco-error-button>}@else{<voco-primary-button (click)="toggleSubscription()">Add to box</voco-primary-button>}@if(data.canManage){<voco-secondary-button (click)="editCollection()"
-							>Edit collection</voco-secondary-button><voco-secondary-button (click)="importEntries()"
-							>Import file</voco-secondary-button><voco-secondary-button (click)="editEntry()"
+        <div class="actions">@if(c.subscribed){<voco-error-button (activated)="toggleSubscription()">Remove from box</voco-error-button>}@else{<voco-primary-button (activated)="toggleSubscription()">Add to box</voco-primary-button>}@if(data.canManage){<voco-secondary-button (activated)="editCollection()"
+							>Edit collection</voco-secondary-button><voco-secondary-button (activated)="importEntries()"
+							>Import file</voco-secondary-button><voco-secondary-button (activated)="editEntry()"
 							>Add word</voco-secondary-button>}</div>
         @if (c.entries?.length) {
           <table mat-table [dataSource]="c.entries || []">
             <ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let entry"><strong>{{ entry.term }}</strong></td></ng-container>
             <ng-container matColumnDef="section"><th mat-header-cell *matHeaderCellDef>Section</th><td mat-cell *matCellDef="let entry">{{ entry.sectionPath || '—' }}</td></ng-container>
-            <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let entry">@if(data.canManage){<voco-icon-button (click)="editEntry(entry)"
+            <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let entry">@if(data.canManage){<voco-icon-button (activated)="editEntry(entry)"
 										>✎</voco-icon-button><voco-icon-button
-										(click)="removeEntry(entry)"
+										(activated)="removeEntry(entry)"
 										>×</voco-icon-button>}</td></ng-container>
             <tr mat-header-row *matHeaderRowDef="entryColumns"></tr><tr mat-row *matRowDef="let row; columns: entryColumns"></tr>
           </table>
         } @else { <p class="empty">No words to display.</p> }
       </mat-dialog-content>
-      <mat-dialog-actions><voco-navigation-button (click)="dialog.close(changed)"
+      <mat-dialog-actions><voco-navigation-button (activated)="dialog.close(changed)"
 					>Close</voco-navigation-button></mat-dialog-actions>
     }
   `,

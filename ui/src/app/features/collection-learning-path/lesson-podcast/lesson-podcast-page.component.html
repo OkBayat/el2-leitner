@@ -23,7 +23,7 @@
       <div class="lesson-podcast-page__error" role="alert">
         <h2>Lesson audio unavailable</h2>
         <p>{{ error() }}</p>
-        <voco-primary-button type="button" (click)="retry()"
+        <voco-primary-button type="button" (activated)="retry()"
 					>Try again</voco-primary-button>
       </div>
     } @else if (lesson()) {

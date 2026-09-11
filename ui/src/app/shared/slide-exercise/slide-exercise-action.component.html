@@ -5,7 +5,7 @@
 	[ariaLabel]="ariaLabel() || null"
 	[ariaBusy]="loading() ? 'true' : null"
 	[disabled]="state() === 'disabled'"
-	(click)="activate()"
+	(activated)="activate()"
 >
   @if (loading()) { <span class="slide-exercise-action__spinner" aria-hidden="true"></span> }
   <span class="slide-exercise-action__label"><ng-content></ng-content></span>

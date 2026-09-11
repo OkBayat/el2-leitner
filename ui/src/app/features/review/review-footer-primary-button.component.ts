@@ -18,7 +18,7 @@ export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 				<voco-success-button
 					type="button"
 					[disabled]="disabled()"
-					(click)="pressed.emit()"
+					(activated)="pressed.emit()"
 				>
 					{{ label() }}
 				</voco-success-button>
@@ -27,7 +27,7 @@ export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 				<voco-error-button
 					type="button"
 					[disabled]="disabled()"
-					(click)="pressed.emit()"
+					(activated)="pressed.emit()"
 				>
 					{{ label() }}
 				</voco-error-button>
@@ -36,7 +36,7 @@ export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 				<voco-primary-button
 					type="button"
 					[disabled]="disabled()"
-					(click)="pressed.emit()"
+					(activated)="pressed.emit()"
 				>
 					{{ label() }}
 				</voco-primary-button>

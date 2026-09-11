@@ -98,7 +98,7 @@ describe('reusable slide renderer contract', () => {
 				cancelable: true,
 			}),
 		);
-		slow?.click();
+		slow?.querySelector<HTMLButtonElement>('button')?.click();
 		expect(speech.speak).toHaveBeenNthCalledWith(1, 'renewable energy', 0.9);
 		expect(speech.speak).toHaveBeenNthCalledWith(
 			2,
@@ -162,7 +162,7 @@ describe('reusable slide renderer contract', () => {
 
 		const audio = element.querySelector('audio')!;
 		audio.play = vi.fn().mockResolvedValue(undefined);
-		slow?.click();
+		slow?.querySelector<HTMLButtonElement>('button')?.click();
 		fixture.detectChanges();
 
 		expect(audio.playbackRate).toBe(0.85);
@@ -645,7 +645,7 @@ describe('reusable slide renderer contract', () => {
 			'is-spoken',
 		);
 
-		button?.click();
+		button?.querySelector<HTMLButtonElement>('button')?.click();
 		expect(speech.speak).toHaveBeenCalledTimes(2);
 	});
 
@@ -881,7 +881,8 @@ describe('reusable slide renderer contract', () => {
 		fixture.componentInstance.handleAction('retry-pronunciation');
 		expect(practice.record).toHaveBeenCalledOnce();
 		(fixture.nativeElement as HTMLElement)
-			.querySelector<HTMLButtonElement>('[data-testid="pronunciation-record"]')
+			.querySelector<HTMLElement>('[data-testid="pronunciation-record"]')
+			?.querySelector<HTMLButtonElement>('button')
 			?.click();
 		expect(practice.record).toHaveBeenCalledTimes(2);
 

@@ -15,7 +15,7 @@ import { LearningChartComponent, type LearningChartPoint } from '../../shared/ch
       <section class="page">
         <header>
           <div><h1>Progress Report</h1><p>A clear view of your learning trend and weak spots</p></div>
-          <voco-primary-button (click)="exportAnalysis()"
+          <voco-primary-button (activated)="exportAnalysis()"
 						>Export for ChatGPT analysis</voco-primary-button>
         </header>
 

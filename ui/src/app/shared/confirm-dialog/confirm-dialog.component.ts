@@ -19,15 +19,15 @@ export interface ConfirmDialogData {
 		<h2 mat-dialog-title>{{ data.title }}</h2>
 		<mat-dialog-content>{{ data.message }}</mat-dialog-content>
 		<mat-dialog-actions align="end">
-			<voco-secondary-button (click)="dialog.close(false)"
+			<voco-secondary-button (activated)="dialog.close(false)"
 				>Cancel</voco-secondary-button
 			>
 			@if (data.danger) {
-				<voco-error-button (click)="dialog.close(true)">{{
+				<voco-error-button (activated)="dialog.close(true)">{{
 					data.confirmLabel || "Confirm"
 				}}</voco-error-button>
 			} @else {
-				<voco-primary-button (click)="dialog.close(true)">{{
+				<voco-primary-button (activated)="dialog.close(true)">{{
 					data.confirmLabel || "Confirm"
 				}}</voco-primary-button>
 			}

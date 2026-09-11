@@ -2,7 +2,7 @@
   <header class="page-header">
     <h1>Library</h1>
     @if (canManage()) {
-      <voco-primary-button (click)="createCollection()"
+      <voco-primary-button (activated)="createCollection()"
 				>New collection</voco-primary-button>
     }
   </header>
@@ -40,7 +40,7 @@
         <voco-secondary-button
 					type="button"
 					data-testid="course-load-retry"
-					(click)="load()"
+					(activated)="load()"
 					>Try again</voco-secondary-button>
       </div>
     }

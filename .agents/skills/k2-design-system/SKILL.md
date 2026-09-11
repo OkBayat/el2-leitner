@@ -99,6 +99,9 @@ button directives or legacy button classes directly:
   required;
 - `voco-icon-button` and `voco-audio-button` for icon-only and audio controls.
 
+Handle a voco control's public action with `(activated)`. Do not bind feature
+logic to the custom-element host's native `(click)` event.
+
 Angular Material is the private interaction foundation inside
 `ui/src/app/shared/voco-button/**`. Use the native `disabled` attribute for
 every disabled button state. Selection controls remain native buttons and add

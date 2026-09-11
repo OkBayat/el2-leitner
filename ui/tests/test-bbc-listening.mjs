@@ -114,7 +114,7 @@ assert.doesNotMatch(
 );
 assert.match(
   template,
-  /type="button"[\s\S]*?data-testid="submit-listening-attempt"[\s\S]*?\(click\)="submit\(\)"/u,
+  /type="button"[\s\S]*?data-testid="submit-listening-attempt"[\s\S]*?\(activated\)="submit\(\)"/u,
   'Listening answers must be submitted only by clicking the explicit submit button.',
 );
 assert.match(template, /add-listening-word-/u, 'Eligible incorrect answers need a stable House 1 action.');

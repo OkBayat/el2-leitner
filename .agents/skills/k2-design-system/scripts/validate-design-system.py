@@ -333,6 +333,8 @@ def validate_button_contract(root: Path, errors: list[str]) -> None:
         errors.append("DESIGN.md must make Angular Material a private button implementation detail")
     if "native `disabled` attribute" not in text:
         errors.append("DESIGN.md must require the native disabled attribute")
+    if "`(activated)` is the public action event" not in text:
+        errors.append("DESIGN.md must document the public voco activated event")
 
 
 def validate_material_reference(root: Path, errors: list[str]) -> None:

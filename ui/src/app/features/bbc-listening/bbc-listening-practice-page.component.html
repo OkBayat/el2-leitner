@@ -157,7 +157,7 @@
 																'add-listening-word-' +
 																question.number
 															"
-															(click)="
+															(activated)="
 																addVocabularyToHouseOne(
 																	vocabulary
 																)
@@ -193,7 +193,7 @@
 							type="button"
 							[disabled]="!canSubmit()"
 							data-testid="submit-listening-attempt"
-							(click)="submit()"
+							(activated)="submit()"
 							>{{ session.submitting() ? 'Submitting…' : 'Submit answers' }}</voco-primary-button>
           } @else {
             <div>
@@ -207,7 +207,7 @@
 									[disabled]="session.restarting()"
 									[ariaLabel]="'Retake ' + test.title"
 									data-testid="retake-listening-test"
-									(click)="retake()"
+									(activated)="retake()"
 									>{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</voco-secondary-button>
                 <voco-navigation-link
 									routerLink="/bbc-6-minute-english"

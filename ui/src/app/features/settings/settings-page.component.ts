@@ -72,7 +72,7 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
           </mat-card-content>
           <mat-card-actions>
             <voco-primary-button
-							(click)="save()"
+							(activated)="save()"
 							[disabled]="form.invalid"
 							>Save settings</voco-primary-button>
           </mat-card-actions>
@@ -86,11 +86,11 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
             <p>All words, practice history, and reports are saved to your account.</p>
             <input #backupInput hidden type="file" accept=".json,application/json" (change)="restore($event)">
             <div class="actions">
-              <voco-secondary-button (click)="exportBackup()"
+              <voco-secondary-button (activated)="exportBackup()"
 								>Download full backup</voco-secondary-button>
-              <voco-secondary-button (click)="backupInput.click()"
+              <voco-secondary-button (activated)="backupInput.click()"
 								>Restore backup</voco-secondary-button>
-              <voco-error-button (click)="reset()"
+              <voco-error-button (activated)="reset()"
 								>Delete all progress</voco-error-button>
             </div>
           </mat-card-content>

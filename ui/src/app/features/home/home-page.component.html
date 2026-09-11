@@ -29,7 +29,7 @@
           <p class="review-state review-error" data-testid="review-load-error" role="alert">
             {{ reviewError() }}
           </p>
-          <voco-secondary-button type="button" (click)="load(true)"
+          <voco-secondary-button type="button" (activated)="load(true)"
 						>Try again</voco-secondary-button>
         } @else if (store.state()) {
           @if (reviewCompleted()) {
@@ -74,7 +74,7 @@
     @if (selectedCourses.error()) {
       <div class="course-notice" role="alert">
         <span>{{ selectedCourses.error() }}</span>
-        <voco-secondary-button type="button" (click)="load()"
+        <voco-secondary-button type="button" (activated)="load()"
 					>Try again</voco-secondary-button>
       </div>
     }

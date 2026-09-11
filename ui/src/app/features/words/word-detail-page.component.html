@@ -11,7 +11,7 @@
           <p class="accepted-forms">Accepted forms: {{ current.accepted.join(' / ') }}</p>
         }
       </div>
-      <voco-secondary-button type="button" (click)="playWord(current)"
+      <voco-secondary-button type="button" (activated)="playWord(current)"
 				>Play pronunciation</voco-secondary-button>
     </header>
 
@@ -47,13 +47,13 @@
               <voco-secondary-button
 								type="button"
 								[disabled]="busy()"
-								(click)="editSource(source)"
+								(activated)="editSource(source)"
 								>Edit</voco-secondary-button>
               <voco-error-button
 								type="button"
 								class="text-danger"
 								[disabled]="busy()"
-								(click)="deleteSource(source)"
+								(activated)="deleteSource(source)"
 								>Delete</voco-error-button>
             </div>
           }
@@ -73,7 +73,7 @@
 					type="button"
 					class="text-danger"
 					[disabled]="busy()"
-					(click)="removeFromWordBank()"
+					(activated)="removeFromWordBank()"
 				>
           Remove from my Word Bank
         </voco-error-button>

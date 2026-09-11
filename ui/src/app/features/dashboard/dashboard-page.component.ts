@@ -29,11 +29,11 @@ type HouseOneCopyStatus = 'idle' | 'copying' | 'copied' | 'failed';
 			</mat-form-field>
 		</mat-dialog-content>
 		<mat-dialog-actions align="end">
-			<voco-navigation-button (click)="dialog.close()"
+			<voco-navigation-button (activated)="dialog.close()"
 				>Cancel</voco-navigation-button>
 			<voco-primary-button
 				[disabled]="count.invalid"
-				(click)="dialog.close(count.value)"
+				(activated)="dialog.close(count.value)"
 				>Add and start session</voco-primary-button>
 		</mat-dialog-actions>
 	`,

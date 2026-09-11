@@ -9,6 +9,7 @@ const implementationRoot = path.join(appRoot, 'shared', 'voco-button');
 const materialButtonPattern = /@angular\/material\/button(?:['"]|\/)/u;
 const materialTemplatePattern = /(?:\bmatButton\b|\bmat-(?:button(?!-)|flat-button|raised-button|stroked-button|icon-button|fab|mini-fab)\b)/u;
 const legacyClassPattern = /\bvocora-(?:button(?:--[a-z-]+)?|action-button)\b/u;
+const nativeVocoClickPattern = /<voco-[a-z-]+\b(?:(?!>).)*\(click\)=/su;
 
 function sourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -25,6 +26,7 @@ for (const file of sourceFiles(appRoot)) {
   if (materialButtonPattern.test(source)) violations.push(`${path.relative(uiRoot, file)} imports Angular Material Button`);
   if (materialTemplatePattern.test(source)) violations.push(`${path.relative(uiRoot, file)} uses a Material button attribute`);
   if (legacyClassPattern.test(source)) violations.push(`${path.relative(uiRoot, file)} uses a legacy Vocora button class`);
+  if (nativeVocoClickPattern.test(source)) violations.push(`${path.relative(uiRoot, file)} binds native click instead of voco activation`);
 }
 
 assert.deepEqual(

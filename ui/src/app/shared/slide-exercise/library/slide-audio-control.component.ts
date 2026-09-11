@@ -34,7 +34,7 @@ import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 						[disabled]="!canReplay()"
 						[ariaLabel]="playLabel"
 						data-testid="slide-audio-play-normal"
-						(click)="play(audio)"
+						(activated)="play(audio)"
 						audioSize="large"
 					>
 						<img src="/assets/icons/normal-speed.svg" alt="" aria-hidden="true" />
@@ -44,7 +44,7 @@ import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 						[disabled]="!canReplay()"
 						[ariaLabel]="slowPlayLabel"
 						data-testid="slide-audio-play-slow"
-						(click)="play(audio, 0.85)"
+						(activated)="play(audio, 0.85)"
 					>
 						<img src="/assets/icons/slow-speed.svg" alt="" aria-hidden="true" />
 					</voco-audio-button>
@@ -54,7 +54,7 @@ import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 					type="button"
 					[disabled]="!canReplay()"
 					[ariaLabel]="playLabel"
-					(click)="play(audio)"
+					(activated)="play(audio)"
 				>
 					{{ buttonLabel }}
 				</voco-secondary-button>
