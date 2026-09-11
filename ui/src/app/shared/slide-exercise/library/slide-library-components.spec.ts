@@ -506,7 +506,7 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('validates every ClassificationSlide category assignment', () => {
-		const speech = configure();
+		configure();
 		const component = TestBed.runInInjectionContext(
 			() => new ClassificationSlideComponent(),
 		);
@@ -527,11 +527,8 @@ describe('reusable slide library behavior', () => {
 			'root',
 			'paw',
 		]);
-		component.selectItem('paw');
-		expect(speech.speak).toHaveBeenCalledWith('paw', 0.95);
-		component.assignSelected('animal');
-		component.selectItem('root');
-		component.assignSelected('plant');
+		component.assignDropped('paw', 'animal');
+		component.assignDropped('root', 'plant');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
 		expect(component.assignmentState('paw')).toBe('correct');
@@ -561,6 +558,7 @@ describe('reusable slide library behavior', () => {
 
 		component.assignDropped('paw', 'plant');
 		expect(component.assignments()).toEqual({ paw: 'plant' });
+		expect(component.assignmentState('paw')).toBe('neutral');
 		expect(component.unassignedItems().map((item) => item.id)).toEqual([
 			'root',
 		]);

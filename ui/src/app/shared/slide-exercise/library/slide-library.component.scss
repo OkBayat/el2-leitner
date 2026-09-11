@@ -64,13 +64,31 @@ blockquote {
 
 .choice-option,
 .matching-column button,
-.chip-list button,
-.classification-item {
+.chip-list button {
 	min-height: var(--vocora-touch-target-min);
 	justify-content: flex-start;
 	border-color: var(--vocora-border);
 	color: var(--vocora-text-primary);
 	background: var(--vocora-surface-base);
+}
+
+.classification-item {
+	box-sizing: border-box;
+	min-height: var(--vocora-touch-target-min);
+	max-width: 100%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: var(--vocora-space-2) var(--vocora-space-4);
+	border: 1px solid var(--vocora-border);
+	border-radius: var(--vocora-radius-pill);
+	background: var(--vocora-surface-base);
+	color: var(--vocora-text-primary);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.33;
+	overflow-wrap: anywhere;
+	user-select: none;
 }
 
 .choice-option {
@@ -219,11 +237,6 @@ blockquote {
 		border-color var(--vocora-motion-fast),
 		background var(--vocora-motion-fast),
 		box-shadow var(--vocora-motion-fast);
-}
-
-.bucket[data-drop-ready='true'] {
-	border-color: var(--vocora-information-border);
-	background: var(--vocora-information-surface);
 }
 
 .bucket.cdk-drop-list-receiving {

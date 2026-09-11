@@ -221,6 +221,11 @@ assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
 assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
 assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
+assert.doesNotMatch(
+	classificationTemplate,
+	/<button|\(click\)|\(keydown\)|aria-pressed/u,
+	'Classification must use drag and drop without click or keyboard assignment controls.',
+);
 assert.ok(
 	classificationTemplate.indexOf('class="bucket-grid"') <
 		classificationTemplate.indexOf('class="chip-list"'),

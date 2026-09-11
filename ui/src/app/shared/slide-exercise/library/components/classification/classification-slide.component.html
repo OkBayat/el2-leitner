@@ -20,62 +20,36 @@
 							assignDropped($event.item.data, category.id)
 						"
 						[attr.aria-label]="category.label"
-						[attr.data-drop-ready]="
-							selectedItemId() && interactionState() === 'idle'
-								? 'true'
-								: null
-						"
 					>
-						<button
-							mat-button
-							type="button"
-							class="bucket__header"
-							[attr.aria-label]="
-								classificationBucketAriaLabel(
-									category.id,
-									category.label
-								)
-							"
-							[disabled]="
-								!selectedItemId() || interactionState() !== 'idle'
-							"
-							(click)="assignSelected(category.id)"
-						>
+						<div class="bucket__header">
 							<strong>{{ category.label }}</strong>
 							<span class="bucket__count" aria-hidden="true">
 								{{ assignedItems(category.id).length }}
 							</span>
-						</button>
-						<div class="bucket__items">
+						</div>
+						<div class="bucket__items" role="list">
 							@for (
 								item of assignedItems(category.id);
 								track item.id
 							) {
-								<button
-									mat-stroked-button
-									type="button"
+								<div
 									class="classification-item"
+									role="listitem"
 									cdkDrag
 									[cdkDragData]="item.id"
 									[cdkDragDisabled]="interactionState() !== 'idle'"
 									[attr.data-item-id]="item.id"
 									[attr.data-state]="itemState(item.id)"
-									[attr.aria-pressed]="selectedItemId() === item.id"
 									[attr.aria-label]="
 										classificationItemAriaLabel(item.id, item.label)
 									"
-									[disabled]="interactionState() !== 'idle'"
-									(click)="selectItem(item.id)"
+									[attr.aria-disabled]="interactionState() !== 'idle'"
 								>
 									{{ item.label }}
-								</button>
+								</div>
 							} @empty {
 								<span class="bucket__placeholder">
-									@if (selectedItemLabel()) {
-										Place “{{ selectedItemLabel() }}” here
-									} @else {
-										Drop an item here
-									}
+									Drop an item here
 								</span>
 							}
 						</div>
@@ -84,29 +58,27 @@
 			</div>
 			<div
 				class="chip-list"
+				role="list"
 				aria-label="Items to classify"
 				cdkDropList
 				[cdkDropListSortingDisabled]="true"
 			>
 				@for (item of unassignedItems(); track item.id) {
-					<button
-						mat-stroked-button
-						type="button"
+					<div
 						class="classification-item"
+						role="listitem"
 						cdkDrag
 						[cdkDragData]="item.id"
 						[cdkDragDisabled]="interactionState() !== 'idle'"
 						[attr.data-item-id]="item.id"
 						[attr.data-state]="itemState(item.id)"
-						[attr.aria-pressed]="selectedItemId() === item.id"
 						[attr.aria-label]="
 							classificationItemAriaLabel(item.id, item.label)
 						"
-						[disabled]="interactionState() !== 'idle'"
-						(click)="selectItem(item.id)"
+						[attr.aria-disabled]="interactionState() !== 'idle'"
 					>
 						{{ item.label }}
-					</button>
+					</div>
 				}
 			</div>
 		</section>
