@@ -506,7 +506,7 @@ describe('reusable slide library behavior', () => {
 	});
 
 	it('validates every ClassificationSlide category assignment', () => {
-		const speech = configure();
+		configure();
 		const component = TestBed.runInInjectionContext(
 			() => new ClassificationSlideComponent(),
 		);
@@ -527,14 +527,69 @@ describe('reusable slide library behavior', () => {
 			'root',
 			'paw',
 		]);
-		component.selectItem('paw');
-		expect(speech.speak).toHaveBeenCalledWith('paw', 0.95);
-		component.assignSelected('animal');
-		component.selectItem('root');
-		component.assignSelected('plant');
+		component.assignDropped('paw', 'animal');
+		component.assignDropped('root', 'plant');
 		component.handleAction('check');
 		expect(component.interactionState()).toBe('answered-correct');
 		expect(component.assignmentState('paw')).toBe('correct');
+	});
+
+	it('assigns and reassigns ClassificationSlide items dropped into categories', () => {
+		configure();
+		const component = TestBed.runInInjectionContext(
+			() => new ClassificationSlideComponent(),
+		);
+		const states: unknown[] = [];
+		component.stateChange.subscribe((state) => states.push(state));
+		load(component, 'classification', {
+			categories: [
+				{ id: 'animal', label: 'Animal' },
+				{ id: 'plant', label: 'Plant' },
+			],
+			items: [
+				{ id: 'paw', label: 'paw', correctCategoryId: 'animal' },
+				{ id: 'root', label: 'root', correctCategoryId: 'plant' },
+			],
+		});
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'paw',
+			'root',
+		]);
+
+		component.assignDropped('paw', 'plant');
+		expect(component.assignments()).toEqual({ paw: 'plant' });
+		expect(component.assignmentState('paw')).toBe('neutral');
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'root',
+		]);
+		expect(component.assignedItems('plant').map((item) => item.id)).toEqual([
+			'paw',
+		]);
+		expect(component.interactionState()).toBe('idle');
+
+		component.assignDropped('paw', 'animal');
+		expect(component.assignedItems('plant')).toEqual([]);
+		expect(component.assignedItems('animal').map((item) => item.id)).toEqual([
+			'paw',
+		]);
+		component.unassignDropped('paw');
+		expect(component.assignments()).toEqual({});
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'paw',
+			'root',
+		]);
+		expect(states.at(-1)).toMatchObject({
+			chrome: { footer: { primary: { disabled: true } } },
+		});
+		component.assignDropped('paw', 'animal');
+		component.assignDropped('root', 'animal');
+		expect(component.assignments()).toEqual({ paw: 'animal', root: 'animal' });
+		expect(states.at(-1)).toMatchObject({
+			chrome: { footer: { primary: { disabled: false } } },
+		});
+		component.handleAction('check');
+		expect(component.assignmentState('paw')).toBe('correct');
+		expect(component.assignmentState('root')).toBe('incorrect');
 	});
 
 	it('validates ClozeSlide blanks independently, including variants and word limits', () => {

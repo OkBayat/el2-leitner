@@ -363,13 +363,68 @@ describe('reusable slide renderer contract', () => {
 				],
 			},
 		});
-		classificationFixture.componentInstance.selectItem('paw');
-		classificationFixture.componentInstance.assignSelected('plant');
+		classificationFixture.detectChanges();
+		const classificationElement =
+			classificationFixture.nativeElement as HTMLElement;
+		const classificationRegions = classificationElement.querySelectorAll(
+			'.bucket-grid, .chip-list',
+		);
+		expect(classificationRegions[0]?.classList).toContain('bucket-grid');
+		expect(classificationRegions[1]?.classList).toContain('chip-list');
+		expect(classificationElement.querySelector('.chip-list')?.classList).toContain(
+			'cdk-drop-list',
+		);
+		const sourceItem = classificationElement.querySelector<HTMLElement>(
+			'.chip-list [data-item-id="paw"]',
+		);
+		expect(sourceItem?.tagName).toBe('BUTTON');
+		expect(sourceItem?.classList).toContain('mat-mdc-outlined-button');
+		expect(sourceItem?.classList).toContain('classification-item');
+		expect(
+			classificationElement.querySelectorAll('.bucket.cdk-drop-list'),
+		).toHaveLength(2);
+
+		classificationFixture.componentInstance.assignDropped('paw', 'plant');
+		classificationFixture.detectChanges();
+		expect(
+			classificationElement.querySelector('.chip-list [data-item-id="paw"]'),
+		).toBeNull();
+		let classifiedItem = classificationElement.querySelector<HTMLElement>(
+			'[data-category-id="plant"] [data-item-id="paw"]',
+		);
+		expect(classifiedItem?.className).toBe(sourceItem?.className);
+
+		classificationFixture.componentInstance.assignDropped('paw', 'animal');
+		classificationFixture.detectChanges();
+		expect(
+			classificationElement.querySelector(
+				'[data-category-id="plant"] [data-item-id="paw"]',
+			),
+		).toBeNull();
+		classifiedItem = classificationElement.querySelector<HTMLElement>(
+			'[data-category-id="animal"] [data-item-id="paw"]',
+		);
+		expect(classifiedItem).not.toBeNull();
+
+		classificationFixture.componentInstance.unassignDropped('paw');
+		classificationFixture.detectChanges();
+		expect(
+			classificationElement.querySelector(
+				'[data-category-id="animal"] [data-item-id="paw"]',
+			),
+		).toBeNull();
+		expect(
+			classificationElement.querySelector(
+				'.chip-list [data-item-id="paw"]',
+			),
+		).not.toBeNull();
+
+		classificationFixture.componentInstance.assignDropped('paw', 'plant');
 		classificationFixture.componentInstance.handleAction('check');
 		classificationFixture.detectChanges();
-		const classifiedItem = (
-			classificationFixture.nativeElement as HTMLElement
-		).querySelector('.chip-list button');
+		classifiedItem = classificationElement.querySelector<HTMLElement>(
+			'[data-category-id="plant"] [data-item-id="paw"]',
+		);
 		const classificationBucket = (
 			classificationFixture.nativeElement as HTMLElement
 		).querySelector('.bucket');
@@ -382,6 +437,7 @@ describe('reusable slide renderer contract', () => {
 		expect(classifiedItem?.getAttribute('aria-label')).toContain(
 			'incorrect; correct category Animal',
 		);
+		expect(classifiedItem?.dataset['state']).toBe('incorrect');
 
 		matchingFixture.destroy();
 		classificationFixture.destroy();

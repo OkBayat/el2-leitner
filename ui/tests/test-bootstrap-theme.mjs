@@ -47,6 +47,17 @@ for (const [bootstrapName, vocoraName] of semanticMappings) {
   );
 }
 
+assert.match(
+  bootstrapTheme,
+  /\.bg-light\s*\{[^}]*background:\s*color-mix\(\s*in srgb,\s*var\(--vocora-surface-base\) 92%,\s*var\(--vocora-border\)\s*\)\s*!important;/u,
+  'Bootstrap bg-light must remain distinct from bg-white while following the active Vocora theme.'
+);
+assert.match(
+  bootstrapTheme,
+  /\.text-body\s*\{[^}]*color:\s*var\(--vocora-text-primary\)\s*!important;/u,
+  'Bootstrap text-body must retain readable Vocora text contrast in both themes.'
+);
+
 assert.doesNotMatch(
   bootstrapTheme,
   /#[0-9a-f]{3,8}\b/iu,

@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { App } from './app';
 import { appRoutes } from './app.routes';
+import { ThemeService } from './core/theme/theme.service';
 
 describe('App', () => {
   it('creates the Angular router root without legacy DOM bootstrap', async () => {
@@ -10,6 +11,21 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();
+  });
+
+  it('starts theme synchronization at the application root', async () => {
+    const createThemeService = vi.fn(() => ({} as ThemeService));
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [
+        provideRouter([]),
+        { provide: ThemeService, useFactory: createThemeService },
+      ],
+    }).compileComponents();
+
+    TestBed.createComponent(App);
+
+    expect(createThemeService).toHaveBeenCalledOnce();
   });
 
   it('keeps canonical lesson podcasts and learning path exercises outside the shared app shell', () => {

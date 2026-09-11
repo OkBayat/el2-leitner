@@ -219,8 +219,79 @@ for (const attribute of [
 assert.match(clozeTemplate, /class="cloze-input-measure"/u);
 assert.doesNotMatch(clozeTemplate, /\[attr\.size\]/u);
 assert.doesNotMatch(clozeTemplate, /<mat-select/u);
-assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
-assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
+assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u);
+assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket(?:\s[^"]*)?"/u);
+assert.match(
+	classificationTemplate,
+	/class="bucket d-flex flex-column align-items-start gap-3 p-3 border border-secondary rounded-4 bg-light text-body text-wrap"/u,
+	'Classification buckets must use Bootstrap layout, spacing, border, radius, background, and text utilities.',
+);
+assert.doesNotMatch(
+	classificationTemplate,
+	/\bborder-2\b/u,
+	'Classification buckets must use the default Bootstrap border width.',
+);
+assert.doesNotMatch(
+	classificationTemplate,
+	/\(click\)|\(keydown\)|aria-pressed/u,
+	'Classification must use drag and drop without click or keyboard assignment controls.',
+);
+assert.doesNotMatch(
+	classificationTemplate,
+	/class="bucket__count"/u,
+	'Classification buckets must not show item counts.',
+);
+assert.match(
+	classificationTemplate,
+	/class="chip-list classification-item-bank"[\s\S]*\(cdkDropListDropped\)="unassignDropped\(\$event\.item\.data\)"/u,
+	'Classification items must be droppable back into the unassigned item list.',
+);
+assert.match(
+	sharedStyles,
+	/\.classification-item-bank\s*\{[^}]*min-height:\s*50px;/u,
+	'The classification item bank must remain a visible drop target when empty.',
+);
+assert.ok(
+	classificationTemplate.indexOf('class="bucket-grid"') <
+		classificationTemplate.indexOf('class="chip-list classification-item-bank"'),
+	'Classification categories must render above the remaining items.',
+);
+assert.equal(
+	classificationTemplate.match(/class="classification-item"/gu)?.length,
+	2,
+	'Unassigned and placed classification items must use the same visual control.',
+);
+assert.equal(
+	classificationTemplate.match(/<button\s+[\s\S]*?mat-stroked-button[\s\S]*?class="classification-item"/gu)?.length,
+	2,
+	'Classification items must use the shared Material secondary button primitive.',
+);
+assert.match(
+	sharedStyles,
+	/\.choice-option,\s*\.matching-column button,\s*\.chip-list button,\s*\.classification-item\s*\{[^}]*border-color:\s*var\(--vocora-border\);[^}]*color:\s*var\(--vocora-text-primary\);[^}]*background:\s*var\(--vocora-surface-base\);/u,
+	'Classification items must retain the same neutral colors inside and outside buckets.',
+);
+const incorrectClassificationStyles = sharedStyles.match(
+	/\.classification-item\[data-state='incorrect'\]\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(
+	incorrectClassificationStyles,
+	/border-color:\s*var\(--vocora-error\)\s*!important;/u,
+);
+assert.match(
+	incorrectClassificationStyles,
+	/background:\s*var\(--vocora-error-surface\)\s*!important;/u,
+);
+const classificationBucketStyles = sharedStyles.match(
+	/\.bucket\s*\{([\s\S]*?)\n\}/u,
+)?.[1] ?? '';
+assert.match(classificationBucketStyles, /min-height:\s*120px;/u);
+assert.match(classificationBucketStyles, /border-style:\s*dashed\s*!important;/u);
+assert.doesNotMatch(
+	classificationBucketStyles,
+	/(?:display|flex-direction|align-items|gap|padding|border-color|border-radius|background|color|white-space|cursor|transition):/u,
+	'Bootstrap utilities must own standard classification bucket presentation.',
+);
 assert.match(clozeTemplate, /class="cloze-choice-grid choice-grid"/u);
 assert.match(clozeTemplate, /class="choice-option"/u);
 assert.match(

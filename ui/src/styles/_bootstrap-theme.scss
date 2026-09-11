@@ -13,4 +13,16 @@
     --bs-danger: var(--vocora-error);
     --bs-danger-rgb: var(--vocora-error-rgb);
   }
+
+  .bg-light {
+    background: color-mix(
+      in srgb,
+      var(--vocora-surface-base) 92%,
+      var(--vocora-border)
+    ) !important;
+  }
+
+  .text-body {
+    color: var(--vocora-text-primary) !important;
+  }
 }

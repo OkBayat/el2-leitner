@@ -20,10 +20,11 @@ assert.match(pkg.scripts.test, /build:production.*check:pwa/u, 'The complete tes
 
 const angular = JSON.parse(read('angular.json'));
 assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/manifest.webmanifest'), 'Angular must keep the compatibility web app manifest available at the origin root.');
-assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/vocora-v3.webmanifest'), 'Angular must publish the current versioned install manifest at the origin root.');
+assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/vocora-v4.webmanifest'), 'Angular must publish the current versioned install manifest at the origin root.');
+assert.ok(angular.projects.vocora.architect.build.options.assets.includes('src/theme-bootstrap.js'), 'Angular must publish the pre-paint theme bootstrap at the origin root.');
 assert.ok(angular.projects.vocora.architect.build.options.styles.includes('src/pwa.scss'), 'The installed-app safe-area stylesheet must be part of every build.');
 
-const manifest = JSON.parse(read('src/vocora-v3.webmanifest'));
+const manifest = JSON.parse(read('src/vocora-v4.webmanifest'));
 assert.equal(manifest.id, '/', 'The PWA needs a stable app identity.');
 assert.equal(manifest.start_url, '/dashboard');
 assert.equal(manifest.scope, '/');
@@ -54,7 +55,7 @@ const index = read('src/index.html');
 const manifestLinkMatch = index.match(/<link rel="manifest" href="([^"]+)">/u);
 assert.ok(manifestLinkMatch, 'The document must reference a web app manifest.');
 const manifestUrl = manifestLinkMatch[1];
-assert.equal(manifestUrl, '/vocora-v3.webmanifest', 'The install manifest URL must change when install metadata changes so older service workers and WebAPK metadata cannot stay stale.');
+assert.equal(manifestUrl, '/vocora-v4.webmanifest', 'The install manifest URL must change when install metadata changes so older service workers and WebAPK metadata cannot stay stale.');
 assert.match(index, /apple-mobile-web-app-capable" content="yes"/u);
 assert.match(index, /apple-mobile-web-app-title" content="Vocora"/u);
 assert.match(index, /viewport-fit=cover/u);
@@ -112,10 +113,10 @@ assert.match(
 );
 
 assert.ok(fs.existsSync(distRoot), 'Production output must exist before PWA validation.');
-for (const required of ['index.html', 'vocora-v3.webmanifest', 'service-worker.js']) {
+for (const required of ['index.html', 'vocora-v4.webmanifest', 'theme-bootstrap.js', 'service-worker.js']) {
 	assert.ok(fs.existsSync(path.join(distRoot, required)), `Production output must contain ${required}.`);
 }
-const builtManifest = JSON.parse(fs.readFileSync(path.join(distRoot, 'vocora-v3.webmanifest'), 'utf8'));
+const builtManifest = JSON.parse(fs.readFileSync(path.join(distRoot, 'vocora-v4.webmanifest'), 'utf8'));
 assert.equal(builtManifest.id, manifest.id, 'The built manifest must match source install identity.');
 assert.equal(builtManifest.name, 'Vocora', 'The built install manifest must expose the current product name.');
 
@@ -142,6 +143,9 @@ for (const required of requiredOfflineAssets) {
 assert.equal(precache.some((url) => url.startsWith('/api/')), false, 'Authenticated API responses must never be precached.');
 
 const builtIndex = fs.readFileSync(path.join(distRoot, 'index.html'), 'utf8');
+const themeBootstrapPosition = builtIndex.indexOf('src="/theme-bootstrap.js"');
+const firstStylesheetPosition = builtIndex.search(/<link[^>]+rel=["']stylesheet["'][^>]*>/iu);
+assert.ok(themeBootstrapPosition >= 0 && themeBootstrapPosition < firstStylesheetPosition, 'The pre-paint theme bootstrap must execute before the compiled stylesheet can paint the default theme.');
 const startupAssets = new Set(
 	[...builtIndex.matchAll(/\b(?:src|href)=["']([^"']+\.(?:js|css))(?:\?[^"']*)?["']/giu)]
 		.map((match) => path.basename(match[1])),

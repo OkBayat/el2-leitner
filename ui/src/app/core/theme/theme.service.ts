@@ -1,24 +1,40 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent } from 'rxjs';
+import { fromEvent, merge } from 'rxjs';
 import { ThemeMode } from '../../domain/learning/models';
 
-export const LIGHT_SYSTEM_CHROME_COLOR = '#f8f9ff';
-export const DARK_SYSTEM_CHROME_COLOR = '#111318';
+export const LIGHT_SYSTEM_CHROME_COLOR = '#ffffff';
+export const DARK_SYSTEM_CHROME_COLOR = '#0f1611';
+export const THEME_MODE_STORAGE_KEY = 'vocora-theme-mode-v1';
+export const SYSTEM_THEME_MEDIA = {
+  light: '(prefers-color-scheme: light)',
+  dark: '(prefers-color-scheme: dark)',
+} as const;
+
+function storedThemeMode(): ThemeMode {
+  try {
+    const mode = globalThis.localStorage?.getItem(THEME_MODE_STORAGE_KEY);
+    if (mode === 'light' || mode === 'dark' || mode === 'system') return mode;
+  } catch { /* Browser storage can be unavailable. */ }
+  return 'system';
+}
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
   private readonly systemThemeQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
-  private activeMode: ThemeMode = 'light';
+  private activeMode: ThemeMode = storedThemeMode();
 
   constructor() {
     const query = this.systemThemeQuery;
     if (!query) return;
 
-    fromEvent<MediaQueryListEvent>(query, 'change')
+    merge(
+      fromEvent<MediaQueryListEvent>(query, 'change'),
+      fromEvent(this.document, 'visibilitychange'),
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         if (this.activeMode !== 'system') return;
@@ -28,6 +44,7 @@ export class ThemeService {
 
   apply(mode: ThemeMode): void {
     this.activeMode = mode;
+    try { globalThis.localStorage?.setItem(THEME_MODE_STORAGE_KEY, mode); } catch { /* Browser storage can be unavailable. */ }
     const prefersDark = this.systemThemeQuery?.matches ?? false;
     this.applyResolved(mode === 'system' ? (prefersDark ? 'dark' : 'light') : mode);
   }
@@ -47,8 +64,31 @@ export class ThemeService {
       body.style.backgroundColor = chromeColor;
     }
 
+    this.updateThemeColorMetadata(resolved);
     this.updateMeta('color-scheme', resolved);
-    this.updateMeta('theme-color', chromeColor);
+  }
+
+  private updateThemeColorMetadata(resolved: 'light' | 'dark'): void {
+    for (const theme of ['light', 'dark'] as const) {
+      const meta = this.getThemeColorMeta(theme);
+      meta.content = theme === 'dark' ? DARK_SYSTEM_CHROME_COLOR : LIGHT_SYSTEM_CHROME_COLOR;
+      meta.media = this.activeMode === 'system'
+        ? SYSTEM_THEME_MEDIA[theme]
+        : theme === resolved ? 'all' : 'not all';
+    }
+  }
+
+  private getThemeColorMeta(theme: 'light' | 'dark'): HTMLMetaElement {
+    let meta = this.document.head.querySelector<HTMLMetaElement>(
+      `meta[name="theme-color"][data-vocora-theme="${theme}"]`,
+    );
+    if (!meta) {
+      meta = this.document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.dataset['vocoraTheme'] = theme;
+      this.document.head.appendChild(meta);
+    }
+    return meta;
   }
 
   private updateMeta(name: string, content: string): void {

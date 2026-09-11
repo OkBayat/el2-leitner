@@ -307,10 +307,20 @@ assert.match(
 	/\.vocora-button--secondary\s*\{[^}]*--vocora-component-action-border:\s*var\(--vocora-action-secondary-border\);/u,
 	"Secondary buttons must use the canonical outlined treatment.",
 );
-assert.match(
+assert.doesNotMatch(
 	components,
-	/\.mat-mdc-outlined-button:not\(:disabled\)\s*\{[^}]*--mat-button-outlined-label-text-color:\s*var\(\s*--vocora-action-secondary-foreground\s*\);[^}]*color:\s*var\(--vocora-action-secondary-foreground\);/u,
-	"Every enabled Material outlined button must use the canonical secondary label color.",
+	/\.mat-mdc-outlined-button:not\(:disabled\)\s*\{/u,
+	"Bare enabled Material outlined buttons must retain their original Material text color.",
+);
+assert.doesNotMatch(
+	components,
+	/\.mat-mdc-outlined-button\s*\{[^}]*background\s*:/u,
+	"Bare Material outlined buttons must retain their original Material background.",
+);
+assert.doesNotMatch(
+	components,
+	/\.mat-mdc-outlined-button:disabled\s*\{/u,
+	"Bare disabled Material outlined buttons must retain their original Material colors.",
 );
 assert.match(
 	components,
