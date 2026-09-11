@@ -46,9 +46,9 @@ function transformCssOutsideProtected(
 	const protectedTokens = [];
 	let unprotected = "";
 	let index = 0;
-	const protect = (end) => {
+	const protect = (end, token = value.slice(index, end)) => {
 		const marker = `__VOCORA_CSS_PROTECTED_${protectedTokens.length}__`;
-		protectedTokens.push(value.slice(index, end));
+		protectedTokens.push(token);
 		unprotected += marker;
 		index = end;
 	};
@@ -95,7 +95,12 @@ function transformCssOutsideProtected(
 				else if (current === "(") depth += 1;
 				else if (current === ")") depth -= 1;
 			}
-			protect(end);
+			const rawUrl = value.slice(index, end);
+			const opening = rawUrl.indexOf("(");
+			const normalizedUrl = rawUrl.endsWith(")")
+				? `${rawUrl.slice(0, opening + 1)}${rawUrl.slice(opening + 1, -1).trim()})`
+				: rawUrl;
+			protect(end, normalizedUrl);
 			continue;
 		}
 		if (character === "/" && value[index + 1] === "*") {
@@ -122,12 +127,87 @@ function transformCssOutsideProtected(
 	return result;
 }
 
-function stripCssComments(value, options) {
-	return transformCssOutsideProtected(
-		value,
-		(unprotected) => unprotected,
-		options,
-	);
+function maskCssSyntax(value, { lineComments = false } = {}) {
+	const cleaned = value.split("");
+	const syntax = value.split("");
+	let index = 0;
+	const maskRange = (target, start, end, replacement = " ") => {
+		for (let position = start; position < end; position += 1) {
+			if (target[position] !== "\n" && target[position] !== "\r") {
+				target[position] = replacement;
+			}
+		}
+	};
+
+	while (index < value.length) {
+		const character = value[index];
+		if (["'", '"'].includes(character)) {
+			const start = index;
+			index += 1;
+			let escaped = false;
+			while (index < value.length) {
+				const current = value[index];
+				index += 1;
+				if (!escaped && current === character) break;
+				escaped = !escaped && current === "\\";
+				if (current !== "\\") escaped = false;
+			}
+			maskRange(syntax, start, index, "_");
+			continue;
+		}
+
+		const startsUrl =
+			value.slice(index, index + 4).toLowerCase() === "url(" &&
+			(index === 0 || !/[a-z0-9_-]/iu.test(value[index - 1]));
+		if (startsUrl) {
+			const start = index;
+			index += 4;
+			let depth = 1;
+			let quote = null;
+			let escaped = false;
+			while (index < value.length && depth > 0) {
+				const current = value[index];
+				index += 1;
+				if (escaped) {
+					escaped = false;
+					continue;
+				}
+				if (current === "\\") {
+					escaped = true;
+					continue;
+				}
+				if (quote) {
+					if (current === quote) quote = null;
+					continue;
+				}
+				if (["'", '"'].includes(current)) quote = current;
+				else if (current === "(") depth += 1;
+				else if (current === ")") depth -= 1;
+			}
+			maskRange(syntax, start, index, "_");
+			continue;
+		}
+
+		if (character === "/" && value[index + 1] === "*") {
+			const close = value.indexOf("*/", index + 2);
+			const end = close < 0 ? value.length : close + 2;
+			maskRange(cleaned, index, end);
+			maskRange(syntax, index, end);
+			index = end;
+			continue;
+		}
+		if (lineComments && character === "/" && value[index + 1] === "/") {
+			const newline = value.indexOf("\n", index + 2);
+			const end = newline < 0 ? value.length : newline;
+			maskRange(cleaned, index, end);
+			maskRange(syntax, index, end);
+			index = end;
+			continue;
+		}
+		index += 1;
+	}
+
+	return { cleaned: cleaned.join(""), syntax: syntax.join("") };
 }
 
 function extractInlineStyleMetadata(text) {
@@ -247,49 +327,61 @@ export function extractInlineStyles(text) {
 	return extractInlineStyleMetadata(text).styles;
 }
 
-function extractBracedImportantDeclarations(text) {
+function extractBracedImportantDeclarations(text, syntax = text) {
 	const declarations = [];
-	for (const match of text.matchAll(
-		/([a-z-]+)\s*:\s*([^;{}]+?)\s*!important\b/giu,
+	for (const match of syntax.matchAll(
+		/([a-z-]+)\s*:\s*([^;{}]+?)\s*!important\b/dgiu,
 	)) {
-		const propertyName = match[1].toLowerCase();
-		const value = normalizeWhitespace(match[2]);
-		const blockStart = text.lastIndexOf("{", match.index);
+		const propertyName = text
+			.slice(...match.indices[1])
+			.trim()
+			.toLowerCase();
+		const value = text.slice(...match.indices[2]).trim();
+		const blockStart = syntax.lastIndexOf("{", match.index);
 		const previousBoundary = Math.max(
-			text.lastIndexOf("{", blockStart - 1),
-			text.lastIndexOf("}", blockStart - 1),
+			syntax.lastIndexOf("{", blockStart - 1),
+			syntax.lastIndexOf("}", blockStart - 1),
 		);
-		const selector = normalizeWhitespace(
-			text.slice(previousBoundary + 1, blockStart),
-		);
+		const selector = text.slice(previousBoundary + 1, blockStart).trim();
 		declarations.push(`${selector} => ${propertyName}:${value}!important`);
 	}
 	return declarations;
 }
 
-function extractIndentedSassImportantDeclarations(text) {
+function extractIndentedSassImportantDeclarations(text, syntax = text) {
 	const declarations = [];
 	const selectors = [];
-	for (const line of text.split(/\r?\n/u)) {
-		const trimmed = line.trim();
-		if (!trimmed || trimmed.startsWith("//")) continue;
+	const textLines = text.split(/\r?\n/u);
+	const syntaxLines = syntax.split(/\r?\n/u);
+	for (const [lineIndex, line] of textLines.entries()) {
+		const syntaxLine = syntaxLines[lineIndex] ?? "";
+		const syntaxTrimmed = syntaxLine.trim();
+		if (!syntaxTrimmed) continue;
 		const indent = line.length - line.trimStart().length;
-		const declaration = trimmed.match(
-			/^([a-z-]+)\s*:\s*(.+?)\s*!important\b/iu,
+		const declaration = syntaxLine.match(
+			/^\s*([a-z-]+)\s*:\s*(.+?)\s*!important\b/diu,
 		);
 		if (declaration) {
 			while (selectors.length && selectors.at(-1).indent >= indent)
 				selectors.pop();
 			const selector = selectors.at(-1)?.text ?? "";
+			const propertyName = line
+				.slice(...declaration.indices[1])
+				.trim()
+				.toLowerCase();
+			const value = line.slice(...declaration.indices[2]).trim();
 			declarations.push(
-				`${selector} => ${declaration[1].toLowerCase()}:${normalizeWhitespace(declaration[2])}!important`,
+				`${selector} => ${propertyName}:${value}!important`,
 			);
 			continue;
 		}
-		if (!trimmed.startsWith("@") && !/^[a-z-]+\s*:/iu.test(trimmed)) {
+		if (
+			!syntaxTrimmed.startsWith("@") &&
+			!/^[a-z-]+\s*:/iu.test(syntaxTrimmed)
+		) {
 			while (selectors.length && selectors.at(-1).indent >= indent)
 				selectors.pop();
-			selectors.push({ indent, text: trimmed });
+			selectors.push({ indent, text: line.trim() });
 		}
 	}
 	return declarations;
@@ -297,30 +389,28 @@ function extractIndentedSassImportantDeclarations(text) {
 
 export function extractImportantDeclarations(
 	text,
-	{ indentedSass = false } = {},
+	{ indentedSass = false, syntax = text } = {},
 ) {
 	return indentedSass
-		? extractIndentedSassImportantDeclarations(text)
-		: extractBracedImportantDeclarations(text);
+		? extractIndentedSassImportantDeclarations(text, syntax)
+		: extractBracedImportantDeclarations(text, syntax);
 }
 
 export function extractMaterialInternalSelectors(
 	text,
-	{ indentedSass = false } = {},
+	{ indentedSass = false, syntax = text } = {},
 ) {
 	if (indentedSass) {
-		return text
+		const textLines = text.split(/\r?\n/u);
+		return syntax
 			.split(/\r?\n/u)
-			.map((line) => line.trim())
-			.filter(
-				(line) =>
-					!line.startsWith("//") &&
-					/\.mat-mdc-[a-z0-9_-]+/iu.test(line),
-			);
+			.map((line, index) => ({ line, index }))
+			.filter(({ line }) => /\.mat-mdc-[a-z0-9_-]+/iu.test(line))
+			.map(({ index }) => textLines[index].trim());
 	}
-	return [...text.matchAll(/([^{}]+)\{/gu)]
-		.map((match) => normalizeWhitespace(match[1]))
-		.filter((selector) => /\.mat-mdc-[a-z0-9_-]+/iu.test(selector));
+	return [...syntax.matchAll(/([^{}]+)\{/dgu)]
+		.filter((match) => /\.mat-mdc-[a-z0-9_-]+/iu.test(match[1]))
+		.map((match) => text.slice(...match.indices[1]).trim());
 }
 
 function styleUnits(sources, errors) {
@@ -328,12 +418,13 @@ function styleUnits(sources, errors) {
 	for (const [relative, text] of sources) {
 		const extension = path.extname(relative).toLowerCase();
 		if (STYLE_EXTENSIONS.has(extension)) {
+			const views = maskCssSyntax(text, {
+				lineComments: [".less", ".sass", ".scss"].includes(extension),
+			});
 			units.push({
 				relative,
-				text: stripCssComments(text, {
-					lineComments:
-						extension === ".sass" || extension === ".scss",
-				}),
+				text: views.cleaned,
+				syntax: views.syntax,
 				indentedSass: extension === ".sass",
 			});
 		} else if (extension === ".ts") {
@@ -344,14 +435,15 @@ function styleUnits(sources, errors) {
 					`Unsupported Angular inline styles expression in ${relative}; use a literal string or literal string array`,
 				);
 			}
-			if (inlineStyles.length)
+			if (inlineStyles.length) {
+				const views = maskCssSyntax(inlineStyles.join("\n"));
 				units.push({
 					relative,
-					text: stripCssComments(inlineStyles.join("\n"), {
-						lineComments: false,
-					}),
+					text: views.cleaned,
+					syntax: views.syntax,
 					indentedSass: false,
 				});
+			}
 		}
 	}
 	return units;
@@ -366,15 +458,17 @@ function increment(target, relative, occurrence) {
 function scanDebt(units) {
 	const important = new Map();
 	const material = new Map();
-	for (const { relative, text, indentedSass } of units) {
+	for (const { relative, text, syntax, indentedSass } of units) {
 		for (const occurrence of extractImportantDeclarations(text, {
 			indentedSass,
+			syntax,
 		})) {
 			increment(important, relative, occurrence);
 		}
 		if (relative.startsWith("ui/src/app/")) {
 			for (const occurrence of extractMaterialInternalSelectors(text, {
 				indentedSass,
+				syntax,
 			})) {
 				increment(material, relative, occurrence);
 			}
@@ -519,7 +613,10 @@ function canonicalOccurrence(occurrence) {
 
 function canonicalSelector(selector) {
 	return transformCssOutsideProtected(selector, (unprotected) =>
-		normalizeWhitespace(unprotected).replace(/\s*([,>+~])\s*/gu, "$1"),
+		normalizeWhitespace(unprotected)
+			.replace(/\s*([,>+~])\s*/gu, "$1")
+			.replace(/\(\s+/gu, "(")
+			.replace(/\s+\)/gu, ")"),
 	);
 }
 
@@ -569,11 +666,11 @@ export function validateArchitectureSnapshot({
 
 	const currentUnits = styleUnits(currentSources, errors);
 	const baseUnits = styleUnits(baseSources);
-	for (const { relative, text } of currentUnits) {
+	for (const { relative, syntax } of currentUnits) {
 		for (const [pattern, label, owner] of STYLE_OWNERS) {
 			if (relative === owner) continue;
 			pattern.lastIndex = 0;
-			for (const match of text.matchAll(pattern)) {
+			for (const match of syntax.matchAll(pattern)) {
 				errors.push(
 					`${label} must be defined only in ${owner}: ${relative} defines ${match[1]}`,
 				);

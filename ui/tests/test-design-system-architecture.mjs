@@ -124,6 +124,35 @@ function validateFixture({
 		}),
 		[],
 	);
+	assert.deepEqual(
+		validateFixture({
+			files: [
+				[
+					"ui/src/app/features/example/commented.component.less",
+					"// .mat-mdc-commented { color: red !important; --bs-primary: red; }",
+				],
+			],
+		}),
+		[],
+	);
+}
+
+{
+	const relative =
+		"ui/src/app/features/example/protected-content.component.scss";
+	assert.deepEqual(
+		validateFixture({
+			files: [
+				[
+					relative,
+					'.tokens::before { content: "--bs-primary: red"; }\n' +
+						'.selectors::before { content: ".mat-mdc-example {"; }\n' +
+						'.importance::before { content: "color:red!important"; }',
+				],
+			],
+		}),
+		[],
+	);
 }
 
 {
@@ -146,7 +175,7 @@ function validateFixture({
 		"ui/src/app/features/example/semantic-values.component.scss";
 	const currentOccurrences = [
 		".image => background:url(https://new.example/b.png)!important",
-		'.label => content:"a, b"!important',
+		'.label => content:"a b"!important',
 		'.comment-label => content:"/*new*/"!important',
 	];
 	const baseline = emptyBaseline();
@@ -159,7 +188,7 @@ function validateFixture({
 			[
 				relative,
 				".image { background: url(https://new.example/b.png) !important; }\n" +
-					'.label { content: "a, b" !important; }\n' +
+					'.label { content: "a b" !important; }\n' +
 					'.comment-label { content: "/*new*/" !important; }',
 			],
 		],
@@ -167,7 +196,7 @@ function validateFixture({
 			[
 				relative,
 				".image { background: url(https://old.example/a.png) !important; }\n" +
-					'.label { content: "a,b" !important; }\n' +
+					'.label { content: "a  b" !important; }\n' +
 					'.comment-label { content: "/*old*/" !important; }',
 			],
 		],
@@ -212,15 +241,15 @@ function validateFixture({
 		"ui/src/app/features/example/semantic-selector.component.scss";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.feature_material_internal_selectors[relative] = {
-		occurrences: ['[data-label="a, b"] .mat-mdc-example'],
+		occurrences: ['[data-label="a b"] .mat-mdc-example'],
 		reason: "Existing semantic selector test debt.",
 	};
 	const errors = validateFixture({
 		files: [
-			[relative, '[data-label="a, b"] .mat-mdc-example { color: red; }'],
+			[relative, '[data-label="a b"] .mat-mdc-example { color: red; }'],
 		],
 		baseFiles: [
-			[relative, '[data-label="a,b"] .mat-mdc-example { color: red; }'],
+			[relative, '[data-label="a  b"] .mat-mdc-example { color: red; }'],
 		],
 		baseline,
 	});
@@ -237,16 +266,24 @@ function validateFixture({
 		".legacy,.second /* baseline note */ => color: red !important";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.important_declarations[relative] = {
-		occurrences: [occurrence],
+		occurrences: [
+			occurrence,
+			".image => background:url(https://same.example/a)!important",
+		],
 		reason: "Existing test debt.",
 	};
 	assert.deepEqual(
 		validateFixture({
-			files: [[relative, ".legacy, .second { color: red !important; }"]],
+			files: [
+				[
+					relative,
+					".legacy, .second { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+				],
+			],
 			baseFiles: [
 				[
 					relative,
-					".legacy,.second /* formatting note */ { color: red !important; }",
+					".legacy,.second /* formatting note */ { color: red !important; } .image { background: url( https://same.example/a ) !important; }",
 				],
 			],
 			baseline,
@@ -255,9 +292,17 @@ function validateFixture({
 	);
 
 	const substitutionErrors = validateFixture({
-		files: [[relative, ".legacy, .second { color: red !important; }"]],
+		files: [
+			[
+				relative,
+				".legacy, .second { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+			],
+		],
 		baseFiles: [
-			[relative, ".legacy, .different { color: red !important; }"],
+			[
+				relative,
+				".legacy, .different { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+			],
 		],
 		baseline,
 	});
@@ -298,16 +343,23 @@ function validateFixture({
 	const relative = "ui/src/app/features/example/example.component.scss";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.feature_material_internal_selectors[relative] = {
-		occurrences: [".host,.mat-mdc-example /* baseline note */"],
+		occurrences: [
+			".host,.mat-mdc-example:not(.disabled) /* baseline note */",
+		],
 		reason: "Existing Material selector debt.",
 	};
 	assert.deepEqual(
 		validateFixture({
-			files: [[relative, ".host, .mat-mdc-example { color: red; }"]],
+			files: [
+				[
+					relative,
+					".host, .mat-mdc-example:not(.disabled) { color: red; }",
+				],
+			],
 			baseFiles: [
 				[
 					relative,
-					".host,.mat-mdc-example /* formatting note */ { color: red; }",
+					".host,.mat-mdc-example:not( .disabled ) /* formatting note */ { color: red; }",
 				],
 			],
 			baseline,
@@ -316,7 +368,12 @@ function validateFixture({
 	);
 
 	const substitutionErrors = validateFixture({
-		files: [[relative, ".host, .mat-mdc-example { color: red; }"]],
+		files: [
+			[
+				relative,
+				".host, .mat-mdc-example:not(.disabled) { color: red; }",
+			],
+		],
 		baseFiles: [[relative, ".host, .mat-mdc-different { color: red; }"]],
 		baseline,
 	});
