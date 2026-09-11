@@ -104,15 +104,17 @@
           [attr.aria-label]="(playing() ? 'Pause ' : 'Play ') + title()"
           (click)="togglePlayback()"
         >
-          @if (playing()) {
-            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <path d="M14 11h7v26h-7V11Zm13 0h7v26h-7V11Z" />
-            </svg>
-          } @else {
-            <svg class="play-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <path d="m18 11 21 13-21 13V11Z" />
-            </svg>
-          }
+          <span class="immersive-play-toggle__icon" aria-hidden="true">
+            @if (playing()) {
+              <svg viewBox="0 0 48 48" focusable="false">
+                <path d="M14 11h7v26h-7V11Zm13 0h7v26h-7V11Z" />
+              </svg>
+            } @else {
+              <svg class="play-icon" viewBox="0 0 48 48" focusable="false">
+                <path d="m18 11 21 13-21 13V11Z" />
+              </svg>
+            }
+          </span>
         </button>
         <button mat-icon-button type="button" class="vocora-plain-icon-action vocora-plain-icon-action--large" data-testid="audio-forward-10" aria-label="Forward 10 seconds" (click)="skip(10)">
           <svg class="skip-icon skip-icon--forward" viewBox="0 0 48 48" aria-hidden="true" focusable="false">

@@ -161,6 +161,11 @@ assert.match(audioPlayer, /vocora-primary-icon-action--hero/u, 'The immersive pl
 assert.match(audioPlayer, /vocora-plain-icon-action/u, 'Immersive secondary controls must use the shared plain icon-action variant.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
 assert.match(audioStyles, /\.audio-player--immersive/u, 'The shared player must own the immersive presentation variant.');
+assert.match(
+  audioStyles,
+  /\.immersive-play-toggle__icon\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*50% auto auto 50%;[^}]*transform:\s*translate\(-50%, -50%\);/u,
+  'The immersive play and pause glyphs must be centered independently of Material icon-button layout.',
+);
 assert.match(audioStyles, /\.immersive-waveform svg[\s\S]*?overflow:\s*visible/u, 'The taller center waveform must remain unclipped.');
 assert.match(audioStyles, /\.immersive-waveform\s*\{[^}]*overflow-x:\s*clip;[^}]*overflow-y:\s*visible;/u, 'The amplified waveform must remain vertically visible without horizontal overflow.');
 assert.match(audioStyles, /\.audio-player\.is-collapsed/u, 'Collapsed player styling must be explicit and testable.');

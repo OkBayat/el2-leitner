@@ -150,9 +150,25 @@ audio {
   gap: clamp(var(--vocora-space-4), 6vw, var(--vocora-space-10));
 }
 
-.immersive-play-toggle svg {
+.immersive-play-toggle {
+  position: relative;
+}
+
+.immersive-play-toggle__icon {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
   width: 52px;
   height: 52px;
+  place-items: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.immersive-play-toggle__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
   fill: currentColor;
 }
 

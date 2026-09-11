@@ -90,6 +90,7 @@ describe('ListeningAudioPlayerComponent', () => {
     fixture.detectChanges();
 
     expect(element.querySelectorAll('[data-testid="audio-waveform"] path')).toHaveLength(3);
+    expect(element.querySelector('[data-testid="audio-play"] > .immersive-play-toggle__icon')).not.toBeNull();
     expect(analyser.getByteTimeDomainData).toHaveBeenCalledTimes(1);
     expect(element.querySelector('[data-testid="audio-waveform"] path')?.getAttribute('d')).not.toBe(initialPath);
 
