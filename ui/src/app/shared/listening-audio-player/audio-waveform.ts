@@ -26,7 +26,8 @@ function wavePath(amplitude: number, frequency: number, phase: number): string {
     const x = progress * VIEWBOX_WIDTH;
     const primary = Math.sin(progress * Math.PI * 2 * frequency + phase);
     const harmonic = Math.sin(progress * Math.PI * 2 * (frequency * 0.48) - phase * 0.7) * 0.22;
-    const y = VIEWBOX_CENTER_Y + (primary + harmonic) * amplitude;
+    const centerEnvelope = 0.12 + Math.pow(Math.sin(progress * Math.PI), 1.5) * 0.88;
+    const y = VIEWBOX_CENTER_Y + (primary + harmonic) * amplitude * centerEnvelope;
     points.push(`${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`);
   }
   return points.join(' ');
