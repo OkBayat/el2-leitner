@@ -73,20 +73,8 @@ blockquote {
 }
 
 .classification-item {
-	box-sizing: border-box;
-	min-height: var(--vocora-touch-target-min);
 	max-width: 100%;
-	display: inline-flex;
-	align-items: center;
-	justify-content: flex-start;
-	padding: var(--vocora-space-2) var(--vocora-space-4);
-	border: 1px solid var(--vocora-border);
-	border-radius: var(--vocora-radius-pill);
-	background: var(--vocora-surface-base);
-	color: var(--vocora-text-primary);
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.33;
+	white-space: normal;
 	overflow-wrap: anywhere;
 	user-select: none;
 }
@@ -258,19 +246,6 @@ blockquote {
 	padding-inline: 0;
 	color: var(--vocora-text-primary);
 	text-align: left;
-}
-
-.bucket__count {
-	min-width: 28px;
-	height: 28px;
-	display: grid;
-	place-items: center;
-	padding-inline: var(--vocora-space-2);
-	border-radius: var(--vocora-radius-pill);
-	background: var(--vocora-action-secondary);
-	color: var(--vocora-action-secondary-foreground);
-	font-size: 12px;
-	font-weight: 700;
 }
 
 .bucket__items {

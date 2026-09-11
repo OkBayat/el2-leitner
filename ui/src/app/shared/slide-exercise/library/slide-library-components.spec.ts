@@ -572,6 +572,16 @@ describe('reusable slide library behavior', () => {
 		expect(component.assignedItems('animal').map((item) => item.id)).toEqual([
 			'paw',
 		]);
+		component.unassignDropped('paw');
+		expect(component.assignments()).toEqual({});
+		expect(component.unassignedItems().map((item) => item.id)).toEqual([
+			'paw',
+			'root',
+		]);
+		expect(states.at(-1)).toMatchObject({
+			chrome: { footer: { primary: { disabled: true } } },
+		});
+		component.assignDropped('paw', 'animal');
 		component.assignDropped('root', 'animal');
 		expect(component.assignments()).toEqual({ paw: 'animal', root: 'animal' });
 		expect(states.at(-1)).toMatchObject({

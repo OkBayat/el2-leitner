@@ -223,8 +223,18 @@ assert.match(classificationTemplate, /<div\b[^>]*\bclass="bucket"/u);
 assert.doesNotMatch(classificationTemplate, /<button\b[^>]*\bclass="bucket"/u);
 assert.doesNotMatch(
 	classificationTemplate,
-	/<button|\(click\)|\(keydown\)|aria-pressed/u,
+	/\(click\)|\(keydown\)|aria-pressed/u,
 	'Classification must use drag and drop without click or keyboard assignment controls.',
+);
+assert.doesNotMatch(
+	classificationTemplate,
+	/class="bucket__count"/u,
+	'Classification buckets must not show item counts.',
+);
+assert.match(
+	classificationTemplate,
+	/class="chip-list"[\s\S]*\(cdkDropListDropped\)="unassignDropped\(\$event\.item\.data\)"/u,
+	'Classification items must be droppable back into the unassigned item list.',
 );
 assert.ok(
 	classificationTemplate.indexOf('class="bucket-grid"') <
@@ -235,6 +245,11 @@ assert.equal(
 	classificationTemplate.match(/class="classification-item"/gu)?.length,
 	2,
 	'Unassigned and placed classification items must use the same visual control.',
+);
+assert.equal(
+	classificationTemplate.match(/<button\s+[\s\S]*?mat-stroked-button[\s\S]*?class="classification-item"/gu)?.length,
+	2,
+	'Classification items must use the shared Material secondary button primitive.',
 );
 const incorrectClassificationStyles = sharedStyles.match(
 	/\.classification-item\[data-state='incorrect'\]\s*\{([\s\S]*?)\n\}/u,

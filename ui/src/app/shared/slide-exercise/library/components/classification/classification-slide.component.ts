@@ -5,6 +5,7 @@ import {
 	signal,
 } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatButtonModule } from '@angular/material/button';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -79,6 +80,7 @@ function parseClassification(value: unknown): ClassificationSlideData {
 	standalone: true,
 	imports: [
 		DragDropModule,
+		MatButtonModule,
 		SlideStimulusComponent,
 	],
 	templateUrl: './classification-slide.component.html',
@@ -96,6 +98,17 @@ export class ClassificationSlideComponent
 	}
 	assignDropped(itemId: string, categoryId: string): void {
 		this.assignItem(itemId, categoryId);
+	}
+	unassignDropped(itemId: string): void {
+		if (
+			this.interactionState() !== 'idle' ||
+			this.assignments()[itemId] === undefined
+		)
+			return;
+		const assignments = { ...this.assignments() };
+		delete assignments[itemId];
+		this.assignments.set(assignments);
+		this.setReady(false);
 	}
 	private assignItem(itemId: string, categoryId: string): void {
 		if (

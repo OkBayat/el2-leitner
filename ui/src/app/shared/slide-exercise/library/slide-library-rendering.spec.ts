@@ -377,8 +377,8 @@ describe('reusable slide renderer contract', () => {
 		const sourceItem = classificationElement.querySelector<HTMLElement>(
 			'.chip-list [data-item-id="paw"]',
 		);
-		expect(sourceItem?.tagName).toBe('DIV');
-		expect(sourceItem?.hasAttribute('tabindex')).toBe(false);
+		expect(sourceItem?.tagName).toBe('BUTTON');
+		expect(sourceItem?.classList).toContain('mat-mdc-outlined-button');
 		expect(sourceItem?.classList).toContain('classification-item');
 		expect(
 			classificationElement.querySelectorAll('.bucket.cdk-drop-list'),
@@ -405,6 +405,19 @@ describe('reusable slide renderer contract', () => {
 			'[data-category-id="animal"] [data-item-id="paw"]',
 		);
 		expect(classifiedItem).not.toBeNull();
+
+		classificationFixture.componentInstance.unassignDropped('paw');
+		classificationFixture.detectChanges();
+		expect(
+			classificationElement.querySelector(
+				'[data-category-id="animal"] [data-item-id="paw"]',
+			),
+		).toBeNull();
+		expect(
+			classificationElement.querySelector(
+				'.chip-list [data-item-id="paw"]',
+			),
+		).not.toBeNull();
 
 		classificationFixture.componentInstance.assignDropped('paw', 'plant');
 		classificationFixture.componentInstance.handleAction('check');
