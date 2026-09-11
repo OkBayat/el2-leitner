@@ -6,6 +6,19 @@ This file is the repository-wide source of truth for coding agents working in Vo
 Read it before changing code, data contracts, tests, deployment behavior, or agent skills.
 Then read the nearest task-specific documentation or skill referenced from `.agents/AGENTS.md`.
 
+## Enterprise architecture playbook
+
+Read [ARCHITECTURE_PLAYBOOK.md](ARCHITECTURE_PLAYBOOK.md) before planning or
+implementing architecture, migration, refactoring, security, delivery, or mobile
+packaging changes. It records the source-audited baseline, intended modular
+monolith, phased work packages, data-preservation gates, and rollback boundaries.
+Distinguish planned architecture from implemented behavior and identify the
+relevant work package and affected contracts in the implementation PR.
+The playbook does not authorize executing unrelated phases, changing repository
+protection, merging, deploying, deleting data, or updating OKF. Existing safety,
+E2E restrictions, source-truth rules, and canonical skill workflows remain in
+force. Apply the dev-based branch policy only after its explicit bootstrap.
+
 ## Mandatory principle selection
 
 Before making any code, docs, config, test, workflow, architecture, schema,

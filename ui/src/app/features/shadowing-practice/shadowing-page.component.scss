@@ -1,18 +1,17 @@
-:host { display: block; --shadowing-blue: #008ecc; }
-:host-context([data-theme='dark']) { --shadowing-blue: #4bc8ff; }
+:host { display: block; }
 .shadowing-text { margin-top: 30px; overflow-wrap: anywhere; }
 .shadowing-word { transition: color 150ms ease; }
-.shadowing-word.recognized { color: var(--shadowing-blue); }
+.shadowing-word.recognized { color: var(--vocora-primary); }
 .shadowing-word.missed { text-decoration: underline dashed; text-decoration-color: var(--mat-sys-error); text-underline-offset: 6px; }
 .microphone-button {
   display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px;
   width: 100%; min-height: 72px; margin-top: 30px; padding: 14px;
   border: 2px solid var(--mat-sys-outline-variant); border-bottom-width: 5px; border-radius: 18px;
-  background: var(--mat-sys-surface); color: var(--shadowing-blue); font: inherit; font-weight: 800;
+  background: var(--mat-sys-surface); color: var(--vocora-primary); font: inherit; font-weight: 800;
   cursor: pointer; touch-action: manipulation;
 }
-.microphone-button:focus-visible { outline: 3px solid var(--shadowing-blue); outline-offset: 4px; }
-.microphone-button[aria-pressed='true'] { border-color: var(--shadowing-blue); }
+.microphone-button:focus-visible { outline: 3px solid var(--vocora-focus-ring); outline-offset: 4px; }
+.microphone-button[aria-pressed='true'] { border-color: var(--vocora-primary); }
 .microphone-button:disabled { opacity: .55; cursor: default; }
 .waveform { display: flex; align-items: center; justify-content: center; gap: 4px; height: 34px; }
 .waveform span { display: block; width: 4px; border-radius: 4px; background: currentColor; }

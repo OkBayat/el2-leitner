@@ -1,5 +1,6 @@
 (() => {
 	const storageKey = 'vocora-theme-mode-v1';
+	// Synchronized from Layer A by tools/sync-first-paint-theme-colors.mjs.
 	const pageColors = {light: '#ffffff', dark: '#0f1611'};
 	let mode = 'system';
 

@@ -31,6 +31,29 @@ export function shouldOpenExternally(href: string): boolean {
   }
 }
 
+export async function handleNativeAnchorClick(
+  event: Event,
+  navigateByUrl: (route: string) => Promise<unknown>,
+  openExternal: (url: string) => Promise<unknown>,
+): Promise<boolean> {
+  const target = event.target;
+  if (!(target instanceof Element)) return false;
+  const anchor = target.closest<HTMLAnchorElement>('a[href]');
+  if (!anchor) return false;
+
+  const internalRoute = internalRouteFromNativeUrl(anchor.href);
+  if (internalRoute) {
+    event.preventDefault();
+    await navigateByUrl(internalRoute);
+    return true;
+  }
+  if (!shouldOpenExternally(anchor.href)) return false;
+
+  event.preventDefault();
+  await openExternal(anchor.href);
+  return true;
+}
+
 @Injectable({ providedIn: 'root' })
 export class NativeLifecycleService {
   private readonly document = inject(DOCUMENT);
@@ -50,7 +73,7 @@ export class NativeLifecycleService {
     this.document.documentElement.classList.add('capacitor-native');
     fromEvent(this.document, 'click', { capture: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => this.handleDocumentClick(event));
+      .subscribe((event) => void this.handleDocumentClick(event));
     this.destroyRef.onDestroy(() => void this.stop());
     void this.registerListeners();
   }
@@ -81,13 +104,12 @@ export class NativeLifecycleService {
     if (route) await this.router.navigateByUrl(route);
   }
 
-  private handleDocumentClick(event: Event): void {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    const anchor = target.closest<HTMLAnchorElement>('a[href]');
-    if (!anchor || !shouldOpenExternally(anchor.href)) return;
-    event.preventDefault();
-    void Browser.open({ url: anchor.href });
+  private async handleDocumentClick(event: Event): Promise<void> {
+    await handleNativeAnchorClick(
+      event,
+      (route) => this.router.navigateByUrl(route),
+      (url) => Browser.open({ url }),
+    );
   }
 
   private clearKeyboardState(): void {

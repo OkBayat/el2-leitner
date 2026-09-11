@@ -10,7 +10,8 @@ import { AppUpdateService } from './core/update/app-update.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, PwaStatusComponent],
-  template: '<app-pwa-status /><router-outlet />',
+  templateUrl: 'app.html',
+  styleUrl: 'app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
@@ -18,7 +19,7 @@ export class App {
   private readonly pwaUpdates = inject(PwaUpdateService);
   private readonly theme = inject(ThemeService);
   private readonly nativeLifecycle = inject(NativeLifecycleService);
-  private readonly appUpdates = inject(AppUpdateService);
+  readonly appUpdates = inject(AppUpdateService);
 
   constructor() {
     // Keep theme and system chrome synchronized on routes outside AppShell.

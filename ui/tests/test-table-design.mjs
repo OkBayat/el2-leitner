@@ -25,7 +25,7 @@ for (const source of [`${words}\n${wordsTemplate}`, house, reports]) {
 assert.match(tableStyles, /\.mat-mdc-cell\s*\{[^}]*border-bottom:\s*0;/u, 'Body rows must not have horizontal separators.');
 assert.match(tableStyles, /\.mat-mdc-header-cell\s*\{[^}]*border-bottom:\s*0;/u, 'The compact table header must not add a heavy separator.');
 assert.doesNotMatch(tableStyles, /--vocora-table-divider/u, 'Removed row separators must not leave an obsolete divider token behind.');
-assert.match(tableStyles, /\.mat-mdc-row:hover,[\s\S]*\.mat-mdc-row:focus-within[\s\S]*background:\s*rgb\(232 240 254\)/u, 'Rows must use the requested Google-like light blue hover color.');
+assert.match(tableStyles, /\.mat-mdc-row:hover,[\s\S]*\.mat-mdc-row:focus-within[\s\S]*background:\s*var\(--vocora-state-primary-surface\)/u, 'Rows must use the theme-aware primary state surface.');
 
 assert.match(tableStyles, /\.mat-mdc-row \.row-actions[\s\S]*opacity:\s*0;[\s\S]*pointer-events:\s*none;[\s\S]*visibility:\s*hidden/u, 'Row actions must be fully hidden before row interaction.');
 assert.match(tableStyles, /\.mat-mdc-row:hover \.row-actions,[\s\S]*\.mat-mdc-row:focus-within \.row-actions[\s\S]*opacity:\s*1;[\s\S]*pointer-events:\s*auto;[\s\S]*visibility:\s*visible/u, 'Row actions must appear only while the row is hovered or keyboard-focused.');

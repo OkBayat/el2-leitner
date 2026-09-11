@@ -1,5 +1,5 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "legacy_debt": {
         "important_declarations": {
             "ui/src/app/features/review/review-answer-feedback.scss": {
@@ -102,7 +102,9 @@
                 ],
                 "reason": "Legacy review field selectors retained until the supported Material API or central adapter can replace them."
             }
-        }
+        },
+        "raw_colors": {},
+        "theme_selectors": {}
     },
     "integration_exceptions": {
         "important_declarations": {
@@ -112,15 +114,8 @@
                 ],
                 "reason": "The central Material adapter disables upstream button transitions to enforce the canonical immediate interaction contract.",
                 "upstream_constraint": "Angular Material button transitions cannot be disabled through a supported theme token."
-            },
-            "ui/src/styles/_bootstrap-theme.scss": {
-                "occurrences": [
-                    ".bg-light => background:color-mix( in srgb, var(--vocora-surface-base) 92%, var(--vocora-border) )!important",
-                    ".text-body => color:var(--vocora-text-primary)!important"
-                ],
-                "reason": "The central Bootstrap adapter must override generated utility declarations at the framework integration boundary.",
-                "upstream_constraint": "Bootstrap generates these utilities with important specificity."
             }
-        }
+        },
+        "raw_colors": {}
     }
 }

@@ -1,28 +1,72 @@
+// Layer C adapter: Bootstrap public variables consume Vocora semantics.
 @mixin apply() {
-  :root {
-    --bs-primary: var(--vocora-action-primary);
-    --bs-primary-rgb: var(--vocora-action-primary-rgb);
-    --bs-secondary: var(--vocora-text-secondary);
-    --bs-secondary-rgb: var(--vocora-text-secondary-rgb);
-    --bs-success: var(--vocora-success);
-    --bs-success-rgb: var(--vocora-success-rgb);
-    --bs-info: var(--vocora-information);
-    --bs-info-rgb: var(--vocora-information-rgb);
-    --bs-warning: var(--vocora-warning);
-    --bs-warning-rgb: var(--vocora-warning-rgb);
-    --bs-danger: var(--vocora-error);
-    --bs-danger-rgb: var(--vocora-error-rgb);
-  }
+	:root {
+		--bs-primary: var(--vocora-primary);
+		--bs-primary-rgb: var(--vocora-primary-rgb);
+		--bs-secondary: var(--vocora-secondary);
+		--bs-secondary-rgb: var(--vocora-secondary-rgb);
+		--bs-success: var(--vocora-success);
+		--bs-success-rgb: var(--vocora-success-rgb);
+		--bs-info: var(--vocora-information);
+		--bs-info-rgb: var(--vocora-information-rgb);
+		--bs-warning: var(--vocora-warning);
+		--bs-warning-rgb: var(--vocora-warning-rgb);
+		--bs-danger: var(--vocora-error);
+		--bs-danger-rgb: var(--vocora-error-rgb);
+		--bs-light: var(--vocora-surface-subtle);
+		--bs-light-rgb: var(--vocora-surface-subtle-rgb);
+		--bs-dark: var(--vocora-surface-inverse);
+		--bs-dark-rgb: var(--vocora-surface-inverse-rgb);
 
-  .bg-light {
-    background: color-mix(
-      in srgb,
-      var(--vocora-surface-base) 92%,
-      var(--vocora-border)
-    ) !important;
-  }
+		--bs-body-bg: var(--vocora-surface-page);
+		--bs-body-bg-rgb: var(--vocora-surface-page-rgb);
+		--bs-body-color: var(--vocora-text-primary);
+		--bs-body-color-rgb: var(--vocora-text-primary-rgb);
+		--bs-emphasis-color: var(--vocora-text-primary);
+		--bs-emphasis-color-rgb: var(--vocora-text-primary-rgb);
+		--bs-secondary-bg: var(--vocora-surface-subtle);
+		--bs-secondary-bg-rgb: var(--vocora-surface-subtle-rgb);
+		--bs-secondary-color: var(--vocora-text-secondary);
+		--bs-secondary-color-rgb: var(--vocora-text-secondary-rgb);
+		--bs-tertiary-bg: var(--vocora-surface-raised);
+		--bs-tertiary-bg-rgb: var(--vocora-surface-raised-rgb);
+		--bs-tertiary-color: var(--vocora-text-disabled);
+		--bs-tertiary-color-rgb: var(--vocora-text-disabled-rgb);
+		--bs-border-color: var(--vocora-border);
+		--bs-border-color-translucent: var(--vocora-border-subtle);
+		--bs-link-color: var(--vocora-primary);
+		--bs-link-color-rgb: var(--vocora-primary-rgb);
+		--bs-link-hover-color: var(--vocora-action-primary-hover);
+		--bs-link-hover-color-rgb: var(--vocora-action-primary-hover-rgb);
+		--bs-focus-ring-color: color-mix(
+			in srgb,
+			var(--vocora-focus-ring) 25%,
+			transparent
+		);
 
-  .text-body {
-    color: var(--vocora-text-primary) !important;
-  }
+		--bs-primary-bg-subtle: var(--vocora-state-primary-surface);
+		--bs-primary-border-subtle: var(--vocora-state-primary-border);
+		--bs-primary-text-emphasis: var(--vocora-state-primary-foreground);
+		--bs-secondary-bg-subtle: var(--vocora-surface-subtle);
+		--bs-secondary-border-subtle: var(--vocora-border-subtle);
+		--bs-secondary-text-emphasis: var(--vocora-text-primary);
+		--bs-success-bg-subtle: var(--vocora-state-success-surface);
+		--bs-success-border-subtle: var(--vocora-state-success-border);
+		--bs-success-text-emphasis: var(--vocora-state-success-foreground);
+		--bs-info-bg-subtle: var(--vocora-state-information-surface);
+		--bs-info-border-subtle: var(--vocora-state-information-border);
+		--bs-info-text-emphasis: var(--vocora-state-information-foreground);
+		--bs-warning-bg-subtle: var(--vocora-state-warning-surface);
+		--bs-warning-border-subtle: var(--vocora-state-warning-border);
+		--bs-warning-text-emphasis: var(--vocora-state-warning-foreground);
+		--bs-danger-bg-subtle: var(--vocora-state-error-surface);
+		--bs-danger-border-subtle: var(--vocora-state-error-border);
+		--bs-danger-text-emphasis: var(--vocora-state-error-foreground);
+		--bs-light-bg-subtle: var(--vocora-surface-subtle);
+		--bs-light-border-subtle: var(--vocora-border-subtle);
+		--bs-light-text-emphasis: var(--vocora-text-primary);
+		--bs-dark-bg-subtle: var(--vocora-surface-inverse);
+		--bs-dark-border-subtle: var(--vocora-border-strong);
+		--bs-dark-text-emphasis: var(--vocora-text-on-inverse);
+	}
 }

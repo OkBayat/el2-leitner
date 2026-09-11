@@ -82,8 +82,27 @@
 	pointer-events: auto;
 }
 
-.required-update {
-	border-color: var(--vocora-action-warning);
+.required-update-backdrop {
+	position: fixed;
+	z-index: 1100;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	padding: max(20px, var(--safe-area-top)) max(20px, var(--safe-area-right)) max(20px, var(--safe-area-bottom)) max(20px, var(--safe-area-left));
+	background: color-mix(in srgb, var(--mat-sys-scrim) 58%, transparent);
+	pointer-events: auto;
+}
+
+.required-update-panel {
+	width: min(520px, 100%);
+	border-color: var(--vocora-state-warning-border);
+	background: var(--vocora-state-warning-surface);
+	color: var(--vocora-state-warning-foreground);
+	pointer-events: auto;
+}
+
+.required-update-panel small {
+	color: var(--vocora-state-warning-foreground);
 }
 
 @media (max-width: 560px) {

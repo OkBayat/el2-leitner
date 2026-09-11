@@ -14,6 +14,7 @@ import {
 	Tooltip,
 	type TooltipItem,
 } from 'chart.js';
+import {ThemeService} from '../../core/theme/theme.service';
 
 export type LearningChartType = 'bar' | 'line' | 'doughnut';
 type LearningChartConfiguration = ChartConfiguration<any, any[], unknown>;
@@ -45,10 +46,10 @@ Chart.register(
 );
 
 const FALLBACK_PALETTE: LearningChartPalette = {
-	primary: 'rgb(26 115 232)',
-	track: 'rgb(218 220 224)',
-	text: 'rgb(60 64 67)',
-	grid: 'rgb(232 234 237)',
+	primary: 'currentColor',
+	track: 'transparent',
+	text: 'currentColor',
+	grid: 'transparent',
 };
 
 function finiteOrNull(value: number | null): number | null {
@@ -180,13 +181,14 @@ export function doughnutPercent(points: LearningChartPoint[]): number {
 		</div>
 	`,
 	styles: [`
-		:host{display:block;min-width:0;--vocora-chart-primary:rgb(26 115 232);--vocora-chart-track:rgb(218 220 224);--vocora-chart-text:rgb(60 64 67);--vocora-chart-grid:rgb(232 234 237)}.chart-frame{position:relative;width:100%;height:270px}.chart-frame canvas{display:block;width:100%!important;height:100%!important}.chart-frame.is-doughnut{width:86px;height:86px;min-width:86px}.doughnut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.doughnut-center strong{color:var(--mat-sys-on-surface);font-size:20px;font-weight:500;letter-spacing:-.03em;line-height:1}.doughnut-center span{margin-top:4px;color:var(--mat-sys-on-surface-variant);font-size:9px;font-weight:600}@media(max-width:700px){.chart-frame:not(.is-doughnut){height:245px}}
+		:host{display:block;min-width:0;--vocora-chart-primary:var(--vocora-primary);--vocora-chart-track:var(--vocora-border-subtle);--vocora-chart-text:var(--vocora-text-secondary);--vocora-chart-grid:var(--vocora-border-subtle)}.chart-frame{position:relative;width:100%;height:270px}.chart-frame canvas{display:block;width:100%!important;height:100%!important}.chart-frame.is-doughnut{width:86px;height:86px;min-width:86px}.doughnut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.doughnut-center strong{color:var(--mat-sys-on-surface);font-size:20px;font-weight:500;letter-spacing:-.03em;line-height:1}.doughnut-center span{margin-top:4px;color:var(--mat-sys-on-surface-variant);font-size:9px;font-weight:600}@media(max-width:700px){.chart-frame:not(.is-doughnut){height:245px}}
 	`],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LearningChartComponent implements AfterViewInit, OnDestroy {
 	@ViewChild('canvas', {static: true}) private canvas!: ElementRef<HTMLCanvasElement>;
 	private readonly host = inject(ElementRef<HTMLElement>);
+	private readonly theme = inject(ThemeService);
 	private readonly ready = signal(false);
 	private chart: Chart | null = null;
 
@@ -201,6 +203,7 @@ export class LearningChartComponent implements AfterViewInit, OnDestroy {
 
 	constructor() {
 		effect(() => {
+			this.theme.resolvedTheme();
 			if (!this.ready()) return;
 			this.render(
 				this.type(),

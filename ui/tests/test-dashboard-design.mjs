@@ -18,6 +18,7 @@ const reportsTs = read('src/app/features/reports/reports-page.component.ts');
 const packageJson = read('package.json');
 const globalStyles = read('src/styles.scss');
 const leitnerPalette = read('src/styles/_leitner-google-palette.scss');
+const designSystem = read('src/styles/_vocora-design-system.scss');
 
 assert.match(dashboardTs, /templateUrl:\s*'dashboard-page\.component\.html'/u, 'Dashboard markup should have one dedicated template owner.');
 assert.match(dashboardTs, /styleUrl:\s*'dashboard-page\.component\.scss'/u, 'Dashboard layout should have one dedicated style owner.');
@@ -35,8 +36,9 @@ assert.match(packageJson, /"chart\.js":\s*"4\.5\.1"/u, 'Chart.js must be the sin
 assert.match(chartTs, /from 'chart\.js'/u, 'The shared learning chart must use Chart.js directly.');
 assert.match(chartTs, /LearningChartType = 'bar' \| 'line' \| 'doughnut'/u, 'One shared adapter must support bar, line, and doughnut charts.');
 assert.match(chartTs, /Chart\.register\(/u, 'Chart.js controllers and elements must be explicitly registered for tree shaking.');
-assert.match(chartTs, /--vocora-chart-primary:rgb\(26 115 232\)/u, 'Charts must use the approved visible blue accent instead of unresolved Material colors.');
-assert.match(chartTs, /--vocora-chart-track:rgb\(218 220 224\)/u, 'Doughnut charts must keep a visible neutral track for the unfilled portion.');
+assert.match(chartTs, /--vocora-chart-primary:var\(--vocora-primary\)/u, 'Charts must use the canonical primary semantic role.');
+assert.match(chartTs, /--vocora-chart-track:var\(--vocora-border-subtle\)/u, 'Doughnut charts must use the canonical subtle-border role for their track.');
+assert.doesNotMatch(chartTs, /#[0-9a-f]{3,8}\b|\brgba?\(/iu, 'The shared chart adapter must not own a raw palette.');
 assert.match(chartTs, /primary:\s*token\('--vocora-chart-primary'/u, 'Chart rendering must read the stable chart accent token.');
 assert.match(chartTs, /track:\s*token\('--vocora-chart-track'/u, 'Doughnut rendering must read the stable track token.');
 assert.match(dashboardHtml, /data-testid="leitner-coverage-stat"/u, 'The Leitner coverage summary needs a stable regression locator.');
@@ -66,8 +68,14 @@ for (const [name, styles] of [
 
 assert.match(globalStyles, /@use '.\/styles\/leitner-google-palette' as leitner-google-palette/u, 'The deliberate Leitner palette must have one global style owner.');
 assert.match(globalStyles, /@include leitner-google-palette\.apply\(\)/u, 'The Leitner palette must be applied through the global theme composition root.');
-for (const color of ['rgb(66 133 244)', 'rgb(52 168 83)', 'rgb(251 188 4)', 'rgb(234 67 53)']) {
-	assert.ok(leitnerPalette.includes(color), `Leitner palette must keep the approved storage-inspired color ${color}.`);
+for (const [role, color] of [
+	['--color-google-blue', 'rgb(66 133 244)'],
+	['--color-google-green', 'rgb(52 168 83)'],
+	['--color-google-yellow', 'rgb(251 188 4)'],
+	['--color-google-red', 'rgb(234 67 53)'],
+]) {
+	assert.ok(designSystem.includes(`${role}: ${color}`), `Layer A must keep the approved storage-inspired color ${color}.`);
+	assert.ok(leitnerPalette.includes(`var(${role})`), `The Leitner adapter must consume the centralized ${role} token.`);
 }
 for (const house of ['2', '3', '4', '5']) {
 	assert.match(leitnerPalette, new RegExp(`data-house='${house}'`, 'u'), `House ${house} needs an explicit palette mapping.`);

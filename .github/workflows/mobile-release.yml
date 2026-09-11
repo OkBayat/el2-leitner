@@ -52,14 +52,28 @@ jobs:
           cache-dependency-path: |
             back/package-lock.json
             ui/package-lock.json
+      - name: Validate semantic release tag
+        if: github.ref_type == 'tag'
+        working-directory: ui
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "v${VERSION}" ]; then
+            echo "Release tag $GITHUB_REF_NAME must match ui/package.json version v${VERSION}." >&2
+            exit 1
+          fi
+          TAG_COMMIT=$(git rev-parse "${GITHUB_REF_NAME}^{commit}")
+          if [ "$TAG_COMMIT" != "$GITHUB_SHA" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not resolve to workflow commit $GITHUB_SHA." >&2
+            exit 1
+          fi
       - name: Test backend
         working-directory: back
         run: npm ci && npm test
-      - name: Test web and native contracts
+      - name: Test web contracts and build deployable PWA
         working-directory: ui
         env:
           VOCORA_REQUIRE_NATIVE_PROJECTS: 'true'
-        run: npm ci && npm test && npm run mobile:build && npm run check:mobile-bundle && npx cap sync
+        run: npm ci && npm test
       - name: Package deployable web bundle
         working-directory: ui
         run: tar -czf vocora-web-${{ github.sha }}.tar.gz -C dist/browser .
@@ -68,6 +82,11 @@ jobs:
           name: Vocora-Web
           path: ui/vocora-web-${{ github.sha }}.tar.gz
           if-no-files-found: error
+      - name: Test native contracts and synchronize native projects
+        working-directory: ui
+        env:
+          VOCORA_REQUIRE_NATIVE_PROJECTS: 'true'
+        run: npm run mobile:build && npm run check:mobile-bundle && npx cap sync
 
   android:
     needs: validate
@@ -271,6 +290,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           pattern: Vocora-Android-*
@@ -286,5 +308,12 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           if [ "$GITHUB_REF_TYPE" != 'tag' ]; then TAG="v$(date -u +%Y%m%d)-${GITHUB_RUN_NUMBER}"; fi
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "Vocora $TAG" --generate-notes
+          if git rev-parse --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+            TAG_COMMIT=$(git rev-parse "${TAG}^{commit}")
+            if [ "$TAG_COMMIT" != "$GITHUB_SHA" ]; then
+              echo "Release tag $TAG resolves to $TAG_COMMIT instead of workflow commit $GITHUB_SHA." >&2
+              exit 1
+            fi
+          fi
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --target "$GITHUB_SHA" --title "Vocora $TAG" --generate-notes
           gh release upload "$TAG" release-assets/* --clobber

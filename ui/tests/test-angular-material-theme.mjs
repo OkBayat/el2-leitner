@@ -18,6 +18,20 @@ const designSystem = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_vocora-design-system.scss"),
 	"utf8",
 );
+const referenceTokens = JSON.parse(
+	fs.readFileSync(
+		path.join(
+			uiRoot,
+			"..",
+			".agents",
+			"skills",
+			"k2-design-system",
+			"references",
+			"tokens.json",
+		),
+		"utf8",
+	),
+);
 const exerciseAction = fs.readFileSync(
 	path.join(
 		uiRoot,
@@ -52,65 +66,53 @@ const exerciseFooterTemplate = fs.readFileSync(
 	"utf8",
 );
 
-const expectedTokens = [
-	"primary",
-	"on-primary",
-	"primary-container",
-	"on-primary-container",
-	"primary-fixed",
-	"on-primary-fixed",
-	"on-primary-fixed-variant",
-	"primary-fixed-dim",
-	"inverse-primary",
-	"secondary",
-	"on-secondary",
-	"secondary-container",
-	"on-secondary-container",
-	"secondary-fixed",
-	"on-secondary-fixed",
-	"on-secondary-fixed-variant",
-	"secondary-fixed-dim",
-	"tertiary",
-	"on-tertiary",
-	"tertiary-container",
-	"on-tertiary-container",
-	"tertiary-fixed",
-	"on-tertiary-fixed",
-	"on-tertiary-fixed-variant",
-	"tertiary-fixed-dim",
-	"error",
-	"on-error",
-	"error-container",
-	"on-error-container",
-	"surface",
-	"on-surface",
-	"on-surface-variant",
-	"surface-bright",
-	"surface-container",
-	"surface-container-high",
-	"surface-container-highest",
-	"surface-container-low",
-	"surface-container-lowest",
-	"surface-dim",
-	"surface-tint",
-	"surface-variant",
-	"inverse-surface",
-	"inverse-on-surface",
-	"background",
-	"on-background",
-	"neutral-variant20",
-	"neutral10",
-	"outline",
-	"outline-variant",
-	"scrim",
-	"shadow",
-];
+const expectedMappings = new Map([
+	["primary", "primary"],
+	["on-primary", "text-on-primary"],
+	["primary-container", "state-primary-surface"],
+	["on-primary-container", "state-primary-foreground"],
+	["inverse-primary", "inverse-primary"],
+	["secondary", "secondary"],
+	["on-secondary", "text-on-secondary"],
+	["secondary-container", "surface-subtle"],
+	["on-secondary-container", "text-primary"],
+	["tertiary", "information"],
+	["on-tertiary", "text-on-primary"],
+	["tertiary-container", "state-information-surface"],
+	["on-tertiary-container", "state-information-foreground"],
+	["error", "error"],
+	["on-error", "text-on-error"],
+	["error-container", "state-error-surface"],
+	["on-error-container", "state-error-foreground"],
+	["surface", "surface-page"],
+	["on-surface", "text-primary"],
+	["on-surface-variant", "text-secondary"],
+	["surface-bright", "surface-base"],
+	["surface-container", "surface-raised"],
+	["surface-container-high", "surface-subtle"],
+	["surface-container-highest", "surface-subtle"],
+	["surface-container-low", "surface-base"],
+	["surface-container-lowest", "surface-base"],
+	["surface-dim", "surface-subtle"],
+	["surface-tint", "primary"],
+	["surface-variant", "surface-subtle"],
+	["inverse-surface", "surface-inverse"],
+	["inverse-on-surface", "text-on-inverse"],
+	["background", "surface-page"],
+	["on-background", "text-primary"],
+	["neutral-variant20", "text-secondary"],
+	["neutral10", "text-primary"],
+	["outline", "border"],
+	["outline-variant", "border-subtle"],
+	["scrim", "scrim"],
+	["shadow", "shadow"],
+]);
 
-for (const token of expectedTokens) {
+for (const [token, vocoraToken] of expectedMappings) {
 	assert.match(
 		theme,
-		new RegExp(`--mat-sys-${token}:\\s*var\\(--vocora-[^)]+\\);`),
-		`Material token ${token} must map to a Vocora design token.`,
+		new RegExp(`--mat-sys-${token}:\\s*var\\(--vocora-${vocoraToken}\\);`),
+		`Material token ${token} must map to Vocora ${vocoraToken}.`,
 	);
 }
 
@@ -124,9 +126,31 @@ assert.doesNotMatch(
 	/--(?:mdc|mat-(?!sys-))[^:]+:/u,
 	"Component-specific Material color overrides must not live in the system color adapter.",
 );
+assert.doesNotMatch(
+	theme,
+	/\.mat-mdc-/u,
+	"Material component geometry must live outside the semantic adapter.",
+);
+assert.doesNotMatch(
+	theme,
+	/--mat-sys-[a-z-]*fixed(?:-dim|-variant)?:/u,
+	"Theme-changing Vocora roles must not override Material fixed-color roles.",
+);
+const materialDefinitionOwners = fs.readdirSync(path.join(uiRoot, "src", "styles"))
+	.filter((name) => name.endsWith(".scss"))
+	.filter((name) =>
+		/--mat-sys-[a-z0-9-]+\s*:/iu.test(
+			fs.readFileSync(path.join(uiRoot, "src", "styles", name), "utf8"),
+		),
+	);
+assert.deepEqual(
+	materialDefinitionOwners,
+	["_angular-material-theme.scss"],
+	"The Material adapter must be the only application-owned Material system-token owner.",
+);
 assert.match(
 	designSystem,
-	/--vocora-neutral-black:\s*#[0-9a-f]{6};/iu,
+	/--color-neutral-black:\s*#000000;[\s\S]*--vocora-shadow:\s*var\(--color-neutral-black\);/iu,
 	"Shared shadow/scrim color must live in the Vocora design system.",
 );
 assert.doesNotMatch(
@@ -139,6 +163,12 @@ assert.ok(
 		styles.indexOf("@include mat.theme(("),
 	"Vocora Angular Material color overrides must be applied after the base Material theme.",
 );
+assert.ok(
+	styles.indexOf("@include vocora-design-system.apply();") >= 0 &&
+		styles.indexOf("@include vocora-design-system.apply();") <
+			styles.indexOf("@include angular-material-theme.apply();"),
+	"The Material adapter must be applied after the Vocora semantic layer.",
+);
 assert.match(
 	styles,
 	/@use '\.\/styles\/angular-material-components' as angular-material-components;/u,
@@ -147,6 +177,133 @@ assert.ok(
 	styles.indexOf("@include angular-material-components.apply();") >
 		styles.indexOf("@include angular-material-theme.apply();"),
 	"Shared Material component styles must be applied after semantic Material colors.",
+);
+const semanticSection = designSystem.split("// Layer B: Vocora semantic tokens")[1];
+assert.ok(semanticSection, "The runtime token source must identify its semantic layer.");
+assert.doesNotMatch(
+	semanticSection,
+	/#[0-9a-f]{3,8}\b|\brgba?\(|:\s*\d+\s*,\s*\d+\s*,\s*\d+/iu,
+	"Semantic tokens must derive from the canonical foundation layer rather than own raw colors.",
+);
+for (const semanticToken of [
+	"surface-page",
+	"surface-base",
+	"surface-raised",
+	"surface-subtle",
+	"surface-inverse",
+	"text-primary",
+	"text-secondary",
+	"text-disabled",
+	"border",
+	"border-subtle",
+	"border-strong",
+	"border-disabled",
+	"primary",
+	"secondary",
+	"success",
+	"information",
+	"warning",
+	"error",
+	"focus-ring",
+]) {
+	assert.equal(
+		(designSystem.match(new RegExp(`--vocora-${semanticToken}:`, "gu")) ?? []).length,
+		2,
+		`Vocora ${semanticToken} must have light and dark definitions.`,
+	);
+}
+
+function declarations(source) {
+	return new Map(
+		[...source.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/giu)].map(
+			([, name, value]) => [name, value.trim()],
+		),
+	);
+}
+
+function themeBlock(themeName) {
+	const pattern = themeName === "light"
+		? /:root,\s*html\[data-theme="light"\]\s*\{([\s\S]*?)\n\t\}/u
+		: /html\[data-theme="dark"\]\s*\{([\s\S]*?)\n\t\}/u;
+	const match = designSystem.match(pattern);
+	assert.ok(match, `Runtime design system must define the ${themeName} theme.`);
+	return match[1];
+}
+
+const foundation = declarations(
+	designSystem.split("// Layer B: Vocora semantic tokens")[0],
+);
+const toKebab = (value) => value.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+const runtimeTokenName = (group, key) => {
+	if (group === "border" && key === "default") return "--vocora-border";
+	if (group === "semantic") return `--vocora-${toKebab(key)}`;
+	return `--vocora-${group}-${toKebab(key)}`;
+};
+
+for (const themeName of ["light", "dark"]) {
+	const semantic = declarations(themeBlock(themeName));
+	const allDeclarations = new Map([...foundation, ...semantic]);
+	const resolve = (name, seen = new Set()) => {
+		assert.ok(!seen.has(name), `Token reference cycle detected at ${name}.`);
+		const value = allDeclarations.get(name);
+		assert.ok(value, `Runtime token ${name} is required by the reference mirror.`);
+		const reference = value.match(/^var\((--[a-z0-9-]+)\)$/iu);
+		return reference ? resolve(reference[1], new Set([...seen, name])) : value.toUpperCase();
+	};
+
+	for (const [group, values] of Object.entries(referenceTokens.themes[themeName])) {
+		for (const [key, expected] of Object.entries(values)) {
+			assert.equal(
+				resolve(runtimeTokenName(group, key)),
+				expected,
+				`Runtime ${themeName} ${group}.${key} must match tokens.json.`,
+			);
+		}
+	}
+
+	const hexToRgb = (hex) => [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16));
+	const relativeLuminance = (hex) => {
+		const channels = hexToRgb(hex).map((channel) => {
+			const normalized = channel / 255;
+			return normalized <= 0.04045
+				? normalized / 12.92
+				: ((normalized + 0.055) / 1.055) ** 2.4;
+		});
+		return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2]);
+	};
+	const contrastRatio = (first, second) => {
+		const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+		const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+		return (lighter + 0.05) / (darker + 0.05);
+	};
+	const inverseSurface = resolve("--vocora-surface-inverse");
+	const inversePrimary = resolve("--vocora-inverse-primary");
+	assert.ok(
+		contrastRatio(inverseSurface, inversePrimary) >= 4.5,
+		`${themeName} inverse-primary must meet 4.5:1 contrast on inverse-surface.`,
+	);
+	assert.ok(
+		contrastRatio(
+			resolve("--vocora-state-primary-surface"),
+			resolve("--vocora-text-primary"),
+		) >= 4.5,
+		`${themeName} primary state surfaces must remain readable with primary text.`,
+	);
+	for (const intent of ["success", "warning", "error"]) {
+		assert.ok(
+			contrastRatio(
+				resolve(`--vocora-state-${intent}-icon`),
+				resolve(`--vocora-state-${intent}-icon-foreground`),
+			) >= 3,
+			`${themeName} ${intent} feedback icons must meet 3:1 graphical contrast.`,
+		);
+	}
+}
+
+assert.doesNotMatch(
+	components,
+	/\.mat-mdc-icon-button\s*\{[\s\S]*?vertical-align:\s*middle;/u,
+	"Material component integration must not add unowned global icon-button geometry.",
 );
 assert.match(components, /\.mat-mdc-unelevated-button/u);
 assert.match(
@@ -183,10 +340,7 @@ assert.match(
 	/\.mat-mdc-icon-button\.vocora-primary-icon-action\b/u,
 	"Filled primary Material icon actions must have one reusable central variant.",
 );
-assert.match(
-	theme,
-	/--mat-sys-error-container:\s*var\(--vocora-error-surface\);/u,
-);
+assert.match(theme, /--mat-sys-error-container:\s*var\(--vocora-state-error-surface\);/u);
 assert.match(designSystem, /--color-eager-green:\s*#58cc02;/iu);
 assert.match(designSystem, /--color-spark-blue:\s*#1cb0f6;/iu);
 assert.match(designSystem, /--color-paper-white:\s*#ffffff;/iu);
@@ -195,16 +349,16 @@ assert.match(designSystem, /--color-pencil-gray:\s*#777777;/iu);
 assert.match(designSystem, /--color-faded-gray:\s*#afafaf;/iu);
 assert.match(
 	designSystem,
-	/--vocora-action-primary:\s*var\(--color-spark-blue\);/iu,
+	/--vocora-primary:\s*var\(--color-spark-blue\);[\s\S]*--vocora-action-primary:\s*var\(--vocora-primary\);/iu,
 );
 assert.match(
 	designSystem,
-	/--vocora-action-success:\s*var\(--color-eager-green\);/iu,
+	/--vocora-success:\s*var\(--color-eager-green\);[\s\S]*--vocora-action-success:\s*var\(--vocora-success\);/iu,
 	"Success actions must retain the canonical Eager Green role.",
 );
 assert.match(
 	designSystem,
-	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-primary:\s*#49c0f8;[^}]*--vocora-action-success:\s*#72d72b;/iu,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-primary:\s*var\(--color-dark-primary\);[^}]*--vocora-success:\s*var\(--color-dark-success\);[^}]*--vocora-action-primary:\s*var\(--vocora-primary\);[^}]*--vocora-action-success:\s*var\(--vocora-success\);/iu,
 	"The new button language must define independently tuned dark-theme actions.",
 );
 assert.match(
@@ -220,11 +374,11 @@ assert.match(designSystem, /--vocora-action-disabled-background:\s*var\(--color-
 assert.match(designSystem, /--vocora-action-disabled-foreground:\s*var\(--color-pencil-gray\);/iu);
 assert.match(
 	designSystem,
-	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*#ffffff;[^}]*--vocora-action-secondary-foreground:\s*#4b4b4b;/iu,
+	/html\[data-theme=["']dark["']\][^{]*\{[^}]*--vocora-action-secondary:\s*var\(--color-paper-white\);[^}]*--vocora-action-secondary-foreground:\s*var\(--color-charcoal\);/iu,
 	"Dark secondary buttons must preserve the white surface and Charcoal label pairing.",
 );
-assert.match(designSystem, /--vocora-error:\s*#ff4b4b;/iu);
-assert.match(designSystem, /--vocora-information-surface:\s*#ddf4ff;/iu);
+assert.match(designSystem, /--vocora-error:\s*var\(--color-answer-red\);/iu);
+assert.match(designSystem, /--vocora-information-surface:\s*var\(--vocora-state-information-surface\);/iu);
 
 for (const intent of ["primary", "secondary", "success", "warning", "error"]) {
 	assert.match(
@@ -265,7 +419,7 @@ for (const token of ["disabled-background", "disabled-foreground"]) {
 assert.equal(
 	[
 		...designSystem.matchAll(
-			/--vocora-action-warning-foreground:\s*(?:var\(--color-paper-white\)|#ffffff);/gu,
+			/--vocora-action-warning-foreground:\s*var\(--(?:vocora-text-on-strong|color-paper-white)\);/gu,
 		),
 	].length,
 	2,
@@ -349,17 +503,17 @@ assert.match(
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="#58A700"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke-width="3"/u,
-	"Successful feedback must use the supplied rounded check SVG at 35px.",
+	/@case \('success'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-success-icon\)"[\s\S]*?<path[^>]*d="M10\.5 15\.5L14 19\.5L21 12"[^>]*stroke="var\(--vocora-state-success-icon-foreground\)"[^>]*stroke-width="3"/u,
+	"Successful feedback must use the rounded check SVG and theme-aware success icon role.",
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke-width="3"/u,
+	/@case \('error'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-error-icon\)"[\s\S]*?<path[^>]*d="M10\.5 10\.5L19\.5 19\.5M19\.5 10\.5L10\.5 19\.5"[^>]*stroke="var\(--vocora-state-error-icon-foreground\)"[^>]*stroke-width="3"/u,
 	"Incorrect feedback must use a matching rounded cross SVG at 35px.",
 );
 assert.match(
 	exerciseFooterTemplate,
-	/@case \('warning'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-action-warning\)"[\s\S]*?<path[^>]*stroke="white"[^>]*stroke-width="3"/u,
+	/@case \('warning'\)\s*\{[\s\S]*?<svg[^>]*width="35"[^>]*height="35"[^>]*viewBox="0 0 30 30"[\s\S]*?<circle[^>]*cx="15"[^>]*cy="15"[^>]*r="15"[^>]*fill="var\(--vocora-state-warning-icon\)"[\s\S]*?<path[^>]*stroke="var\(--vocora-state-warning-icon-foreground\)"[^>]*stroke-width="3"/u,
 	"Warning feedback must use a matching rounded SVG at 35px.",
 );
 assert.doesNotMatch(

@@ -1,11 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { DestroyRef, Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge } from 'rxjs';
 import { ThemeMode } from '../../domain/learning/models';
 
-export const LIGHT_SYSTEM_CHROME_COLOR = '#ffffff';
-export const DARK_SYSTEM_CHROME_COLOR = '#0f1611';
 export const THEME_MODE_STORAGE_KEY = 'vocora-theme-mode-v1';
 export const SYSTEM_THEME_MEDIA = {
   light: '(prefers-color-scheme: light)',
@@ -26,6 +24,10 @@ export class ThemeService {
   private readonly destroyRef = inject(DestroyRef);
   private readonly systemThemeQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
   private activeMode: ThemeMode = storedThemeMode();
+  private readonly resolvedThemeState = signal<'light' | 'dark'>(
+    this.document.documentElement.dataset['theme'] === 'dark' ? 'dark' : 'light',
+  );
+  readonly resolvedTheme = this.resolvedThemeState.asReadonly();
 
   constructor() {
     const query = this.systemThemeQuery;
@@ -52,26 +54,30 @@ export class ThemeService {
   private applyResolved(resolved: 'light' | 'dark'): void {
     const root = this.document.documentElement;
     const body = this.document.body;
-    const chromeColor = resolved === 'dark' ? DARK_SYSTEM_CHROME_COLOR : LIGHT_SYSTEM_CHROME_COLOR;
 
     root.style.colorScheme = resolved;
     root.dataset['theme'] = resolved;
-    root.style.setProperty('--vocora-system-chrome-color', chromeColor);
-    root.style.backgroundColor = chromeColor;
+    const chromeColor = this.document.defaultView
+      ?.getComputedStyle(root)
+      .getPropertyValue('--vocora-surface-page')
+      .trim() || root.style.getPropertyValue('--vocora-system-chrome-color').trim();
+    if (chromeColor) root.style.setProperty('--vocora-system-chrome-color', chromeColor);
+    root.style.removeProperty('background-color');
 
     if (body) {
       body.style.colorScheme = resolved;
-      body.style.backgroundColor = chromeColor;
+      body.style.removeProperty('background-color');
     }
 
-    this.updateThemeColorMetadata(resolved);
+    this.updateThemeColorMetadata(resolved, chromeColor);
     this.updateMeta('color-scheme', resolved);
+    this.resolvedThemeState.set(resolved);
   }
 
-  private updateThemeColorMetadata(resolved: 'light' | 'dark'): void {
+  private updateThemeColorMetadata(resolved: 'light' | 'dark', chromeColor: string): void {
     for (const theme of ['light', 'dark'] as const) {
       const meta = this.getThemeColorMeta(theme);
-      meta.content = theme === 'dark' ? DARK_SYSTEM_CHROME_COLOR : LIGHT_SYSTEM_CHROME_COLOR;
+      if (theme === resolved && chromeColor) meta.content = chromeColor;
       meta.media = this.activeMode === 'system'
         ? SYSTEM_THEME_MEDIA[theme]
         : theme === resolved ? 'all' : 'not all';

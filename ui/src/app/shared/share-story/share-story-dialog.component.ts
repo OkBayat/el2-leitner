@@ -49,16 +49,23 @@ export class ShareStoryDialogComponent implements AfterViewInit {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const moment = this.moment();
+		const styles = this.document.defaultView?.getComputedStyle(canvas);
+		const themeColor = (name: string): string => {
+			const value = styles?.getPropertyValue(name).trim();
+			if (!value) throw new Error(`Missing share-story theme token: ${name}`);
+			return value;
+		};
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const gradient = ctx.createLinearGradient(0, 0, 1080, 1920);
-    gradient.addColorStop(0, '#e8def8'); gradient.addColorStop(1, '#d3e4ff');
+		gradient.addColorStop(0, themeColor('--vocora-share-story-gradient-start'));
+		gradient.addColorStop(1, themeColor('--vocora-share-story-gradient-end'));
     ctx.fillStyle = gradient; ctx.fillRect(0, 0, 1080, 1920);
-    ctx.fillStyle = '#1d1b20'; ctx.textAlign = 'center'; ctx.direction = 'ltr';
+		ctx.fillStyle = themeColor('--vocora-share-story-ink'); ctx.textAlign = 'center'; ctx.direction = 'ltr';
     ctx.font = '700 72px sans-serif'; ctx.fillText('VOCORA', 540, 210);
     ctx.font = '700 64px sans-serif'; this.wrap(ctx, moment.title, 540, 520, 850, 90);
     ctx.font = '400 38px sans-serif'; ctx.fillText(moment.subtitle, 540, 720);
-    ctx.fillStyle = 'rgba(255,255,255,.68)'; this.roundedRect(ctx, 125, 900, 830, 510, 44); ctx.fill();
-    ctx.fillStyle = '#1d1b20'; ctx.font = '800 120px sans-serif'; ctx.fillText(moment.primaryValue, 540, 1080);
+		ctx.fillStyle = themeColor('--vocora-share-story-panel'); this.roundedRect(ctx, 125, 900, 830, 510, 44); ctx.fill();
+		ctx.fillStyle = themeColor('--vocora-share-story-ink'); ctx.font = '800 120px sans-serif'; ctx.fillText(moment.primaryValue, 540, 1080);
     ctx.font = '500 34px sans-serif'; ctx.fillText(moment.primaryLabel, 540, 1140);
     ctx.font = '800 88px sans-serif'; ctx.fillText(moment.secondaryValue, 540, 1290);
     ctx.font = '500 32px sans-serif'; ctx.fillText(moment.secondaryLabel, 540, 1345);

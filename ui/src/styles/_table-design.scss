@@ -27,7 +27,7 @@
 
 	.mat-mdc-row:hover,
 	.mat-mdc-row:focus-within {
-		background: rgb(232 240 254);
+		background: var(--vocora-state-primary-surface);
 	}
 
 	.mat-mdc-cell {

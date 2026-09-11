@@ -107,6 +107,16 @@ With `onlyDownload`, the validated built-in/current bundle starts first. A compa
 
 Create distinct Capgo channels for development, staging, and production. Configure production with the metadata compatibility strategy and no development/emulator delivery. The CI upload always uses `--fail-on-incompatible --auto-min-update-version`. The only exception is the intentional baseline upload after a newly signed native binary has shipped; perform that once as an operator-reviewed step, without `--fail-on-incompatible`, then restore the guarded path. Apple live updates must stay within the reviewed app's purpose and must never add native capability or bypass store review.
 
+Channel attachment is fail-closed. Production binaries do not embed `defaultChannel`; they use the platform-specific Capgo cloud default. Mark only `production` as the cloud default for Android and iOS, enable production builds and physical devices, and disable development builds and emulators. Development and staging binaries embed their selected test channel, so those private channels must explicitly allow device self-assignment (`allow_device_self_set`; CLI `--self-assign`). Do not make a test channel the cloud default. A representative setup is:
+
+```sh
+npx @capgo/cli@8.50.3 channel set development ir.vocora --self-assign --dev --emulator
+npx @capgo/cli@8.50.3 channel set staging ir.vocora --self-assign --prod --device --no-emulator
+npx @capgo/cli@8.50.3 channel set production ir.vocora --state default --prod --device --no-dev --no-emulator --no-self-assign
+```
+
+Before enabling a release channel, verify in Capgo that the app ID is exactly `ir.vocora`, the production cloud default is platform-correct, test channels have self-assignment enabled, build/device filters match the intended audience, and the channel's native compatibility strategy has required metadata. If any item cannot be confirmed, leave live updates disabled for that binary.
+
 Eligibility rule: a change is OTA-eligible only when `npx @capgo/cli@8.50.3 bundle releaseType ir.vocora --channel <channel>` returns `OTA` and the diff contains no native project, Capacitor config, native dependency, plugin, permission, entitlement, or store metadata change. Otherwise publish a new binary.
 
 Rollback is channel-scoped: repoint the channel to a known-good bundle or force the built-in bundle. Do not delete the last good bundle during an incident.
@@ -176,5 +186,6 @@ Current native plugins:
 - Android release tasks intentionally fail when signing variables are incomplete.
 - An iOS simulator build proves compilation only. Check certificate, profile app ID, Team ID, export method, and registered devices when IPA export fails.
 - A Capgo compatibility failure means the change needs a native release or the channel baseline is wrong. Do not bypass the gate for an ordinary OTA.
+- A `cannotUpdateViaPrivateChannel` or `NoChannelOrOverride` result means the channel attachment policy is incomplete. Verify test-channel self-assignment or the platform-specific production cloud default before retrying.
 
 Primary upstream references: [Capacitor configuration](https://capacitorjs.com/docs/config), [Capacitor HTTP](https://capacitorjs.com/docs/apis/http), [App lifecycle](https://capacitorjs.com/docs/apis/app), [Keyboard](https://capacitorjs.com/docs/apis/keyboard), [System Bars](https://capacitorjs.com/docs/apis/system-bars), and [Capgo native compatibility](https://capgo.app/docs/live-updates/compatibility/).

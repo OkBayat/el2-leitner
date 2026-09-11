@@ -74,6 +74,7 @@ assert.deepEqual(
 );
 
 const appRoot = read('src/app/app.ts');
+const appRootTemplate = read('src/app/app.html');
 const installService = read('src/app/core/pwa/pwa-install.service.ts');
 const updateService = read('src/app/core/pwa/pwa-update.service.ts');
 const installCard = read('src/app/shared/pwa/pwa-install-card.component.ts');
@@ -88,7 +89,7 @@ const dockerfile = read('../back/Dockerfile');
 assert.match(appRoot, /PwaInstallService/u, 'The application root must instantiate install-prompt capture during bootstrap.');
 assert.match(appRoot, /pwaInstallation\.mode\(\)/u, 'The one-shot Android install prompt listener must be active before Settings is opened.');
 assert.match(appRoot, /PwaUpdateService/u, 'The application root must start the service-worker update lifecycle.');
-assert.match(appRoot, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
+assert.match(appRootTemplate, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
 assert.match(installService, /beforeinstallprompt/u, 'Chromium install prompts must be captured for an explicit user action.');
 assert.match(installService, /appinstalled/u, 'Successful browser installation must update app state.');
 assert.match(updateService, /register\('\/service-worker\.js'/u, 'Production must register the generated root service worker.');

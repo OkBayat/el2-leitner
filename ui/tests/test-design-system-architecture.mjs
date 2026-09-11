@@ -12,13 +12,16 @@ const sharedMarker = [
 	"export class ExampleComponent {}",
 ];
 const emptyBaseline = () => ({
-	schema_version: 2,
+	schema_version: 3,
 	legacy_debt: {
 		important_declarations: {},
 		feature_material_internal_selectors: {},
+		raw_colors: {},
+		theme_selectors: {},
 	},
 	integration_exceptions: {
 		important_declarations: {},
+		raw_colors: {},
 	},
 });
 
@@ -32,6 +35,134 @@ function validateFixture({
 		baseSources: new Map([sharedMarker, ...baseFiles]),
 		baseline,
 	});
+}
+
+{
+	const relative = "ui/src/app/features/example/named-colors.component.scss";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			":host { color: red; background: white; box-shadow: 0 0 rgb(var(--vocora-primary-rgb) / .5); }",
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	for (const [relative, source] of [
+		[
+			"ui/src/app/features/example/preprocessor.component.scss",
+			"$feature-color: red;",
+		],
+		[
+			"ui/src/app/features/example/preprocessor.component.less",
+			"@feature-color: red;",
+		],
+	]) {
+		assert.ok(
+			validateFixture({files: [[relative, source]]}).some((error) =>
+				error.includes("raw color debt"),
+			),
+		);
+	}
+}
+
+{
+	assert.deepEqual(
+		validateFixture({
+			files: [[
+				"ui/src/app/features/example/semantic-colors.component.scss",
+				":host { color: var(--vocora-brand-green); background: rgb(var(--vocora-primary-rgb) / .5); border-color: rgb(var(--vocora-primary-rgb) / var(--alpha)); }",
+			]],
+		}),
+		[],
+	);
+}
+
+{
+	for (const source of [
+		":host { color: rgb(255 0 0 / var(--opacity)); }",
+		":host { color: hsl(0 100% 50% / var(--alpha)); }",
+	]) {
+		assert.ok(
+			validateFixture({
+				files: [[
+					"ui/src/app/features/example/raw-channels.component.scss",
+					source,
+				]],
+			}).some((error) => error.includes("raw color debt")),
+			`Raw color channels must not be hidden by a variable alpha: ${source}`,
+		);
+	}
+}
+
+{
+	const relative = "ui/src/app/features/example/template.component.html";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			'<svg fill="#123456"><path stroke="white" /></svg><div style="color: var(--vocora-text-primary)"></div>',
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/bound-template.component.html";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			`<div [style.color]="'#123456'"></div><svg [attr.fill]="'red'"></svg>`,
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/inline-template.component.ts";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			`import {Component} from '@angular/core'; @Component({template: \`<svg [attr.stroke]="'white'"></svg>\`}) export class Example {}`,
+		]],
+	});
+	assert.ok(errors.some((error) => error.includes("raw color debt")));
+}
+
+{
+	const relative = "ui/src/app/shared/example-canvas.component.ts";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			"function paint(ctx, gradient) { ctx.fillStyle = '#123456'; gradient.addColorStop(0, 'red'); }",
+		]],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		2,
+	);
+}
+
+{
+	const relative = "ui/src/app/features/example/local-theme.component.sass";
+	const errors = validateFixture({
+		files: [[
+			relative,
+			":host-context([data-theme='dark'])\n  color: var(--vocora-text-primary)",
+		]],
+	});
+	assert.ok(
+		errors.some((error) => error.includes("local theme-selector debt")),
+	);
 }
 
 {
@@ -171,6 +302,59 @@ function validateFixture({
 }
 
 {
+	const relative = "ui/src/app/features/example/local-theme.component.scss";
+	const errors = validateFixture({
+		files: [
+			[
+				relative,
+				":host { --feature-accent: #123456; color: rgb(1 2 3); } :host-context([data-theme='dark']) { --feature-accent: oklch(70% .1 250); }",
+			],
+		],
+	});
+	assert.equal(
+		errors.filter((error) => error.includes("raw color debt")).length,
+		3,
+	);
+	assert.ok(
+		errors.some((error) => error.includes("local theme-selector debt")),
+	);
+}
+
+{
+	const foundation = "ui/src/styles/_vocora-design-system.scss";
+	assert.deepEqual(
+		validateFixture({
+			files: [[foundation, ":root, html[data-theme='light'] { --color-example: #123456; }"]],
+		}),
+		[],
+	);
+
+	const exception = "ui/src/pwa.scss";
+	const baseline = emptyBaseline();
+	baseline.integration_exceptions.raw_colors[exception] = {
+		occurrences: ["#ffffff"],
+		reason: "Early paint needs a deterministic fallback.",
+		upstream_constraint: "The semantic runtime is not initialized yet.",
+	};
+	assert.deepEqual(
+		validateFixture({ files: [[exception, "html { background: #ffffff; }"]], baseline }),
+		[],
+	);
+
+	const feature = "ui/src/app/features/example/example.component.scss";
+	baseline.integration_exceptions.raw_colors = {
+		[feature]: baseline.integration_exceptions.raw_colors[exception],
+	};
+	const errors = validateFixture({
+		files: [[feature, ":host { background: #ffffff; }"]],
+		baseline,
+	});
+	assert.ok(
+		errors.some((error) => error.includes("is not approved for raw_colors")),
+	);
+}
+
+{
 	const relative =
 		"ui/src/app/features/example/semantic-values.component.scss";
 	const currentOccurrences = [
@@ -212,14 +396,14 @@ function validateFixture({
 
 {
 	const relative = "ui/src/app/features/example/example.component.scss";
-	const occurrence = ".legacy => color:red!important";
+	const occurrence = ".legacy => color:var(--vocora-error)!important";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.important_declarations[relative] = {
 		occurrences: [occurrence],
 		reason: "Existing test debt.",
 	};
 	const errors = validateFixture({
-		files: [[relative, ".legacy { color: red !important; }"]],
+		files: [[relative, ".legacy { color: var(--vocora-error) !important; }"]],
 		baseline,
 	});
 	assert.ok(
@@ -229,8 +413,8 @@ function validateFixture({
 	);
 
 	const passingErrors = validateFixture({
-		files: [[relative, ".legacy { color: red !important; }"]],
-		baseFiles: [[relative, ".legacy { color: red !important; }"]],
+		files: [[relative, ".legacy { color: var(--vocora-error) !important; }"]],
+		baseFiles: [[relative, ".legacy { color: var(--vocora-error) !important; }"]],
 		baseline,
 	});
 	assert.deepEqual(passingErrors, []);
@@ -263,7 +447,7 @@ function validateFixture({
 {
 	const relative = "ui/src/app/features/example/example.component.scss";
 	const occurrence =
-		".legacy,.second /* baseline note */ => color: red !important";
+		".legacy,.second /* baseline note */ => color: var(--vocora-error) !important";
 	const baseline = emptyBaseline();
 	baseline.legacy_debt.important_declarations[relative] = {
 		occurrences: [
@@ -277,13 +461,13 @@ function validateFixture({
 			files: [
 				[
 					relative,
-					".legacy, .second { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+					".legacy, .second { color: var(--vocora-error) !important; } .image { background: url(https://same.example/a) !important; }",
 				],
 			],
 			baseFiles: [
 				[
 					relative,
-					".legacy,.second /* formatting note */ { color: red !important; } .image { background: url( https://same.example/a ) !important; }",
+					".legacy,.second /* formatting note */ { color: var(--vocora-error) !important; } .image { background: url( https://same.example/a ) !important; }",
 				],
 			],
 			baseline,
@@ -295,13 +479,13 @@ function validateFixture({
 		files: [
 			[
 				relative,
-				".legacy, .second { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+				".legacy, .second { color: var(--vocora-error) !important; } .image { background: url(https://same.example/a) !important; }",
 			],
 		],
 		baseFiles: [
 			[
 				relative,
-				".legacy, .different { color: red !important; } .image { background: url(https://same.example/a) !important; }",
+				".legacy, .different { color: var(--vocora-error) !important; } .image { background: url(https://same.example/a) !important; }",
 			],
 		],
 		baseline,
@@ -353,13 +537,13 @@ function validateFixture({
 			files: [
 				[
 					relative,
-					".host, .mat-mdc-example:not(.disabled) { color: red; }",
+					".host, .mat-mdc-example:not(.disabled) { color: var(--vocora-error); }",
 				],
 			],
 			baseFiles: [
 				[
 					relative,
-					".host,.mat-mdc-example:not( .disabled ) /* formatting note */ { color: red; }",
+					".host,.mat-mdc-example:not( .disabled ) /* formatting note */ { color: var(--vocora-error); }",
 				],
 			],
 			baseline,
@@ -371,10 +555,10 @@ function validateFixture({
 		files: [
 			[
 				relative,
-				".host, .mat-mdc-example:not(.disabled) { color: red; }",
+				".host, .mat-mdc-example:not(.disabled) { color: var(--vocora-error); }",
 			],
 		],
-		baseFiles: [[relative, ".host, .mat-mdc-different { color: red; }"]],
+		baseFiles: [[relative, ".host, .mat-mdc-different { color: var(--vocora-error); }"]],
 		baseline,
 	});
 	assert.ok(
@@ -386,7 +570,8 @@ function validateFixture({
 
 {
 	const relative = "ui/src/styles/_bootstrap-theme.scss";
-	const occurrence = ".bg-light => background:white!important";
+	const occurrence =
+		".bg-light => background:var(--vocora-surface-page)!important";
 	const baseline = emptyBaseline();
 	baseline.integration_exceptions.important_declarations[relative] = {
 		occurrences: [occurrence],
@@ -396,7 +581,7 @@ function validateFixture({
 	};
 	assert.deepEqual(
 		validateFixture({
-			files: [[relative, ".bg-light { background: white !important; }"]],
+			files: [[relative, ".bg-light { background: var(--vocora-surface-page) !important; }"]],
 			baseline,
 		}),
 		[],
@@ -408,12 +593,12 @@ function validateFixture({
 			baseline.integration_exceptions.important_declarations[relative],
 	};
 	const errors = validateFixture({
-		files: [[feature, ".bg-light { background: white !important; }"]],
+		files: [[feature, ".bg-light { background: var(--vocora-surface-page) !important; }"]],
 		baseline,
 	});
 	assert.ok(
 		errors.some((error) =>
-			error.includes("is not an approved framework integration owner"),
+			error.includes("is not approved for important_declarations"),
 		),
 	);
 }
@@ -421,15 +606,15 @@ function validateFixture({
 {
 	const relative = "ui/src/app/features/example/example.component.sass";
 	assert.deepEqual(
-		validateFixture({ files: [[relative, ".example\n  color: red"]] }),
+		validateFixture({ files: [[relative, ".example\n  color: var(--vocora-error)"]] }),
 		[],
 	);
 	const errors = validateFixture({
-		files: [[relative, ".example\n  color: red !important"]],
+		files: [[relative, ".example\n  color: var(--vocora-error) !important"]],
 	});
 	assert.ok(
 		errors.includes(
-			`Untracked !important debt in ${relative}: .example => color:red!important`,
+			`Untracked !important debt in ${relative}: .example => color:var(--vocora-error)!important`,
 		),
 	);
 }
