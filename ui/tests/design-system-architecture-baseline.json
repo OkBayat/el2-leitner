@@ -116,12 +116,6 @@
                 "upstream_constraint": "Angular Material button transitions cannot be disabled through a supported theme token."
             }
         },
-        "raw_colors": {
-            "ui/src/pwa.scss": {
-                "occurrences": ["#ffffff"],
-                "reason": "The standalone-mode shell needs a light fallback before the application design system is available.",
-                "upstream_constraint": "This stylesheet can paint before Angular and the runtime token layer have initialized."
-            }
-        }
+        "raw_colors": {}
     }
 }

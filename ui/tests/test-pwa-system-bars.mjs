@@ -8,6 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {
 	extractFirstPaintThemeColors,
 	inspectFirstPaintThemeArtifacts,
+	writeFirstPaintThemeArtifacts,
 } from '../tools/sync-first-paint-theme-colors.mjs';
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -109,6 +110,24 @@ try {
 		],
 		'A Layer A page-color change must fail every stale first-paint artifact deterministically.',
 	);
+	writeFirstPaintThemeArtifacts(staleFixtureRoot);
+	assert.deepEqual(
+		inspectFirstPaintThemeArtifacts(staleFixtureRoot),
+		[],
+		'The generator must repair every stale first-paint artifact from Layer A.',
+	);
+	assert.match(
+		fs.readFileSync(path.join(staleFixtureRoot, 'src/theme-bootstrap.js'), 'utf8'),
+		new RegExp(`light: '${changedCanonicalColors.light}'`, 'u'),
+		'Generated bootstrap colors must use the changed canonical light value.',
+	);
+	for (const relativePath of ['src/manifest.webmanifest', 'src/vocora-v4.webmanifest']) {
+		assert.equal(
+			JSON.parse(fs.readFileSync(path.join(staleFixtureRoot, relativePath), 'utf8')).theme_color,
+			changedCanonicalColors.light,
+			`${relativePath} must be regenerated from the changed canonical light value.`,
+		);
+	}
 } finally {
 	fs.rmSync(staleFixtureRoot, {recursive: true});
 }
@@ -151,6 +170,11 @@ assert.doesNotMatch(
 	pwaStyles,
 	/@media\(display-mode: standalone\)[\s\S]*html, body\s*\{[\s\S]*?(?:overflow|overscroll-behavior)\s*:/u,
 	'System-bar theming must not reintroduce the standalone scrolling bug.',
+);
+assert.match(
+	pwaStyles,
+	/--vocora-system-chrome-color:\s*var\(--color-paper-white\)/u,
+	'The standalone pre-runtime fallback must reference Layer A instead of owning a raw page color.',
 );
 
 console.log('PWA install and runtime system bar color contract passed.');
