@@ -10,7 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 
 interface WelcomeSlide {
   readonly eyebrow: string;
@@ -23,7 +23,7 @@ interface WelcomeSlide {
 
 @Component({
   selector: 'app-welcome-page',
-  imports: [MatButtonModule],
+  imports: [VocoButtonComponent],
   templateUrl: './welcome-page.component.html',
   styleUrl: './welcome-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

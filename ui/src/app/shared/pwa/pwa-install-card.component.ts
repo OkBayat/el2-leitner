@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoButtonComponent } from '../voco-button';
 import {MatCardModule} from '@angular/material/card';
 import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 
 @Component({
 	selector: 'app-pwa-install-card',
-	imports: [MatButtonModule, MatCardModule],
+	imports: [VocoButtonComponent, MatCardModule],
 	template: `
 		<mat-card class="install-card" appearance="outlined" data-testid="pwa-install-card">
 			<mat-card-header>
@@ -55,9 +55,14 @@ import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 
 			@if (install.mode() === 'prompt') {
 				<mat-card-actions>
-					<button mat-flat-button type="button" data-testid="install-vocora" [disabled]="installing()" (click)="requestInstall()">
+					<voco-primary-button
+						type="button"
+						data-testid="install-vocora"
+						[disabled]="installing()"
+						(click)="requestInstall()"
+					>
 						{{ installing() ? 'Opening installer…' : 'Install on this device' }}
-					</button>
+					</voco-primary-button>
 				</mat-card-actions>
 			}
 		</mat-card>

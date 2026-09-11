@@ -8,7 +8,7 @@
 				shared slide family.</span
 			>
 		</div>
-		<button mat-stroked-button type="button" (click)="reset()">
+		<button vocoButtonInteraction type="button" (click)="reset()">
 			Reset current slide
 		</button>
 	</header>
@@ -16,7 +16,7 @@
 	<nav class="showcase__nav" aria-label="Slide types">
 		@for (slide of slides(); track slide.id) {
 			<button
-				mat-button
+				vocoButtonInteraction
 				type="button"
 				[attr.aria-current]="
 					activeSlideId() === slide.id ? 'page' : null

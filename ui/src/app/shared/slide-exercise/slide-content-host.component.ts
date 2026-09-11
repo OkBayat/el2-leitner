@@ -14,7 +14,7 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../voco-button';
 import { Subscription } from 'rxjs';
 import type { SlideContentComponent, SlideContentEvent } from './slide-content-contracts';
 import type { SlideContentRegistry } from './slide-content-registry';
@@ -23,7 +23,7 @@ import type { SlideExerciseDeckController, SlideExerciseRuntimeState, SlideExerc
 @Component({
   selector: 'app-slide-content-host',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [VocoButtonComponent],
   templateUrl: './slide-content-host.component.html',
   styleUrl: './slide-content-host.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

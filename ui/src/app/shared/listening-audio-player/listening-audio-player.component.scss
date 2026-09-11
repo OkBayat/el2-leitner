@@ -19,7 +19,11 @@
   padding: 18px 22px;
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--mat-sys-surface-container-lowest) 94%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mat-sys-surface-container-lowest) 94%,
+		transparent
+	);
   box-shadow: var(--mat-sys-level2);
   backdrop-filter: blur(14px);
   opacity: 1;
@@ -57,7 +61,8 @@ audio {
   flex-direction: column;
   min-height: 100%;
   gap: clamp(var(--vocora-space-5), 4vh, var(--vocora-space-10));
-  padding: var(--vocora-space-4) 0 calc(var(--vocora-space-4) + var(--safe-area-bottom));
+	padding: var(--vocora-space-4) 0
+		calc(var(--vocora-space-4) + var(--safe-area-bottom));
 }
 
 .immersive-waveform {
@@ -224,7 +229,11 @@ audio {
   height: 42px;
   place-items: center;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface));
+	background: color-mix(
+		in srgb,
+		var(--mat-sys-primary) 10%,
+		var(--mat-sys-surface)
+	);
   color: var(--mat-sys-primary);
 }
 
@@ -268,20 +277,12 @@ audio {
   gap: 9px;
 }
 
-.audio-controls button {
-  --mdc-outlined-button-container-height: 40px;
-  --mdc-outlined-button-container-shape: 999px;
-  white-space: nowrap;
-}
-
 .audio-controls .play-toggle {
   display: inline-grid;
   width: 48px;
   min-width: 48px;
   height: 48px;
-  padding: 0;
   place-items: center;
-  border-radius: 50%;
   font-size: 1.05rem;
   line-height: 1;
 }
@@ -344,7 +345,8 @@ audio {
   border: 2px solid var(--mat-sys-primary);
   border-radius: 50%;
   background: var(--mat-sys-surface-container-lowest);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--mat-sys-shadow) 25%, transparent);
+	box-shadow: 0 1px 3px
+		color-mix(in srgb, var(--mat-sys-shadow) 25%, transparent);
 }
 
 .scrubber input::-moz-range-track {
@@ -364,7 +366,8 @@ audio {
   border: 2px solid var(--mat-sys-primary);
   border-radius: 50%;
   background: var(--mat-sys-surface-container-lowest);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--mat-sys-shadow) 25%, transparent);
+	box-shadow: 0 1px 3px
+		color-mix(in srgb, var(--mat-sys-shadow) 25%, transparent);
 }
 
 .collapsed-progress {
@@ -376,7 +379,11 @@ audio {
   height: 6px;
   overflow: hidden;
   border-radius: 0;
-  background: color-mix(in srgb, var(--mat-sys-outline-variant) 72%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mat-sys-outline-variant) 72%,
+		transparent
+	);
   opacity: 0;
   pointer-events: none;
   transform: translateX(-50%);
@@ -442,9 +449,8 @@ audio {
     gap: 7px;
   }
 
-  .audio-controls button:not(.play-toggle) {
+	.audio-controls voco-secondary-button {
     min-width: 0;
-    padding-inline: 8px;
     font-size: 0.76rem;
   }
 
@@ -491,7 +497,6 @@ audio {
     grid-template-columns: 64px 104px 64px;
     gap: var(--vocora-space-6);
   }
-
 }
 
 @media (max-height: 720px) {
@@ -511,7 +516,6 @@ audio {
   .immersive-transport {
     grid-template-columns: 56px 84px 56px;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {

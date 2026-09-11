@@ -6,14 +6,14 @@ import {
 	Output,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../voco-button';
 import { ShortcutClickDirective } from '../../shortcut-click.directive';
 import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 
 @Component({
 	selector: 'app-slide-audio-control',
 	standalone: true,
-	imports: [MatButtonModule, ShortcutClickDirective],
+	imports: [VocoButtonComponent, ShortcutClickDirective],
 	template: `
 		<div
 			class="slide-audio-control"
@@ -28,40 +28,36 @@ import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 			></audio>
 			@if (speedControls) {
 				<div class="slide-audio-control__speed-actions">
-					<button
-						mat-flat-button
+					<voco-audio-button
 						appShortcutClick="Alt+R"
-						class="vocora-audio-action vocora-audio-action--large"
 						type="button"
 						[disabled]="!canReplay()"
-						[attr.aria-label]="playLabel"
+						[ariaLabel]="playLabel"
 						data-testid="slide-audio-play-normal"
 						(click)="play(audio)"
+						audioSize="large"
 					>
 						<img src="/assets/icons/normal-speed.svg" alt="" aria-hidden="true" />
-					</button>
-					<button
-						mat-flat-button
-						class="vocora-audio-action"
+					</voco-audio-button>
+					<voco-audio-button
 						type="button"
 						[disabled]="!canReplay()"
-						[attr.aria-label]="slowPlayLabel"
+						[ariaLabel]="slowPlayLabel"
 						data-testid="slide-audio-play-slow"
 						(click)="play(audio, 0.85)"
 					>
 						<img src="/assets/icons/slow-speed.svg" alt="" aria-hidden="true" />
-					</button>
+					</voco-audio-button>
 				</div>
 			} @else {
-				<button
-					mat-stroked-button
+				<voco-secondary-button
 					type="button"
 					[disabled]="!canReplay()"
-					[attr.aria-label]="playLabel"
+					[ariaLabel]="playLabel"
 					(click)="play(audio)"
 				>
 					{{ buttonLabel }}
-				</button>
+				</voco-secondary-button>
 			}
 			@if (maxReplays) {
 				<span aria-live="polite"

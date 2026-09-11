@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective } from '../../../../voco-button';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -59,7 +59,7 @@ function errorMessage(error: unknown): string {
 @Component({
 	selector: 'app-selection-slide',
 	standalone: true,
-	imports: [MatButtonModule],
+	imports: [VocoButtonInteractionDirective],
 	templateUrl: './selection-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

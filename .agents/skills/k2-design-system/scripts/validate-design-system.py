@@ -91,7 +91,14 @@ CANONICAL_SEMANTIC_ROLES = {
     },
 }
 
-BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
+BUTTON_SELECTORS = (
+    "voco-primary-button",
+    "voco-secondary-button",
+    "voco-success-button",
+    "voco-warning-button",
+    "voco-error-button",
+    "voco-navigation-button",
+)
 THEME_GROUPS = ("surface", "text", "border", "semantic", "state", "action", "focus")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 def skill_root() -> Path:
@@ -319,10 +326,11 @@ def validate_button_contract(root: Path, errors: list[str]) -> None:
         return
 
     text = path.read_text(encoding="utf-8")
-    for intent in BUTTON_INTENTS:
-        css_class = f"vocora-button--{intent}"
-        if css_class not in text:
-            errors.append(f"DESIGN.md is missing button class: {css_class}")
+    for selector in BUTTON_SELECTORS:
+        if selector not in text:
+            errors.append(f"DESIGN.md is missing button selector: {selector}")
+    if "Angular Material is the private" not in text:
+        errors.append("DESIGN.md must make Angular Material a private button implementation detail")
     if "native `disabled` attribute" not in text:
         errors.append("DESIGN.md must require the native disabled attribute")
 

@@ -2,13 +2,13 @@ import { listeningDifficultyLabel, listeningLevelLabel } from '../../domain/list
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import { ListeningPracticeApiService } from '../../core/listening-practice/listening-practice-api.service';
 import { ListeningLessonSummary } from '../../domain/listening-practice/listening-practice';
 
 @Component({
   selector: 'app-bbc-lessons-page',
-  imports: [DatePipe, RouterLink, MatButtonModule],
+  imports: [DatePipe, RouterLink, VocoButtonComponent],
   templateUrl: 'bbc-lessons-page.component.html',
   styleUrl: 'bbc-lessons-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

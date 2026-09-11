@@ -37,7 +37,7 @@ assert.deepEqual(
 	'Word Bank must expose only the Word and Box columns.',
 );
 assert.match(wordsTemplate, /\[routerLink\]="\['\/words', word\.id\]"/u, 'Word labels must link to their detail page.');
-assert.match(wordsTemplate, />\s*\{\{ activatingId\(\) === word\.id \? 'Adding…' : 'Add to Leitner' \}\}\s*<\/button>/u, 'Unintroduced words must expose the Add to Leitner action.');
+assert.match(wordsTemplate, />\s*\{\{ activatingId\(\) === word\.id \? 'Adding…' : 'Add to Leitner' \}\}\s*<\/voco-secondary-button>/u, 'Unintroduced words must expose the Add to Leitner action.');
 assert.doesNotMatch(wordsTemplate, />Previous<|>Next</u, 'Word Bank paging controls must stay removed.');
 assert.match(words, /IntersectionObserver/u, 'Word Bank must lazy-load additional table rows.');
 assert.match(tableStyles, /\.mat-mdc-header-cell[\s\S]*font-size:\s*12px;[\s\S]*font-weight:\s*600/u, 'Headers should remain compact rather than visually heavy.');

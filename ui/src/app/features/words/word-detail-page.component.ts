@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LibraryApiService } from '../../core/library/library-api.service';
@@ -17,7 +17,7 @@ type WordSource = VocabularySourceInfo['collections'][number];
 
 @Component({
   selector: 'app-word-detail-page',
-  imports: [RouterLink, MatButtonModule],
+  imports: [RouterLink, VocoButtonComponent],
   templateUrl: './word-detail-page.component.html',
   styleUrl: './word-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,7 +7,7 @@ import {
 	signal,
 	untracked,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../../../voco-button';
 import {
 	SpeechService,
 	type SpeechPlaybackObserver,
@@ -72,7 +72,7 @@ function practiceController(environment: unknown): PronunciationPracticeControll
 @Component({
 	selector: 'app-pronunciation-slide',
 	standalone: true,
-	imports: [MatButtonModule, ShortcutClickDirective, SlideStimulusComponent],
+	imports: [VocoButtonComponent, ShortcutClickDirective, SlideStimulusComponent],
 	templateUrl: './pronunciation-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

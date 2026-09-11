@@ -6,8 +6,10 @@
     </div>
     <div class="header-actions">
       <input #fileInput hidden type="file" accept=".md,.txt,text/plain,text/markdown" (change)="importFile($event)">
-      <button mat-stroked-button (click)="fileInput.click()">Import MD / TXT</button>
-      <button mat-flat-button (click)="editWord()">Add word</button>
+      <voco-secondary-button (click)="fileInput.click()"
+				>Import MD / TXT</voco-secondary-button>
+      <voco-primary-button (click)="editWord()"
+				>Add word</voco-primary-button>
     </div>
   </header>
 
@@ -54,15 +56,14 @@
           } @else if (word.box > 0) {
             <span class="box-status-chip" data-status="leitner">Box {{ word.box }}</span>
           } @else {
-            <button
-              mat-stroked-button
-              type="button"
-              class="add-to-leitner"
-              [disabled]="activatingId() !== ''"
-              (click)="activate(word)"
-            >
+            <voco-secondary-button
+							type="button"
+							class="add-to-leitner"
+							[disabled]="activatingId() !== ''"
+							(click)="activate(word)"
+						>
               {{ activatingId() === word.id ? 'Adding…' : 'Add to Leitner' }}
-            </button>
+            </voco-secondary-button>
           }
         </td>
       </ng-container>

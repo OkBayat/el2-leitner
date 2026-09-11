@@ -3,7 +3,8 @@
 } @else if (error()) {
 	<main class="practice-state practice-state--error">
 		<p role="alert">{{ error() }}</p>
-		<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="load()">Try again</button>
+		<voco-secondary-button type="button" (click)="load()"
+			>Try again</voco-secondary-button>
 	</main>
 } @else {
 	<app-slides-sequence-exercise (outcome)="onOutcome($event)" />

@@ -16,7 +16,7 @@
 			@if (data.speech; as speechPlayback) {
 				@if (speechPlayback.replay) {
 					<button
-						mat-stroked-button
+						vocoButtonInteraction
 						type="button"
 						class="speech-replay"
 						[attr.aria-label]="
@@ -39,7 +39,7 @@
 					let index = $index
 				) {
 					<button
-						mat-stroked-button
+						vocoButtonInteraction
 						type="button"
 						class="choice-option"
 						[attr.data-state]="optionState(option.id)"

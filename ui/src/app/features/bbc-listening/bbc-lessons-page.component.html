@@ -19,7 +19,8 @@
   } @else if (error()) {
     <section class="status error" role="alert">
       <p>{{ error() }}</p>
-      <button mat-stroked-button type="button" (click)="load()">Try again</button>
+      <voco-secondary-button type="button" (click)="load()"
+				>Try again</voco-secondary-button>
     </section>
   } @else if (lessons().length === 0) {
     <p class="status">No BBC listening lessons are available yet.</p>
@@ -67,36 +68,48 @@
 
             <div class="lesson-secondary-actions">
               @if (lesson.vocabularyCollectionId) {
-                <a mat-stroked-button [routerLink]="[lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
+                <voco-secondary-link
+									[routerLink]="[lesson.slug, 'vocabulary']"
+									data-testid="episode-vocabulary-link"
+									>Episode vocabulary</voco-secondary-link>
               }
-              <a
-                mat-button
-                class="episode-link"
-                [href]="lesson.sourceUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Open BBC episode</a>
+              <voco-secondary-link
+								class="episode-link"
+								[href]="lesson.sourceUrl"
+								target="_blank"
+								rel="noopener noreferrer"
+								>Open BBC episode</voco-secondary-link>
             </div>
           </div>
 
           <div class="lesson-tests">
             <div class="test-picker" aria-label="Choose a test">
               @for (test of lesson.tests; track test.id) {
-                <a
-                  mat-stroked-button
-                  class="test-button"
-                  [class.completed]="test.completed"
-                  [routerLink]="[lesson.slug, 'tests', test.id, 'practice']"
-                  [attr.aria-label]="test.title + ' — ' + difficultyLabel(test.difficulty) + ' — ' + (test.completed ? 'Completed' : 'Start')"
-                  [attr.data-testid]="'start-bbc-' + test.id"
-                >
+                <voco-secondary-link
+									class="test-button"
+									[class.completed]="test.completed"
+									[routerLink]="[
+										lesson.slug,
+										'tests',
+										test.id,
+										'practice',
+									]"
+									[ariaLabel]="
+										test.title +
+										' — ' +
+										difficultyLabel(test.difficulty) +
+										' — ' +
+										(test.completed ? 'Completed' : 'Start')
+									"
+									[attr.data-testid]="'start-bbc-' + test.id"
+								>
                   <span class="test-button-content">
                     <span class="difficulty-badge" [attr.data-difficulty]="test.difficulty || 'medium'">{{ difficultyLabel(test.difficulty) }}</span>
                     <span class="test-status">
                       {{ test.completed ? '✓ Completed' : 'Start' }}
                     </span>
                   </span>
-                </a>
+                </voco-secondary-link>
               }
             </div>
           </div>

@@ -125,7 +125,7 @@ p {
   justify-self: start;
 }
 
-.welcome-controls > button {
+.welcome-controls > voco-primary-button {
   justify-self: end;
   min-width: 96px;
   min-height: var(--vocora-touch-target-min);
@@ -141,13 +141,8 @@ p {
 .step-button {
   width: var(--vocora-touch-target-min);
   height: var(--vocora-touch-target-min);
-  padding: 0;
   display: grid;
   place-items: center;
-  border: 0;
-  border-radius: var(--vocora-radius-pill);
-  background: transparent;
-  cursor: pointer;
 }
 
 .step-dot {
@@ -161,13 +156,8 @@ p {
 }
 
 .step-button:hover .step-dot,
-.step-button:focus-visible .step-dot {
+.step-button:focus-within .step-dot {
   background: var(--vocora-action-primary-hover);
-}
-
-.step-button:focus-visible {
-  outline: 3px solid var(--vocora-focus-ring);
-  outline-offset: -4px;
 }
 
 .step-button.active .step-dot {
@@ -234,8 +224,8 @@ p {
 
   .welcome-controls {
     grid-template-areas:
-      'steps steps'
-      'back next';
+			"steps steps"
+			"back next";
     grid-template-columns: 1fr 1fr;
   }
 
@@ -247,7 +237,7 @@ p {
     grid-area: steps;
   }
 
-  .welcome-controls > button {
+	.welcome-controls > voco-primary-button {
     grid-area: next;
   }
 

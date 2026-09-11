@@ -85,33 +85,31 @@ legacy UI, apply the bounded touch-to-refactor rule from the design reference.
 11. Run the skill validator, its Node focused tests, and the frontend
     design-system architecture check when UI source is affected.
 
-## Angular Material button rule
+## voco Button API rule
 
-Use Angular Material as the interaction primitive.
+Application code uses the shared `voco` Button API, never Angular Material
+button directives or legacy button classes directly:
 
-For a shared CTA, apply `vocora-button` and exactly one of:
+- `voco-primary-button` for the main action;
+- `voco-secondary-button` for a lower-emphasis alternative;
+- `voco-success-button`, `voco-warning-button`, and `voco-error-button` for
+  outcome-specific actions;
+- `voco-navigation-button` for button-driven route or flow navigation;
+- the corresponding `voco-*-link` component when native anchor behavior is
+  required;
+- `voco-icon-button` and `voco-audio-button` for icon-only and audio controls.
 
-- `vocora-button--primary`;
-- `vocora-button--success`;
-- `vocora-button--error`;
-- `vocora-button--warning`;
-- `vocora-button--secondary`.
+Angular Material is the private interaction foundation inside
+`ui/src/app/shared/voco-button/**`. Use the native `disabled` attribute for
+every disabled button state. Selection controls remain native buttons and add
+`vocoButtonInteraction` only when they need the shared Material interaction
+layer without CTA semantics.
 
-Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
-secondary intent. Use the native `disabled` attribute for every disabled
-state. Filled intents have no border. Secondary buttons retain their 2px
-`#E5E5E5` border in both enabled and disabled states. Disabled buttons have no
-lower edge. Light filled-disabled buttons use `#D9D9D9` with `#777777` labels;
-disabled secondary labels use `#D9D9D9`. Secondary labels use Charcoal
-(`#4B4B4B`) in both themes; the dark theme keeps the secondary button's Paper
-White surface for accessible contrast.
-
-Do not apply CTA color classes to answer-option tiles or other content-sized
-selection controls. Their colors remain selection-owned, while the global
-Material button geometry keeps their height content-driven.
-
-Do not create a feature-local Material override. Extend the central design
-tokens, central Material adapter, and this reference together.
+Do not create feature-local Material overrides. Extend the shared component,
+central design tokens, and this reference together. The architecture check
+must reject direct Material Button imports/directives and the removed
+`vocora-button` or `vocora-action-button` classes outside the shared
+implementation.
 
 ## Typography rule
 

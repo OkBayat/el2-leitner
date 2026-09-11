@@ -5,13 +5,17 @@
 		</div>
 	} @else if (empty() && !session.completed()) {
 		<div class="review-center">
-			<button class="review-close" mat-icon-button type="button" aria-label="Back to dashboard"
-				(click)="router.navigateByUrl('/dashboard')">
+			<voco-icon-button
+				class="review-close"
+				type="button"
+				aria-label="Back to dashboard"
+				(click)="router.navigateByUrl('/dashboard')"
+			>
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 						stroke-linecap="round"/>
 				</svg>
-			</button>
+			</voco-icon-button>
 			<mat-card class="setup" appearance="outlined">
 				<mat-card-header>
 					<mat-card-title>No sentence cards are ready</mat-card-title>
@@ -20,7 +24,10 @@
 					<p>Add words to House 1 first. Sentence practice counts toward today's practice totals without changing daily-review scheduling.</p>
 				</mat-card-content>
 				<mat-card-actions>
-					<button mat-flat-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+					<voco-navigation-button
+						type="button"
+						(click)="router.navigateByUrl('/dashboard')"
+						>Back home</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>
 		</div>
@@ -29,12 +36,17 @@
 	@if (session.active() && session.currentPrompt(); as prompt) {
 		<div class="review-session" data-testid="sentence-practice-session">
 			<div class="session-bar">
-				<button class="session-close" mat-icon-button type="button" aria-label="Exit sentence practice" (click)="exit()">
+				<voco-icon-button
+					class="session-close"
+					type="button"
+					aria-label="Exit sentence practice"
+					(click)="exit()"
+				>
 					<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 						<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 							stroke-linecap="round"/>
 					</svg>
-				</button>
+				</voco-icon-button>
 				<div class="session-progress">
 					<span class="visually-hidden">Sentence practice progress: {{ session.progress() }}%</span>
 					<mat-progress-bar mode="determinate" [value]="session.progress()"/>
@@ -55,10 +67,17 @@
 					</div>
 
 					<div class="listen">
-						<button mat-fab extended class="play-pronunciation" type="button" (click)="session.pronounce()">
+						<voco-audio-button
+							class="play-pronunciation"
+							type="button"
+							(click)="session.pronounce()"
+						>
 							▶ Play pronunciation
-						</button>
-						<button mat-button type="button" (click)="session.pronounce('slow')">Slower</button>
+						</voco-audio-button>
+						<voco-secondary-button
+							type="button"
+							(click)="session.pronounce('slow')"
+							>Slower</voco-secondary-button>
 					</div>
 
 					<form class="sentence-answer-form" (submit)="$event.preventDefault(); session.feedback() ? next() : submit()">
@@ -112,14 +131,17 @@
 							<p class="sentence-instruction">Type the missing word, then press Enter.</p>
 						}
 
-						<button
+						<voco-primary-button
 							class="review-action-primary"
-							mat-flat-button
 							type="button"
-							[disabled]="saving() || (!session.feedback() && !answer.value.trim())"
-							(click)="handlePrimary()">
+							[disabled]="
+								saving() ||
+								(!session.feedback() && !answer.value.trim())
+							"
+							(click)="handlePrimary()"
+						>
 							{{ state.label }}
-						</button>
+						</voco-primary-button>
 					</div>
 				</footer>
 			}
@@ -139,8 +161,12 @@
 					<p class="practice-note">Practice totals were counted for today; no Leitner house or daily-review due date was changed.</p>
 				</mat-card-content>
 				<mat-card-actions>
-					<button mat-flat-button type="button" (click)="restart()">Practice again</button>
-					<button mat-stroked-button type="button" (click)="router.navigateByUrl('/dashboard')">Back home</button>
+					<voco-primary-button type="button" (click)="restart()"
+						>Practice again</voco-primary-button>
+					<voco-navigation-button
+						type="button"
+						(click)="router.navigateByUrl('/dashboard')"
+						>Back home</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>
 		</div>

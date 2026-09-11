@@ -12,7 +12,7 @@ import {
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDialog} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -80,7 +80,7 @@ function continueFooter(
 
 @Component({
 	selector: 'app-review-page',
-	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
+	imports: [ReactiveFormsModule, VocoButtonComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
 	templateUrl: 'review-page.component.html',
 	styleUrls: ['review-page.component.scss', 'review-answer-feedback.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

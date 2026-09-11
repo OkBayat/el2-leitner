@@ -6,7 +6,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../voco-button';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type { DialogueStimulusTurn } from './slide-library.models';
@@ -14,17 +14,16 @@ import type { DialogueStimulusTurn } from './slide-library.models';
 @Component({
 	selector: 'app-slide-dialogue-control',
 	standalone: true,
-	imports: [MatButtonModule],
+	imports: [VocoButtonComponent],
 	template: `
 		<div class="slide-dialogue-control">
-			<button
-				mat-stroked-button
+			<voco-secondary-button
 				type="button"
 				[disabled]="playing() || !canReplay()"
 				(click)="play()"
 			>
 				{{ playing() ? 'Playing dialogue' : 'Play dialogue' }}
-			</button>
+			</voco-secondary-button>
 			@if (currentSpeaker()) {
 				<span aria-live="polite"
 					>Now speaking: {{ currentSpeaker() }}</span

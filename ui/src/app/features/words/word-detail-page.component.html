@@ -1,5 +1,6 @@
 <section class="word-detail" data-testid="word-detail-page">
-  <a mat-button routerLink="/words" class="back-action">← Back to Word Bank</a>
+  <voco-navigation-link routerLink="/words" class="back-action"
+		>← Back to Word Bank</voco-navigation-link>
 
   @if (word(); as current) {
     <header>
@@ -10,7 +11,8 @@
           <p class="accepted-forms">Accepted forms: {{ current.accepted.join(' / ') }}</p>
         }
       </div>
-      <button mat-stroked-button type="button" (click)="playWord(current)">Play pronunciation</button>
+      <voco-secondary-button type="button" (click)="playWord(current)"
+				>Play pronunciation</voco-secondary-button>
     </header>
 
     <section class="stats" aria-label="Practice statistics">
@@ -42,8 +44,17 @@
           <a [routerLink]="['/library', source.id]">{{ source.title }}</a>
           @if (canManage()) {
             <div class="management-actions">
-              <button mat-button type="button" [disabled]="busy()" (click)="editSource(source)">Edit</button>
-              <button mat-button type="button" class="text-danger" [disabled]="busy()" (click)="deleteSource(source)">Delete</button>
+              <voco-secondary-button
+								type="button"
+								[disabled]="busy()"
+								(click)="editSource(source)"
+								>Edit</voco-secondary-button>
+              <voco-error-button
+								type="button"
+								class="text-danger"
+								[disabled]="busy()"
+								(click)="deleteSource(source)"
+								>Delete</voco-error-button>
             </div>
           }
         </div>
@@ -58,9 +69,14 @@
           <h2>My Word Bank</h2>
           <p>You can remove this word because it has not entered Leitner yet.</p>
         </div>
-        <button mat-stroked-button type="button" class="text-danger" [disabled]="busy()" (click)="removeFromWordBank()">
+        <voco-error-button
+					type="button"
+					class="text-danger"
+					[disabled]="busy()"
+					(click)="removeFromWordBank()"
+				>
           Remove from my Word Bank
-        </button>
+        </voco-error-button>
       </section>
     }
   }

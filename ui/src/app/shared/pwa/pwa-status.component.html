@@ -13,7 +13,11 @@
 				<small id="required-update-description">This version is no longer compatible with Vocora. Update from your app store to continue.</small>
 			</div>
 			<div class="status-actions">
-				<button #requiredUpdateAction mat-flat-button class="vocora-button vocora-button--primary" type="button" (click)="appUpdates.openStore()">Open Store</button>
+				<voco-primary-button
+					#requiredUpdateAction
+					type="button"
+					(click)="appUpdates.openStore()"
+					>Open Store</voco-primary-button>
 			</div>
 		</section>
 	</div>
@@ -38,10 +42,17 @@
 				<small>Reload once to switch to the updated app files.</small>
 			</div>
 			<div class="status-actions">
-				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="updates.dismissUpdate()">Later</button>
-				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="updates.activating()" (click)="updates.reloadForUpdate()">
+				<voco-secondary-button
+					type="button"
+					(click)="updates.dismissUpdate()"
+					>Later</voco-secondary-button>
+				<voco-primary-button
+					type="button"
+					[disabled]="updates.activating()"
+					(click)="updates.reloadForUpdate()"
+				>
 					{{ updates.activating() ? 'Updating…' : 'Reload' }}
-				</button>
+				</voco-primary-button>
 			</div>
 		</div>
 	}
@@ -67,11 +78,16 @@
 				}
 			</div>
 			<div class="status-actions">
-				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="dismissInstall()">Later</button>
+				<voco-secondary-button type="button" (click)="dismissInstall()"
+					>Later</voco-secondary-button>
 				@if (install.mode() === 'prompt') {
-					<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="installing()" (click)="requestInstall()">
+					<voco-primary-button
+						type="button"
+						[disabled]="installing()"
+						(click)="requestInstall()"
+					>
 						{{ installing() ? 'Opening…' : 'Install' }}
-					</button>
+					</voco-primary-button>
 				}
 			</div>
 		</div>
@@ -84,7 +100,8 @@
 				<strong>App support needs attention</strong>
 				<small>{{ updates.errorMessage() }}</small>
 			</div>
-			<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="updates.clearError()">Dismiss</button>
+			<voco-secondary-button type="button" (click)="updates.clearError()"
+				>Dismiss</voco-secondary-button>
 		</div>
 	}
 
@@ -96,10 +113,17 @@
 				<small>Your current session is safe. Restart now or apply it after you leave the app.</small>
 			</div>
 			<div class="status-actions">
-				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.postponeLiveUpdate()">Later</button>
-				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" [disabled]="appUpdates.activating()" (click)="appUpdates.restartForLiveUpdate()">
+				<voco-secondary-button
+					type="button"
+					(click)="appUpdates.postponeLiveUpdate()"
+					>Later</voco-secondary-button>
+				<voco-primary-button
+					type="button"
+					[disabled]="appUpdates.activating()"
+					(click)="appUpdates.restartForLiveUpdate()"
+				>
 					{{ appUpdates.activating() ? 'Updating…' : 'Restart & Update' }}
-				</button>
+				</voco-primary-button>
 			</div>
 		</div>
 	}
@@ -112,8 +136,14 @@
 				<small>This update contains native app changes and is installed from your app store.</small>
 			</div>
 			<div class="status-actions">
-				<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.dismissOptionalBinaryUpdate()">Later</button>
-				<button mat-flat-button class="vocora-button vocora-button--primary" type="button" (click)="appUpdates.openStore()">Open Store</button>
+				<voco-secondary-button
+					type="button"
+					(click)="appUpdates.dismissOptionalBinaryUpdate()"
+					>Later</voco-secondary-button>
+				<voco-primary-button
+					type="button"
+					(click)="appUpdates.openStore()"
+					>Open Store</voco-primary-button>
 			</div>
 		</div>
 	}
@@ -125,7 +155,10 @@
 				<strong>Update check needs attention</strong>
 				<small>{{ appUpdates.errorMessage() }}</small>
 			</div>
-			<button mat-stroked-button class="vocora-button vocora-button--secondary" type="button" (click)="appUpdates.clearError()">Dismiss</button>
+			<voco-secondary-button
+				type="button"
+				(click)="appUpdates.clearError()"
+				>Dismiss</voco-secondary-button>
 		</div>
 	}
 </section>

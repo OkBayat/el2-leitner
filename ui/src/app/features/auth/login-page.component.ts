@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +11,7 @@ import { ApiError } from '../../core/http/api-client.service';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule],
+  imports: [ReactiveFormsModule, RouterLink, VocoButtonComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule],
   template: `
     <main class="auth-page">
       <mat-card class="auth-card" appearance="outlined">
@@ -25,10 +25,14 @@ import { ApiError } from '../../core/http/api-client.service';
             <mat-form-field appearance="outline"><mat-label>Email</mat-label><input matInput type="email" formControlName="email" autocomplete="email"></mat-form-field>
             <mat-form-field appearance="outline"><mat-label>Password</mat-label><input matInput type="password" formControlName="password" autocomplete="current-password"></mat-form-field>
             @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
-            <button mat-flat-button type="submit" [disabled]="loading()">@if(loading()){<mat-spinner diameter="20"/>} @else { Sign in to Vocora }</button>
+            <voco-primary-button
+							type="submit"
+							[disabled]="loading()"
+						>@if(loading()){<mat-spinner diameter="20"/>} @else { Sign in to Vocora }</voco-primary-button>
           </form>
         </mat-card-content>
-        <mat-card-actions>Don't have an account yet? <a mat-button routerLink="/register">Create one</a></mat-card-actions>
+        <mat-card-actions>Don't have an account yet? <voco-secondary-link routerLink="/register"
+						>Create one</voco-secondary-link></mat-card-actions>
       </mat-card>
       <section class="auth-visual"><p>Smart, consistent practice</p><h1>A few words every day, one step closer to IELTS</h1><span>Your progress, mistakes, and review plan stay saved to your account.</span></section>
     </main>

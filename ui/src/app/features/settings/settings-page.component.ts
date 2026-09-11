@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +21,7 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
   selector: 'app-settings-page',
   imports: [
     ReactiveFormsModule,
-    MatButtonModule,
+    VocoButtonComponent,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -71,7 +71,10 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
             </form>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-flat-button (click)="save()" [disabled]="form.invalid">Save settings</button>
+            <voco-primary-button
+							(click)="save()"
+							[disabled]="form.invalid"
+							>Save settings</voco-primary-button>
           </mat-card-actions>
         </mat-card>
 
@@ -83,9 +86,12 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
             <p>All words, practice history, and reports are saved to your account.</p>
             <input #backupInput hidden type="file" accept=".json,application/json" (change)="restore($event)">
             <div class="actions">
-              <button mat-stroked-button (click)="exportBackup()">Download full backup</button>
-              <button mat-stroked-button (click)="backupInput.click()">Restore backup</button>
-              <button mat-flat-button class="danger" (click)="reset()">Delete all progress</button>
+              <voco-secondary-button (click)="exportBackup()"
+								>Download full backup</voco-secondary-button>
+              <voco-secondary-button (click)="backupInput.click()"
+								>Restore backup</voco-secondary-button>
+              <voco-error-button (click)="reset()"
+								>Delete all progress</voco-error-button>
             </div>
           </mat-card-content>
         </mat-card>
@@ -105,7 +111,7 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
     </section>
   `,
   styles: [`
-    :host{display:block}.page{display:grid;gap:18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid>mat-card{padding:18px}.form{display:grid}.form>label{display:grid;gap:8px;margin-bottom:16px}.actions{display:flex;flex-wrap:wrap;gap:8px}.danger{background:var(--mat-sys-error)!important;color:var(--mat-sys-on-error)!important}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+    :host{display:block}.page{display:grid;gap:18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid>mat-card{padding:18px}.form{display:grid}.form>label{display:grid;gap:8px;margin-bottom:16px}.actions{display:flex;flex-wrap:wrap;gap:8px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

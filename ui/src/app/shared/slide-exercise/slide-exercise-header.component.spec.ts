@@ -15,7 +15,7 @@ describe('SlideExerciseHeaderComponent', () => {
     const progress = element.querySelector('.slide-exercise-header__progress');
     const copy = element.querySelector('.slide-exercise-header__copy');
 
-    expect(close?.classList.contains('mat-mdc-icon-button')).toBe(true);
+    expect(close?.querySelector('.mat-mdc-icon-button')).not.toBeNull();
     expect(progress?.parentElement).toBe(header);
     expect(copy?.parentElement).toBe(header);
     expect(copy?.previousElementSibling).toBe(progress);

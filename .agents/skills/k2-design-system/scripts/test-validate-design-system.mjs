@@ -187,4 +187,23 @@ withFixture(
     ),
 );
 
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replaceAll("voco-navigation-button", "removed-navigation-button"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md is missing button selector: voco-navigation-button/u,
+    );
+  },
+);
+
 console.log("K2 design-system validator tests passed.");

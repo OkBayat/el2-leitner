@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LeitnerDictationSlideBuilderService } from '../../application/review/leitner-dictation-slide-builder.service';
 import { LeitnerSlideSessionService } from '../../application/review/leitner-slide-session.service';
@@ -51,7 +51,7 @@ function wordIds(slides: readonly SlideExerciseSlide[], expectedCount: number): 
 @Component({
 	selector: 'app-leitner-slide-practice-page',
 	standalone: true,
-	imports: [MatButtonModule, SlidesSequenceExerciseComponent],
+	imports: [VocoButtonComponent, SlidesSequenceExerciseComponent],
 	templateUrl: './leitner-slide-practice-page.component.html',
 	styleUrl: './leitner-slide-practice-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

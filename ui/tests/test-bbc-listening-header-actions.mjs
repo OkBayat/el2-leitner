@@ -19,8 +19,8 @@ assert.match(
 );
 assert.match(
   actions,
-  /<a\s+mat-button[\s\S]*?data-testid="open-bbc-episode"[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
-  'The BBC source must be a text button inside the listening header action row.',
+  /<voco-secondary-link[\s\S]*?data-testid="open-bbc-episode"[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
+  'The BBC source must use the shared secondary link inside the listening header action row.',
 );
 assert.match(actions, /target="_blank"/u, 'The BBC source must open in a new tab.');
 assert.match(actions, /rel="noopener noreferrer"/u, 'The BBC source must keep safe external-link attributes.');
@@ -31,6 +31,6 @@ assert.match(
 );
 assert.doesNotMatch(
   template,
-  /mat-flat-button[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
-  'The BBC source must not return as the separate filled header CTA.',
+  /<voco-primary-link[\s\S]*?\[href\]="lesson\.sourceUrl"/u,
+  'The BBC source must not return as the separate primary header CTA.',
 );

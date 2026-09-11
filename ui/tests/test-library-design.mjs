@@ -32,7 +32,7 @@ assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must retain the d
 
 assert.match(pageStyles, /grid-template-columns:\s*minmax\(0, 1fr\)/u, 'Library must begin with a one-column mobile layout.');
 assert.match(pageStyles, /min-height:\s*56px/u, 'Library items must have large touch targets.');
-assert.match(pageHtml, /mat-stroked-button/u, 'Library items must use the standard outlined Material button variant.');
+assert.match(pageHtml, /vocoButtonInteraction/u, 'Library items must use the shared voco interaction primitive.');
 assert.match(pageHtml, /w-100 d-flex justify-content-start align-items-center text-start text-truncate/u, 'Library item layout must use Bootstrap utilities.');
 assert.doesNotMatch(pageStyles, /\.library-item:hover|\.library-item:focus-visible/u, 'Feature styles must not reskin Material hover or focus states.');
 assert.match(pageStyles, /@media \(min-width:\s*720px\)/u, 'Library layout must be mobile-first.');
@@ -46,7 +46,7 @@ assert.match(detailPage, /'Start Course'/u, 'Course details must expose the expl
 assert.match(detailPage, /'Add to Leitner Only'/u, 'Details must expose the explicit Leitner-only copy.');
 assert.match(detailPage, /This will not start the course or add it to your learning path\./u, 'Course actions must explain independent Leitner behavior.');
 for (const action of ['Edit collection', 'Import file', 'Add word']) {
-  assert.ok(detailPage.includes(`>${action}</button>`), `Details must preserve the ${action} action.`);
+  assert.ok(detailPage.includes(`>${action}</voco-secondary-button>`), `Details must preserve the ${action} action.`);
 }
 assert.match(detailPage, /LibraryEntryDialogComponent/u, 'Details must preserve add/edit-word dialogs.');
 assert.match(detailPage, /api\.updateEntry/u, 'Details must preserve word editing.');

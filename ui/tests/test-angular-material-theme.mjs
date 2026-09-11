@@ -13,6 +13,14 @@ const components = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_angular-material-components.scss"),
 	"utf8",
 );
+const buttonStyles = fs.readFileSync(
+	path.join(uiRoot, "src", "app", "shared", "voco-button", "voco-button.component.scss"),
+	"utf8",
+);
+const buttonTemplate = fs.readFileSync(
+	path.join(uiRoot, "src", "app", "shared", "voco-button", "voco-button.component.html"),
+	"utf8",
+);
 const styles = fs.readFileSync(path.join(uiRoot, "src", "styles.scss"), "utf8");
 const designSystem = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_vocora-design-system.scss"),
@@ -305,39 +313,39 @@ assert.doesNotMatch(
 	/\.mat-mdc-icon-button\s*\{[\s\S]*?vertical-align:\s*middle;/u,
 	"Material component integration must not add unowned global icon-button geometry.",
 );
-assert.match(components, /\.mat-mdc-unelevated-button/u);
+assert.match(buttonTemplate, /mat-flat-button/u);
 assert.match(
-	components,
-	/--mat-button-filled-container-color:\s*var\(\s*--vocora-component-action-background,\s*var\(--vocora-action-primary\)\s*\);/u,
+	buttonStyles,
+	/--mat-button-filled-container-color:\s*var\(--voco-button-background\);/u,
 );
 assert.match(
-	components,
-	/--mat-button-filled-label-text-color:\s*var\(\s*--vocora-component-action-foreground,\s*var\(--vocora-action-primary-foreground\)\s*\);/u,
+	buttonStyles,
+	/--mat-button-filled-label-text-color:\s*var\(--voco-button-foreground\);/u,
 );
-assert.doesNotMatch(components, /--mdc-filled-button-/u);
+assert.doesNotMatch(buttonStyles, /--mdc-filled-button-/u);
 assert.match(
-	components,
-	/@media\s*\(hover:\s*hover\)[\s\S]*\.mat-mdc-unelevated-button\.vocora-action-button:not\(:disabled\):hover/u,
-	"Primary hover colors must only apply on devices that support hover.",
+	buttonStyles,
+	/\.voco-button:not\(:disabled\):active/u,
+	"The shared button must own its pressed interaction.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-icon-button\.vocora-secondary-icon-action\s*\{[^}]*display:\s*inline-grid;[^}]*place-items:\s*center;/u,
+	buttonStyles,
+	/\.voco-icon-button\s*\{[^}]*display:\s*inline-grid;[^}]*place-items:\s*center;/u,
 	"The shared secondary icon button must center its Material icon.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-icon-button\.vocora-secondary-icon-action\s*\{[^}]*--mat-icon-button-icon-color:\s*var\(\s*--vocora-action-secondary-foreground\s*\);/u,
+	buttonStyles,
+	/\.voco-icon-button--secondary\s*\{[^}]*--mat-icon-button-icon-color:\s*var\(--vocora-action-secondary-foreground\);/u,
 	"The shared secondary icon button must map its Material icon color to the Vocora secondary action token.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-icon-button\.vocora-plain-icon-action\b/u,
+	buttonStyles,
+	/\.voco-icon-button\s*\{/u,
 	"Plain Material icon actions must have one reusable central variant.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-icon-button\.vocora-primary-icon-action\b/u,
+	buttonStyles,
+	/\.voco-icon-button--primary\b/u,
 	"Filled primary Material icon actions must have one reusable central variant.",
 );
 assert.match(theme, /--mat-sys-error-container:\s*var\(--vocora-state-error-surface\);/u);
@@ -382,9 +390,9 @@ assert.match(designSystem, /--vocora-information-surface:\s*var\(--vocora-state-
 
 for (const intent of ["primary", "secondary", "success", "warning", "error"]) {
 	assert.match(
-		components,
-		new RegExp(`\\.vocora-button--${intent}\\b`),
-		`Material button intent '${intent}' must have a central modifier class.`,
+		buttonStyles,
+		new RegExp(`\\.voco-button--${intent}\\b`),
+		`voco button intent '${intent}' must have a shared modifier class.`,
 	);
 }
 
@@ -396,12 +404,12 @@ for (const [intent, token] of [
 	["error", "error"],
 ]) {
 	assert.match(
-		components,
+		buttonStyles,
 		new RegExp(
-			`\\.vocora-button--${intent}\\s*\\{[^}]*--vocora-component-action-background:\\s*var\\(--vocora-action-${token}\\);`,
+			`\\.voco-button--${intent}\\s*\\{[^}]*--voco-button-default-background:\\s*var\\(--vocora-action-${token}\\);`,
 			"u",
 		),
-		`Material button intent '${intent}' must map to its semantic background token.`,
+		`voco button intent '${intent}' must map to its semantic background token.`,
 	);
 }
 
@@ -427,38 +435,38 @@ assert.equal(
 );
 
 assert.match(
-	components,
-	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*44px;/u,
-	"All textual Material buttons must allow wrapped labels while preserving the minimum touch target.",
+	buttonStyles,
+	/\.voco-button,\s*\.voco-audio-button\s*\{[^}]*min-height:\s*44px;[^}]*height:\s*auto;/u,
+	"All textual voco buttons must allow wrapped labels while preserving the minimum touch target.",
 );
 assert.match(
-	components,
+	buttonStyles,
 	/border-radius:\s*var\(--vocora-radius-button\);/u,
-	"Material action buttons must use the shared 13px radius token.",
+	"voco action buttons must use the shared 13px radius token.",
 );
 assert.match(
-	components,
+	buttonStyles,
 	/box-shadow:\s*0 4px 0/u,
-	"Enabled Material buttons must use the canonical four-pixel lower edge.",
+	"Enabled voco buttons must use the canonical four-pixel lower edge.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-unelevated-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-raised-button\s*\{[^}]*border-width:\s*0;[\s\S]*?\.mat-mdc-outlined-button\s*\{[^}]*border-width:\s*2px;/u,
-	"Filled buttons must be borderless while outlined buttons keep the canonical two-pixel border.",
+	buttonStyles,
+	/\.voco-button--secondary\s*\{[^}]*--voco-button-default-border-width:\s*2px;/u,
+	"Secondary buttons must keep the canonical two-pixel border.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-button:not\(:disabled\):active,[\s\S]*?\.mat-tonal-button:disabled\s*\{[^}]*box-shadow:\s*none;[^}]*transform:\s*translateY\(4px\);/u,
-	"Pressed and disabled Material buttons must remove the lower edge within the preserved footprint.",
+	buttonStyles,
+	/\.voco-button:disabled,[\s\S]*?\.voco-audio-button:disabled\s*\{[^}]*box-shadow:\s*none;[^}]*transform:\s*translateY\(4px\);/u,
+	"Disabled voco buttons must remove the lower edge within the preserved footprint.",
 );
 assert.match(
-	components,
-	/\.mat-mdc-button,\s*\.mat-mdc-unelevated-button,\s*\.mat-mdc-raised-button,\s*\.mat-mdc-outlined-button,\s*\.mat-tonal-button\s*\{[^}]*transition:\s*none\s*!important;/u,
-	"Textual Material buttons must not animate any visual property.",
+	buttonStyles,
+	/transition:\s*none;/u,
+	"Textual voco buttons must not animate any visual property.",
 );
 assert.match(
-	components,
-	/\.vocora-button--secondary\s*\{[^}]*--vocora-component-action-border:\s*var\(--vocora-action-secondary-border\);/u,
+	buttonStyles,
+	/\.voco-button--secondary\s*\{[^}]*--voco-button-default-border:\s*var\(--vocora-action-secondary-border\);/u,
 	"Secondary buttons must use the canonical outlined treatment.",
 );
 assert.doesNotMatch(
@@ -477,8 +485,8 @@ assert.doesNotMatch(
 	"Bare disabled Material outlined buttons must retain their original Material colors.",
 );
 assert.match(
-	components,
-	/:disabled[^{]*\{[^}]*--mat-button-filled-disabled-container-color:/u,
+	buttonStyles,
+	/--mat-button-filled-disabled-container-color:\s*var\(--voco-button-disabled-background\);/u,
 	"Every button intent must inherit a deterministic disabled treatment.",
 );
 assert.match(

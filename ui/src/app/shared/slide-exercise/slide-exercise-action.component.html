@@ -1,13 +1,12 @@
-<button
-  mat-flat-button
-  class="vocora-action-button slide-exercise-action"
-  type="button"
-  [attr.data-state]="state()"
-  [attr.aria-label]="ariaLabel() || null"
-  [attr.aria-busy]="loading() ? 'true' : null"
-  [disabled]="state() === 'disabled'"
-  (click)="activate()"
+<voco-primary-button
+	class="slide-exercise-action"
+	type="button"
+	[attr.data-state]="state()"
+	[ariaLabel]="ariaLabel() || null"
+	[ariaBusy]="loading() ? 'true' : null"
+	[disabled]="state() === 'disabled'"
+	(click)="activate()"
 >
   @if (loading()) { <span class="slide-exercise-action__spinner" aria-hidden="true"></span> }
   <span class="slide-exercise-action__label"><ng-content></ng-content></span>
-</button>
+</voco-primary-button>

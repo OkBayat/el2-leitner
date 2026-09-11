@@ -3,7 +3,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoButtonComponent } from '../voco-button';
 import {PwaConnectivityService} from '../../core/pwa/pwa-connectivity.service';
 import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 import type {PwaInstallMode} from '../../core/pwa/pwa-platform';
@@ -44,7 +44,7 @@ export function shouldShowPwaInstallSuggestion(
 
 @Component({
 	selector: 'app-pwa-status',
-	imports: [MatButtonModule],
+	imports: [VocoButtonComponent],
 	templateUrl: 'pwa-status.component.html',
 	styleUrl: 'pwa-status.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

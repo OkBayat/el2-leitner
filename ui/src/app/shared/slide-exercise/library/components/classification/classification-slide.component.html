@@ -30,17 +30,22 @@
 								track item.id
 							) {
 								<button
-									mat-stroked-button
+									vocoButtonInteraction
 									type="button"
 									class="classification-item"
 									role="listitem"
 									cdkDrag
 									[cdkDragData]="item.id"
-									[cdkDragDisabled]="interactionState() !== 'idle'"
+									[cdkDragDisabled]="
+										interactionState() !== 'idle'
+									"
 									[attr.data-item-id]="item.id"
 									[attr.data-state]="itemState(item.id)"
 									[attr.aria-label]="
-										classificationItemAriaLabel(item.id, item.label)
+										classificationItemAriaLabel(
+											item.id,
+											item.label
+										)
 									"
 									[disabled]="interactionState() !== 'idle'"
 								>
@@ -66,7 +71,7 @@
 			>
 				@for (item of unassignedItems(); track item.id) {
 					<button
-						mat-stroked-button
+						vocoButtonInteraction
 						type="button"
 						class="classification-item"
 						role="listitem"

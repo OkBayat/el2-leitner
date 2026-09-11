@@ -267,9 +267,9 @@ assert.equal(
 	'Unassigned and placed classification items must use the same visual control.',
 );
 assert.equal(
-	classificationTemplate.match(/<button\s+[\s\S]*?mat-stroked-button[\s\S]*?class="classification-item"/gu)?.length,
+	classificationTemplate.match(/<button\s+[\s\S]*?vocoButtonInteraction[\s\S]*?class="classification-item"/gu)?.length,
 	2,
-	'Classification items must use the shared Material secondary button primitive.',
+	'Classification items must use the shared voco interaction primitive.',
 );
 assert.match(
 	sharedStyles,

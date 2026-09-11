@@ -172,7 +172,7 @@ dd {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .personal-action button {
+	.personal-action voco-error-button {
     width: 100%;
   }
 }

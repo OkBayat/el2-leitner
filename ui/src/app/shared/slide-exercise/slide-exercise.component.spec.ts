@@ -221,10 +221,7 @@ describe("SlideExerciseComponent", () => {
 		expect(guideAction?.getAttribute("aria-label")).toBe(
 			"Open the exercise guide",
 		);
-		expect(guideAction?.classList).toContain("mat-mdc-icon-button");
-		expect(guideAction?.classList).toContain(
-			"vocora-secondary-icon-action",
-		);
+		expect(guideAction?.querySelector(".mat-mdc-icon-button")).not.toBeNull();
 		const guideIcon = guideAction?.querySelector("mat-icon");
 		expect(guideIcon?.getAttribute("svgicon")).toBe(
 			"exercise-guide-lightbulb",
@@ -298,7 +295,7 @@ describe("SlideExerciseComponent", () => {
 			].map((button: HTMLButtonElement) => button.textContent?.trim()),
 		).toEqual(['Skip', 'Try again']);
 		expect(skip?.textContent).toContain("Skip");
-		expect(skip?.classList).toContain("mat-mdc-outlined-button");
+		expect(skip?.querySelector(".mat-mdc-button-base")).not.toBeNull();
 
 		skip?.click();
 		fixture.detectChanges();
@@ -365,7 +362,7 @@ describe("SlideExerciseComponent", () => {
 
 		const primaryState = (): string | null =>
 			fixture.nativeElement
-				.querySelector(".slide-exercise-action--primary button")
+				.querySelector(".slide-exercise-action--primary voco-primary-button")
 				?.getAttribute("data-state") ?? null;
 
 		expect(primaryState()).toBe("primary");

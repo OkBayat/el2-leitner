@@ -9,8 +9,10 @@
           <p role="status">{{ session.phase() === 'empty' ? 'Add words to Box 1 that have an available practice sentence, then come back here.' : session.error() }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-flat-button type="button" (click)="session.load()">Try again</button>
-          <button mat-stroked-button type="button" (click)="back()">Back home</button>
+          <voco-primary-button type="button" (click)="session.load()"
+						>Try again</voco-primary-button>
+          <voco-navigation-button type="button" (click)="back()"
+						>Back home</voco-navigation-button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -28,17 +30,24 @@
           @if (session.error()) { <p role="alert">{{ session.error() }}</p> }
         </mat-card-content>
         <mat-card-actions>
-          <button mat-flat-button type="button" (click)="session.load()">Practice again</button>
-          <button mat-stroked-button type="button" (click)="back()">Back home</button>
+          <voco-primary-button type="button" (click)="session.load()"
+						>Practice again</voco-primary-button>
+          <voco-navigation-button type="button" (click)="back()"
+						>Back home</voco-navigation-button>
         </mat-card-actions>
       </mat-card>
     </div>
   } @else if (session.prompt(); as prompt) {
     <div class="review-session" data-testid="shadowing-session">
       <div class="session-bar">
-        <button class="session-close" mat-icon-button type="button" aria-label="Exit shadowing" (click)="exit()">
+        <voco-icon-button
+					class="session-close"
+					type="button"
+					aria-label="Exit shadowing"
+					(click)="exit()"
+				>
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-        </button>
+        </voco-icon-button>
         <div class="session-progress">
           <span class="visually-hidden">Words recognized: {{ session.assessment()?.score ?? 0 }}%</span>
           <mat-progress-bar mode="determinate" [value]="session.assessment()?.score ?? 0"/>
@@ -53,11 +62,20 @@
             <h1>Listen and repeat the sentence</h1>
           </div>
           <div class="listen">
-            <button mat-fab extended class="play-pronunciation" type="button" [disabled]="session.busy()" (click)="session.listen()">
+            <voco-audio-button
+							class="play-pronunciation"
+							type="button"
+							[disabled]="session.busy()"
+							(click)="session.listen()"
+						>
               <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9H7L12 5V19L7 15H3Z" fill="currentColor"/><path d="M16 8Q21 12 16 16M18 4Q27 12 18 20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
               Play sentence
-            </button>
-            <button mat-button type="button" [disabled]="session.busy()" (click)="session.listen('slow')">Slower</button>
+            </voco-audio-button>
+            <voco-secondary-button
+							type="button"
+							[disabled]="session.busy()"
+							(click)="session.listen('slow')"
+							>Slower</voco-secondary-button>
           </div>
           <p class="audio-hint">{{ session.audioNotice() || 'If audio does not start automatically, press Play sentence.' }}</p>
           @if (session.assessment(); as assessment) {
@@ -81,7 +99,10 @@
           @if (session.error()) {
             <div class="speech-error" role="alert"><p>{{ session.error() }}</p>
               @if (session.errorCode() === 'SHADOWING_SESSION_EXPIRED' || session.errorCode() === 'SHADOWING_WORD_MOVED') {
-                <button mat-stroked-button type="button" (click)="session.load()">Start a new session</button>
+                <voco-secondary-button
+									type="button"
+									(click)="session.load()"
+									>Start a new session</voco-secondary-button>
               }
             </div>
           }
@@ -104,12 +125,32 @@
           </div>
           <div class="shadowing-actions">
             @if (session.phase() === 'evaluation-error') {
-              <button mat-flat-button class="review-action-primary" type="button" (click)="session.retryEvaluation()">Retry evaluation</button>
+              <voco-primary-button
+								class="review-action-primary"
+								type="button"
+								(click)="session.retryEvaluation()"
+								>Retry evaluation</voco-primary-button>
             } @else if (session.result()) {
-              <button mat-flat-button class="review-action-primary" type="button" (click)="session.result()?.passed ? session.next() : session.record()">{{ session.result()?.passed ? 'Continue' : 'Try again' }}</button>
+              <voco-primary-button
+								class="review-action-primary"
+								type="button"
+								(click)="
+									session.result()?.passed
+										? session.next()
+										: session.record()
+								"
+								>{{ session.result()?.passed ? 'Continue' : 'Try again' }}</voco-primary-button>
             }
-            <button mat-button type="button" [disabled]="session.busy()" (click)="session.next()">Skip sentence</button>
-            @if (session.counts().completedCount) { <button mat-button type="button" [disabled]="session.busy()" (click)="finish()">Finish practice</button> }
+            <voco-secondary-button
+							type="button"
+							[disabled]="session.busy()"
+							(click)="session.next()"
+							>Skip sentence</voco-secondary-button>
+            @if (session.counts().completedCount) { <voco-secondary-button
+								type="button"
+								[disabled]="session.busy()"
+								(click)="finish()"
+								>Finish practice</voco-secondary-button> }
           </div>
         </div>
       </footer>

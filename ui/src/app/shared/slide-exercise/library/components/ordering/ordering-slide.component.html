@@ -18,7 +18,7 @@
 						<span>{{ item.label }}</span
 						><span class="ordering-actions"
 							><button
-								mat-icon-button
+								vocoButtonInteraction
 								type="button"
 								[disabled]="
 									first || interactionState() !== 'idle'
@@ -26,9 +26,8 @@
 								[attr.aria-label]="'Move ' + item.label + ' up'"
 								(click)="move(item.id, -1)"
 							>
-								↑</button
-							><button
-								mat-icon-button
+								↑</button><button
+								vocoButtonInteraction
 								type="button"
 								[disabled]="
 									last || interactionState() !== 'idle'

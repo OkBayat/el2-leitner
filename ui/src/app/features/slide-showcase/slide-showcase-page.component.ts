@@ -4,7 +4,7 @@ import {
 	ViewChild,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective } from '../../shared/voco-button';
 import {
 	REUSABLE_SLIDE_FIXTURES,
 	SlideExerciseComponent,
@@ -15,7 +15,7 @@ import {
 @Component({
 	selector: 'app-slide-showcase-page',
 	standalone: true,
-	imports: [MatButtonModule, SlideExerciseComponent],
+	imports: [VocoButtonInteractionDirective, SlideExerciseComponent],
 	templateUrl: './slide-showcase-page.component.html',
 	styleUrl: './slide-showcase-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

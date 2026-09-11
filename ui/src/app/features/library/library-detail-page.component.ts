@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoButtonComponent } from '../../shared/voco-button';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
@@ -30,11 +30,12 @@ import {
 
 @Component({
   selector: 'app-library-detail-page',
-  imports: [MatButtonModule, MatChipsModule, MatProgressBarModule, MatTableModule],
+  imports: [VocoButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
   template: `
     @if (collection(); as c) {
       <section class="detail-page" data-testid="library-detail-page">
-        <button mat-button class="back-action" (click)="back()">← Back to library</button>
+        <voco-navigation-button class="back-action" (click)="back()"
+					>← Back to library</voco-navigation-button>
 
         <div class="detail-content">
           <h1>{{ c.title }}</h1>
@@ -57,36 +58,49 @@ import {
             @if (learningPaths.error()) {
               <div class="action-option" role="alert">
                 <p>{{ learningPaths.error() }}</p>
-                <button mat-stroked-button data-testid="course-detail-retry" (click)="reload()">Retry</button>
+                <voco-secondary-button
+									data-testid="course-detail-retry"
+									(click)="reload()"
+									>Retry</voco-secondary-button>
               </div>
             } @else if (course(); as courseView) {
               <div class="action-option">
-                <button
-                  mat-flat-button
-                  data-testid="start-course-action"
-                  [disabled]="learningPaths.enteringId() === c.id"
-                  (click)="startCourse()"
-                >
+                <voco-primary-button
+									data-testid="start-course-action"
+									[disabled]="
+										learningPaths.enteringId() === c.id
+									"
+									(click)="startCourse()"
+								>
                   @if (learningPaths.enteringId() === c.id) { Opening… } @else { {{ courseActionLabel(courseView.path.learnerStatus) }} }
-                </button>
+                </voco-primary-button>
                 <p>Start this course to follow a structured learning path with lessons, exercises, and progress tracking.</p>
                 @if (courseView.path.learnerStatus !== 'available') {
-                  <button mat-stroked-button data-testid="remove-course-action" (click)="removeCourse()">
+                  <voco-error-button
+										data-testid="remove-course-action"
+										(click)="removeCourse()"
+									>
                     Remove Course
-                  </button>
+                  </voco-error-button>
                 }
               </div>
               <div class="action-option">
-                <button mat-stroked-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                <voco-secondary-button
+									data-testid="leitner-only-action"
+									(click)="toggleSubscription()"
+								>
                   {{ leitnerActionLabel(c) }}
-                </button>
+                </voco-secondary-button>
                 <p>{{ leitnerDescription(c, true) }}</p>
               </div>
             } @else if (learningPaths.catalogReady()) {
               <div class="action-option">
-                <button mat-flat-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                <voco-primary-button
+									data-testid="leitner-only-action"
+									(click)="toggleSubscription()"
+								>
                   {{ leitnerActionLabel(c) }}
-                </button>
+                </voco-primary-button>
                 <p>{{ leitnerDescription(c, false) }}</p>
               </div>
             }
@@ -94,9 +108,12 @@ import {
 
           @if (canManage()) {
             <div class="management-actions">
-              <button mat-stroked-button (click)="editCollection()">Edit collection</button>
-              <button mat-stroked-button (click)="importEntries()">Import file</button>
-              <button mat-stroked-button (click)="editEntry()">Add word</button>
+              <voco-secondary-button (click)="editCollection()"
+								>Edit collection</voco-secondary-button>
+              <voco-secondary-button (click)="importEntries()"
+								>Import file</voco-secondary-button>
+              <voco-secondary-button (click)="editEntry()"
+								>Add word</voco-secondary-button>
             </div>
           }
 
@@ -117,8 +134,16 @@ import {
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let entry" class="entry-actions">
                     @if (canManage()) {
-                      <button mat-icon-button (click)="editEntry(entry)" title="Edit word" aria-label="Edit word">✎</button>
-                      <button mat-icon-button (click)="removeEntry(entry)" title="Delete word" aria-label="Delete word">×</button>
+                      <voco-icon-button
+												(click)="editEntry(entry)"
+												title="Edit word"
+												aria-label="Edit word"
+												>✎</voco-icon-button>
+                      <voco-icon-button
+												(click)="removeEntry(entry)"
+												title="Delete word"
+												aria-label="Delete word"
+												>×</voco-icon-button>
                     }
                   </td>
                 </ng-container>

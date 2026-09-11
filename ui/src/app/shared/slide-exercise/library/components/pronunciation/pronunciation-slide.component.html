@@ -3,14 +3,15 @@
 		<article class="slide-type" data-testid="pronunciation-slide">
 			<section class="slide-interaction">
 				<p class="slide-instruction">
-					{{ data.instruction || 'Listen, then repeat the sentence.' }}
+					{{
+						data.instruction || "Listen, then repeat the sentence."
+					}}
 				</p>
 				<p
 					class="cloze-content cloze-content--spoken pronunciation-sentence"
 					[class.is-playing]="playbackActive()"
 				>
-					<button
-						mat-icon-button
+					<voco-icon-button
 						appShortcutClick="Alt+R"
 						class="cloze-sentence-replay"
 						type="button"
@@ -19,8 +20,11 @@
 						[disabled]="practiceBusy()"
 						(click)="playSentence()"
 					>
-						<span class="cloze-sentence-replay__icon" aria-hidden="true"></span>
-					</button>
+						<span
+							class="cloze-sentence-replay__icon"
+							aria-hidden="true"
+						></span>
+					</voco-icon-button>
 					@for (token of tokens(); track $index) {
 						<span
 							class="cloze-playback-token"
@@ -33,8 +37,7 @@
 				</p>
 
 				@if (practice(); as recording) {
-					<button
-						mat-stroked-button
+					<voco-secondary-button
 						class="pronunciation-record"
 						type="button"
 						data-testid="pronunciation-record"
@@ -44,35 +47,87 @@
 							recording.phase() === 'processing' ||
 							interactionState() !== 'idle'
 						"
-						[attr.aria-pressed]="recording.phase() === 'recording'"
-						[attr.aria-label]="recording.phase() === 'recording' ? 'Stop recording' : 'Record your voice'"
+						[ariaPressed]="recording.phase() === 'recording'"
+						[ariaLabel]="
+							recording.phase() === 'recording'
+								? 'Stop recording'
+								: 'Record your voice'
+						"
 						(click)="toggleRecording()"
 					>
-						@if (recording.phase() === 'recording') {
-							<span class="pronunciation-waveform" aria-hidden="true">
-								@for (height of recording.levels(); track $index) {
+						@if (recording.phase() === "recording") {
+							<span
+								class="pronunciation-waveform"
+								aria-hidden="true"
+							>
+								@for (
+									height of recording.levels();
+									track $index
+								) {
 									<span [style.height.px]="height"></span>
 								}
 							</span>
-							<span>Listening · {{ recording.seconds().toFixed(1) }}s</span>
+							<span
+								>Listening ·
+								{{ recording.seconds().toFixed(1) }}s</span
+							>
 						} @else {
-							<svg class="pronunciation-record__microphone" width="22" height="28" viewBox="0 0 24 28" aria-hidden="true">
-								<rect x="8" y="1" width="8" height="16" rx="4" fill="currentColor" />
-								<path d="M4 12V14A8 8 0 0 0 20 14V12M12 22V27M7 27H17" fill="none" stroke="currentColor" stroke-width="2" />
+							<svg
+								class="pronunciation-record__microphone"
+								width="22"
+								height="28"
+								viewBox="0 0 24 28"
+								aria-hidden="true"
+							>
+								<rect
+									x="8"
+									y="1"
+									width="8"
+									height="16"
+									rx="4"
+									fill="currentColor"
+								/>
+								<path
+									d="M4 12V14A8 8 0 0 0 20 14V12M12 22V27M7 27H17"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+								/>
 							</svg>
 							<span>
-								{{ recording.phase() === 'requesting' ? 'Preparing microphone…' : recording.phase() === 'processing' ? 'Checking your speech…' : 'Tap to speak' }}
+								{{
+									recording.phase() === "requesting"
+										? "Preparing microphone…"
+										: recording.phase() === "processing"
+											? "Checking your speech…"
+											: "Tap to speak"
+								}}
 							</span>
 						}
-					</button>
+					</voco-secondary-button>
 					<p class="pronunciation-record__hint">
-						{{ recording.phase() === 'recording' ? 'Pause briefly when you finish; your answer will be checked automatically.' : 'Your voice is processed for word recognition. Audio recordings are not saved.' }}
+						{{
+							recording.phase() === "recording"
+								? "Pause briefly when you finish; your answer will be checked automatically."
+								: "Your voice is processed for word recognition. Audio recordings are not saved."
+						}}
 					</p>
 					@if (!recording.supported) {
-						<p class="pronunciation-record__error text-danger" role="alert">Microphone practice requires HTTPS or localhost and Web Audio support.</p>
+						<p
+							class="pronunciation-record__error text-danger"
+							role="alert"
+						>
+							Microphone practice requires HTTPS or localhost and
+							Web Audio support.
+						</p>
 					}
 					@if (recording.error()) {
-						<p class="pronunciation-record__error text-danger" role="alert">{{ recording.error() }}</p>
+						<p
+							class="pronunciation-record__error text-danger"
+							role="alert"
+						>
+							{{ recording.error() }}
+						</p>
 					}
 				}
 			</section>
@@ -83,12 +138,21 @@
 				<app-slide-stimulus [stimulus]="data.stimulus" />
 			}
 			<section class="slide-interaction">
-				<p class="slide-instruction">{{ data.instruction || 'Choose one answer.' }}</p>
+				<p class="slide-instruction">
+					{{ data.instruction || "Choose one answer." }}
+				</p>
 				<h1>{{ data.question }}</h1>
-				<div class="choice-grid" role="radiogroup" aria-label="Answer options">
-					@for (option of data.options; track option.id; let index = $index) {
+				<div
+					class="choice-grid"
+					role="radiogroup"
+					aria-label="Answer options"
+				>
+					@for (
+						option of data.options;
+						track option.id;
+						let index = $index
+					) {
 						<button
-							mat-stroked-button
 							type="button"
 							class="choice-option"
 							[attr.data-state]="optionState(option.id)"
@@ -99,7 +163,11 @@
 							(click)="selectOption(option.id)"
 						>
 							<span class="choice-option__content">
-								<span class="choice-option__number" aria-hidden="true">{{ index + 1 }}</span>
+								<span
+									class="choice-option__number"
+									aria-hidden="true"
+									>{{ index + 1 }}</span
+								>
 								<span>{{ option.label }}</span>
 							</span>
 						</button>

@@ -2,7 +2,8 @@
   <header class="page-header">
     <h1>Library</h1>
     @if (canManage()) {
-      <button mat-flat-button (click)="createCollection()">New collection</button>
+      <voco-primary-button (click)="createCollection()"
+				>New collection</voco-primary-button>
     }
   </header>
 
@@ -11,14 +12,18 @@
     <div class="library-list" data-testid="library-my-items">
       @for (item of myItems(); track item.collection.id) {
         <button
-          mat-stroked-button
-          type="button"
-          class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
-          data-testid="library-item"
-          [attr.data-library-kind]="item.kind"
-          [attr.aria-label]="(item.kind === 'course' ? 'My course: ' : 'My collection: ') + item.title"
-          (click)="open(item.collection)"
-        >
+					vocoButtonInteraction
+					type="button"
+					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+					data-testid="library-item"
+					[attr.data-library-kind]="item.kind"
+					[attr.aria-label]="
+						(item.kind === 'course'
+							? 'My course: '
+							: 'My collection: ') + item.title
+					"
+					(click)="open(item.collection)"
+				>
           {{ item.title }}
         </button>
       } @empty {
@@ -32,12 +37,22 @@
     @if (learningPaths.error()) {
       <div class="d-flex flex-column align-items-start gap-2" role="alert">
         <p class="m-0">{{ learningPaths.error() }}</p>
-        <button mat-button type="button" data-testid="course-load-retry" (click)="load()">Try again</button>
+        <voco-secondary-button
+					type="button"
+					data-testid="course-load-retry"
+					(click)="load()"
+					>Try again</voco-secondary-button>
       </div>
     }
     <div class="library-list" data-testid="library-all-courses">
       @for (course of allCourses(); track course.collection.id) {
-        <button mat-stroked-button type="button" class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate" data-testid="library-item" (click)="open(course.collection)">
+        <button
+					vocoButtonInteraction
+					type="button"
+					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+					data-testid="library-item"
+					(click)="open(course.collection)"
+				>
           {{ course.title }}
         </button>
       } @empty {
@@ -52,7 +67,13 @@
     <h2 id="all-collections-heading">All Collections</h2>
     <div class="library-list" data-testid="library-all-collections">
       @for (collection of allCollections(); track collection.id) {
-        <button mat-stroked-button type="button" class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate" data-testid="library-item" (click)="open(collection)">
+        <button
+					vocoButtonInteraction
+					type="button"
+					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+					data-testid="library-item"
+					(click)="open(collection)"
+				>
           {{ collection.title }}
         </button>
       } @empty {

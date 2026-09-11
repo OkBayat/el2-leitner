@@ -12,12 +12,16 @@
 			>
 				@for (option of content.options; track option.id; let index = $index) {
 					<button
-						mat-stroked-button
+						vocoButtonInteraction
 						type="button"
 						class="choice-option"
 						data-testid="selection-option"
-						[attr.data-state]="isSelected(option.id) ? 'selected' : 'neutral'"
-						[attr.role]="content.mode === 'multiple' ? 'checkbox' : 'radio'"
+						[attr.data-state]="
+							isSelected(option.id) ? 'selected' : 'neutral'
+						"
+						[attr.role]="
+							content.mode === 'multiple' ? 'checkbox' : 'radio'
+						"
 						[attr.aria-checked]="isSelected(option.id)"
 						[attr.aria-label]="optionAriaLabel(option, index)"
 						[disabled]="busy()"

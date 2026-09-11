@@ -109,8 +109,8 @@ describe('reusable slide renderer contract', () => {
 			'slow',
 		);
 		fixture.detectChanges();
-		expect(normal?.disabled).toBe(true);
-		expect(slow?.disabled).toBe(true);
+		expect(normal?.querySelector('button')?.disabled).toBe(true);
+		expect(slow?.querySelector('button')?.disabled).toBe(true);
 
 		fixture.destroy();
 		expect(speech.cancel).toHaveBeenCalledOnce();
@@ -167,8 +167,8 @@ describe('reusable slide renderer contract', () => {
 
 		expect(audio.playbackRate).toBe(0.85);
 		expect(audio.preservesPitch).toBe(true);
-		expect(normal?.disabled).toBe(true);
-		expect(slow?.disabled).toBe(true);
+		expect(normal?.querySelector('button')?.disabled).toBe(true);
+		expect(slow?.querySelector('button')?.disabled).toBe(true);
 		fixture.destroy();
 	});
 
@@ -378,7 +378,7 @@ describe('reusable slide renderer contract', () => {
 			'.chip-list [data-item-id="paw"]',
 		);
 		expect(sourceItem?.tagName).toBe('BUTTON');
-		expect(sourceItem?.classList).toContain('mat-mdc-outlined-button');
+		expect(sourceItem?.classList).toContain('mat-ripple');
 		expect(sourceItem?.classList).toContain('classification-item');
 		expect(
 			classificationElement.querySelectorAll('.bucket.cdk-drop-list'),
@@ -601,7 +601,7 @@ describe('reusable slide renderer contract', () => {
 			'[data-testid="cloze-sentence-replay"]',
 		);
 		expect(element.querySelector('app-slide-stimulus')).toBeNull();
-		expect(button?.hasAttribute('mat-icon-button')).toBe(true);
+		expect(button?.querySelector('.mat-mdc-icon-button')).not.toBeNull();
 		expect(button?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
 		expect(button?.classList).not.toContain('vocora-secondary-icon-action');
 		expect(button?.querySelector('.cloze-sentence-replay__icon')).not.toBeNull();
@@ -721,7 +721,7 @@ describe('reusable slide renderer contract', () => {
 		const recordButton = element.querySelector<HTMLButtonElement>('[data-testid="pronunciation-record"]');
 		expect(element.querySelector('app-slide-stimulus')).toBeNull();
 		expect(sentence?.firstElementChild).toBe(replay);
-		expect(replay?.hasAttribute('mat-icon-button')).toBe(true);
+		expect(replay?.querySelector('.mat-mdc-icon-button')).not.toBeNull();
 		expect(replay?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
 		expect(element.querySelectorAll('.cloze-playback-token--word')).toHaveLength(5);
 		expect(recordButton?.textContent).toContain('Tap to speak');
