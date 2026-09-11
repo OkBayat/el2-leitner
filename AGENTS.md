@@ -94,6 +94,14 @@ Do not translate existing domain data merely to satisfy this rule. User-authored
 - Material product customization uses the supported theming/token API first, then the single central integration layer. Feature SCSS must not redesign undocumented `.mat-mdc-*` internals.
 - Custom CSS is last and needs a concrete reason. Do not escalate specificity or add application-owned `!important`; a genuinely unavoidable upstream exception belongs at a documented central integration boundary.
 
+## Capacitor mobile releases
+
+- Production Capacitor apps use locally bundled Angular assets; never set a production `server.url`.
+- The Angular service worker is web-only. Native builds must use the `native` build configuration and must not contain `service-worker.js`.
+- Add native plugins only for a current requirement. Plugin, permission, manifest/plist, entitlement, or native dependency changes require signed store binaries.
+- Live web updates must pass native-package compatibility checks and target an explicit environment channel.
+- Never commit signing certificates, provisioning profiles, keystores, passwords, or deployment API keys. Follow `docs/mobile/CAPACITOR.md`.
+
 ## Testing
 
 Use test-driven development for new deterministic behavior and regression tests for bug fixes.

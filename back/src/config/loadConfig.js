@@ -30,6 +30,60 @@ function emailListFromEnv(value) {
     .filter(Boolean))];
 }
 
+function originListFromEnv(value) {
+  return [...new Set(String(value || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .map((origin) => {
+      if (origin === 'capacitor://localhost') return origin;
+      const normalized = origin.replace(/\/$/u, '');
+      let parsed;
+      try {
+        parsed = new URL(normalized);
+      } catch {
+        throw new ValidationError('INVALID_CONFIGURATION', 'CORS_ALLOWED_ORIGINS must contain exact HTTPS or capacitor://localhost origins.');
+      }
+      if (parsed.protocol !== 'https:' || parsed.origin !== normalized || parsed.username || parsed.password || parsed.hostname.includes('*')) {
+        throw new ValidationError('INVALID_CONFIGURATION', 'CORS_ALLOWED_ORIGINS must contain exact HTTPS or capacitor://localhost origins.');
+      }
+      return normalized;
+    }))];
+}
+
+function compareSemanticVersions(left, right) {
+  const leftParts = left.split('.').map(Number);
+  const rightParts = right.split('.').map(Number);
+  for (let index = 0; index < 3; index += 1) {
+    if (leftParts[index] !== rightParts[index]) return leftParts[index] < rightParts[index] ? -1 : 1;
+  }
+  return 0;
+}
+
+function mobileReleaseFromEnv(env, platform) {
+  const prefix = `MOBILE_${platform.toUpperCase()}_`;
+  const latestVersion = env[`${prefix}LATEST_VERSION`]?.trim() || '';
+  const minimumSupportedVersion = env[`${prefix}MINIMUM_SUPPORTED_VERSION`]?.trim() || '';
+  const storeUrl = env[`${prefix}STORE_URL`]?.trim() || '';
+  const values = [latestVersion, minimumSupportedVersion, storeUrl];
+  if (values.every((value) => !value)) {
+    return { enabled: false, platform, latestVersion: '', minimumSupportedVersion: '', storeUrl: '' };
+  }
+  if (values.some((value) => !value)) {
+    throw new ValidationError('INVALID_CONFIGURATION', `${prefix}LATEST_VERSION, ${prefix}MINIMUM_SUPPORTED_VERSION, and ${prefix}STORE_URL must be configured together.`);
+  }
+  if (!/^\d+\.\d+\.\d+$/u.test(latestVersion) || !/^\d+\.\d+\.\d+$/u.test(minimumSupportedVersion)) {
+    throw new ValidationError('INVALID_CONFIGURATION', `${prefix} versions must use MAJOR.MINOR.PATCH.`);
+  }
+  if (compareSemanticVersions(minimumSupportedVersion, latestVersion) > 0) {
+    throw new ValidationError('INVALID_CONFIGURATION', `${prefix}MINIMUM_SUPPORTED_VERSION cannot exceed ${prefix}LATEST_VERSION.`);
+  }
+  if (!storeUrl.startsWith('https://')) {
+    throw new ValidationError('INVALID_CONFIGURATION', `${prefix}STORE_URL must use HTTPS.`);
+  }
+  return { enabled: true, platform, latestVersion, minimumSupportedVersion, storeUrl };
+}
+
 function ttsVoiceListFromEnv(value) {
   const voices = [...new Set(String(value || DEFAULT_TTS_VOICES.join(","))
     .split(",")
@@ -94,6 +148,11 @@ export function loadConfig(env = process.env) {
     nodeEnv,
     port: numberFromEnv(env.PORT, 3000, "PORT"),
     trustProxy: booleanFromEnv(env.TRUST_PROXY),
+    corsAllowedOrigins: originListFromEnv(env.CORS_ALLOWED_ORIGINS),
+    mobileReleases: {
+      android: mobileReleaseFromEnv(env, 'android'),
+      ios: mobileReleaseFromEnv(env, 'ios')
+    },
     shadowing: { url: env.SHADOWING_SPEECH_URL?.trim() || "" },
     tts: {
       providerUrl: ttsProviderUrl,

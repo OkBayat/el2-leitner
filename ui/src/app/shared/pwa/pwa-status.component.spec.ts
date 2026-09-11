@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {shouldShowPwaInstallSuggestion} from './pwa-status.component';
+import {shouldShowPwaInstallSuggestion, synchronizeRequiredUpdateOverlay} from './pwa-status.component';
 
 describe('PWA install suggestion', () => {
 	it('shows on the dashboard when the app is installable but not installed', () => {
@@ -25,5 +25,21 @@ describe('PWA install suggestion', () => {
 		expect(shouldShowPwaInstallSuggestion('/dashboard', 'prompt', false, false, true)).toBe(true);
 		// Pointer-event ownership is intentionally limited to the card actions in the component stylesheet;
 		// the suggestion itself remains visible instead of being disabled to make dashboard clicks work.
+	});
+
+	it('blocks and restores the global CDK overlay container across a required-update transition', () => {
+		const overlayContainer = document.createElement('div');
+
+		synchronizeRequiredUpdateOverlay(overlayContainer, true);
+
+		expect(overlayContainer.classList.contains('vocora-required-update-blocked')).toBe(true);
+		expect(overlayContainer.hasAttribute('inert')).toBe(true);
+		expect(overlayContainer.getAttribute('aria-hidden')).toBe('true');
+
+		synchronizeRequiredUpdateOverlay(overlayContainer, false);
+
+		expect(overlayContainer.classList.contains('vocora-required-update-blocked')).toBe(false);
+		expect(overlayContainer.hasAttribute('inert')).toBe(false);
+		expect(overlayContainer.hasAttribute('aria-hidden')).toBe(false);
 	});
 });

@@ -1,0 +1,8 @@
+<app-pwa-status />
+<div
+  class="app-route-content"
+  [attr.inert]="appUpdates.binaryUpdate() === 'required' ? '' : null"
+  [attr.aria-hidden]="appUpdates.binaryUpdate() === 'required' ? 'true' : null"
+>
+  <router-outlet />
+</div>

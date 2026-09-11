@@ -236,6 +236,8 @@ export function createTestContext(environmentOverrides = {}, appOverrides = {}) 
     staticDirectory: false,
     nodeEnv: "test",
     logger: { error() {} },
+    corsAllowedOrigins: config.corsAllowedOrigins,
+    mobileReleases: config.mobileReleases,
     ...appOverrides
   });
 

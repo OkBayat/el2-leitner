@@ -123,7 +123,7 @@ describe("SpeechService backend playback", () => {
 			expect.objectContaining({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				credentials: "same-origin",
+				credentials: "include",
 				signal: expect.any(AbortSignal),
 			}),
 		);

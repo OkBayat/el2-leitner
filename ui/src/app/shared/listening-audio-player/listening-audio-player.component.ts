@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnDestroy,
   OnInit,
   computed,
@@ -17,6 +18,7 @@ import {
   normalizedAudioEnergy,
   type AudioWaveformPaths,
 } from './audio-waveform';
+import { RuntimePlatformService } from '../../core/platform/runtime-platform.service';
 
 const PLAYER_SCROLL_HYSTERESIS = 24;
 const PLAYER_TOP_SAFE_ZONE = 24;
@@ -33,7 +35,9 @@ type ListeningReaction = 'like' | 'dislike' | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListeningAudioPlayerComponent implements OnInit, OnDestroy {
+  private readonly runtime = inject(RuntimePlatformService);
   readonly src = input.required<string>();
+  readonly resolvedSrc = computed(() => this.runtime.apiUrl(this.src()));
   readonly title = input('Episode audio');
   readonly description = input('Sticky while scrolling');
   readonly collapseOnScroll = input(true);

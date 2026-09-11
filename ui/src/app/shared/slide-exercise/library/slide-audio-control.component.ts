@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ShortcutClickDirective } from '../../shortcut-click.directive';
+import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 
 @Component({
 	selector: 'app-slide-audio-control',
@@ -20,7 +21,8 @@ import { ShortcutClickDirective } from '../../shortcut-click.directive';
 		>
 			<audio
 				#audio
-				[src]="src"
+				[src]="resolveSource(src)"
+				crossorigin="use-credentials"
 				preload="metadata"
 				[attr.aria-label]="audioLabel"
 			></audio>
@@ -111,6 +113,7 @@ import { ShortcutClickDirective } from '../../shortcut-click.directive';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlideAudioControlComponent {
+	readonly resolveSource = runtimeApiUrl;
 	@Input({ required: true }) src = '';
 	@Input() maxReplays?: number;
 	@Input() transcript?: string;

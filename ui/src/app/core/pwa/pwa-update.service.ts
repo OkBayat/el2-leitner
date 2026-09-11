@@ -2,6 +2,7 @@ import {DestroyRef, Injectable, isDevMode, inject, signal} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {catchError, filter, firstValueFrom, fromEvent, interval, merge, of, take, timeout} from 'rxjs';
 import {isSecurePwaContext} from './pwa-platform';
+import {Capacitor} from '@capacitor/core';
 
 const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 const CONTROLLER_CHANGE_TIMEOUT_MS = 8_000;
@@ -30,7 +31,7 @@ export class PwaUpdateService {
 	start(): void {
 		if (this.started) return;
 		this.started = true;
-		if (isDevMode() || !this.canRegister()) return;
+		if (isDevMode() || Capacitor.isNativePlatform() || !this.canRegister()) return;
 		void this.register();
 	}
 

@@ -59,6 +59,7 @@ assert.equal(manifestUrl, '/vocora-v4.webmanifest', 'The install manifest URL mu
 assert.match(index, /apple-mobile-web-app-capable" content="yes"/u);
 assert.match(index, /apple-mobile-web-app-title" content="Vocora"/u);
 assert.match(index, /viewport-fit=cover/u);
+assert.match(index, /interactive-widget=resizes-content/u, 'The layout viewport must resize when the mobile keyboard opens.');
 assert.match(index, /format-detection" content="telephone=no"/u);
 assert.doesNotMatch(index, /safari-pinned-tab\.svg/u, 'The legacy Safari pinned-tab book artwork must not remain referenced.');
 
@@ -73,6 +74,7 @@ assert.deepEqual(
 );
 
 const appRoot = read('src/app/app.ts');
+const appRootTemplate = read('src/app/app.html');
 const installService = read('src/app/core/pwa/pwa-install.service.ts');
 const updateService = read('src/app/core/pwa/pwa-update.service.ts');
 const installCard = read('src/app/shared/pwa/pwa-install-card.component.ts');
@@ -87,7 +89,7 @@ const dockerfile = read('../back/Dockerfile');
 assert.match(appRoot, /PwaInstallService/u, 'The application root must instantiate install-prompt capture during bootstrap.');
 assert.match(appRoot, /pwaInstallation\.mode\(\)/u, 'The one-shot Android install prompt listener must be active before Settings is opened.');
 assert.match(appRoot, /PwaUpdateService/u, 'The application root must start the service-worker update lifecycle.');
-assert.match(appRoot, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
+assert.match(appRootTemplate, /<app-pwa-status/u, 'Connectivity and update status must have one global owner.');
 assert.match(installService, /beforeinstallprompt/u, 'Chromium install prompts must be captured for an explicit user action.');
 assert.match(installService, /appinstalled/u, 'Successful browser installation must update app state.');
 assert.match(updateService, /register\('\/service-worker\.js'/u, 'Production must register the generated root service worker.');
@@ -143,6 +145,7 @@ for (const required of requiredOfflineAssets) {
 assert.equal(precache.some((url) => url.startsWith('/api/')), false, 'Authenticated API responses must never be precached.');
 
 const builtIndex = fs.readFileSync(path.join(distRoot, 'index.html'), 'utf8');
+assert.match(builtIndex, /interactive-widget=resizes-content/u, 'The production document must preserve mobile keyboard viewport resizing.');
 const themeBootstrapPosition = builtIndex.indexOf('src="/theme-bootstrap.js"');
 const firstStylesheetPosition = builtIndex.search(/<link[^>]+rel=["']stylesheet["'][^>]*>/iu);
 assert.ok(themeBootstrapPosition >= 0 && themeBootstrapPosition < firstStylesheetPosition, 'The pre-paint theme bootstrap must execute before the compiled stylesheet can paint the default theme.');
