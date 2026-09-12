@@ -1,0 +1,812 @@
+{
+  "schemaVersion": 1,
+  "managedIdPrefix": "ielts-",
+  "path": {
+    "id": "ielts-learning-path",
+    "collectionId": "ielts",
+    "title": "Vocora IELTS Academic",
+    "mode": "finite",
+    "status": "draft"
+  },
+  "lessons": [
+    {
+      "id": "ielts-l0001",
+      "title": "L0001 — Food and everyday meals: Form and meaning",
+      "position": 1,
+      "source": {
+        "kind": "collection-section",
+        "collectionId": "ielts",
+        "sectionTitle": "L0001 — Food and everyday meals: Form and meaning"
+      },
+      "exercises": [
+        {
+          "id": "ielts-l0001-e01-vocabulary-intake",
+          "position": 10,
+          "type": "vocabulary.intake",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "vocabulary-intake",
+          "config": {
+            "scope": { "kind": "lesson-source" },
+            "presentation": "slides"
+          }
+        },
+        {
+          "id": "ielts-l0001-e02-spelling-dictation",
+          "position": 20,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Spelling and dictation",
+            "retryIncorrect": true,
+            "scope": { "kind": "lesson-source" },
+            "slides": [
+              {
+                "id": "ielts-l0001-e02-bread",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "bread", "autoplay": true, "replay": true },
+                  "answer": "bread",
+                  "definition": "A food made from flour and water and usually baked.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-rice",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "rice", "autoplay": true, "replay": true },
+                  "answer": "rice",
+                  "definition": "Small grains cooked and eaten as food.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-water",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "water", "autoplay": true, "replay": true },
+                  "answer": "water",
+                  "definition": "The clear liquid people drink.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-milk",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "milk", "autoplay": true, "replay": true },
+                  "answer": "milk",
+                  "definition": "A white liquid used as a drink or food.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-eat",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "eat", "autoplay": true, "replay": true },
+                  "answer": "eat",
+                  "definition": "To put food in your mouth and swallow it.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-drink",
+                "type": "dictation",
+                "data": {
+                  "mode": "word",
+                  "instruction": "Listen and type the word.",
+                  "speech": { "text": "drink", "autoplay": true, "replay": true },
+                  "answer": "drink",
+                  "definition": "To take liquid into your mouth and swallow it.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-have-breakfast",
+                "type": "dictation",
+                "data": {
+                  "mode": "phrase",
+                  "instruction": "Listen and type the complete phrase.",
+                  "speech": { "text": "have breakfast", "autoplay": true, "replay": true },
+                  "answer": "have breakfast",
+                  "definition": "To eat the first meal of the day.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-drink-water",
+                "type": "dictation",
+                "data": {
+                  "mode": "phrase",
+                  "instruction": "Listen and type the complete phrase.",
+                  "speech": { "text": "drink water", "autoplay": true, "replay": true },
+                  "answer": "drink water",
+                  "definition": "To take water into your mouth and swallow it.",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e02-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "eyebrow": "Spelling practice complete",
+                  "title": "You typed all eight lesson words and phrases",
+                  "subtitle": "Any missed item was repeated until correct."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e03-meaning-context",
+          "position": 30,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Sense, context and word relationships",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e03-roles",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify the highlighted word by its job in the sentence.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "food", "label": "Food noun" },
+                    { "id": "liquid", "label": "Drink noun" },
+                    { "id": "action", "label": "Action verb" }
+                  ],
+                  "items": [
+                    { "id": "bread", "label": "I eat BREAD in the morning.", "correctCategoryId": "food" },
+                    { "id": "rice", "label": "We eat RICE at lunch.", "correctCategoryId": "food" },
+                    { "id": "water", "label": "They drink WATER with dinner.", "correctCategoryId": "liquid" },
+                    { "id": "milk", "label": "I drink MILK at breakfast.", "correctCategoryId": "liquid" },
+                    { "id": "eat", "label": "We EAT at home.", "correctCategoryId": "action" },
+                    { "id": "drink", "label": "You DRINK water.", "correctCategoryId": "action" }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e03-recall",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete each sentence with the exact lesson word.",
+                  "content": "I {{eat}} {{bread}} in the morning. We {{drink}} {{water}} with lunch. Sam eats {{rice}}, and Mina drinks {{milk}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "eat", "answers": ["eat"], "exactSpelling": true },
+                    { "id": "bread", "answers": ["bread"], "exactSpelling": true },
+                    { "id": "drink", "answers": ["drink"], "exactSpelling": true },
+                    { "id": "water", "answers": ["water"], "exactSpelling": true },
+                    { "id": "rice", "answers": ["rice"], "exactSpelling": true },
+                    { "id": "milk", "answers": ["milk"], "exactSpelling": true }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e03-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You can distinguish foods, drinks and actions"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e04-sentence-relationship",
+          "position": 40,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Notice the sentence relationship",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e04-rule",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "rule",
+                  "instruction": "Study the order before repairing the sentence.",
+                  "title": "Put the action after the subject",
+                  "markdown": "### A simple statement\nUse **subject + present-tense verb + object** with *I, you, we,* and *they*.\n\n- I eat rice.\n- We drink water.\n\n#### Check the relationship\nIn *I eat rice*, **I** is the subject, **eat** is the verb, and **rice** is the object. Start with a capital letter and finish with a full stop."
+                }
+              },
+              {
+                "id": "ielts-l0001-e04-correction",
+                "type": "error-correction",
+                "data": {
+                  "instruction": "Correct the word order and punctuation.",
+                  "mode": "sentence-correction",
+                  "category": "subject–verb–object order",
+                  "original": "i rice eat",
+                  "answers": ["I eat rice."],
+                  "explanation": "Place the verb after the subject and the object after the verb. Use capital I and a final full stop."
+                }
+              },
+              {
+                "id": "ielts-l0001-e04-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You can build a simple subject–verb–object statement"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e05-grammar-transfer",
+          "position": 50,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Use the relationship in a different message",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e05-rewrite",
+                "type": "rewrite",
+                "data": {
+                  "instruction": "Move the action into the correct place. Keep the same words.",
+                  "mode": "target-grammar",
+                  "original": "We water drink.",
+                  "acceptedAnswers": ["We drink water."],
+                  "modelAnswer": "We drink water.",
+                  "explanation": "The subject comes first, then the verb, then the object."
+                }
+              },
+              {
+                "id": "ielts-l0001-e05-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You transferred the sentence pattern to a new message"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e06-word-partners",
+          "position": 60,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Retrieve natural word partners",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e06-matching",
+                "type": "matching",
+                "data": {
+                  "instruction": "Match each action to its natural partner.",
+                  "mode": "collocation",
+                  "shuffleRight": true,
+                  "pairs": [
+                    { "id": "breakfast", "left": "have", "right": "breakfast" },
+                    { "id": "water", "left": "drink", "right": "water" }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e06-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete both word partners without a word bank.",
+                  "content": "I {{have}} breakfast before work. We {{drink}} water with our meals.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "have", "answers": ["have"], "exactSpelling": true },
+                    { "id": "drink", "answers": ["drink"], "exactSpelling": true }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e06-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You can retrieve have breakfast and drink water"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e07-aural-bridge",
+          "position": 70,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Recognise prepared language in speech",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e07-recognition",
+                "type": "pronunciation",
+                "data": {
+                  "mode": "listen-and-identify",
+                  "question": "Which complete phrase do you hear?",
+                  "speech": { "text": "I have breakfast at home." },
+                  "options": [
+                    { "id": "have-breakfast", "label": "have breakfast" },
+                    { "id": "drink-water", "label": "drink water" },
+                    { "id": "eat-rice", "label": "eat rice" }
+                  ],
+                  "correctOptionId": "have-breakfast",
+                  "explanation": "The stressed content word breakfast completes the phrase have breakfast."
+                }
+              },
+              {
+                "id": "ielts-l0001-e07-dictation",
+                "type": "dictation",
+                "data": {
+                  "mode": "phrase",
+                  "instruction": "Listen and type the complete phrase.",
+                  "speech": { "text": "drink water", "autoplay": true, "replay": true },
+                  "answer": "drink water",
+                  "maxReplays": 3,
+                  "caseSensitive": false,
+                  "punctuationSensitive": false
+                }
+              },
+              {
+                "id": "ielts-l0001-e07-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You recognised and transcribed the prepared phrases"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e08-reading",
+          "position": 80,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Read an intact text and justify meaning",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e08-reading-strategy",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Read the whole message before answering details.",
+                  "title": "Build the main message first",
+                  "markdown": "### Food at Mina's home\nMy name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home.\n\nRead once for the **people and meals**. Then return to the exact sentence that supports each answer."
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-mina-breakfast",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Write one word.",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "question": "What does Mina eat in the morning?",
+                  "answers": ["bread"],
+                  "exactSpelling": true,
+                  "explanation": "Mina says, “I eat bread in the morning.”"
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-sam-drink",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Write one word.",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "question": "What does Sam drink at lunch?",
+                  "answers": ["water"],
+                  "exactSpelling": true,
+                  "explanation": "The sentence after Sam is introduced says, “He drinks water.”"
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-home",
+                "type": "truth",
+                "data": {
+                  "mode": "true-false-not-given",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "statement": "Mina and Sam eat at home.",
+                  "correctOptionId": "true",
+                  "explanation": "The text explicitly says, “We eat at home.”"
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-table",
+                "type": "truth",
+                "data": {
+                  "mode": "true-false-not-given",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "statement": "Their table is large.",
+                  "correctOptionId": "false",
+                  "explanation": "The text says that the table is small, so the statement is false."
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-jo-age",
+                "type": "truth",
+                "data": {
+                  "mode": "true-false-not-given",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "statement": "Jo is twenty years old.",
+                  "correctOptionId": "not-given",
+                  "explanation": "The text does not state Jo's age."
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-svo",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each word in “I eat bread.”",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "subject", "label": "Subject" },
+                    { "id": "verb", "label": "Verb" },
+                    { "id": "object", "label": "Object" }
+                  ],
+                  "items": [
+                    { "id": "i", "label": "I", "correctCategoryId": "subject" },
+                    { "id": "eat", "label": "eat", "correctCategoryId": "verb" },
+                    { "id": "bread", "label": "bread", "correctCategoryId": "object" }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-sunday",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Write one word.",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "question": "Who eats with the family on Sunday?",
+                  "answers": ["Jo"],
+                  "caseSensitive": false,
+                  "explanation": "The last sentence names Jo."
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-evening-drink",
+                "type": "short-answer",
+                "data": {
+                  "instruction": "Write one word.",
+                  "stimulus": { "type": "text", "content": "My name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home." },
+                  "question": "What do both Mina and Sam drink in the evening?",
+                  "answers": ["water"],
+                  "exactSpelling": true,
+                  "explanation": "The evening description says, “We both drink water.”"
+                }
+              },
+              {
+                "id": "ielts-l0001-e08-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You used exact evidence from an intact text"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e10-context-contrast",
+          "position": 100,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Contrast two plausible meanings",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e10-contrast",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "contrast",
+                  "instruction": "Use the object to decide which action fits.",
+                  "title": "Eat food; drink liquids",
+                  "markdown": "### Choose the action from the object\nUse **eat** with food such as bread and rice. Use **drink** with liquids such as water and milk.\n\n- We **eat rice**.\n- We **drink water**.\n\nThe object helps you choose between two plausible action verbs."
+                }
+              },
+              {
+                "id": "ielts-l0001-e10-choices",
+                "type": "classification",
+                "data": {
+                  "instruction": "Classify each message by the missing action.",
+                  "mode": "custom",
+                  "categories": [
+                    { "id": "eat", "label": "eat" },
+                    { "id": "drink", "label": "drink" }
+                  ],
+                  "items": [
+                    { "id": "bread", "label": "We ___ bread in the morning.", "correctCategoryId": "eat" },
+                    { "id": "rice", "label": "They ___ rice at lunch.", "correctCategoryId": "eat" },
+                    { "id": "water", "label": "I ___ water with dinner.", "correctCategoryId": "drink" },
+                    { "id": "milk", "label": "You ___ milk at breakfast.", "correctCategoryId": "drink" }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e10-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You can choose eat or drink from the message"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e11-independent-recall",
+          "position": 110,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Retrieve without recognition options",
+            "retryIncorrect": true,
+            "slides": [
+              {
+                "id": "ielts-l0001-e11-strategy",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Prepare to recall the words without a word bank.",
+                  "title": "Build the message before typing",
+                  "markdown": "### Recall from meaning and grammar\nFirst decide whether the gap needs an **action**, **food**, or **liquid**. Then retrieve the exact lesson word. The next task has no answer choices."
+                }
+              },
+              {
+                "id": "ielts-l0001-e11-cloze",
+                "type": "cloze",
+                "data": {
+                  "instruction": "Complete the message without a word bank.",
+                  "content": "I {{have}} breakfast at home. I {{eat}} {{bread}} and {{drink}} {{milk}}. At lunch, we eat {{rice}} and drink {{water}}.",
+                  "inputMode": "text",
+                  "blanks": [
+                    { "id": "have", "answers": ["have"], "exactSpelling": true },
+                    { "id": "eat", "answers": ["eat"], "exactSpelling": true },
+                    { "id": "bread", "answers": ["bread"], "exactSpelling": true },
+                    { "id": "drink", "answers": ["drink"], "exactSpelling": true },
+                    { "id": "milk", "answers": ["milk"], "exactSpelling": true },
+                    { "id": "rice", "answers": ["rice"], "exactSpelling": true },
+                    { "id": "water", "answers": ["water"], "exactSpelling": true }
+                  ]
+                }
+              },
+              {
+                "id": "ielts-l0001-e11-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "You retrieved the lesson language without options"
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e12-speaking",
+          "position": 120,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Plan briefly and communicate independently",
+            "slides": [
+              {
+                "id": "ielts-l0001-e12-plan",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Plan ideas, not a script.",
+                  "title": "Speak about your own morning meal",
+                  "markdown": "### Make two or three complete statements\nSay **what you eat**, **what you drink**, and optionally **where or when**. Your answer can be different from the reading text. Use lesson language naturally; you do not need to use every target."
+                }
+              },
+              {
+                "id": "ielts-l0001-e12-response",
+                "type": "speaking-response",
+                "data": {
+                  "mode": "vocabulary-production",
+                  "prompt": "What do you eat and drink in the morning? Give two or three complete statements.",
+                  "promptBullets": ["what you eat", "what you drink", "where or when you have breakfast"],
+                  "prepSeconds": 30,
+                  "speakingSeconds": 30,
+                  "targetVocabulary": ["bread", "rice", "water", "milk", "eat", "drink", "have breakfast", "drink water"],
+                  "notesEnabled": true
+                }
+              },
+              {
+                "id": "ielts-l0001-e12-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "title": "Your speaking response was submitted",
+                  "subtitle": "Submission records practice; it is not an IELTS band score."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ielts-l0001-e13-writing",
+          "position": 130,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": true,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Plan, draft and preserve the first response",
+            "slides": [
+              {
+                "id": "ielts-l0001-e13-plan",
+                "type": "teaching-card",
+                "chrome": { "header": { "progress": null } },
+                "data": {
+                  "mode": "tip",
+                  "instruction": "Plan the message before writing.",
+                  "title": "Cover three simple details",
+                  "markdown": "### Write about one meal\nSay **who eats**, **what they eat**, and **what they drink**. Write complete sentences with capital letters and full stops. Use the target words only where they fit your real or invented meal."
+                }
+              },
+              {
+                "id": "ielts-l0001-e13-response",
+                "type": "writing-response",
+                "data": {
+                  "mode": "paragraph",
+                  "prompt": "Write 20–40 words about one meal. Say who eats, what they eat and what they drink.",
+                  "recommendedMinimumWords": 20,
+                  "targetVocabulary": ["bread", "rice", "water", "milk", "eat", "drink", "have breakfast", "drink water"],
+                  "planningNotes": true,
+                  "register": "neutral"
+                }
+              },
+              {
+                "id": "ielts-l0001-e13-summary",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "title": "Your first writing response was submitted",
+                  "subtitle": "Submission records the original response; it is not automatic mastery or an IELTS score."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": { "id": "finish", "label": "Finish", "behavior": "emit" },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
