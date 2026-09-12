@@ -165,10 +165,14 @@ export class CollectionLearningPathApiService {
     slideId: string,
     recording: Blob,
   ): Promise<{ artifactId: string }> {
+    const mimeType = recording.type || 'audio/webm';
+    // CapacitorHttp's native bridge serializes File bodies as binary data,
+    // while a bare Blob can fall through its JSON request-body path.
+    const upload = new File([recording], 'speaking-recording', { type: mimeType });
     return this.api.post<{ artifactId: string }>(
       `${exercisePath(pathId, lessonId, exerciseId)}/slides/${segment(slideId)}/recordings`,
-      recording,
-      { 'Content-Type': recording.type || 'audio/webm' },
+      upload,
+      { 'Content-Type': mimeType },
     );
   }
 

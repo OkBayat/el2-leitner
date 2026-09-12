@@ -56,9 +56,14 @@ describe('CollectionLearningPathApiService', () => {
     expect(remove).toHaveBeenCalledWith('/api/learning-paths/1/enrollment');
     expect(post.mock.calls[1]?.[1]).toEqual({ progressRevision: 7 });
     expect(post.mock.calls[3]?.[1]).toEqual({ scope: 'course' });
+    const uploadedRecording = post.mock.calls[4]?.[1];
+    expect(uploadedRecording).toBeInstanceOf(File);
+    expect(uploadedRecording).not.toBe(recording);
+    expect(uploadedRecording.type).toBe('audio/webm');
+    expect(uploadedRecording.size).toBe(recording.size);
     expect(post.mock.calls[4]).toEqual([
       '/api/learning-paths/1/lessons/5/exercises/10/slides/speaking%2F1/recordings',
-      recording,
+      uploadedRecording,
       { 'Content-Type': 'audio/webm' },
     ]);
     expect(post.mock.calls.at(-1)?.[1]).toEqual({ outcome: { kind: 'completed' }, progressRevision: 8 });
