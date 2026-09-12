@@ -28,6 +28,12 @@ curriculum, adaptive conversation capability, or model-quality gates are ready.
 Future interactions remain absent from JSON until their general runtime contracts
 ship.
 
+The current reusable-slide coverage and the exact boundary between slide
+interactions and application orchestration are recorded in
+[SLIDE_CAPABILITIES.md](SLIDE_CAPABILITIES.md). That audit adds only the general
+spatial `labeling` interaction and backward-compatible evidence improvements;
+it does not register the still-incomplete adaptive-conversation workflow.
+
 ## Decision and limits
 
 | Concern | Direction | Boundary |

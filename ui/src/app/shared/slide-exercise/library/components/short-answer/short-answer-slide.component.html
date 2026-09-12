@@ -5,7 +5,7 @@
 		}
 		<section class="slide-interaction">
 			<p class="slide-instruction">
-				{{ data.instruction || 'Write a short answer.' }}
+				{{ data.instruction || "Write a short answer." }}
 			</p>
 			<h1>{{ data.question }}</h1>
 			<div class="hint-row">
@@ -26,6 +26,18 @@
 					[disabled]="interactionState() !== 'idle'"
 					(input)="setAnswer(inputFrom($event))"
 			/></mat-form-field>
+			@if (data.evidencePrompt) {
+				<mat-form-field appearance="outline">
+					<mat-label>{{ data.evidencePrompt }}</mat-label>
+					<textarea
+						matInput
+						rows="3"
+						[value]="supportingEvidence()"
+						[disabled]="interactionState() !== 'idle'"
+						(input)="setSupportingEvidence(inputFrom($event))"
+					></textarea>
+				</mat-form-field>
+			}
 		</section>
 	</article>
 }

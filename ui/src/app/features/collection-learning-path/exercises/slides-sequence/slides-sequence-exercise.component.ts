@@ -58,16 +58,28 @@ function learnerResponse(
 	if (
 		slideType === "cloze" ||
 		slideType === "structured-completion" ||
-		slideType === "word-formation"
+		slideType === "word-formation" ||
+		slideType === "labeling"
 	) {
 		return { answers: data["answers"] };
 	}
-	if (slideType === "short-answer" || slideType === "dictation")
-		return { answer: data["answer"] };
+	if (slideType === "short-answer")
+		return {
+			answer: data["answer"],
+			supportingEvidence: data["supportingEvidence"],
+		};
+	if (slideType === "dictation") return { answer: data["answer"] };
 	if (slideType === "error-correction")
 		return { correction: data["correction"] };
-	if (slideType === "rewrite" || slideType === "writing-response")
-		return { response: data["response"] };
+	if (slideType === "rewrite") return { response: data["response"] };
+	if (slideType === "writing-response")
+		return {
+			response: data["response"],
+			notes: data["notes"],
+			wordCount: data["wordCount"],
+			mode: data["mode"],
+			register: data["register"],
+		};
 	if (slideType === "ordering")
 		return { orderedItemIds: data["orderedItemIds"] };
 	return null;
@@ -274,12 +286,19 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent {
 				result.rootSlideId,
 				recording,
 			);
+			const evidenceData: Record<string, unknown> = {
+				recordingArtifactId: artifact.artifactId,
+			};
+			for (const key of ["notes", "mode"] as const) {
+				if (typeof record(result.data)?.[key] === "string")
+					evidenceData[key] = record(result.data)?.[key];
+			}
 			return {
 				rootSlideId: result.rootSlideId,
 				slideType: result.slideType,
 				itemId: result.itemId,
 				eventType: result.eventType,
-				data: { recordingArtifactId: artifact.artifactId },
+				data: evidenceData,
 			};
 		}
 		const data = learnerResponse(result.slideType, result.data);

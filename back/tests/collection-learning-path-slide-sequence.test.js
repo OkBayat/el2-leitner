@@ -177,6 +177,105 @@ describe("slide-sequence completion evidence", () => {
     });
   });
 
+  it("grades positioned labels from server-owned map, plan, or diagram targets", () => {
+    const definition = exercise({
+      config: {
+        slides: [
+          {
+            id: "map-labels",
+            type: "labeling",
+            data: {
+              mode: "map",
+              question: "Label the campus map.",
+              stimulus: { type: "diagram", imageSrc: "/maps/campus.svg", alt: "Campus map." },
+              targets: [
+                { id: "one", label: "Location 1", markerLabel: "1", xPercent: 20, yPercent: 30, answers: ["library"] },
+                { id: "two", label: "Location 2", markerLabel: "2", xPercent: 75, yPercent: 60, answers: ["cafe"] },
+              ],
+            },
+          },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+    const result = (answers) => outcome([{
+      rootSlideId: "map-labels",
+      slideType: "labeling",
+      eventType: "answered",
+      data: { answers },
+    }]);
+
+    assert.equal(verify(definition, result({ one: "library", two: "station" })), false);
+    assert.deepEqual(verify(definition, result({ one: "Library", two: "cafe" })), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:1",
+    });
+
+    const invalid = structuredClone(definition);
+    invalid.config.slides[0].data.targets[0].xPercent = 101;
+    assert.throws(() => verify(invalid, outcome([])), /between 0 and 100/);
+  });
+
+  it("accepts any configured valid order and requires supporting evidence when requested", () => {
+    const definition = exercise({
+      config: {
+        slides: [
+          {
+            id: "order",
+            type: "ordering",
+            data: {
+              items: [
+                { id: "intro", label: "Introduction" },
+                { id: "reason", label: "Reason" },
+                { id: "example", label: "Example" },
+              ],
+              correctOrderIds: ["intro", "reason", "example"],
+              acceptedOrders: [
+                ["intro", "reason", "example"],
+                ["intro", "example", "reason"],
+              ],
+            },
+          },
+          {
+            id: "answer",
+            type: "short-answer",
+            data: {
+              question: "Where is the cafe?",
+              answers: ["beside the library"],
+              evidencePrompt: "Copy the supporting words.",
+              evidenceRequired: true,
+            },
+          },
+          { id: "summary", type: "summary", terminal: true, data: {} },
+        ],
+      },
+    });
+    const results = (supportingEvidence) => outcome([
+      {
+        rootSlideId: "order",
+        slideType: "ordering",
+        eventType: "answered",
+        data: { orderedItemIds: ["intro", "example", "reason"] },
+      },
+      {
+        rootSlideId: "answer",
+        slideType: "short-answer",
+        eventType: "answered",
+        data: { answer: "beside the library", supportingEvidence },
+      },
+    ]);
+
+    assert.equal(verify(definition, results("")), false);
+    assert.deepEqual(verify(definition, results("The cafe is beside the library.")), {
+      evidenceType: "slide-sequence",
+      evidenceRef: "exercise:sequence-1:slides:2",
+    });
+
+    const missingPrimary = structuredClone(definition);
+    missingPrimary.config.slides[0].data.acceptedOrders = [["intro", "example", "reason"]];
+    assert.throws(() => verify(missingPrimary, outcome([])), /must include correctOrderIds/);
+  });
+
   it("rejects a bare completion and requires correct scored results plus submitted production", () => {
     const definition = exercise();
 
@@ -245,11 +344,18 @@ describe("slide-sequence completion evidence", () => {
         type: "word-formation",
         data: { fields: [{ id: "field", answers: ["interaction"], exactSpelling: true }] },
       },
-      { id: "short", type: "short-answer", data: { answers: ["sibling"] } },
+      { id: "short", type: "short-answer", data: { question: "What is the relationship?", answers: ["sibling"] } },
       { id: "dictation", type: "dictation", data: { answer: "maternal", caseSensitive: false } },
       { id: "correction", type: "error-correction", data: { answers: ["I resemble my father."] } },
       { id: "rewrite", type: "rewrite", data: { requiredFragments: ["have", "in common"] } },
-      { id: "ordering", type: "ordering", data: { correctOrderIds: ["first", "second"] } },
+      {
+        id: "ordering",
+        type: "ordering",
+        data: {
+          items: [{ id: "first", label: "First" }, { id: "second", label: "Second" }],
+          correctOrderIds: ["first", "second"],
+        },
+      },
       { id: "writing", type: "writing-response", data: {} },
       { id: "speaking", type: "speaking-response", data: {} },
       { id: "summary", type: "summary", terminal: true, data: {} },

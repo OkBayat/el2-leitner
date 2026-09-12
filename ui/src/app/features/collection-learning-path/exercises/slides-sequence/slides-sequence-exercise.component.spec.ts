@@ -250,7 +250,11 @@ describe("SlidesSequenceExerciseComponent", () => {
 		).componentInstance as SlideExerciseComponent;
 		slideExercise.onContentEvent({
 			type: "submitted",
-			data: { recordingUrl: "blob:local-recording" },
+			data: {
+				recordingUrl: "blob:local-recording",
+				notes: "Mention breakfast and a drink.",
+				mode: "part1",
+			},
 		});
 		slideExercise.next();
 
@@ -273,7 +277,107 @@ describe("SlidesSequenceExerciseComponent", () => {
 						slideType: "speaking-response",
 						itemId: undefined,
 						eventType: "submitted",
-						data: { recordingArtifactId: "recording-1" },
+						data: {
+							recordingArtifactId: "recording-1",
+							notes: "Mention breakfast and a drink.",
+							mode: "part1",
+						},
+					},
+				],
+			},
+		});
+	});
+
+	it("preserves labeling, supporting evidence, and writing metadata in completion evidence", async () => {
+		TestBed.configureTestingModule({
+			imports: [SlidesSequenceExerciseComponent],
+			providers: [
+				{
+					provide: ReviewAnswerSoundService,
+					useValue: { play: vi.fn(), stop: vi.fn() },
+				},
+			],
+		});
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		const outcomes = vi.fn();
+		fixture.componentInstance.outcome.subscribe(outcomes);
+		fixture.componentInstance.load({
+			...context,
+			config: {
+				slides: [
+					{ id: "labels", type: "labeling", data: {} },
+					{ id: "answer", type: "short-answer", data: {} },
+					{ id: "writing", type: "writing-response", data: {} },
+					{ id: "summary", type: "summary", terminal: true, data: {} },
+				],
+			},
+		});
+		fixture.detectChanges();
+		const slideExercise = fixture.debugElement.query(
+			By.directive(SlideExerciseComponent),
+		).componentInstance as SlideExerciseComponent;
+		slideExercise.onContentEvent({
+			type: "answered",
+			data: { answers: { one: "library" }, correct: true },
+		});
+		slideExercise.next();
+		slideExercise.onContentEvent({
+			type: "answered",
+			data: {
+				answer: "beside the library",
+				supportingEvidence: "The cafe is beside the library.",
+				correct: true,
+			},
+		});
+		slideExercise.next();
+		slideExercise.onContentEvent({
+			type: "submitted",
+			data: {
+				response: "The main feature increased.",
+				notes: "Mention the overview first.",
+				wordCount: 4,
+				mode: "task1-chart",
+				register: "formal",
+			},
+		});
+		slideExercise.next();
+
+		await fixture.componentInstance.finish("summary");
+
+		expect(outcomes).toHaveBeenCalledWith({
+			kind: "completed",
+			evidence: {
+				schemaVersion: 1,
+				results: [
+					{
+						rootSlideId: "labels",
+						slideType: "labeling",
+						itemId: undefined,
+						eventType: "answered",
+						data: { answers: { one: "library" } },
+					},
+					{
+						rootSlideId: "answer",
+						slideType: "short-answer",
+						itemId: undefined,
+						eventType: "answered",
+						data: {
+							answer: "beside the library",
+							supportingEvidence: "The cafe is beside the library.",
+						},
+					},
+					{
+						rootSlideId: "writing",
+						slideType: "writing-response",
+						itemId: undefined,
+						eventType: "submitted",
+						data: {
+							response: "The main feature increased.",
+							notes: "Mention the overview first.",
+							wordCount: 4,
+							mode: "task1-chart",
+							register: "formal",
+						},
 					},
 				],
 			},

@@ -6,6 +6,7 @@ export { TeachingCardSlideComponent } from './components/teaching-card/teaching-
 export { MatchingSlideComponent } from './components/matching/matching-slide.component';
 export { ClassificationSlideComponent } from './components/classification/classification-slide.component';
 export { OrderingSlideComponent } from './components/ordering/ordering-slide.component';
+export { LabelingSlideComponent } from './components/labeling/labeling-slide.component';
 export { ClozeSlideComponent } from './components/cloze/cloze-slide.component';
 export { StructuredCompletionSlideComponent } from './components/structured-completion/structured-completion-slide.component';
 export { ShortAnswerSlideComponent } from './components/short-answer/short-answer-slide.component';

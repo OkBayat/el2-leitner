@@ -141,7 +141,7 @@ Return the object only after the validator reports `status: valid`. If the sourc
 
 ## Slide-contract placeholder policy
 
-The provisional output contract currently allows the 17 reusable interaction types documented in `output-contract.md`, but the `data` payload remains a deliberate placeholder. `k2-exercise-builder` owns the authoritative runtime-ready object and must be used for that handoff.
+The provisional output contract currently allows the 19 reusable interaction types documented in `output-contract.md`, but the `data` payload remains a deliberate placeholder. `k2-exercise-builder` owns the authoritative runtime-ready object and must be used for that handoff.
 
 When the application slide contracts become authoritative for agent generation, update these surfaces atomically:
 

@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
+import type { SlideExerciseRuntimeState } from '../slide-exercise.models';
 import { ReviewAnswerSoundService } from '../../../core/sound/review-answer-sound.service';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
@@ -12,8 +13,10 @@ import {
 	ClozeSlideComponent,
 	DictationSlideComponent,
 	ErrorCorrectionSlideComponent,
+	LabelingSlideComponent,
 	MatchingSlideComponent,
 	NumberInputSlideComponent,
+	OrderingSlideComponent,
 	PronunciationSlideComponent,
 	RewriteSlideComponent,
 	SelectionSlideComponent,
@@ -333,6 +336,165 @@ describe('reusable slide library behavior', () => {
 
 		expect(component.interactionState()).toBe('answered-incorrect');
 		expect(footerDetail).toBe('Correct answer: bond');
+	});
+
+	it('keeps optional short-answer evidence separate from the scored answer', () => {
+		const component = new ShortAnswerSlideComponent();
+		const events: unknown[] = [];
+		const states: SlideExerciseRuntimeState[] = [];
+		component.event.subscribe((event) => events.push(event));
+		component.stateChange.subscribe((state) => states.push(state));
+		load(component, 'short-answer', {
+			question: 'Where is the cafe?',
+			answers: ['beside the library'],
+			evidencePrompt: 'Copy the words that prove your answer.',
+			evidenceRequired: true,
+		});
+
+		component.setAnswer('beside the library');
+		const answerOnlyAction = states.at(-1)?.chrome?.footer?.primary;
+		expect(answerOnlyAction ? answerOnlyAction.disabled : undefined).toBe(true);
+		component.setSupportingEvidence('The cafe is beside the library.');
+		const completeAction = states.at(-1)?.chrome?.footer?.primary;
+		expect(completeAction ? completeAction.disabled : undefined).toBe(false);
+		component.handleAction('check');
+
+		expect(events.at(-1)).toMatchObject({
+			type: 'answered',
+			data: {
+				answer: 'beside the library',
+				supportingEvidence: 'The cafe is beside the library.',
+				correct: true,
+			},
+		});
+	});
+
+	it('accepts any explicitly configured valid ordering', () => {
+		const component = new OrderingSlideComponent();
+		load(component, 'ordering', {
+			items: [
+				{ id: 'intro', label: 'Introduction' },
+				{ id: 'reason', label: 'Reason' },
+				{ id: 'example', label: 'Example' },
+			],
+			correctOrderIds: ['intro', 'reason', 'example'],
+			acceptedOrders: [
+				['intro', 'reason', 'example'],
+				['intro', 'example', 'reason'],
+			],
+		});
+
+		component.move('example', -1);
+		component.handleAction('check');
+
+		expect(component.interactionState()).toBe('answered-correct');
+		expect(component.orderState('example')).toBe('correct');
+	});
+
+	it('uses one coherent accepted order for incorrect ordering feedback', () => {
+		const component = new OrderingSlideComponent();
+		load(component, 'ordering', {
+			items: [
+				{ id: 'a', label: 'A' },
+				{ id: 'b', label: 'B' },
+				{ id: 'd', label: 'D' },
+				{ id: 'c', label: 'C' },
+			],
+			correctOrderIds: ['a', 'b', 'c', 'd'],
+			acceptedOrders: [
+				['a', 'b', 'c', 'd'],
+				['b', 'a', 'd', 'c'],
+			],
+		});
+
+		component.handleAction('check');
+
+		expect(component.interactionState()).toBe('answered-incorrect');
+		expect(component.orderedItems().map((item) => component.orderState(item.id))).toEqual([
+			'correct',
+			'correct',
+			'incorrect',
+			'incorrect',
+		]);
+	});
+
+	it('grades reusable map, plan, and diagram labels from positioned JSON targets', () => {
+		const component = new LabelingSlideComponent();
+		const events: unknown[] = [];
+		component.event.subscribe((event) => events.push(event));
+		load(component, 'labeling', {
+			mode: 'map',
+			question: 'Label the two locations.',
+			stimulus: {
+				type: 'diagram',
+				imageSrc: '/assets/maps/campus.svg',
+				alt: 'A campus map with two numbered locations.',
+			},
+			inputMode: 'word-bank',
+			wordBank: ['library', 'cafe', 'station'],
+			targets: [
+				{
+					id: 'one',
+					label: 'Location 1',
+					markerLabel: '1',
+					xPercent: 20,
+					yPercent: 35,
+					answers: ['library'],
+				},
+				{
+					id: 'two',
+					label: 'Location 2',
+					markerLabel: '2',
+					xPercent: 75,
+					yPercent: 60,
+					answers: ['cafe'],
+				},
+			],
+		});
+
+		component.setAnswer('one', 'library');
+		component.setAnswer('two', 'cafe');
+		component.handleAction('check');
+
+		expect(component.interactionState()).toBe('answered-correct');
+		expect(events.at(-1)).toMatchObject({
+			type: 'answered',
+			data: { answers: { one: 'library', two: 'cafe' }, correct: true },
+		});
+	});
+
+	it('rejects labeling targets that cannot be placed or rendered accessibly', () => {
+		const component = new LabelingSlideComponent();
+		expect(() => load(component, 'labeling', {
+			mode: 'diagram',
+			question: 'Label the diagram.',
+			stimulus: { type: 'diagram', imageSrc: '/assets/diagram.svg', alt: 'A diagram.' },
+			targets: [
+				{
+					id: 'one',
+					label: ' ',
+					markerLabel: '1',
+					xPercent: 101,
+					yPercent: 20,
+					answers: ['intake'],
+				},
+			],
+		})).toThrow('Labeling target label is required.');
+		expect(() => load(component, 'labeling', {
+			mode: 'diagram',
+			question: 'Label the diagram.',
+			stimulus: { type: 'diagram', imageSrc: '/assets/diagram.svg', alt: 'A diagram.' },
+			targets: [
+				{
+					id: 'one',
+					label: 'Stage 1',
+					markerLabel: '1',
+					xPercent: 101,
+					yPercent: 20,
+					answers: ['intake'],
+				},
+			],
+		})).toThrow('Labeling target coordinates must be between 0 and 100.');
 	});
 
 	it('preserves the selected wrong and correct ChoiceSlide states after checking', () => {

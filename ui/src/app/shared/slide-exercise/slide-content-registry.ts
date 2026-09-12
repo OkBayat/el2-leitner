@@ -61,6 +61,7 @@ export function createDefaultSlideContentRegistry(): SlideContentRegistry {
   registry.register({ type: 'matching', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.MatchingSlideComponent) });
   registry.register({ type: 'classification', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.ClassificationSlideComponent) });
   registry.register({ type: 'ordering', chromeDefaults: { footer: { primary: { id: 'check', label: 'Check', behavior: 'content', disabled: false } } }, loadComponent: () => component().then((module) => module.OrderingSlideComponent) });
+  registry.register({ type: 'labeling', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.LabelingSlideComponent) });
   registry.register({ type: 'cloze', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.ClozeSlideComponent) });
   registry.register({ type: 'structured-completion', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.StructuredCompletionSlideComponent) });
   registry.register({ type: 'short-answer', chromeDefaults: scoredDefaults, loadComponent: () => component().then((module) => module.ShortAnswerSlideComponent) });

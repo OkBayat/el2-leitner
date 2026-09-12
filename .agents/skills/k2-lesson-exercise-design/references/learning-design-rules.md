@@ -239,13 +239,13 @@ Useful progression patterns include:
 - collocation: `teaching-card` -> `matching` -> `cloze` -> `dictation` -> `rewrite`;
 - usage contrast: `teaching-card` -> `choice` -> `error-correction` -> `rewrite`;
 - morphology: `teaching-card` -> `classification` -> `word-formation` -> contextual `cloze`;
-- reading: text stimulus with `choice` / `truth` / `matching` -> `short-answer` -> `rewrite`;
+- reading: text stimulus with `choice` / `truth` / `matching` -> `short-answer` with separate supporting evidence when required -> `rewrite`;
 - aural bridge: `pronunciation` / audio `choice` -> phrase `dictation`;
-- listening: audio stimulus with `choice`, `matching`, `structured-completion`, `cloze`, or `short-answer` as the source task requires;
+- listening: audio stimulus with `choice`, `matching`, `structured-completion`, `cloze`, `short-answer`, or positioned `labeling` as the source task requires;
 - production: `speaking-response` and/or `writing-response` after preparatory retrieval;
 - mastery: mixed scored types with minimal teaching support.
 
-Do not use every available slide type. `ordering`, for example, belongs only where chronology, process, severity, or another real order is a lesson target.
+Do not use every available slide type. `ordering`, for example, belongs only where chronology, process, severity, or another real order is a lesson target. Use `labeling` only when a shared map, plan, or diagram and its spatial positions are part of the evidence; a text-only blank is not a substitute.
 
 ## Feedback and support
 

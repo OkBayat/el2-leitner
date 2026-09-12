@@ -146,6 +146,40 @@ export const REUSABLE_SLIDE_FIXTURES: readonly SlideExerciseSlide[] = [
 		},
 	},
 	{
+		id: 'showcase-labeling',
+		type: 'labeling',
+		data: {
+			mode: 'diagram',
+			instruction: 'Label the marked stages.',
+			question: 'Complete the process diagram.',
+			stimulus: {
+				type: 'diagram',
+				imageSrc: SIMPLE_DIAGRAM,
+				alt: 'Four connected stages with two numbered markers.',
+			},
+			inputMode: 'word-bank',
+			wordBank: ['collect', 'sort', 'clean'],
+			targets: [
+				{
+					id: 'first-stage',
+					label: 'Stage 1',
+					markerLabel: '1',
+					xPercent: 12.5,
+					yPercent: 50,
+					answers: ['collect'],
+				},
+				{
+					id: 'second-stage',
+					label: 'Stage 2',
+					markerLabel: '2',
+					xPercent: 40,
+					yPercent: 50,
+					answers: ['sort'],
+				},
+			],
+		},
+	},
+	{
 		id: 'showcase-cloze',
 		type: 'cloze',
 		data: {

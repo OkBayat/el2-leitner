@@ -12,7 +12,7 @@ from typing import Any
 SCHEMA_VERSION = 1
 SLIDE_TYPES = {
     "message", "summary", "teaching-card", "selection", "number-input", "choice", "truth",
-    "matching", "classification", "ordering", "cloze", "structured-completion",
+    "matching", "classification", "ordering", "labeling", "cloze", "structured-completion",
     "short-answer", "word-formation", "error-correction", "rewrite",
     "pronunciation", "dictation", "speaking-response", "writing-response",
 }
@@ -49,6 +49,10 @@ ENUM_FIELDS = {
     },
     "ordering": {
         "mode": ({"sequence", "chronology", "severity", "adjective-order", "process"}, False),
+    },
+    "labeling": {
+        "mode": ({"map", "plan", "diagram"}, True),
+        "inputMode": ({"text", "word-bank"}, False),
     },
     "cloze": {"inputMode": ({"text", "word-bank", "select"}, False)},
     "structured-completion": {
@@ -151,6 +155,24 @@ def string_array(source: dict, key: str, label: str, minimum: int = 1) -> list[s
     if len(set(normalized)) != len(normalized):
         raise ValueError(f"{label} must not contain duplicates.")
     return normalized
+
+
+def normalize_answer(value: str, field: dict) -> str:
+    normalized = " ".join(value.strip().split())
+    exact_spelling = field.get("exactSpelling") is True
+    if not exact_spelling and field.get("punctuationSensitive") is not True:
+        normalized = re.sub(r"[.,!?;:]+$", "", normalized).strip()
+    if not exact_spelling and field.get("caseSensitive") is not True:
+        normalized = normalized.lower()
+    return normalized
+
+
+def answer_matches(value: str, field: dict, answers: list[str]) -> bool:
+    word_limit = field.get("wordLimit")
+    if word_limit is not None and len(value.strip().split()) > word_limit:
+        return False
+    actual = normalize_answer(value, field)
+    return any(normalize_answer(answer, field) == actual for answer in answers)
 
 
 def validate_options(data: dict, minimum: int = 2) -> list[str]:
@@ -261,6 +283,61 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         correct_ids = string_array(data, "correctOrderIds", "Ordering correctOrderIds", 2)
         if set(correct_ids) != set(option_ids):
             raise ValueError("Ordering correctOrderIds must list every configured item exactly once.")
+        accepted_orders = data.get("acceptedOrders", [correct_ids])
+        if not isinstance(accepted_orders, list) or not accepted_orders:
+            raise ValueError("Ordering acceptedOrders must contain at least one order.")
+        normalized_orders = []
+        for index, candidate in enumerate(accepted_orders):
+            if not isinstance(candidate, list):
+                raise ValueError(f"Ordering acceptedOrders[{index}] must be an array.")
+            accepted = [value.strip() for value in candidate if isinstance(value, str) and value.strip()]
+            if len(accepted) != len(candidate) or len(accepted) != len(option_ids) or set(accepted) != set(option_ids):
+                raise ValueError("Every accepted ordering must list every configured item exactly once.")
+            normalized_orders.append(tuple(accepted))
+        if len(set(normalized_orders)) != len(normalized_orders):
+            raise ValueError("Ordering acceptedOrders must not contain duplicates.")
+        if tuple(correct_ids) not in normalized_orders:
+            raise ValueError("Ordering acceptedOrders must include correctOrderIds.")
+        return
+    if slide_type == "labeling":
+        text(data, "question", "Labeling question")
+        stimulus = record(data.get("stimulus"), "Labeling stimulus")
+        stimulus_type = text(stimulus, "type", "Labeling stimulus type")
+        if stimulus_type == "diagram":
+            text(stimulus, "imageSrc", "Labeling diagram source")
+        elif stimulus_type == "image":
+            text(stimulus, "src", "Labeling image source")
+        else:
+            raise ValueError("Labeling requires an image or diagram stimulus.")
+        text(stimulus, "alt", "Labeling stimulus alternative text")
+        target_ids = []
+        target_answers = []
+        targets = array(data, "targets", "Labeling targets")
+        for candidate in targets:
+            target = record(candidate, "labeling target")
+            target_ids.append(text(target, "id", "Labeling target id"))
+            text(target, "label", "Labeling target label")
+            text(target, "markerLabel", "Labeling target marker label")
+            target_answers.append((target, string_array(target, "answers", "Labeling target answers")))
+            if "wordLimit" in target and (
+                isinstance(target["wordLimit"], bool)
+                or not isinstance(target["wordLimit"], int)
+                or target["wordLimit"] < 1
+            ):
+                raise ValueError("Labeling target wordLimit must be a positive integer.")
+            for key in ("xPercent", "yPercent"):
+                value = target.get(key)
+                if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0 or value > 100:
+                    raise ValueError("Labeling target coordinates must be between 0 and 100.")
+        if len(set(target_ids)) != len(target_ids):
+            raise ValueError("Labeling target ids must be unique.")
+        if data.get("inputMode", "text") == "word-bank":
+            word_bank = string_array(data, "wordBank", "Labeling wordBank", 2)
+            if any(
+                not any(answer_matches(option, target, answers) for option in word_bank)
+                for target, answers in target_answers
+            ):
+                raise ValueError("Every labeling target needs an accepted answer in the word bank.")
         return
     if slide_type == "cloze":
         text(data, "content", "Cloze content")
@@ -274,6 +351,10 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
     if slide_type == "short-answer":
         text(data, "question", "Short answer question")
         string_array(data, "answers", "Short answer answers")
+        if "evidenceRequired" in data and not isinstance(data["evidenceRequired"], bool):
+            raise ValueError("Short answer evidenceRequired must be a boolean.")
+        if data.get("evidenceRequired") is True:
+            text(data, "evidencePrompt", "Short answer evidencePrompt")
         return
     if slide_type == "word-formation":
         text(data, "baseWord", "Word formation baseWord")
