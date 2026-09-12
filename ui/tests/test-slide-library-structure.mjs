@@ -35,6 +35,10 @@ const materialComponents = readFileSync(
 	join(uiRoot, 'src/styles/_angular-material-components.scss'),
 	'utf8',
 );
+const pronunciationTemplate = readFileSync(
+	join(libraryRoot, 'components/pronunciation/pronunciation-slide.component.html'),
+	'utf8',
+);
 const layoutStyles = readFileSync(
 	join(uiRoot, 'src/app/shared/slide-exercise/slide-exercise.component.scss'),
 	'utf8',
@@ -178,26 +182,15 @@ assert.match(
 	/\.mat-mdc-form-field \.mat-mdc-input-element:focus,[\s\S]*\.mat-mdc-form-field \.mat-mdc-input-element:focus-visible\s*\{[\s\S]*outline-style:\s*none;/u,
 );
 assert.doesNotMatch(sharedStyles, /\.dictation-answer-input/u);
-const pronunciationRecordStyles = sharedStyles.match(
-	/\.pronunciation-record\s*\{([\s\S]*?)\n\}/u,
-)?.[1] ?? '';
 assert.doesNotMatch(
-	pronunciationRecordStyles,
-	/border-bottom-width/u,
-	'Pronunciation recording must use only the canonical Material lower edge.',
+	sharedStyles,
+	/\.pronunciation-record(?:\s|\[|\{|:)/u,
+	'Pronunciation recording must not override shared Voco button visuals from feature styles.',
 );
 assert.match(
-	pronunciationRecordStyles,
-	/color:\s*var\(--vocora-action-primary\);/u,
-	'Pronunciation recording must keep its label and waveform primary blue.',
-);
-const activePronunciationRecordStyles = sharedStyles.match(
-	/\.pronunciation-record\[aria-pressed='true'\]\s*\{([\s\S]*?)\n\}/u,
-)?.[1] ?? '';
-assert.match(
-	activePronunciationRecordStyles,
-	/border-color:\s*var\(--vocora-action-primary\);/u,
-	'Active pronunciation recording must keep its outline and lower edge the same primary color.',
+	pronunciationTemplate,
+	/<voco-secondary-button\s+class="w-100 mt-4"/u,
+	'Pronunciation recording layout must use exact Bootstrap utilities on the Voco host.',
 );
 assert.match(
 	sharedStyles,
