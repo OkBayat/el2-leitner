@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 import type { WritingFeedbackController, WritingSubmission } from '../../../writing-feedback-contracts';
+import type { SlideExerciseRuntimeState } from '../../../slide-exercise.models';
 import { WritingResponseSlideComponent } from './writing-response-slide.component';
 
 const metadata = { schemaVersion: 1, learnerLevel: 'A1', targetSkill: 'Simple personal writing', languageObjectives: ['Present simple'], taskExpectations: ['Describe breakfast'] };
@@ -47,6 +48,8 @@ describe('Writing response formative feedback', () => {
 
   it('emits saved participation only after the immutable draft is acknowledged, even with feedback off', async () => {
     const { fixture, component, controller, events } = await setup();
+    const states: SlideExerciseRuntimeState[] = [];
+    component.stateChange.subscribe((state) => states.push(state));
     component.setResponse('  I eat bread.  ');
     component.notes.set('Breakfast.');
     let acknowledge!: (value: WritingSubmission) => void;
@@ -60,6 +63,7 @@ describe('Writing response formative feedback', () => {
     fixture.detectChanges();
     expect(events).toHaveBeenCalledExactlyOnceWith({ type: 'submitted', data: expect.objectContaining({ response: '  I eat bread.  ', notes: 'Breakfast.' }) });
     expect(component.interactionState()).toBe('revealed');
+    expect(states.at(-1)?.chrome?.footer?.primary).toMatchObject({ id: 'continue', behavior: 'next', disabled: false });
     expect(fixture.nativeElement.textContent).not.toContain('mastered');
   });
 
@@ -112,6 +116,7 @@ describe('Writing response formative feedback', () => {
     expect(events).toHaveBeenCalledExactlyOnceWith({ type: 'submitted', data: expect.objectContaining({ response: 'My response is still here.' }) });
     expect(states).toHaveBeenLastCalledWith(expect.objectContaining({ chrome: { footer: {
       tone: 'information', title: 'Response ready', detail: 'Finish this exercise to save your response. Feedback is unavailable.',
+      primary: { id: 'continue', label: 'Continue', behavior: 'next', disabled: false },
     } } }));
     expect(controller.dispose).toHaveBeenCalledOnce();
   });

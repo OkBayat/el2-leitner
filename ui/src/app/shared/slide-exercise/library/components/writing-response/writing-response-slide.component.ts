@@ -286,7 +286,12 @@ export class WritingResponseSlideComponent
 		this.submit({ response, notes, wordCount: wordCount(response), mode: this.data().mode, register: this.data().register },
 			this.data().modelAnswer ? 'Compare your response with the model answer.' : '');
 		if (this.feedbackConfigured) {
-			this.stateChanges.next({ chrome: { footer: { tone: 'information', title: durable ? 'Draft saved' : 'Response ready', detail: durable ? 'Your original response is saved.' : 'Finish this exercise to save your response. Feedback is unavailable.' } } });
+			this.stateChanges.next({ chrome: { footer: {
+				tone: 'information',
+				title: durable ? 'Draft saved' : 'Response ready',
+				detail: durable ? 'Your original response is saved.' : 'Finish this exercise to save your response. Feedback is unavailable.',
+				primary: { id: 'continue', label: 'Continue', behavior: 'next', disabled: false },
+			} } });
 		}
 	}
 	private updateReady(): void {
