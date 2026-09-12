@@ -36,3 +36,5 @@ bash scripts/deploy.sh
 ```
 
 Deployment remains a separate explicit action so installing local content cannot restart production accidentally.
+Its environment contract, incremental build behavior, and private Ollama/Qwen
+provisioning are documented in [Server deployment](../docs/DEPLOYMENT.md).

@@ -56,9 +56,12 @@ services:
       - app_network
 
   db-setup:
+    image: leitner-ielts-app
     build:
       context: .
       dockerfile: back/Dockerfile
+      args:
+        VOCORA_SOURCE_HASH: ${VOCORA_APP_SOURCE_HASH:-manual}
     restart: "no"
     depends_on:
       mysql:
@@ -83,8 +86,11 @@ services:
       - app_network
 
   speech:
+    image: leitner-ielts-speech
     build:
       context: ./speech
+      args:
+        VOCORA_SOURCE_HASH: ${VOCORA_SPEECH_SOURCE_HASH:-manual}
     restart: unless-stopped
     networks:
       - app_network
@@ -112,10 +118,36 @@ services:
     networks:
       - app_network
 
+  ollama:
+    image: ollama/ollama:${OLLAMA_IMAGE_TAG:-0.34.0}
+    profiles: ["ai"]
+    restart: unless-stopped
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_NO_CLOUD: ${OLLAMA_NO_CLOUD:-1}
+      OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-1}
+      OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-1}
+      OLLAMA_MAX_QUEUE: ${OLLAMA_MAX_QUEUE:-8}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-5m}
+      QWEN_MODEL: qwen3:4b-instruct-2507-q4_K_M
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+    networks:
+      - app_network
+
   app:
+    image: leitner-ielts-app
     build:
       context: .
       dockerfile: back/Dockerfile
+      args:
+        VOCORA_SOURCE_HASH: ${VOCORA_APP_SOURCE_HASH:-manual}
     restart: unless-stopped
     depends_on:
       mysql:
@@ -186,6 +218,7 @@ services:
 volumes:
   mysql_data:
   tts_audio_cache:
+  ollama_models:
 
 networks:
   app_network:
