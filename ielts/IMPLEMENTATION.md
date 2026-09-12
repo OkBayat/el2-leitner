@@ -62,6 +62,11 @@ this list marks the slice complete or authorizes a deployment.
 | AC-01 | General adaptive-conversation contract and persisted turn workflow | No IELTS-specific component; server-owned JSON context, bounded recording/inference and verifiable completion evidence |
 | AC-02 | L0001 E09 as the first JSON consumer | Two accepted turns, validated Qwen question generation, owned ephemeral Kokoro playback and no IELTS-band claim |
 
+The current deployment foundation provisions the WF-01 candidate runtime and
+model idempotently for target-host experiments. It does not implement WF-01's
+measurements, the WF-03 inference adapter, an HTTP endpoint, a slide, or learner
+access. Those remain separate stacked slices with their own acceptance evidence.
+
 Start with the [L0001 reference pack](examples/EX01.md) and a small set of newly
 authored alternative responses. Preserve its personal meal-writing objective:
 learners need not repeat the model's chosen foods or facts. The public reference
@@ -96,5 +101,6 @@ validation of these later implementation companions. A later intentional package
 release must regenerate its own manifest and any derived documents with the
 owning scripts; it must not advertise inherited counts as new validation.
 
-This documentation change installs no model, changes no runtime/Compose/database
-file, starts no service, and changes neither repository protection nor OKF.
+The current repository change configures Compose and deployment provisioning but
+does not download a model or start a service until an operator explicitly runs
+the deploy script. It changes no database schema, repository protection, or OKF.

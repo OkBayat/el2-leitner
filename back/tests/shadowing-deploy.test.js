@@ -9,16 +9,21 @@ test('deployment builds and starts the speech companion before replacing the app
   const root = await mkdtemp(join(tmpdir(), 'vocora-shadowing-deploy-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const log = join(root, 'calls.log');
-  await writeFile(join(root, 'docker'), '#!/usr/bin/env bash\necho "$*" >> "$DEPLOY_TEST_LOG"\nif [[ "${FAIL_SPEECH:-}" == 1 && "$*" == "compose up -d --wait speech" ]]; then exit 9; fi\n', { mode: 0o755 });
+  await writeFile(join(root, 'docker'), `#!/usr/bin/env bash
+echo "$*" >> "$DEPLOY_TEST_LOG"
+if [[ "$*" == compose\\ --profile\\ ai\\ exec\\ -T\\ ollama\\ sha256sum* ]]; then echo "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0  manifest"; exit 0; fi
+if [[ "\${FAIL_SPEECH:-}" == 1 && "$*" == "compose up -d --wait speech" ]]; then exit 9; fi
+`, { mode: 0o755 });
   const script = new URL('../../scripts/deploy.sh', import.meta.url);
   const env = { ...process.env, PATH: `${root}:${process.env.PATH}`, DEPLOY_TEST_LOG: log };
   assert.equal(spawnSync('bash', [script.pathname], { env }).status, 0);
   const calls = (await readFile(log, 'utf8')).trim().split('\n');
-  assert.ok(calls.includes('compose build app db-setup speech'));
+  assert.ok(calls.includes('compose build app'));
+  assert.ok(calls.includes('compose build speech'));
   const speech = calls.indexOf('compose up -d --wait speech');
   assert.ok(speech > calls.indexOf('compose run --rm --no-deps db-setup'));
-  assert.ok(speech < calls.indexOf('compose up -d --no-deps --force-recreate app'));
+  assert.ok(speech < calls.indexOf('compose up -d --no-deps --wait app'));
   await writeFile(log, '');
   assert.equal(spawnSync('bash', [script.pathname], { env: { ...env, FAIL_SPEECH: '1' } }).status, 9);
-  assert.ok(!(await readFile(log, 'utf8')).includes('--force-recreate app'));
+  assert.ok(!(await readFile(log, 'utf8')).includes('compose up -d --no-deps --wait app'));
 });

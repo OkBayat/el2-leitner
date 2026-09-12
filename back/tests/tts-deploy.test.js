@@ -11,7 +11,11 @@ test("deployment starts Kokoro before replacing the app", async (t) => {
   const log = join(root, "docker-calls.log");
   await writeFile(
     join(root, "docker"),
-    '#!/usr/bin/env bash\necho "$*" >> "$DEPLOY_TEST_LOG"\nif [[ "${FAIL_KOKORO:-}" == 1 && "$*" == "compose up -d --wait kokoro" ]]; then exit 9; fi\n',
+    `#!/usr/bin/env bash
+echo "$*" >> "$DEPLOY_TEST_LOG"
+if [[ "$*" == compose\\ --profile\\ ai\\ exec\\ -T\\ ollama\\ sha256sum* ]]; then echo "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0  manifest"; exit 0; fi
+if [[ "\${FAIL_KOKORO:-}" == 1 && "$*" == "compose up -d --wait kokoro" ]]; then exit 9; fi
+`,
     { mode: 0o755 },
   );
   const script = new URL("../../scripts/deploy.sh", import.meta.url);
@@ -21,9 +25,9 @@ test("deployment starts Kokoro before replacing the app", async (t) => {
   const calls = (await readFile(log, "utf8")).trim().split("\n");
   const kokoro = calls.indexOf("compose up -d --wait kokoro");
   assert.ok(kokoro > calls.indexOf("compose run --rm --no-deps db-setup"));
-  assert.ok(kokoro < calls.indexOf("compose up -d --no-deps --force-recreate app"));
+  assert.ok(kokoro < calls.indexOf("compose up -d --no-deps --wait app"));
 
   await writeFile(log, "");
   assert.equal(spawnSync("bash", [script.pathname], { env: { ...env, FAIL_KOKORO: "1" } }).status, 9);
-  assert.ok(!(await readFile(log, "utf8")).includes("--force-recreate app"));
+  assert.ok(!(await readFile(log, "utf8")).includes("compose up -d --no-deps --wait app"));
 });
