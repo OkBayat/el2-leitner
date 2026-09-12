@@ -10,15 +10,23 @@ The [curriculum README](README.md) defines what learners practise. The existing
 technical playbook for repository architecture, migration, deployment, testing,
 and ownership. It already exists and is deliberately not duplicated or rewritten.
 
-The new [self-hosted Writing feedback plan](WRITING_FEEDBACK.md) applies that
+The new [self-hosted Writing feedback plan](WRITING_FEEDBACK.md) and the general
+[adaptive conversation design](../docs/ADAPTIVE_CONVERSATION.md) apply that
 playbook to the next IELTS implementation direction: **deterministic checking for
 closed tasks, local Qwen feedback for open text, existing Kokoro for TTS, and
-existing Shadowing for the current speaking-practice scope**.
+reuse of the current browser PCM/Vosk boundaries for conversational practice**.
 
 The course's numbered lessons, targets, prerequisites, counts, reference packs,
 and blocked production status remain unchanged. These implementation companions
 are not new lessons, generated slide objects, evidence of model quality, or a
 replacement for the curriculum's authoring/runtime compiler.
+
+Managed-path increments may be published for branch-level product review as soon
+as every included exercise is registered, runnable, and contract-tested. In this
+context, `published` means discoverable in Courses; it does not mean the complete
+curriculum, adaptive conversation capability, or model-quality gates are ready.
+Future interactions remain absent from JSON until their general runtime contracts
+ship.
 
 ## Decision and limits
 
@@ -30,7 +38,7 @@ replacement for the curriculum's authoring/runtime compiler.
 | Output | Schema-validated JSON with relevant source quotes, minimal corrections and brief explanations | Valid JSON does not establish correct language judgment |
 | TTS | Retain Kokoro and the existing authenticated TTS boundary | The selected Qwen model is text-only and does not replace Kokoro |
 | Speaking now | Retain existing Vosk/Shadowing behavior | Repetition/word recognition is not independent Speaking assessment |
-| Speaking later | Consider ASR -> text feedback -> optional Kokoro playback | Transcript-only feedback cannot assess pronunciation or full Speaking performance |
+| Adaptive conversation | General JSON slide: browser PCM -> private Vosk -> local Qwen turn feedback/question -> existing Kokoro playback | Transcript-only feedback cannot assess pronunciation, fluency, or a full Speaking performance |
 | Scores | Keep deterministic task results; begin AI feedback qualitatively | Withhold numeric IELTS estimates until external calibration and release approval |
 
 This direction supersedes a **deterministic-only restriction on open-response
@@ -51,6 +59,8 @@ this list marks the slice complete or authorizes a deployment.
 | WF-05 | Wider curriculum coverage | Open summaries/explanations and longer Writing tasks pass task-specific quality and capacity gates; Task 1 has authoritative textual visual data |
 | WF-06 | Optional calibrated score estimates | Held-out independently rated responses validate the exact model/prompt/quantization/rubric version; limitations remain visible |
 | WF-07 | Separately scoped speaking-text feedback | A suitable recording/ASR contract exists; transcripts and corrected playback never stand in for acoustic assessment |
+| AC-01 | General adaptive-conversation contract and persisted turn workflow | No IELTS-specific component; server-owned JSON context, bounded recording/inference and verifiable completion evidence |
+| AC-02 | L0001 E09 as the first JSON consumer | Two accepted turns, validated Qwen question generation, owned ephemeral Kokoro playback and no IELTS-band claim |
 
 Start with the [L0001 reference pack](examples/EX01.md) and a small set of newly
 authored alternative responses. Preserve its personal meal-writing objective:
