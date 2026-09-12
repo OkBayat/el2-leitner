@@ -48,7 +48,9 @@ def verified_model(request):
     models = [item for item in layers if item.get("mediaType") == "application/vnd.ollama.image.model"]
     templates = [item for item in layers if item.get("mediaType") == "application/vnd.ollama.image.template"]
     require(len(models) == 1 and len(templates) == 1)
-    require(templates[0]["digest"] == "sha256:" + request["template_sha256"])
+    template_digest = templates[0].get("digest")
+    require(isinstance(template_digest, str) and template_digest.startswith("sha256:")
+            and SHA256.fullmatch(template_digest[7:]))
     model_digest = models[0]["digest"]
     require(model_digest.startswith("sha256:") and SHA256.fullmatch(model_digest[7:]))
     before = file_identity(model_path)

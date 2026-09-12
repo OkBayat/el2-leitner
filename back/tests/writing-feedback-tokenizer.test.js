@@ -143,7 +143,7 @@ test('real helper fails closed for a manifest digest mismatch before any model l
   }
 });
 
-test('GGUF verification accepts matching files despite access-time updates and rejects same-size tampering', async () => {
+test('GGUF verification accepts Ollama-normalized template text while preserving manifest and model pins', async () => {
   const program = `
 import hashlib, importlib.util, json, os, pathlib, tempfile
 spec = importlib.util.spec_from_file_location('tokenizer', ${JSON.stringify(helper)})
@@ -156,21 +156,34 @@ with tempfile.TemporaryDirectory() as directory:
     model.write_bytes(data)
     os.utime(model, (1, 1))
     digest = 'sha256:' + hashlib.sha256(data).hexdigest()
-    manifest.write_text(json.dumps({'layers': [
+    manifest_value = {'layers': [
         {'mediaType': 'application/vnd.ollama.image.model', 'digest': digest, 'size': len(data)},
         {'mediaType': 'application/vnd.ollama.image.template', 'digest': 'sha256:' + 'e' * 64}
-    ]}))
+    ]}
+    manifest.write_text(json.dumps(manifest_value))
     request = {'manifest_path': str(manifest), 'model_path': str(model),
         'model_digest': 'sha256:' + hashlib.sha256(manifest.read_bytes()).hexdigest(),
-        'template_sha256': 'e' * 64}
+        'template_sha256': 'f' * 64}
     assert module.verified_model(request)[1] == digest
-    for mutation in [{'template_sha256': 'f' * 64}, {'model_digest': 'sha256:' + 'f' * 64}]:
+    for mutation in [{'model_digest': 'sha256:' + 'f' * 64}]:
         try:
             module.verified_model({**request, **mutation})
         except ValueError:
             pass
         else:
             raise AssertionError('identity mismatch accepted')
+    manifest_value['layers'][1]['digest'] = 'not-a-digest'
+    manifest.write_text(json.dumps(manifest_value))
+    try:
+        module.verified_model({**request,
+            'model_digest': 'sha256:' + hashlib.sha256(manifest.read_bytes()).hexdigest()})
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('invalid manifest template digest accepted')
+    manifest_value['layers'][1]['digest'] = 'sha256:' + 'e' * 64
+    manifest.write_text(json.dumps(manifest_value))
+    request['model_digest'] = 'sha256:' + hashlib.sha256(manifest.read_bytes()).hexdigest()
     model.write_bytes(data[:-1] + b'X')
     try:
         module.verified_model(request)
