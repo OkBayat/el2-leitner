@@ -197,8 +197,9 @@ drink, time, place, or another person. The model must not force the learner to
 copy the reference dialogue or invent a personal fact.
 
 E09 stays out of the managed lesson JSON until the type, backend workflow,
-registry entry, tests, and design-system states ship together. This prevents an
-unregistered placeholder from making a draft lesson appear runtime-ready.
+registry entry, tests, and design-system states ship together. The published
+increment exposes only interactions that are already runnable; it does not use an
+unregistered placeholder to advertise a capability that does not exist.
 
 ## Verification and release gates
 

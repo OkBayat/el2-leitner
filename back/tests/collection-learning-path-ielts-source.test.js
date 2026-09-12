@@ -40,7 +40,7 @@ test("IELTS L0001 uses the managed JSON path and reusable slide contracts", asyn
     collectionId: "ielts",
     title: "Vocora IELTS Academic",
     mode: "finite",
-    status: "draft",
+    status: "published",
   });
   assert.equal(definition.lessons.length, 1);
 

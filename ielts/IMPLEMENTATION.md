@@ -21,6 +21,13 @@ and blocked production status remain unchanged. These implementation companions
 are not new lessons, generated slide objects, evidence of model quality, or a
 replacement for the curriculum's authoring/runtime compiler.
 
+Managed-path increments may be published for branch-level product review as soon
+as every included exercise is registered, runnable, and contract-tested. In this
+context, `published` means discoverable in Courses; it does not mean the complete
+curriculum, adaptive conversation capability, or model-quality gates are ready.
+Future interactions remain absent from JSON until their general runtime contracts
+ship.
+
 ## Decision and limits
 
 | Concern | Direction | Boundary |
