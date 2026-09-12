@@ -5,6 +5,12 @@
 
 ## Start here
 
+For the current runtime-content checkpoint and its remaining release gates,
+read [PROGRESS.md](PROGRESS.md). The expanded L0001 teaching companion is
+[lessons/L0001.md](lessons/L0001.md). The generated curriculum below remains
+the original research/authoring baseline; its inherited counts do not describe
+the current managed runtime JSON.
+
 The [curriculum README](README.md) defines what learners practise. The existing
 [enterprise architecture playbook](../ARCHITECTURE_PLAYBOOK.md) remains the
 technical playbook for repository architecture, migration, deployment, testing,
