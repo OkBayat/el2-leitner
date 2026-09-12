@@ -35,11 +35,13 @@ function relative(file) {
 }
 
 function isSelectionInteractionTag(tag) {
-  return /(?:class\s*=\s*["'][^"']*\b(?:choice-option|classification-item|cloze-choice-blank|library-item)\b|aria-(?:checked|current|pressed)|data-testid\s*=\s*["']selection-option["']|\[attr\.data-state\]|\[attr\.data-item-id\]|['"]Move ['"])/u.test(tag);
+  return /(?:class\s*=\s*["'][^"']*\b(?:choice-option|classification-item|cloze-choice-blank)\b|aria-(?:checked|current|pressed)|data-testid\s*=\s*["']selection-option["']|\[attr\.data-state\]|\[attr\.data-item-id\])/u.test(tag);
 }
 
 assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction type="button">Reset current slide</button>'), false);
 assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="speech-replay">Play pronunciation</button>'), false);
+assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="library-item">Open library item</button>'), false);
+assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction aria-label="Move item up">↑</button>'), false);
 assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="choice-option" [attr.aria-checked]="selected">'), true);
 
 const violations = [];

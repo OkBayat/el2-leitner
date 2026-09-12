@@ -11,21 +11,19 @@
     <h2 id="my-library-heading">My Courses and Collections</h2>
     <div class="library-list" data-testid="library-my-items">
       @for (item of myItems(); track item.collection.id) {
-        <button
-					vocoButtonInteraction
-					type="button"
-					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+        <voco-secondary-link
+					[routerLink]="['/library', item.collection.id]"
+					class="library-item w-100"
 					data-testid="library-item"
 					[attr.data-library-kind]="item.kind"
-					[attr.aria-label]="
+					[ariaLabel]="
 						(item.kind === 'course'
 							? 'My course: '
 							: 'My collection: ') + item.title
 					"
-					(click)="open(item.collection)"
 				>
           {{ item.title }}
-        </button>
+        </voco-secondary-link>
       } @empty {
         <p class="empty">Courses you start and collections you add to Leitner will appear here.</p>
       }
@@ -46,15 +44,13 @@
     }
     <div class="library-list" data-testid="library-all-courses">
       @for (course of allCourses(); track course.collection.id) {
-        <button
-					vocoButtonInteraction
-					type="button"
-					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+        <voco-secondary-link
+					[routerLink]="['/library', course.collection.id]"
+					class="library-item w-100"
 					data-testid="library-item"
-					(click)="open(course.collection)"
 				>
           {{ course.title }}
-        </button>
+        </voco-secondary-link>
       } @empty {
         @if (!learningPaths.error()) {
           <p class="empty">No courses are available yet.</p>
@@ -67,15 +63,13 @@
     <h2 id="all-collections-heading">All Collections</h2>
     <div class="library-list" data-testid="library-all-collections">
       @for (collection of allCollections(); track collection.id) {
-        <button
-					vocoButtonInteraction
-					type="button"
-					class="library-item w-100 d-flex justify-content-start align-items-center text-start text-truncate"
+        <voco-secondary-link
+					[routerLink]="['/library', collection.id]"
+					class="library-item w-100"
 					data-testid="library-item"
-					(click)="open(collection)"
 				>
           {{ collection.title }}
-        </button>
+        </voco-secondary-link>
       } @empty {
         <p class="empty">No collections are available yet.</p>
       }

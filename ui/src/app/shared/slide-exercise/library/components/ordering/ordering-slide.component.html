@@ -17,28 +17,26 @@
 					<li [attr.data-state]="orderState(item.id)">
 						<span>{{ item.label }}</span
 						><span class="ordering-actions"
-							><button
-								vocoButtonInteraction
+							><voco-icon-button
 								type="button"
 								[disabled]="
 									first || interactionState() !== 'idle'
 								"
-								[attr.aria-label]="'Move ' + item.label + ' up'"
-								(click)="move(item.id, -1)"
+								[ariaLabel]="'Move ' + item.label + ' up'"
+								(activated)="move(item.id, -1)"
 							>
-								↑</button><button
-								vocoButtonInteraction
+								↑</voco-icon-button><voco-icon-button
 								type="button"
 								[disabled]="
 									last || interactionState() !== 'idle'
 								"
-								[attr.aria-label]="
+								[ariaLabel]="
 									'Move ' + item.label + ' down'
 								"
-								(click)="move(item.id, 1)"
+								(activated)="move(item.id, 1)"
 							>
 								↓
-							</button></span
+							</voco-icon-button></span
 						>
 					</li>
 				}

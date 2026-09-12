@@ -1,8 +1,7 @@
-import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective } from '../../shared/voco-button';
+import { VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
@@ -30,7 +29,7 @@ function alphabetical<T extends {title: string}>(items: readonly T[]): T[] {
 
 @Component({
   selector: 'app-library-page',
-  imports: [CommonModule, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective],
+  imports: [VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent],
   templateUrl: 'library-page.component.html',
   styleUrl: 'library-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,10 +70,6 @@ export class LibraryPageComponent implements OnInit {
     await this.learningPaths.loadCatalog(collections);
     this.collections.set(collections);
     this.canManage.set(Boolean(result.capabilities?.canManage));
-  }
-
-  open(collection: LibraryCollection): void {
-    void this.router.navigate(['/library', collection.id]);
   }
 
   async createCollection(): Promise<void> {
