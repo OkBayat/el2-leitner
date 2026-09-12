@@ -1,0 +1,2696 @@
+{
+  "schema_version": 1,
+  "lesson": {
+    "id": "L0001",
+    "title": "Food and everyday meals — Form and meaning",
+    "source": {
+      "kind": "original_commissioned_curriculum",
+      "reference": "data/modules.normalized.json#S01-U01",
+      "section": "stage 1, unit 1, lesson 1"
+    },
+    "learning_goals": [
+      "Establish a usable lexical representation and use it in a simple communicative exchange.",
+      "Find explicitly stated people, actions, objects and locations in short texts.",
+      "Recognise familiar words and retrieve a stated item, number or place without relying on the transcript.",
+      "Give an intelligible personal answer using two linked statements.",
+      "Write complete SVO sentences with clear reference and basic punctuation."
+    ],
+    "content_inventory": {
+      "targets": [
+        {
+          "id": "L0001-V01",
+          "kind": "vocabulary",
+          "label": "bread",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-V02",
+          "kind": "vocabulary",
+          "label": "rice",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-V03",
+          "kind": "vocabulary",
+          "label": "water",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-V04",
+          "kind": "vocabulary",
+          "label": "milk",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-V05",
+          "kind": "vocabulary",
+          "label": "eat",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-V06",
+          "kind": "vocabulary",
+          "label": "drink",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-C01",
+          "kind": "multiword_expression",
+          "label": "have breakfast",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-C02",
+          "kind": "multiword_expression",
+          "label": "drink water",
+          "source_ref": "data/modules.normalized.json#S01-U01; original curriculum target selection",
+          "leitner_eligible": true
+        },
+        {
+          "id": "L0001-G1",
+          "kind": "usage_frame",
+          "label": "Subject + present-tense verb + object with I/you/we/they",
+          "source_ref": "data/grammar.txt#S01-U01",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-G2",
+          "kind": "grammar_warning",
+          "label": "Object nouns; receptive recognition of eats/drinks with named subjects; capital I and final full stop",
+          "source_ref": "data/grammar.txt#S01-U01",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-R",
+          "kind": "reading_comprehension",
+          "label": "Find explicitly stated people, actions, objects and locations in short texts.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-L",
+          "kind": "listening_comprehension",
+          "label": "Recognise familiar words and retrieve a stated item, number or place without relying on the transcript.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-S",
+          "kind": "speaking_function",
+          "label": "Give an intelligible personal answer using two linked statements.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-W",
+          "kind": "writing_function",
+          "label": "Write complete SVO sentences with clear reference and basic punctuation.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-P",
+          "kind": "aural_recognition",
+          "label": "Word boundaries, stressed syllables, clear final consonants and meaningful pauses",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-Q",
+          "kind": "exam_mechanic",
+          "label": "Understand the four skill names; distinguish an answer from an explanation; type exact words. Do not impose full-test timing.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        },
+        {
+          "id": "L0001-M",
+          "kind": "transfer_task",
+          "label": "Identify a mismatch, correct it and retrieve the capability in a fresh context without overwriting the first attempt.",
+          "source_ref": "data/stages.json#stage-1; course specification §§ 5–12",
+          "leitner_eligible": false
+        }
+      ],
+      "assets": [
+        {
+          "id": "L0001-text",
+          "kind": "reading_text",
+          "source_ref": "examples/EX01.md#reading",
+          "available": true
+        },
+        {
+          "id": "L0001-script",
+          "kind": "listening_script",
+          "source_ref": "examples/EX01.md#listening",
+          "available": true
+        },
+        {
+          "id": "L0001-audio",
+          "kind": "audio",
+          "source_ref": "required-original-recording:L0001",
+          "available": false
+        },
+        {
+          "id": "L0001-gate",
+          "kind": "held_out_assessment",
+          "source_ref": "required-sealed-form:L0001-G",
+          "available": false
+        }
+      ]
+    },
+    "content_gaps": [
+      "Natural listening recordings and pronunciation assets are not supplied.",
+      "Sealed transfer items, reference-anchored productive assessment and empirical item calibration are not supplied.",
+      "Dictionary/corpus checks and distractor review are still required.",
+      "Authoring placeholder fields are not production component configuration; compile only against verified runtime contracts."
+    ]
+  },
+  "design": {
+    "sequence_strategy": "Keep the mandated vocabulary intake and dictation first; teach the unit language, bridge print to speech, integrate both receptive skills, expand the primary lesson role, produce, revise and check fresh transfer. Optional target repairs are conditional specifications, not a fixed compulsory sequence.",
+    "research_principles": [
+      "retrieval_practice",
+      "distributed_practice",
+      "multidimensional_vocabulary",
+      "collocation_learning",
+      "balanced_language_opportunities",
+      "oral_corrective_feedback",
+      "written_corrective_feedback",
+      "explicit_form_instruction",
+      "extensive_reading",
+      "fluency_task_repetition",
+      "listening_process_instruction"
+    ],
+    "notes": [
+      "A linear order implements the authoring prerequisite graph; this does not assume a deployed runtime DAG engine.",
+      "All curriculum target selections and exact counts are Vocora design choices, not validated IELTS-band mappings.",
+      "Optional repair dispatch and readiness routing are proposed product behavior.",
+      "First-attempt evidence, repaired performance and official IELTS scoring must remain separate."
+    ]
+  },
+  "evidence_catalog": [
+    {
+      "id": "retrieval_practice",
+      "kind": "research",
+      "citation": "[R01] Roediger, H. L., III, & Karpicke, J. D. (2006). Test-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention. https://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01693.x",
+      "claim": "Retrieval can improve delayed retention relative to repeated study."
+    },
+    {
+      "id": "distributed_practice",
+      "kind": "research",
+      "citation": "[R02] Kim, S. K., & Webb, S. (2022). The Effects of Spaced Practice on Second Language Learning: A Meta-Analysis. https://onlinelibrary.wiley.com/doi/abs/10.1111/lang.12479",
+      "claim": "Spacing benefits L2 learning; timing and retention interval matter."
+    },
+    {
+      "id": "multidimensional_vocabulary",
+      "kind": "research",
+      "citation": "[R03] Webb, S. (2009). The Effects of Receptive and Productive Learning of Word Pairs on Vocabulary Knowledge. https://journals.sagepub.com/doi/10.1177/0033688209343854",
+      "claim": "Different learning operations develop different dimensions of word knowledge."
+    },
+    {
+      "id": "collocation_learning",
+      "kind": "research",
+      "citation": "[R04] Webb, S., & Kagimoto, E. (2009). The Effects of Vocabulary Learning on Collocation and Meaning. https://onlinelibrary.wiley.com/doi/10.1002/j.1545-7249.2009.tb00227.x",
+      "claim": "Focused vocabulary work can develop collocation and meaning knowledge."
+    },
+    {
+      "id": "balanced_language_opportunities",
+      "kind": "research",
+      "citation": "[R05] Nation, I. S. P. (2007). The four strands. https://www.tandfonline.com/doi/abs/10.2167/illt039.0",
+      "claim": "Balancing meaning-focused input, meaning-focused output, language-focused learning and fluency development."
+    },
+    {
+      "id": "oral_corrective_feedback",
+      "kind": "research",
+      "citation": "[R06] Lyster, R., & Saito, K. (2010). Oral Feedback in Classroom SLA: A Meta-Analysis. https://www.cambridge.org/core/journals/studies-in-second-language-acquisition/article/oral-feedback-in-classroom-sla/4999EE1C8379B2BF026B148EAF373CA1",
+      "claim": "Corrective feedback can support classroom L2 development, including prompted learner repair."
+    },
+    {
+      "id": "written_corrective_feedback",
+      "kind": "research",
+      "citation": "[R07] Kang, E., & Han, Z. (2015). The Efficacy of Written Corrective Feedback in Improving L2 Written Accuracy: A Meta-Analysis. https://onlinelibrary.wiley.com/doi/10.1111/modl.12189",
+      "claim": "Written corrective feedback can improve grammatical accuracy, with contextual moderators."
+    },
+    {
+      "id": "explicit_form_instruction",
+      "kind": "research",
+      "citation": "[R11] Norris, J. M., & Ortega, L. (2000). Effectiveness of L2 Instruction: A Research Synthesis and Quantitative Meta-analysis. https://onlinelibrary.wiley.com/doi/10.1111/0023-8333.00136",
+      "claim": "Focused instruction supports target-oriented L2 gains; explicit attention to form can be useful."
+    },
+    {
+      "id": "extensive_reading",
+      "kind": "research",
+      "citation": "[R12] Nakanishi, T. (2015). A Meta-Analysis of Extensive Reading Research. https://onlinelibrary.wiley.com/doi/10.1002/tesq.157",
+      "claim": "Extensive reading is supported as a component of reading development."
+    },
+    {
+      "id": "fluency_task_repetition",
+      "kind": "research",
+      "citation": "[R13] de Jong, N., & Perfetti, C. A. (2011). Fluency Training in the ESL Classroom: An Experimental Study of Fluency Development and Proceduralization. https://onlinelibrary.wiley.com/doi/10.1111/j.1467-9922.2010.00620.x",
+      "claim": "Speech repetition can contribute to fluency development; later transfer still needs assessment."
+    },
+    {
+      "id": "listening_process_instruction",
+      "kind": "research",
+      "citation": "[R14] Vandergrift, L., & Tafaghodtari, M. H. (2010). Teaching L2 Learners How to Listen Does Make a Difference: An Empirical Study. https://onlinelibrary.wiley.com/doi/10.1111/j.1467-9922.2009.00559.x",
+      "claim": "Guided planning, monitoring and evaluation supported listening development in the studied setting."
+    },
+    {
+      "id": "vocora_prerequisite_synthesis",
+      "kind": "design_synthesis",
+      "citation": "Original Vocora IELTS curriculum design, 2026-09-09; repository snapshot 03e581fb95aefa27268baff5a324948576728b66",
+      "claim": "The exact sequence, target counts, stage labels, repair choices and thresholds are design decisions. No cited study validates this whole course or guarantees an IELTS score."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "L0001-E01",
+      "position": 10,
+      "exercise_type": "vocabulary_intake",
+      "title": "Vocabulary intake",
+      "objective": "Introduce the exact eligible lexical scope and activate unseen vocabulary in Leitner House 1; preserve known items.",
+      "required": true,
+      "prerequisites": [],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06",
+        "L0001-C01",
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "The lexical representation is needed before a sound-to-form request. This fixed opening is Vocora policy [V01–V03], not a research-proven band gain."
+      },
+      "completion": {
+        "evidence": "Activate unseen vocabulary in Leitner House 1 once; preserve existing shared vocabulary progress. Record intake exposure, not mastery.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'bread' before retrieval.",
+          "target_ids": [
+            "L0001-V01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'bread' before retrieval.",
+            "prompt_or_stimulus": "bread — noun, normally uncountable in this meaning. Meaning: a food made from flour and water and usually baked. Example: I eat bread.",
+            "expected_response": "Intended sense: a food made from flour and water and usually baked",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S01"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'bread'.",
+          "target_ids": [
+            "L0001-V01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'bread'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'bread' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: a food made from flour and water and usually baked",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S02"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'rice' before retrieval.",
+          "target_ids": [
+            "L0001-V02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'rice' before retrieval.",
+            "prompt_or_stimulus": "rice — uncountable noun. Meaning: small grains cooked and eaten as food. Example: We eat rice.",
+            "expected_response": "Intended sense: small grains cooked and eaten as food",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S03"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'rice'.",
+          "target_ids": [
+            "L0001-V02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'rice'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'rice' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: small grains cooked and eaten as food",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S04"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'water' before retrieval.",
+          "target_ids": [
+            "L0001-V03"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'water' before retrieval.",
+            "prompt_or_stimulus": "water — uncountable noun. Meaning: the clear liquid people drink. Example: I drink water.",
+            "expected_response": "Intended sense: the clear liquid people drink",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S05"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'water'.",
+          "target_ids": [
+            "L0001-V03"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'water'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'water' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: the clear liquid people drink",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S06"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'milk' before retrieval.",
+          "target_ids": [
+            "L0001-V04"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'milk' before retrieval.",
+            "prompt_or_stimulus": "milk — uncountable noun. Meaning: a white liquid used as a drink or food. Example: We drink milk.",
+            "expected_response": "Intended sense: a white liquid used as a drink or food",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S07"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'milk'.",
+          "target_ids": [
+            "L0001-V04"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'milk'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'milk' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: a white liquid used as a drink or food",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S08"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'eat' before retrieval.",
+          "target_ids": [
+            "L0001-V05"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'eat' before retrieval.",
+            "prompt_or_stimulus": "eat — verb. Meaning: to put food in your mouth and swallow it. Example: I eat rice.",
+            "expected_response": "Intended sense: to put food in your mouth and swallow it",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S09"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'eat'.",
+          "target_ids": [
+            "L0001-V05"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'eat'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'eat' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: to put food in your mouth and swallow it",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S10"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'drink' before retrieval.",
+          "target_ids": [
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'drink' before retrieval.",
+            "prompt_or_stimulus": "drink — verb. Meaning: to take liquid into your mouth and swallow it. Example: You drink water.",
+            "expected_response": "Intended sense: to take liquid into your mouth and swallow it",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S11"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'drink'.",
+          "target_ids": [
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'drink'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'drink' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "Intended sense: to take liquid into your mouth and swallow it",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S12"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'have breakfast' before retrieval.",
+          "target_ids": [
+            "L0001-C01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'have breakfast' before retrieval.",
+            "prompt_or_stimulus": "AUTHORING BRIEF, not a finished card: introduce the intended sense of 'have breakfast' in Food and everyday meals. Supply a verified plain-English definition, part of speech, pronunciation, one natural example and an optional L1 gloss. Resolve homographs and countability before publication.",
+            "expected_response": "A verified sense-specific representation of 'have breakfast'; dictionary/corpus review pending, so do not auto-publish.",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S13"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'have breakfast'.",
+          "target_ids": [
+            "L0001-C01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'have breakfast'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'have breakfast' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "A verified sense-specific representation of 'have breakfast'; dictionary/corpus review pending, so do not auto-publish.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S14"
+        },
+        {
+          "type": "teaching-card",
+          "purpose": "Meet 'drink water' before retrieval.",
+          "target_ids": [
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Meet 'drink water' before retrieval.",
+            "prompt_or_stimulus": "AUTHORING BRIEF, not a finished card: introduce the intended sense of 'drink water' in Food and everyday meals. Supply a verified plain-English definition, part of speech, pronunciation, one natural example and an optional L1 gloss. Resolve homographs and countability before publication.",
+            "expected_response": "A verified sense-specific representation of 'drink water'; dictionary/corpus review pending, so do not auto-publish.",
+            "feedback_intent": "Do not score exposure as retrieval."
+          },
+          "id": "L0001-E01-S15"
+        },
+        {
+          "type": "choice",
+          "purpose": "Recognise the intended meaning of 'drink water'.",
+          "target_ids": [
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recognise the intended meaning of 'drink water'.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: choose the meaning of 'drink water' in a new Food and everyday meals sentence. Provide one correct sense and two plausible, mutually exclusive alternatives; shuffle without positional cues.",
+            "expected_response": "A verified sense-specific representation of 'drink water'; dictionary/corpus review pending, so do not auto-publish.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E01-S16"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E02",
+      "position": 20,
+      "exercise_type": "spelling_dictation",
+      "title": "Spelling and dictation",
+      "objective": "Spelling and dictation. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E01",
+          "reason": "An initial meaning/form representation must exist before exact written-form retrieval."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06",
+        "L0001-C01",
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; spelling and dictation supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'bread' without seeing it.",
+          "target_ids": [
+            "L0001-V01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'bread' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'bread'; never render this author-side transcript in the learner cue.",
+            "expected_response": "bread",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S01"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'rice' without seeing it.",
+          "target_ids": [
+            "L0001-V02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'rice' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'rice'; never render this author-side transcript in the learner cue.",
+            "expected_response": "rice",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S02"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'water' without seeing it.",
+          "target_ids": [
+            "L0001-V03"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'water' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'water'; never render this author-side transcript in the learner cue.",
+            "expected_response": "water",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S03"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'milk' without seeing it.",
+          "target_ids": [
+            "L0001-V04"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'milk' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'milk'; never render this author-side transcript in the learner cue.",
+            "expected_response": "milk",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S04"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'eat' without seeing it.",
+          "target_ids": [
+            "L0001-V05"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'eat' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'eat'; never render this author-side transcript in the learner cue.",
+            "expected_response": "eat",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S05"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'drink' without seeing it.",
+          "target_ids": [
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'drink' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'drink'; never render this author-side transcript in the learner cue.",
+            "expected_response": "drink",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S06"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'have breakfast' without seeing it.",
+          "target_ids": [
+            "L0001-C01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'have breakfast' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'have breakfast'; never render this author-side transcript in the learner cue.",
+            "expected_response": "have breakfast",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S07"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen and type 'drink water' without seeing it.",
+          "target_ids": [
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen and type 'drink water' without seeing it.",
+            "prompt_or_stimulus": "AUDIO REQUIRED: sense-disambiguated recording of 'drink water'; never render this author-side transcript in the learner cue.",
+            "expected_response": "drink water",
+            "feedback_intent": "Compare with approved spelling variants; identify grapheme or boundary error. Use the existing practice-only repair policy, never rescore the first attempt."
+          },
+          "id": "L0001-E02-S08"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E03",
+      "position": 30,
+      "exercise_type": "meaning_in_context",
+      "title": "Sense, context and word relationships",
+      "objective": "Sense, context and word relationships. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E02",
+          "reason": "Exact forms are available for contextual retrieval, without assuming that spelling proves meaning knowledge."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "multidimensional_vocabulary",
+          "retrieval_practice"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; sense, context and word relationships supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "classification",
+          "purpose": "Place the target forms in their contextual grammatical and semantic roles.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Place the target forms in their contextual grammatical and semantic roles.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: use bread, rice, water, milk, eat, drink in separate, natural sentences about Food and everyday meals. Identify each word's role in that sentence, not an immutable class for every possible use.",
+            "expected_response": "A sentence-specific classification and a justified meaning contrast. Part-of-speech keys must be verified before release.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E03-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve a word from a meaning or situation cue without a word bank.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve a word from a meaning or situation cue without a word bank.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: one fresh sense-specific cue per target: bread, rice, water, milk, eat, drink. Do not require untaught specialist knowledge.",
+            "expected_response": "Each target or an explicitly accepted equivalent; author and validate the cue/answer pairs.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E03-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E04",
+      "position": 40,
+      "exercise_type": "grammar_notice",
+      "title": "Notice the sentence relationship",
+      "objective": "Notice the sentence relationship. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "Learners must understand the message before analysing the form that conveys it."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-G1",
+        "L0001-G2"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "explicit_form_instruction",
+          "retrieval_practice"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; notice the sentence relationship supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Explain the unit grammar through a worked contrast.",
+          "target_ids": [
+            "L0001-G1",
+            "L0001-G2"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Explain the unit grammar through a worked contrast.",
+            "prompt_or_stimulus": "MODEL: I eat rice.\nCONTRAST: I rice eat.\nTARGET: Subject + present-tense verb + object with I/you/we/they\nRELATED: Object nouns; receptive recognition of eats/drinks with named subjects; capital I and final full stop",
+            "expected_response": "Place the finite verb after the subject in this simple statement. Rice is the object.",
+            "feedback_intent": "Explain form, meaning and use. An upper-stage logic/stance contrast is not necessarily an ungrammatical string."
+          },
+          "id": "L0001-E04-S01"
+        },
+        {
+          "type": "error-correction",
+          "purpose": "Repair the diagnosed sentence or overclaim.",
+          "target_ids": [
+            "L0001-G1",
+            "L0001-G2"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Repair the diagnosed sentence or overclaim.",
+            "prompt_or_stimulus": "I rice eat.",
+            "expected_response": "I eat rice. Rationale: Place the finite verb after the subject in this simple statement. Rice is the object.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E04-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E05",
+      "position": 50,
+      "exercise_type": "grammar_transfer",
+      "title": "Use the relationship in a different message",
+      "objective": "Use the relationship in a different message. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E04",
+          "reason": "Transfer is meaningful only after the learner has noticed what is wrong and why."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-G1",
+        "L0001-G2",
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "explicit_form_instruction",
+          "written_corrective_feedback"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; use the relationship in a different message supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "rewrite",
+          "purpose": "Produce a fresh sentence retaining the intended meaning.",
+          "target_ids": [
+            "L0001-G1",
+            "L0001-G2",
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Produce a fresh sentence retaining the intended meaning.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: create a new Food and everyday meals context requiring Subject + present-tense verb + object with I/you/we/they and selected targets bread, rice, water, milk, eat, drink. It must not be a copy of the worked diagnostic.",
+            "expected_response": "A semantically appropriate sentence using the target relationship; accept alternative natural wording and do not demand every listed word in one sentence.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E05-S01"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E06",
+      "position": 60,
+      "exercise_type": "collocation_retrieval",
+      "title": "Retrieve natural word partners",
+      "objective": "Retrieve natural word partners. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "Known meanings are combined into conventional partners rather than memorised as isolated translations."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-C01",
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "collocation_learning",
+          "retrieval_practice"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; retrieve natural word partners supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "matching",
+          "purpose": "Connect the partners, then explain their combined meaning.",
+          "target_ids": [
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Connect the partners, then explain their combined meaning.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: split only at a meaningful boundary: have breakfast; drink water. Include an incompatible distractor whose wrongness can be explained without arbitrary preference.",
+            "expected_response": "have breakfast; drink water",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E06-S01"
+        },
+        {
+          "type": "cloze",
+          "purpose": "Recall the missing partner without an answer bank.",
+          "target_ids": [
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Recall the missing partner without an answer bank.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: one different contextual cue for each chunk: have breakfast; drink water. Check that acceptable synonyms are not marked wrong.",
+            "expected_response": "have breakfast; drink water",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E06-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E07",
+      "position": 70,
+      "exercise_type": "aural_bridge",
+      "title": "Recognise the prepared language in speech",
+      "objective": "Recognise the prepared language in speech. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E06",
+          "reason": "Written chunk knowledge must be connected to its aural form before dependent integrated listening."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-C01",
+        "L0001-C02",
+        "L0001-P"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "multidimensional_vocabulary",
+          "listening_process_instruction"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; recognise the prepared language in speech supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "pronunciation",
+          "purpose": "Notice boundaries, prominence and the prepared chunk in connected speech.",
+          "target_ids": [
+            "L0001-C01",
+            "L0001-C02",
+            "L0001-P"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Notice boundaries, prominence and the prepared chunk in connected speech.",
+            "prompt_or_stimulus": "AUDIO BRIEF: two short contextual versions of have breakfast; drink water. Phonological target: Word boundaries, stressed syllables, clear final consonants and meaningful pauses. This is formative pronunciation practice, not a natural IELTS recording.",
+            "expected_response": "Identify the words and the meaningful stress or boundary; accent imitation is not the criterion.",
+            "feedback_intent": "Replay and compare only in learning mode. Repeated clips are not unseen listening evidence."
+          },
+          "id": "L0001-E07-S01"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Retrieve a short phrase heard in connected speech.",
+          "target_ids": [
+            "L0001-C01",
+            "L0001-C02",
+            "L0001-P"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve a short phrase heard in connected speech.",
+            "prompt_or_stimulus": "AUDIO BRIEF: naturally voiced phrase containing have breakfast or drink water; add a short disambiguating context but no later test answers.",
+            "expected_response": "The approved phrase transcription; naturally variable contractions must be specified in the key.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E07-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E08",
+      "position": 80,
+      "exercise_type": "reading_integration",
+      "title": "Read an intact text and justify meaning",
+      "objective": "Read an intact text and justify meaning. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E05",
+          "reason": "The grammar required to parse the passage has been practised."
+        },
+        {
+          "exercise_id": "L0001-E06",
+          "reason": "The text can now integrate prepared chunks without becoming an answer-preteaching exercise."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-R",
+        "L0001-Q"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "balanced_language_opportunities",
+          "explicit_form_instruction"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; read an intact text and justify meaning supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Read for the main message before selecting details.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Read for the main message before selecting details.",
+            "prompt_or_stimulus": "AUTHORED REFERENCE EX01-R, a focused extract rather than a full-length stage assessment:\nMy name is Mina. I eat bread in the morning. I drink milk. My brother, Sam, eats rice at lunch. He drinks water. We eat at home. Our table is small. In the evening, I eat rice and Sam eats bread. We both drink water. We like our meals. On Sunday, our friend Jo eats with us at home.",
+            "expected_response": "State a defensible gist; keep the coherent text accessible during practice.",
+            "feedback_intent": "The first skim precedes questions; do not display an answer summary in a scored task."
+          },
+          "id": "L0001-E08-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Mina eat in the morning? Write ONE WORD.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Mina eat in the morning? Write ONE WORD.",
+            "prompt_or_stimulus": "Refer to EX01-R. What does Mina eat in the morning? Write ONE WORD.",
+            "expected_response": "bread",
+            "feedback_intent": "The second sentence states Mina eats bread in the morning."
+          },
+          "id": "L0001-E08-S02"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Sam drink at lunch? Write ONE WORD.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Sam drink at lunch? Write ONE WORD.",
+            "prompt_or_stimulus": "Refer to EX01-R. What does Sam drink at lunch? Write ONE WORD.",
+            "expected_response": "water",
+            "feedback_intent": "He in the sentence after Sam refers to Sam."
+          },
+          "id": "L0001-E08-S03"
+        },
+        {
+          "type": "truth",
+          "purpose": "Mina and Sam eat at home. TRUE, FALSE or NOT GIVEN?",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Mina and Sam eat at home. TRUE, FALSE or NOT GIVEN?",
+            "prompt_or_stimulus": "Refer to EX01-R. Mina and Sam eat at home. TRUE, FALSE or NOT GIVEN?",
+            "expected_response": "TRUE",
+            "feedback_intent": "We eat at home explicitly states this."
+          },
+          "id": "L0001-E08-S04"
+        },
+        {
+          "type": "truth",
+          "purpose": "Their table is large. TRUE, FALSE or NOT GIVEN?",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Their table is large. TRUE, FALSE or NOT GIVEN?",
+            "prompt_or_stimulus": "Refer to EX01-R. Their table is large. TRUE, FALSE or NOT GIVEN?",
+            "expected_response": "FALSE",
+            "feedback_intent": "The text says the table is small."
+          },
+          "id": "L0001-E08-S05"
+        },
+        {
+          "type": "truth",
+          "purpose": "Jo is twenty years old. TRUE, FALSE or NOT GIVEN?",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Jo is twenty years old. TRUE, FALSE or NOT GIVEN?",
+            "prompt_or_stimulus": "Refer to EX01-R. Jo is twenty years old. TRUE, FALSE or NOT GIVEN?",
+            "expected_response": "NOT GIVEN",
+            "feedback_intent": "The text gives no age for Jo."
+          },
+          "id": "L0001-E08-S06"
+        },
+        {
+          "type": "classification",
+          "purpose": "In I eat bread, identify the subject, verb and object.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "In I eat bread, identify the subject, verb and object.",
+            "prompt_or_stimulus": "Refer to EX01-R. In I eat bread, identify the subject, verb and object.",
+            "expected_response": "I = subject; eat = verb; bread = object",
+            "feedback_intent": "The subject does the action, and bread names what is eaten."
+          },
+          "id": "L0001-E08-S07"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Who eats with the family on Sunday? Write ONE WORD.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Who eats with the family on Sunday? Write ONE WORD.",
+            "prompt_or_stimulus": "Refer to EX01-R. Who eats with the family on Sunday? Write ONE WORD.",
+            "expected_response": "Jo",
+            "feedback_intent": "The last sentence identifies the visitor."
+          },
+          "id": "L0001-E08-S08"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What do both Mina and Sam drink in the evening? Write ONE WORD.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What do both Mina and Sam drink in the evening? Write ONE WORD.",
+            "prompt_or_stimulus": "Refer to EX01-R. What do both Mina and Sam drink in the evening? Write ONE WORD.",
+            "expected_response": "water",
+            "feedback_intent": "We both drink water follows the evening meal description."
+          },
+          "id": "L0001-E08-S09"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E09",
+      "position": 90,
+      "exercise_type": "listening_integration",
+      "title": "Listen to a coherent message",
+      "objective": "Listen to a coherent message. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E07",
+          "reason": "Spoken forms have been prepared before the learner must track the integrated message."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-L",
+        "L0001-Q"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "listening_process_instruction",
+          "balanced_language_opportunities"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; listen to a coherent message supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Predict the information category, then monitor the actual message.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Predict the information category, then monitor the actual message.",
+            "prompt_or_stimulus": "AUTHORED SCRIPT EX01-L; recording not supplied:\nAri: Hello, Jo. What do you eat in the morning?\nJo: I eat rice.\nAri: Do you drink milk?\nJo: No. I drink water.\nAri: I eat bread and drink milk.\nJo: Do you eat at home?\nAri: Yes. My sister eats with me.\nJo: I eat with my brother. We sit at a small table.",
+            "expected_response": "Predict a possible answer type, not a guessed factual answer.",
+            "feedback_intent": "Guided replay is allowed here; a later sealed test has one uninterrupted play and no transcript."
+          },
+          "id": "L0001-E09-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Jo eat in the morning? ONE WORD.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Jo eat in the morning? ONE WORD.",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. What does Jo eat in the morning? ONE WORD.",
+            "expected_response": "rice",
+            "feedback_intent": "Jo says I eat rice."
+          },
+          "id": "L0001-E09-S02"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Jo drink? ONE WORD.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Jo drink? ONE WORD.",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. What does Jo drink? ONE WORD.",
+            "expected_response": "water",
+            "feedback_intent": "Jo rejects milk and states water."
+          },
+          "id": "L0001-E09-S03"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Ari eat? ONE WORD.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Ari eat? ONE WORD.",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. What does Ari eat? ONE WORD.",
+            "expected_response": "bread",
+            "feedback_intent": "Ari explicitly says I eat bread."
+          },
+          "id": "L0001-E09-S04"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "What does Ari drink? ONE WORD.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "What does Ari drink? ONE WORD.",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. What does Ari drink? ONE WORD.",
+            "expected_response": "milk",
+            "feedback_intent": "Ari says drink milk."
+          },
+          "id": "L0001-E09-S05"
+        },
+        {
+          "type": "choice",
+          "purpose": "Who eats with Ari: his sister, his brother, or Jo?",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Who eats with Ari: his sister, his brother, or Jo?",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. Who eats with Ari: his sister, his brother, or Jo?",
+            "expected_response": "his sister",
+            "feedback_intent": "Ari says My sister eats with me."
+          },
+          "id": "L0001-E09-S06"
+        },
+        {
+          "type": "choice",
+          "purpose": "Who eats with Jo: her teacher, her brother, or Mina?",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Who eats with Jo: her teacher, her brother, or Mina?",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. Who eats with Jo: her teacher, her brother, or Mina?",
+            "expected_response": "her brother",
+            "feedback_intent": "Jo names her brother."
+          },
+          "id": "L0001-E09-S07"
+        },
+        {
+          "type": "truth",
+          "purpose": "Jo says she drinks milk. TRUE or FALSE?",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Jo says she drinks milk. TRUE or FALSE?",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. Jo says she drinks milk. TRUE or FALSE?",
+            "expected_response": "FALSE",
+            "feedback_intent": "No rejects the suggested milk; water is the final answer."
+          },
+          "id": "L0001-E09-S08"
+        },
+        {
+          "type": "dictation",
+          "purpose": "Listen to the isolated phrase from a separate word-audio cue and type it: drink water.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Listen to the isolated phrase from a separate word-audio cue and type it: drink water.",
+            "prompt_or_stimulus": "Use recording EX01-L; script remains author-side. Listen to the isolated phrase from a separate word-audio cue and type it: drink water.",
+            "expected_response": "drink water",
+            "feedback_intent": "Exact word form and boundary, not a comprehension inference."
+          },
+          "id": "L0001-E09-S09"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E10",
+      "position": 100,
+      "exercise_type": "context_contrast",
+      "title": "Contrast two plausible senses",
+      "objective": "Contrast two plausible senses. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "The integrated or foundational exercise has established the capability this focused operation extends."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; contrast two plausible senses supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Study one worked example of this subskill.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Study one worked example of this subskill.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: Contrast two plausible senses. Food and everyday meals; lesson role: Form and meaning; stage 1. Grammar: Subject + present-tense verb + object with I/you/we/they; chunks: have breakfast; drink water. At stage 1, use the demand stated in data/stages.json, not an assumed band conversion.",
+            "expected_response": "A worked, source-supported explanation; no answer-bearing facts from the later mastery set.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E10-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Apply the subskill to a parallel case with less help.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Apply the subskill to a parallel case with less help.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: construct a fresh parallel item for 'Contrast two plausible senses' in Food and everyday meals; lesson role: Form and meaning; stage 1. Expected reading family: short-answer; listening family: form-completion. Final stimulus and keyed response require authorship and review.",
+            "expected_response": "A justified response to the authored case; do not auto-score this specification string.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E10-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E11",
+      "position": 110,
+      "exercise_type": "independent_lexical_recall",
+      "title": "Retrieve without recognition options",
+      "objective": "Retrieve without recognition options. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "The integrated or foundational exercise has established the capability this focused operation extends."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; retrieve without recognition options supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Study one worked example of this subskill.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Study one worked example of this subskill.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: Retrieve without recognition options. Food and everyday meals; lesson role: Form and meaning; stage 1. Grammar: Subject + present-tense verb + object with I/you/we/they; chunks: have breakfast; drink water. At stage 1, use the demand stated in data/stages.json, not an assumed band conversion.",
+            "expected_response": "A worked, source-supported explanation; no answer-bearing facts from the later mastery set.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E11-S01"
+        },
+        {
+          "type": "cloze",
+          "purpose": "Apply the subskill to a parallel case with less help.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Apply the subskill to a parallel case with less help.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: construct a fresh parallel item for 'Retrieve without recognition options' in Food and everyday meals; lesson role: Form and meaning; stage 1. Expected reading family: short-answer; listening family: form-completion. Final stimulus and keyed response require authorship and review.",
+            "expected_response": "A justified response to the authored case; do not auto-score this specification string.",
+            "feedback_intent": "After submission, explain the meaning or form contrast; preserve the original answer. This is learning feedback, not examination grading."
+          },
+          "id": "L0001-E11-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E12",
+      "position": 120,
+      "exercise_type": "speaking_production",
+      "title": "Plan briefly and communicate independently",
+      "objective": "Plan briefly and communicate independently. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E08",
+          "reason": "Input supplies relevant ideas without requiring outside expertise."
+        },
+        {
+          "exercise_id": "L0001-E09",
+          "reason": "The learner has heard usable language before independent production."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-S",
+        "L0001-G1",
+        "L0001-C01",
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "oral_corrective_feedback",
+          "balanced_language_opportunities"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; plan briefly and communicate independently supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "structured-completion",
+          "purpose": "Plan meaning in keywords, not a memorised script.",
+          "target_ids": [
+            "L0001-S",
+            "L0001-G1",
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Plan meaning in keywords, not a memorised script.",
+            "prompt_or_stimulus": "Say what you eat and drink in the morning. Use two or three complete statements. You may invent a meal. Do not read the model.",
+            "expected_response": "A few relevant ideas and an example; notes are withdrawn for a no-notes transfer task.",
+            "feedback_intent": "Do not grade speaking from the notes or reward rehearsed word counts."
+          },
+          "id": "L0001-E12-S01"
+        },
+        {
+          "type": "speaking-response",
+          "purpose": "Record an independent spoken response.",
+          "target_ids": [
+            "L0001-S",
+            "L0001-G1",
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Record an independent spoken response.",
+            "prompt_or_stimulus": "Say what you eat and drink in the morning. Use two or three complete statements. You may invent a meal. Do not read the model.",
+            "expected_response": "An audio artifact demonstrating relevance, development and intelligibility at the stated training demand; official criteria inform feedback, not an uncalibrated numeric band.",
+            "feedback_intent": "Give timestamped, evidence-based feedback on meaning and language. A transcript alone cannot establish pronunciation or fluency."
+          },
+          "id": "L0001-E12-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E13",
+      "position": 130,
+      "exercise_type": "writing_production",
+      "title": "Plan, draft and preserve the first response",
+      "objective": "Plan, draft and preserve the first response. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E05",
+          "reason": "Sentence relationships have been practised before extended writing."
+        },
+        {
+          "exercise_id": "L0001-E08",
+          "reason": "Input demonstrates ideas and organisation without supplying an essay to copy."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-W",
+        "L0001-G2",
+        "L0001-C01",
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "written_corrective_feedback",
+          "balanced_language_opportunities"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; plan, draft and preserve the first response supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "structured-completion",
+          "purpose": "Identify purpose, required content and organisation before drafting.",
+          "target_ids": [
+            "L0001-W",
+            "L0001-G2",
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Identify purpose, required content and organisation before drafting.",
+            "prompt_or_stimulus": "Write 20–40 words about one meal. Say who eats, what they eat and what they drink. Use the six target words where relevant; do not force all of them.",
+            "expected_response": "A relevant plan that covers the prompt, with accurate data where supplied.",
+            "feedback_intent": "A plan is preparation, not proof of a completed written response."
+          },
+          "id": "L0001-E13-S01"
+        },
+        {
+          "type": "writing-response",
+          "purpose": "Write an independent response without seeing the model.",
+          "target_ids": [
+            "L0001-W",
+            "L0001-G2",
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Write an independent response without seeing the model.",
+            "prompt_or_stimulus": "Write 20–40 words about one meal. Say who eats, what they eat and what they drink. Use the six target words where relevant; do not force all of them.",
+            "expected_response": "A saved first draft responding to the complete prompt; feedback references task achievement/response, coherence, lexical resource and grammar. No universal exact model answer.",
+            "feedback_intent": "Keep word-count and completion evidence separate from rubric judgments; disclose uncalibrated grading."
+          },
+          "id": "L0001-E13-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E14",
+      "position": 140,
+      "exercise_type": "production_revision",
+      "title": "Notice, revise and explain one change",
+      "objective": "Notice, revise and explain one change. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E12",
+          "reason": "An oral artifact supplies real evidence for feedback."
+        },
+        {
+          "exercise_id": "L0001-E13",
+          "reason": "The first draft must exist before revision is meaningful."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-W",
+        "L0001-S",
+        "L0001-M"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "written_corrective_feedback",
+          "oral_corrective_feedback"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; notice, revise and explain one change supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "error-correction",
+          "purpose": "Identify a meaning/organisation problem and a language-control problem in your own response.",
+          "target_ids": [
+            "L0001-W",
+            "L0001-S",
+            "L0001-M"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Identify a meaning/organisation problem and a language-control problem in your own response.",
+            "prompt_or_stimulus": "Use the learner's actual speaking and writing attempts for L0001; select feedback supported by a quoted text span or audio timestamp.",
+            "expected_response": "A defensible diagnosis; never invent an error because a template expects one.",
+            "feedback_intent": "If there is no relevant error, use an extension challenge rather than fabricate correction."
+          },
+          "id": "L0001-E14-S01"
+        },
+        {
+          "type": "rewrite",
+          "purpose": "Revise the affected message and explain the improvement.",
+          "target_ids": [
+            "L0001-W",
+            "L0001-S",
+            "L0001-M"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Revise the affected message and explain the improvement.",
+            "prompt_or_stimulus": "Use the preserved first response, show the selected issue, then request a revised passage or brief oral reformulation.",
+            "expected_response": "A meaning-preserving or better-supported revision. A correction copied from a model is not independent mastery.",
+            "feedback_intent": "Record the diagnosis, revision and next transfer target separately from the first attempt."
+          },
+          "id": "L0001-E14-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E15",
+      "position": 150,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: bread",
+      "objective": "Conditional repair: bread. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'bread' before selecting a repair.",
+          "target_ids": [
+            "L0001-V01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'bread' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'bread'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E15-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'bread' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'bread' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'bread' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "bread",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E15-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E16",
+      "position": 160,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: rice",
+      "objective": "Conditional repair: rice. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'rice' before selecting a repair.",
+          "target_ids": [
+            "L0001-V02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'rice' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'rice'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E16-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'rice' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'rice' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'rice' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "rice",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E16-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E17",
+      "position": 170,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: water",
+      "objective": "Conditional repair: water. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V03"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'water' before selecting a repair.",
+          "target_ids": [
+            "L0001-V03"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'water' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'water'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E17-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'water' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V03"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'water' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'water' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "water",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E17-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E18",
+      "position": 180,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: milk",
+      "objective": "Conditional repair: milk. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V04"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'milk' before selecting a repair.",
+          "target_ids": [
+            "L0001-V04"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'milk' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'milk'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E18-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'milk' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V04"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'milk' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'milk' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "milk",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E18-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E19",
+      "position": 190,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: eat",
+      "objective": "Conditional repair: eat. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V05"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'eat' before selecting a repair.",
+          "target_ids": [
+            "L0001-V05"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'eat' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'eat'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E19-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'eat' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V05"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'eat' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'eat' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "eat",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E19-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E20",
+      "position": 200,
+      "exercise_type": "conditional_lexical_repair",
+      "title": "Conditional repair: drink",
+      "objective": "Conditional repair: drink. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V06"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "multidimensional_vocabulary"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'drink' before selecting a repair.",
+          "target_ids": [
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'drink' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'drink'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E20-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'drink' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-V06"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'drink' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'drink' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "drink",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E20-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E21",
+      "position": 210,
+      "exercise_type": "conditional_chunk_repair",
+      "title": "Conditional repair: have breakfast",
+      "objective": "Conditional repair: have breakfast. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E06",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-C01"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "collocation_learning"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'have breakfast' before selecting a repair.",
+          "target_ids": [
+            "L0001-C01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'have breakfast' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'have breakfast'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E21-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'have breakfast' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-C01"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'have breakfast' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'have breakfast' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "have breakfast",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E21-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E22",
+      "position": 220,
+      "exercise_type": "conditional_chunk_repair",
+      "title": "Conditional repair: drink water",
+      "objective": "Conditional repair: drink water. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": false,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E06",
+          "reason": "A failed meaningful first attempt, not mere exposure, is needed to justify this optional repair."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-C02"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "collocation_learning"
+        ],
+        "sequence_reason": "This target-specific repair is used only if the relevant error occurred. The existence of a repair specification is not a requirement to complete it, an additional assessment score, or evidence that the runtime can route it automatically."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": null
+      },
+      "slides": [
+        {
+          "type": "teaching-card",
+          "purpose": "Diagnose the failed dimension of 'drink water' before selecting a repair.",
+          "target_ids": [
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Diagnose the failed dimension of 'drink water' before selecting a repair.",
+            "prompt_or_stimulus": "CONDITIONAL AUTHORING BRIEF: use the actual first-attempt error for 'drink water'. If spelling failed, use the existing practice-only copy/hide/recall sequence. If meaning or usage failed, give one contrast and a new cue. Skip this plan when the target is secure.",
+            "expected_response": "A diagnosis tied to the failed response, not a second automatic Leitner assessment.",
+            "feedback_intent": "No extra XP or promotion for repeating a revealed answer. Existing scheduled-review rules stay untouched."
+          },
+          "id": "L0001-E22-S01"
+        },
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve 'drink water' in a new cue after intervening work.",
+          "target_ids": [
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve 'drink water' in a new cue after intervening work.",
+            "prompt_or_stimulus": "AUTHORING BRIEF: a fresh meaning, role or collocation cue for 'drink water' in Food and everyday meals; change the context, not only option order.",
+            "expected_response": "drink water",
+            "feedback_intent": "Record repair evidence separately. Automatic conditional dispatch for non-spelling repairs is proposed and not verified in the current runtime."
+          },
+          "id": "L0001-E22-S02"
+        }
+      ]
+    },
+    {
+      "id": "L0001-E23",
+      "position": 230,
+      "exercise_type": "cumulative_mastery",
+      "title": "Independent cumulative check",
+      "objective": "Independent cumulative check. Food and everyday meals; lesson role: Form and meaning; stage 1.",
+      "required": true,
+      "prerequisites": [
+        {
+          "exercise_id": "L0001-E03",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E05",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E08",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E09",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E12",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E13",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        },
+        {
+          "exercise_id": "L0001-E14",
+          "reason": "This previously taught capability must be represented in a cumulative check that introduces no new target."
+        }
+      ],
+      "source_target_ids": [
+        "L0001-V01",
+        "L0001-V02",
+        "L0001-V03",
+        "L0001-V04",
+        "L0001-V05",
+        "L0001-V06",
+        "L0001-C01",
+        "L0001-C02",
+        "L0001-G1",
+        "L0001-G2",
+        "L0001-R",
+        "L0001-L",
+        "L0001-S",
+        "L0001-W",
+        "L0001-P",
+        "L0001-Q",
+        "L0001-M"
+      ],
+      "extension_ids": [],
+      "evidence": {
+        "source_refs": [
+          "data/modules.normalized.json#S01-U01",
+          "data/grammar.txt#S01-U01",
+          "data/stages.json#stage-1",
+          "examples/EX01.md"
+        ],
+        "research_principle_ids": [
+          "retrieval_practice",
+          "distributed_practice",
+          "balanced_language_opportunities"
+        ],
+        "sequence_reason": "Within Food and everyday meals; lesson role: Form and meaning; stage 1. this objective uses the prepared targets rather than adding a new lexical burden; independent cumulative check supplies evidence needed by later independent transfer. This order is a design synthesis, not a tested universal sequence."
+      },
+      "completion": {
+        "evidence": "Persist the original response and assistance state; keep repaired success separate. Production needs a validated artifact; no inferred IELTS score from completion.",
+        "mastery_gate": "Design policy G1/G2/G3 in README: first-attempt evidence, per-skill floors and delayed fresh transfer. Completion is not an official IELTS band. This gate is blocked until item and scoring validation is complete."
+      },
+      "slides": [
+        {
+          "type": "short-answer",
+          "purpose": "Retrieve sampled lexical meanings, exact forms and chunks from fresh cues.",
+          "target_ids": [
+            "L0001-V01",
+            "L0001-V02",
+            "L0001-V03",
+            "L0001-V04",
+            "L0001-V05",
+            "L0001-V06",
+            "L0001-C01",
+            "L0001-C02"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Retrieve sampled lexical meanings, exact forms and chunks from fresh cues.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Retrieve sampled lexical meanings, exact forms and chunks from fresh cues. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S01"
+        },
+        {
+          "type": "error-correction",
+          "purpose": "Apply the grammatical and scope relationships to a new sentence.",
+          "target_ids": [
+            "L0001-G1",
+            "L0001-G2"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Apply the grammatical and scope relationships to a new sentence.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Apply the grammatical and scope relationships to a new sentence. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S02"
+        },
+        {
+          "type": "structured-completion",
+          "purpose": "Answer a fresh coherent reading task using its stated constraints.",
+          "target_ids": [
+            "L0001-R",
+            "L0001-Q"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Answer a fresh coherent reading task using its stated constraints.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Answer a fresh coherent reading task using its stated constraints. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S03"
+        },
+        {
+          "type": "structured-completion",
+          "purpose": "Answer a fresh recorded listening task without a transcript or replay.",
+          "target_ids": [
+            "L0001-L",
+            "L0001-P"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Answer a fresh recorded listening task without a transcript or replay.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Answer a fresh recorded listening task without a transcript or replay. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S04"
+        },
+        {
+          "type": "speaking-response",
+          "purpose": "Respond independently to an unfamiliar prompt and handle a follow-up.",
+          "target_ids": [
+            "L0001-S",
+            "L0001-M"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Respond independently to an unfamiliar prompt and handle a follow-up.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Respond independently to an unfamiliar prompt and handle a follow-up. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S05"
+        },
+        {
+          "type": "writing-response",
+          "purpose": "Write an independent message at the lesson demand.",
+          "target_ids": [
+            "L0001-W"
+          ],
+          "contract_status": "placeholder",
+          "data": {
+            "_placeholder": true,
+            "instruction_intent": "Write an independent message at the lesson demand.",
+            "prompt_or_stimulus": "SEALED AUTHORING REQUIREMENT L0001-G: Write an independent message at the lesson demand. Topic domain Food and everyday meals; use different answer-bearing facts, wording and speaker details from training. The complete item set is not supplied in this blueprint.",
+            "expected_response": "Apply the published first-attempt gate only after all assets, keys and productive rubrics are validated. No answer is shown until the whole coherent task is submitted.",
+            "feedback_intent": "Delayed feedback. A failed gate preserves the evidence and yields a repair recommendation; do not relabel a corrected repeat as a fresh pass."
+          },
+          "id": "L0001-E23-S06"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "source_target_ids": [
+      "L0001-V01",
+      "L0001-V02",
+      "L0001-V03",
+      "L0001-V04",
+      "L0001-V05",
+      "L0001-V06",
+      "L0001-C01",
+      "L0001-C02",
+      "L0001-G1",
+      "L0001-G2",
+      "L0001-R",
+      "L0001-L",
+      "L0001-S",
+      "L0001-W",
+      "L0001-P",
+      "L0001-Q",
+      "L0001-M"
+    ],
+    "covered_target_ids": [
+      "L0001-V01",
+      "L0001-V02",
+      "L0001-V03",
+      "L0001-V04",
+      "L0001-V05",
+      "L0001-V06",
+      "L0001-C01",
+      "L0001-C02",
+      "L0001-G1",
+      "L0001-G2",
+      "L0001-R",
+      "L0001-L",
+      "L0001-S",
+      "L0001-W",
+      "L0001-P",
+      "L0001-Q",
+      "L0001-M"
+    ],
+    "uncovered_target_ids": [],
+    "vocora_extensions": []
+  },
+  "validation": {
+    "status": "blocked",
+    "warnings": [
+      "Uses the repository placeholder authoring contract, not runtime-ready slide data.",
+      "Coverage means targets are assigned in the design, not that they have been learned or the stimuli are fully authored.",
+      "These source targets are original commissioned content; they are not passed off as textbook extracts."
+    ],
+    "blockers": [
+      "Natural listening recordings and pronunciation assets are not supplied.",
+      "Sealed transfer items, reference-anchored productive assessment and empirical item calibration are not supplied.",
+      "Dictionary/corpus checks and distractor review are still required.",
+      "Authoring placeholder fields are not production component configuration; compile only against verified runtime contracts."
+    ]
+  }
+}

@@ -4,6 +4,7 @@ node_modules/
 *.mp3
 back/data/tts-cache/
 .env
+.nvmrc
 coverage/
 .nyc_output/
 ui/dist/

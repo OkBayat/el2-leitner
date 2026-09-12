@@ -1,0 +1,232 @@
+{
+  "package": "Vocora IELTS Academic curriculum design",
+  "date": "2026-09-09",
+  "manifest_excludes_itself": true,
+  "files": [
+    {
+      "path": "README.html",
+      "bytes": 4172614,
+      "sha256": "ca1f6ded1ed535581b13177aa7a3009f13194053c739a74ab9dec4f993ac905b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3796897,
+      "sha256": "4e41b74c9ec2e5f057f047fe225cfea6731d044117b7eecb4fc6e7d587938364"
+    },
+    {
+      "path": "audit/counts.json",
+      "bytes": 1122,
+      "sha256": "31c856346b196b9e0b4ff0e12cd871dce645cb6129b4ae4f98708d39df2c1baf"
+    },
+    {
+      "path": "audit/validation.json",
+      "bytes": 3203,
+      "sha256": "27edc1a578da72a0cb01f19e563c1ea05295324522811bae4ee523bc31336965"
+    },
+    {
+      "path": "data/exercise_index.jsonl",
+      "bytes": 122398388,
+      "sha256": "56bb6de79124ecaf68efbd50f31213c86498c9fe53f32da15969d479ca011ff3"
+    },
+    {
+      "path": "data/grammar.txt",
+      "bytes": 31738,
+      "sha256": "6710bd9e3684f1998e4adf944400615f209c7b7273595c02152ab11bd8671c1c"
+    },
+    {
+      "path": "data/lesson_index.jsonl",
+      "bytes": 16853511,
+      "sha256": "e6a4ab0333df1f4591f73c4af9d847af97f513a41691a3b434daad52d8951c60"
+    },
+    {
+      "path": "data/lesson_plans.jsonl",
+      "bytes": 134320098,
+      "sha256": "b8f9bbe0b6abedc51302365dfc010b1214d9257e8ab3aadfa1061427ddd43cc7"
+    },
+    {
+      "path": "data/modules.normalized.json",
+      "bytes": 203141,
+      "sha256": "6ceae5008eee7ef1dc41e76309d421ecdcdc9a937e1ab04fb896061d66b4d778"
+    },
+    {
+      "path": "data/modules.txt",
+      "bytes": 47804,
+      "sha256": "f4c42ce9f72e5a527a206feadd19709008b16e74d53a1aba3bca93598f02e130"
+    },
+    {
+      "path": "data/sources.json",
+      "bytes": 23392,
+      "sha256": "758c1b8c0801014509bedce3e290c6c65b6b9bc86de4c3516d99ea0c3de40de6"
+    },
+    {
+      "path": "data/stages.json",
+      "bytes": 12811,
+      "sha256": "15d08ffa7ac14dc48c9bc3cbb16fc29901ae50764a8034ac4ae5224c2b279889"
+    },
+    {
+      "path": "examples/EX01.md",
+      "bytes": 5046,
+      "sha256": "53898509d2a1185923adeb99297c007d3b77a091ad21dd91e3334a602e2ced90"
+    },
+    {
+      "path": "examples/EX02.md",
+      "bytes": 6210,
+      "sha256": "e838106a87cd70f5c82fccbc751db862e7209f74cb5fcc69585a0bb3065274a6"
+    },
+    {
+      "path": "examples/EX03.md",
+      "bytes": 7546,
+      "sha256": "77616343ced924f6c75ab94bd2aa43c1305c4b219c55ea3ac4dff643124817c7"
+    },
+    {
+      "path": "examples/EX04.md",
+      "bytes": 8443,
+      "sha256": "8e42635165368d4694b051ff51c54a8e9edff79b8442527791d272d117ec7031"
+    },
+    {
+      "path": "examples/EX05.md",
+      "bytes": 9490,
+      "sha256": "42575c6dadda612645023aea9010c2bdb3826a4734706bbba8c6756cc7a09b8d"
+    },
+    {
+      "path": "examples/EX06.md",
+      "bytes": 9871,
+      "sha256": "0fc152de221dba1140d6b293b83002c19e72ce30e5fad0cc5557e088f94b3266"
+    },
+    {
+      "path": "examples/EX07.md",
+      "bytes": 11828,
+      "sha256": "9a239ac29a611e5f11e88401ccb0453cf4c1e1056cc2733c2606b7b168081c4a"
+    },
+    {
+      "path": "examples/EX08.md",
+      "bytes": 12197,
+      "sha256": "2233fab7b196e3920f31d93a7d9d97519f7d381598cca039ee2e1c1665df585e"
+    },
+    {
+      "path": "examples/EX09.md",
+      "bytes": 12645,
+      "sha256": "9f9ff3997c6137b2d9abee6a551ba42084646faccdccd28b1d4ed43b18ad0335"
+    },
+    {
+      "path": "examples/EX10.md",
+      "bytes": 12900,
+      "sha256": "a8fd36ef45137f94eabc95f39e704a3688c930756db43691ec4c6911736845bc"
+    },
+    {
+      "path": "examples/EX11.md",
+      "bytes": 13413,
+      "sha256": "336ddfb445e3431e1c7fb1dc3bdf64edc10d60796e351cc5e28e8ead595038f8"
+    },
+    {
+      "path": "examples/EX12.md",
+      "bytes": 15603,
+      "sha256": "ebe3767ab07fd266d4c94c6d2eb7ed59ac7d64843bd97e55a9cc8e64f6d9e941"
+    },
+    {
+      "path": "examples/L0001.authoring-plan.json",
+      "bytes": 126404,
+      "sha256": "07ea52a65d8e6c5e8ee1246c70dc1e61268bb5529d39d26ee1508ccea00f9100"
+    },
+    {
+      "path": "examples/reference_materials.json",
+      "bytes": 154923,
+      "sha256": "6614d5a57e8d56c036b5fc9fa7216b22b9dbbaeeed738f6a1c0b53b1fa20d823"
+    },
+    {
+      "path": "scripts/README-front.md",
+      "bytes": 88670,
+      "sha256": "33b787ed43b8cbf83c9ae81d24e008d8e9f16caf4c1c9ddbdc50f82ecb311955"
+    },
+    {
+      "path": "scripts/author_examples.py",
+      "bytes": 114652,
+      "sha256": "e3ca0f01f7d5e88a1b76d480789c5ae804d77d7a128d9a9a5565ce0e179fc675"
+    },
+    {
+      "path": "scripts/build_course.py",
+      "bytes": 50645,
+      "sha256": "90aa1a486846714a726f0fb7a57f9e8f84733a6ac72955cca58fe274820a6ff7"
+    },
+    {
+      "path": "scripts/build_manifest.py",
+      "bytes": 1233,
+      "sha256": "7d083855b55a06fec439c2e1b00421ca2ba1453d10b54ad67fede50a110a82af"
+    },
+    {
+      "path": "scripts/extract_lesson.py",
+      "bytes": 1025,
+      "sha256": "8c3b6fc092b2fe84f06f08050446c627601343ef85c71339336ba37d26e9db7a"
+    },
+    {
+      "path": "scripts/render_readme.py",
+      "bytes": 5162,
+      "sha256": "3ac6280f9c31cd2dc412230e66ed40904209007392cd8d478b5df3478e636281"
+    },
+    {
+      "path": "scripts/validate_course.py",
+      "bytes": 13928,
+      "sha256": "009f0cd2872f4d03ff04a0a68b84468cbe55abd77dddae7abae970d46043f2f0"
+    },
+    {
+      "path": "stages/S01.md",
+      "bytes": 275055,
+      "sha256": "88e8334e94ec718c07279b5ad26d53a8792408f691e2b37481b13e9088cfad39"
+    },
+    {
+      "path": "stages/S02.md",
+      "bytes": 275065,
+      "sha256": "c115c267063f73773d0f5bacd062b8119888fac34c474422d41ae1d11e449023"
+    },
+    {
+      "path": "stages/S03.md",
+      "bytes": 279453,
+      "sha256": "ffbcda0964553f72485815d93b6cfc248716a827123e48b8c71b06b9e2e92a1d"
+    },
+    {
+      "path": "stages/S04.md",
+      "bytes": 289421,
+      "sha256": "9540614293af1be08127ad47b85866688ea76a3dd1543a98112401b14e411bdc"
+    },
+    {
+      "path": "stages/S05.md",
+      "bytes": 291354,
+      "sha256": "4b74839482ed49ba1e6172eac76824396fe43357d62e9602753247909b0d3f63"
+    },
+    {
+      "path": "stages/S06.md",
+      "bytes": 297462,
+      "sha256": "f4113731a4b3b8669cf885accf9820a43e66d9dc7b1f417146a9615fdc8268b6"
+    },
+    {
+      "path": "stages/S07.md",
+      "bytes": 301688,
+      "sha256": "a4648b5a741764257ed7f726aca6d132813d2a173f24c9af5fe971522e295404"
+    },
+    {
+      "path": "stages/S08.md",
+      "bytes": 305572,
+      "sha256": "200dc59648e91e281e2f87717343585ae62daea1490bf259f91b0544d0e04fec"
+    },
+    {
+      "path": "stages/S09.md",
+      "bytes": 307633,
+      "sha256": "ff5152d98dd520ae4e4db8ac537ff528d6c323cdaab7878c5ff5f4cc2779159a"
+    },
+    {
+      "path": "stages/S10.md",
+      "bytes": 308027,
+      "sha256": "d440e384ea34f9446096f6f728108ee4ed7163bef3ea898d7926900ad2b2fb7e"
+    },
+    {
+      "path": "stages/S11.md",
+      "bytes": 311303,
+      "sha256": "147e36a3b947d29fd121c5602ab2aac53cb95d08d8a74f3df2c51585d10a9e38"
+    },
+    {
+      "path": "stages/S12.md",
+      "bytes": 310460,
+      "sha256": "a16a53f7b994beaf317d5ed7002a898fb4bb288504f6afb22054f2c969dbf09a"
+    }
+  ]
+}

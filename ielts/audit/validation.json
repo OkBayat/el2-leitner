@@ -1,0 +1,125 @@
+{
+  "checked_at": "2026-09-09",
+  "checker": "Independent contract-oriented package checker; repository validator NOT executed",
+  "structural_status": "pass",
+  "counts": {
+    "lessons": 960,
+    "production_blocked": 960,
+    "required_exercises": 16580,
+    "authoring_slide_specs": 103864,
+    "conditional_exercises": 13920
+  },
+  "authored_reference_questions": 192,
+  "negative_mutation_checks": [
+    {
+      "case": "opening type",
+      "invalid_case_rejected": true
+    },
+    {
+      "case": "extra root field",
+      "invalid_case_rejected": true
+    },
+    {
+      "case": "unknown slide type",
+      "invalid_case_rejected": true
+    },
+    {
+      "case": "forward prerequisite",
+      "invalid_case_rejected": true
+    },
+    {
+      "case": "target coverage",
+      "invalid_case_rejected": true
+    },
+    {
+      "case": "false readiness",
+      "invalid_case_rejected": true
+    }
+  ],
+  "writing_model_checks": [
+    {
+      "reference": "EX01",
+      "stage": 1,
+      "writing_model_words": 25,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX02",
+      "stage": 2,
+      "writing_model_words": 48,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX03",
+      "stage": 3,
+      "writing_model_words": 77,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX04",
+      "stage": 4,
+      "writing_model_words": 101,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX05",
+      "stage": 5,
+      "writing_model_words": 162,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX06",
+      "stage": 6,
+      "writing_model_words": 169,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX07",
+      "stage": 7,
+      "writing_model_words": 275,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX08",
+      "stage": 8,
+      "writing_model_words": 276,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX09",
+      "stage": 9,
+      "writing_model_words": 292,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX10",
+      "stage": 10,
+      "writing_model_words": 289,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX11",
+      "stage": 11,
+      "writing_model_words": 299,
+      "exam_certification": "not claimed"
+    },
+    {
+      "reference": "EX12",
+      "stage": 12,
+      "writing_model_words": 312,
+      "exam_certification": "not claimed"
+    }
+  ],
+  "word_limit_items_needing_manual_review": [],
+  "errors": [],
+  "production_readiness": "blocked",
+  "runtime_ready_lessons": 0,
+  "limitations": [
+    "No application integration or rendering test was executed.",
+    "No recorded audio or sealed full mock form is supplied.",
+    "Most stimulus/question entries are authoring briefs, not complete question banks.",
+    "Dictionary/corpus review, pedagogical review, distractor validation and empirical calibration remain outstanding.",
+    "Structural target assignment is not proof of target mastery or an IELTS score.",
+    "No universal band-9 guarantee or outcome-trial evidence is claimed."
+  ]
+}
