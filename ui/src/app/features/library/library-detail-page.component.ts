@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
@@ -30,12 +30,12 @@ import {
 
 @Component({
   selector: 'app-library-detail-page',
-  imports: [VocoButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
+  imports: [VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
   template: `
     @if (collection(); as c) {
       <section class="detail-page" data-testid="library-detail-page">
-        <voco-navigation-button class="back-action" (activated)="back()"
-					>← Back to library</voco-navigation-button>
+        <voco-navigation-link class="back-action" routerLink="/library"
+					>← Back to library</voco-navigation-link>
 
         <div class="detail-content">
           <h1>{{ c.title }}</h1>
@@ -169,14 +169,14 @@ import {
     .progress{display:grid;gap:8px}
     .learning-actions{display:grid;gap:12px}
     .action-option{display:grid;gap:8px;padding:16px;border:1px solid var(--vocora-border);border-radius:var(--vocora-radius-md);background:var(--vocora-surface-subtle)}
-    .action-option button{justify-self:start;min-height:var(--vocora-touch-target-min)}
+    .action-option>:is(voco-primary-button,voco-secondary-button,voco-error-button){justify-self:start}
     .action-option p{margin:0;color:var(--vocora-text-secondary);font:var(--mat-sys-body-medium);line-height:1.5}
     .management-actions{display:flex;flex-wrap:wrap;gap:8px}
     .table-wrap{overflow-x:auto}
     table{width:100%}
     .entry-actions{text-align:right;white-space:nowrap}
     .empty{padding:30px;text-align:center;color:var(--mat-sys-on-surface-variant)}
-    @media(max-width:640px){.action-option button{width:100%}.management-actions>*{flex:1 1 auto}.detail-content{width:100%}}
+    @media(max-width:640px){.action-option>:is(voco-primary-button,voco-secondary-button,voco-error-button){width:100%}.management-actions>*{flex:1 1 auto}.detail-content{width:100%}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -349,7 +349,4 @@ export class LibraryDetailPageComponent implements OnInit {
     await this.reload();
   }
 
-  back(): void {
-    void this.router.navigate(['/library']);
-  }
 }

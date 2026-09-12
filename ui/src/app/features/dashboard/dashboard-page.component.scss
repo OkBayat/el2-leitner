@@ -249,18 +249,6 @@
 	stroke-linejoin: round;
 }
 
-.leitner-export-btn.is-copied {
-	--vocora-component-action-background: var(--mat-sys-primary-container);
-	--vocora-component-action-foreground: var(--mat-sys-on-primary-container);
-	--vocora-component-action-border: var(--mat-sys-primary);
-}
-
-.leitner-export-btn.is-failed {
-	--vocora-component-action-background: var(--mat-sys-error-container);
-	--vocora-component-action-foreground: var(--mat-sys-on-error-container);
-	--vocora-component-action-border: var(--mat-sys-error);
-}
-
 .chart-content {
 	padding: 8px 18px 18px;
 	border-top: 1px solid var(--mat-sys-outline-variant);

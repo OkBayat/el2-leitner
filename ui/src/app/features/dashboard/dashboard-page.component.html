@@ -109,12 +109,6 @@
 							class="leitner-export-btn"
 							type="button"
 							data-testid="copy-house-one"
-							[class.is-copied]="
-								houseOneCopyStatus() === 'copied'
-							"
-							[class.is-failed]="
-								houseOneCopyStatus() === 'failed'
-							"
 							[disabled]="
 								houseOneExportCount() === 0 ||
 								houseOneCopyStatus() === 'copying'
@@ -172,10 +166,8 @@
 						<h2 id="attention-title">Needs more attention</h2>
 						<p>Words with the highest recent error count</p>
 					</div>
-					<voco-navigation-button
-						type="button"
-						(activated)="router.navigateByUrl('/words')"
-						>View all</voco-navigation-button>
+					<voco-navigation-link routerLink="/words"
+						>View all</voco-navigation-link>
 				</header>
 
 				<div class="attention-list">

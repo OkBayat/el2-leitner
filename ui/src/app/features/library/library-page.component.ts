@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoButtonComponent, VocoButtonInteractionDirective } from '../../shared/voco-button';
+import { VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective } from '../../shared/voco-button';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
@@ -30,7 +30,7 @@ function alphabetical<T extends {title: string}>(items: readonly T[]): T[] {
 
 @Component({
   selector: 'app-library-page',
-  imports: [CommonModule, VocoButtonComponent, VocoButtonInteractionDirective],
+  imports: [CommonModule, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective],
   templateUrl: 'library-page.component.html',
   styleUrl: 'library-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

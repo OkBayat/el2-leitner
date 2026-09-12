@@ -1,13 +1,12 @@
 <section class="review-page" data-testid="review-layout">
 	@if (!session.active() && !session.completed()) {
 		<div class="review-center">
-			<voco-icon-button class="review-close" type="button" aria-label="Back to dashboard"
-			        (activated)="router.navigateByUrl('/dashboard')">
+			<voco-icon-link class="review-close" routerLink="/dashboard" aria-label="Back to dashboard">
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 					      stroke-linecap="round"/>
 				</svg>
-			</voco-icon-button>
+			</voco-icon-link>
 			<mat-card class="setup" appearance="outlined">
 				<mat-card-header>
 					<mat-card-title>Today's Review</mat-card-title>
@@ -73,11 +72,11 @@
 					</div>
 
 					<div class="listen">
-						<voco-audio-button
+						<voco-primary-button
 							class="play-pronunciation"
 							(activated)="session.pronounce()">
 							▶ Play pronunciation
-						</voco-audio-button>
+						</voco-primary-button>
 						<voco-secondary-button (activated)="session.pronounce('slow')">Slower</voco-secondary-button>
 					</div>
 
@@ -220,7 +219,7 @@
 				</mat-card-content>
 				<mat-card-actions>
 					<voco-primary-button (activated)="share.open()">Create result story</voco-primary-button>
-					<voco-navigation-button (activated)="router.navigateByUrl('/dashboard')">Back home</voco-navigation-button>
+					<voco-navigation-link routerLink="/dashboard">Back home</voco-navigation-link>
 					<voco-navigation-button (activated)="start('box1')">Continue free practice</voco-navigation-button>
 				</mat-card-actions>
 			</mat-card>

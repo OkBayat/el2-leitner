@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { VocoButtonComponent } from '../../../shared/voco-button';
+import { VocoIconLinkComponent, VocoPrimaryButtonComponent } from '../../../shared/voco-button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CollectionLearningPathApiService } from '../../../core/collection-learning-path/collection-learning-path-api.service';
 import type { LearningPathLessonView } from '../../../domain/collection-learning-path/learning-path';
@@ -20,7 +20,7 @@ function errorMessage(error: unknown): string {
 @Component({
   selector: 'app-learning-path-lesson-podcast-page',
   standalone: true,
-  imports: [VocoButtonComponent, RouterLink, ListeningAudioPlayerComponent],
+  imports: [VocoIconLinkComponent, VocoPrimaryButtonComponent, RouterLink, ListeningAudioPlayerComponent],
   templateUrl: './lesson-podcast-page.component.html',
   styleUrl: './lesson-podcast-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

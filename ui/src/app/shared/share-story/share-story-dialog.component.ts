@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
-import { VocoButtonComponent } from '../voco-button';
+import { VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../voco-button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,7 +9,7 @@ import { ShareMomentKind, buildShareMoment } from './share-story.model';
 
 @Component({
   selector: 'app-share-story-dialog',
-  imports: [MatDialogModule, VocoButtonComponent, MatButtonToggleModule],
+  imports: [MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatButtonToggleModule],
   template: `
     <h2 mat-dialog-title>Story Studio</h2>
     <mat-dialog-content class="story-dialog">

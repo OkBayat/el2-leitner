@@ -9,7 +9,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { VocoButtonComponent } from '../../../../voco-button';
+import { VocoAudioButtonComponent } from '../../../../voco-button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -98,7 +98,7 @@ function parseDictation(value: unknown): DictationSlideData {
 	selector: 'app-dictation-slide',
 	standalone: true,
 	imports: [
-		VocoButtonComponent,
+		VocoAudioButtonComponent,
 		MatFormFieldModule,
 		MatInputModule,
 		ShortcutClickDirective,

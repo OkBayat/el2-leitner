@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { VocoButtonComponent } from '../voco-button';
+import { VocoIconButtonComponent, VocoSecondaryButtonComponent } from '../voco-button';
 import {
   audioWaveformPhaseAdvance,
   createAudioWaveformPaths,
@@ -29,7 +29,7 @@ type ListeningReaction = 'like' | 'dislike' | null;
 
 @Component({
   selector: 'app-listening-audio-player',
-  imports: [VocoButtonComponent],
+  imports: [VocoIconButtonComponent, VocoSecondaryButtonComponent],
   templateUrl: 'listening-audio-player.component.html',
   styleUrl: 'listening-audio-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

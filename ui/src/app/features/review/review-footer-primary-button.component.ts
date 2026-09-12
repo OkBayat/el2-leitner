@@ -4,14 +4,24 @@ import {
 	input,
 	output,
 } from "@angular/core";
-import { VocoButtonComponent } from "../../shared/voco-button";
+import {
+	VocoErrorButtonComponent,
+	VocoPrimaryButtonComponent,
+	VocoSuccessButtonComponent,
+	VocoWarningButtonComponent,
+} from "../../shared/voco-button";
 
 export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 
 @Component({
 	selector: "app-review-footer-primary-button",
 	standalone: true,
-	imports: [VocoButtonComponent],
+	imports: [
+		VocoErrorButtonComponent,
+		VocoPrimaryButtonComponent,
+		VocoSuccessButtonComponent,
+		VocoWarningButtonComponent,
+	],
 	template: `
 		@switch (tone()) {
 			@case ("success") {
@@ -32,6 +42,15 @@ export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 					{{ label() }}
 				</voco-error-button>
 			}
+			@case ("practice") {
+				<voco-warning-button
+					type="button"
+					[disabled]="disabled()"
+					(activated)="pressed.emit()"
+				>
+					{{ label() }}
+				</voco-warning-button>
+			}
 			@default {
 				<voco-primary-button
 					type="button"
@@ -47,7 +66,8 @@ export type ReviewFooterTone = "neutral" | "success" | "error" | "practice";
 		:host,
 		voco-primary-button,
 		voco-success-button,
-		voco-error-button {
+		voco-error-button,
+		voco-warning-button {
 			display: inline-block;
 			width: 100%;
 		}

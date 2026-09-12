@@ -346,7 +346,7 @@ describe("SlideExerciseComponent", () => {
 		]);
 	});
 
-	it("maps answer feedback to the primary action color and keeps ordinary actions primary", () => {
+	it("maps answer feedback to semantic action components and keeps ordinary actions primary", () => {
 		TestBed.configureTestingModule({
 			imports: [SlideExerciseComponent],
 			providers: [
@@ -360,12 +360,13 @@ describe("SlideExerciseComponent", () => {
 		fixture.componentRef.setInput("slides", [slide("question")]);
 		fixture.detectChanges();
 
-		const primaryState = (): string | null =>
-			fixture.nativeElement
-				.querySelector(".slide-exercise-action--primary voco-primary-button")
-				?.getAttribute("data-state") ?? null;
+		const primaryControl = (): Element | null =>
+			fixture.nativeElement.querySelector(
+				".slide-exercise-action--primary :is(voco-primary-button, voco-success-button, voco-error-button)",
+			);
 
-		expect(primaryState()).toBe("primary");
+		expect(primaryControl()?.localName).toBe("voco-primary-button");
+		expect(primaryControl()?.getAttribute("data-state")).toBe("primary");
 
 		fixture.componentInstance.onContentState({
 			chrome: { footer: { tone: "success" } },
@@ -374,19 +375,22 @@ describe("SlideExerciseComponent", () => {
 			"success",
 		);
 		fixture.detectChanges();
-		expect(primaryState()).toBe("success");
+		expect(primaryControl()?.localName).toBe("voco-success-button");
+		expect(primaryControl()?.getAttribute("data-state")).toBe("success");
 
 		fixture.componentInstance.onContentState({
 			chrome: { footer: { tone: "error" } },
 		});
 		fixture.detectChanges();
-		expect(primaryState()).toBe("error");
+		expect(primaryControl()?.localName).toBe("voco-error-button");
+		expect(primaryControl()?.getAttribute("data-state")).toBe("error");
 
 		fixture.componentInstance.onContentState({
 			chrome: { footer: { tone: "information" } },
 		});
 		fixture.detectChanges();
-		expect(primaryState()).toBe("primary");
+		expect(primaryControl()?.localName).toBe("voco-primary-button");
+		expect(primaryControl()?.getAttribute("data-state")).toBe("primary");
 	});
 
 	it("lets a slide insert generated slides while keeping terminal slides last", () => {

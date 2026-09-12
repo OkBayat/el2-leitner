@@ -225,4 +225,52 @@ withFixture(
   },
 );
 
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replaceAll("VocoWarningButtonComponent", "RemovedWarningButton"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md is missing public button class: VocoWarningButtonComponent/u,
+    );
+  },
+);
+
+for (const [contractText, expected] of [
+  [
+    "removes both native `href` and `routerLink`",
+    /DESIGN\.md must define disabled Voco link behavior/u,
+  ],
+  [
+    "`voco-audio-button` is the square icon-oriented audio transport control",
+    /DESIGN\.md must distinguish square audio controls from textual audio actions/u,
+  ],
+  [
+    "not a generic Voco\nbutton replacement",
+    /DESIGN\.md must keep vocoButtonInteraction selection-only/u,
+  ],
+]) {
+  withFixture(
+    (root) => {
+      const designPath = path.join(root, "references", "DESIGN.md");
+      fs.writeFileSync(
+        designPath,
+        fs.readFileSync(designPath, "utf8").replace(contractText, "removed contract"),
+      );
+    },
+    ({ status, output }) => {
+      assert.notEqual(status, 0);
+      assert.match(output, expected);
+    },
+  );
+}
+
 console.log("K2 design-system validator tests passed.");

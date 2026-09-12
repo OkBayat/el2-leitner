@@ -6,7 +6,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { VocoButtonComponent } from '../../voco-button';
+import { VocoSecondaryButtonComponent } from '../../voco-button';
 import { SpeechService } from '../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../core/state/learning-store.service';
 import type { DialogueStimulusTurn } from './slide-library.models';
@@ -14,7 +14,7 @@ import type { DialogueStimulusTurn } from './slide-library.models';
 @Component({
 	selector: 'app-slide-dialogue-control',
 	standalone: true,
-	imports: [VocoButtonComponent],
+	imports: [VocoSecondaryButtonComponent],
 	template: `
 		<div class="slide-dialogue-control">
 			<voco-secondary-button

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoPrimaryButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
@@ -9,7 +9,7 @@ import { LearningChartComponent, type LearningChartPoint } from '../../shared/ch
 
 @Component({
   selector: 'app-reports-page',
-  imports: [VocoButtonComponent, MatCardModule, MatProgressBarModule, MatTableModule, LearningChartComponent],
+  imports: [VocoPrimaryButtonComponent, MatCardModule, MatProgressBarModule, MatTableModule, LearningChartComponent],
   template: `
     @if(state(); as s){
       <section class="page">

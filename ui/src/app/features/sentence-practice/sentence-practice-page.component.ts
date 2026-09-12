@@ -11,7 +11,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -60,7 +60,7 @@ function sentencePlaybackTokens(text: string, offset: number): SentencePlaybackT
 
 @Component({
 	selector: 'app-sentence-practice-page',
-	imports: [SentenceAnswerComponent, VocoButtonComponent, MatCardModule, MatProgressBarModule],
+	imports: [SentenceAnswerComponent, VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatCardModule, MatProgressBarModule],
 	templateUrl: 'sentence-practice-page.component.html',
 	styleUrls: ['../review/review-page.component.scss', 'sentence-practice-page.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

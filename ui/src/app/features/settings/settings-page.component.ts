@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +21,7 @@ import { PwaInstallCardComponent } from '../../shared/pwa/pwa-install-card.compo
   selector: 'app-settings-page',
   imports: [
     ReactiveFormsModule,
-    VocoButtonComponent,
+    VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,

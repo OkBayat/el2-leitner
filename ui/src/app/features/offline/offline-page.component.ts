@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoPrimaryButtonComponent } from '../../shared/voco-button';
 import {AuthService} from '../../core/auth/auth.service';
 
 @Component({
 	selector: 'app-offline-page',
-	imports: [VocoButtonComponent],
+	imports: [VocoPrimaryButtonComponent],
 	template: `
 		<main class="offline-page" data-testid="offline-page">
 			<section class="offline-card">

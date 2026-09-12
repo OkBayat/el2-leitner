@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it } from 'vitest';
 import { ShortcutClickDirective } from './shortcut-click.directive';
-import { VocoButtonComponent } from './voco-button';
+import { VocoPrimaryButtonComponent } from './voco-button';
 
 @Component({
 	standalone: true,
@@ -25,7 +25,7 @@ class ShortcutClickTestHostComponent {
 
 @Component({
 	standalone: true,
-	imports: [ShortcutClickDirective, VocoButtonComponent],
+	imports: [ShortcutClickDirective, VocoPrimaryButtonComponent],
 	template: `
 		<div (click)="ancestorClicks += 1">
 			<voco-primary-button

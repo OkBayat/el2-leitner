@@ -12,7 +12,7 @@ import {
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoWarningButtonComponent } from '../../shared/voco-button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDialog} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -80,7 +80,7 @@ function continueFooter(
 
 @Component({
 	selector: 'app-review-page',
-	imports: [ReactiveFormsModule, VocoButtonComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent, ReviewFooterPrimaryButtonComponent],
+	imports: [ReactiveFormsModule, VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoWarningButtonComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent, ReviewFooterPrimaryButtonComponent],
 	templateUrl: 'review-page.component.html',
 	styleUrls: ['review-page.component.scss', 'review-answer-feedback.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

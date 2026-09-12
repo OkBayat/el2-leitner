@@ -5,17 +5,16 @@
 		</div>
 	} @else if (empty() && !session.completed()) {
 		<div class="review-center">
-			<voco-icon-button
+			<voco-icon-link
 				class="review-close"
-				type="button"
+				routerLink="/dashboard"
 				aria-label="Back to dashboard"
-				(activated)="router.navigateByUrl('/dashboard')"
 			>
 				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
 					<path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4"
 						stroke-linecap="round"/>
 				</svg>
-			</voco-icon-button>
+			</voco-icon-link>
 			<mat-card class="setup" appearance="outlined">
 				<mat-card-header>
 					<mat-card-title>No sentence cards are ready</mat-card-title>
@@ -24,10 +23,8 @@
 					<p>Add words to House 1 first. Sentence practice counts toward today's practice totals without changing daily-review scheduling.</p>
 				</mat-card-content>
 				<mat-card-actions>
-					<voco-navigation-button
-						type="button"
-						(activated)="router.navigateByUrl('/dashboard')"
-						>Back home</voco-navigation-button>
+					<voco-navigation-link routerLink="/dashboard"
+						>Back home</voco-navigation-link>
 				</mat-card-actions>
 			</mat-card>
 		</div>
@@ -67,13 +64,13 @@
 					</div>
 
 					<div class="listen">
-						<voco-audio-button
+						<voco-primary-button
 							class="play-pronunciation"
 							type="button"
 							(activated)="session.pronounce()"
 						>
 							▶ Play pronunciation
-						</voco-audio-button>
+						</voco-primary-button>
 						<voco-secondary-button
 							type="button"
 							(activated)="session.pronounce('slow')"
@@ -163,10 +160,9 @@
 				<mat-card-actions>
 					<voco-primary-button type="button" (activated)="restart()"
 						>Practice again</voco-primary-button>
-					<voco-navigation-button
-						type="button"
-						(activated)="router.navigateByUrl('/dashboard')"
-						>Back home</voco-navigation-button>
+					<voco-navigation-link
+						routerLink="/dashboard"
+						>Back home</voco-navigation-link>
 				</mat-card-actions>
 			</mat-card>
 		</div>

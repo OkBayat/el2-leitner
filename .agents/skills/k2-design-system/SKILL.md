@@ -90,11 +90,13 @@ legacy UI, apply the bounded touch-to-refactor rule from the design reference.
 Application code uses the shared `voco` Button API, never Angular Material
 button directives or legacy button classes directly:
 
-- `voco-primary-button` for the main action;
-- `voco-secondary-button` for a lower-emphasis alternative;
-- `voco-success-button`, `voco-warning-button`, and `voco-error-button` for
+- `VocoPrimaryButtonComponent` / `voco-primary-button` for the main action;
+- `VocoSecondaryButtonComponent` / `voco-secondary-button` for a lower-emphasis alternative;
+- `VocoSuccessButtonComponent`, `VocoWarningButtonComponent`, and
+  `VocoErrorButtonComponent` with their matching `voco-*-button` selectors for
   outcome-specific actions;
-- `voco-navigation-button` for button-driven route or flow navigation;
+- `VocoNavigationButtonComponent` / `voco-navigation-button` for imperative
+  flow navigation;
 - the corresponding `voco-*-link` component when native anchor behavior is
   required;
 - `voco-icon-button` and `voco-audio-button` for icon-only and audio controls.
@@ -102,11 +104,19 @@ button directives or legacy button classes directly:
 Handle a voco control's public action with `(activated)`. Do not bind feature
 logic to the custom-element host's native `(click)` event.
 
-Angular Material is the private interaction foundation inside
-`ui/src/app/shared/voco-button/**`. Use the native `disabled` attribute for
-every disabled button state. Selection controls remain native buttons and add
-`vocoButtonInteraction` only when they need the shared Material interaction
-layer without CTA semantics.
+Each semantic component is a distinct public class with a fixed intent and a
+shared private foundation inside `ui/src/app/shared/voco-button/**`; Angular
+Material remains a private implementation detail. Use native disabled behavior
+for buttons. Disabled Voco links remove `href` and `routerLink`, expose
+`aria-disabled="true"`, leave the tab order, and block mouse and keyboard
+activation.
+
+Square `voco-audio-button` controls are only for icon-oriented audio transport
+and require an accessible name. Audio actions with visible text use a flexible
+semantic text button. Feature CSS owns layout and placement only; Voco owns
+button visuals. Selection controls remain native buttons and add
+`vocoButtonInteraction` only for the shared Material ripple/focus layer when
+CTA semantics would be incorrect.
 
 Do not create feature-local Material overrides. Extend the shared component,
 central design tokens, and this reference together. The architecture check

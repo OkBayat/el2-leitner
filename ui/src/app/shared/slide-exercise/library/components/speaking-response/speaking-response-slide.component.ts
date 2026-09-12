@@ -5,7 +5,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { VocoButtonComponent } from '../../../../voco-button';
+import { VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../../../voco-button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -54,7 +54,7 @@ function parseSpeaking(value: unknown): SpeakingResponseSlideData {
 	selector: 'app-speaking-response-slide',
 	standalone: true,
 	imports: [
-		VocoButtonComponent,
+		VocoPrimaryButtonComponent, VocoSecondaryButtonComponent,
 		MatChipsModule,
 		MatFormFieldModule,
 		MatInputModule,

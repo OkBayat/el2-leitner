@@ -168,15 +168,6 @@ h1 {
   align-items: center;
 }
 
-.test-button.completed {
-	--vocora-component-action-background: color-mix(
-		in srgb,
-		var(--mat-sys-primary) 7%,
-		var(--vocora-action-secondary)
-	);
-	--vocora-component-action-border: var(--mat-sys-primary);
-}
-
 .test-status {
   color: var(--mat-sys-primary);
   font-size: 0.82rem;

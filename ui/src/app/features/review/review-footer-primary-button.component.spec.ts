@@ -24,12 +24,21 @@ describe("ReviewFooterPrimaryButtonComponent", () => {
 		["success", "voco-success-button"],
 		["error", "voco-error-button"],
 		["neutral", "voco-primary-button"],
-		["practice", "voco-primary-button"],
+		["practice", "voco-warning-button"],
 	] as const)("renders %s through %s", (tone, selector) => {
 		const fixture = render(tone);
 		expect(
 			(fixture.nativeElement as HTMLElement).querySelector(selector),
 		).not.toBeNull();
+	});
+
+	it("never renders practice through the primary semantic component", () => {
+		const fixture = render("practice");
+		expect(
+			(fixture.nativeElement as HTMLElement).querySelector(
+				"voco-primary-button",
+			),
+		).toBeNull();
 	});
 
 	it("emits once from an enabled action and not from a disabled action", () => {

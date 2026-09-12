@@ -51,10 +51,8 @@ application's standalone component/import architecture.
 
 This shared ownership includes reusable dialog shells, action primitives,
 drag/drop behavior, menus, focus management, and other low-level interactions.
-Future product component names use the `Voco` family and `voco-*` selectors,
-for example `VocoButtonComponent` and `voco-button`. The governance contract
-does not itself introduce a Voco Button; that implementation belongs to
-dedicated component work.
+Product component names use the `Voco` family and `voco-*` selectors. Public
+components are semantic APIs rather than generic variant-driven wrappers.
 
 ### Angular Material
 
@@ -334,14 +332,14 @@ the lower edge is their only depth cue. Angular Material is the private
 interaction foundation inside `ui/src/app/shared/voco-button/**`, not a public
 application API.
 
-| Intent     | Public component         | Treatment                                           | Use                           |
+| Intent     | Public class / selector                                      | Treatment                                           | Use                           |
 | ---------- | ------------------------ | --------------------------------------------------- | ----------------------------- |
-| Primary    | `voco-primary-button`    | Spark Blue fill, Paper White text                   | The one main action           |
-| Secondary  | `voco-secondary-button`  | Paper White fill, Charcoal text, 2px neutral border | Lower-emphasis alternative    |
-| Success    | `voco-success-button`    | Eager Green fill, Paper White text                  | Confirmed/correct outcome     |
-| Warning    | `voco-warning-button`    | Attention Yellow fill, dark readable text           | Caution or attention          |
-| Error      | `voco-error-button`      | Answer Red fill, Paper White text                   | Incorrect/destructive outcome |
-| Navigation | `voco-navigation-button` | Transparent, borderless, flat, and layout-neutral   | Button-driven navigation      |
+| Primary    | `VocoPrimaryButtonComponent` / `voco-primary-button`          | Spark Blue fill, Paper White text                   | The one main action           |
+| Secondary  | `VocoSecondaryButtonComponent` / `voco-secondary-button`      | Paper White fill, Charcoal text, 2px neutral border | Lower-emphasis alternative    |
+| Success    | `VocoSuccessButtonComponent` / `voco-success-button`          | Eager Green fill, Paper White text                  | Confirmed/correct outcome     |
+| Warning    | `VocoWarningButtonComponent` / `voco-warning-button`          | Attention Yellow fill, dark readable text           | Caution or attention          |
+| Error      | `VocoErrorButtonComponent` / `voco-error-button`              | Answer Red fill, Paper White text                   | Incorrect/destructive outcome |
+| Navigation | `VocoNavigationButtonComponent` / `voco-navigation-button`    | Transparent, borderless, flat, and layout-neutral   | Button-driven navigation      |
 
 Example:
 
@@ -354,12 +352,32 @@ Example:
 `(activated)` is the public action event. Feature code must not bind to the
 custom-element host's native `(click)` event; keeping those event names
 separate ensures disabled controls cannot bypass the native Material control.
+Semantic identity comes from the public component type; no public `variant` or
+`intent` input exists. The six classes reuse one private internal foundation,
+which owns Material integration, input forwarding, activation, focus, and
+visual styling without runtime tag-name inspection.
 
 Use the corresponding `voco-primary-link`, `voco-secondary-link`, or
 `voco-navigation-link` when native anchor behavior, `href`, `target`, or
 `routerLink` semantics are required. Use `voco-icon-button` for icon-only
 actions and `voco-audio-button` for audio playback. Both require an accessible
 name. Do not place route semantics on a button when an anchor is correct.
+Voco links always render real anchors. A disabled link uses Material-supported
+disabled styling, removes both native `href` and `routerLink`, sets
+`aria-disabled="true"` and `tabindex="-1"`, and prevents mouse, Enter, and
+Space activation. Pointer-events alone are never the disabled contract.
+
+`voco-audio-button` is the square icon-oriented audio transport control. It is
+appropriate for normal/slow speed icons and icon-only replay controls, and it
+always requires an accessible name. A visible textual action such as “Play
+pronunciation” or “Play sentence” uses the appropriate flexible textual Voco
+button instead; audio subject matter does not itself justify square geometry.
+
+Feature CSS owns layout and placement only; Voco owns button visuals, geometry,
+intent colors, and interaction states. Prefer exact Bootstrap utilities such as
+`w-100`, flex/grid, alignment, and gap utilities. Feature styles may target the
+public Voco host for otherwise-unavailable layout, but must never reach into
+`.voco-button`, its nested native control, or Material internals.
 
 Filled buttons are borderless. Secondary buttons use a 2px border around the
 face in addition to the 4px lower edge; the border and lower edge are separate
@@ -402,6 +420,11 @@ identical to light mode.
 Application code must not import `@angular/material/button`, apply Material
 button attributes, or use the removed `vocora-button` and
 `vocora-action-button` classes. The architecture guard owns this boundary.
+
+`vocoButtonInteraction` is only for native selection controls whose selected
+visuals stay feature-owned and whose semantics are not CTA semantics. It adds
+the shared Material ripple/focus interaction layer; it is not a generic Voco
+button replacement and must not be used for ordinary actions.
 
 ## 5. Forms and selection controls
 

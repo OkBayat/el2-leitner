@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoNavigationLinkComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { NavigationIconComponent } from '../../shared/app-shell/navigation-icon.
 
 @Component({
   selector: 'app-home-page',
-  imports: [VocoButtonComponent, MatCardModule, MatRippleModule, NavigationIconComponent, RouterLink],
+  imports: [VocoNavigationLinkComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent, MatCardModule, MatRippleModule, NavigationIconComponent, RouterLink],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,14 +13,21 @@ const components = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_angular-material-components.scss"),
 	"utf8",
 );
-const buttonStyles = fs.readFileSync(
-	path.join(uiRoot, "src", "app", "shared", "voco-button", "voco-button.component.scss"),
-	"utf8",
-);
-const buttonTemplate = fs.readFileSync(
-	path.join(uiRoot, "src", "app", "shared", "voco-button", "voco-button.component.html"),
-	"utf8",
-);
+const vocoRoot = path.join(uiRoot, "src", "app", "shared", "voco-button");
+const buttonStyles = [
+	"voco-button-foundation.component.scss",
+	"voco-icon-button.component.scss",
+	"voco-audio-button.component.scss",
+].map((file) => fs.readFileSync(path.join(vocoRoot, file), "utf8")).join("\n");
+const buttonTemplate = [
+	"voco-text-button.components.ts",
+	"voco-text-button.component.html",
+	"voco-link.components.ts",
+	"voco-link.component.html",
+	"voco-icon-button.component.ts",
+	"voco-icon-link.component.ts",
+	"voco-audio-button.component.ts",
+].map((file) => fs.readFileSync(path.join(vocoRoot, file), "utf8")).join("\n");
 const styles = fs.readFileSync(path.join(uiRoot, "src", "styles.scss"), "utf8");
 const designSystem = fs.readFileSync(
 	path.join(uiRoot, "src", "styles", "_vocora-design-system.scss"),
@@ -48,6 +55,17 @@ const exerciseAction = fs.readFileSync(
 		"shared",
 		"slide-exercise",
 		"slide-exercise-action.component.scss",
+	),
+	"utf8",
+);
+const exerciseActionTemplate = fs.readFileSync(
+	path.join(
+		uiRoot,
+		"src",
+		"app",
+		"shared",
+		"slide-exercise",
+		"slide-exercise-action.component.html",
 	),
 	"utf8",
 );
@@ -325,7 +343,7 @@ assert.match(
 assert.doesNotMatch(buttonStyles, /--mdc-filled-button-/u);
 assert.match(
 	buttonStyles,
-	/\.voco-button:not\(:disabled\):active/u,
+	/\.voco-button:not\(:disabled\):not\(\[aria-disabled='true'\]\):active/u,
 	"The shared button must own its pressed interaction.",
 );
 assert.match(
@@ -436,8 +454,13 @@ assert.equal(
 
 assert.match(
 	buttonStyles,
-	/\.voco-button,\s*\.voco-audio-button\s*\{[^}]*min-height:\s*44px;[^}]*height:\s*auto;/u,
+	/\.voco-button\s*\{[^}]*min-height:\s*44px;[^}]*height:\s*auto;/u,
 	"All textual voco buttons must allow wrapped labels while preserving the minimum touch target.",
+);
+assert.match(
+	buttonStyles,
+	/\.voco-audio-button\s*\{[^}]*width:\s*80px;[^}]*min-width:\s*80px;[^}]*height:\s*80px;[^}]*min-height:\s*80px;/u,
+	"Square audio controls must retain their explicit transport-control geometry.",
 );
 assert.match(
 	buttonStyles,
@@ -489,11 +512,18 @@ assert.match(
 	/--mat-button-filled-disabled-container-color:\s*var\(--voco-button-disabled-background\);/u,
 	"Every button intent must inherit a deterministic disabled treatment.",
 );
-assert.match(
+assert.doesNotMatch(
 	exerciseAction,
-	/\.slide-exercise-action\[data-state=["']primary["']\][^{]*\{[^}]*--vocora-component-action-foreground:\s*var\(\s*--vocora-action-primary-foreground\s*\);/u,
-	"Exercise primary actions must use the canonical button foreground token.",
+	/--vocora-component-action-/u,
+	"Exercise actions must not override shared Voco visual intent tokens.",
 );
+for (const selector of ["primary", "secondary", "success", "warning", "error"]) {
+	assert.match(
+		exerciseActionTemplate,
+		new RegExp(`<voco-${selector}-button\\b`, "u"),
+		`Exercise action tone '${selector}' must select the matching semantic Voco component.`,
+	);
+}
 assert.match(
 	exerciseAction,
 	/\.slide-exercise-action__spinner\s*\{[^}]*display:\s*inline-block;[^}]*width:\s*16px;[^}]*height:\s*16px;/u,

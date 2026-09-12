@@ -99,6 +99,14 @@ BUTTON_SELECTORS = (
     "voco-error-button",
     "voco-navigation-button",
 )
+BUTTON_CLASSES = (
+    "VocoPrimaryButtonComponent",
+    "VocoSecondaryButtonComponent",
+    "VocoSuccessButtonComponent",
+    "VocoWarningButtonComponent",
+    "VocoErrorButtonComponent",
+    "VocoNavigationButtonComponent",
+)
 THEME_GROUPS = ("surface", "text", "border", "semantic", "state", "action", "focus")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 def skill_root() -> Path:
@@ -329,12 +337,27 @@ def validate_button_contract(root: Path, errors: list[str]) -> None:
     for selector in BUTTON_SELECTORS:
         if selector not in text:
             errors.append(f"DESIGN.md is missing button selector: {selector}")
+    for class_name in BUTTON_CLASSES:
+        if class_name not in text:
+            errors.append(f"DESIGN.md is missing public button class: {class_name}")
     if "Angular Material is the private" not in text:
         errors.append("DESIGN.md must make Angular Material a private button implementation detail")
     if "native `disabled` attribute" not in text:
         errors.append("DESIGN.md must require the native disabled attribute")
     if "`(activated)` is the public action event" not in text:
         errors.append("DESIGN.md must document the public voco activated event")
+    if "no public `variant` or\n`intent` input exists" not in text:
+        errors.append("DESIGN.md must make semantic identity compile-time explicit")
+    if "removes both native `href` and `routerLink`" not in text:
+        errors.append("DESIGN.md must define disabled Voco link behavior")
+    if "`voco-audio-button` is the square icon-oriented audio transport control" not in text:
+        errors.append("DESIGN.md must distinguish square audio controls from textual audio actions")
+    if "Feature CSS owns layout and placement only" not in text:
+        errors.append("DESIGN.md must keep feature CSS ownership layout-only")
+    if "not a generic Voco\nbutton replacement" not in text:
+        errors.append("DESIGN.md must keep vocoButtonInteraction selection-only")
+    if "VocoButtonComponent" in text:
+        errors.append("DESIGN.md must not recommend the removed generic VocoButtonComponent")
 
 
 def validate_material_reference(root: Path, errors: list[str]) -> None:

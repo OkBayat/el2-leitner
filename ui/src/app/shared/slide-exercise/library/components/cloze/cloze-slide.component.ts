@@ -10,7 +10,7 @@ import {
 	signal,
 } from '@angular/core';
 import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
-import { VocoButtonComponent, VocoButtonInteractionDirective } from '../../../../voco-button';
+import { VocoIconButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective } from '../../../../voco-button';
 import {
 	SpeechService,
 	type SpeechPlaybackObserver,
@@ -161,7 +161,7 @@ function parseCloze(value: unknown): ClozeSlideData {
 	selector: 'app-cloze-slide',
 	standalone: true,
 	imports: [
-		VocoButtonComponent, VocoButtonInteractionDirective,
+		VocoIconButtonComponent, VocoSecondaryButtonComponent, VocoButtonInteractionDirective,
 		OverlayModule,
 		ShortcutClickDirective,
 		SlideStimulusComponent,

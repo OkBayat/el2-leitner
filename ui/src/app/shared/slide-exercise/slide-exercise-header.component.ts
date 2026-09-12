@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { VocoButtonComponent } from '../voco-button';
+import { VocoIconButtonComponent } from '../voco-button';
 import { normalizeSlideExerciseProgress, type SlideExerciseProgressView } from './slide-exercise.models';
 
 @Component({
   selector: 'app-slide-exercise-header',
   standalone: true,
-  imports: [VocoButtonComponent],
+  imports: [VocoIconButtonComponent],
   templateUrl: './slide-exercise-header.component.html',
   styleUrl: './slide-exercise-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

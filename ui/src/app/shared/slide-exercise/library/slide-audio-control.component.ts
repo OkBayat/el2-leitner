@@ -6,14 +6,14 @@ import {
 	Output,
 	signal,
 } from '@angular/core';
-import { VocoButtonComponent } from '../../voco-button';
+import { VocoAudioButtonComponent, VocoSecondaryButtonComponent } from '../../voco-button';
 import { ShortcutClickDirective } from '../../shortcut-click.directive';
 import { runtimeApiUrl } from '../../../core/platform/runtime-platform.service';
 
 @Component({
 	selector: 'app-slide-audio-control',
 	standalone: true,
-	imports: [VocoButtonComponent, ShortcutClickDirective],
+	imports: [VocoAudioButtonComponent, VocoSecondaryButtonComponent, ShortcutClickDirective],
 	template: `
 		<div
 			class="slide-audio-control"

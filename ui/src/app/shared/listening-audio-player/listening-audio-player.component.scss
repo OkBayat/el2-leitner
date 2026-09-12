@@ -449,9 +449,8 @@ audio {
     gap: 7px;
   }
 
-	.audio-controls voco-secondary-button {
+	.audio-controls > voco-secondary-button {
     min-width: 0;
-    font-size: 0.76rem;
   }
 
   .scrubber {

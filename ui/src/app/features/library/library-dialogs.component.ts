@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,7 +44,7 @@ export interface CollectionPayload {
 
 @Component({
   selector: 'app-collection-editor',
-  imports: [ReactiveFormsModule, MatDialogModule, VocoButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
     <h2 mat-dialog-title>{{ data.collection ? 'Edit collection' : 'New collection' }}</h2>
     <mat-dialog-content>
@@ -103,7 +103,7 @@ export interface LibraryImportValue { text: string; mode: 'replace' | 'append' }
 
 @Component({
   selector: 'app-library-import-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, VocoButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
     <h2 mat-dialog-title>Import words</h2>
     <mat-dialog-content>
@@ -132,7 +132,7 @@ export class LibraryImportDialogComponent {
 
 @Component({
   selector: 'app-library-entry-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, VocoButtonComponent, MatFormFieldModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, MatFormFieldModule, MatInputModule],
   template: `
     <h2 mat-dialog-title>{{ data.entry ? 'Edit word' : 'New word' }}</h2>
     <mat-dialog-content><form [formGroup]="form" class="form">
@@ -164,7 +164,7 @@ export class LibraryEntryDialogComponent {
 
 @Component({
   selector: 'app-library-detail-dialog',
-  imports: [MatDialogModule, VocoButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
+  imports: [MatDialogModule, VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
   template: `
     @if (collection(); as c) {
       <h2 mat-dialog-title>{{ c.title }}</h2>
@@ -180,8 +180,9 @@ export class LibraryEntryDialogComponent {
           <table mat-table [dataSource]="c.entries || []">
             <ng-container matColumnDef="term"><th mat-header-cell *matHeaderCellDef>Word</th><td mat-cell *matCellDef="let entry"><strong>{{ entry.term }}</strong></td></ng-container>
             <ng-container matColumnDef="section"><th mat-header-cell *matHeaderCellDef>Section</th><td mat-cell *matCellDef="let entry">{{ entry.sectionPath || '—' }}</td></ng-container>
-            <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let entry">@if(data.canManage){<voco-icon-button (activated)="editEntry(entry)"
+            <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let entry">@if(data.canManage){<voco-icon-button aria-label="Edit word" (activated)="editEntry(entry)"
 										>✎</voco-icon-button><voco-icon-button
+										aria-label="Delete word"
 										(activated)="removeEntry(entry)"
 										>×</voco-icon-button>}</td></ng-container>
             <tr mat-header-row *matHeaderRowDef="entryColumns"></tr><tr mat-row *matRowDef="let row; columns: entryColumns"></tr>

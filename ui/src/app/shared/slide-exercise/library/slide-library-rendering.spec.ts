@@ -603,7 +603,6 @@ describe('reusable slide renderer contract', () => {
 		expect(element.querySelector('app-slide-stimulus')).toBeNull();
 		expect(button?.querySelector('.mat-mdc-icon-button')).not.toBeNull();
 		expect(button?.getAttribute('aria-keyshortcuts')).toBe('Alt+R');
-		expect(button?.classList).not.toContain('vocora-secondary-icon-action');
 		expect(button?.querySelector('.cloze-sentence-replay__icon')).not.toBeNull();
 		const sentence = element.querySelector('.cloze-content');
 		expect(sentence?.firstElementChild).toBe(button);

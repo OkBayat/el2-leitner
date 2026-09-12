@@ -14,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -42,7 +42,7 @@ interface WordDialogValue { term: string; variants: string; category: string; no
 
 @Component({
   selector: 'app-word-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, VocoButtonComponent, MatFormFieldModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, MatFormFieldModule, MatInputModule],
   template: `<h2 mat-dialog-title>{{ data.word ? 'Edit word' : 'Add word' }}</h2><mat-dialog-content><form [formGroup]="form" class="dialog-form"><mat-form-field appearance="outline"><mat-label>English word or phrase</mat-label><input matInput formControlName="term"></mat-form-field><mat-form-field appearance="outline"><mat-label>Alternative spellings separated by /</mat-label><input matInput formControlName="variants"></mat-form-field><mat-form-field appearance="outline"><mat-label>Category</mat-label><input matInput formControlName="category"></mat-form-field><mat-form-field appearance="outline"><mat-label>Note or meaning</mat-label><textarea matInput rows="3" formControlName="notes"></textarea></mat-form-field></form></mat-dialog-content><mat-dialog-actions align="end"><voco-navigation-button (activated)="dialog.close()"
 				>Cancel</voco-navigation-button><voco-primary-button [disabled]="form.invalid" (activated)="save()"
 				>Save</voco-primary-button></mat-dialog-actions>`,
@@ -64,7 +64,7 @@ export class WordDialogComponent {
 
 @Component({
   selector: 'app-words-page',
-  imports: [RouterLink, ReactiveFormsModule, VocoButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
+  imports: [RouterLink, ReactiveFormsModule, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
   templateUrl: './words-page.component.html',
   styleUrl: './words-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

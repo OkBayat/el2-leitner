@@ -4,7 +4,7 @@ import {
 	MatDialogModule,
 	MatDialogRef,
 } from "@angular/material/dialog";
-import { VocoButtonComponent } from "../voco-button";
+import { VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from "../voco-button";
 export interface ConfirmDialogData {
 	title: string;
 	message: string;
@@ -14,7 +14,7 @@ export interface ConfirmDialogData {
 
 @Component({
 	selector: "app-confirm-dialog",
-	imports: [MatDialogModule, VocoButtonComponent],
+	imports: [MatDialogModule, VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent],
 	template: `
 		<h2 mat-dialog-title>{{ data.title }}</h2>
 		<mat-dialog-content>{{ data.message }}</mat-dialog-content>

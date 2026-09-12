@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject,
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoButtonComponent } from '../../shared/voco-button';
+import { VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import {MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -18,7 +18,7 @@ type HouseOneCopyStatus = 'idle' | 'copying' | 'copied' | 'failed';
 
 @Component({
 	selector: 'app-new-words-dialog',
-	imports: [ReactiveFormsModule, MatDialogModule, VocoButtonComponent, MatFormFieldModule, MatInputModule],
+	imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, MatFormFieldModule, MatInputModule],
 	template: `
 		<h2 mat-dialog-title>Add new words</h2>
 		<mat-dialog-content>
@@ -50,7 +50,7 @@ export class NewWordsDialogComponent {
 
 @Component({
 	selector: 'app-dashboard-page',
-	imports: [VocoButtonComponent, MatProgressBarModule, RouterLink, LearningChartComponent],
+	imports: [VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent, MatProgressBarModule, RouterLink, LearningChartComponent],
 	templateUrl: 'dashboard-page.component.html',
 	styleUrl: 'dashboard-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

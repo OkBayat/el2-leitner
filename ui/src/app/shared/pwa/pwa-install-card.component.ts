@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import { VocoButtonComponent } from '../voco-button';
+import { VocoPrimaryButtonComponent } from '../voco-button';
 import {MatCardModule} from '@angular/material/card';
 import {PwaInstallService} from '../../core/pwa/pwa-install.service';
 
 @Component({
 	selector: 'app-pwa-install-card',
-	imports: [VocoButtonComponent, MatCardModule],
+	imports: [VocoPrimaryButtonComponent, MatCardModule],
 	template: `
 		<mat-card class="install-card" appearance="outlined" data-testid="pwa-install-card">
 			<mat-card-header>
