@@ -28,4 +28,3 @@ export function matchesClosedSchema(schema, value) {
     && Object.entries(schema.properties).every(([key, child]) => matchesClosedSchema(child, value[key]));
   return schema.type === undefined;
 }
-
