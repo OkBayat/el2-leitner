@@ -363,9 +363,10 @@ Use the corresponding `voco-primary-link`, `voco-secondary-link`, or
 actions and `voco-audio-button` for audio playback. Both require an accessible
 name. Do not place route semantics on a button when an anchor is correct.
 Voco links always render real anchors. A disabled link uses Material-supported
-disabled styling, removes both native `href` and `routerLink`, sets
-`aria-disabled="true"` and `tabindex="-1"`, and prevents mouse, Enter, and
-Space activation. Pointer-events alone are never the disabled contract.
+disabled styling, is removed from the tab order with `tabindex="-1"`, and sets
+`aria-disabled="true"`. It removes both native `href` and `routerLink` and
+prevents mouse, Enter, and Space activation. Pointer-events alone are never the
+disabled contract.
 
 `voco-audio-button` is the square icon-oriented audio transport control. It is
 appropriate for normal/slow speed icons and icon-only replay controls, and it

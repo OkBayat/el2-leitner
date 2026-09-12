@@ -326,6 +326,10 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
     for phrase in required_phrases:
         if phrase not in text:
             errors.append(f"SKILL.md is missing required contract text: {phrase}")
+    if "are removed from the tab order" not in text:
+        errors.append(
+            "SKILL.md must say disabled Voco links are removed from the tab order"
+        )
 
 
 def validate_button_contract(root: Path, errors: list[str]) -> None:
@@ -350,6 +354,10 @@ def validate_button_contract(root: Path, errors: list[str]) -> None:
         errors.append("DESIGN.md must make semantic identity compile-time explicit")
     if "removes both native `href` and `routerLink`" not in text:
         errors.append("DESIGN.md must define disabled Voco link behavior")
+    if "is removed from the tab order" not in text:
+        errors.append(
+            "DESIGN.md must say disabled Voco links are removed from the tab order"
+        )
     if "`voco-audio-button` is the square icon-oriented audio transport control" not in text:
         errors.append("DESIGN.md must distinguish square audio controls from textual audio actions")
     if "Feature CSS owns layout and placement only" not in text:

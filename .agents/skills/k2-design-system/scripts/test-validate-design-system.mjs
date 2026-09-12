@@ -100,6 +100,44 @@ withFixture(
 );
 
 withFixture(
+  (root) => {
+    const skillPath = path.join(root, "SKILL.md");
+    fs.writeFileSync(
+      skillPath,
+      fs
+        .readFileSync(skillPath, "utf8")
+        .replace("are removed from the tab order", "leave the tab order"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /SKILL\.md must say disabled Voco links are removed from the tab order/u,
+    );
+  },
+);
+
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replace("is removed from the tab order", "leaves the tab order"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md must say disabled Voco links are removed from the tab order/u,
+    );
+  },
+);
+
+withFixture(
   (root) =>
     mutateTokens(root, (tokens) => {
       tokens.themes.light.action.primary = "#58CC02";

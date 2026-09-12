@@ -108,8 +108,8 @@ Each semantic component is a distinct public class with a fixed intent and a
 shared private foundation inside `ui/src/app/shared/voco-button/**`; Angular
 Material remains a private implementation detail. Use native disabled behavior
 for buttons. Disabled Voco links remove `href` and `routerLink`, expose
-`aria-disabled="true"`, leave the tab order, and block mouse and keyboard
-activation.
+`aria-disabled="true"`, are removed from the tab order, and block mouse and
+keyboard activation.
 
 Square `voco-audio-button` controls are only for icon-oriented audio transport
 and require an accessible name. Audio actions with visible text use a flexible
