@@ -1,0 +1,76 @@
+@if (content(); as data) {
+	<article class="slide-type" data-testid="labeling-slide">
+		<section class="slide-interaction">
+			<p class="slide-instruction">
+				{{ data.instruction || "Label the marked locations." }}
+			</p>
+			<h1>{{ data.question }}</h1>
+			<figure class="labeling-figure m-0">
+				<div
+					class="labeling-canvas overflow-hidden border rounded-3 bg-body-tertiary"
+				>
+					<img
+						class="d-block w-100 h-auto"
+						[src]="imageSource(data)"
+						[alt]="imageAlt(data)"
+					/>
+					@for (target of data.targets; track target.id) {
+						<span
+							class="labeling-marker"
+							aria-hidden="true"
+							[style.left.%]="target.xPercent"
+							[style.top.%]="target.yPercent"
+							>{{ target.markerLabel }}</span
+						>
+					}
+				</div>
+				@if (imageCaption(data)) {
+					<figcaption class="mt-2 text-body-secondary">
+						{{ imageCaption(data) }}
+					</figcaption>
+				}
+			</figure>
+			<div class="labeling-fields row g-3">
+				@for (target of data.targets; track target.id) {
+					<mat-form-field
+						class="col-12 col-md-6"
+						appearance="outline"
+						[attr.data-state]="fieldState(target)"
+					>
+						<mat-label>{{ target.label }}</mat-label>
+						@if (data.inputMode === "word-bank") {
+							<mat-select
+								[value]="answers()[target.id] || ''"
+								[disabled]="interactionState() !== 'idle'"
+								(selectionChange)="
+									setAnswer(target.id, $event.value)
+								"
+							>
+								@for (
+									option of data.wordBank ?? [];
+									track option
+								) {
+									<mat-option [value]="option">{{
+										option
+									}}</mat-option>
+								}
+							</mat-select>
+						} @else {
+							<input
+								matInput
+								[value]="answers()[target.id] || ''"
+								[disabled]="interactionState() !== 'idle'"
+								(input)="
+									setAnswer(target.id, inputFrom($event))
+								"
+							/>
+						}
+						@if (target.wordLimit) {
+							<mat-hint>{{ wordLimitLabel(target) }}</mat-hint>
+						}
+					</mat-form-field>
+				}
+			</div>
+		</section>
+	</article>
+}

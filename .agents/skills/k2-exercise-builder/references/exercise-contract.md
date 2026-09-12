@@ -175,6 +175,36 @@ runtime-sized path, configure `expansionId`; the application parent supplies a
 matching `numberInputExpansion` handler that returns registered non-terminal
 slides before the component advances. Keep services and callbacks out of JSON.
 
+## Spatial labeling
+
+Use `labeling` only when a learner must connect an answer to a marked location
+on a map, plan, or diagram. Configure `mode: map|plan|diagram`, a non-empty
+`question`, an image or diagram `stimulus`, and one or more `targets`. Each
+target has a stable `id`, an accessible `label`, a visible `markerLabel`,
+`xPercent` and `yPercent` coordinates from 0 through 100, and the normal answer
+field contract. Use `inputMode: word-bank` with at least two unique `wordBank`
+options when the source supplies a label list; otherwise use text entry.
+
+Do not substitute `structured-completion` when spatial location is itself the
+evidence. Conversely, do not use `labeling` for a form, table, or flowchart whose
+answer fields are structurally related but not positioned on an image.
+
+## Multiple valid orders
+
+`ordering.correctOrderIds` remains the primary answer and backward-compatible
+default. When the source permits more than one complete order, provide
+`acceptedOrders` as unique arrays, each containing every configured item exactly
+once and including `correctOrderIds`. Do not add speculative permutations merely
+to make an item easier.
+
+## Short-answer supporting evidence
+
+Use `evidencePrompt` when the learner should separately cite a source span or
+explain the answer. Set `evidenceRequired: true` only when submission requires
+that supporting response. The backend still scores `answer` against its own
+accepted-answer key and preserves `supportingEvidence` as separate learner
+evidence; it never concatenates the two fields or treats prose length as proof.
+
 ## Rewrite locality
 
 Use `rewrite` only for a short, unambiguous correction whose exact model and

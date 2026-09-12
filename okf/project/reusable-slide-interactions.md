@@ -3,10 +3,10 @@ type: Concept
 title: Reusable Slide Interactions
 description: Select and compose Vocora reusable slide families by learner action, evidence type, and assessment boundary.
 tags: [learning-path, slides, exercises, angular, interaction-design]
-timestamp: 2026-09-10T00:30:00Z
+timestamp: 2026-09-12T00:00:00Z
 ---
 
-Vocora provides 17 reusable interaction families for lesson exercises. Select a
+Vocora provides 19 reusable interaction families for lesson exercises. Select a
 family from the action the learner must perform and the evidence the exercise
 needs. A lesson topic such as collocations or word formation does not by itself
 determine the interaction: the same content can require recognition, controlled
@@ -18,14 +18,16 @@ recall, correction, transformation, or independent production.
 | --- | --- | --- | --- | --- |
 | `teaching-card` | Presenting a word, usage distinction, rule, warning, or study tip before practice | `word`, `usage`, `contrast`, `rule`, `warning`, `tip`; constrained Markdown is preferred and legacy typed blocks remain readable | Markdown paragraphs, line breaks, level-three/four headings, emphasis, and short ordered or bullet lists; text, image, chart, or diagram stimuli remain available | Configure exactly one content format. Raw HTML is escaped. It presents information and does not prove mastery. |
 | `selection` | Choosing a learner preference, path, category, or configuration when no option is correct | `single`, `multiple` | A question with two or more object-configured options; each option has an ID, label, and optional description. A registered `expansionId` can request runtime-sized follow-up slides. | It emits selected option IDs as submitted evidence. It is not scored and must not contain correctness fields. Dynamic handlers live in the application runtime, never in JSON. Use `choice` for assessment. |
+| `number-input` | Choosing one bounded numeric setting when no numeric answer is being assessed | finite `min`, `max`, `step`, and `initialValue` | A labeled numeric control; a registered `expansionId` can request runtime-sized follow-up slides | It emits one validated number as submitted evidence. It is a setup decision, not a scored mathematics answer. |
 | `choice` | Recognition among explicit alternatives | `single`, `multiple`, `meaning`, `part-of-speech`, `synonym`, `antonym`, `correct-spelling`, `best-word`, `odd-one-out` | Text or visual prompts; speech playback supports sound-to-option recognition | Options can cue the answer, so use constructed response when unaided recall is required. |
 | `truth` | Judging a statement against a source, claim, or opinion | `true-false`, `true-false-not-given`, `yes-no-not-given`, `agree-disagree` | Text, audio, chart, or diagram followed by one or more judgments | Use `not-given` only when source coverage genuinely makes absence distinguishable from falsehood. |
 | `matching` | Mapping two sets of related items | `definition`, `synonym`, `antonym`, `collocation`, `word-family`, `person-opinion`, `sentence-ending`, `heading-section`, `term-example` | Text sections, audio speakers, or term/example sets; can follow a teaching card | Prefer `on-complete` feedback for test-like tasks and `immediate` feedback for guided practice. Enable many-to-one only when the domain relation permits it. |
 | `classification` | Assigning items to meaningful categories | `positive-negative`, `formal-informal`, `countable-uncountable`, `part-of-speech`, `possible-impossible`, `linking-word-function`, `letter-language-function`, `sound`, `custom` | Word lists, sentences, audio examples, or source-derived categories | Categories must be mutually understandable from the instruction. Do not force continuous or ambiguous distinctions into discrete buckets. |
-| `ordering` | Reconstructing a genuine order | `sequence`, `chronology`, `severity`, `adjective-order`, `process` | Processes, timelines, graded intensity, or language-order rules | Use only when one defensible order exists; ordinary grouping or association belongs in matching or classification. |
+| `ordering` | Reconstructing one or more explicitly defensible orders | `sequence`, `chronology`, `severity`, `adjective-order`, `process` | Processes, timelines, graded intensity, or language-order rules; `acceptedOrders` can preserve source-supported alternatives | Every accepted order must contain every item exactly once and include the primary key. Ordinary grouping or association belongs in matching or classification. |
+| `labeling` | Connecting answers to marked spatial positions | `map`, `plan`, `diagram`; input modes `text`, `word-bank` | One shared image or diagram stimulus with positioned targets and accessible answer fields | Use only when spatial location is evidence. Every marker needs 0-100 percentage coordinates, accessible text, and server-owned accepted answers. |
 | `cloze` | Controlled recall inside meaningful context | input modes: `text`, `word-bank`, `select` | Text or audio context; useful after recognition practice | `word-bank` and `select` provide stronger cues than free text. Configure accepted answers, word limits, case, punctuation, and spelling deliberately. |
 | `structured-completion` | Preserving multi-field source structure while collecting answers | `form`, `table`, `notes`, `flowchart`, `timeline` | Listening/reading forms, tables, notes, processes, and timelines | Keep related fields together when their layout carries meaning. Do not fragment an authentic form or table into unrelated short-answer slides. |
-| `short-answer` | Brief unaided retrieval of one answer | no mode; optional first-letter and character-count hints | Text, audio, image, chart, or diagram questions | Hints reduce retrieval difficulty. Use exact spelling only when orthographic accuracy is part of the objective. |
+| `short-answer` | Brief unaided retrieval of one answer | no mode; optional first-letter and character-count hints, plus a separate supporting-evidence prompt | Text, audio, image, chart, or diagram questions | `evidenceRequired` can require a cited span or explanation without merging it into the scored answer. Hints reduce retrieval difficulty. Use exact spelling only when orthographic accuracy is part of the objective. |
 | `word-formation` | Producing a derived form from a supplied base word | `family`, `target-part-of-speech`, `prefix`, `suffix`, `negative-form`, `base-word`, `transitive-intransitive` | Sentential context or a teaching card showing a word family | This tests production of form, not recognition of a word-family relation. Use matching when production is not required. |
 | `error-correction` | Detecting and replacing faulty language | `select-and-replace`, `inline-edit`, `sentence-correction`, `paragraph-correction` | Sentences or paragraphs containing a purposeful error; often follows a rule card | Accepted corrections must reflect the intended error category and avoid rejecting other valid rewrites accidentally. |
 | `rewrite` | Transforming meaning, register, grammar, or target vocabulary | `paraphrase`, `target-grammar`, `target-vocabulary`, `sentence-transformation`, `noun-to-verb`, `verb-to-noun`, `formalize`, `linking-word`, `synonym-replacement` | Source sentence plus targets; useful before independent writing | Exact accepted answers or required fragments can score constrained tasks. Open transformations should provide a model answer and be treated as submitted work rather than pretending to have exhaustive automatic scoring. |
@@ -42,12 +44,17 @@ recall, correction, transformation, or independent production.
   collect learning evidence.
 * Use `selection` for an unscored learner decision and `choice` for a scored
   answer. Never invent an answer key for a preference or configuration choice.
+* Use `number-input` only for an unscored bounded setup value. Use an actual
+  scored answer contract when the number itself is the learner's answer.
 * Choose between `choice` and `short-answer` based on whether options are part of
   the intended support. Choose between `matching` and `word-formation` based on
   whether the learner maps an existing form or must produce it.
 * Use `pronunciation` for sound discrimination or rehearsal and `dictation` for
   sound-to-written-form retrieval. Neither is a substitute for a broader
   listening-comprehension task.
+* Use `labeling` only when the learner must preserve the relationship between a
+  shared map, plan, or diagram and its marked locations. Forms and tables remain
+  `structured-completion`.
 * Use a `slides.sequence` exercise to combine interaction families when one
   objective needs staged evidence. Do not create a new exercise component merely
   because the content is called collocation, spelling, or word family.
@@ -113,7 +120,7 @@ configurations are validated fail-closed, so incomplete or contradictory slide
 data must be corrected at the source rather than tolerated by the component.
 
 The registry also exposes `message` and `summary` shell content. They support
-exercise flow but are not members of the 17 reusable interaction families.
+exercise flow but are not members of the 19 reusable interaction families.
 
 # Composition Examples
 
@@ -128,6 +135,8 @@ exercise flow but are not members of the 17 reusable interaction families.
 * Source-based IELTS completion: one source stimulus ->
   `structured-completion`; preserve the form, table, notes, flowchart, or
   timeline structure instead of converting every field to an isolated item.
+* Spatial source task: one image or diagram stimulus -> `labeling`; keep the
+  positioned markers and accessible answer list in the same interaction.
 
 # Citations
 
@@ -143,3 +152,5 @@ exercise flow but are not members of the 17 reusable interaction families.
 [10] [Practice Words session persistence](../../ui/src/app/application/practice-words/practice-words-session.service.ts)
 [11] [Sequence completion boundary](../../ui/src/app/features/collection-learning-path/exercises/slides-sequence/slides-sequence-exercise.component.ts)
 [12] [Teaching-card Markdown parser](../../ui/src/app/shared/slide-exercise/library/components/teaching-card/teaching-card-markdown.ts)
+[13] [Spatial labeling component](../../ui/src/app/shared/slide-exercise/library/components/labeling/labeling-slide.component.ts)
+[14] [Server-owned slide completion verifier](../../back/src/domain/collection-learning-path/SlideSequenceExercise.js)

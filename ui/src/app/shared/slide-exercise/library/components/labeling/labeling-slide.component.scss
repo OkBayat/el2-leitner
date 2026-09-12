@@ -1,0 +1,18 @@
+.labeling-canvas {
+	position: relative;
+}
+
+.labeling-marker {
+	position: absolute;
+	min-width: 32px;
+	min-height: 32px;
+	padding: 4px 8px;
+	transform: translate(-50%, -50%);
+	border: 2px solid var(--vocora-border-strong);
+	border-radius: 999px;
+	background: var(--vocora-surface-raised);
+	color: var(--vocora-text-primary);
+	font-weight: 700;
+	line-height: 20px;
+	text-align: center;
+}

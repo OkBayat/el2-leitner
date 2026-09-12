@@ -13,12 +13,51 @@ import {
 	ClassificationSlideComponent,
 	ClozeSlideComponent,
 	DictationSlideComponent,
+	LabelingSlideComponent,
 	MatchingSlideComponent,
 	PronunciationSlideComponent,
 	TeachingCardSlideComponent,
 } from './slide-library.components';
 
 describe('reusable slide renderer contract', () => {
+	it('renders positioned labeling markers with an accessible answer list', () => {
+		const fixture = TestBed.createComponent(LabelingSlideComponent);
+		fixture.componentInstance.load({
+			slideId: 'campus-map',
+			type: 'labeling',
+			data: {
+				mode: 'map',
+				question: 'Label the campus map.',
+				stimulus: {
+					type: 'diagram',
+					imageSrc: '/assets/maps/campus.svg',
+					alt: 'A campus map with one numbered location.',
+				},
+				targets: [
+					{
+						id: 'one',
+						label: 'Location 1',
+						markerLabel: '1',
+						xPercent: 25,
+						yPercent: 40,
+						answers: ['library'],
+					},
+				],
+			},
+		});
+		fixture.detectChanges();
+
+		const element = fixture.nativeElement as HTMLElement;
+		const image = element.querySelector<HTMLImageElement>('.labeling-canvas img');
+		const marker = element.querySelector<HTMLElement>('.labeling-marker');
+		expect(image?.alt).toBe('A campus map with one numbered location.');
+		expect(marker?.textContent?.trim()).toBe('1');
+		expect(marker?.style.left).toBe('25%');
+		expect(marker?.style.top).toBe('40%');
+		expect(marker?.getAttribute('aria-hidden')).toBe('true');
+		expect(element.querySelector('mat-label')?.textContent).toContain('Location 1');
+	});
+
 	it('renders dictation playback controls and a soft single-line answer field', () => {
 		const speech = { speak: vi.fn().mockReturnValue(true), cancel: vi.fn() };
 		TestBed.configureTestingModule({

@@ -12,7 +12,7 @@ const GENERATED_TYPES = new Map([
 ]);
 const UNSCORED_TYPES = new Set(["message", "teaching-card", "summary", LESSON_VOCABULARY_SCOPE_SLIDE_TYPE]);
 const SUBMITTED_TYPES = new Set(["selection", "number-input", "speaking-response", "writing-response"]);
-const ANSWER_FIELD_TYPES = new Set(["cloze", "structured-completion", "word-formation"]);
+const ANSWER_FIELD_TYPES = new Set(["cloze", "structured-completion", "word-formation", "labeling"]);
 const MAX_EVIDENCE_BYTES = 256_000;
 
 function invalid(message) {
@@ -118,6 +118,96 @@ function numberInputConfig(data) {
   return values;
 }
 
+function completeOrder(value, expectedIds, label) {
+  const ids = strings(value);
+  if (ids.length !== expectedIds.length || new Set(ids).size !== ids.length
+    || !ids.every((id) => expectedIds.includes(id))) {
+    invalid(`${label} must contain every ordering item exactly once.`);
+  }
+  return ids;
+}
+
+function orderingConfig(data) {
+  const configuredItems = Array.isArray(data.items) ? data.items : [];
+  const primaryIds = strings(data.correctOrderIds);
+  if (primaryIds.length < 2) invalid("Ordering correctOrderIds must contain at least two items.");
+  const itemIds = configuredItems.length
+    ? configuredItems.map((candidate) => {
+        const item = record(candidate);
+        const id = requiredString(item, "id", "Ordering item id");
+        requiredString(item, "label", "Ordering item label");
+        return id;
+      })
+    : primaryIds;
+  if (new Set(itemIds).size !== itemIds.length) invalid("Ordering item ids must be unique.");
+  const primary = completeOrder(data.correctOrderIds, itemIds, "Ordering correctOrderIds");
+  if (data.acceptedOrders !== undefined && !Array.isArray(data.acceptedOrders)) {
+    invalid("Ordering acceptedOrders must be an array.");
+  }
+  const accepted = data.acceptedOrders === undefined
+    ? [primary]
+    : data.acceptedOrders.map((order, index) => completeOrder(order, itemIds, `Ordering acceptedOrders[${index}]`));
+  if (!accepted.length) invalid("Ordering acceptedOrders must contain at least one order.");
+  if (new Set(accepted.map((order) => order.join("\u0000"))).size !== accepted.length) {
+    invalid("Ordering acceptedOrders must be unique.");
+  }
+  if (!accepted.some((order) => order.every((id, index) => primary[index] === id))) {
+    invalid("Ordering acceptedOrders must include correctOrderIds.");
+  }
+  return accepted;
+}
+
+function answerFieldConfig(candidate, label) {
+  const field = record(candidate);
+  const id = requiredString(field, "id", `${label} id`);
+  if (!strings(field.answers).length) invalid(`${label} answers are required.`);
+  return { field, id };
+}
+
+function labelingConfig(data) {
+  const mode = requiredString(data, "mode", "Labeling mode");
+  if (!new Set(["map", "plan", "diagram"]).has(mode)) invalid("Labeling mode is unsupported.");
+  requiredString(data, "question", "Labeling question");
+  const stimulus = record(data.stimulus);
+  const stimulusType = requiredString(stimulus, "type", "Labeling stimulus type");
+  if (stimulusType === "diagram") requiredString(stimulus, "imageSrc", "Labeling diagram source");
+  else if (stimulusType === "image") requiredString(stimulus, "src", "Labeling image source");
+  else invalid("Labeling requires an image or diagram stimulus.");
+  requiredString(stimulus, "alt", "Labeling stimulus alternative text");
+  if (!Array.isArray(data.targets) || !data.targets.length) invalid("Labeling targets are required.");
+  const targetIds = data.targets.map((candidate) => {
+    const { field, id } = answerFieldConfig(candidate, "Labeling target");
+    requiredString(field, "label", "Labeling target label");
+    requiredString(field, "markerLabel", "Labeling target marker label");
+    for (const key of ["xPercent", "yPercent"]) {
+      const value = field[key];
+      if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 100) {
+        invalid("Labeling target coordinates must be between 0 and 100.");
+      }
+    }
+    return id;
+  });
+  if (new Set(targetIds).size !== targetIds.length) invalid("Labeling target ids must be unique.");
+  const inputMode = String(data.inputMode ?? "text").trim();
+  if (!new Set(["text", "word-bank"]).has(inputMode)) invalid("Labeling inputMode is unsupported.");
+  if (inputMode === "word-bank") {
+    const wordBank = strings(data.wordBank);
+    if (wordBank.length < 2 || new Set(wordBank).size !== wordBank.length) {
+      invalid("Labeling wordBank must contain at least two unique options.");
+    }
+    if (data.targets.some((target) => wordBank.every((option) => !answerMatches(option, target)))) {
+      invalid("Every labeling target needs an accepted answer in the word bank.");
+    }
+  }
+}
+
+function shortAnswerConfig(data) {
+  if ("evidenceRequired" in data && typeof data.evidenceRequired !== "boolean") {
+    invalid("Short-answer evidenceRequired must be a boolean.");
+  }
+  if (data.evidenceRequired === true) requiredString(data, "evidencePrompt", "Short-answer evidencePrompt");
+}
+
 function wordCount(value) {
   const normalized = String(value ?? "").trim();
   return normalized ? normalized.split(/\s+/u).length : 0;
@@ -191,9 +281,12 @@ function gradeConfiguredResult(slide, resultData) {
     });
   }
   if (slide.type === "cloze") return gradeAnswerFields(data, "blanks", resultData);
-  if (ANSWER_FIELD_TYPES.has(slide.type)) return gradeAnswerFields(data, "fields", resultData);
+  if (ANSWER_FIELD_TYPES.has(slide.type)) {
+    return gradeAnswerFields(data, slide.type === "labeling" ? "targets" : "fields", resultData);
+  }
   if (slide.type === "short-answer") {
-    return answerMatches(resultData.answer, {
+    return (!data.evidenceRequired || Boolean(String(resultData.supportingEvidence ?? "").trim()))
+      && answerMatches(resultData.answer, {
       answers: data.answers,
       caseSensitive: data.exactSpelling === true,
       punctuationSensitive: data.exactSpelling === true,
@@ -217,8 +310,11 @@ function gradeConfiguredResult(slide, resultData) {
         && strings(data.requiredFragments).every((fragment) => response.includes(normalizeAnswer(fragment))))
     );
   }
-  if (slide.type === "ordering") return equalIds(resultData.orderedItemIds, data.correctOrderIds)
-    && strings(resultData.orderedItemIds).every((id, index) => id === strings(data.correctOrderIds)[index]);
+  if (slide.type === "ordering") {
+    const actual = strings(resultData.orderedItemIds);
+    return orderingConfig(data).some((order) => equalIds(actual, order)
+      && actual.every((id, index) => id === order[index]));
+  }
   return false;
 }
 
@@ -278,6 +374,9 @@ export function resolveSlideSequenceDefinition(exercise) {
   if (new Set(slides.map((slide) => slide.id)).size !== slides.length) invalid("slides.sequence slide ids must be unique.");
   slides.filter((slide) => slide.type === "selection").forEach((slide) => selectionConfig(slide.data));
   slides.filter((slide) => slide.type === "number-input").forEach((slide) => numberInputConfig(slide.data));
+  slides.filter((slide) => slide.type === "ordering").forEach((slide) => orderingConfig(slide.data));
+  slides.filter((slide) => slide.type === "labeling").forEach((slide) => labelingConfig(slide.data));
+  slides.filter((slide) => slide.type === "short-answer").forEach((slide) => shortAnswerConfig(slide.data));
   if (slides.filter((slide) => slide.terminal).length !== 1 || !slides.at(-1).terminal) {
     invalid("slides.sequence requires exactly one terminal final slide.");
   }

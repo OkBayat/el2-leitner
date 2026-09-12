@@ -197,6 +197,22 @@ export interface OrderingSlideData extends SlideTypeData {
 		'sequence' | 'chronology' | 'severity' | 'adjective-order' | 'process';
 	readonly items: readonly OrderingItem[];
 	readonly correctOrderIds: readonly string[];
+	readonly acceptedOrders?: readonly (readonly string[])[];
+}
+
+export interface LabelingTarget extends AnswerField {
+	readonly label: string;
+	readonly markerLabel: string;
+	readonly xPercent: number;
+	readonly yPercent: number;
+}
+
+export interface LabelingSlideData extends SlideTypeData {
+	readonly mode: 'map' | 'plan' | 'diagram';
+	readonly question: string;
+	readonly inputMode?: 'text' | 'word-bank';
+	readonly wordBank?: readonly string[];
+	readonly targets: readonly LabelingTarget[];
 }
 
 export interface AnswerField {
@@ -243,6 +259,8 @@ export interface ShortAnswerSlideData extends SlideTypeData {
 	readonly firstLetterHint?: string;
 	readonly characterCount?: number;
 	readonly exactSpelling?: boolean;
+	readonly evidencePrompt?: string;
+	readonly evidenceRequired?: boolean;
 }
 
 export interface WordFormationField extends AnswerField {
@@ -358,6 +376,7 @@ export const REUSABLE_SLIDE_TYPES = [
 	'matching',
 	'classification',
 	'ordering',
+	'labeling',
 	'cloze',
 	'structured-completion',
 	'short-answer',

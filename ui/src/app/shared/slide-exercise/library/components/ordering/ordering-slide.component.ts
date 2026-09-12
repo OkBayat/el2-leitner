@@ -31,6 +31,25 @@ function parseOrdering(value: unknown): OrderingSlideData {
 		)
 	)
 		throw new Error('Ordering answer must contain every item once.');
+	const acceptedOrders = Array.isArray(source['acceptedOrders'])
+		? source['acceptedOrders'].map((candidate) => strings(candidate))
+		: [correctOrderIds];
+	if (
+		!acceptedOrders.length ||
+		acceptedOrders.some(
+			(order) =>
+				order.length !== items.length ||
+				!equalIds(
+					items.map((item) => item.id),
+					order,
+				),
+		)
+	)
+		throw new Error('Every accepted ordering must contain every item once.');
+	if (new Set(acceptedOrders.map((order) => order.join('\u0000'))).size !== acceptedOrders.length)
+		throw new Error('Accepted orderings must be unique.');
+	if (!acceptedOrders.some((order) => order.every((id, index) => correctOrderIds[index] === id)))
+		throw new Error('Accepted orderings must include the primary correct order.');
 	return {
 		...common(source),
 		mode: stringMode(
@@ -46,6 +65,7 @@ function parseOrdering(value: unknown): OrderingSlideData {
 		),
 		items,
 		correctOrderIds,
+		acceptedOrders,
 	};
 }
 
@@ -80,15 +100,18 @@ export class OrderingSlideComponent
 	orderState(id: string): string {
 		if (this.interactionState() === 'idle') return 'neutral';
 		const index = this.orderedItems().findIndex((item) => item.id === id);
-		return this.data().correctOrderIds[index] === id
+		return this.acceptedOrders().some((order) => order[index] === id)
 			? 'correct'
 			: 'incorrect';
+	}
+	private acceptedOrders(): readonly (readonly string[])[] {
+		return this.data().acceptedOrders ?? [this.data().correctOrderIds];
 	}
 	handleAction(actionId: string): void {
 		if (actionId !== 'check') return;
 		const actual = this.orderedItems().map((item) => item.id);
-		const correct = actual.every(
-			(id, index) => this.data().correctOrderIds[index] === id,
+		const correct = this.acceptedOrders().some((order) =>
+			actual.every((id, index) => order[index] === id),
 		);
 		this.finish(
 			correct,

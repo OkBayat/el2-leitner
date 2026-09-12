@@ -4,6 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const uiRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const repositoryRoot = resolve(uiRoot, '..');
 const libraryRoot = join(uiRoot, 'src/app/shared/slide-exercise/library');
 const componentTypes = [
 	'teaching-card',
@@ -14,6 +15,7 @@ const componentTypes = [
 	'matching',
 	'classification',
 	'ordering',
+	'labeling',
 	'cloze',
 	'structured-completion',
 	'short-answer',
@@ -27,6 +29,18 @@ const componentTypes = [
 ];
 const barrelPath = join(libraryRoot, 'slide-library.components.ts');
 const barrel = readFileSync(barrelPath, 'utf8');
+const exerciseBuilderCatalog = readFileSync(
+	join(repositoryRoot, '.agents/skills/k2-exercise-builder/references/slide-catalog.md'),
+	'utf8',
+);
+const lessonDesignContract = readFileSync(
+	join(repositoryRoot, '.agents/skills/k2-lesson-exercise-design/references/output-contract.md'),
+	'utf8',
+);
+const okfCatalog = readFileSync(
+	join(repositoryRoot, 'okf/project/reusable-slide-interactions.md'),
+	'utf8',
+);
 const sharedStyles = readFileSync(
 	join(libraryRoot, 'slide-library.component.scss'),
 	'utf8',
@@ -97,6 +111,20 @@ for (const type of componentTypes) {
 		new RegExp(`components/${type}/${type}-slide\\.component`, 'u'),
 		`${type} must remain exported from the public component barrel.`,
 	);
+	for (const [owner, source] of [
+		['k2-exercise-builder', exerciseBuilderCatalog],
+		['k2-lesson-exercise-design', lessonDesignContract],
+		['OKF', okfCatalog],
+	]) {
+		assert.match(
+			source,
+			new RegExp(
+				`(?:^|\\n)(?:\\| )?(?:\\x60${type}\\x60|${type})(?:\\n| |\\||$)`,
+				'u',
+			),
+			`${type} must remain documented by ${owner}.`,
+		);
+	}
 }
 
 assert.match(

@@ -1,6 +1,6 @@
 # Registered Slide Catalog
 
-Select a slide from the learner action and evidence required. The 18 reusable families below are registered by the application. `message` and `summary` are flow-shell types, not reusable interaction families.
+Select a slide from the learner action and evidence required. The 19 reusable families below are registered by the application. `message` and `summary` are flow-shell types, not reusable interaction families.
 
 | Type | Learner action and evidence | Essential data | Important boundary |
 | --- | --- | --- | --- |
@@ -11,10 +11,11 @@ Select a slide from the learner action and evidence required. The 18 reusable fa
 | `truth` | Judge a statement | `mode`, `statement`, `correctOptionId`; optional `options` | Use not-given modes only when the source supports absence as evidence. |
 | `matching` | Map related items | `pairs` with `id`, `left`, `right`; optional mode and feedback policy | Allow many-to-one only when the relation permits it. |
 | `classification` | Assign items to explicit categories | at least two `categories`; `items` with `correctCategoryId` | Categories must be meaningful and item answers must reference them. |
-| `ordering` | Reconstruct one defensible order | `items`, `correctOrderIds` | Do not use for relationships with several valid orders. |
+| `ordering` | Reconstruct one or more explicitly defensible orders | `items`, `correctOrderIds`; optional complete `acceptedOrders` | Every accepted order must contain every item exactly once and include the primary key. Configure alternatives only when the source supports them. |
+| `labeling` | Place written or word-bank labels at marked points on a shared map, plan, or diagram | `mode`, `question`, image/diagram `stimulus`, positioned `targets`; optional `inputMode` and `wordBank` | Use only when spatial position is evidence. Every marker needs an accessible field label, coordinates from 0 to 100, and server-owned accepted answers. |
 | `cloze` | Fill gaps in meaningful context | `content`, `blanks`; optional `inputMode` and `wordBank` | Free text gives less support than word-bank or select modes. |
 | `structured-completion` | Complete a form, table, notes, flowchart, or timeline | `layout`, `fields`; optional `columns` and `rows` | Preserve structure when layout carries meaning. |
-| `short-answer` | Retrieve one brief answer without options | `question`, `answers`; optional hints and exact spelling | Hints reduce retrieval difficulty. |
+| `short-answer` | Retrieve one brief answer without options | `question`, `answers`; optional hints, exact spelling, and `evidencePrompt` | `evidenceRequired` makes a separate supporting span/explanation mandatory; it does not merge that text into the scored answer. Hints reduce retrieval difficulty. |
 | `word-formation` | Produce a derived form from a base | `baseWord`, `fields` with `partOfSpeech`; optional mode | Use matching when production is not required. |
 | `error-correction` | Detect and replace faulty language | `original`, `answers`; optional mode and category | Accepted answers must not reject other valid corrections accidentally. |
 | `rewrite` | Correct one or two local word-level errors in a supplied utterance | `original`, exact `acceptedAnswers`, and `modelAnswer`; optional target words | Keep the correction unambiguous and within one or two word edits. Use `writing-response` for open paraphrase or substantial restructuring. |
@@ -35,6 +36,7 @@ Select a slide from the learner action and evidence required. The 18 reusable fa
 - Meaning into recall: `teaching-card` -> `choice` or `matching` -> `cloze` or `short-answer` -> `summary`.
 - Usage repair: `teaching-card` -> `error-correction` -> `rewrite` -> `summary`.
 - Productive transfer: supported recall slides -> `speaking-response` or `writing-response` -> `summary`.
+- Spatial comprehension: shared image/diagram `stimulus` -> `labeling` -> `summary`.
 
 Compositions are examples, not mandatory templates. Every slide must be justified by the active objective and source.
 

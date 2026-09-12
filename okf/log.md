@@ -1,5 +1,10 @@
 # K2 OKF Knowledge Bundle Update Log
 
+## 2026-09-12
+
+* **Update**: Synchronized the reusable interaction catalog with all 19 registered families, including bounded `number-input` setup and the general spatial `labeling` contract.
+* **Update**: Recorded server-verifiable multiple ordering keys and separate short-answer supporting evidence without changing their scoring boundaries.
+
 ## 2026-09-10
 
 * **Update**: Documented the constrained, raw-HTML-escaping Markdown contract for new `teaching-card` content while retaining legacy block compatibility.

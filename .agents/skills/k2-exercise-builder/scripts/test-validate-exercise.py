@@ -129,6 +129,97 @@ class ExerciseValidatorTests(unittest.TestCase):
         }
         self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
 
+    def test_accepts_multiple_complete_ordering_keys(self) -> None:
+        MODULE.validate_slide_data(
+            "ordering",
+            {
+                "items": [
+                    {"id": "intro", "label": "Introduction"},
+                    {"id": "reason", "label": "Reason"},
+                    {"id": "example", "label": "Example"},
+                ],
+                "correctOrderIds": ["intro", "reason", "example"],
+                "acceptedOrders": [
+                    ["intro", "reason", "example"],
+                    ["intro", "example", "reason"],
+                ],
+            },
+        )
+
+    def test_requires_multiple_ordering_keys_to_include_the_primary_key(self) -> None:
+        with self.assertRaisesRegex(ValueError, "must include correctOrderIds"):
+            MODULE.validate_slide_data(
+                "ordering",
+                {
+                    "items": [
+                        {"id": "intro", "label": "Introduction"},
+                        {"id": "reason", "label": "Reason"},
+                        {"id": "example", "label": "Example"},
+                    ],
+                    "correctOrderIds": ["intro", "reason", "example"],
+                    "acceptedOrders": [["intro", "example", "reason"]],
+                },
+            )
+
+    def test_accepts_a_positioned_labeling_interaction(self) -> None:
+        exercise = valid_exercise()
+        exercise["config"]["slides"][0] = {
+            "id": "campus-map",
+            "type": "labeling",
+            "data": {
+                "mode": "map",
+                "question": "Label the campus map.",
+                "stimulus": {
+                    "type": "diagram",
+                    "imageSrc": "/assets/maps/campus.svg",
+                    "alt": "A campus map with numbered locations.",
+                },
+                "inputMode": "word-bank",
+                "wordBank": ["library", "cafe", "station"],
+                "targets": [
+                    {
+                        "id": "one",
+                        "label": "Location 1",
+                        "markerLabel": "1",
+                        "xPercent": 20,
+                        "yPercent": 35,
+                        "answers": ["library"],
+                    },
+                    {
+                        "id": "two",
+                        "label": "Location 2",
+                        "markerLabel": "2",
+                        "xPercent": 75,
+                        "yPercent": 60,
+                        "answers": ["cafe"],
+                    },
+                ],
+            },
+        }
+
+        self.assertEqual(MODULE.validate_exercise(exercise)["status"], "valid")
+
+    def test_rejects_an_out_of_bounds_labeling_target(self) -> None:
+        with self.assertRaisesRegex(ValueError, "between 0 and 100"):
+            MODULE.validate_slide_data(
+                "labeling",
+                {
+                    "mode": "diagram",
+                    "question": "Label the part.",
+                    "stimulus": {"type": "diagram", "imageSrc": "/diagram.svg", "alt": "Diagram."},
+                    "targets": [
+                        {
+                            "id": "part",
+                            "label": "Part A",
+                            "markerLabel": "A",
+                            "xPercent": 101,
+                            "yPercent": 20,
+                            "answers": ["valve"],
+                        }
+                    ],
+                },
+            )
+
     def test_accepts_target_grammar_rewrite_mode(self) -> None:
         exercise = valid_exercise()
         exercise["config"]["slides"][0] = {
