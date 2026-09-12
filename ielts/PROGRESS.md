@@ -10,7 +10,7 @@ base branch. Do not move the work to `main` or create a second course PR.
 - Stage: S01, foundation. Current lesson: **L0001 Golden Lesson candidate**.
 - Last fully production-ready lesson under the complete requested feedback and
   conversation contract: **none**. Do not report the whole course complete.
-- L0001 authored checkpoint: 14 runtime exercises, including intake, and 106
+- L0001 authored checkpoint: 15 runtime exercises, including intake, and 110
   configured slides. The intake also generates its own vocabulary screens.
   Complete teaching source: [lessons/L0001.md](lessons/L0001.md).
 - Next: resolve the Golden Lesson feedback/conversation gates below, validate
@@ -33,9 +33,11 @@ base branch. Do not move the work to `main` or create a second course PR.
 The expanded lesson preserves all original runtime lesson, exercise and slide
 IDs and the eight-item vocabulary scope. Added listening at position 75 uses
 the registered `dialogue` stimulus and `structured-completion` interaction.
-Position 90/E09 stays reserved by the existing adaptive-conversation plan. The
-original blueprint called E09 listening integration; the new listening exercise
-supplies that comprehension objective without claiming conversation is built.
+Position 90/E09 now contains the registered adaptive conversation, preceded by
+instruction on food, drink and place questions. It is optional while its service
+is disabled; completing it still requires genuine server-issued practice evidence.
+The original blueprint called E09 listening integration; the listening exercise
+at position 75 supplies that separate comprehension objective.
 Final mixed retrieval is at position 140. These counts are not templates for
 later lessons.
 
@@ -66,17 +68,24 @@ later lessons.
    contracts and failure behavior; the optional native image, real token parity
    and target-host output quality remain unverified. The 80-word pilot does not
    support full-length Academic Writing tasks or numeric IELTS estimates.
-2. **Adaptive Speaking:** the planned `adaptive-conversation` session/API and
-   its PCM → Vosk → Qwen → Kokoro orchestration are not registered or implemented.
-   Independent recording is not conversational feedback or acoustic assessment.
+2. **Adaptive Speaking:** the reusable `adaptive-conversation` slide, owned
+   session/API, persistence and PCM → Vosk → Qwen → Kokoro orchestration are
+   implemented behind a disabled feature flag. E09 is the first consumer. Writing
+   and conversation share one bounded text-inference queue and provider lease.
+   Contract tests do not establish real recognition accuracy, relevant follow-up
+   questions, correct feedback or acceptable target-host response times.
+   Transcript-only feedback does not assess pronunciation or acoustic fluency.
 3. **Quality evidence:** WF-01 requires actual target-CPU measurements and
    reviewed model outputs before a supported feedback pilot. The original
-   17-case evaluation harness is available in `ielts/evaluation/`; its default
-   dry run performs no inference. No target-host benchmark or reviewed model
-   output is available. Content validation cannot supply that evidence.
+   17-case Writing harness and 12-case synthetic conversation text-turn harness
+   are available in `ielts/evaluation/`; their default dry runs perform no
+   inference. The conversation harness exercises 11 model-request paths and one
+   server abstention; it does not measure ASR or TTS. The operator guide also
+   specifies recorded-speech scenarios. No target-host benchmark or reviewed
+   model output is available. Content validation cannot supply that evidence.
 
-Do not add unused evaluator metadata, count submitted text as mastery, or publish
-a fake E09 to conceal these gaps. The accepted request permits the smallest
+Do not add unused evaluator metadata, count submitted text as mastery, or claim
+that disabled services have passed real-model evaluation. The accepted request permits the smallest
 necessary generic extension; missing model measurements block enabling feedback,
 not implementation and contract testing of disabled functionality. Release claims
 still need working consumers and actual validation. The full Golden Lesson remains

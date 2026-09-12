@@ -66,6 +66,11 @@ provider capacity until the underlying operation stops or its lease expires.
 Trial limits are one active provider operation, eight queued/running jobs globally,
 two per owner, twenty new feedback submissions per owner per UTC day, ten saved
 drafts per writing slide and exercise run, and three provider attempts per draft.
+The active provider slot and eight-global/two-owner queue are now shared with
+adaptive conversation through `LocalTextInferenceWorker`; neither family owns a
+second inference scheduler. The existing Writing worker facade delegates to that
+same owner. Conversation has its own session quotas and retains its own prompt,
+schema and result policy while using the pinned structured-text client.
 Queue refusal preserves an otherwise accepted draft. Daily quota accounting
 survives individual submission deletion. These are bounded trial settings, not
 measured service capacity or a restriction on the number of course lessons.
@@ -147,7 +152,8 @@ the isolated target-host experiment. Its default command is a no-inference dry
 run; actual execution requires explicit operator metadata and a preselected
 latency budget. Synthetic contract tests do not satisfy WF-01's model-quality,
 CPU, memory, concurrent-load or token-parity release gates. Adaptive conversation
-remains a separate implementation requirement in the existing conversation plan.
+is implemented behind its own disabled flag; its speech, feedback and follow-up
+quality require separate evidence described in the existing conversation document.
 
 The numbered sections below preserve the design rationale and release criteria.
 

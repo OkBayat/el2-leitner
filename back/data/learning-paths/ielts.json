@@ -1569,6 +1569,95 @@
           }
         },
         {
+          "id": "ielts-l0001-e09-conversation",
+          "position": 90,
+          "type": "slides.sequence",
+          "schemaVersion": 1,
+          "required": false,
+          "completionPolicy": "slide-sequence",
+          "config": {
+            "title": "Answer a question and follow the reply",
+            "slides": [
+              {
+                "id": "ielts-l0001-e09-food-question",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "tip",
+                  "title": "Answer the question you hear",
+                  "markdown": "### Food or drink?\n**What do you eat in the morning?** asks about food.\n\n**I eat bread.** is one possible answer. Rice is possible too.\n\nFor a drink question, use **I drink** + a drink. You may describe a real or invented meal."
+                }
+              },
+              {
+                "id": "ielts-l0001-e09-next-question",
+                "type": "teaching-card",
+                "chrome": {
+                  "header": {
+                    "progress": null
+                  }
+                },
+                "data": {
+                  "mode": "tip",
+                  "title": "Listen to the next question",
+                  "markdown": "### Follow the question\nFor **What do you drink?**, name a drink: **I drink water.**\n\nFor **Where do you eat breakfast?**, give a place: **I eat breakfast at home.**\n\nKeep your meal facts. Answer the new question instead of repeating every sentence."
+                }
+              },
+              {
+                "id": "ielts-l0001-e09-dialogue",
+                "type": "adaptive-conversation",
+                "data": {
+                  "mode": "guided-dialogue",
+                  "goal": "Answer short questions about morning meals: food, drinks and where you eat. Give one relevant detail at a time.",
+                  "openingPrompt": "What do you eat in the morning?",
+                  "minimumTurns": 2,
+                  "maximumTurns": 3,
+                  "responseSeconds": 30,
+                  "learnerLevel": "beginner",
+                  "targetVocabulary": [
+                    "bread",
+                    "rice",
+                    "water",
+                    "milk",
+                    "eat",
+                    "drink",
+                    "have breakfast",
+                    "drink water"
+                  ],
+                  "questionConstraints": {
+                    "maximumWords": 14,
+                    "oneQuestionOnly": true,
+                    "avoidAnswerDisclosure": true
+                  }
+                }
+              },
+              {
+                "id": "ielts-l0001-e09-finish",
+                "type": "summary",
+                "terminal": true,
+                "data": {
+                  "aggregationMode": "first-attempts",
+                  "title": "Conversation practice complete",
+                  "subtitle": "Recall the question you heard and the detail you gave. Keep your own meaning when you practise again."
+                },
+                "chrome": {
+                  "footer": {
+                    "primary": {
+                      "id": "finish",
+                      "label": "Finish",
+                      "behavior": "emit"
+                    },
+                    "secondary": false
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
           "id": "ielts-l0001-e10-context-contrast",
           "position": 100,
           "type": "slides.sequence",

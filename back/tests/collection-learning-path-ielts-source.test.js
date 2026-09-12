@@ -38,6 +38,7 @@ function accepts(slide, data) {
 }
 
 const REUSABLE_SLIDE_TYPES = new Set([
+  "adaptive-conversation",
   "choice",
   "classification",
   "cloze",
@@ -75,10 +76,10 @@ test("IELTS L0001 uses the managed JSON path and reusable slide contracts", asyn
   const [lesson] = definition.lessons;
   assert.equal(lesson.id, "ielts-l0001");
   assert.equal(lesson.source.collectionId, "ielts");
-  assert.equal(lesson.exercises.length, 14);
+  assert.equal(lesson.exercises.length, 15);
   assert.deepEqual(
     lesson.exercises.map(({ position }) => position),
-    [10, 20, 30, 40, 50, 60, 70, 75, 80, 100, 110, 120, 130, 140],
+    [10, 20, 30, 40, 50, 60, 70, 75, 80, 90, 100, 110, 120, 130, 140],
   );
   assert.equal(lesson.exercises[0].type, "vocabulary.intake");
 
@@ -86,7 +87,7 @@ test("IELTS L0001 uses the managed JSON path and reusable slide contracts", asyn
   const slides = sequences.flatMap((exercise) => exercise.config.slides);
   assert.ok(sequences.every((exercise) => exercise.type === "slides.sequence"));
   assert.ok(sequences.every((exercise) => resolveSlideSequenceDefinition(exercise)));
-  const unscored = new Set(["teaching-card", "summary", "speaking-response", "writing-response"]);
+  const unscored = new Set(["teaching-card", "summary", "speaking-response", "writing-response", "adaptive-conversation"]);
   assert.ok(sequences.every((exercise) =>
     !exercise.config.slides.some(({ type }) => !unscored.has(type))
       || exercise.config.retryIncorrect === true),
@@ -150,4 +151,25 @@ test("IELTS punctuation practice requires the capital and full stop it teaches",
   assert.equal(accepts(slide, { answer: "I drink water." }), true);
   assert.equal(accepts(slide, { answer: "i drink water." }), false);
   assert.equal(accepts(slide, { answer: "I drink water" }), false);
+});
+
+test("IELTS optional conversation teaches the question focus and requires real completion evidence", async () => {
+  const source = JSON.parse(await readFile(new URL("ielts.json", LEARNING_PATH_SOURCES), "utf8"));
+  const exercise = source.lessons[0].exercises.find(({ id }) => id === "ielts-l0001-e09-conversation");
+  assert.ok(exercise);
+  assert.equal(exercise.required, false, "Disabled optional feedback must not block existing lesson progress");
+  assert.equal(exercise.position, 90);
+  const [food, followUp, conversation] = exercise.config.slides;
+  assert.equal(food.type, "teaching-card");
+  assert.equal(followUp.type, "teaching-card");
+  assert.equal(conversation.type, "adaptive-conversation");
+  assert.equal(conversation.data.minimumTurns, 2);
+  assert.equal(conversation.data.maximumTurns, 3);
+  assert.equal(conversation.data.openingPrompt, "What do you eat in the morning?");
+  assert.equal(verifySlideSequenceCompletion(exercise, {
+    kind: "completed", evidence: { schemaVersion: 1, results: [{
+      rootSlideId: conversation.id, slideType: conversation.type, eventType: "submitted",
+      data: { response: "finished", acceptedTurnCount: 3, formativeTaskScore: 2 },
+    }] },
+  }), false, "Client counts or model scores cannot replace an owned conversation receipt");
 });
