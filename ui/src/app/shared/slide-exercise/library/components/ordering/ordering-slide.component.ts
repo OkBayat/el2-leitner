@@ -100,12 +100,24 @@ export class OrderingSlideComponent
 	orderState(id: string): string {
 		if (this.interactionState() === 'idle') return 'neutral';
 		const index = this.orderedItems().findIndex((item) => item.id === id);
-		return this.acceptedOrders().some((order) => order[index] === id)
+		return this.feedbackOrder()[index] === id
 			? 'correct'
 			: 'incorrect';
 	}
 	private acceptedOrders(): readonly (readonly string[])[] {
 		return this.data().acceptedOrders ?? [this.data().correctOrderIds];
+	}
+	private feedbackOrder(): readonly string[] {
+		const actual = this.orderedItems().map((item) => item.id);
+		return this.acceptedOrders().reduce((closest, candidate) => {
+			const matches = candidate.filter(
+				(id, index) => actual[index] === id,
+			).length;
+			const closestMatches = closest.filter(
+				(id, index) => actual[index] === id,
+			).length;
+			return matches > closestMatches ? candidate : closest;
+		});
 	}
 	handleAction(actionId: string): void {
 		if (actionId !== 'check') return;

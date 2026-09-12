@@ -220,6 +220,38 @@ class ExerciseValidatorTests(unittest.TestCase):
                 },
             )
 
+    def test_labeling_word_bank_membership_honors_answer_sensitivity(self) -> None:
+        base = {
+            "mode": "diagram",
+            "question": "Label the part.",
+            "stimulus": {"type": "diagram", "imageSrc": "/diagram.svg", "alt": "Diagram."},
+            "inputMode": "word-bank",
+            "wordBank": ["library", "cafe"],
+        }
+        cases = [
+            ({"answers": ["Library"], "caseSensitive": True}, "case-sensitive"),
+            ({"answers": ["library."], "punctuationSensitive": True}, "punctuation-sensitive"),
+        ]
+        for answer_contract, label in cases:
+            with self.subTest(label=label), self.assertRaisesRegex(
+                ValueError,
+                "accepted answer in the word bank",
+            ):
+                MODULE.validate_slide_data(
+                    "labeling",
+                    {
+                        **base,
+                        "targets": [{
+                            "id": "part",
+                            "label": "Part A",
+                            "markerLabel": "A",
+                            "xPercent": 50,
+                            "yPercent": 50,
+                            **answer_contract,
+                        }],
+                    },
+                )
+
     def test_accepts_target_grammar_rewrite_mode(self) -> None:
         exercise = valid_exercise()
         exercise["config"]["slides"][0] = {

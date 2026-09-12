@@ -391,6 +391,33 @@ describe('reusable slide library behavior', () => {
 		expect(component.orderState('example')).toBe('correct');
 	});
 
+	it('uses one coherent accepted order for incorrect ordering feedback', () => {
+		const component = new OrderingSlideComponent();
+		load(component, 'ordering', {
+			items: [
+				{ id: 'a', label: 'A' },
+				{ id: 'b', label: 'B' },
+				{ id: 'd', label: 'D' },
+				{ id: 'c', label: 'C' },
+			],
+			correctOrderIds: ['a', 'b', 'c', 'd'],
+			acceptedOrders: [
+				['a', 'b', 'c', 'd'],
+				['b', 'a', 'd', 'c'],
+			],
+		});
+
+		component.handleAction('check');
+
+		expect(component.interactionState()).toBe('answered-incorrect');
+		expect(component.orderedItems().map((item) => component.orderState(item.id))).toEqual([
+			'correct',
+			'correct',
+			'incorrect',
+			'incorrect',
+		]);
+	});
+
 	it('grades reusable map, plan, and diagram labels from positioned JSON targets', () => {
 		const component = new LabelingSlideComponent();
 		const events: unknown[] = [];

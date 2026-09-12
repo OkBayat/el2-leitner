@@ -157,6 +157,16 @@ def string_array(source: dict, key: str, label: str, minimum: int = 1) -> list[s
     return normalized
 
 
+def normalize_answer(value: str, field: dict) -> str:
+    normalized = " ".join(value.strip().split())
+    exact_spelling = field.get("exactSpelling") is True
+    if not exact_spelling and field.get("punctuationSensitive") is not True:
+        normalized = re.sub(r"[.,!?;:]+$", "", normalized).strip()
+    if not exact_spelling and field.get("caseSensitive") is not True:
+        normalized = normalized.lower()
+    return normalized
+
+
 def validate_options(data: dict, minimum: int = 2) -> list[str]:
     options = array(data, "options", "options", minimum)
     ids = []
@@ -310,10 +320,10 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
         if data.get("inputMode", "text") == "word-bank":
             word_bank = string_array(data, "wordBank", "Labeling wordBank", 2)
             if any(not {
-                value if target.get("exactSpelling") is True else value.casefold()
+                normalize_answer(value, target)
                 for value in answers
             } & {
-                value if target.get("exactSpelling") is True else value.casefold()
+                normalize_answer(value, target)
                 for value in word_bank
             } for target, answers in target_answers):
                 raise ValueError("Every labeling target needs an accepted answer in the word bank.")
