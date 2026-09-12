@@ -6,7 +6,11 @@ import type {
 	SlideContentComponent,
 	SlideContentContext,
 } from '../../../slide-content-contracts';
-import { AnswerFieldsSlideBase } from '../../slide-library.component-support';
+import {
+	AnswerFieldsSlideBase,
+	common,
+	stringMode,
+} from '../../slide-library.component-support';
 import type {
 	LabelingSlideData,
 	LabelingTarget,
@@ -18,7 +22,6 @@ import {
 	requiredText,
 	strings,
 } from '../../slide-library.utils';
-import { common, stringMode } from '../../slide-library.component-support';
 
 function percent(value: unknown): number {
 	const parsed = Number(value);
