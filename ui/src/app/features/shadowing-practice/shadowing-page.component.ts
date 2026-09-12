@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoIconButtonComponent, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -12,7 +12,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 @Component({
   selector: 'app-shadowing-page',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatProgressBarModule],
+  imports: [VocoIconButtonComponent, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatCardModule, MatProgressBarModule],
   providers: [ShadowingSessionService, PcmRecorderService],
   templateUrl: './shadowing-page.component.html',
   styleUrls: ['../review/review-page.component.scss', '../sentence-practice/sentence-practice-page.component.scss', './shadowing-page.component.scss'],

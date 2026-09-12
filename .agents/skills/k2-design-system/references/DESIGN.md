@@ -51,10 +51,8 @@ application's standalone component/import architecture.
 
 This shared ownership includes reusable dialog shells, action primitives,
 drag/drop behavior, menus, focus management, and other low-level interactions.
-Future product component names use the `Voco` family and `voco-*` selectors,
-for example `VocoButtonComponent` and `voco-button`. The governance contract
-does not itself introduce a Voco Button; that implementation belongs to
-dedicated component work.
+Product component names use the `Voco` family and `voco-*` selectors. Public
+components are semantic APIs rather than generic variant-driven wrappers.
 
 ### Angular Material
 
@@ -326,39 +324,66 @@ is reserved for short interactive or emphasized content.
 Prefer generous whitespace and focused single-purpose regions. Avoid dense
 enterprise-dashboard composition, deep card nesting, and decorative grids.
 
-## 4. Material button system
+## 4. voco Button system
 
-Textual Angular Material buttons are chunky, rounded controls with a 44px face,
-a 13px radius, and a 4px lower edge. They never use gradients or ambient
-elevation; the lower edge is their only depth cue.
+Textual `voco` buttons are chunky, rounded controls with a 44px face, a 13px
+radius, and a 4px lower edge. They never use gradients or ambient elevation;
+the lower edge is their only depth cue. Angular Material is the private
+interaction foundation inside `ui/src/app/shared/voco-button/**`, not a public
+application API.
 
-Every styled Angular Material button uses the base class `vocora-button` and
-exactly one intent class:
-
-| Intent    | Class                      | Treatment                                                | Use                           |
-| --------- | -------------------------- | -------------------------------------------------------- | ----------------------------- |
-| Primary   | `vocora-button--primary`   | Spark Blue fill, Paper White text                        | The one main action           |
-| Success   | `vocora-button--success`   | Eager Green fill, Paper White text                       | Confirmed/correct outcome     |
-| Error     | `vocora-button--error`     | Answer Red fill, Paper White text                        | Incorrect/destructive outcome |
-| Warning   | `vocora-button--warning`   | Attention Yellow fill, Paper White text                  | Caution or attention          |
-| Secondary | `vocora-button--secondary` | Paper White fill, Charcoal text, 2px `#E5E5E5` border   | Lower-emphasis alternative    |
+| Intent     | Public class / selector                                      | Treatment                                           | Use                           |
+| ---------- | ------------------------ | --------------------------------------------------- | ----------------------------- |
+| Primary    | `VocoPrimaryButtonComponent` / `voco-primary-button`          | Spark Blue fill, Paper White text                   | The one main action           |
+| Secondary  | `VocoSecondaryButtonComponent` / `voco-secondary-button`      | Paper White fill, Charcoal text, 2px neutral border | Lower-emphasis alternative    |
+| Success    | `VocoSuccessButtonComponent` / `voco-success-button`          | Eager Green fill, Paper White text                  | Confirmed/correct outcome     |
+| Warning    | `VocoWarningButtonComponent` / `voco-warning-button`          | Attention Yellow fill, dark readable text           | Caution or attention          |
+| Error      | `VocoErrorButtonComponent` / `voco-error-button`              | Answer Red fill, Paper White text                   | Incorrect/destructive outcome |
+| Navigation | `VocoNavigationButtonComponent` / `voco-navigation-button`    | Transparent, borderless, flat, and layout-neutral   | Button-driven navigation      |
 
 Example:
 
 ```html
-<button mat-flat-button class="vocora-button vocora-button--primary">
+<voco-primary-button type="submit" [disabled]="saving()" (activated)="save()">
   Continue
-</button>
+</voco-primary-button>
 ```
 
-Use `mat-flat-button` for primary, success, error, and warning intents. Use
-`mat-stroked-button` for secondary intent. The central override also keeps the
-visual contract deterministic if a supported Material directive is changed.
+`(activated)` is the public action event. Feature code must not bind to the
+custom-element host's native `(click)` event; keeping those event names
+separate ensures disabled controls cannot bypass the native Material control.
+Semantic identity comes from the public component type; no public `variant` or
+`intent` input exists. The six classes reuse one private internal foundation,
+which owns Material integration, input forwarding, activation, focus, and
+visual styling without runtime tag-name inspection.
+
+Use the corresponding `voco-primary-link`, `voco-secondary-link`, or
+`voco-navigation-link` when native anchor behavior, `href`, `target`, or
+`routerLink` semantics are required. Use `voco-icon-button` for icon-only
+actions and `voco-audio-button` for audio playback. Both require an accessible
+name. Do not place route semantics on a button when an anchor is correct.
+Voco links always render real anchors. A disabled link uses Material-supported
+disabled styling, is removed from the tab order with `tabindex="-1"`, and sets
+`aria-disabled="true"`. It removes both native `href` and `routerLink` and
+prevents mouse, Enter, and Space activation. Pointer-events alone are never the
+disabled contract.
+
+`voco-audio-button` is the square icon-oriented audio transport control. It is
+appropriate for normal/slow speed icons and icon-only replay controls, and it
+always requires an accessible name. A visible textual action such as “Play
+pronunciation” or “Play sentence” uses the appropriate flexible textual Voco
+button instead; audio subject matter does not itself justify square geometry.
+
+Feature CSS owns layout and placement only; Voco owns button visuals, geometry,
+intent colors, and interaction states. Prefer exact Bootstrap utilities such as
+`w-100`, flex/grid, alignment, and gap utilities. Feature styles may target the
+public Voco host for otherwise-unavailable layout, but must never reach into
+`.voco-button`, its nested native control, or Material internals.
+
 Filled buttons are borderless. Secondary buttons use a 2px border around the
 face in addition to the 4px lower edge; the border and lower edge are separate
-parts of the control shape. Secondary labels use Charcoal (`#4B4B4B`) in both
-themes. Dark mode preserves the Paper White secondary surface so this fixed
-foreground remains readable.
+parts of the control shape. Secondary labels use the action foreground tokens
+in both themes.
 
 Button labels use the control type style: 15px, weight 700, and 0.053em
 tracking. Uppercase is appropriate for short CTA labels, not explanatory copy.
@@ -383,7 +408,7 @@ identical to light mode.
 
 ### Interaction
 
-- Textual Material buttons use `transition: none`. Pressing removes the lower
+- Textual `voco` buttons use `transition: none`. Pressing removes the lower
   edge and translates the face down by 4px immediately; releasing restores the
   complete visual state immediately. This central override is authoritative
   over Material and feature-level button transitions.
@@ -393,9 +418,14 @@ identical to light mode.
 - State meaning must not rely on color alone; the label and surrounding feedback
   identify success, warning, or error.
 
-The legacy `vocora-action-button` class remains a compatibility consumer of
-the same central base pattern for slide exercise actions. New reusable controls
-use `vocora-button` plus an explicit intent.
+Application code must not import `@angular/material/button`, apply Material
+button attributes, or use the removed `vocora-button` and
+`vocora-action-button` classes. The architecture guard owns this boundary.
+
+`vocoButtonInteraction` is only for native selection controls whose selected
+visuals stay feature-owned and whose semantics are not CTA semantics. It adds
+the shared Material ripple/focus interaction layer; it is not a generic Voco
+button replacement and must not be used for ordinary actions.
 
 ## 5. Forms and selection controls
 
@@ -403,8 +433,9 @@ Forms remain calm and predictable. Keep visible labels, readable validation
 copy, a clear focus state, and native disabled semantics.
 
 Choice and selection controls are not CTA buttons. Their height stays
-content-driven so multi-line labels remain readable; do not apply
-`vocora-button` to answer-option tiles.
+content-driven so multi-line labels remain readable. Keep their native button
+semantics and selection-owned visual state; add `vocoButtonInteraction` only
+for the shared ripple/focus interaction layer.
 
 ## 6. Surfaces and cards
 

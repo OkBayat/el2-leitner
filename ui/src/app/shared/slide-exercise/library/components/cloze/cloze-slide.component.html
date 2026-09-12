@@ -13,20 +13,19 @@
 				[class.is-playing]="playbackActive()"
 			>
 				@if (data.speech) {
-					<button
-						mat-icon-button
+					<voco-icon-button
 						appShortcutClick="Alt+R"
 						class="cloze-sentence-replay"
 						type="button"
 						aria-label="Replay sentence"
 						data-testid="cloze-sentence-replay"
-						(click)="playSentence()"
+						(activated)="playSentence()"
 					>
 						<span
 							class="cloze-sentence-replay__icon"
 							aria-hidden="true"
 						></span>
-					</button>
+					</voco-icon-button>
 				}
 				@for (segment of segments(); track $index) {
 					@if (segment.text !== undefined) {
@@ -48,6 +47,7 @@
 						>
 							@if (data.inputMode === "select") {
 								<button
+									vocoButtonInteraction
 									type="button"
 									class="cloze-choice-blank"
 									[class.cloze-choice-blank--active]="
@@ -229,11 +229,10 @@
 														Word meaning
 													</h2>
 												</div>
-												<button
-													mat-icon-button
+												<voco-icon-button
 													type="button"
 													aria-label="Close word meaning"
-													(click)="
+													(activated)="
 														closeWordDetails(true)
 													"
 												>
@@ -249,7 +248,7 @@
 															stroke-width="2"
 														/>
 													</svg>
-												</button>
+												</voco-icon-button>
 											</header>
 											<div
 												class="cloze-word-details__content"
@@ -319,25 +318,24 @@
 				}
 			</p>
 			@if (
-				data.inputMode === 'text' &&
+				data.inputMode === "text" &&
 				data.showOptions &&
 				answerOptions().length
 			) {
 				<div class="cloze-answer-support">
-					<button
-						mat-stroked-button
+					<voco-secondary-button
 						type="button"
-						[attr.aria-expanded]="answerOptionsVisible()"
+						[ariaExpanded]="answerOptionsVisible()"
 						aria-controls="cloze-answer-options"
 						[disabled]="interactionState() !== 'idle'"
-						(click)="toggleAnswerOptions()"
+						(activated)="toggleAnswerOptions()"
 					>
 						{{
 							answerOptionsVisible()
-								? 'Hide options'
-								: 'Show options'
+								? "Hide options"
+								: "Show options"
 						}}
-					</button>
+					</voco-secondary-button>
 					@if (answerOptionsVisible()) {
 						<div
 							id="cloze-answer-options"
@@ -353,17 +351,16 @@
 					}
 				</div>
 			}
-			@if (data.inputMode === 'word-bank') {
+			@if (data.inputMode === "word-bank") {
 				<div class="chip-list" aria-label="Word bank">
 					@for (word of data.wordBank ?? []; track word) {
-						<button
-							mat-stroked-button
+						<voco-secondary-button
 							type="button"
-							(click)="useWord(word)"
+							(activated)="useWord(word)"
 							[disabled]="interactionState() !== 'idle'"
 						>
 							{{ word }}
-						</button>
+						</voco-secondary-button>
 					}
 				</div>
 			}
@@ -379,7 +376,7 @@
 						let index = $index
 					) {
 						<button
-							mat-stroked-button
+							vocoButtonInteraction
 							type="button"
 							class="choice-option"
 							[attr.data-state]="choiceState(word)"

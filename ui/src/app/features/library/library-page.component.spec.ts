@@ -1,6 +1,6 @@
-import {signal} from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {Router} from '@angular/router';
+import {provideRouter} from '@angular/router';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {LibraryLearningPathJourneyFacade} from '../../application/collection-learning-path/library-learning-path-journey.facade';
 import {SelectedCoursesFacade} from '../../application/collection-learning-path/selected-courses.facade';
@@ -8,6 +8,12 @@ import {LibraryApiService} from '../../core/library/library-api.service';
 import type {CollectionLearningPathView} from '../../domain/collection-learning-path/learning-path';
 import type {LibraryCollection} from '../../domain/learning/models';
 import {LibraryPageComponent} from './library-page.component';
+
+@Component({
+  standalone: true,
+  template: '',
+})
+class EmptyLibraryDetailComponent {}
 
 function collection(
   id: string,
@@ -69,7 +75,6 @@ describe('LibraryPageComponent', () => {
     enrolled: view.path.learnerStatus !== 'available',
   }]));
   const list = vi.fn();
-  const navigate = vi.fn();
   const loadCatalog = vi.fn(async () => true);
   const journeyError = signal('');
 
@@ -81,7 +86,7 @@ describe('LibraryPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LibraryPageComponent],
       providers: [
-        {provide: Router, useValue: {navigate}},
+        provideRouter([{path: 'library/:id', component: EmptyLibraryDetailComponent}]),
         {provide: LibraryApiService, useValue: {list}},
         {
           provide: LibraryLearningPathJourneyFacade,
@@ -171,16 +176,16 @@ describe('LibraryPageComponent', () => {
     ]);
   });
 
-  it('opens course and collection items in the existing detail route', async () => {
+  it('renders course and collection navigation as real detail-route anchors', async () => {
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
-    const item = host.querySelector<HTMLButtonElement>(
+    const item = host.querySelector<HTMLElement>(
       '[data-testid="library-all-courses"] [data-testid="library-item"]',
     );
+    const anchor = item?.querySelector('a');
 
-    item?.click();
-
-    expect(navigate).toHaveBeenCalledWith(['/library', alphaCourse.id]);
+    expect(item?.localName).toBe('voco-secondary-link');
+    expect(anchor?.getAttribute('href')).toBe(`/library/${alphaCourse.id}`);
   });
 
   it('shows a retry action when known courses fail to load', async () => {
@@ -190,7 +195,7 @@ describe('LibraryPageComponent', () => {
     const host: HTMLElement = fixture.nativeElement;
 
     expect(host.querySelector('[role="alert"]')?.textContent).toContain('Some courses could not load');
-    host.querySelector<HTMLButtonElement>('[data-testid="course-load-retry"]')?.click();
+    host.querySelector<HTMLElement>('[data-testid="course-load-retry"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
 
     expect(loadCatalog).toHaveBeenCalledTimes(3);

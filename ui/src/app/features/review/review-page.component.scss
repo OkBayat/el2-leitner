@@ -3,18 +3,11 @@
 	min-height: 100dvh;
 	background: var(--mat-sys-background);
 	--review-footer-border: var(--vocora-action-secondary-border);
-	--review-footer-muted: var(--vocora-text-disabled);
-	--review-footer-disabled: var(--vocora-action-disabled-background);
-	--review-footer-disabled-shadow: var(--vocora-action-disabled-border);
 	--review-success-background: var(--vocora-state-success-surface);
-	--review-success-action: var(--vocora-action-success);
 	--review-success-action-shadow: var(--vocora-action-success-edge);
 	--review-error-background: var(--vocora-state-error-surface);
-	--review-error-action: var(--vocora-action-error);
 	--review-error-action-shadow: var(--vocora-action-error-edge);
 	--review-practice-background: var(--vocora-state-warning-surface);
-	--review-practice-action: var(--vocora-action-warning);
-	--review-practice-action-shadow: var(--vocora-action-warning-edge);
 	--review-practice-text: var(--vocora-state-warning-foreground);
 }
 
@@ -39,7 +32,8 @@
 	color: var(--mat-sys-on-surface-variant);
 }
 
-.setup, .complete {
+.setup,
+.complete {
 	width: min(680px, 100%);
 	padding: 24px;
 	border-radius: 28px;
@@ -84,7 +78,9 @@
 	color: var(--mat-sys-on-surface-variant);
 }
 
-.review-close svg, .session-close svg, .feedback-status-icon svg {
+.review-close svg,
+.session-close svg,
+.feedback-status-icon svg {
 	display: block;
 }
 
@@ -170,17 +166,10 @@
 	font-size: 1.2rem!important;
 }
 
-.play-pronunciation {
-	box-shadow: none!important;
-}
-
 .review-action-footer {
 	--review-footer-background: var(--mat-sys-background);
 	--review-footer-color: var(--mat-sys-on-surface);
 	--review-footer-border-color: var(--review-footer-border);
-	--review-primary-background: var(--mat-sys-primary);
-	--review-primary-color: var(--mat-sys-on-primary);
-	--review-primary-shadow: color-mix(in srgb, var(--mat-sys-primary) 78%, var(--vocora-shadow));
 	position: fixed;
 	left: 0;
 	right: 0;
@@ -198,27 +187,18 @@
 	--review-footer-background: var(--review-success-background);
 	--review-footer-color: var(--review-success-action-shadow);
 	--review-footer-border-color: var(--review-success-background);
-	--review-primary-background: var(--review-success-action);
-	--review-primary-color: var(--vocora-action-success-foreground);
-	--review-primary-shadow: var(--review-success-action-shadow);
 }
 
 .review-action-footer.error {
 	--review-footer-background: var(--review-error-background);
 	--review-footer-color: var(--review-error-action-shadow);
 	--review-footer-border-color: var(--review-error-background);
-	--review-primary-background: var(--review-error-action);
-	--review-primary-color: var(--vocora-action-error-foreground);
-	--review-primary-shadow: var(--review-error-action-shadow);
 }
 
 .review-action-footer.practice {
 	--review-footer-background: var(--review-practice-background);
 	--review-footer-color: var(--review-practice-text);
 	--review-footer-border-color: var(--review-practice-background);
-	--review-primary-background: var(--review-practice-action);
-	--review-primary-color: var(--vocora-action-warning-foreground);
-	--review-primary-shadow: var(--review-practice-action-shadow);
 }
 
 .review-action-inner {
@@ -267,48 +247,17 @@
 	line-height: 1.45;
 }
 
-.review-action-primary, .review-action-secondary {
-	height: 50px;
-	border-radius: 14px;
-	font-size: 14px;
-	font-weight: 800;
-	letter-spacing: .04em;
-	text-transform: uppercase;
+.review-action-primary,
+.review-action-secondary {
+	min-height: 50px;
 }
 
 .review-action-primary {
 	min-width: 150px;
-	padding: 0 28px;
-	--mdc-filled-button-container-height: 50px;
-	--mdc-filled-button-container-shape: 14px;
-}
-
-.review-action-primary:not(:disabled) {
-	--mdc-filled-button-container-color: var(--review-primary-background);
-	--mdc-filled-button-label-text-color: var(--review-primary-color);
-	background: var(--review-primary-background);
-	color: var(--review-primary-color);
-	box-shadow: 0 4px 0 var(--review-primary-shadow);
-}
-
-.review-action-primary:disabled {
-	--mdc-filled-button-container-color: var(--review-footer-disabled);
-	--mdc-filled-button-label-text-color: var(--review-footer-muted);
-	background: var(--review-footer-disabled);
-	color: var(--review-footer-muted);
-	box-shadow: 0 4px 0 var(--review-footer-disabled-shadow);
 }
 
 .review-action-secondary {
 	width: 200px;
-	padding: 0 22px;
-	--mdc-outlined-button-container-height: 50px;
-	--mdc-outlined-button-outline-color: var(--review-footer-border);
-	--mdc-outlined-button-label-text-color: var(--review-footer-muted);
-	border-color: var(--review-footer-border)!important;
-	background: none;
-	color: var(--review-footer-muted)!important;
-	box-shadow: 0 4px 0 var(--review-footer-border);
 }
 
 .spelling-comparison {
@@ -327,13 +276,21 @@
 }
 
 .user-spelling-row {
-	border-color: color-mix(in srgb, var(--mat-sys-error) 35%, var(--mat-sys-outline-variant));
+	border-color: color-mix(
+		in srgb,
+		var(--mat-sys-error) 35%,
+		var(--mat-sys-outline-variant)
+	);
 	background: var(--mat-sys-error-container);
 	color: var(--mat-sys-on-error-container);
 }
 
 .correct-spelling-row {
-	border-color: color-mix(in srgb, var(--mat-sys-primary) 35%, var(--mat-sys-outline-variant));
+	border-color: color-mix(
+		in srgb,
+		var(--mat-sys-primary) 35%,
+		var(--mat-sys-outline-variant)
+	);
 	background: var(--mat-sys-primary-container);
 	color: var(--mat-sys-on-primary-container);
 }
@@ -343,14 +300,15 @@
 	margin-bottom: 6px;
 	font-size: 11px;
 	font-weight: 700;
-	letter-spacing: .02em;
+	letter-spacing: 0.02em;
 	color: var(--mat-sys-on-surface-variant);
 }
 
 .spelling-text {
 	min-height: 36px;
 	overflow-wrap: anywhere;
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	font-size: clamp(20px, 4vw, 28px);
 	font-weight: 750;
 	line-height: 1.35;
@@ -359,7 +317,7 @@
 
 .spelling-token {
 	display: inline-block;
-	min-width: .5ch;
+	min-width: 0.5ch;
 	border-radius: 5px;
 	padding: 0 1px;
 }
@@ -368,7 +326,8 @@
 	color: inherit;
 }
 
-.user-spelling-row .spelling-changed, .user-spelling-row .spelling-extra {
+.user-spelling-row .spelling-changed,
+.user-spelling-row .spelling-extra {
 	background: color-mix(in srgb, var(--mat-sys-error) 18%, transparent);
 	color: var(--mat-sys-error);
 	text-decoration: underline;
@@ -376,7 +335,8 @@
 	text-underline-offset: 4px;
 }
 
-.correct-spelling-row .spelling-changed, .correct-spelling-row .spelling-missing {
+.correct-spelling-row .spelling-changed,
+.correct-spelling-row .spelling-missing {
 	background: color-mix(in srgb, var(--mat-sys-primary) 22%, transparent);
 	color: var(--mat-sys-primary);
 	text-decoration: underline;
@@ -402,7 +362,8 @@
 		left: 8px;
 	}
 
-	.setup, .complete {
+	.setup,
+	.complete {
 		width: 100%;
 		padding: 18px;
 		border-radius: 22px;
@@ -470,7 +431,8 @@
 		gap: 12px;
 	}
 
-	.review-action-primary, .review-action-secondary {
+	.review-action-primary,
+	.review-action-secondary {
 		width: 100%;
 		min-width: 0;
 		padding: 0 14px;

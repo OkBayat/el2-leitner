@@ -4,12 +4,12 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoIconButtonComponent } from '../../shared/voco-button';
 import { SentencePracticePrompt } from '../../domain/sentence-practice/sentence-practice';
 
 @Component({
 	selector: 'app-sentence-answer',
-	imports: [ReactiveFormsModule, OverlayModule, MatButtonModule],
+	imports: [ReactiveFormsModule, OverlayModule, VocoIconButtonComponent],
 	templateUrl: './sentence-answer.component.html',
 	styleUrl: './sentence-answer.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

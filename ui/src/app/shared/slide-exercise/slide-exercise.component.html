@@ -64,21 +64,21 @@
 							"
 						>
 							@if (guideAvailable) {
-								<button
-									mat-icon-button
+								<voco-icon-button
 									type="button"
-									class="vocora-secondary-icon-action slide-exercise__guide-action"
+									class="slide-exercise__guide-action"
 									[class.slide-exercise__guide-action--split-start]="
 										!view.footer.secondary
 									"
 									aria-label="Open the exercise guide"
-									(click)="openGuide()"
+									(activated)="openGuide()"
+									iconTone="secondary"
 								>
 									<mat-icon
 										svgIcon="exercise-guide-lightbulb"
 										aria-hidden="true"
 									/>
-								</button>
+								</voco-icon-button>
 							}
 							@if (view.footer.secondary; as secondary) {
 								<app-slide-exercise-action

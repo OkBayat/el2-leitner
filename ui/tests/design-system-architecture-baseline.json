@@ -11,20 +11,10 @@
             },
             "ui/src/app/features/review/review-page.component.scss": {
                 "occurrences": [
-                    ".play-pronunciation => box-shadow:none!important",
-                    ".review-action-secondary => border-color:var(--review-footer-border)!important",
-                    ".review-action-secondary => color:var(--review-footer-muted)!important",
                     ".review-answer-input => font-size:1.2rem!important",
                     ".review-answer-input => height:2rem!important"
                 ],
                 "reason": "Legacy review control overrides retained for progressive touch-to-refactor cleanup."
-            },
-            "ui/src/app/features/settings/settings-page.component.ts": {
-                "occurrences": [
-                    ".danger => background:var(--mat-sys-error)!important",
-                    ".danger => color:var(--mat-sys-on-error)!important"
-                ],
-                "reason": "Legacy inline Material danger-button overrides retained until the settings action uses the shared action treatment."
             },
             "ui/src/app/shared/app-shell/course-menu.component.scss": {
                 "occurrences": [
@@ -107,15 +97,7 @@
         "theme_selectors": {}
     },
     "integration_exceptions": {
-        "important_declarations": {
-            "ui/src/styles/_angular-material-components.scss": {
-                "occurrences": [
-                    ".mat-mdc-button, .mat-mdc-unelevated-button, .mat-mdc-raised-button, .mat-mdc-outlined-button, .mat-tonal-button => transition:none!important"
-                ],
-                "reason": "The central Material adapter disables upstream button transitions to enforce the canonical immediate interaction contract.",
-                "upstream_constraint": "Angular Material button transitions cannot be disabled through a supported theme token."
-            }
-        },
+        "important_declarations": {},
         "raw_colors": {}
     }
 }

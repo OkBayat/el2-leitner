@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../voco-button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,7 +9,7 @@ import { ShareMomentKind, buildShareMoment } from './share-story.model';
 
 @Component({
   selector: 'app-share-story-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatButtonToggleModule],
+  imports: [MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatButtonToggleModule],
   template: `
     <h2 mat-dialog-title>Story Studio</h2>
     <mat-dialog-content class="story-dialog">
@@ -21,10 +21,13 @@ import { ShareMomentKind, buildShareMoment } from './share-story.model';
       <p class="privacy">The story only shows aggregate stats; your email, typed answers, and missed-word names are never shared.</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="copyCaption()">Copy caption</button>
-      <button mat-stroked-button (click)="download()">Download PNG</button>
-      <button mat-flat-button (click)="share()">Share</button>
-      <button mat-button (click)="dialog.close()">Close</button>
+      <voco-secondary-button (activated)="copyCaption()"
+				>Copy caption</voco-secondary-button>
+      <voco-secondary-button (activated)="download()"
+				>Download PNG</voco-secondary-button>
+      <voco-primary-button (activated)="share()">Share</voco-primary-button>
+      <voco-navigation-button (activated)="dialog.close()"
+				>Close</voco-navigation-button>
     </mat-dialog-actions>
   `,
   styles: [`

@@ -71,4 +71,22 @@ describe('ExerciseHostComponent', () => {
 
     expect(engaged).toHaveBeenCalledTimes(1);
   });
+
+  it.each([
+    'slide-exercise-header__close',
+    'slide-exercise__guide-action',
+    'slide-exercise-action--guide-return',
+  ])('does not report %s wrapper interactions as engagement', (excludedClass) => {
+    const fixture = TestBed.createComponent(ExerciseHostComponent);
+    const engaged = vi.fn();
+    fixture.componentInstance.engaged.subscribe(engaged);
+    const wrapper = document.createElement('voco-icon-button');
+    wrapper.className = excludedClass;
+    const button = document.createElement('button');
+    wrapper.append(button);
+
+    fixture.componentInstance.onClick({ target: button } as unknown as MouseEvent);
+
+    expect(engaged).not.toHaveBeenCalled();
+  });
 });

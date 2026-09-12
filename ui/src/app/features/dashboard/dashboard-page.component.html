@@ -21,13 +21,26 @@
 
 				<div class="today-actions">
 					@if (dueCount()) {
-						<button mat-flat-button type="button" (click)="goReview()">Start today's review</button>
+						<voco-primary-link routerLink="/review"
+							>Start today's review</voco-primary-link>
 					}
-					<button mat-stroked-button type="button" (click)="startBoxOne()">Free practice: Box 1</button>
-					<button mat-stroked-button type="button" data-testid="start-sentence-practice" (click)="startSentencePractice()">Sentence practice: Box 1</button>
-					<a mat-stroked-button routerLink="/shadowing" data-testid="start-shadowing">Shadowing: Box 1</a>
-					<button mat-stroked-button type="button" (click)="addNewWords()">Add new words</button>
-					<a mat-stroked-button routerLink="/bbc-6-minute-english" data-testid="open-bbc-listening">BBC 6 Minute English</a>
+					<voco-secondary-link routerLink="/review" [queryParams]="{ mode: 'box1' }"
+						>Free practice: Box 1</voco-secondary-link>
+					<voco-secondary-link
+						routerLink="/sentence"
+						[queryParams]="{ house: 1 }"
+						data-testid="start-sentence-practice"
+						>Sentence practice: Box 1</voco-secondary-link>
+					<voco-secondary-link
+						routerLink="/shadowing"
+						data-testid="start-shadowing"
+						>Shadowing: Box 1</voco-secondary-link>
+					<voco-secondary-button type="button" (activated)="addNewWords()"
+						>Add new words</voco-secondary-button>
+					<voco-secondary-link
+						routerLink="/bbc-6-minute-english"
+						data-testid="open-bbc-listening"
+						>BBC 6 Minute English</voco-secondary-link>
 				</div>
 			</div>
 
@@ -92,23 +105,27 @@
 						<p>Leitner waiting states</p>
 					</div>
 					<div class="leitner-heading-actions">
-						<button
+						<voco-secondary-button
 							class="leitner-export-btn"
-							mat-stroked-button
 							type="button"
 							data-testid="copy-house-one"
-							[class.is-copied]="houseOneCopyStatus() === 'copied'"
-							[class.is-failed]="houseOneCopyStatus() === 'failed'"
-							[disabled]="houseOneExportCount() === 0 || houseOneCopyStatus() === 'copying'"
-							[attr.aria-label]="houseOneExportCount() ? 'Copy all Box 1 words with mistake counts' : 'Box 1 has no words to copy'"
-							(click)="copyHouseOne()"
+							[disabled]="
+								houseOneExportCount() === 0 ||
+								houseOneCopyStatus() === 'copying'
+							"
+							[ariaLabel]="
+								houseOneExportCount()
+									? 'Copy all Box 1 words with mistake counts'
+									: 'Box 1 has no words to copy'
+							"
+							(activated)="copyHouseOne()"
 						>
 							<svg viewBox="0 0 24 24" aria-hidden="true">
 								<rect x="8" y="8" width="11" height="11" rx="2" />
 								<path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
 							</svg>
 							<span>{{ houseOneCopyLabel() }}</span>
-						</button>
+						</voco-secondary-button>
 						<span class="panel-meta">{{ houseDistribution().total.toLocaleString('en-US') }} words</span>
 					</div>
 				</header>
@@ -149,7 +166,8 @@
 						<h2 id="attention-title">Needs more attention</h2>
 						<p>Words with the highest recent error count</p>
 					</div>
-					<button mat-button type="button" (click)="router.navigateByUrl('/words')">View all</button>
+					<voco-navigation-link routerLink="/words"
+						>View all</voco-navigation-link>
 				</header>
 
 				<div class="attention-list">

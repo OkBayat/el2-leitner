@@ -27,7 +27,7 @@
   font: var(--mat-sys-headline-medium);
 }
 
-.page-header button {
+.page-header voco-primary-button {
   align-self: start;
   min-height: var(--vocora-touch-target-min);
 }
@@ -46,10 +46,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--vocora-space-2);
-}
-
-.library-item {
-  min-height: 56px;
 }
 
 .empty {

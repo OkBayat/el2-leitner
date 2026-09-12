@@ -100,6 +100,44 @@ withFixture(
 );
 
 withFixture(
+  (root) => {
+    const skillPath = path.join(root, "SKILL.md");
+    fs.writeFileSync(
+      skillPath,
+      fs
+        .readFileSync(skillPath, "utf8")
+        .replace("are removed from the tab order", "leave the tab order"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /SKILL\.md must say disabled Voco links are removed from the tab order/u,
+    );
+  },
+);
+
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replace("is removed from the tab order", "leaves the tab order"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md must say disabled Voco links are removed from the tab order/u,
+    );
+  },
+);
+
+withFixture(
   (root) =>
     mutateTokens(root, (tokens) => {
       tokens.themes.light.action.primary = "#58CC02";
@@ -186,5 +224,91 @@ withFixture(
       /DESIGN\.md is missing decision-tree step: Reusable product-specific primitive\?/u,
     ),
 );
+
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replaceAll("voco-navigation-button", "removed-navigation-button"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md is missing button selector: voco-navigation-button/u,
+    );
+  },
+);
+
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replace("`(activated)` is the public action event", "The public action event"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md must document the public voco activated event/u,
+    );
+  },
+);
+
+withFixture(
+  (root) => {
+    const designPath = path.join(root, "references", "DESIGN.md");
+    fs.writeFileSync(
+      designPath,
+      fs
+        .readFileSync(designPath, "utf8")
+        .replaceAll("VocoWarningButtonComponent", "RemovedWarningButton"),
+    );
+  },
+  ({ status, output }) => {
+    assert.notEqual(status, 0);
+    assert.match(
+      output,
+      /DESIGN\.md is missing public button class: VocoWarningButtonComponent/u,
+    );
+  },
+);
+
+for (const [contractText, expected] of [
+  [
+    "removes both native `href` and `routerLink`",
+    /DESIGN\.md must define disabled Voco link behavior/u,
+  ],
+  [
+    "`voco-audio-button` is the square icon-oriented audio transport control",
+    /DESIGN\.md must distinguish square audio controls from textual audio actions/u,
+  ],
+  [
+    "not a generic Voco\nbutton replacement",
+    /DESIGN\.md must keep vocoButtonInteraction selection-only/u,
+  ],
+]) {
+  withFixture(
+    (root) => {
+      const designPath = path.join(root, "references", "DESIGN.md");
+      fs.writeFileSync(
+        designPath,
+        fs.readFileSync(designPath, "utf8").replace(contractText, "removed contract"),
+      );
+    },
+    ({ status, output }) => {
+      assert.notEqual(status, 0);
+      assert.match(output, expected);
+    },
+  );
+}
 
 console.log("K2 design-system validator tests passed.");

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject,
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import {MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -18,7 +18,7 @@ type HouseOneCopyStatus = 'idle' | 'copying' | 'copied' | 'failed';
 
 @Component({
 	selector: 'app-new-words-dialog',
-	imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule],
+	imports: [ReactiveFormsModule, MatDialogModule, VocoNavigationButtonComponent, VocoPrimaryButtonComponent, MatFormFieldModule, MatInputModule],
 	template: `
 		<h2 mat-dialog-title>Add new words</h2>
 		<mat-dialog-content>
@@ -29,8 +29,12 @@ type HouseOneCopyStatus = 'idle' | 'copying' | 'copied' | 'failed';
 			</mat-form-field>
 		</mat-dialog-content>
 		<mat-dialog-actions align="end">
-			<button mat-button (click)="dialog.close()">Cancel</button>
-			<button mat-flat-button [disabled]="count.invalid" (click)="dialog.close(count.value)">Add and start session</button>
+			<voco-navigation-button (activated)="dialog.close()"
+				>Cancel</voco-navigation-button>
+			<voco-primary-button
+				[disabled]="count.invalid"
+				(activated)="dialog.close(count.value)"
+				>Add and start session</voco-primary-button>
 		</mat-dialog-actions>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +50,7 @@ export class NewWordsDialogComponent {
 
 @Component({
 	selector: 'app-dashboard-page',
-	imports: [MatButtonModule, MatProgressBarModule, RouterLink, LearningChartComponent],
+	imports: [VocoNavigationLinkComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent, MatProgressBarModule, RouterLink, LearningChartComponent],
 	templateUrl: 'dashboard-page.component.html',
 	styleUrl: 'dashboard-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,18 +136,6 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		if (this.houseOneCopyResetTimer !== null) clearTimeout(this.houseOneCopyResetTimer);
-	}
-
-	goReview(): void {
-		void this.router.navigateByUrl('/review');
-	}
-
-	async startBoxOne(): Promise<void> {
-		await this.router.navigate(['/review'], {queryParams: {mode: 'box1'}});
-	}
-
-	async startSentencePractice(): Promise<void> {
-		await this.router.navigate(['/sentence'], {queryParams: {house: 1}});
 	}
 
 	async copyHouseOne(): Promise<void> {

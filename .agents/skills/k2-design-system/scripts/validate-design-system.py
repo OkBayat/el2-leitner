@@ -91,7 +91,22 @@ CANONICAL_SEMANTIC_ROLES = {
     },
 }
 
-BUTTON_INTENTS = ("primary", "success", "error", "warning", "secondary")
+BUTTON_SELECTORS = (
+    "voco-primary-button",
+    "voco-secondary-button",
+    "voco-success-button",
+    "voco-warning-button",
+    "voco-error-button",
+    "voco-navigation-button",
+)
+BUTTON_CLASSES = (
+    "VocoPrimaryButtonComponent",
+    "VocoSecondaryButtonComponent",
+    "VocoSuccessButtonComponent",
+    "VocoWarningButtonComponent",
+    "VocoErrorButtonComponent",
+    "VocoNavigationButtonComponent",
+)
 THEME_GROUPS = ("surface", "text", "border", "semantic", "state", "action", "focus")
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 def skill_root() -> Path:
@@ -311,6 +326,10 @@ def validate_skill_contract(root: Path, errors: list[str]) -> None:
     for phrase in required_phrases:
         if phrase not in text:
             errors.append(f"SKILL.md is missing required contract text: {phrase}")
+    if "are removed from the tab order" not in text:
+        errors.append(
+            "SKILL.md must say disabled Voco links are removed from the tab order"
+        )
 
 
 def validate_button_contract(root: Path, errors: list[str]) -> None:
@@ -319,12 +338,34 @@ def validate_button_contract(root: Path, errors: list[str]) -> None:
         return
 
     text = path.read_text(encoding="utf-8")
-    for intent in BUTTON_INTENTS:
-        css_class = f"vocora-button--{intent}"
-        if css_class not in text:
-            errors.append(f"DESIGN.md is missing button class: {css_class}")
+    for selector in BUTTON_SELECTORS:
+        if selector not in text:
+            errors.append(f"DESIGN.md is missing button selector: {selector}")
+    for class_name in BUTTON_CLASSES:
+        if class_name not in text:
+            errors.append(f"DESIGN.md is missing public button class: {class_name}")
+    if "Angular Material is the private" not in text:
+        errors.append("DESIGN.md must make Angular Material a private button implementation detail")
     if "native `disabled` attribute" not in text:
         errors.append("DESIGN.md must require the native disabled attribute")
+    if "`(activated)` is the public action event" not in text:
+        errors.append("DESIGN.md must document the public voco activated event")
+    if "no public `variant` or\n`intent` input exists" not in text:
+        errors.append("DESIGN.md must make semantic identity compile-time explicit")
+    if "removes both native `href` and `routerLink`" not in text:
+        errors.append("DESIGN.md must define disabled Voco link behavior")
+    if "is removed from the tab order" not in text:
+        errors.append(
+            "DESIGN.md must say disabled Voco links are removed from the tab order"
+        )
+    if "`voco-audio-button` is the square icon-oriented audio transport control" not in text:
+        errors.append("DESIGN.md must distinguish square audio controls from textual audio actions")
+    if "Feature CSS owns layout and placement only" not in text:
+        errors.append("DESIGN.md must keep feature CSS ownership layout-only")
+    if "not a generic Voco\nbutton replacement" not in text:
+        errors.append("DESIGN.md must keep vocoButtonInteraction selection-only")
+    if "VocoButtonComponent" in text:
+        errors.append("DESIGN.md must not recommend the removed generic VocoButtonComponent")
 
 
 def validate_material_reference(root: Path, errors: list[str]) -> None:

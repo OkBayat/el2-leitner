@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { ActivatedRoute } from '@angular/router';
+import { VocoNavigationLinkComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -22,10 +22,11 @@ interface HouseModel {
 
 @Component({
   selector: 'app-leitner-house-page',
-  imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
+  imports: [ReactiveFormsModule, VocoNavigationLinkComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule],
   template: `
     <section class="page">
-      <header><button mat-stroked-button (click)="router.navigateByUrl('/dashboard')">← Back</button><div><p>Leitner box</p><h1>Box {{ house() }} words</h1></div></header>
+      <header><voco-navigation-link routerLink="/dashboard"
+					>← Back</voco-navigation-link><div><p>Leitner box</p><h1>Box {{ house() }} words</h1></div></header>
       @if (error()) { <div class="error" role="alert">{{ error() }}</div> }
       @if (model(); as model) {
         <mat-card appearance="outlined" class="info">
@@ -55,7 +56,6 @@ interface HouseModel {
 export class LeitnerHousePageComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(LearningApiService);
-  readonly router = inject(Router);
   readonly house = signal(0);
   readonly model = signal<HouseModel | null>(null);
   readonly error = signal('');

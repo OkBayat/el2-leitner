@@ -1,0 +1,122 @@
+:host {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.voco-button {
+  --voco-button-background: var(--voco-button-default-background);
+  --voco-button-foreground: var(--voco-button-default-foreground);
+  --voco-button-edge: var(--voco-button-default-edge);
+  --voco-button-border: var(--voco-button-default-border, transparent);
+  --voco-button-border-width: var(--voco-button-default-border-width, 0);
+  --voco-button-disabled-background: var(--voco-button-default-disabled-background, var(--vocora-action-disabled-background));
+  --voco-button-disabled-foreground: var(--voco-button-default-disabled-foreground, var(--vocora-action-disabled-foreground));
+  --voco-button-disabled-border: var(--voco-button-default-disabled-border, var(--vocora-action-disabled-border));
+  --mat-button-filled-container-color: var(--voco-button-background);
+  --mat-button-filled-label-text-color: var(--voco-button-foreground);
+  --mat-button-filled-disabled-container-color: var(--voco-button-disabled-background);
+  --mat-button-filled-disabled-label-text-color: var(--voco-button-disabled-foreground);
+  width: 100%;
+  min-height: 44px;
+  height: auto;
+  margin-block-end: 4px;
+  padding: 10px 16px;
+  border: var(--voco-button-border-width) solid var(--voco-button-border);
+  border-radius: var(--vocora-radius-button);
+  background: var(--voco-button-background);
+  color: var(--voco-button-foreground);
+  box-shadow: 0 4px 0 var(--voco-button-edge);
+  font-family: var(--vocora-font-body);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.33;
+  letter-spacing: 0.053em;
+  text-transform: uppercase;
+  white-space: normal;
+  transition: none;
+}
+
+.voco-button--primary {
+  --voco-button-default-background: var(--vocora-action-primary);
+  --voco-button-default-foreground: var(--vocora-action-primary-foreground);
+  --voco-button-default-edge: var(--vocora-action-primary-edge);
+}
+
+.voco-button--secondary {
+  --voco-button-default-background: var(--vocora-action-secondary);
+  --voco-button-default-foreground: var(--vocora-action-secondary-foreground);
+  --voco-button-default-border: var(--vocora-action-secondary-border);
+  --voco-button-default-border-width: 2px;
+  --voco-button-default-edge: var(--vocora-action-secondary-edge);
+  --voco-button-default-disabled-background: var(--vocora-action-secondary-disabled-background);
+  --voco-button-default-disabled-foreground: var(--vocora-action-secondary-disabled-foreground);
+  --voco-button-default-disabled-border: var(--vocora-action-secondary-disabled-border);
+}
+
+.voco-button--success {
+  --voco-button-default-background: var(--vocora-action-success);
+  --voco-button-default-foreground: var(--vocora-action-success-foreground);
+  --voco-button-default-edge: var(--vocora-action-success-edge);
+}
+
+.voco-button--warning {
+  --voco-button-default-background: var(--vocora-action-warning);
+  --voco-button-default-foreground: var(--vocora-action-warning-foreground);
+  --voco-button-default-edge: var(--vocora-action-warning-edge);
+}
+
+.voco-button--error {
+  --voco-button-default-background: var(--vocora-action-error);
+  --voco-button-default-foreground: var(--vocora-action-error-foreground);
+  --voco-button-default-edge: var(--vocora-action-error-edge);
+}
+
+.voco-button--navigation {
+  --mat-button-filled-container-color: transparent;
+  --mat-button-filled-label-text-color: var(--vocora-action-primary);
+  --voco-button-default-background: transparent;
+  --voco-button-default-foreground: var(--vocora-action-primary);
+  --voco-button-default-edge: transparent;
+  margin-block-end: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.voco-button:not(:disabled):not([aria-disabled='true']):active {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+.voco-button--navigation:not(:disabled):not([aria-disabled='true']):active {
+  transform: none;
+}
+
+.voco-button:disabled,
+.voco-button[aria-disabled='true'] {
+  border-color: var(--voco-button-disabled-border);
+  background: var(--voco-button-disabled-background);
+  color: var(--voco-button-disabled-foreground);
+  box-shadow: none;
+  transform: translateY(4px);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.voco-button--navigation:disabled,
+.voco-button--navigation[aria-disabled='true'] {
+  background: transparent;
+  color: var(--vocora-action-disabled-foreground);
+  transform: none;
+}
+
+.voco-button:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voco-button { transition: none; }
+}

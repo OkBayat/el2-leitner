@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoPrimaryButtonComponent } from '../../shared/voco-button';
 import {AuthService} from '../../core/auth/auth.service';
 
 @Component({
 	selector: 'app-offline-page',
-	imports: [MatButtonModule],
+	imports: [VocoPrimaryButtonComponent],
 	template: `
 		<main class="offline-page" data-testid="offline-page">
 			<section class="offline-card">
@@ -16,9 +16,13 @@ import {AuthService} from '../../core/auth/auth.service';
 				@if (stillOffline()) {
 					<p class="connection-note" role="status">No connection yet. Check Wi-Fi or mobile data, then try again.</p>
 				}
-				<button mat-flat-button type="button" [disabled]="retrying()" (click)="retry()">
+				<voco-primary-button
+					type="button"
+					[disabled]="retrying()"
+					(activated)="retry()"
+				>
 					{{ retrying() ? 'Checking connection…' : 'Try again' }}
-				</button>
+				</voco-primary-button>
 			</section>
 		</main>
 	`,

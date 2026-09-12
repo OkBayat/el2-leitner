@@ -29,7 +29,8 @@
           <p class="review-state review-error" data-testid="review-load-error" role="alert">
             {{ reviewError() }}
           </p>
-          <button mat-stroked-button type="button" (click)="load(true)">Try again</button>
+          <voco-secondary-button type="button" (activated)="load(true)"
+						>Try again</voco-secondary-button>
         } @else if (store.state()) {
           @if (reviewCompleted()) {
             <p class="review-state is-complete">
@@ -37,16 +38,25 @@
               Today's review completed
             </p>
             <div class="review-actions">
-              <a mat-flat-button class="vocora-button vocora-button--primary" routerLink="/practice-words" data-testid="practice-words">
+              <voco-primary-link
+								routerLink="/practice-words"
+								data-testid="practice-words"
+							>
                 Practice Words
-              </a>
-              <a mat-stroked-button class="vocora-button vocora-button--secondary" routerLink="/add-new-words" data-testid="add-new-words">
+              </voco-primary-link>
+              <voco-secondary-link
+								routerLink="/add-new-words"
+								data-testid="add-new-words"
+							>
                 Add new words
-              </a>
+              </voco-secondary-link>
             </div>
           } @else {
             <p class="review-state">Your daily review is ready</p>
-            <a mat-flat-button class="vocora-button vocora-button--primary" routerLink="/daily-review" data-testid="start-review">Start Review</a>
+            <voco-primary-link
+							routerLink="/daily-review"
+							data-testid="start-review"
+							>Start Review</voco-primary-link>
           }
         } @else {
           <p class="review-state" role="status">Loading today's review…</p>
@@ -64,7 +74,8 @@
     @if (selectedCourses.error()) {
       <div class="course-notice" role="alert">
         <span>{{ selectedCourses.error() }}</span>
-        <button mat-button type="button" (click)="load()">Try again</button>
+        <voco-secondary-button type="button" (activated)="load()"
+					>Try again</voco-secondary-button>
       </div>
     }
 
@@ -97,7 +108,8 @@
         } @else if (!selectedCourses.error()) {
           <div class="course-empty">
             <p>No courses selected yet.</p>
-            <a mat-button routerLink="/library">Choose a course</a>
+            <voco-navigation-link routerLink="/library"
+							>Choose a course</voco-navigation-link>
           </div>
         }
       }

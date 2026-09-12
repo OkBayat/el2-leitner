@@ -9,7 +9,15 @@
 	top: max(12px, var(--safe-area-top));
 	left: 50%;
 	display: grid;
-	width: min(620px, calc(100% - max(24px, calc(var(--safe-area-left) + var(--safe-area-right) + 16px))));
+	width: min(
+		620px,
+		calc(
+			100% - max(
+					24px,
+					calc(var(--safe-area-left) + var(--safe-area-right) + 16px)
+				)
+		)
+	);
 	gap: 8px;
 	pointer-events: none;
 	transform: translateX(-50%);
@@ -23,7 +31,11 @@
 	padding: 12px 14px;
 	border: 1px solid var(--mat-sys-outline-variant);
 	border-radius: 16px;
-	background: color-mix(in srgb, var(--mat-sys-surface-container-high) 96%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mat-sys-surface-container-high) 96%,
+		transparent
+	);
 	color: var(--mat-sys-on-surface);
 	box-shadow: var(--mat-sys-level3);
 	backdrop-filter: blur(14px);
@@ -77,8 +89,8 @@
 	gap: 6px;
 }
 
-.status-actions button,
-.pwa-status > button {
+.status-actions > :is(voco-primary-button, voco-secondary-button),
+.pwa-status > :is(voco-primary-button, voco-secondary-button) {
 	pointer-events: auto;
 }
 
@@ -88,7 +100,8 @@
 	inset: 0;
 	display: grid;
 	place-items: center;
-	padding: max(20px, var(--safe-area-top)) max(20px, var(--safe-area-right)) max(20px, var(--safe-area-bottom)) max(20px, var(--safe-area-left));
+	padding: max(20px, var(--safe-area-top)) max(20px, var(--safe-area-right))
+		max(20px, var(--safe-area-bottom)) max(20px, var(--safe-area-left));
 	background: color-mix(in srgb, var(--mat-sys-scrim) 58%, transparent);
 	pointer-events: auto;
 }
@@ -112,7 +125,7 @@
 	}
 
 	.status-actions,
-	.pwa-status > button {
+	.pwa-status > :is(voco-primary-button, voco-secondary-button) {
 		grid-column: 2;
 		justify-self: start;
 	}

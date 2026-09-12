@@ -18,12 +18,18 @@
   font-weight: 600;
   line-height: 20px;
   text-decoration: none;
-  transition: border-color var(--vocora-motion-fast), background var(--vocora-motion-fast);
+	transition:
+		border-color var(--vocora-motion-fast),
+		background var(--vocora-motion-fast);
 }
 
 .telegram-banner:hover {
   border-color: var(--vocora-information);
-  background: color-mix(in srgb, var(--vocora-information) 12%, var(--vocora-information-surface));
+	background: color-mix(
+		in srgb,
+		var(--vocora-information) 12%,
+		var(--vocora-information-surface)
+	);
 }
 
 .telegram-banner:focus-visible {
@@ -55,7 +61,7 @@
   display: block;
   font-size: 12px;
   font-weight: 650;
-  letter-spacing: .09em;
+	letter-spacing: 0.09em;
   line-height: 18px;
   text-transform: uppercase;
 }
@@ -89,9 +95,17 @@
   justify-content: center;
   overflow: hidden;
   padding: var(--vocora-space-6);
-  border-color: color-mix(in srgb, var(--vocora-action-primary) 24%, var(--vocora-border));
+	border-color: color-mix(
+		in srgb,
+		var(--vocora-action-primary) 24%,
+		var(--vocora-border)
+	);
   border-radius: var(--vocora-radius-xl);
-  background: color-mix(in srgb, var(--vocora-action-secondary) 68%, var(--vocora-surface-base));
+	background: color-mix(
+		in srgb,
+		var(--vocora-action-secondary) 68%,
+		var(--vocora-surface-base)
+	);
   box-shadow: none;
 }
 
@@ -134,7 +148,7 @@
   margin-right: var(--vocora-space-1);
 }
 
-.review-copy a[mat-flat-button] {
+.review-copy voco-primary-link {
   min-height: var(--vocora-touch-target-min);
   border-radius: var(--vocora-radius-md);
 }
@@ -154,8 +168,12 @@
   height: 96px;
   place-items: center;
   border-radius: var(--vocora-radius-xl);
-  background: color-mix(in srgb, var(--vocora-information) 12%, var(--vocora-surface-base));
-  opacity: .9;
+	background: color-mix(
+		in srgb,
+		var(--vocora-information) 12%,
+		var(--vocora-surface-base)
+	);
+	opacity: 0.9;
 }
 
 .review-illustration app-navigation-icon {
@@ -187,16 +205,26 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--vocora-motion-fast), background var(--vocora-motion-fast);
+	transition:
+		border-color var(--vocora-motion-fast),
+		background var(--vocora-motion-fast);
 }
 
 .course-card.is-not-practiced {
   color: var(--vocora-text-secondary);
-  background: color-mix(in srgb, var(--vocora-surface-subtle) 56%, var(--vocora-surface-base));
+	background: color-mix(
+		in srgb,
+		var(--vocora-surface-subtle) 56%,
+		var(--vocora-surface-base)
+	);
 }
 
 .course-card:hover {
-  border-color: color-mix(in srgb, var(--vocora-action-primary) 40%, var(--vocora-border));
+	border-color: color-mix(
+		in srgb,
+		var(--vocora-action-primary) 40%,
+		var(--vocora-border)
+	);
   background: var(--vocora-surface-raised);
 }
 

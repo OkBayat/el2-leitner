@@ -88,10 +88,11 @@ export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
   onClick(event: MouseEvent): void {
     const target = event.target;
     if (!(target instanceof Element)) return;
-    const control = target.closest('button, [role="button"]');
-    if (!control || control.matches(
+    if (target.closest(
       '.slide-exercise-header__close, .slide-exercise__guide-action, .slide-exercise-action--guide-return',
     )) return;
+    const control = target.closest('button, [role="button"]');
+    if (!control) return;
     this.onInteraction();
   }
 

@@ -136,14 +136,14 @@ describe('HomePageComponent', () => {
     const fixture = await render();
     const host: HTMLElement = fixture.nativeElement;
     expect(host.querySelector('[data-testid="daily-review-card"]')?.textContent).toContain("Today's review completed");
-    expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"]')?.getAttribute('href')).toBe('/practice-words');
-    expect(host.querySelector<HTMLAnchorElement>('[data-testid="add-new-words"]')?.getAttribute('href')).toBe('/add-new-words');
-    expect(host.querySelector('[data-testid="add-new-words"]')?.hasAttribute('mat-stroked-button')).toBe(true);
+    expect(host.querySelector<HTMLAnchorElement>('[data-testid="practice-words"] a')?.getAttribute('href')).toBe('/practice-words');
+    expect(host.querySelector<HTMLAnchorElement>('[data-testid="add-new-words"] a')?.getAttribute('href')).toBe('/add-new-words');
+    expect(host.querySelector('[data-testid="add-new-words"]')?.tagName).toBe('VOCO-SECONDARY-LINK');
   });
 
   it('starts today review through the slide exercise route', async () => {
     const fixture = await render();
-    const link = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('[data-testid="start-review"]');
+    const link = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('[data-testid="start-review"] a');
     expect(link?.getAttribute('href')).toBe('/daily-review');
   });
 
@@ -253,7 +253,7 @@ describe('HomePageComponent', () => {
         return recovered;
       });
       const host: HTMLElement = fixture.nativeElement;
-      host.querySelector<HTMLButtonElement>('[data-testid="review-load-error"] + button')?.click();
+      host.querySelector<HTMLElement>('[data-testid="review-load-error"] + voco-secondary-button')?.querySelector<HTMLButtonElement>('button')?.click();
       await Promise.resolve();
       await Promise.resolve();
       fixture.detectChanges();

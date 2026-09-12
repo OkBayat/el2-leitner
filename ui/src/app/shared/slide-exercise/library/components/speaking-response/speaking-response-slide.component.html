@@ -45,30 +45,28 @@
 			}
 			<div class="recording-controls">
 				@if (recordingState() !== 'recording') {
-					<button
-						mat-stroked-button
+					<voco-secondary-button
 						type="button"
 						[disabled]="
 							recordingState() === 'requesting' || !supported
 						"
 						aria-label="Start recording"
-						(click)="startRecording()"
+						(activated)="startRecording()"
 					>
 						{{
 							recordingState() === 'recorded'
 								? 'Record again'
 								: 'Record response'
 						}}
-					</button>
+					</voco-secondary-button>
 				} @else {
-					<button
-						mat-flat-button
+					<voco-primary-button
 						type="button"
 						aria-label="Stop recording"
-						(click)="stopRecording()"
+						(activated)="stopRecording()"
 					>
 						Stop recording
-					</button>
+					</voco-primary-button>
 				}
 				@if (recordingUrl()) {
 					<audio

@@ -4,7 +4,7 @@ import {
 	OnDestroy,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoIconButtonComponent } from '../../../../voco-button';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -52,7 +52,7 @@ function parseOrdering(value: unknown): OrderingSlideData {
 @Component({
 	selector: 'app-ordering-slide',
 	standalone: true,
-	imports: [MatButtonModule, SlideStimulusComponent],
+	imports: [VocoIconButtonComponent, SlideStimulusComponent],
 	templateUrl: './ordering-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

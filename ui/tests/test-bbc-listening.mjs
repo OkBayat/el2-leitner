@@ -68,7 +68,7 @@ const catalogTemplate = read('src/app/features/bbc-listening/bbc-lessons-page.co
 assert.match(catalogTemplate, /lesson\.tests/u, 'Each lesson card must render its tests dynamically.');
 assert.match(catalogTemplate, /test\.completed/u, 'Each test must expose its own completion state.');
 assert.match(catalogTemplate, /start-bbc-/u, 'Each test needs a stable start action.');
-assert.match(catalogTemplate, /'tests', test\.id, 'practice'/u, 'Each test action must route by test id.');
+assert.match(catalogTemplate, /'tests',\s*test\.id,\s*'practice'/u, 'Each test action must route by test id.');
 
 const listeningDomain = read('src/app/domain/listening-practice/listening-practice.ts');
 assert.doesNotMatch(
@@ -114,7 +114,7 @@ assert.doesNotMatch(
 );
 assert.match(
   template,
-  /type="button"[\s\S]*?data-testid="submit-listening-attempt"[\s\S]*?\(click\)="submit\(\)"/u,
+  /type="button"[\s\S]*?data-testid="submit-listening-attempt"[\s\S]*?\(activated\)="submit\(\)"/u,
   'Listening answers must be submitted only by clicking the explicit submit button.',
 );
 assert.match(template, /add-listening-word-/u, 'Eligible incorrect answers need a stable House 1 action.');
@@ -157,8 +157,8 @@ assert.match(audioPlayerComponent, /requestAnimationFrame/u, 'Audio-reactive wav
 assert.match(audioPlayer, /data-testid="audio-waveform"/u, 'Immersive playback must expose its three-line waveform.');
 assert.match(audioPlayer, /data-testid="audio-back-10"/u, 'Immersive playback must expose ten-second rewind.');
 assert.match(audioPlayer, /data-testid="audio-forward-10"/u, 'Immersive playback must expose ten-second forward seek.');
-assert.match(audioPlayer, /vocora-primary-icon-action--hero/u, 'The immersive play control must use the shared primary icon-action variant.');
-assert.match(audioPlayer, /vocora-plain-icon-action/u, 'Immersive secondary controls must use the shared plain icon-action variant.');
+assert.match(audioPlayer, /data-testid="audio-play"[\s\S]*?iconTone="primary"[\s\S]*?iconSize="hero"/u, 'The immersive play control must use the shared primary icon-action variant.');
+assert.match(audioPlayer, /<voco-icon-button[\s\S]*?data-testid="audio-back-10"/u, 'Immersive secondary controls must use the shared plain icon-action variant.');
 assert.match(audioStyles, /\.scrubber-track/u, 'The approved progress-line visual must remain explicit in player styling.');
 assert.match(audioStyles, /\.audio-player--immersive/u, 'The shared player must own the immersive presentation variant.');
 assert.match(

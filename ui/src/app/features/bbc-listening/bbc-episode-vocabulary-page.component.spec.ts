@@ -46,7 +46,7 @@ describe('Episode vocabulary page', () => {
   });
   it('has independent add-all, add-one and pronunciation actions', async () => {
     const f = await setup();
-    (f.element.querySelector('[data-testid="pronounce-episode-word-word-1"]') as HTMLButtonElement).click();
+    f.element.querySelector('[data-testid="pronounce-episode-word-word-1"]')?.querySelector<HTMLButtonElement>('button')?.click();
     expect(f.speech.speak).toHaveBeenCalledWith('intentional', 0.85);
     await f.page.add(data.entries[0]); expect(f.service.add).toHaveBeenCalledWith('screen-time', ['word-1']);
     await f.page.add(); expect(f.service.add).toHaveBeenCalledWith('screen-time', undefined);

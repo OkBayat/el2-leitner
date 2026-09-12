@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoPrimaryButtonComponent } from '../../shared/voco-button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
@@ -9,13 +9,14 @@ import { LearningChartComponent, type LearningChartPoint } from '../../shared/ch
 
 @Component({
   selector: 'app-reports-page',
-  imports: [MatButtonModule, MatCardModule, MatProgressBarModule, MatTableModule, LearningChartComponent],
+  imports: [VocoPrimaryButtonComponent, MatCardModule, MatProgressBarModule, MatTableModule, LearningChartComponent],
   template: `
     @if(state(); as s){
       <section class="page">
         <header>
           <div><h1>Progress Report</h1><p>A clear view of your learning trend and weak spots</p></div>
-          <button mat-flat-button (click)="exportAnalysis()">Export for ChatGPT analysis</button>
+          <voco-primary-button (activated)="exportAnalysis()"
+						>Export for ChatGPT analysis</voco-primary-button>
         </header>
 
         <div class="stats">

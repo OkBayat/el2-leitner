@@ -5,7 +5,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective } from '../../../../voco-button';
 import { SpeechService } from '../../../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
@@ -66,7 +66,7 @@ function parseMatching(value: unknown): MatchingSlideData {
 @Component({
 	selector: 'app-matching-slide',
 	standalone: true,
-	imports: [MatButtonModule, SlideStimulusComponent],
+	imports: [VocoButtonInteractionDirective, SlideStimulusComponent],
 	templateUrl: './matching-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

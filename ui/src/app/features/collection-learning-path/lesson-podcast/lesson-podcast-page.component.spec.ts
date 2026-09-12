@@ -59,7 +59,7 @@ describe('LessonPodcastPageComponent', () => {
     expect(element.textContent).toContain('Unit 1 — Present tenses');
     expect(element.querySelector('app-app-shell')).toBeNull();
     expect(element.querySelector('.lesson-podcast-page__header h1')?.textContent).toContain('Unit 1 — Present tenses');
-    expect(element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-back"]')?.getAttribute('href'))
+    expect(element.querySelector<HTMLAnchorElement>('[data-testid="lesson-podcast-back"] a')?.getAttribute('href'))
       .toBe('/learning-paths/4');
     expect(element.querySelector('[data-testid="lesson-podcast-download"]')).toBeNull();
     expect(element.querySelector<HTMLAudioElement>('audio')?.getAttribute('src'))
@@ -71,7 +71,7 @@ describe('LessonPodcastPageComponent', () => {
     expect(element.querySelector('[data-testid="audio-back-10"]')).not.toBeNull();
     expect(element.querySelector('[data-testid="audio-forward-10"]')).not.toBeNull();
 
-    element.querySelector<HTMLButtonElement>('[data-testid="audio-play"]')?.click();
+    element.querySelector<HTMLElement>('[data-testid="audio-play"]')?.querySelector<HTMLButtonElement>('button')?.click();
     await fixture.whenStable();
     expect(play).toHaveBeenCalledTimes(1);
   });

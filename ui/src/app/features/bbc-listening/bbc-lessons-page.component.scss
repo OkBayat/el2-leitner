@@ -1,4 +1,4 @@
-@use './listening-badges';
+@use "./listening-badges";
 
 :host {
   display: block;
@@ -75,7 +75,10 @@ h1 {
 }
 
 .lesson-card.has-cover {
-  grid-template-columns: minmax(280px, 40%) minmax(0, 1fr) minmax(170px, 190px);
+	grid-template-columns: minmax(280px, 40%) minmax(0, 1fr) minmax(
+			170px,
+			190px
+		);
   gap: 0;
   align-items: stretch;
   padding: 0;
@@ -155,8 +158,6 @@ h1 {
 .test-button {
   width: 100%;
   min-height: 44px;
-  height: auto;
-  padding: 6px 10px;
 }
 
 .test-button-content {
@@ -165,11 +166,6 @@ h1 {
   justify-content: space-between;
   gap: 12px;
   align-items: center;
-}
-
-.test-button.completed {
-  border-color: var(--mat-sys-primary);
-  background: color-mix(in srgb, var(--mat-sys-primary) 7%, transparent);
 }
 
 .test-status {

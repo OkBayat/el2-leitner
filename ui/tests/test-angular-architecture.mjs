@@ -147,6 +147,7 @@ const reviewAnswerField = read('src/app/features/review/review-answer-field.ts')
 const reviewAnswerFieldSpec = read('src/app/features/review/review-answer-field.spec.ts');
 const reviewContextBadge = read('src/app/features/review/review-context-badge.component.ts');
 const reviewContextBadgeSpec = read('src/app/features/review/review-context-badge.component.spec.ts');
+const reviewFooterPrimaryButton = read('src/app/features/review/review-footer-primary-button.component.ts');
 assert.match(reviewTemplate, /#answerInput/u, 'Review answer input needs a stable template reference for focus management.');
 assert.match(reviewPage, /focusAnswerInput/u, 'Review page must own explicit answer-input focus behavior.');
 assert.match(reviewTemplate, /data-testid="review-layout"/u, 'Review page must own its standalone distraction-free layout.');
@@ -195,11 +196,11 @@ assert.match(reviewStyles, /min-height:\s*100dvh/u, 'Review layout must fill the
 assert.match(reviewStyles, /\.review-action-footer\s*\{[\s\S]*position:\s*fixed;[\s\S]*bottom:\s*0;/u, 'Review footer must stay fixed to the viewport bottom.');
 assert.match(reviewStyles, /border-top:\s*2px solid var\(--review-footer-border-color\)/u, 'All footer tones must share one full-width divider implementation.');
 assert.match(reviewStyles, /--review-success-background:\s*var\(--vocora-state-success-surface\)/u, 'Correct feedback must use the canonical success surface.');
-assert.match(reviewStyles, /--review-success-action:\s*var\(--vocora-action-success\)/u, 'Correct feedback must use the canonical success action.');
+assert.match(reviewFooterPrimaryButton, /@case \(["']success["']\)[\s\S]*<voco-success-button/u, 'Correct feedback must use the canonical success action.');
+assert.match(reviewFooterPrimaryButton, /@case \(["']error["']\)[\s\S]*<voco-error-button/u, 'Wrong feedback must use the canonical error action.');
 assert.match(reviewStyles, /--review-error-background:\s*var\(--vocora-state-error-surface\)/u, 'Wrong feedback must use the canonical error surface.');
-assert.match(reviewStyles, /--review-error-action:\s*var\(--vocora-action-error\)/u, 'Wrong feedback must use the canonical error action.');
 assert.match(reviewStyles, /--review-practice-background:\s*var\(--vocora-state-warning-surface\)/u, 'Recall/copy remediation must use the canonical warning surface.');
-assert.match(reviewStyles, /--review-practice-action:\s*var\(--vocora-action-warning\)/u, 'Recall/copy remediation must use the canonical warning action.');
+assert.match(reviewTemplate, /<voco-warning-button class="review-action-secondary"/u, 'Recall/copy remediation must use the canonical warning action.');
 assert.doesNotMatch(reviewStyles, /\.review-action-footer\.(?:success|error|practice)\s+\.review-action-primary/u, 'Footer tones must change shared CSS variables instead of duplicating primary-button rules.');
 assert.doesNotMatch(reviewStyles, /\.footer-primary|\.footer-secondary|\.neutral-action-inner|\.feedback-action-inner/u, 'Review controls must not reintroduce duplicate legacy footer classes.');
 assert.match(reviewStyles, /@media\(max-width:\s*600px\)/u, 'Review layout must have a dedicated mobile presentation.');

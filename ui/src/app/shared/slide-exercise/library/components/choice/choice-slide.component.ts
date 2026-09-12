@@ -5,7 +5,7 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective, VocoSecondaryButtonComponent } from '../../../../voco-button';
 import { SpeechService } from '../../../../../core/speech/speech.service';
 import { LearningStoreService } from '../../../../../core/state/learning-store.service';
 import type {
@@ -79,7 +79,7 @@ function parseChoice(value: unknown): ChoiceSlideData {
 @Component({
 	selector: 'app-choice-slide',
 	standalone: true,
-	imports: [MatButtonModule, SlideStimulusComponent],
+	imports: [VocoButtonInteractionDirective, VocoSecondaryButtonComponent, SlideStimulusComponent],
 	templateUrl: './choice-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

@@ -29,9 +29,13 @@
 					</svg>
 				</div>
 				<div class="details-heading"><span class="details-eyebrow">Vocabulary notes</span><h2 id="sentence-word-details-title">Word meaning</h2></div>
-				<button mat-icon-button type="button" aria-label="Close word meaning" (click)="closeDetails(true)">
+				<voco-icon-button
+					type="button"
+					aria-label="Close word meaning"
+					(activated)="closeDetails(true)"
+				>
 					<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2"/></svg>
-				</button>
+				</voco-icon-button>
 			</header>
 			<div class="details-content">
 				<div class="sentence-context"><span class="details-eyebrow">In this sentence</span>

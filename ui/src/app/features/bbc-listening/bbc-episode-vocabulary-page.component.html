@@ -1,5 +1,6 @@
 <section class="episode-vocabulary-page" data-testid="episode-vocabulary-page">
-  <a mat-button routerLink="/bbc-6-minute-english">← Back to episodes</a>
+  <voco-navigation-link routerLink="/bbc-6-minute-english"
+		>← Back to episodes</voco-navigation-link>
   @if (loading()) {
     <p role="status">Loading episode vocabulary…</p>
   }
@@ -7,7 +8,8 @@
     <section class="error" role="alert">
       <p>{{ error() }}</p>
       @if (!vocabulary() && !loading()) {
-        <button mat-stroked-button type="button" (click)="load()">Try again</button>
+        <voco-secondary-button type="button" (activated)="load()"
+					>Try again</voco-secondary-button>
       }
     </section>
   }
@@ -21,9 +23,14 @@
           <span>{{ data.entries.length }} words and phrases</span>
         </div>
       </div>
-      <button mat-flat-button type="button" [disabled]="saving() || newCount() === 0" (click)="add()" data-testid="add-all-episode-vocabulary">
+      <voco-primary-button
+				type="button"
+				[disabled]="saving() || newCount() === 0"
+				(activated)="add()"
+				data-testid="add-all-episode-vocabulary"
+			>
         {{ saving() ? 'Adding…' : 'Add all new words to Leitner' }}
-      </button>
+      </voco-primary-button>
     </header>
     <p class="intro">Only vocabulary introduced in this episode is listed here. Words you already know keep their current progress.</p>
     @if (message()) { <p class="confirmation" role="status">{{ message() }}</p> }
@@ -36,9 +43,23 @@
             @for (example of entry.examples; track $index) { <p class="example"><span>Example</span> {{ example }}</p> }
           </div>
           <div class="word-actions">
-            <button mat-stroked-button type="button" (click)="pronounce(entry)" [attr.aria-label]="'Play pronunciation of ' + entry.term" [attr.data-testid]="'pronounce-episode-word-' + entry.vocabularyId">Listen</button>
+            <voco-secondary-button
+							type="button"
+							(activated)="pronounce(entry)"
+							[ariaLabel]="'Play pronunciation of ' + entry.term"
+							[attr.data-testid]="
+								'pronounce-episode-word-' + entry.vocabularyId
+							"
+							>Listen</voco-secondary-button>
             @if (entry.progress.state === 'new') {
-              <button mat-flat-button type="button" [disabled]="saving()" (click)="add(entry)" [attr.data-testid]="'add-episode-word-' + entry.vocabularyId">Add to Leitner</button>
+              <voco-primary-button
+								type="button"
+								[disabled]="saving()"
+								(activated)="add(entry)"
+								[attr.data-testid]="
+									'add-episode-word-' + entry.vocabularyId
+								"
+								>Add to Leitner</voco-primary-button>
             } @else {
               <span class="word-status" [class.mastered]="entry.progress.state === 'mastered'" [attr.data-testid]="'episode-word-status-' + entry.vocabularyId">{{ status(entry) }}</span>
             }

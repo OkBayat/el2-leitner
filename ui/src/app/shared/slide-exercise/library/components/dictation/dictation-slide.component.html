@@ -50,29 +50,26 @@
 				/>
 			} @else if (data.speech?.replay) {
 				<div class="dictation-audio-actions" role="group" aria-label="Dictation pronunciation controls">
-					<button
-						mat-flat-button
+					<voco-audio-button
 						appShortcutClick="Alt+R"
-						class="vocora-audio-action vocora-audio-action--large"
 						type="button"
 						[disabled]="!canReplay()"
 						aria-label="Play dictation pronunciation"
 						data-testid="dictation-play-normal"
-						(click)="playSpeech()"
+						(activated)="playSpeech()"
+						audioSize="large"
 					>
 						<img src="/assets/icons/normal-speed.svg" alt="" aria-hidden="true" />
-					</button>
-					<button
-						mat-flat-button
-						class="vocora-audio-action"
+					</voco-audio-button>
+					<voco-audio-button
 						type="button"
 						[disabled]="!canReplay()"
 						aria-label="Play dictation pronunciation slowly"
 						data-testid="dictation-play-slow"
-						(click)="playSpeech('slow')"
+						(activated)="playSpeech('slow')"
 					>
 						<img src="/assets/icons/slow-speed.svg" alt="" aria-hidden="true" />
-					</button>
+					</voco-audio-button>
 				</div>
 			}
 			@if (showComparison()) {

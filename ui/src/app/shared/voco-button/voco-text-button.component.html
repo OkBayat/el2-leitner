@@ -1,0 +1,14 @@
+<button
+  mat-flat-button
+  class="voco-button voco-button--{{ intent }}"
+  [type]="type"
+  [disabled]="disabled"
+  [attr.aria-label]="ariaLabel"
+  [attr.aria-describedby]="ariaDescribedBy"
+  [attr.aria-busy]="ariaBusy"
+  [attr.aria-controls]="ariaControls"
+  [attr.aria-expanded]="ariaExpanded"
+  [attr.aria-pressed]="ariaPressed"
+  [attr.title]="title"
+  (click)="onControlClick($event)"
+><ng-content /></button>

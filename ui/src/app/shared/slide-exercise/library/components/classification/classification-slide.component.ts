@@ -5,7 +5,7 @@ import {
 	signal,
 } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective } from '../../../../voco-button';
 import type {
 	SlideContentComponent,
 	SlideContentContext,
@@ -80,7 +80,7 @@ function parseClassification(value: unknown): ClassificationSlideData {
 	standalone: true,
 	imports: [
 		DragDropModule,
-		MatButtonModule,
+		VocoButtonInteractionDirective,
 		SlideStimulusComponent,
 	],
 	templateUrl: './classification-slide.component.html',

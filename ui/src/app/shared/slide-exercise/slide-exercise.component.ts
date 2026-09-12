@@ -11,7 +11,7 @@ import {
 	ViewChild,
 	signal,
 } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
+import { VocoIconButtonComponent } from "../voco-button";
 import { MatIconModule, MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ReviewAnswerSoundService } from "../../core/sound/review-answer-sound.service";
@@ -47,7 +47,7 @@ const GUIDE_LIGHTBULB_ICON =
 	selector: "app-slide-exercise",
 	standalone: true,
 	imports: [
-		MatButtonModule,
+		VocoIconButtonComponent,
 		MatIconModule,
 		SlideContentHostComponent,
 		SlideExerciseActionComponent,

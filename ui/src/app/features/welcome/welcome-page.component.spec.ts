@@ -24,7 +24,7 @@ describe('WelcomePageComponent', () => {
 
     expect(host.querySelector('[data-testid="welcome-slide"]')?.textContent).toContain('Welcome to Vocora');
     expect(host.querySelectorAll('[data-testid="welcome-step"]')).toHaveLength(5);
-    expect(host.querySelector('[data-testid="welcome-step"]')?.classList).toContain('mat-mdc-icon-button');
+    expect(host.querySelector('[data-testid="welcome-step"] .mat-mdc-icon-button')).not.toBeNull();
     expect(host.querySelector('[aria-current="step"]')).not.toBeNull();
     expect(host.querySelector('[data-testid="welcome-back"]')).toBeNull();
     expect(document.activeElement).toBe(heading);

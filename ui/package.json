@@ -16,7 +16,7 @@
         "mobile:ios:open": "cap open ios",
         "mobile:version": "node tools/sync-native-version.mjs",
         "mobile:assets": "npx --yes @capacitor/assets@3.0.5 generate --assetPath resources",
-        "check:architecture": "node tests/test-angular-architecture.mjs",
+        "check:architecture": "node tests/test-angular-architecture.mjs && node tests/test-voco-button-architecture.mjs",
         "check:design-system-architecture": "node tests/test-design-system-architecture.mjs",
         "check:slide-library-structure": "node tests/test-slide-library-structure.mjs",
         "check:bootstrap-theme": "node tests/test-bootstrap-theme.mjs",

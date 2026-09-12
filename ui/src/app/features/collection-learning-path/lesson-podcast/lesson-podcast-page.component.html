@@ -1,16 +1,15 @@
 <main class="lesson-podcast-page" [attr.aria-busy]="loading()">
   <header class="lesson-podcast-page__header">
-    <a
-      mat-icon-button
-      class="lesson-podcast-page__header-action"
-      data-testid="lesson-podcast-back"
-      [routerLink]="['/learning-paths', pathId()]"
-      aria-label="Back to Learning Path"
-    >
+    <voco-icon-link
+			class="lesson-podcast-page__header-action"
+			data-testid="lesson-podcast-back"
+			[routerLink]="['/learning-paths', pathId()]"
+			aria-label="Back to Learning Path"
+		>
       <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
         <path d="M27 16H6m8-8-8 8 8 8" />
       </svg>
-    </a>
+    </voco-icon-link>
 
     <h1>{{ pageTitle() }}</h1>
 
@@ -24,12 +23,8 @@
       <div class="lesson-podcast-page__error" role="alert">
         <h2>Lesson audio unavailable</h2>
         <p>{{ error() }}</p>
-        <button
-          mat-flat-button
-          type="button"
-          class="vocora-button vocora-button--primary"
-          (click)="retry()"
-        >Try again</button>
+        <voco-primary-button type="button" (activated)="retry()"
+					>Try again</voco-primary-button>
       </div>
     } @else if (lesson()) {
       <app-listening-audio-player

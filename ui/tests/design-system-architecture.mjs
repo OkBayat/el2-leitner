@@ -246,6 +246,10 @@ function maskCssSyntax(value, { lineComments = false } = {}) {
 	return { cleaned: cleaned.join(""), syntax: syntax.join("") };
 }
 
+export function extractCssSyntax(value, options) {
+	return maskCssSyntax(value, options).syntax;
+}
+
 function extractInlineStyleMetadata(text) {
 	const source = ts.createSourceFile(
 		"component.ts",

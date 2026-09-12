@@ -17,7 +17,7 @@ assert.doesNotMatch(
 );
 assert.match(
   template,
-  /\[attr\.aria-label\]="test\.title[\s\S]*?difficultyLabel\(test\.difficulty\)[\s\S]*?Completed[\s\S]*?Start/u,
+  /\[ariaLabel\]="[\s\S]*?test\.title[\s\S]*?difficultyLabel\(test\.difficulty\)[\s\S]*?Completed[\s\S]*?Start/u,
   'Compact test buttons must keep the hidden test context for assistive technology.',
 );
 assert.match(

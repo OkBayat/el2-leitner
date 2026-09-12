@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import { ListeningVocabularyService } from '../../application/listening-practice/listening-vocabulary.service';
 import { SpeechService } from '../../core/speech/speech.service';
 import { LearningStoreService } from '../../core/state/learning-store.service';
@@ -9,7 +9,7 @@ import { ListeningVocabularyEntry, ListeningVocabularyResponse, listeningLevelLa
 
 @Component({
   selector: 'app-bbc-episode-vocabulary-page',
-  imports: [RouterLink, MatButtonModule],
+  imports: [RouterLink, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent],
   templateUrl: 'bbc-episode-vocabulary-page.component.html',
   styleUrl: 'bbc-episode-vocabulary-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

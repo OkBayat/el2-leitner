@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormRecord, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -25,7 +25,7 @@ import { ListeningAudioPlayerComponent } from '../../shared/listening-audio-play
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatButtonModule,
+    VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent,
     MatFormFieldModule,
     MatInputModule,
     MatRadioModule,

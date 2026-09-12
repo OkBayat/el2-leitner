@@ -1,11 +1,12 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSuccessButtonComponent, VocoWarningButtonComponent } from '../voco-button';
 import { resolveSlideExerciseActionState, type SlideExerciseActionTone } from './slide-exercise.models';
 
 @Component({
   selector: 'app-slide-exercise-action',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [NgTemplateOutlet, VocoErrorButtonComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSuccessButtonComponent, VocoWarningButtonComponent],
   templateUrl: './slide-exercise-action.component.html',
   styleUrl: './slide-exercise-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

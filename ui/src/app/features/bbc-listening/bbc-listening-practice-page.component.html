@@ -5,7 +5,8 @@
     <section class="page-status error" role="alert">
       <p>{{ routeError() || session.error() }}</p>
       @if (!embedded) {
-        <a mat-stroked-button routerLink="/bbc-6-minute-english">Back to lessons</a>
+        <voco-navigation-link routerLink="/bbc-6-minute-english"
+					>Back to lessons</voco-navigation-link>
       }
     </section>
   } @else if (session.lesson(); as lesson) {
@@ -25,18 +26,24 @@
             <span class="level-badge" data-testid="episode-level">Episode: {{ levelLabel(lesson.level) }}</span>
             <span class="difficulty-badge" [attr.data-difficulty]="test.difficulty || 'medium'" data-testid="test-difficulty">Test: {{ difficultyLabel(test.difficulty) }}</span>
             @if (lesson.vocabularyCollectionId) {
-              <a mat-button [routerLink]="['/bbc-6-minute-english', lesson.slug, 'vocabulary']" data-testid="episode-vocabulary-link">Episode vocabulary</a>
+              <voco-secondary-link
+								[routerLink]="[
+									'/bbc-6-minute-english',
+									lesson.slug,
+									'vocabulary',
+								]"
+								data-testid="episode-vocabulary-link"
+								>Episode vocabulary</voco-secondary-link>
             }
-            <a
-              mat-button
-              data-testid="open-bbc-episode"
-              [href]="lesson.sourceUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <voco-secondary-link
+							data-testid="open-bbc-episode"
+							[href]="lesson.sourceUrl"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
               Open BBC episode
               <span class="external-link-icon" aria-hidden="true">↗</span>
-            </a>
+            </voco-secondary-link>
           </div>
           <p>Answer as many of the {{ test.questionCount }} questions as you can, then submit when you are ready.</p>
         </div>
@@ -139,16 +146,25 @@
                               [attr.data-testid]="'listening-word-in-house-1-' + question.number"
                             >Already in House 1</span>
                           } @else {
-                            <button
-                              mat-stroked-button
-                              type="button"
-                              class="add-vocabulary-button"
-                              [disabled]="addingVocabulary() !== null"
-                              [attr.data-testid]="'add-listening-word-' + question.number"
-                              (click)="addVocabularyToHouseOne(vocabulary)"
-                            >
+                            <voco-secondary-button
+															type="button"
+															class="add-vocabulary-button"
+															[disabled]="
+																addingVocabulary() !==
+																null
+															"
+															[attr.data-testid]="
+																'add-listening-word-' +
+																question.number
+															"
+															(activated)="
+																addVocabularyToHouseOne(
+																	vocabulary
+																)
+															"
+														>
                               {{ addingVocabulary() === vocabulary ? 'Adding…' : 'Add to House 1' }}
-                            </button>
+                            </voco-secondary-button>
                           }
                         }
                       }
@@ -173,13 +189,12 @@
               <strong>{{ answeredCount() }} / {{ test.questionCount }} answered</strong>
               <span>Unanswered questions will be marked incorrect.</span>
             </div>
-            <button
-              mat-flat-button
-              type="button"
-              [disabled]="!canSubmit()"
-              data-testid="submit-listening-attempt"
-              (click)="submit()"
-            >{{ session.submitting() ? 'Submitting…' : 'Submit answers' }}</button>
+            <voco-primary-button
+							type="button"
+							[disabled]="!canSubmit()"
+							data-testid="submit-listening-attempt"
+							(activated)="submit()"
+							>{{ session.submitting() ? 'Submitting…' : 'Submit answers' }}</voco-primary-button>
           } @else {
             <div>
               <strong>{{ test.title }} completed</strong>
@@ -187,15 +202,16 @@
             </div>
             @if (!embedded) {
               <div class="submit-actions">
-                <button
-                  mat-stroked-button
-                  type="button"
-                  [disabled]="session.restarting()"
-                  [attr.aria-label]="'Retake ' + test.title"
-                  data-testid="retake-listening-test"
-                  (click)="retake()"
-                >{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</button>
-                <a mat-flat-button routerLink="/bbc-6-minute-english">Back to tests</a>
+                <voco-secondary-button
+									type="button"
+									[disabled]="session.restarting()"
+									[ariaLabel]="'Retake ' + test.title"
+									data-testid="retake-listening-test"
+									(activated)="retake()"
+									>{{ session.restarting() ? 'Preparing…' : 'Retake test' }}</voco-secondary-button>
+                <voco-navigation-link
+									routerLink="/bbc-6-minute-english"
+									>Back to tests</voco-navigation-link>
               </div>
             }
           }

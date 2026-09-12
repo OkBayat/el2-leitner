@@ -1,0 +1,54 @@
+:host {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.voco-audio-button {
+  --mat-button-filled-container-color: var(--vocora-action-primary);
+  --mat-button-filled-label-text-color: var(--vocora-action-primary-foreground);
+  --mat-button-filled-disabled-container-color: var(--vocora-action-disabled-background);
+  --mat-button-filled-disabled-label-text-color: var(--vocora-action-disabled-foreground);
+  width: 80px;
+  min-width: 80px;
+  height: 80px;
+  min-height: 80px;
+  margin-block-end: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background: var(--vocora-action-primary);
+  color: var(--vocora-action-primary-foreground);
+  box-shadow: 0 4px 0 var(--vocora-action-primary-edge);
+  transition: none;
+}
+
+.voco-audio-button--large {
+  width: 112px;
+  min-width: 112px;
+  height: 112px;
+  min-height: 112px;
+  border-radius: 32px;
+}
+
+.voco-audio-button:not(:disabled):active {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
+.voco-audio-button:disabled {
+  background: var(--vocora-action-disabled-background);
+  color: var(--vocora-action-disabled-foreground);
+  box-shadow: none;
+  transform: translateY(4px);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.voco-audio-button:focus-visible {
+  outline: 3px solid var(--vocora-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voco-audio-button { transition: none; }
+}

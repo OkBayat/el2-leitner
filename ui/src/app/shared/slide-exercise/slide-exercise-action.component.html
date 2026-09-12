@@ -1,13 +1,32 @@
-<button
-  mat-flat-button
-  class="vocora-action-button slide-exercise-action"
-  type="button"
-  [attr.data-state]="state()"
-  [attr.aria-label]="ariaLabel() || null"
-  [attr.aria-busy]="loading() ? 'true' : null"
-  [disabled]="state() === 'disabled'"
-  (click)="activate()"
->
+<ng-template #content>
   @if (loading()) { <span class="slide-exercise-action__spinner" aria-hidden="true"></span> }
   <span class="slide-exercise-action__label"><ng-content></ng-content></span>
-</button>
+</ng-template>
+
+@switch (tone()) {
+  @case ('secondary') {
+    <voco-secondary-button class="slide-exercise-action w-100" type="button" [attr.data-state]="state()"
+      [ariaLabel]="ariaLabel() || null" [ariaBusy]="loading() ? 'true' : null" [disabled]="disabled() || loading()"
+      (activated)="activate()"><ng-container [ngTemplateOutlet]="content" /></voco-secondary-button>
+  }
+  @case ('success') {
+    <voco-success-button class="slide-exercise-action w-100" type="button" [attr.data-state]="state()"
+      [ariaLabel]="ariaLabel() || null" [ariaBusy]="loading() ? 'true' : null" [disabled]="disabled() || loading()"
+      (activated)="activate()"><ng-container [ngTemplateOutlet]="content" /></voco-success-button>
+  }
+  @case ('warning') {
+    <voco-warning-button class="slide-exercise-action w-100" type="button" [attr.data-state]="state()"
+      [ariaLabel]="ariaLabel() || null" [ariaBusy]="loading() ? 'true' : null" [disabled]="disabled() || loading()"
+      (activated)="activate()"><ng-container [ngTemplateOutlet]="content" /></voco-warning-button>
+  }
+  @case ('error') {
+    <voco-error-button class="slide-exercise-action w-100" type="button" [attr.data-state]="state()"
+      [ariaLabel]="ariaLabel() || null" [ariaBusy]="loading() ? 'true' : null" [disabled]="disabled() || loading()"
+      (activated)="activate()"><ng-container [ngTemplateOutlet]="content" /></voco-error-button>
+  }
+  @default {
+    <voco-primary-button class="slide-exercise-action w-100" type="button" [attr.data-state]="state()"
+      [ariaLabel]="ariaLabel() || null" [ariaBusy]="loading() ? 'true' : null" [disabled]="disabled() || loading()"
+      (activated)="activate()"><ng-container [ngTemplateOutlet]="content" /></voco-primary-button>
+  }
+}

@@ -12,7 +12,7 @@ import {
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoWarningButtonComponent } from '../../shared/voco-button';
 import {MatCardModule} from '@angular/material/card';
 import {MatDialog} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -31,9 +31,9 @@ import {ConfirmDialogComponent} from '../../shared/confirm-dialog/confirm-dialog
 import {ShareStoryService} from '../../shared/share-story/share-story.service';
 import {buildReviewAnswerFieldState, type ReviewAnswerFieldState} from './review-answer-field';
 import {ReviewContextBadgeComponent} from './review-context-badge.component';
+import {ReviewFooterPrimaryButtonComponent, type ReviewFooterTone} from './review-footer-primary-button.component';
 import {buildReviewSessionBarState} from './review-session-bar';
 
-type ReviewFooterTone = 'neutral' | 'success' | 'error' | 'practice';
 type ReviewFooterIcon = 'none' | 'check' | 'error' | 'practice';
 type ReviewFooterAction = 'submit-answer' | 'acknowledge' | 'next';
 
@@ -80,7 +80,7 @@ function continueFooter(
 
 @Component({
 	selector: 'app-review-page',
-	imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent],
+	imports: [ReactiveFormsModule, VocoIconButtonComponent, VocoIconLinkComponent, VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoWarningButtonComponent, MatCardModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule, MatSnackBarModule, ReviewContextBadgeComponent, ReviewFooterPrimaryButtonComponent],
 	templateUrl: 'review-page.component.html',
 	styleUrls: ['review-page.component.scss', 'review-answer-feedback.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,

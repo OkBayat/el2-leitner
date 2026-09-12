@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { VocoButtonInteractionDirective, VocoSecondaryButtonComponent } from '../../../../voco-button';
 import type { SlideContentContext } from '../../../slide-content-contracts';
 import type { SlideOption, TruthSlideData } from '../../slide-library.models';
 import { SlideStimulusComponent } from '../../slide-stimulus.component';
@@ -31,7 +31,7 @@ const TRUTH_OPTIONS: Record<TruthSlideData['mode'], readonly SlideOption[]> = {
 @Component({
 	selector: 'app-truth-slide',
 	standalone: true,
-	imports: [MatButtonModule, SlideStimulusComponent],
+	imports: [VocoButtonInteractionDirective, VocoSecondaryButtonComponent, SlideStimulusComponent],
 	templateUrl: './truth-slide.component.html',
 	styleUrl: '../../slide-library.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

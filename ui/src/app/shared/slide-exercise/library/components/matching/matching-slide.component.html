@@ -11,7 +11,7 @@
 				<div class="matching-column" aria-label="Items to match">
 					@for (pair of data.pairs; track pair.id) {
 						<button
-							mat-stroked-button
+							vocoButtonInteraction
 							type="button"
 							[attr.data-state]="pairButtonState(pair.id)"
 							[attr.aria-pressed]="selectedLeftId() === pair.id"
@@ -28,7 +28,7 @@
 				<div class="matching-column" aria-label="Possible matches">
 					@for (option of rightOptions(); track option.id) {
 						<button
-							mat-stroked-button
+							vocoButtonInteraction
 							type="button"
 							[attr.data-state]="rightButtonState(option.id)"
 							[attr.aria-label]="

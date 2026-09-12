@@ -85,33 +85,44 @@ legacy UI, apply the bounded touch-to-refactor rule from the design reference.
 11. Run the skill validator, its Node focused tests, and the frontend
     design-system architecture check when UI source is affected.
 
-## Angular Material button rule
+## voco Button API rule
 
-Use Angular Material as the interaction primitive.
+Application code uses the shared `voco` Button API, never Angular Material
+button directives or legacy button classes directly:
 
-For a shared CTA, apply `vocora-button` and exactly one of:
+- `VocoPrimaryButtonComponent` / `voco-primary-button` for the main action;
+- `VocoSecondaryButtonComponent` / `voco-secondary-button` for a lower-emphasis alternative;
+- `VocoSuccessButtonComponent`, `VocoWarningButtonComponent`, and
+  `VocoErrorButtonComponent` with their matching `voco-*-button` selectors for
+  outcome-specific actions;
+- `VocoNavigationButtonComponent` / `voco-navigation-button` for imperative
+  flow navigation;
+- the corresponding `voco-*-link` component when native anchor behavior is
+  required;
+- `voco-icon-button` and `voco-audio-button` for icon-only and audio controls.
 
-- `vocora-button--primary`;
-- `vocora-button--success`;
-- `vocora-button--error`;
-- `vocora-button--warning`;
-- `vocora-button--secondary`.
+Handle a voco control's public action with `(activated)`. Do not bind feature
+logic to the custom-element host's native `(click)` event.
 
-Use `mat-flat-button` for filled intents and `mat-stroked-button` for the
-secondary intent. Use the native `disabled` attribute for every disabled
-state. Filled intents have no border. Secondary buttons retain their 2px
-`#E5E5E5` border in both enabled and disabled states. Disabled buttons have no
-lower edge. Light filled-disabled buttons use `#D9D9D9` with `#777777` labels;
-disabled secondary labels use `#D9D9D9`. Secondary labels use Charcoal
-(`#4B4B4B`) in both themes; the dark theme keeps the secondary button's Paper
-White surface for accessible contrast.
+Each semantic component is a distinct public class with a fixed intent and a
+shared private foundation inside `ui/src/app/shared/voco-button/**`; Angular
+Material remains a private implementation detail. Use native disabled behavior
+for buttons. Disabled Voco links remove `href` and `routerLink`, expose
+`aria-disabled="true"`, are removed from the tab order, and block mouse and
+keyboard activation.
 
-Do not apply CTA color classes to answer-option tiles or other content-sized
-selection controls. Their colors remain selection-owned, while the global
-Material button geometry keeps their height content-driven.
+Square `voco-audio-button` controls are only for icon-oriented audio transport
+and require an accessible name. Audio actions with visible text use a flexible
+semantic text button. Feature CSS owns layout and placement only; Voco owns
+button visuals. Selection controls remain native buttons and add
+`vocoButtonInteraction` only for the shared Material ripple/focus layer when
+CTA semantics would be incorrect.
 
-Do not create a feature-local Material override. Extend the central design
-tokens, central Material adapter, and this reference together.
+Do not create feature-local Material overrides. Extend the shared component,
+central design tokens, and this reference together. The architecture check
+must reject direct Material Button imports/directives and the removed
+`vocora-button` or `vocora-action-button` classes outside the shared
+implementation.
 
 ## Typography rule
 
@@ -150,7 +161,7 @@ The Python skill validator owns deterministic checks for:
 - complete light/dark semantic token parity;
 - required CSS variable parity with the token source;
 - required Material semantic mappings;
-- documented five-intent button contract and native disabled rule;
+- documented six-intent button contract and native disabled rule;
 - the documented UI primitive decision hierarchy;
 
 The canonical Node check at

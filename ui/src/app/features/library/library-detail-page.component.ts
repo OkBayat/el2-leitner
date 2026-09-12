@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit, computed, inject, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import {MatButtonModule} from '@angular/material/button';
+import { VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent } from '../../shared/voco-button';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
@@ -30,11 +30,12 @@ import {
 
 @Component({
   selector: 'app-library-detail-page',
-  imports: [MatButtonModule, MatChipsModule, MatProgressBarModule, MatTableModule],
+  imports: [VocoErrorButtonComponent, VocoIconButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, MatChipsModule, MatProgressBarModule, MatTableModule],
   template: `
     @if (collection(); as c) {
       <section class="detail-page" data-testid="library-detail-page">
-        <button mat-button class="back-action" (click)="back()">← Back to library</button>
+        <voco-navigation-link class="back-action" routerLink="/library"
+					>← Back to library</voco-navigation-link>
 
         <div class="detail-content">
           <h1>{{ c.title }}</h1>
@@ -57,36 +58,49 @@ import {
             @if (learningPaths.error()) {
               <div class="action-option" role="alert">
                 <p>{{ learningPaths.error() }}</p>
-                <button mat-stroked-button data-testid="course-detail-retry" (click)="reload()">Retry</button>
+                <voco-secondary-button
+									data-testid="course-detail-retry"
+									(activated)="reload()"
+									>Retry</voco-secondary-button>
               </div>
             } @else if (course(); as courseView) {
               <div class="action-option">
-                <button
-                  mat-flat-button
-                  data-testid="start-course-action"
-                  [disabled]="learningPaths.enteringId() === c.id"
-                  (click)="startCourse()"
-                >
+                <voco-primary-button
+									data-testid="start-course-action"
+									[disabled]="
+										learningPaths.enteringId() === c.id
+									"
+									(activated)="startCourse()"
+								>
                   @if (learningPaths.enteringId() === c.id) { Opening… } @else { {{ courseActionLabel(courseView.path.learnerStatus) }} }
-                </button>
+                </voco-primary-button>
                 <p>Start this course to follow a structured learning path with lessons, exercises, and progress tracking.</p>
                 @if (courseView.path.learnerStatus !== 'available') {
-                  <button mat-stroked-button data-testid="remove-course-action" (click)="removeCourse()">
+                  <voco-error-button
+										data-testid="remove-course-action"
+										(activated)="removeCourse()"
+									>
                     Remove Course
-                  </button>
+                  </voco-error-button>
                 }
               </div>
               <div class="action-option">
-                <button mat-stroked-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                <voco-secondary-button
+									data-testid="leitner-only-action"
+									(activated)="toggleSubscription()"
+								>
                   {{ leitnerActionLabel(c) }}
-                </button>
+                </voco-secondary-button>
                 <p>{{ leitnerDescription(c, true) }}</p>
               </div>
             } @else if (learningPaths.catalogReady()) {
               <div class="action-option">
-                <button mat-flat-button data-testid="leitner-only-action" (click)="toggleSubscription()">
+                <voco-primary-button
+									data-testid="leitner-only-action"
+									(activated)="toggleSubscription()"
+								>
                   {{ leitnerActionLabel(c) }}
-                </button>
+                </voco-primary-button>
                 <p>{{ leitnerDescription(c, false) }}</p>
               </div>
             }
@@ -94,9 +108,12 @@ import {
 
           @if (canManage()) {
             <div class="management-actions">
-              <button mat-stroked-button (click)="editCollection()">Edit collection</button>
-              <button mat-stroked-button (click)="importEntries()">Import file</button>
-              <button mat-stroked-button (click)="editEntry()">Add word</button>
+              <voco-secondary-button (activated)="editCollection()"
+								>Edit collection</voco-secondary-button>
+              <voco-secondary-button (activated)="importEntries()"
+								>Import file</voco-secondary-button>
+              <voco-secondary-button (activated)="editEntry()"
+								>Add word</voco-secondary-button>
             </div>
           }
 
@@ -117,8 +134,16 @@ import {
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let entry" class="entry-actions">
                     @if (canManage()) {
-                      <button mat-icon-button (click)="editEntry(entry)" title="Edit word" aria-label="Edit word">✎</button>
-                      <button mat-icon-button (click)="removeEntry(entry)" title="Delete word" aria-label="Delete word">×</button>
+                      <voco-icon-button
+												(activated)="editEntry(entry)"
+												title="Edit word"
+												aria-label="Edit word"
+												>✎</voco-icon-button>
+                      <voco-icon-button
+												(activated)="removeEntry(entry)"
+												title="Delete word"
+												aria-label="Delete word"
+												>×</voco-icon-button>
                     }
                   </td>
                 </ng-container>
@@ -144,14 +169,14 @@ import {
     .progress{display:grid;gap:8px}
     .learning-actions{display:grid;gap:12px}
     .action-option{display:grid;gap:8px;padding:16px;border:1px solid var(--vocora-border);border-radius:var(--vocora-radius-md);background:var(--vocora-surface-subtle)}
-    .action-option button{justify-self:start;min-height:var(--vocora-touch-target-min)}
+    .action-option>:is(voco-primary-button,voco-secondary-button,voco-error-button){justify-self:start}
     .action-option p{margin:0;color:var(--vocora-text-secondary);font:var(--mat-sys-body-medium);line-height:1.5}
     .management-actions{display:flex;flex-wrap:wrap;gap:8px}
     .table-wrap{overflow-x:auto}
     table{width:100%}
     .entry-actions{text-align:right;white-space:nowrap}
     .empty{padding:30px;text-align:center;color:var(--mat-sys-on-surface-variant)}
-    @media(max-width:640px){.action-option button{width:100%}.management-actions>*{flex:1 1 auto}.detail-content{width:100%}}
+    @media(max-width:640px){.action-option>:is(voco-primary-button,voco-secondary-button,voco-error-button){width:100%}.management-actions>*{flex:1 1 auto}.detail-content{width:100%}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -324,7 +349,4 @@ export class LibraryDetailPageComponent implements OnInit {
     await this.reload();
   }
 
-  back(): void {
-    void this.router.navigate(['/library']);
-  }
 }
