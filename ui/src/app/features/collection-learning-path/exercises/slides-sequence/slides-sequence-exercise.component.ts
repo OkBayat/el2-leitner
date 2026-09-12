@@ -73,6 +73,7 @@ function learnerResponse(
 	if (slideType === "error-correction")
 		return { correction: data["correction"] };
 	if (slideType === "rewrite") return { response: data["response"] };
+	if (slideType === "adaptive-conversation") return { conversationEvidenceId: data["conversationEvidenceId"] };
 	if (slideType === "writing-response")
 		return {
 			response: data["response"],

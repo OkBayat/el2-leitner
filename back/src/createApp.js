@@ -105,10 +105,9 @@ export function createApp({
       }
     })
   );
-  app.use(
-    /^\/api\/(?:learning-paths\/[^/]+\/lessons\/[^/]+\/exercises\/[^/]+\/slides\/[^/]+\/writing-feedback(?:\/|$)|writing-feedback(?:\/|$))/iu,
-    express.json({ limit: "16kb", strict: true }),
-  );
+  const privateTextJson = express.json({ limit: "16kb", strict: true });
+  const privateTextRoute = /^\/api\/(?:learning-paths\/[^/]+\/lessons\/[^/]+\/exercises\/[^/]+\/slides\/[^/]+\/(?:writing-feedback|conversation-sessions)(?:\/|$)|(?:writing-feedback|conversations)(?:\/|$))/iu;
+  app.use((req, res, next) => privateTextRoute.test(req.path) ? privateTextJson(req, res, next) : next());
   app.use(express.json({ limit: "10mb", strict: true }));
   app.use(cookieParser());
   app.get('/api/mobile/releases/:platform', (req, res) => {
@@ -128,6 +127,12 @@ export function createApp({
     });
     app.use("/api/learning-paths", container.writingFeedback.createTaskRouter({ authenticate }));
     app.use("/api/writing-feedback", container.writingFeedback.createJobRouter({ authenticate }));
+  }
+
+  if (container.adaptiveConversation) {
+    const authenticate = createAuthMiddleware({ tokenService: container.tokenService, getCurrentUser: container.useCases.getCurrentUser, cookieName: container.authCookie.name });
+    app.use("/api/learning-paths", container.adaptiveConversation.createTaskRouter({ authenticate }));
+    app.use("/api/conversations", container.adaptiveConversation.createRouter({ authenticate }));
   }
 
   // Production containers always expose the Learning Path module through

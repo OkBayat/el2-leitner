@@ -8,7 +8,7 @@ function boundedInteger(value, fallback, minimum, maximum, name) {
   return number;
 }
 
-export function loadWritingFeedbackConfig(env) {
+export function loadWritingFeedbackConfig(env, { requireProvider = false } = {}) {
   const rawEnabled = String(env.WRITING_FEEDBACK_ENABLED ?? "false").toLowerCase();
   if (!["false", "true"].includes(rawEnabled)) invalid("WRITING_FEEDBACK_ENABLED must be true or false.");
   const enabled = rawEnabled === "true";
@@ -26,12 +26,12 @@ export function loadWritingFeedbackConfig(env) {
     nativeLibrarySha256: env.WRITING_FEEDBACK_TOKENIZER_LIBRARY_SHA256?.trim() || "",
     timeoutMs: 30_000,
   };
-  if (enabled && (!/^sha256:[a-f0-9]{64}$/u.test(modelDigest)
+  if ((enabled || requireProvider) && (!/^sha256:[a-f0-9]{64}$/u.test(modelDigest)
     || !path.isAbsolute(tokenizer.modelPath) || !path.isAbsolute(tokenizer.manifestPath)
     || !path.isAbsolute(tokenizer.pythonExecutable)
     || !/^\d+\.\d+\.\d+$/u.test(tokenizer.llamaCppVersion)
     || !/^[a-f0-9]{64}$/u.test(tokenizer.nativeLibrarySha256))) {
-    invalid("Enabled Writing feedback requires the full model digest and pinned local tokenizer paths, version and library hash.");
+    invalid("Enabled local text feedback requires the full model digest and pinned local tokenizer paths, version and library hash.");
   }
   return {
     enabled, providerUrl, model: "qwen3:4b-instruct-2507-q4_K_M", modelDigest,

@@ -1,8 +1,9 @@
 import { WritingFeedbackRepository } from "../../../../application/writing-feedback/ports/WritingFeedbackRepository.js";
 import { AppError, ConflictError, NotFoundError, ValidationError } from "../../../../domain/errors.js";
+import { LocalTextInferencePersistence } from "../local-text-inference/LocalTextInferencePersistence.js";
 
 const dateColumn = (column, alias) => `DATE_FORMAT(${column}, '%Y-%m-%dT%H:%i:%s.%fZ') AS ${alias}`;
-const columns = `id, user_id AS userId, request_hash AS requestHash, idempotency_key AS idempotencyKey,
+export const writingFeedbackColumns = `id, user_id AS userId, request_hash AS requestHash, idempotency_key AS idempotencyKey,
   parent_submission_id AS parentSubmissionId, path_id AS pathId, lesson_id AS lessonId,
   exercise_id AS exerciseId, slide_id AS slideId, ${dateColumn("exercise_started_at", "exerciseStartedAt")},
   draft_text AS draftText, notes, task_context AS taskContext, evaluation_profile AS evaluationProfile, content_version AS contentVersion,
@@ -10,6 +11,7 @@ const columns = `id, user_id AS userId, request_hash AS requestHash, idempotency
   metrics_json AS metrics, error_code AS errorCode, worker_id AS workerId, lease_token AS leaseToken,
   ${dateColumn("lease_until", "leaseUntil")}, ${dateColumn("created_at", "createdAt")},
   ${dateColumn("updated_at", "updatedAt")}, ${dateColumn("expires_at", "expiresAt")}`;
+const columns = writingFeedbackColumns;
 
 function iso(value) {
   const date = new Date(value);
@@ -20,35 +22,22 @@ const sqlTime = (value) => iso(value).replace("T", " ").replace("Z", "");
 const json = (value) => value == null ? null : JSON.stringify(value);
 const parseJson = (value) => typeof value === "string" ? JSON.parse(value) : value ?? null;
 const bounded = (value, fallback, maximum) => Number.isSafeInteger(value) && value > 0 ? Math.min(value, maximum) : fallback;
-function mapRow(row) {
+export function mapWritingFeedbackRow(row) {
   if (!row) return null;
   const result = { ...row, userId: String(row.userId), attemptCount: Number(row.attemptCount), notes: row.notes ?? "" };
   for (const field of ["taskContext", "evaluationProfile", "result", "identity", "metrics"]) result[field] = parseJson(row[field]);
   for (const field of ["exerciseStartedAt", "createdAt", "updatedAt", "expiresAt", "leaseUntil"]) result[field] = row[field] == null ? null : iso(row[field]);
   return result;
 }
+const mapRow = mapWritingFeedbackRow;
 const missing = () => new NotFoundError("WRITING_FEEDBACK_NOT_FOUND", "Writing feedback was not found.");
 const queueFull = () => new AppError(429, "WRITING_FEEDBACK_QUEUE_FULL", "Writing feedback is busy. Try again later.");
 
 export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
-  constructor(pool) { super(); this.pool = pool; }
+  constructor(pool) { super(); this.pool = pool; this.shared = new LocalTextInferencePersistence(pool); }
 
   async transaction(operation) {
-    const connection = await this.pool.getConnection();
-    try {
-      await connection.beginTransaction();
-      const [rows] = await connection.execute(
-        `SELECT id, job_id AS jobId, lease_token AS leaseToken, ${dateColumn("lease_until", "leaseUntil")}
-         FROM writing_feedback_gate WHERE id = 1 FOR UPDATE`,
-      );
-      if (!rows[0]) throw new AppError(503, "WRITING_FEEDBACK_STORAGE_UNAVAILABLE", "Writing feedback storage is unavailable.");
-      const result = await operation(connection, rows[0]);
-      await connection.commit();
-      return result;
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally { connection.release(); }
+    return this.shared.transaction(operation);
   }
 
   async owned(connection, userId, id, lock = false) {
@@ -60,13 +49,7 @@ export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
   }
 
   async hasCapacity(connection, userId, now, maxQueued = 8, maxPerOwner = 2) {
-    const [rows] = await connection.execute(
-      `SELECT COUNT(*) AS activeCount, COALESCE(SUM(user_id = ?), 0) AS ownerCount
-       FROM writing_feedback_submissions WHERE status IN ('queued', 'running') AND expires_at > ?`,
-      [userId, sqlTime(now)],
-    );
-    return Number(rows[0].activeCount) < bounded(maxQueued, 8, 8)
-      && Number(rows[0].ownerCount) < bounded(maxPerOwner, 2, 2);
+    return this.shared.hasCapacity(connection, userId, now, maxQueued, maxPerOwner);
   }
 
   async enqueue(record, { maxQueued = 8, maxPerOwner = 2, maxPerOwnerDay = 20, now = new Date() } = {}) {
@@ -142,12 +125,13 @@ export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
   }
 
   async clearGate(connection) {
-    await connection.execute("UPDATE writing_feedback_gate SET job_id = NULL, worker_id = NULL, lease_token = NULL, lease_until = NULL WHERE id = 1");
+    return this.shared.clearGate(connection);
   }
 
   async claim({ workerId, leaseToken, now, leaseUntil, maxAttempts = 3, evaluationProfile = null }) {
     if (new Date(iso(leaseUntil)) <= new Date(iso(now))) throw new ValidationError("WRITING_FEEDBACK_INVALID_LEASE", "The worker lease must expire in the future.");
     return this.transaction(async (connection, gate) => {
+      if (gate.jobKind === "adaptive-conversation") return null;
       if (gate.leaseToken && gate.leaseUntil && new Date(gate.leaseUntil) > new Date(now)) return null;
       if (gate.leaseToken) {
         await connection.execute(
@@ -171,7 +155,7 @@ export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
         [workerId, leaseToken, sqlTime(leaseUntil), sqlTime(now), json(evaluationProfile), job.id],
       );
       await connection.execute(
-        `UPDATE writing_feedback_gate SET job_id = ?, worker_id = ?, lease_token = ?, lease_until = ? WHERE id = 1`,
+        `UPDATE writing_feedback_gate SET job_id = ?, worker_id = ?, lease_token = ?, lease_until = ?, job_kind = 'writing-feedback' WHERE id = 1`,
         [job.id, workerId, leaseToken, sqlTime(leaseUntil)],
       );
       return { ...job, evaluationProfile: job.evaluationProfile ?? evaluationProfile, status: "running", attemptCount: job.attemptCount + 1, workerId, leaseToken, leaseUntil: iso(leaseUntil), updatedAt: iso(now) };
@@ -181,6 +165,7 @@ export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
   async finish({ id, leaseToken, now, status, result = null, identity = null, metrics = null, errorCode = null }) {
     if (!["completed", "unavailable"].includes(status)) throw new ValidationError("WRITING_FEEDBACK_INVALID_STATUS", "A worker must complete feedback or record unavailability.");
     return this.transaction(async (connection, gate) => {
+      if (gate.jobKind === "adaptive-conversation") return false;
       if (gate.jobId !== id || gate.leaseToken !== leaseToken || !gate.leaseUntil || new Date(gate.leaseUntil) <= new Date(iso(now))) return false;
       const [updated] = await connection.execute(
         `UPDATE writing_feedback_submissions SET status = ?, result_json = ?, identity_json = ?, metrics_json = ?,

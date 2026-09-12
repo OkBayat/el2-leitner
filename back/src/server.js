@@ -36,7 +36,7 @@ const server = app.listen(config.port, () => {
   console.info(`Vazheyar is listening on port ${config.port}`);
 });
 
-container.writingFeedback.worker.start();
+container.localTextInference.worker.start();
 
 let stopping = false;
 async function shutdown(signal) {
@@ -44,7 +44,7 @@ async function shutdown(signal) {
   stopping = true;
   console.info(`${signal} received; shutting down.`);
 
-  const workerStopped = container.writingFeedback.worker.stop();
+  const workerStopped = Promise.all([container.localTextInference.worker.stop(), container.adaptiveConversation.stop()]);
   server.close(async (error) => {
     await workerStopped;
     await pool.end();

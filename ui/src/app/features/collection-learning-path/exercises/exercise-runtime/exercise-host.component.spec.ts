@@ -6,6 +6,8 @@ import type { ExerciseContextView } from '../../../../domain/collection-learning
 import { ExerciseHostComponent } from './exercise-host.component';
 import { CollectionLearningPathApiService } from '../../../../core/collection-learning-path/collection-learning-path-api.service';
 import { WritingResponseSlideComponent } from '../../../../shared/slide-exercise/library/components/writing-response/writing-response-slide.component';
+import { AdaptiveConversationSlideComponent } from '../../../../shared/slide-exercise/library/components/adaptive-conversation/adaptive-conversation-slide.component';
+import { AdaptiveConversationApiService } from '../../../../core/adaptive-conversation/adaptive-conversation-api.service';
 
 function context(type = 'vocabulary.intake'): ExerciseContextView {
   return {
@@ -27,6 +29,29 @@ function context(type = 'vocabulary.intake'): ExerciseContextView {
 }
 
 describe('ExerciseHostComponent', () => {
+  it('binds conversation to the displayed version and starts the exercise before allocating a session', async () => {
+    const history = vi.fn().mockResolvedValue({ pathContentVersion: 1, currentContentVersion: 'task-v1', availability: { enabled: true }, sessions: [] });
+    const start = vi.fn().mockRejectedValue(new Error('Provider unavailable.'));
+    TestBed.configureTestingModule({ imports: [ExerciseHostComponent], providers: [
+      { provide: CollectionLearningPathApiService, useValue: {} }, { provide: AdaptiveConversationApiService, useValue: { history, start } },
+    ] });
+    const fixture = TestBed.createComponent(ExerciseHostComponent);
+    let started!: (value: boolean) => void;
+    const ensureStarted = vi.fn(() => new Promise<boolean>(resolve => { started = resolve; }));
+    const conversation = context('slides.sequence'); conversation.exercise.completionPolicy = 'slide-sequence';
+    conversation.exercise.config = { slides: [
+      { id: 'conversation-slide', type: 'adaptive-conversation', data: { mode: 'guided-dialogue', goal: 'Talk about meals.', openingPrompt: 'What do you eat?', learnerLevel: 'beginner', minimumTurns: 2, maximumTurns: 3, responseSeconds: 5, questionConstraints: { maximumWords: 14, oneQuestionOnly: true, avoidAnswerDisclosure: true } } },
+      { id: 'summary', type: 'summary', terminal: true, data: {} },
+    ] };
+    fixture.componentRef.setInput('context', conversation); fixture.componentRef.setInput('ensureStarted', ensureStarted); fixture.detectChanges();
+    await vi.waitFor(() => expect(history).toHaveBeenCalled()); await fixture.whenStable(); fixture.detectChanges();
+    const component = fixture.debugElement.query(By.directive(AdaptiveConversationSlideComponent)).componentInstance as AdaptiveConversationSlideComponent;
+    const command = component.controller()!.start(); expect(ensureStarted).toHaveBeenCalledOnce(); expect(start).not.toHaveBeenCalled();
+    started(true); await command;
+    expect(start).toHaveBeenCalledWith({ pathId: 'path-1', lessonId: 'lesson-1', exerciseId: 'exercise-1', slideId: 'conversation-slide', expectedPathContentVersion: 1 }, expect.any(String));
+    expect(component.controller()?.session()).toBeNull();
+  });
+
   it('binds generic writing to the displayed task version and waits for exercise start before saving', async () => {
     const history = vi.fn().mockResolvedValue({ pathContentVersion: 1, currentContentVersion: 'task-v1', availability: { enabled: false, maxCharacters: 2000, maxWords: 80 }, submissions: [] });
     const save = vi.fn().mockResolvedValue({ id: 'draft-1', status: 'unavailable', draftText: 'I eat bread.', notes: '', parentSubmissionId: null, contentVersion: 'task-v1', errorCode: 'WRITING_FEEDBACK_DISABLED' });

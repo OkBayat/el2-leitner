@@ -173,3 +173,81 @@ their findings as regression cases and author a new untouched evaluation set.
 Model, quantization, prompt, rubric, tokenizer, locale or decoding changes require
 a fresh evaluation. This small synthetic set does not validate numeric IELTS
 scores, learning gains, transfer or multilingual feedback.
+
+## Adaptive conversation: synthetic text-turn experiment
+
+`adaptive-conversation-cases.json` adds 12 original synthetic E09 cases, with no
+recorded audio or private learner data. The task snapshot uses the canonical meal
+goal, two required turns, three maximum turns and fourteen-word questions. Cases
+cover natural short replies (`At home.` for a where question), grammatical but
+off-topic replies (`I drink milk.` for that same question), valid personal food
+choices, negation, Unicode, embedded instructions, unsupported personal details,
+answer disclosure and the minimum/maximum turn rules. Review criteria are stored
+separately and are never sent to the provider.
+
+The CLI uses the actual `OllamaConversationProvider` and matching pinned tokenizer.
+It shares argument, operator-metadata and deadline handling with the Writing
+experiment. Its default invocation performs no inference and creates no services:
+
+```sh
+node back/scripts/evaluate-adaptive-conversation.js
+node --test back/tests/adaptive-conversation-evaluation.test.js
+```
+
+On the isolated target host, reuse the observed `provider-config.json` and
+`operator-metadata.json` described above. Set `CONVERSATION_EVAL_BUDGET_MS` to the
+owner's accepted text-request latency budget before measuring, then run:
+
+```sh
+node back/scripts/evaluate-adaptive-conversation.js --run \
+  --provider-config /private/path/provider-config.json \
+  --operator-metadata /private/path/operator-metadata.json \
+  --latency-budget-ms "$CONVERSATION_EVAL_BUDGET_MS" \
+  --output /private/path/conversation-text-evaluation.json
+```
+
+The native executable and model/manifest files must be accessible before a real
+provider is constructed; actual identity hashes and token parity are still
+verified by the provider/tokenizer. Runs are sequential, without retries or
+warm-up. A harness deadline aborts the active request and stops remaining cases.
+An existing output file is never overwritten, and a new report uses owner-only
+permissions. Supplying configuration without `--run` remains a dry run.
+
+One case supplies the synthetic `insufficient_evidence` recognizer status. The
+server abstains without calling the model, so the default workload contains
+twelve provider requests and eleven planned model requests. Reports distinguish
+that path from `model_text_request`; a planned model request may still fail
+before generation. `model_path_wall_latency_ms` includes those failed attempts
+and excludes the fast server-abstention case. The request-budget flag requires
+all planned provider requests to succeed and the model-path p95 to meet the
+preselected budget. This small sample does not establish queue capacity or a
+reliable tail-latency estimate.
+
+Every result remains `pending_independent_review`, even after contract validation
+or a measured latency-budget pass; `release_decision` stays `not_established`.
+Apply the independent-review process above to relevance, valid alternatives,
+invented facts, beginner-level question quality, answer disclosure, abstention
+and unsupported acoustic/IELTS claims. Approve tolerances before judging outputs,
+retain both reviewers' initial judgments and resolve disagreements separately.
+Do not use reviewer criteria as prompt demonstrations or tune against this set
+while continuing to call it held out.
+
+This is **text-turn evidence only**. ASR accuracy, confidence calibration, Kokoro
+intelligibility, microphone behavior, the recorded-speech pipeline and co-located
+capacity remain `not_measured`. No audio or real model output was generated while
+authoring this bundle. On the actual host, separately observe these manual
+recorded-speech scenarios with consenting test speakers and synthetic personal
+facts; do not retain microphone audio in the production application:
+
+| Actual recording scenario | Evidence to record separately |
+| --- | --- |
+| A clear food → drink → place exchange, including the short reply “At home” | Intended words, displayed Vosk transcript and measured model identity; relevant feedback/follow-ups; audible accepted Kokoro questions; completion only after the required turns. |
+| A drink answer to a where question; a speaker who does not eat breakfast | Distinguish question relevance from grammaticality, preserve stated facts/negation, and check that follow-ups do not prescribe an answer. |
+| Silence, background noise or an uncertain/misrecognized reply from representative target speakers | Actual transcript/status and word evidence; no invented aggregate confidence; safe retry for missing evidence. Check how mistaken transcripts affect feedback rather than assuming the recognizer detected every error. |
+| Cancel/retry during recording, inference and playback; finish the third accepted turn | Microphone/stream cancellation and bounded recovery, unchanged question after abstention, valid final receipt and no extra question after the turn limit. |
+| The same bounded exchanges under documented cold/warm and co-located Writing/Vosk/Kokoro load | Request/queue timings, sample sizes, actual peak service RAM, failures and effect on existing speech/application responsiveness. |
+
+Keep the tested commit, runtime/container/model/tokenizer identities, host and
+workload record, human judgments and approved acceptance limits with the reports.
+Public sources and synthetic contract tests cannot replace this private-host
+evidence. The feature flags remain disabled until those separate gates are met.

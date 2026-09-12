@@ -456,6 +456,22 @@ describe("SlidesSequenceExerciseComponent", () => {
 		});
 	});
 
+	it("passes only the server conversation receipt into completion evidence", async () => {
+		const fixture = TestBed.createComponent(SlidesSequenceExerciseComponent);
+		const outcomes = vi.fn(); fixture.componentInstance.outcome.subscribe(outcomes);
+		fixture.componentInstance.load({ ...context, config: { slides: [
+			{ id: 'conversation', type: 'adaptive-conversation', data: { mode: 'guided-dialogue', goal: 'Talk about meals.', openingPrompt: 'What do you eat?', learnerLevel: 'beginner', minimumTurns: 2, maximumTurns: 3, responseSeconds: 5, questionConstraints: { maximumWords: 14, oneQuestionOnly: true, avoidAnswerDisclosure: true } } },
+			{ id: 'summary', type: 'summary', terminal: true, data: {} },
+		] } });
+		fixture.detectChanges();
+		const slides = fixture.debugElement.query(By.directive(SlideExerciseComponent)).componentInstance as SlideExerciseComponent;
+		slides.onContentEvent({ type: 'submitted', data: { conversationEvidenceId: 'receipt', transcript: 'private transcript', score: 2 } });
+		slides.next(); await fixture.componentInstance.finish('summary');
+		expect(outcomes).toHaveBeenCalledWith({ kind: 'completed', evidence: { schemaVersion: 1, results: [{
+			rootSlideId: 'conversation', slideType: 'adaptive-conversation', itemId: undefined, eventType: 'submitted', data: { conversationEvidenceId: 'receipt' },
+		}] } });
+	});
+
 	it("awaits an application-owned sequence completion handler before emitting completion", async () => {
 		TestBed.configureTestingModule({
 			imports: [SlidesSequenceExerciseComponent],

@@ -1,3 +1,4 @@
+import { loadConversationConfig } from "./loadConversationConfig.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ValidationError } from "../domain/errors.js";
@@ -145,6 +146,7 @@ export function loadConfig(env = process.env) {
     throw new ValidationError("INVALID_CONFIGURATION", "KOKORO_TTS_URL must be an HTTP(S) URL.");
   }
 
+  const adaptiveConversation = loadConversationConfig(env);
   return {
     nodeEnv,
     port: numberFromEnv(env.PORT, 3000, "PORT"),
@@ -154,7 +156,8 @@ export function loadConfig(env = process.env) {
       android: mobileReleaseFromEnv(env, 'android'),
       ios: mobileReleaseFromEnv(env, 'ios')
     },
-    writingFeedback: loadWritingFeedbackConfig(env),
+    writingFeedback: loadWritingFeedbackConfig(env, { requireProvider: adaptiveConversation.enabled }),
+    adaptiveConversation,
     shadowing: { url: env.SHADOWING_SPEECH_URL?.trim() || "" },
     tts: {
       providerUrl: ttsProviderUrl,

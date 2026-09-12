@@ -22,11 +22,14 @@ import { createLearningPathExerciseRegistry } from './learning-path-exercise-reg
 import { UnsupportedExerciseComponent } from './unsupported-exercise.component';
 import { WritingFeedbackService } from '../../../../core/writing-feedback/writing-feedback.service';
 import type { WritingFeedbackControllerFactory } from '../../../../shared/slide-exercise/writing-feedback-contracts';
+import { AdaptiveConversationService } from '../../../../core/adaptive-conversation/adaptive-conversation.service';
+import type { AdaptiveConversationControllerFactory } from '../../../../shared/slide-exercise/adaptive-conversation-contracts';
 
 function runtimeContext(
   context: ExerciseContextView,
   ensureStarted?: () => Promise<boolean>,
   writingFeedback?: WritingFeedbackControllerFactory,
+  adaptiveConversation?: AdaptiveConversationControllerFactory,
 ): ExerciseContext {
   return {
     pathId: context.path.id,
@@ -40,6 +43,7 @@ function runtimeContext(
     payload: context.payload,
     ensureStarted,
     writingFeedback,
+    adaptiveConversation,
   };
 }
 
@@ -123,6 +127,10 @@ export class ExerciseHostComponent implements OnInit, OnChanges, OnDestroy {
       const ensureStarted = this.ensureStarted;
       this.componentRef.instance.load(runtimeContext(context, ensureStarted, (slideId) =>
         this.injector.get(WritingFeedbackService).create({
+          pathId: context.path.id, lessonId: context.lesson.id, exerciseId: context.exercise.id, slideId,
+          expectedPathContentVersion: Number(context.path.contentVersion),
+        }, ensureStarted),
+        (slideId) => this.injector.get(AdaptiveConversationService).create({
           pathId: context.path.id, lessonId: context.lesson.id, exerciseId: context.exercise.id, slideId,
           expectedPathContentVersion: Number(context.path.contentVersion),
         }, ensureStarted),

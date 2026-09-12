@@ -1,5 +1,6 @@
 import type { Observable } from 'rxjs';
 import type { WritingFeedbackControllerFactory } from '../../../../shared/slide-exercise/writing-feedback-contracts';
+import type { AdaptiveConversationControllerFactory } from '../../../../shared/slide-exercise/adaptive-conversation-contracts';
 import type { NumberInputSlideExpansionHandler, PronunciationPracticeController, SelectionSlideExpansionHandler, SlideExerciseResult } from '../../../../shared/slide-exercise';
 import type {
   CompletedLearningPathExerciseOutcome,
@@ -21,6 +22,7 @@ export interface ExerciseContext<TPayload = unknown> {
   readonly numberInputExpansion?: NumberInputSlideExpansionHandler;
   readonly pronunciationPractice?: PronunciationPracticeController;
   readonly writingFeedback?: WritingFeedbackControllerFactory;
+  readonly adaptiveConversation?: AdaptiveConversationControllerFactory;
   readonly slideResult?: (result: SlideExerciseResult) => Promise<void>;
   readonly sequenceCompletion?: (results: readonly SlideExerciseResult[]) => Promise<void>;
 }

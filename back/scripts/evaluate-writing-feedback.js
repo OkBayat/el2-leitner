@@ -89,11 +89,11 @@ function validateDataset(dataset) {
   }
 }
 
-function percentile(sorted, fraction) {
+export function percentile(sorted, fraction) {
   return sorted.length ? sorted[Math.max(0, Math.ceil(sorted.length * fraction) - 1)] : null;
 }
 
-async function timedAttempt(provider, request, timeoutMs, now) {
+export async function timedAttempt(provider, request, timeoutMs, now) {
   const controller = new AbortController();
   const started = now();
   let timer;
@@ -186,7 +186,7 @@ export async function evaluateCases({
   return report;
 }
 
-async function readJson(filename) {
+export async function readJson(filename) {
   try { return JSON.parse(await readFile(filename, 'utf8')); }
   catch { throw new Error('Could not read valid JSON from a supplied configuration or case file.'); }
 }
