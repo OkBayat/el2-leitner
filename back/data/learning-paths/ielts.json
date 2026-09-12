@@ -229,7 +229,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "Food, liquids and actions",
-                  "markdown": "**Bread** and **rice** are foods. **Water** and **milk** are liquids: you can drink them.\n\n**Eat** and **drink** are actions.\n\n- I **eat bread**.\n- I **drink milk**.\n\nA **noun** names something. A **verb** gives an action here."
+                  "markdown": "### Names and actions\n**Bread** and **rice** are foods. **Water** and **milk** are liquids: you can drink them.\n\n**Eat** and **drink** are actions.\n\n- I **eat bread**.\n- I **drink milk**.\n\nA **noun** names something. A **verb** gives an action here."
                 },
                 "chrome": {
                   "header": {
@@ -459,7 +459,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "Who? Action? What?",
-                  "markdown": "Start with **who**, then the **action**, then **what**.\n\n**I eat rice.**\n\n- **I**: the person speaking (subject).\n- **eat**: the action (verb).\n- **rice**: the food (object)."
+                  "markdown": "### Build a message\nStart with **who**, then the **action**, then **what**.\n\n**I eat rice.**\n\n- **I**: the person speaking (subject).\n- **eat**: the action (verb).\n- **rice**: the food (object)."
                 },
                 "chrome": {
                   "header": {
@@ -473,7 +473,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "I, you, we, they",
-                  "markdown": "- **I**: the person speaking.\n- **you**: the person or people I speak to.\n- **we**: I and another person, or more people.\n- **they**: other people.\n\nUse **eat** and **drink** with all four: *I eat. You eat. We eat. They eat.*"
+                  "markdown": "### Choose the person\n- **I**: the person speaking.\n- **you**: the person or people I speak to.\n- **we**: I and another person, or more people.\n- **they**: other people.\n\nUse **eat** and **drink** with all four: *I eat. You eat. We eat. They eat.*"
                 },
                 "chrome": {
                   "header": {
@@ -537,7 +537,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "Start and finish a statement",
-                  "markdown": "Use a **capital letter** at the start. Always write **I**, even inside a sentence.\n\nUse a **full stop** at the end of a statement.\n\n*we drink water* → **We drink water.**"
+                  "markdown": "### Check the writing\nUse a **capital letter** at the start. Always write **I**, even inside a sentence.\n\nUse a **full stop** at the end of a statement.\n\n*we drink water* → **We drink water.**"
                 },
                 "chrome": {
                   "header": {
@@ -637,7 +637,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "A meal you have regularly",
-                  "markdown": "**I eat rice.** can describe a meal I have regularly. This is the **present simple**.\n\nKeep the same order for a new person or food:\n- I eat rice.\n- We eat bread.\n- They drink milk."
+                  "markdown": "### Regular actions\n**I eat rice.** can describe a meal I have regularly. This is the **present simple**.\n\nKeep the same order for a new person or food:\n- I eat rice.\n- We eat bread.\n- They drink milk."
                 },
                 "chrome": {
                   "header": {
@@ -730,7 +730,7 @@
                 "data": {
                   "mode": "warning",
                   "title": "One action is enough here",
-                  "markdown": "Write **I eat rice.**\n\nDo not add **am**: *I am eat rice* is incorrect.\n\nWrite **We drink water.**\n\nDo not add **are**: *We are drink water* is incorrect."
+                  "markdown": "### Use the action directly\nWrite **I eat rice.**\n\nDo not add **am**: *I am eat rice* is incorrect.\n\nWrite **We drink water.**\n\nDo not add **are**: *We are drink water* is incorrect."
                 },
                 "chrome": {
                   "header": {
@@ -792,7 +792,7 @@
                 "data": {
                   "mode": "usage",
                   "title": "Learn a complete phrase",
-                  "markdown": "**Have breakfast** means eat the first meal of the day.\n\n**Drink water** names an action and a liquid.\n\n- We **have breakfast** at home.\n- I **drink water**.\n\n**Eat breakfast** is also natural. *Have water* can also mean drink water; it is not always wrong."
+                  "markdown": "### Two useful chunks\n**Have breakfast** means eat the first meal of the day.\n\n**Drink water** names an action and a liquid.\n\n- We **have breakfast** at home.\n- I **drink water**.\n\n**Eat breakfast** is also natural. *Have water* can also mean drink water; it is not always wrong."
                 },
                 "chrome": {
                   "header": {
@@ -856,7 +856,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "At home; in the morning",
-                  "markdown": "**At home** tells us where: the place you live.\n\n**In the morning** tells us when: the early part of the day.\n\n- We have breakfast **at home**.\n- I drink milk **in the morning**.\n\nPut the place or time after the simple message."
+                  "markdown": "### Add where or when\n**At home** tells us where: the place you live.\n\n**In the morning** tells us when: the early part of the day.\n\n- We have breakfast **at home**.\n- I drink milk **in the morning**.\n\nPut the place or time after the simple message."
                 },
                 "chrome": {
                   "header": {
@@ -943,7 +943,7 @@
                 "data": {
                   "mode": "tip",
                   "title": "Hear the words together",
-                  "markdown": "Listen to the **whole phrase**. Words do not always have a long pause between them.\n\nIn **drink water**, keep the end of *drink*. In **milk**, listen for the final sound.\n\n**Bread** has one syllable (one beat), even though it has two vowel letters.\n\nReplay while learning. This is practice, not an exam recording."
+                  "markdown": "### Word endings and phrases\nListen to the **whole phrase**. Words do not always have a long pause between them.\n\nIn **drink water**, keep the end of *drink*. In **milk**, listen for the final sound.\n\n**Bread** has one syllable (one beat), even though it has two vowel letters.\n\nReplay while learning. This is practice, not an exam recording."
                 },
                 "chrome": {
                   "header": {
@@ -1097,7 +1097,7 @@
                 "data": {
                   "mode": "tip",
                   "title": "Listen for the reply",
-                  "markdown": "**What do you eat?** asks about food.\n\n**Do you drink milk?** can have a yes or no answer.\n\nListen to the **reply**, not only the question.\n\n- Do you eat rice?\n- No. I eat bread.\n\nThe reply gives **bread**."
+                  "markdown": "### Hear the answer\n**What do you eat?** asks about food.\n\n**Do you drink milk?** can have a yes or no answer.\n\nListen to the **reply**, not only the question.\n\n- Do you eat rice?\n- No. I eat bread.\n\nThe reply gives **bread**."
                 },
                 "chrome": {
                   "header": {
@@ -1111,7 +1111,7 @@
                 "data": {
                   "mode": "rule",
                   "title": "People and places in the conversation",
-                  "markdown": "**Brother**: a boy or man with the same parents.\n**Sister**: a girl or woman with the same parents.\n**With me**: together with the person speaking.\n**Sit**: be on a chair.\n**Table**: furniture for meals.\n**Small**: not big."
+                  "markdown": "### Useful support words\n**Brother**: a boy or man with the same parents.\n**Sister**: a girl or woman with the same parents.\n**With me**: together with the person speaking.\n**Sit**: be on a chair.\n**Table**: furniture for meals.\n**Small**: not big."
                 },
                 "chrome": {
                   "header": {
@@ -1125,7 +1125,7 @@
                 "data": {
                   "mode": "tip",
                   "title": "Complete the listening form",
-                  "markdown": "Two people will talk about meals. Read the name beside each gap.\n\n1. Listen for **who** is speaking.\n2. Listen for their **food** or **drink**.\n3. Write **one word** in each gap.\n\nYou can listen up to three times in this practice. The real IELTS recording is heard once."
+                  "markdown": "### Names and details\nTwo people will talk about meals. Read the name beside each gap.\n\n1. Listen for **who** is speaking.\n2. Listen for their **food** or **drink**.\n3. Write **one word** in each gap.\n\nYou can listen up to three times in this practice. The real IELTS recording is heard once."
                 },
                 "chrome": {
                   "header": {
@@ -1233,7 +1233,7 @@
                 "data": {
                   "mode": "tip",
                   "title": "Check the words you heard",
-                  "markdown": "Read this **after** completing the form.\n\n**Ari:** Hello, Jo. What do you eat in the morning?\n\n**Jo:** I eat rice.\n\n**Ari:** Do you drink milk?\n\n**Jo:** No. I drink water.\n\n**Ari:** I eat bread and drink milk.\n\n**Jo:** Do you eat at home?\n\n**Ari:** Yes. My sister eats with me.\n\n**Jo:** I eat with my brother. We sit at a small table."
+                  "markdown": "### Ari and Jo\nRead this **after** completing the form.\n\n**Ari:** Hello, Jo. What do you eat in the morning?\n\n**Jo:** I eat rice.\n\n**Ari:** Do you drink milk?\n\n**Jo:** No. I drink water.\n\n**Ari:** I eat bread and drink milk.\n\n**Jo:** Do you eat at home?\n\n**Ari:** Yes. My sister eats with me.\n\n**Jo:** I eat with my brother. We sit at a small table."
                 },
                 "chrome": {
                   "header": {
@@ -1288,7 +1288,7 @@
                   "mode": "word",
                   "instruction": "These words help you follow the times in the story.",
                   "title": "When do people eat?",
-                  "markdown": "- **morning**: the early part of the day.\n- **lunch**: a meal in the middle of the day.\n- **evening**: the part of the day near the end.\n- **Sunday**: the name of a day. It starts with a capital **S**."
+                  "markdown": "### Time words\n- **morning**: the early part of the day.\n- **lunch**: a meal in the middle of the day.\n- **evening**: the part of the day near the end.\n- **Sunday**: the name of a day. It starts with a capital **S**."
                 }
               },
               {
@@ -1303,7 +1303,7 @@
                   "mode": "word",
                   "instruction": "Read these helpful words. Mina, Sam and Jo are names.",
                   "title": "People and meals",
-                  "markdown": "- **brother**: a boy or man with the same parent or parents as you.\n- **friend**: a person you know and like.\n- **family**: people such as parents, brothers and sisters.\n- **meal**: a time when you eat, such as breakfast or lunch.\n- **like**: enjoy; feel good about something."
+                  "markdown": "### Family and meals\n- **brother**: a boy or man with the same parent or parents as you.\n- **friend**: a person you know and like.\n- **family**: people such as parents, brothers and sisters.\n- **meal**: a time when you eat, such as breakfast or lunch.\n- **like**: enjoy; feel good about something."
                 }
               },
               {
@@ -1318,7 +1318,7 @@
                   "mode": "word",
                   "instruction": "Learn the place and size words before reading.",
                   "title": "Where people eat",
-                  "markdown": "- **at home**: in the place where you live.\n- **table**: furniture with a flat top; you can put food on it.\n- **small** and **large** describe size. **Large** means big. They are opposites."
+                  "markdown": "### Place and size\n- **at home**: in the place where you live.\n- **table**: furniture with a flat top; you can put food on it.\n- **small** and **large** describe size. **Large** means big. They are opposites."
                 }
               },
               {
@@ -1333,7 +1333,7 @@
                   "mode": "usage",
                   "instruction": "Small words help you follow the people.",
                   "title": "Who do these small words mean?",
-                  "markdown": "- **I**: the person speaking or writing. **My** means belonging to that person.\n- **We**: the speaker or writer and another person or people.\n- **Our**: belonging to the group. **Us** is the group after **with**.\n- **Both** means the two people together.\n\nIn **We both eat**, two people eat. Follow who is speaking to know which people."
+                  "markdown": "### Follow the group\n- **I**: the person speaking or writing. **My** means belonging to that person.\n- **We**: the speaker or writer and another person or people.\n- **Our**: belonging to the group. **Us** is the group after **with**.\n- **Both** means the two people together.\n\nIn **We both eat**, two people eat. Follow who is speaking to know which people."
                 }
               },
               {
@@ -1348,7 +1348,7 @@
                   "mode": "usage",
                   "instruction": "Recognise these forms in the story. You can still use I and we in your own answers.",
                   "title": "A name and he",
-                  "markdown": "**Ali eats bread. He drinks milk.**\n\n**He** refers to Ali. These are two statements about the same person.\n\nWith **I** and **we**, read **eat** and **drink**. With **Ali** or **he**, read **eats** and **drinks**. The action has the same meaning.\n\n**Their table** means the table belonging to the people just mentioned."
+                  "markdown": "### Follow one person\n**Ali eats bread. He drinks milk.**\n\n**He** refers to Ali. These are two statements about the same person.\n\nWith **I** and **we**, read **eat** and **drink**. With **Ali** or **he**, read **eats** and **drinks**. The action has the same meaning.\n\n**Their table** means the table belonging to the people just mentioned."
                 }
               },
               {
@@ -1363,7 +1363,7 @@
                   "mode": "tip",
                   "instruction": "Practise the answer format before the story.",
                   "title": "Write the answer, not a full sentence",
-                  "markdown": "Read the question to know what to find.\n\n- **Who?** Find a person.\n- **What does someone eat or drink?** Find the food or drink.\n\nExample: **My name is Ali.**\nQuestion: **What is the name? Write ONE WORD.**\nAnswer: **Ali**.\n\nGive just the word. You do not need to type an explanation."
+                  "markdown": "### Use one word\nRead the question to know what to find.\n\n- **Who?** Find a person.\n- **What does someone eat or drink?** Find the food or drink.\n\nExample: **My name is Ali.**\nQuestion: **What is the name? Write ONE WORD.**\nAnswer: **Ali**.\n\nGive just the word. You do not need to type an explanation."
                 }
               },
               {
@@ -1427,7 +1427,7 @@
                   "mode": "rule",
                   "instruction": "Learn the three labels. This example is separate from Mina's story.",
                   "title": "True, false or not given?",
-                  "markdown": "Use only the text.\n\n- **TRUE**: the text agrees.\n- **FALSE**: the text says the opposite.\n- **NOT GIVEN**: the text does not tell you.\n\nPractice text: **The table is large.**\n- The table is large. **TRUE**.\n- The table is small. **FALSE**.\n- The table is ten years old. **NOT GIVEN**: we do not know its age.\n\n**Twenty years old** tells a person's age. No information about age means **NOT GIVEN**, not **FALSE**."
+                  "markdown": "### Find support in the text\nUse only the text.\n\n- **TRUE**: the text agrees.\n- **FALSE**: the text says the opposite.\n- **NOT GIVEN**: the text does not tell you.\n\nPractice text: **The table is large.**\n- The table is large. **TRUE**.\n- The table is small. **FALSE**.\n- The table is ten years old. **NOT GIVEN**: we do not know its age.\n\n**Twenty years old** tells a person's age. No information about age means **NOT GIVEN**, not **FALSE**."
                 }
               },
               {
@@ -1641,7 +1641,7 @@
                 "data": {
                   "mode": "usage",
                   "title": "Bread, rice, water and milk",
-                  "markdown": "For these food and drink meanings, use the simple forms:\n\n- I eat **bread**.\n- We eat **rice**.\n- They drink **water**.\n- You drink **milk**.\n\nDo not add **a** to bread or rice in these general meal sentences. We will learn portions and containers later."
+                  "markdown": "### General food meanings\nFor these food and drink meanings, use the simple forms:\n\n- I eat **bread**.\n- We eat **rice**.\n- They drink **water**.\n- You drink **milk**.\n\nDo not add **a** to bread or rice in these general meal sentences. We will learn portions and containers later."
                 },
                 "chrome": {
                   "header": {
@@ -1728,7 +1728,7 @@
                 "data": {
                   "mode": "tip",
                   "title": "Recall without a word bank",
-                  "markdown": "Use the **meaning cue** to find a lesson word. Then check the sentence.\n\nUse only words you have learned. You do not need to guess anyone’s meal."
+                  "markdown": "### Meaning before spelling\nUse the **meaning cue** to find a lesson word. Then check the sentence.\n\nUse only words you have learned. You do not need to guess anyone’s meal."
                 },
                 "chrome": {
                   "header": {
@@ -1878,7 +1878,7 @@
                   "mode": "tip",
                   "instruction": "Use the words and sentence order you have already practised.",
                   "title": "Build two short statements",
-                  "markdown": "Say **what you eat** and **what you drink**.\n\n- **I eat** + food.\n- **I drink** + a drink.\n\nKeep the person first, then the action. Two short statements can give a clear answer. You may describe a real or invented meal."
+                  "markdown": "### Food and drink\nSay **what you eat** and **what you drink**.\n\n- **I eat** + food.\n- **I drink** + a drink.\n\nKeep the person first, then the action. Two short statements can give a clear answer. You may describe a real or invented meal."
                 }
               },
               {
@@ -1893,7 +1893,7 @@
                   "mode": "usage",
                   "instruction": "Listen, then try the sentence pattern.",
                   "title": "Listen to two complete statements",
-                  "markdown": "**I eat rice. I drink milk.**\n\nThe first statement tells us the food. The second tells us the drink. Hear the small pause between them.\n\nSay the two statements quietly once. Notice the ending of **eat** and **drink**. Keep the words clear; you do not need to copy a particular accent.",
+                  "markdown": "### Hear a short model\n**I eat rice. I drink milk.**\n\nThe first statement tells us the food. The second tells us the drink. Hear the small pause between them.\n\nSay the two statements quietly once. Notice the ending of **eat** and **drink**. Keep the words clear; you do not need to copy a particular accent.",
                   "stimulus": {
                     "type": "dialogue",
                     "turns": [
@@ -1939,7 +1939,7 @@
                   "mode": "tip",
                   "instruction": "Prepare ideas without writing a script.",
                   "title": "Now choose your own message",
-                  "markdown": "Choose the food and drink for your morning meal. Your facts may be different from the model.\n\nSay two or three complete statements. You may add **in the morning** or **at home**.\n\nOn the next screen, speak from your ideas. You do not need to use all eight lesson items."
+                  "markdown": "### Your morning meal\nChoose the food and drink for your morning meal. Your facts may be different from the model.\n\nSay two or three complete statements. You may add **in the morning** or **at home**.\n\nOn the next screen, speak from your ideas. You do not need to use all eight lesson items."
                 }
               },
               {
@@ -1971,7 +1971,7 @@
                   "mode": "tip",
                   "instruction": "Use your own answer. Do not invent a mistake.",
                   "title": "Choose one speaking improvement",
-                  "markdown": "Think about the recording you just heard.\n\n1. Did you name a food **and** a drink?\n2. Did each statement have a person and an action?\n3. Could you hear each food or drink word clearly?\n\nChoose one small change: add a missing detail, fix the word order, or make a word clearer. If your message is clear, keep it and try a more comfortable pause.\n\nThis is your self-check. It is not a pronunciation score."
+                  "markdown": "### Improve one thing\nThink about the recording you just heard.\n\n1. Did you name a food **and** a drink?\n2. Did each statement have a person and an action?\n3. Could you hear each food or drink word clearly?\n\nChoose one small change: add a missing detail, fix the word order, or make a word clearer. If your message is clear, keep it and try a more comfortable pause.\n\nThis is your self-check. It is not a pronunciation score."
                 }
               },
               {
@@ -2033,7 +2033,7 @@
                   "mode": "tip",
                   "instruction": "Write a few planning words, not a complete script.",
                   "title": "Plan one meal",
-                  "markdown": "Choose **one meal**, such as breakfast. Keep the whole message about that meal.\n\nPlan three things:\n- **Who?** You can use **I** or **we**.\n- **Food?** What do you eat?\n- **Drink?** What do you drink?\n\nYou may add **at home** or **in the morning**. Use only the lesson words that fit your message."
+                  "markdown": "### Who, food and drink\nChoose **one meal**, such as breakfast. Keep the whole message about that meal.\n\nPlan three things:\n- **Who?** You can use **I** or **we**.\n- **Food?** What do you eat?\n- **Drink?** What do you drink?\n\nYou may add **at home** or **in the morning**. Use only the lesson words that fit your message."
                 }
               },
               {
@@ -2048,7 +2048,7 @@
                   "mode": "rule",
                   "instruction": "Notice where each sentence starts and finishes.",
                   "title": "Make each sentence complete",
-                  "markdown": "**We eat bread. We drink water.**\n\nEach sentence starts with a person (**We**), then an action (**eat**, **drink**), then what is eaten or drunk.\n\nStart the sentence with a capital letter. End with a full stop. The word **I** always has a capital letter.\n\nTwo clear sentences are better than one unfinished sentence."
+                  "markdown": "### A clear written message\n**We eat bread. We drink water.**\n\nEach sentence starts with a person (**We**), then an action (**eat**, **drink**), then what is eaten or drunk.\n\nStart the sentence with a capital letter. End with a full stop. The word **I** always has a capital letter.\n\nTwo clear sentences are better than one unfinished sentence."
                 }
               },
               {
@@ -2093,7 +2093,7 @@
                   "mode": "tip",
                   "instruction": "Use this checklist for your own message.",
                   "title": "Read, choose one change, write again",
-                  "markdown": "Think about the first version you just read.\n\n1. Is the whole message about **one meal**?\n2. Did you say **who**, **what food**, and **what drink**?\n3. Does each sentence have the person before the action?\n4. Did you use capital **I**, sentence capitals and full stops?\n\nChoose one useful change. If you find no error, add a clear time or place. Do not copy the model's meal facts."
+                  "markdown": "### Keep your own facts\nThink about the first version you just read.\n\n1. Is the whole message about **one meal**?\n2. Did you say **who**, **what food**, and **what drink**?\n3. Does each sentence have the person before the action?\n4. Did you use capital **I**, sentence capitals and full stops?\n\nChoose one useful change. If you find no error, add a clear time or place. Do not copy the model's meal facts."
                 }
               },
               {
