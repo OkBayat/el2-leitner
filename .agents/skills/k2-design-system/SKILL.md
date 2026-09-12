@@ -161,7 +161,7 @@ The Python skill validator owns deterministic checks for:
 - complete light/dark semantic token parity;
 - required CSS variable parity with the token source;
 - required Material semantic mappings;
-- documented five-intent button contract and native disabled rule;
+- documented six-intent button contract and native disabled rule;
 - the documented UI primitive decision hierarchy;
 
 The canonical Node check at

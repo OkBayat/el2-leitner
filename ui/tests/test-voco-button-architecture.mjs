@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { extractInlineStyles } from './design-system-architecture.mjs';
+
 const uiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const appRoot = path.join(uiRoot, 'src', 'app');
 const implementationRoot = path.join(appRoot, 'shared', 'voco-button');
@@ -34,6 +36,15 @@ function relative(file) {
   return path.relative(uiRoot, file);
 }
 
+function privateVocoStyleSources(file, source) {
+  if (/\.(?:scss|css|sass|less)$/u.test(file)) return [source];
+  return file.endsWith('.ts') ? extractInlineStyles(source) : [];
+}
+
+function targetsPrivateVocoStyles(file, source) {
+  return privateVocoStyleSources(file, source).some((style) => internalVocoStylePattern.test(style));
+}
+
 function isSelectionInteractionTag(tag) {
   return /(?:class\s*=\s*["'][^"']*\b(?:choice-option|classification-item|cloze-choice-blank)\b|aria-(?:checked|current|pressed)|data-testid\s*=\s*["']selection-option["']|\[attr\.data-state\]|\[attr\.data-item-id\])/u.test(tag);
 }
@@ -44,6 +55,29 @@ assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="lib
 assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction aria-label="Move item up">↑</button>'), false);
 assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="choice-option" [attr.aria-checked]="selected">'), true);
 
+for (const inlineStyle of [
+  '.voco-button { min-width: 10rem; }',
+  '.voco-icon-button--selected { color: inherit; }',
+  '.voco-audio-button { width: 100%; }',
+]) {
+  assert.equal(
+    targetsPrivateVocoStyles(
+      'src/app/features/example/example.component.ts',
+      `import { Component } from '@angular/core'; @Component({ styles: [\`${inlineStyle}\`] }) export class ExampleComponent {}`,
+    ),
+    true,
+    `Angular inline styles must not target private Voco classes: ${inlineStyle}`,
+  );
+}
+assert.equal(
+  targetsPrivateVocoStyles(
+    'src/app/features/example/example.component.ts',
+    `const selectorDocumentation = '.voco-button';`,
+  ),
+  false,
+  'Non-style TypeScript strings must not be treated as CSS selectors.',
+);
+
 const violations = [];
 for (const file of sourceFiles(appRoot)) {
   if (file.startsWith(`${implementationRoot}${path.sep}`)) continue;
@@ -53,7 +87,7 @@ for (const file of sourceFiles(appRoot)) {
   if (legacyClassPattern.test(source)) violations.push(`${relative(file)} uses a legacy Vocora button class`);
   if (nativeVocoClickPattern.test(source)) violations.push(`${relative(file)} binds native click instead of voco activation`);
   if (staleMaterialButtonVariablePattern.test(source)) violations.push(`${relative(file)} owns a Material button CSS variable`);
-  if (/\.(?:scss|css|sass|less)$/u.test(file) && internalVocoStylePattern.test(source)) {
+  if (targetsPrivateVocoStyles(file, source)) {
     violations.push(`${relative(file)} targets a private voco implementation class`);
   }
   if (!file.endsWith('.spec.ts') && nestedNativeControlPattern.test(source)) {
