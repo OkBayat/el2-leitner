@@ -17,14 +17,14 @@ Read this document with [Shadowing](SHADOWING.md), [TTS](TTS.md), the
 
 ```text
 server-owned opening question
-    -> existing Kokoro TTS boundary
+    -> application-owned, turn-bound TTS operation -> existing Kokoro provider
     -> browser playback
     -> existing PCM recorder captures the learner's answer
     -> authenticated backend streams PCM to the private ASR boundary
     -> server preserves the transcript and ASR uncertainty
     -> private text-model adapter evaluates the answer and proposes one next question
     -> backend validates the structured result and question
-    -> existing Kokoro TTS boundary synthesizes the accepted question
+    -> turn-bound TTS operation synthesizes the accepted question with Kokoro
     -> browser playback starts the next turn
 ```
 
@@ -113,7 +113,13 @@ If the transcript is empty or ASR reports insufficient evidence, no learner erro
 is recorded and the user can record again. If model output is invalid, unsafe,
 truncated, too long, or outside the schema, the turn enters a retryable processing
 failure; raw model text is never spoken. Kokoro receives only the backend-accepted
-`nextQuestion`.
+`nextQuestion`. The backend resolves an owned turn ID to that accepted text; the
+browser never resubmits model text to the general `/api/tts/speech` route as if
+it were authoritative.
+
+`endConversation` is advisory model output. The application ignores it before
+`minimumTurns`, ends at `maximumTurns` regardless of its value, and may accept it
+only between those bounds. The server-derived session state is authoritative.
 
 The current Vosk adapter exposes text only. Before this interaction is released,
 its port must return a versioned transcript result with `text`, `status`, and
@@ -130,9 +136,13 @@ idempotency identifiers; it never submits an authoritative prompt or rubric.
 Persist a conversation session and immutable turns through repository ports. A
 turn stores the content/config version, transcript result, accepted model-result
 version, provider/model/prompt identities, and the exact accepted next question.
-Do not persist raw microphone chunks in the first release. Audio retention, if
-later required, needs an explicit owner and deletion policy rather than reuse of
-the shared TTS cache or a public object URL.
+Do not persist raw microphone chunks in the first release. Generated conversation
+audio is learner-derived data and must not enter the current shared,
+content-addressed TTS cache, which has no eviction policy. Add an application-owned
+ephemeral audio artifact with owner, turn, expiry, content type, and model/voice
+identity, or stream a single generation without caching. The authenticated audio
+read verifies the session owner and deletes or expires the artifact under the
+approved retention policy. It never exposes a provider URL or public object URL.
 
 Use a bounded job for text-model inference so a slow CPU request holds neither an
 HTTP request nor a database transaction. The state machine is:
@@ -164,14 +174,18 @@ owner during implementation. The required authenticated operations are:
 3. Append ordered PCM chunks and return provisional transcript status.
 4. Finish the recording and queue the immutable transcript for evaluation.
 5. Poll or subscribe to the turn state and accepted feedback.
-6. Request playback through the existing TTS owner and `SpeechService`.
+6. Request audio by owned turn ID. The backend resolves the accepted question,
+   delegates generation to the existing Kokoro provider owner, and returns an
+   authenticated ephemeral stream.
 7. Cancel a recording/session without marking a wrong answer.
 8. Finish the session and return server-verifiable completion evidence.
 
 Transport failures, ASR uncertainty, model abstention, and TTS failure are
-distinct states. TTS failure must leave the accepted question visible and allow
-playback retry. No provider failure should mark the learner wrong or erase an
-accepted transcript.
+distinct states. Add a server-only playback mode to `SpeechService` for this
+interaction: it reports Kokoro failure to the slide and never silently falls back
+to browser speech synthesis. TTS failure must leave the accepted question visible
+and allow an explicit playback retry. No provider failure should mark the learner
+wrong or erase an accepted transcript.
 
 ## First IELTS use
 

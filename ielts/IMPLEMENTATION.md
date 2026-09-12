@@ -53,7 +53,7 @@ this list marks the slice complete or authorizes a deployment.
 | WF-06 | Optional calibrated score estimates | Held-out independently rated responses validate the exact model/prompt/quantization/rubric version; limitations remain visible |
 | WF-07 | Separately scoped speaking-text feedback | A suitable recording/ASR contract exists; transcripts and corrected playback never stand in for acoustic assessment |
 | AC-01 | General adaptive-conversation contract and persisted turn workflow | No IELTS-specific component; server-owned JSON context, bounded recording/inference and verifiable completion evidence |
-| AC-02 | L0001 E09 as the first JSON consumer | Two accepted turns, validated Qwen question generation, Kokoro playback and no IELTS-band claim |
+| AC-02 | L0001 E09 as the first JSON consumer | Two accepted turns, validated Qwen question generation, owned ephemeral Kokoro playback and no IELTS-band claim |
 
 Start with the [L0001 reference pack](examples/EX01.md) and a small set of newly
 authored alternative responses. Preserve its personal meal-writing objective:

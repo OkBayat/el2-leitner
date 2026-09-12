@@ -4,6 +4,7 @@ import test from "node:test";
 
 import { VocabularyFileParser } from "../src/domain/library/VocabularyFileParser.js";
 import { parseFileManagedLearningPathSource } from "../src/domain/collection-learning-path/FileManagedLearningPathSource.js";
+import { resolveSlideSequenceDefinition } from "../src/domain/collection-learning-path/SlideSequenceExercise.js";
 import { loadLearningPathSources } from "../src/infrastructure/content/loadLearningPathSources.js";
 
 const LEARNING_PATH_SOURCES = new URL("../data/learning-paths/", import.meta.url);
@@ -56,6 +57,7 @@ test("IELTS L0001 uses the managed JSON path and reusable slide contracts", asyn
   const sequences = lesson.exercises.slice(1);
   const slides = sequences.flatMap((exercise) => exercise.config.slides);
   assert.ok(sequences.every((exercise) => exercise.type === "slides.sequence"));
+  assert.ok(sequences.every((exercise) => resolveSlideSequenceDefinition(exercise)));
   assert.ok(slides.every((slide) => REUSABLE_SLIDE_TYPES.has(slide.type)));
   assert.equal(new Set(slides.map(({ id }) => id)).size, slides.length);
   assert.ok(sequences.every((exercise) => {

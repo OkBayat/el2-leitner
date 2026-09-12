@@ -41,7 +41,6 @@
           "config": {
             "title": "Spelling and dictation",
             "retryIncorrect": true,
-            "scope": { "kind": "lesson-source" },
             "slides": [
               {
                 "id": "ielts-l0001-e02-bread",
