@@ -57,7 +57,7 @@ class EmptyRouteComponent {}
     <voco-audio-button aria-label="Play pronunciation" [disabled]="disabled"><svg aria-hidden="true" /></voco-audio-button>
     <voco-primary-link href="/primary">Primary link</voco-primary-link>
     <voco-secondary-link href="https://example.com" target="_blank" rel="noopener">External</voco-secondary-link>
-    <voco-navigation-link [routerLink]="['/library']">Library</voco-navigation-link>
+    <voco-navigation-link [routerLink]="['/library']" [queryParams]="{ view: 'all' }">Library</voco-navigation-link>
     <voco-navigation-link data-testid="disabled-router-link" [routerLink]="['/library']" [disabled]="disabled" (activated)="recordActivation()">Disabled library</voco-navigation-link>
     <voco-icon-link href="/edit" aria-label="Edit link">✎</voco-icon-link>
     <voco-icon-link data-testid="disabled-icon-link" [routerLink]="['/library']" [disabled]="disabled" aria-label="Disabled edit link" (activated)="recordActivation()">✎</voco-icon-link>
@@ -145,7 +145,7 @@ describe('public voco button components', () => {
     expect(external.target).toBe('_blank');
     expect(external.rel).toBe('noopener');
     expect(external.textContent?.trim()).toBe('External');
-    expect(internal.getAttribute('href')).toBe('/library');
+    expect(internal.getAttribute('href')).toBe('/library?view=all');
     expect(internal.textContent?.trim()).toBe('Library');
   });
 

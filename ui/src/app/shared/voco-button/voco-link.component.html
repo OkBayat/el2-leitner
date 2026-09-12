@@ -6,6 +6,7 @@
     class="voco-button voco-button--{{ intent }}"
     [disabled]="disabled"
     [routerLink]="disabled ? null : routerLink"
+    [queryParams]="queryParams"
     [target]="target"
     [attr.rel]="rel"
     [attr.aria-label]="ariaLabel"

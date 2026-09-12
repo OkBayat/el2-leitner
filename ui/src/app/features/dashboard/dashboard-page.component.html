@@ -21,16 +21,16 @@
 
 				<div class="today-actions">
 					@if (dueCount()) {
-						<voco-primary-button type="button" (activated)="goReview()"
-							>Start today's review</voco-primary-button>
+						<voco-primary-link routerLink="/review"
+							>Start today's review</voco-primary-link>
 					}
-					<voco-secondary-button type="button" (activated)="startBoxOne()"
-						>Free practice: Box 1</voco-secondary-button>
-					<voco-secondary-button
-						type="button"
+					<voco-secondary-link routerLink="/review" [queryParams]="{ mode: 'box1' }"
+						>Free practice: Box 1</voco-secondary-link>
+					<voco-secondary-link
+						routerLink="/sentence"
+						[queryParams]="{ house: 1 }"
 						data-testid="start-sentence-practice"
-						(activated)="startSentencePractice()"
-						>Sentence practice: Box 1</voco-secondary-button>
+						>Sentence practice: Box 1</voco-secondary-link>
 					<voco-secondary-link
 						routerLink="/shadowing"
 						data-testid="start-shadowing"

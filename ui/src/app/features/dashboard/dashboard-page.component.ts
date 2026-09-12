@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject,
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {firstValueFrom} from 'rxjs';
-import { VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
+import { VocoNavigationButtonComponent, VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent } from '../../shared/voco-button';
 import {MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -50,7 +50,7 @@ export class NewWordsDialogComponent {
 
 @Component({
 	selector: 'app-dashboard-page',
-	imports: [VocoNavigationLinkComponent, VocoPrimaryButtonComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent, MatProgressBarModule, RouterLink, LearningChartComponent],
+	imports: [VocoNavigationLinkComponent, VocoPrimaryLinkComponent, VocoSecondaryButtonComponent, VocoSecondaryLinkComponent, MatProgressBarModule, RouterLink, LearningChartComponent],
 	templateUrl: 'dashboard-page.component.html',
 	styleUrl: 'dashboard-page.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -136,18 +136,6 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		if (this.houseOneCopyResetTimer !== null) clearTimeout(this.houseOneCopyResetTimer);
-	}
-
-	goReview(): void {
-		void this.router.navigateByUrl('/review');
-	}
-
-	async startBoxOne(): Promise<void> {
-		await this.router.navigate(['/review'], {queryParams: {mode: 'box1'}});
-	}
-
-	async startSentencePractice(): Promise<void> {
-		await this.router.navigate(['/sentence'], {queryParams: {house: 1}});
 	}
 
 	async copyHouseOne(): Promise<void> {

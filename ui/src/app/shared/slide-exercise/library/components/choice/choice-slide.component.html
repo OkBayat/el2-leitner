@@ -15,17 +15,15 @@
 			<h1>{{ data.question }}</h1>
 			@if (data.speech; as speechPlayback) {
 				@if (speechPlayback.replay) {
-					<button
-						vocoButtonInteraction
+					<voco-secondary-button
 						type="button"
-						class="speech-replay"
-						[attr.aria-label]="
+						[ariaLabel]="
 							'Play pronunciation for ' + speechPlayback.text
 						"
-						(click)="playSpeech()"
+						(activated)="playSpeech()"
 					>
 						Play pronunciation
-					</button>
+					</voco-secondary-button>
 				}
 			}
 			<div

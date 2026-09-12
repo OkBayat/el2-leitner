@@ -34,6 +34,14 @@ function relative(file) {
   return path.relative(uiRoot, file);
 }
 
+function isSelectionInteractionTag(tag) {
+  return /(?:class\s*=\s*["'][^"']*\b(?:choice-option|classification-item|cloze-choice-blank|library-item)\b|aria-(?:checked|current|pressed)|data-testid\s*=\s*["']selection-option["']|\[attr\.data-state\]|\[attr\.data-item-id\]|['"]Move ['"])/u.test(tag);
+}
+
+assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction type="button">Reset current slide</button>'), false);
+assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="speech-replay">Play pronunciation</button>'), false);
+assert.equal(isSelectionInteractionTag('<button vocoButtonInteraction class="choice-option" [attr.aria-checked]="selected">'), true);
+
 const violations = [];
 for (const file of sourceFiles(appRoot)) {
   if (file.startsWith(`${implementationRoot}${path.sep}`)) continue;
@@ -54,6 +62,11 @@ for (const file of sourceFiles(appRoot)) {
   }
   if (/\bVocoButtonComponent\b/u.test(source)) {
     violations.push(`${relative(file)} imports the removed generic public component`);
+  }
+  for (const match of source.matchAll(/<button\b(?:(?!>).)*\bvocoButtonInteraction\b(?:(?!>).)*>/gsu)) {
+    if (!isSelectionInteractionTag(match[0])) {
+      violations.push(`${relative(file)} uses vocoButtonInteraction outside an approved selection control`);
+    }
   }
 }
 
@@ -130,5 +143,13 @@ for (const file of sourceFiles(appRoot).filter((item) => !item.startsWith(`${imp
     assert.equal(visibleText, '', `${relative(file)} uses square voco-audio-button for textual content: ${visibleText}`);
   }
 }
+
+const dashboardSource = fs.readFileSync(
+  path.join(appRoot, 'features', 'dashboard', 'dashboard-page.component.html'),
+  'utf8',
+);
+assert.match(dashboardSource, /<voco-primary-link\s+routerLink="\/review"[\s\S]*?>Start today's review<\/voco-primary-link>/u);
+assert.match(dashboardSource, /<voco-secondary-link\s+routerLink="\/review"\s+\[queryParams\]="\{ mode: 'box1' \}"[\s\S]*?>Free practice: Box 1<\/voco-secondary-link>/u);
+assert.match(dashboardSource, /<voco-secondary-link[\s\S]*?routerLink="\/sentence"[\s\S]*?\[queryParams\]="\{ house: 1 \}"[\s\S]*?>Sentence practice: Box 1<\/voco-secondary-link>/u);
 
 console.log('voco button architecture checks passed');

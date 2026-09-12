@@ -7,6 +7,7 @@ import {
   booleanAttribute,
   inject,
 } from '@angular/core';
+import type { Params } from '@angular/router';
 import { VocoLinkIntent, VocoRouterLink } from './voco-button.types';
 
 export const VOCO_LINK_HOST = {
@@ -21,6 +22,7 @@ export abstract class VocoLinkFoundation {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input() href: string | null = null;
   @Input() routerLink: VocoRouterLink | null = null;
+  @Input() queryParams: Params | null = null;
   @Input() target: string | undefined;
   @Input() rel: string | null = null;
   @Input({ alias: 'aria-label' }) ariaLabel: string | null = null;

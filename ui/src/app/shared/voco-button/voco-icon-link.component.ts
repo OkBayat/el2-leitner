@@ -9,7 +9,7 @@ import {
   output,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
+import { RouterLink, type Params } from '@angular/router';
 import { VocoIconButtonSize, VocoIconButtonTone, VocoRouterLink } from './voco-button.types';
 
 @Component({
@@ -25,6 +25,7 @@ import { VocoIconButtonSize, VocoIconButtonTone, VocoRouterLink } from './voco-b
         [class.voco-icon-button--selected]="selected()"
         [disabled]="disabled()"
         [routerLink]="disabled() ? null : routerLink()"
+        [queryParams]="queryParams()"
         [target]="target()"
         [attr.rel]="rel()"
         [attr.aria-label]="ariaLabel()"
@@ -71,6 +72,7 @@ export class VocoIconLinkComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly href = input<string | null>(null);
   readonly routerLink = input<VocoRouterLink | null>(null);
+  readonly queryParams = input<Params | null>(null);
   readonly target = input<string | undefined>(undefined);
   readonly rel = input<string | null>(null);
   readonly ariaLabel = input<string | null>(null, { alias: 'aria-label' });
