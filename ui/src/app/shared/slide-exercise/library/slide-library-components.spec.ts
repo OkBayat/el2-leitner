@@ -59,7 +59,7 @@ function configure(): {
 				useValue: {
 					supported: () => true,
 					start: vi.fn().mockResolvedValue(undefined),
-					stop: vi.fn().mockResolvedValue('blob:recording'),
+					stop: vi.fn().mockResolvedValue({ blob: new Blob(['recording'], { type: 'audio/webm' }), url: 'blob:recording' }),
 					cancel: vi.fn(),
 				},
 			},
@@ -1151,7 +1151,7 @@ describe('reusable slide library behavior', () => {
 
 		expect(notes.disabled).toBe(true);
 		expect((fixture.nativeElement.querySelector('voco-secondary-button button') as HTMLButtonElement).disabled).toBe(true);
-		vi.mocked(recorder.stop).mockResolvedValueOnce('blob:replacement');
+		vi.mocked(recorder.stop).mockResolvedValueOnce({ blob: new Blob(['replacement']), url: 'blob:replacement' });
 		notes.value = 'Different notes.';
 		notes.dispatchEvent(new Event('input'));
 		await component.startRecording();
@@ -1165,7 +1165,7 @@ describe('reusable slide library behavior', () => {
 		expect(component.notes()).toBe('Bread and water.');
 		expect(submitted).toHaveBeenCalledExactlyOnceWith({
 			type: 'submitted',
-			data: { recordingUrl: 'blob:recording', notes: 'Bread and water.', mode: 'part1' },
+			data: { recordingBlob: expect.any(Blob), notes: 'Bread and water.', mode: 'part1' },
 		});
 		const playback = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
 		expect(playback.getAttribute('src')).toBe('blob:recording');

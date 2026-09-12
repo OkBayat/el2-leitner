@@ -179,17 +179,15 @@ export class SlidesSequenceExerciseComponent implements ExerciseComponent, OnDes
 	private captureRecording(result: SlideExerciseResult): Promise<Blob> {
 		const existing = this.recordings.get(result.slideId);
 		if (existing) return existing.blob;
-		// Acquire the Blob URL while its renderer still owns it. Navigation may
-		// revoke the URL immediately after this synchronous submission event.
-		const blob = (async () => {
-			const url = String(record(result.data)?.["recordingUrl"] ?? "").trim();
-			if (!url.startsWith("blob:")) throw new Error("A local speaking recording is missing.");
-			const response = await fetch(url);
-			if (!response.ok) throw new Error("The speaking recording could not be read.");
-			return response.blob();
-		})();
-		this.recordings.set(result.slideId, { blob });
-		return blob;
+		// Retain the actual bytes. Preview URLs belong to the renderer and may
+		// be revoked on navigation or unavailable to fetch under browser policy.
+		const blob = record(result.data)?.["recordingBlob"];
+		if (!(blob instanceof Blob) || !blob.size) {
+			return Promise.reject(new Error("A local speaking recording is missing."));
+		}
+		const recording = { blob: Promise.resolve(blob) };
+		this.recordings.set(result.slideId, recording);
+		return recording.blob;
 	}
 
 	onAction(event: SlideExerciseActionEvent): void {

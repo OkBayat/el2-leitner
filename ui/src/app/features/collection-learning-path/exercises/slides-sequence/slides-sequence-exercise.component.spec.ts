@@ -219,24 +219,22 @@ describe("SlidesSequenceExerciseComponent", () => {
 		});
 	});
 
-	async function recordSpeakingSequence() {
+	async function recordSpeakingSequence(count = 1) {
 		const blobs = new Map<string, Blob>();
-		const recordingUrl = "blob:local-recording";
+		let recordingNumber = 0;
 		const OriginalUrl = URL;
 		const revoke = vi.fn((url: string) => blobs.delete(url));
 		vi.stubGlobal("URL", class extends OriginalUrl {
 			static override createObjectURL(blob: Blob): string {
-				blobs.set(recordingUrl, blob);
-				return recordingUrl;
+				const url = `blob:local-recording-${++recordingNumber}`;
+				blobs.set(url, blob);
+				return url;
 			}
 			static override revokeObjectURL = revoke;
 		});
-		vi.stubGlobal("fetch", vi.fn((url: string) => {
-			const blob = blobs.get(url);
-			return blob
-				? Promise.resolve({ ok: true, blob: async () => blob })
-				: Promise.reject(new Error("Recording URL was revoked."));
-		}));
+		// Local playback can work even when fetching a blob URL is prohibited.
+		const localFetch = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+		vi.stubGlobal("fetch", localFetch);
 		vi.stubGlobal("isSecureContext", true);
 		vi.stubGlobal("navigator", {
 			mediaDevices: {
@@ -271,9 +269,11 @@ describe("SlidesSequenceExerciseComponent", () => {
 			...context,
 			config: {
 				slides: [
-					{ id: "speaking", type: "speaking-response", data: {
-						mode: "part1", prompt: "What do you eat for breakfast?",
-					} },
+					...Array.from({ length: count }, (_, index) => ({
+						id: index ? "revision" : "speaking", type: "speaking-response", data: {
+							mode: "part1", prompt: "What do you eat for breakfast?",
+						},
+					})),
 					{ id: "summary", type: "summary", terminal: true, data: {} },
 				],
 			},
@@ -283,30 +283,35 @@ describe("SlidesSequenceExerciseComponent", () => {
 		const slideExercise = fixture.debugElement.query(
 			By.directive(SlideExerciseComponent),
 		).componentInstance as SlideExerciseComponent;
-		await vi.waitFor(() => {
+		const recordings: Blob[] = [];
+		for (let index = 0; index < count; index++) {
+			await vi.waitFor(() => {
+				fixture.detectChanges();
+				expect(fixture.debugElement.query(By.directive(SpeakingResponseSlideComponent))).not.toBeNull();
+			});
+			const speaking = fixture.debugElement.query(
+				By.directive(SpeakingResponseSlideComponent),
+			).componentInstance as SpeakingResponseSlideComponent;
+			await speaking.startRecording();
+			await speaking.stopRecording();
+			const url = speaking.recordingUrl();
+			recordings.push(blobs.get(url)!);
+			speaking.handleAction("submit");
+			slideExercise.next();
 			fixture.detectChanges();
-			expect(fixture.debugElement.query(By.directive(SpeakingResponseSlideComponent))).not.toBeNull();
-		});
-		const speaking = fixture.debugElement.query(
-			By.directive(SpeakingResponseSlideComponent),
-		).componentInstance as SpeakingResponseSlideComponent;
-		await speaking.startRecording();
-		await speaking.stopRecording();
-		const recording = blobs.get(recordingUrl)!;
-		speaking.handleAction("submit");
-		slideExercise.next();
-		fixture.detectChanges();
-		await fixture.whenStable();
-		expect(revoke).toHaveBeenCalledWith(recordingUrl);
-		expect(blobs.has(recordingUrl)).toBe(false);
-		return { fixture, outcomes, recording };
+			await fixture.whenStable();
+			expect(revoke).toHaveBeenCalledWith(url);
+			expect(blobs.has(url)).toBe(false);
+		}
+		return { fixture, outcomes, recording: recordings[0], recordings, localFetch };
 	}
 
-	it("uploads speaking evidence after navigation destroys and revokes the recorder URL", async () => {
-		const { fixture, outcomes, recording } = await recordSpeakingSequence();
+	it("uploads speaking evidence without fetching a revoked preview URL", async () => {
+		const { fixture, outcomes, recording, localFetch } = await recordSpeakingSequence();
 
 		await fixture.componentInstance.finish("summary");
 
+		expect(localFetch).not.toHaveBeenCalled();
 		expect(uploadRecording).toHaveBeenCalledExactlyOnceWith(
 			"path-1", "lesson-1", "exercise-1", "speaking", recording,
 		);
@@ -321,6 +326,26 @@ describe("SlidesSequenceExerciseComponent", () => {
 				}],
 			},
 		});
+	});
+
+	it("submits both the first answer and revision when local URL fetch is unavailable", async () => {
+		const { fixture, outcomes, recordings, localFetch } = await recordSpeakingSequence(2);
+		uploadRecording.mockImplementation((_path, _lesson, _exercise, slideId) =>
+			Promise.resolve({ artifactId: `saved-${slideId}` }));
+
+		await fixture.componentInstance.finish("summary");
+
+		expect(localFetch).not.toHaveBeenCalled();
+		expect(fixture.componentInstance.error()).toBe("");
+		expect(recordings[0]).not.toBe(recordings[1]);
+		expect(uploadRecording).toHaveBeenCalledTimes(2);
+		expect(uploadRecording).toHaveBeenNthCalledWith(1, "path-1", "lesson-1", "exercise-1", "speaking", recordings[0]);
+		expect(uploadRecording).toHaveBeenNthCalledWith(2, "path-1", "lesson-1", "exercise-1", "revision", recordings[1]);
+		expect(outcomes).toHaveBeenCalledOnce();
+		const evidence = outcomes.mock.calls[0][0].evidence;
+		expect(evidence.results.map((result: { data: { recordingArtifactId: string } }) => result.data.recordingArtifactId))
+			.toEqual(["saved-speaking", "saved-revision"]);
+		expect(JSON.stringify(evidence)).not.toMatch(/recordingBlob|recordingUrl|blob:/);
 	});
 
 	it("retries a failed speaking upload using retained bytes and reuses successful uploads", async () => {

@@ -69,6 +69,7 @@ export class SpeakingResponseSlideComponent
 	implements SlideContentComponent, OnDestroy
 {
 	private readonly recorder = inject(LocalAudioRecorderService);
+	private recordingBlob: Blob | null = null;
 	private timer: ReturnType<typeof setInterval> | null = null;
 	readonly supported = this.recorder.supported();
 	readonly recordingState = signal<
@@ -93,6 +94,7 @@ export class SpeakingResponseSlideComponent
 		this.begin(context.slideId, data, 'submit');
 		this.recordingState.set('idle');
 		this.recordingUrl.set('');
+		this.recordingBlob = null;
 		this.recordingError.set('');
 		this.notes.set('');
 		this.prepRemaining.set(data.prepSeconds ?? 0);
@@ -110,6 +112,9 @@ export class SpeakingResponseSlideComponent
 		this.clearTimer();
 		this.recordingError.set('');
 		this.recordingState.set('requesting');
+		this.recordingBlob = null;
+		this.recordingUrl.set('');
+		this.setReady(false, 'submit');
 		try {
 			await this.recorder.start();
 			this.recordingState.set('recording');
@@ -136,7 +141,9 @@ export class SpeakingResponseSlideComponent
 			return;
 		this.clearTimer();
 		try {
-			this.recordingUrl.set(await this.recorder.stop());
+			const recording = await this.recorder.stop();
+			this.recordingBlob = recording.blob;
+			this.recordingUrl.set(recording.url);
 			this.recordingState.set('recorded');
 			this.setReady(true, 'submit');
 		} catch (error) {
@@ -152,11 +159,12 @@ export class SpeakingResponseSlideComponent
 		if (
 			this.interactionState() !== 'idle' ||
 			actionId !== 'submit' ||
-			this.recordingState() !== 'recorded'
+			this.recordingState() !== 'recorded' ||
+			!this.recordingBlob
 		)
 			return;
 		this.submit({
-			recordingUrl: this.recordingUrl(),
+			recordingBlob: this.recordingBlob,
 			notes: this.notes(),
 			mode: this.data().mode,
 		});
@@ -181,6 +189,7 @@ export class SpeakingResponseSlideComponent
 	ngOnDestroy(): void {
 		this.clearTimer();
 		this.recorder.cancel();
+		this.recordingBlob = null;
 		this.destroy();
 	}
 }
