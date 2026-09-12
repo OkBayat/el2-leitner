@@ -167,6 +167,14 @@ def normalize_answer(value: str, field: dict) -> str:
     return normalized
 
 
+def answer_matches(value: str, field: dict, answers: list[str]) -> bool:
+    word_limit = field.get("wordLimit")
+    if word_limit is not None and len(value.strip().split()) > word_limit:
+        return False
+    actual = normalize_answer(value, field)
+    return any(normalize_answer(answer, field) == actual for answer in answers)
+
+
 def validate_options(data: dict, minimum: int = 2) -> list[str]:
     options = array(data, "options", "options", minimum)
     ids = []
@@ -311,6 +319,12 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
             text(target, "label", "Labeling target label")
             text(target, "markerLabel", "Labeling target marker label")
             target_answers.append((target, string_array(target, "answers", "Labeling target answers")))
+            if "wordLimit" in target and (
+                isinstance(target["wordLimit"], bool)
+                or not isinstance(target["wordLimit"], int)
+                or target["wordLimit"] < 1
+            ):
+                raise ValueError("Labeling target wordLimit must be a positive integer.")
             for key in ("xPercent", "yPercent"):
                 value = target.get(key)
                 if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0 or value > 100:
@@ -319,13 +333,10 @@ def validate_slide_data(slide_type: str, data: dict) -> None:
             raise ValueError("Labeling target ids must be unique.")
         if data.get("inputMode", "text") == "word-bank":
             word_bank = string_array(data, "wordBank", "Labeling wordBank", 2)
-            if any(not {
-                normalize_answer(value, target)
-                for value in answers
-            } & {
-                normalize_answer(value, target)
-                for value in word_bank
-            } for target, answers in target_answers):
+            if any(
+                not any(answer_matches(option, target, answers) for option in word_bank)
+                for target, answers in target_answers
+            ):
                 raise ValueError("Every labeling target needs an accepted answer in the word bank.")
         return
     if slide_type == "cloze":

@@ -252,6 +252,28 @@ class ExerciseValidatorTests(unittest.TestCase):
                     },
                 )
 
+    def test_labeling_word_bank_membership_honors_word_limit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "accepted answer in the word bank"):
+            MODULE.validate_slide_data(
+                "labeling",
+                {
+                    "mode": "map",
+                    "question": "Label the destination.",
+                    "stimulus": {"type": "image", "src": "/map.svg", "alt": "Map."},
+                    "inputMode": "word-bank",
+                    "wordBank": ["train station", "cafe"],
+                    "targets": [{
+                        "id": "destination",
+                        "label": "Destination",
+                        "markerLabel": "1",
+                        "xPercent": 50,
+                        "yPercent": 50,
+                        "answers": ["train station"],
+                        "wordLimit": 1,
+                    }],
+                },
+            )
+
     def test_accepts_target_grammar_rewrite_mode(self) -> None:
         exercise = valid_exercise()
         exercise["config"]["slides"][0] = {
