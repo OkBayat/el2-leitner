@@ -141,4 +141,20 @@ describe('ThemeService system chrome', () => {
 
 		expect(document.documentElement.dataset['theme']).toBe('light');
 	});
+
+	it('keeps light as the default when no cached preference exists on a dark device', () => {
+		let changeListener: () => void = () => undefined;
+		const query = {
+			matches: true,
+			addEventListener: vi.fn((_type: string, listener: () => void) => { changeListener = listener; }),
+			removeEventListener: vi.fn(),
+		};
+		vi.stubGlobal('matchMedia', vi.fn(() => query));
+		document.documentElement.dataset['theme'] = 'light';
+
+		TestBed.inject(ThemeService);
+		changeListener();
+
+		expect(document.documentElement.dataset['theme']).toBe('light');
+	});
 });

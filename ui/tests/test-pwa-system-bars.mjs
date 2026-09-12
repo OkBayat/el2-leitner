@@ -158,8 +158,8 @@ assert.equal(restoredSystemDark.themeColors[0].media, '(prefers-color-scheme: li
 assert.equal(restoredSystemDark.themeColors[1].media, '(prefers-color-scheme: dark)');
 
 const invalidPreference = runThemeBootstrap('sepia', true);
-assert.equal(invalidPreference.root.dataset.theme, 'dark', 'A missing or unknown cache must follow the device before the account setting loads.');
-assert.equal(invalidPreference.colorScheme.content, 'dark');
+assert.equal(invalidPreference.root.dataset.theme, 'light', 'A missing or unknown cache must use the default light theme before the account setting loads.');
+assert.equal(invalidPreference.colorScheme.content, 'light');
 
 assert.match(
 	pwaStyles,

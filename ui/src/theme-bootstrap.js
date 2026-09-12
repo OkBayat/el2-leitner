@@ -2,13 +2,13 @@
 	const storageKey = 'vocora-theme-mode-v1';
 	// Synchronized from Layer A by tools/sync-first-paint-theme-colors.mjs.
 	const pageColors = {light: '#ffffff', dark: '#0f1611'};
-	let mode = 'system';
+	let mode = 'light';
 
 	try {
 		const savedMode = globalThis.localStorage?.getItem(storageKey);
 		if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'system') mode = savedMode;
 	} catch {
-		// Fall back to the device theme when browser storage is unavailable.
+		// Keep the product default when browser storage is unavailable.
 	}
 
 	const prefersDark = globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;

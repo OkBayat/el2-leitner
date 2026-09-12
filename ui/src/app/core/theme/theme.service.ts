@@ -15,7 +15,7 @@ function storedThemeMode(): ThemeMode {
     const mode = globalThis.localStorage?.getItem(THEME_MODE_STORAGE_KEY);
     if (mode === 'light' || mode === 'dark' || mode === 'system') return mode;
   } catch { /* Browser storage can be unavailable. */ }
-  return 'system';
+  return 'light';
 }
 
 @Injectable({ providedIn: 'root' })

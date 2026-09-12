@@ -58,6 +58,7 @@ jobs:
       DB_ADMIN_PASSWORD: ci-root-password
       MYSQL_ROOT_PASSWORD: ci-root-password
       JWT_SECRET: ci-only-secret-with-more-than-thirty-two-characters
+      CORS_ALLOWED_ORIGINS: https://localhost,capacitor://localhost
     steps:
       - uses: actions/checkout@v4
 
