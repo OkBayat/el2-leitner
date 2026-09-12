@@ -2078,7 +2078,25 @@
                   "planningNotes": true,
                   "register": "neutral",
                   "instruction": "Write your first version. After Submit, read your text here and remember one thing to improve before Continue.",
-                  "modelAnswer": "I have breakfast at home. I eat bread and I drink milk. We eat rice at breakfast. We drink water. We like our morning meal."
+                  "modelAnswer": "I have breakfast at home. I eat bread and I drink milk. We eat rice at breakfast. We drink water. We like our morning meal.",
+                  "wordLimit": 40,
+                  "writingFeedback": {
+                    "schemaVersion": 1,
+                    "learnerLevel": "A1",
+                    "targetSkill": "Write an understandable short description of one familiar meal.",
+                    "languageObjectives": [
+                      "Use I or we as the subject of a simple present statement with eat, drink or have.",
+                      "Use a subject, a verb and a food or drink object in a complete statement.",
+                      "Start a sentence and the pronoun I with a capital letter; end statements with a full stop."
+                    ],
+                    "taskExpectations": [
+                      "Describe one meal and identify who eats, what they eat and what they drink.",
+                      "Accept real or invented personal facts and any natural food or drink; lesson vocabulary is helpful, not an exhaustive key.",
+                      "Treat 20–40 words as a practice target; word count alone is not evidence of accuracy.",
+                      "Give simple English feedback appropriate to A1 and prioritize one useful change without adding personal facts.",
+                      "The response is the first independent version. Do not replace it with a polished model narrative."
+                    ]
+                  }
                 }
               },
               {
@@ -2105,7 +2123,25 @@
                   "prompt": "Write your revised 20–40-word message about the same meal. Keep your own facts and improve one detail, sentence, capital letter or full stop.",
                   "recommendedMinimumWords": 20,
                   "planningNotes": true,
-                  "register": "neutral"
+                  "register": "neutral",
+                  "wordLimit": 40,
+                  "writingFeedback": {
+                    "schemaVersion": 1,
+                    "learnerLevel": "A1",
+                    "targetSkill": "Write an understandable short description of one familiar meal.",
+                    "languageObjectives": [
+                      "Use I or we as the subject of a simple present statement with eat, drink or have.",
+                      "Use a subject, a verb and a food or drink object in a complete statement.",
+                      "Start a sentence and the pronoun I with a capital letter; end statements with a full stop."
+                    ],
+                    "taskExpectations": [
+                      "Describe one meal and identify who eats, what they eat and what they drink.",
+                      "Accept real or invented personal facts and any natural food or drink; lesson vocabulary is helpful, not an exhaustive key.",
+                      "Treat 20–40 words as a practice target; word count alone is not evidence of accuracy.",
+                      "Give simple English feedback appropriate to A1 and prioritize one useful change without adding personal facts.",
+                      "The response is a supported second version. Do not label it independent mastery or infer improvement without the first draft."
+                    ]
+                  }
                 }
               },
               {

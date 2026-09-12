@@ -11,6 +11,11 @@ read [PROGRESS.md](PROGRESS.md). The expanded L0001 teaching companion is
 the original research/authoring baseline; its inherited counts do not describe
 the current managed runtime JSON.
 
+The current user's authoring instruction also overrides the design skill's fixed
+vocabulary-first, spelling-second opening. Select and order those activities by
+the actual lesson objective and prerequisites. The generated blueprints remain
+reference material, not mandatory exercise schedules; see [PROGRESS.md](PROGRESS.md).
+
 The [curriculum README](README.md) defines what learners practise. The existing
 [enterprise architecture playbook](../ARCHITECTURE_PLAYBOOK.md) remains the
 technical playbook for repository architecture, migration, deployment, testing,
@@ -59,8 +64,9 @@ closed-answer scoring, persistence, progression or Leitner scheduling.
 
 ## Delivery order
 
-Each row is a future independently reviewable implementation slice. Nothing in
-this list marks the slice complete or authorizes a deployment.
+Each row identifies an independently reviewable implementation slice. The current
+short-text implementation and remaining release evidence are recorded in
+[WRITING_FEEDBACK.md](WRITING_FEEDBACK.md). This list authorizes no deployment.
 
 | Slice | Deliverable | Acceptance condition |
 | --- | --- | --- |
@@ -74,10 +80,13 @@ this list marks the slice complete or authorizes a deployment.
 | AC-01 | General adaptive-conversation contract and persisted turn workflow | No IELTS-specific component; server-owned JSON context, bounded recording/inference and verifiable completion evidence |
 | AC-02 | L0001 E09 as the first JSON consumer | Two accepted turns, validated Qwen question generation, owned ephemeral Kokoro playback and no IELTS-band claim |
 
-The current deployment foundation provisions the WF-01 candidate runtime and
-model idempotently for target-host experiments. It does not implement WF-01's
-measurements, the WF-03 inference adapter, an HTTP endpoint, a slide, or learner
-access. Those remain separate stacked slices with their own acceptance evidence.
+The deployment foundation provisions the WF-01 candidate runtime and model
+idempotently for target-host experiments. The course-production branch adds the
+disabled WF-02/WF-03/WF-04 short-text contracts, durable jobs, private provider,
+existing-slide integration and optional tokenizer image. WF-01's real host/model
+measurements, wider Writing and adaptive conversation remain separate acceptance
+work. The single course PR accumulates these required generic extensions and
+their lesson consumers without claiming a deployed feedback service.
 
 Start with the [L0001 reference pack](examples/EX01.md) and a small set of newly
 authored alternative responses. Preserve its personal meal-writing objective:
