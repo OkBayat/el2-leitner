@@ -82,6 +82,10 @@ export class SpeakingResponseSlideComponent
 	inputFrom(event: Event): string {
 		return inputValue(event);
 	}
+	setNotes(value: string): void {
+		if (this.interactionState() !== 'idle') return;
+		this.notes.set(value);
+	}
 	load(context: SlideContentContext): void {
 		const data = parseSpeaking(context.data);
 		this.clearTimer();
@@ -97,6 +101,7 @@ export class SpeakingResponseSlideComponent
 	}
 	async startRecording(): Promise<void> {
 		if (
+			this.interactionState() !== 'idle' ||
 			!this.supported ||
 			this.recordingState() === 'requesting' ||
 			this.recordingState() === 'recording'
@@ -124,7 +129,11 @@ export class SpeakingResponseSlideComponent
 		}
 	}
 	async stopRecording(): Promise<void> {
-		if (this.recordingState() !== 'recording') return;
+		if (
+			this.interactionState() !== 'idle' ||
+			this.recordingState() !== 'recording'
+		)
+			return;
 		this.clearTimer();
 		try {
 			this.recordingUrl.set(await this.recorder.stop());
@@ -140,7 +149,11 @@ export class SpeakingResponseSlideComponent
 		}
 	}
 	handleAction(actionId: string): void {
-		if (actionId !== 'submit' || this.recordingState() !== 'recorded')
+		if (
+			this.interactionState() !== 'idle' ||
+			actionId !== 'submit' ||
+			this.recordingState() !== 'recorded'
+		)
 			return;
 		this.submit({
 			recordingUrl: this.recordingUrl(),
