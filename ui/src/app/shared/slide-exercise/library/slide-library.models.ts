@@ -1,3 +1,5 @@
+import type { WritingFeedbackContext } from '../writing-feedback-contracts';
+
 export type SlideInteractionState =
 	'idle' | 'answered-correct' | 'answered-incorrect' | 'revealed';
 
@@ -351,6 +353,8 @@ export interface SpeakingResponseSlideData extends SlideTypeData {
 }
 
 export interface WritingResponseSlideData extends SlideTypeData {
+	readonly writingFeedback?: WritingFeedbackContext;
+	readonly wordLimit?: number;
 	readonly mode:
 		| 'sentence'
 		| 'paragraph'

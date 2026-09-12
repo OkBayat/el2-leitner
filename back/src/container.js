@@ -42,6 +42,7 @@ import { MySqlVocabularyActivationRepository } from "./infrastructure/persistenc
 import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
+import { createWritingFeedbackModule } from "./modules/writing-feedback/createWritingFeedbackModule.js";
 import { createCollectionLearningPathModule } from "./modules/collection-learning-path/createCollectionLearningPathModule.js";
 import { SynthesizeSpeech } from "./application/text-to-speech/SynthesizeSpeech.js";
 import { FileTtsAudioCache } from "./infrastructure/text-to-speech/FileTtsAudioCache.js";
@@ -80,6 +81,7 @@ export function createContainer({ pool, config, adapters = {} }) {
   const vocabularyFileParser = adapters.vocabularyFileParser ?? new VocabularyFileParser();
   const getSentencePracticeCards = new GetSentencePracticeCards({ sentencePracticeRepository });
   const collectionLearningPath = createCollectionLearningPathModule({ pool, adapters });
+  const writingFeedback = createWritingFeedbackModule({ pool, config: config.writingFeedback, adapters });
   const ttsAudioCache = adapters.ttsAudioCache ?? new FileTtsAudioCache({
     directory: config.tts.cacheDirectory
   });
@@ -95,6 +97,7 @@ export function createContainer({ pool, config, adapters = {} }) {
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
     collectionLearningPath,
+    writingFeedback,
     useCases: {
       synthesizeSpeech: new SynthesizeSpeech({
         audioCache: ttsAudioCache,

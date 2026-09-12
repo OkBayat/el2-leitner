@@ -12,6 +12,7 @@ import type { VocabularyMasteryCheckStartView } from '../../domain/collection-le
 import type { VocabularySpellingScope, VocabularySpellingStartView } from '../../domain/collection-learning-path/vocabulary-spelling-practice';
 import type { LibraryCollection } from '../../domain/learning/models';
 import { ApiClientService } from '../http/api-client.service';
+import type { WritingFeedbackSaveRequest, WritingFeedbackHistory, WritingSubmission } from '../../shared/slide-exercise/writing-feedback-contracts';
 
 export interface LearningPathCatalogRoute {
   collectionId: string;
@@ -182,5 +183,30 @@ export class CollectionLearningPathApiService {
       `${exercisePath(pathId, lessonId, exerciseId)}/complete`,
       { outcome, progressRevision },
     );
+  }
+
+  queryWritingFeedbackHistory(pathId: string, lessonId: string, exerciseId: string, slideId: string): Promise<WritingFeedbackHistory> {
+    return this.api.get(`${exercisePath(pathId, lessonId, exerciseId)}/slides/${segment(slideId)}/writing-feedback`);
+  }
+
+  commandSaveWritingFeedback(pathId: string, lessonId: string, exerciseId: string, slideId: string, request: WritingFeedbackSaveRequest): Promise<WritingSubmission> {
+    return this.api.post<{ submission: WritingSubmission }>(
+      `${exercisePath(pathId, lessonId, exerciseId)}/slides/${segment(slideId)}/writing-feedback`, request,
+    ).then((response) => response.submission);
+  }
+
+  queryWritingFeedbackSubmission(id: string): Promise<WritingSubmission> {
+    return this.api.get<{ submission: WritingSubmission }>(`/api/writing-feedback/${segment(id)}`)
+      .then((response) => response.submission);
+  }
+
+  commandRetryWritingFeedback(id: string): Promise<WritingSubmission> {
+    return this.api.post<{ submission: WritingSubmission }>(`/api/writing-feedback/${segment(id)}/retry`, {})
+      .then((response) => response.submission);
+  }
+
+  commandCancelWritingFeedback(id: string): Promise<WritingSubmission> {
+    return this.api.post<{ submission: WritingSubmission }>(`/api/writing-feedback/${segment(id)}/cancel`, {})
+      .then((response) => response.submission);
   }
 }

@@ -5,6 +5,7 @@ on:
     paths:
       - 'back/data/collections/**'
       - 'back/src/application/collection-learning-path/**'
+      - 'back/src/application/writing-feedback/**'
       - 'back/src/application/learning/GetLeitnerHouse.js'
       - 'back/src/domain/collection-learning-path/**'
       - 'back/src/domain/learning/**'
@@ -12,6 +13,7 @@ on:
       - 'back/src/domain/library/VocabularyNormalizer.js'
       - 'back/src/infrastructure/integration/collection-learning-path/**'
       - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/writing-feedback/**'
       - 'back/src/infrastructure/persistence/mysql/createPool.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js'
@@ -28,12 +30,14 @@ on:
       - 'back/scripts/verify-database.js'
       - 'back/package*.json'
       - 'back/tests/**/*learning-path*'
+      - 'back/tests/**/*writing-feedback*'
       - '.github/workflows/learning-path-persistence-integration.yml'
   push:
     branches: [main, learning-path]
     paths:
       - 'back/data/collections/**'
       - 'back/src/application/collection-learning-path/**'
+      - 'back/src/application/writing-feedback/**'
       - 'back/src/application/learning/GetLeitnerHouse.js'
       - 'back/src/domain/collection-learning-path/**'
       - 'back/src/domain/learning/**'
@@ -41,6 +45,7 @@ on:
       - 'back/src/domain/library/VocabularyNormalizer.js'
       - 'back/src/infrastructure/integration/collection-learning-path/**'
       - 'back/src/infrastructure/persistence/mysql/collection-learning-path/**'
+      - 'back/src/infrastructure/persistence/mysql/writing-feedback/**'
       - 'back/src/infrastructure/persistence/mysql/createPool.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlLearningBootstrapRepository.js'
       - 'back/src/infrastructure/persistence/mysql/MySqlEfficientLearningStateRepository.js'
@@ -57,6 +62,7 @@ on:
       - 'back/scripts/verify-database.js'
       - 'back/package*.json'
       - 'back/tests/**/*learning-path*'
+      - 'back/tests/**/*writing-feedback*'
       - '.github/workflows/learning-path-persistence-integration.yml'
 
 permissions:
@@ -110,4 +116,6 @@ jobs:
           tests/integration/collection-learning-path-vocabulary-intake.mysql.test.js
           tests/integration/collection-learning-path-vocabulary-mastery-check.mysql.test.js
           tests/integration/learning-path-progress-cas.mysql.test.js
+          tests/writing-feedback-repository.test.js
+          tests/integration/writing-feedback.mysql.test.js
       - run: npm run db:verify

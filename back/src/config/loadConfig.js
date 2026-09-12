@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ValidationError } from "../domain/errors.js";
+import { loadWritingFeedbackConfig } from "./loadWritingFeedbackConfig.js";
 
 const DEFAULT_LISTENING_AUDIO_DIRECTORY = fileURLToPath(
   new URL("../../data/listening/audio/", import.meta.url)
@@ -153,6 +154,7 @@ export function loadConfig(env = process.env) {
       android: mobileReleaseFromEnv(env, 'android'),
       ios: mobileReleaseFromEnv(env, 'ios')
     },
+    writingFeedback: loadWritingFeedbackConfig(env),
     shadowing: { url: env.SHADOWING_SPEECH_URL?.trim() || "" },
     tts: {
       providerUrl: ttsProviderUrl,

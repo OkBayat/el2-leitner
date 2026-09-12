@@ -1,5 +1,6 @@
 import { ValidationError } from "../errors.js";
 import { parseVocabularyExerciseScope } from "./VocabularyExerciseScope.js";
+import { parseWritingFeedbackTask } from "../writing-feedback/WritingFeedbackTask.js";
 
 export const SLIDE_SEQUENCE_TYPE = "slides.sequence";
 export const SLIDE_SEQUENCE_SCHEMA_VERSION = 1;
@@ -377,6 +378,7 @@ export function resolveSlideSequenceDefinition(exercise) {
   slides.filter((slide) => slide.type === "ordering").forEach((slide) => orderingConfig(slide.data));
   slides.filter((slide) => slide.type === "labeling").forEach((slide) => labelingConfig(slide.data));
   slides.filter((slide) => slide.type === "short-answer").forEach((slide) => shortAnswerConfig(slide.data));
+  slides.filter((slide) => slide.type === "writing-response").forEach((slide) => parseWritingFeedbackTask(slide.data));
   if (slides.filter((slide) => slide.terminal).length !== 1 || !slides.at(-1).terminal) {
     invalid("slides.sequence requires exactly one terminal final slide.");
   }

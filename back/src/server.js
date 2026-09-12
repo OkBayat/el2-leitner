@@ -36,13 +36,17 @@ const server = app.listen(config.port, () => {
   console.info(`Vazheyar is listening on port ${config.port}`);
 });
 
+container.writingFeedback.worker.start();
+
 let stopping = false;
 async function shutdown(signal) {
   if (stopping) return;
   stopping = true;
   console.info(`${signal} received; shutting down.`);
 
+  const workerStopped = container.writingFeedback.worker.stop();
   server.close(async (error) => {
+    await workerStopped;
     await pool.end();
     process.exitCode = error ? 1 : 0;
   });
