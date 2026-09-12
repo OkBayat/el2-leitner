@@ -25,15 +25,22 @@ assert.match(pageHtml, /data-testid="library-all-collections"/u, 'All collection
 assert.doesNotMatch(pageHtml, /mat-form-field|mat-select|Search|Filter/u, 'Library must not add search or filter controls.');
 assert.doesNotMatch(pageHtml, /description|wordCount|mat-progress-bar|progress|tag/u, 'Library items must contain names only.');
 assert.match(pageTs, /localeCompare/u, 'Library lists must use alphabetical ordering.');
-assert.match(pageTs, /router\.navigate\(\['\/library', collection\.id\]\)/u, 'Every item must open the existing detail route.');
+assert.equal((pageHtml.match(/<voco-secondary-link/gu) ?? []).length, 3, 'Every Library item group must render links through the shared Voco primitive.');
+for (const idExpression of ['item.collection.id', 'course.collection.id', 'collection.id']) {
+  assert.ok(
+    pageHtml.includes(`[routerLink]="['/library', ${idExpression}]"`),
+    `Library items keyed by ${idExpression} must declaratively target the existing detail route.`,
+  );
+}
+assert.doesNotMatch(pageTs, /\n\s*(?:async\s+)?open\s*\(/u, 'Library item navigation must not be implemented as an imperative button action.');
 assert.match(pageTs, /dialogs\.open\(CollectionEditorComponent/u, 'Creating a collection must keep using the collection editor.');
 assert.match(pageTs, /api\.create\(value\)/u, 'The New collection action must still persist the new collection.');
 assert.match(routes, /path:\s*'library\/:id'/u, 'The app shell must retain the dedicated details route.');
 
 assert.match(pageStyles, /grid-template-columns:\s*minmax\(0, 1fr\)/u, 'Library must begin with a one-column mobile layout.');
-assert.match(pageStyles, /min-height:\s*56px/u, 'Library items must have large touch targets.');
-assert.match(pageHtml, /vocoButtonInteraction/u, 'Library items must use the shared voco interaction primitive.');
-assert.match(pageHtml, /w-100 d-flex justify-content-start align-items-center text-start text-truncate/u, 'Library item layout must use Bootstrap utilities.');
+assert.doesNotMatch(pageStyles, /\.library-item\s*\{/u, 'The shared Voco link primitive must own Library item geometry.');
+assert.doesNotMatch(pageHtml, /vocoButtonInteraction/u, 'Navigation links must not use the selection-only interaction API.');
+assert.equal((pageHtml.match(/class="library-item w-100"/gu) ?? []).length, 3, 'Library links must fill their grid column.');
 assert.doesNotMatch(pageStyles, /\.library-item:hover|\.library-item:focus-visible/u, 'Feature styles must not reskin Material hover or focus states.');
 assert.match(pageStyles, /@media \(min-width:\s*720px\)/u, 'Library layout must be mobile-first.');
 
