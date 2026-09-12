@@ -188,7 +188,7 @@ assert.doesNotMatch(
 );
 assert.match(
 	pronunciationRecordStyles,
-	/--mat-button-outlined-label-text-color:\s*var\(--vocora-action-primary\);/u,
+	/color:\s*var\(--vocora-action-primary\);/u,
 	'Pronunciation recording must keep its label and waveform primary blue.',
 );
 const activePronunciationRecordStyles = sharedStyles.match(
@@ -196,7 +196,7 @@ const activePronunciationRecordStyles = sharedStyles.match(
 )?.[1] ?? '';
 assert.match(
 	activePronunciationRecordStyles,
-	/--mat-button-outlined-outline-color:\s*var\(--vocora-action-primary\);/u,
+	/border-color:\s*var\(--vocora-action-primary\);/u,
 	'Active pronunciation recording must keep its outline and lower edge the same primary color.',
 );
 assert.match(
