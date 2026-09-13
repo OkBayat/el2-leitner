@@ -65,7 +65,11 @@ function expansionHandler(value: unknown): NumberInputSlideExpansionHandler | nu
 	standalone: true,
 	imports: [MatFormFieldModule, MatInputModule],
 	templateUrl: './number-input-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NumberInputSlideComponent implements SlideContentComponent, AfterViewInit {

@@ -26,6 +26,7 @@ const componentTypes = [
 	'dictation',
 	'speaking-response',
 	'writing-response',
+	'adaptive-conversation',
 ];
 const barrelPath = join(libraryRoot, 'slide-library.components.ts');
 const barrel = readFileSync(barrelPath, 'utf8');
@@ -41,10 +42,36 @@ const okfCatalog = readFileSync(
 	join(repositoryRoot, 'okf/project/reusable-slide-interactions.md'),
 	'utf8',
 );
-const sharedStyles = readFileSync(
-	join(libraryRoot, 'slide-library.component.scss'),
+const runtimeRegistry = readFileSync(
+	join(uiRoot, 'src/app/shared/slide-exercise/slide-content-registry.ts'),
 	'utf8',
 );
+
+function assertSnapshotFamilies(source, available, owner) {
+	const tables = [...source.matchAll(/^\| `([a-z-]+)` \|/gmu)].map((match) => match[1]);
+	const lists = [...source.matchAll(/```text\n([\s\S]*?)\n```/gu)]
+		.flatMap((match) => match[1].split('\n').filter((line) => /^[a-z][a-z-]*$/u.test(line)));
+	const families = new Set([...tables, ...lists]);
+	assert.ok(families.size > 0, `${owner} must contain a readable interaction inventory.`);
+	for (const family of families) {
+		assert.ok(available.has(family), `${owner} documents an unsupported interaction: ${family}`);
+	}
+}
+
+// Curated knowledge and provisional plans can lag new runtime features. Validate
+// every family they document without making an unrequested knowledge refresh a
+// prerequisite for registering a component. Runtime and authoring owners below
+// must cover the complete current component set.
+assert.doesNotThrow(() => assertSnapshotFamilies('| `choice` | Recognition |', new Set(['choice', 'new-interaction']), 'snapshot'));
+assert.throws(() => assertSnapshotFamilies('| `removed-interaction` | Recognition |', new Set(['choice']), 'snapshot'), /unsupported interaction/u);
+assert.throws(() => assertSnapshotFamilies('', new Set(['choice']), 'snapshot'), /readable interaction inventory/u);
+assertSnapshotFamilies(lessonDesignContract, new Set(componentTypes), 'Provisional lesson design');
+assertSnapshotFamilies(okfCatalog, new Set(componentTypes), 'OKF');
+const sharedStyles = [
+	'slide-library.component.scss',
+	'slide-library-language.component.scss',
+	'slide-library-supporting.component.scss',
+].map((file) => readFileSync(join(libraryRoot, file), 'utf8')).join('\n');
 const materialComponents = readFileSync(
 	join(uiRoot, 'src/styles/_angular-material-components.scss'),
 	'utf8',
@@ -113,8 +140,6 @@ for (const type of componentTypes) {
 	);
 	for (const [owner, source] of [
 		['k2-exercise-builder', exerciseBuilderCatalog],
-		['k2-lesson-exercise-design', lessonDesignContract],
-		['OKF', okfCatalog],
 	]) {
 		assert.match(
 			source,
@@ -125,6 +150,11 @@ for (const type of componentTypes) {
 			`${type} must remain documented by ${owner}.`,
 		);
 	}
+	assert.match(
+		runtimeRegistry,
+		new RegExp(`type:\\s*['\"]${type}['\"]`, 'u'),
+		`${type} must be registered by the runtime owner.`,
+	);
 }
 
 assert.match(

@@ -1,0 +1,3 @@
+# Compatibility shim for deployments whose existing .env still lists this
+# overlay in COMPOSE_FILE. AI services now live in the backend configuration.
+services: {}

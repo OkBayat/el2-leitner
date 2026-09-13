@@ -81,7 +81,11 @@ function parseChoice(value: unknown): ChoiceSlideData {
 	standalone: true,
 	imports: [VocoButtonInteractionDirective, VocoSecondaryButtonComponent, SlideStimulusComponent],
 	templateUrl: './choice-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChoiceSlideComponent

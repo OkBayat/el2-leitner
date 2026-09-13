@@ -61,7 +61,11 @@ function parseSpeaking(value: unknown): SpeakingResponseSlideData {
 		SlideStimulusComponent,
 	],
 	templateUrl: './speaking-response-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpeakingResponseSlideComponent
@@ -69,6 +73,7 @@ export class SpeakingResponseSlideComponent
 	implements SlideContentComponent, OnDestroy
 {
 	private readonly recorder = inject(LocalAudioRecorderService);
+	private recordingBlob: Blob | null = null;
 	private timer: ReturnType<typeof setInterval> | null = null;
 	readonly supported = this.recorder.supported();
 	readonly recordingState = signal<
@@ -82,6 +87,10 @@ export class SpeakingResponseSlideComponent
 	inputFrom(event: Event): string {
 		return inputValue(event);
 	}
+	setNotes(value: string): void {
+		if (this.interactionState() !== 'idle') return;
+		this.notes.set(value);
+	}
 	load(context: SlideContentContext): void {
 		const data = parseSpeaking(context.data);
 		this.clearTimer();
@@ -89,6 +98,7 @@ export class SpeakingResponseSlideComponent
 		this.begin(context.slideId, data, 'submit');
 		this.recordingState.set('idle');
 		this.recordingUrl.set('');
+		this.recordingBlob = null;
 		this.recordingError.set('');
 		this.notes.set('');
 		this.prepRemaining.set(data.prepSeconds ?? 0);
@@ -97,6 +107,7 @@ export class SpeakingResponseSlideComponent
 	}
 	async startRecording(): Promise<void> {
 		if (
+			this.interactionState() !== 'idle' ||
 			!this.supported ||
 			this.recordingState() === 'requesting' ||
 			this.recordingState() === 'recording'
@@ -105,6 +116,9 @@ export class SpeakingResponseSlideComponent
 		this.clearTimer();
 		this.recordingError.set('');
 		this.recordingState.set('requesting');
+		this.recordingBlob = null;
+		this.recordingUrl.set('');
+		this.setReady(false, 'submit');
 		try {
 			await this.recorder.start();
 			this.recordingState.set('recording');
@@ -124,10 +138,16 @@ export class SpeakingResponseSlideComponent
 		}
 	}
 	async stopRecording(): Promise<void> {
-		if (this.recordingState() !== 'recording') return;
+		if (
+			this.interactionState() !== 'idle' ||
+			this.recordingState() !== 'recording'
+		)
+			return;
 		this.clearTimer();
 		try {
-			this.recordingUrl.set(await this.recorder.stop());
+			const recording = await this.recorder.stop();
+			this.recordingBlob = recording.blob;
+			this.recordingUrl.set(recording.url);
 			this.recordingState.set('recorded');
 			this.setReady(true, 'submit');
 		} catch (error) {
@@ -140,10 +160,15 @@ export class SpeakingResponseSlideComponent
 		}
 	}
 	handleAction(actionId: string): void {
-		if (actionId !== 'submit' || this.recordingState() !== 'recorded')
+		if (
+			this.interactionState() !== 'idle' ||
+			actionId !== 'submit' ||
+			this.recordingState() !== 'recorded' ||
+			!this.recordingBlob
+		)
 			return;
 		this.submit({
-			recordingUrl: this.recordingUrl(),
+			recordingBlob: this.recordingBlob,
 			notes: this.notes(),
 			mode: this.data().mode,
 		});
@@ -168,6 +193,7 @@ export class SpeakingResponseSlideComponent
 	ngOnDestroy(): void {
 		this.clearTimer();
 		this.recorder.cancel();
+		this.recordingBlob = null;
 		this.destroy();
 	}
 }

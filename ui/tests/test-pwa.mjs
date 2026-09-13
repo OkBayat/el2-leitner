@@ -128,6 +128,7 @@ assert.match(worker, /request\.mode === 'navigate'/u, 'Offline navigation must f
 assert.match(worker, /url\.pathname === '\/service-worker\.js'.*api/u, 'API traffic must be explicitly excluded from the service-worker cache.');
 assert.match(worker, /removeOldCaches/u, 'Obsolete app versions must be removed after activation.');
 assert.match(worker, /CACHEABLE_PATH\.test\(url\.pathname\)/u, 'Non-shell static assets must be cached on demand instead of blocking service-worker installation.');
+assert.match(worker, /svg\|wasm\|wav/u, 'Lazy Harper WebAssembly must be cached on demand after its first Writing use.');
 assert.match(worker, /response\.status === 200/u, 'Runtime caching must only persist complete successful responses.');
 
 const precacheMatch = worker.match(/const PRECACHE_URLS = Object\.freeze\((\[[\s\S]*?\])\);/u);

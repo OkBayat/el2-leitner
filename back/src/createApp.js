@@ -98,6 +98,9 @@ export function createApp({
       contentSecurityPolicy: {
         directives: {
           "media-src": ["'self'", "blob:"],
+          // Harper's bundled WorkerLinter creates an application-owned Blob
+          // worker. Script execution and network sources remain self-only.
+          "worker-src": ["'self'", "blob:"],
           // The documented Docker deployment is HTTP on localhost. Browsers
           // (notably Safari) may otherwise rewrite it to unavailable HTTPS.
           "upgrade-insecure-requests": null
@@ -105,6 +108,9 @@ export function createApp({
       }
     })
   );
+  const privateTextJson = express.json({ limit: "16kb", strict: true });
+  const privateTextRoute = /^\/api\/(?:learning-paths\/[^/]+\/lessons\/[^/]+\/exercises\/[^/]+\/slides\/[^/]+\/(?:writing-feedback|conversation-sessions)(?:\/|$)|(?:writing-feedback|conversations)(?:\/|$))/iu;
+  app.use((req, res, next) => privateTextRoute.test(req.path) ? privateTextJson(req, res, next) : next());
   app.use(express.json({ limit: "10mb", strict: true }));
   app.use(cookieParser());
   app.get('/api/mobile/releases/:platform', (req, res) => {
@@ -115,6 +121,22 @@ export function createApp({
     return res.status(200).json(policy);
   });
   app.use("/api/shadowing", createShadowingRouter(container));
+
+  if (container.writingFeedback) {
+    const authenticate = createAuthMiddleware({
+      tokenService: container.tokenService,
+      getCurrentUser: container.useCases.getCurrentUser,
+      cookieName: container.authCookie.name,
+    });
+    app.use("/api/learning-paths", container.writingFeedback.createTaskRouter({ authenticate }));
+    app.use("/api/writing-feedback", container.writingFeedback.createJobRouter({ authenticate }));
+  }
+
+  if (container.adaptiveConversation) {
+    const authenticate = createAuthMiddleware({ tokenService: container.tokenService, getCurrentUser: container.useCases.getCurrentUser, cookieName: container.authCookie.name });
+    app.use("/api/learning-paths", container.adaptiveConversation.createTaskRouter({ authenticate }));
+    app.use("/api/conversations", container.adaptiveConversation.createRouter({ authenticate }));
+  }
 
   // Production containers always expose the Learning Path module through
   // createContainer(). Some focused HTTP unit tests intentionally supply a

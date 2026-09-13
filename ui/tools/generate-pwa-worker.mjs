@@ -20,6 +20,7 @@ const CACHEABLE_EXTENSIONS = new Set([
 	'.ogg',
 	'.png',
 	'.svg',
+	'.wasm',
 	'.wav',
 	'.webmanifest',
 	'.webp',
@@ -148,7 +149,7 @@ const CACHE_NAME = CACHE_PREFIX + ${JSON.stringify(version)};
 const APP_SHELL_URL = '/index.html';
 const PRECACHE_URLS = Object.freeze(${JSON.stringify(precacheUrls, null, 2)});
 const PRECACHE_PATHS = new Set(PRECACHE_URLS);
-const CACHEABLE_PATH = /\\.(?:css|gif|html|jpe?g|js|json|md|mp3|ogg|png|svg|wav|webmanifest|webp|woff2?)$/iu;
+const CACHEABLE_PATH = /\\.(?:css|gif|html|jpe?g|js|json|md|mp3|ogg|png|svg|wasm|wav|webmanifest|webp|woff2?)$/iu;
 const PRECACHE_RETRIES = 2;
 
 async function precacheAsset(cache, url) {

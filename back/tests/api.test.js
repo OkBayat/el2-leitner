@@ -18,6 +18,10 @@ describe("HTTP API", () => {
       response.headers["content-security-policy"],
       /(?:^|;)default-src 'self'(?:;|$)/
     );
+    assert.match(
+      response.headers["content-security-policy"],
+      /(?:^|;)worker-src 'self' blob:(?:;|$)/
+    );
     assert.doesNotMatch(
       response.headers["content-security-policy"],
       /upgrade-insecure-requests/

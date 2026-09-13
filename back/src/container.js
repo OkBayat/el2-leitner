@@ -42,6 +42,7 @@ import { MySqlVocabularyActivationRepository } from "./infrastructure/persistenc
 import { MySqlVocabularySourceRepository } from "./infrastructure/persistence/mysql/MySqlVocabularySourceRepository.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./infrastructure/security/JwtTokenService.js";
+import { createAiEvaluationModule } from './modules/ai-evaluation/createAiEvaluationModule.js';
 import { createCollectionLearningPathModule } from "./modules/collection-learning-path/createCollectionLearningPathModule.js";
 import { SynthesizeSpeech } from "./application/text-to-speech/SynthesizeSpeech.js";
 import { FileTtsAudioCache } from "./infrastructure/text-to-speech/FileTtsAudioCache.js";
@@ -87,6 +88,21 @@ export function createContainer({ pool, config, adapters = {} }) {
     baseUrl: config.tts.providerUrl,
     timeoutMs: config.tts.requestTimeoutMs
   });
+  const synthesizeSpeech = new SynthesizeSpeech({
+    audioCache: ttsAudioCache,
+    ttsProvider,
+    requestOptions: {
+      allowedVoices: config.tts.allowedVoices,
+      defaultVoice: config.tts.defaultVoice,
+      defaultSpeed: config.tts.defaultSpeed,
+      defaultFormat: config.tts.defaultFormat,
+      maxTextLength: config.tts.maxTextLength,
+      model: config.tts.model,
+      modelVersion: config.tts.modelVersion
+    }
+  });
+  const aiEvaluation = createAiEvaluationModule({ pool, config, synthesizeSpeech, adapters });
+  const { writingFeedback, adaptiveConversation } = aiEvaluation;
 
   return {
     tokenService,
@@ -95,20 +111,11 @@ export function createContainer({ pool, config, adapters = {} }) {
     listeningAudioDirectory: config.listening.audioDirectory,
     listeningEpisodesDirectory: config.listening.episodesDirectory,
     collectionLearningPath,
+    writingFeedback,
+    adaptiveConversation,
+    aiEvaluation,
     useCases: {
-      synthesizeSpeech: new SynthesizeSpeech({
-        audioCache: ttsAudioCache,
-        ttsProvider,
-        requestOptions: {
-          allowedVoices: config.tts.allowedVoices,
-          defaultVoice: config.tts.defaultVoice,
-          defaultSpeed: config.tts.defaultSpeed,
-          defaultFormat: config.tts.defaultFormat,
-          maxTextLength: config.tts.maxTextLength,
-          model: config.tts.model,
-          modelVersion: config.tts.modelVersion
-        }
-      }),
+      synthesizeSpeech,
       getLearningTimeline: new GetLearningTimeline({
         timelineRepository: adapters.timelineRepository ?? new MySqlLearningTimelineRepository(pool)
       }),

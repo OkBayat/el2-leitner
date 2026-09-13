@@ -30,32 +30,6 @@ build_if_source_changed() {
   docker compose build "$service"
 }
 
-ensure_qwen_model() {
-  local model="qwen3:4b-instruct-2507-q4_K_M"
-  local expected_digest="0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
-  local manifest="/root/.ollama/models/manifests/registry.ollama.ai/library/qwen3/4b-instruct-2507-q4_K_M"
-  local actual_digest
-  actual_digest="$(
-    docker compose --profile ai exec -T ollama sha256sum "$manifest" 2>/dev/null |
-      awk '{ print $1 }'
-  )" || true
-  if docker compose --profile ai exec -T ollama ollama show "$model" >/dev/null 2>&1 &&
-    [[ "$actual_digest" == "$expected_digest" ]]; then
-    printf 'Skipping installed Qwen model %s.\n' "$model"
-    return
-  fi
-  docker compose --profile ai exec -T ollama ollama pull "$model"
-  actual_digest="$(
-    docker compose --profile ai exec -T ollama sha256sum "$manifest" 2>/dev/null |
-      awk '{ print $1 }'
-  )" || true
-  if [[ "$actual_digest" != "$expected_digest" ]]; then
-    printf 'Qwen model digest mismatch for %s: expected %s, got %s.\n' \
-      "$model" "$expected_digest" "${actual_digest:-missing}" >&2
-    return 1
-  fi
-}
-
 export VOCORA_APP_SOURCE_HASH="$(source_fingerprint .dockerignore back ui)"
 export VOCORA_SPEECH_SOURCE_HASH="$(source_fingerprint .dockerignore speech)"
 
@@ -67,11 +41,9 @@ docker compose up -d --wait mysql
 # mount. Its migrations and publishers are idempotent; a failure keeps the
 # currently serving app untouched.
 docker compose run --rm --no-deps db-setup
-# The app is deployed with --no-deps, so health-gate every private provider.
+# The app is deployed with --no-deps, so health-gate its private media providers.
 docker compose up -d --wait speech
 docker compose up -d --wait kokoro
-docker compose --profile ai up -d --wait ollama
-ensure_qwen_model
 
 # Compose reuses the current container when its image and configuration are
 # unchanged. Avoid force-recreating a healthy app on no-op deployments.

@@ -11,7 +11,6 @@ test("every deployment runs setup and a failed setup prevents an app restart", a
   const log = join(root, "docker-calls.log");
   await writeFile(join(root, "docker"), `#!/usr/bin/env bash
 echo "$*" >> "$DEPLOY_TEST_LOG"
-if [[ "$*" == compose\\ --profile\\ ai\\ exec\\ -T\\ ollama\\ sha256sum* ]]; then echo "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0  manifest"; exit 0; fi
 if [[ "\${FAIL_SETUP:-}" == 1 && "$*" == "compose run --rm --no-deps db-setup" ]]; then exit 9; fi
 `, { mode: 0o755 });
   const script = new URL("../../scripts/deploy.sh", import.meta.url);
