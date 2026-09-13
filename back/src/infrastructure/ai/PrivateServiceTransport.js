@@ -3,9 +3,16 @@ import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { isIP } from 'node:net';
 import { Readable } from 'node:stream';
-import { StructuredInferenceError } from './StructuredInferenceError.js';
 
-export function isPrivateOllamaAddress(address) {
+class PrivateServiceError extends Error {
+  constructor(code = 'PRIVATE_SERVICE_UNAVAILABLE') {
+    super('The private service request could not be completed.');
+    this.name = 'PrivateServiceError';
+    this.code = code;
+  }
+}
+
+export function isPrivateServiceAddress(address) {
   if (address === '::1') return true;
   if (isIP(address) !== 4) return false;
   const [first, second] = address.split('.').map(Number);
@@ -15,27 +22,23 @@ export function isPrivateOllamaAddress(address) {
 
 export function privateServiceUrl(value, allowedHostnames = []) {
   let url;
-  try { url = new URL(value); } catch { throw new StructuredInferenceError('STRUCTURED_INFERENCE_CONFIGURATION'); }
+  try { url = new URL(value); } catch { throw new PrivateServiceError('PRIVATE_SERVICE_CONFIGURATION'); }
   const hostname = url.hostname.replace(/^\[|\]$/g, '');
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash
-      || url.pathname !== '/' || !(isPrivateOllamaAddress(hostname) || ['localhost', ...allowedHostnames].includes(hostname))) {
-    throw new StructuredInferenceError('STRUCTURED_INFERENCE_CONFIGURATION');
+      || url.pathname !== '/' || !(isPrivateServiceAddress(hostname) || ['localhost', ...allowedHostnames].includes(hostname))) {
+    throw new PrivateServiceError('PRIVATE_SERVICE_CONFIGURATION');
   }
   return url;
 }
 
-export function privateOllamaUrl(value) {
-  return privateServiceUrl(value, ['ollama']);
-}
-
 /** A no-redirect transport which validates the addresses used by the socket.
- * The aliases below are private services declared in docker-compose.yml.
+ * The allowed aliases below are private services declared in docker-compose.yml.
  */
 export function createPrivateServiceFetch({ lookupImpl = lookup } = {}) {
   const privateLookup = (hostname, options, callback) => {
     lookupImpl(hostname, { all: true }, (error, addresses) => {
-      if (error || !addresses?.length || addresses.some(item => !isPrivateOllamaAddress(item.address))) {
-        callback(new StructuredInferenceError('STRUCTURED_INFERENCE_PROVIDER_UNAVAILABLE')); return;
+      if (error || !addresses?.length || addresses.some(item => !isPrivateServiceAddress(item.address))) {
+        callback(new PrivateServiceError()); return;
       }
       if (options.all) callback(null, addresses);
       else callback(null, addresses[0].address, addresses[0].family);
@@ -45,9 +48,9 @@ export function createPrivateServiceFetch({ lookupImpl = lookup } = {}) {
     return new Promise((resolve, reject) => {
       const target = new URL(url);
       // Direct IP sockets can bypass DNS lookup; validate the origin here too.
-      privateServiceUrl(target.origin, ['ollama', 'speech', 'kokoro']);
+      privateServiceUrl(target.origin, ['speech', 'kokoro']);
       if (target.username || target.password || target.hash) {
-        throw new StructuredInferenceError('STRUCTURED_INFERENCE_CONFIGURATION');
+        throw new PrivateServiceError('PRIVATE_SERVICE_CONFIGURATION');
       }
       const request = (target.protocol === 'https:' ? httpsRequest : httpRequest)(target, {
         method, headers, signal, lookup: privateLookup, agent: false,
@@ -71,4 +74,3 @@ export function createPrivateServiceFetch({ lookupImpl = lookup } = {}) {
 }
 
 export const privateServiceFetch = createPrivateServiceFetch();
-export const privateOllamaFetch = privateServiceFetch;

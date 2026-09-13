@@ -19,6 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
+            "externalDependencies": ["fs"],
             "inlineStyleLanguage": "scss",
             "outputPath": { "base": "dist", "browser": "browser" },
             "assets": [
@@ -27,6 +28,7 @@
               "src/vocora-v3.webmanifest",
               "src/vocora-v4.webmanifest",
               "src/theme-bootstrap.js",
+              { "glob": "*.wasm", "input": "node_modules/harper.js/dist", "output": "/" },
               { "glob": "**/*", "input": "assets", "output": "assets" },
               { "glob": "**/*", "input": "fonts", "output": "fonts" },
               { "glob": "**/*", "input": "data", "output": "data" }

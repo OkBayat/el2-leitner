@@ -14,7 +14,7 @@ function saved(overrides: Partial<ConversationSession> = {}): ConversationSessio
 function controller() {
   const session = signal<ConversationSession | null>(null);
   return { session, currentTurn: computed(() => session()?.turns[0] ?? null), loaded: signal(true), loading: signal(false), enabled: signal(false), busy: signal(false),
-    phase: signal<'idle' | 'requesting' | 'recording' | 'uploading'>('idle'), seconds: signal(0), error: signal(''), audioError: signal(''), audioPlaying: signal(false),
+    phase: signal<'idle' | 'requesting' | 'recording' | 'uploading'>('idle'), seconds: signal(0), error: signal(''), audioError: signal(''), audioLoading: signal(false), audioPlaying: signal(false),
     pollingPaused: signal(false), contentChanged: signal(false), liveTranscript: signal(null), supported: true, canRecord: signal(false), recordingLimitReached: signal(false), canRetry: signal(false), canFinish: signal(false), canRetryUpload: signal(false),
     load: vi.fn().mockResolvedValue(undefined), start: vi.fn(), record: vi.fn(), stop: vi.fn(), retryUpload: vi.fn(), cancelRecording: vi.fn(), check: vi.fn(), retry: vi.fn(), finish: vi.fn(), cancel: vi.fn(), listen: vi.fn(), stopAudio: vi.fn(), dispose: vi.fn(),
   } satisfies AdaptiveConversationController;

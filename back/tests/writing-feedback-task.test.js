@@ -61,9 +61,10 @@ test("writing practice can explicitly declare no vocabulary targets", () => {
   assert.deepEqual(parseWritingFeedbackTask(writing({ targetVocabulary: [] })).targetVocabulary, []);
 });
 
-test("the short-text pilot rejects unmeasured modes and invalid word constraints", () => {
+test('supports full IELTS modes while rejecting invalid word constraints', () => {
+  assert.equal(parseWritingFeedbackTask(writing({ mode: 'task2-essay', wordLimit: 300 })).mode, 'task2-essay');
   for (const overrides of [
-    { mode: "task1-chart" }, { mode: "task2-essay" }, { wordLimit: 81 },
+    { mode: 'unknown' }, { wordLimit: 451 },
     { wordLimit: "40" }, { wordLimit: 0 }, { recommendedMinimumWords: 41 },
     { recommendedMinimumWords: -1 }, { register: "academic" },
   ]) {

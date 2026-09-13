@@ -1,8 +1,8 @@
 import { ConflictError, NotFoundError, ValidationError } from "../../domain/errors.js";
-import { MAXIMUM_PILOT_WORDS } from "../../domain/writing-feedback/WritingFeedbackTask.js";
+import { MAXIMUM_WRITING_WORDS } from '../../domain/writing-feedback/WritingFeedbackTask.js';
 import { canonicalWritingFeedbackJson } from "./writingFeedbackIdentity.js";
 
-export const WRITING_FEEDBACK_LIMITS = Object.freeze({ maxWords: MAXIMUM_PILOT_WORDS, maxCharacters: 2000 });
+export const WRITING_FEEDBACK_LIMITS = Object.freeze({ maxWords: MAXIMUM_WRITING_WORDS, maxCharacters: 4000 });
 const REQUEST_FIELDS = new Set(["expectedPathContentVersion", "draftText", "notes", "idempotencyKey", "parentSubmissionId"]);
 
 function validateInput(value) {

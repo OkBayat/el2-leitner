@@ -3,18 +3,18 @@ import { MySqlWritingFeedbackRepository, mapWritingFeedbackRow, writingFeedbackC
 import { MySqlConversationRepository } from "../adaptive-conversation/MySqlConversationRepository.js";
 import { conversationJobColumns, mapConversationJob, ownedConversation, saveCompletionEvidence,
   saveConversationState, synchronousTransform } from "../adaptive-conversation/conversationPersistence.js";
-import { LocalTextInferencePersistence, iso, json, parseJson, sqlTime } from "./LocalTextInferencePersistence.js";
+import { AiEvaluationPersistence, iso, json, parseJson, sqlTime } from "./AiEvaluationPersistence.js";
 
 const KINDS = Object.freeze({
   "writing-feedback": { table: "writing_feedback_submissions", columns: writingFeedbackColumns, map: mapWritingFeedbackRow, interrupted: "WRITING_FEEDBACK_INTERRUPTED" },
   "adaptive-conversation": { table: "conversation_inference_jobs", columns: conversationJobColumns, map: mapConversationJob, interrupted: "CONVERSATION_INTERRUPTED" },
 });
 function definition(kind) {
-  if (!Object.hasOwn(KINDS, kind)) throw new ValidationError("LOCAL_TEXT_INFERENCE_INVALID_KIND", "Inference job kind is unsupported.");
+  if (!Object.hasOwn(KINDS, kind)) throw new ValidationError("AI_EVALUATION_INVALID_KIND", "Inference job kind is unsupported.");
   return KINDS[kind];
 }
 
-export class MySqlLocalTextInferenceQueue extends LocalTextInferencePersistence {
+export class MySqlAiEvaluationQueue extends AiEvaluationPersistence {
   async isClaimCurrent({ kind, id, leaseToken, now }) {
     const spec = definition(kind);
     const conversation = kind === "adaptive-conversation";
@@ -72,7 +72,7 @@ export class MySqlLocalTextInferenceQueue extends LocalTextInferencePersistence 
   }
 
   async claim({ workerId, leaseToken, now, leaseUntil, evaluationProfiles = {} }) {
-    if (Date.parse(iso(leaseUntil)) <= Date.parse(iso(now))) throw new ValidationError("LOCAL_TEXT_INFERENCE_INVALID_LEASE", "The inference lease must expire in the future.");
+    if (Date.parse(iso(leaseUntil)) <= Date.parse(iso(now))) throw new ValidationError("AI_EVALUATION_INVALID_LEASE", "The inference lease must expire in the future.");
     return this.transaction(async (connection, gate) => {
       if (gate.leaseToken && gate.leaseUntil && Date.parse(gate.leaseUntil) > Date.parse(iso(now))) return null;
       await this.reconcileLease(connection, gate, now);
@@ -114,7 +114,7 @@ export class MySqlLocalTextInferenceQueue extends LocalTextInferencePersistence 
 
   async finish({ kind, id, leaseToken, now, status, result = null, identity = null, metrics = null, errorCode = null, applyConversationResult }) {
     const spec = definition(kind);
-    if (!["completed", "unavailable"].includes(status)) throw new ValidationError("LOCAL_TEXT_INFERENCE_INVALID_STATUS", "An inference must complete or record unavailability.");
+    if (!["completed", "unavailable"].includes(status)) throw new ValidationError("AI_EVALUATION_INVALID_STATUS", "An inference must complete or record unavailability.");
     return this.transaction(async (connection, gate) => {
       if ((gate.jobKind ?? "writing-feedback") !== kind || gate.jobId !== id || gate.leaseToken !== leaseToken
         || !gate.leaseUntil || Date.parse(gate.leaseUntil) <= Date.parse(iso(now))) return false;

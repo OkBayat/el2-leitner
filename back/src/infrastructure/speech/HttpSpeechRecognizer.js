@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 import { AppError } from '../../domain/errors.js';
-import { privateServiceFetch, privateServiceUrl } from '../ai/PrivateOllamaTransport.js';
+import { privateServiceFetch, privateServiceUrl } from '../ai/PrivateServiceTransport.js';
 
 const MAX_RESPONSE_BYTES = 128 * 1024;
 const unavailable = () => new AppError(503, 'SHADOWING_UNAVAILABLE', 'Speech recognition is temporarily unavailable. Please try again. Your attempt was not marked wrong.');

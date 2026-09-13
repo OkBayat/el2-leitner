@@ -33,6 +33,7 @@
 			<mat-form-field appearance="outline"
 				><mat-label>Your response</mat-label
 				><textarea
+					#responseEditor
 					matInput
 					rows="8"
 					[value]="response()"
@@ -47,10 +48,37 @@
 					}
 				</mat-hint></mat-form-field
 			>
+			@if (!originalLocked() && assistant(); as localAssistant) {
+				<section class="d-flex flex-column gap-2" aria-label="Local writing suggestions">
+					@if (localAssistant.status() === 'checking') {
+						<p class="text-body-secondary mb-0" role="status">Checking locally…</p>
+					} @else if (localAssistant.status() === 'unavailable') {
+						<p class="text-body-secondary mb-0" role="status">Local writing checks are unavailable. You can keep writing and submit normally.</p>
+					} @else if (localIssue(); as issue) {
+						<div class="border rounded-3 p-3 d-flex flex-column gap-2">
+							<div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+								<strong>{{ issue.category }}</strong>
+								<span class="text-body-secondary">{{ localAssistant.issues().length }} local suggestion{{ localAssistant.issues().length === 1 ? '' : 's' }}</span>
+							</div>
+							<p class="mb-0">{{ issue.message }}</p>
+							@if (issue.problemText) { <p class="mb-0">Check: “{{ issue.problemText }}”</p> }
+							<div class="d-flex flex-wrap gap-2">
+								<voco-secondary-button (activated)="showLocalIssue(issue)">Show in text</voco-secondary-button>
+								@for (suggestion of issue.suggestions.slice(0, 2); track $index) {
+									<voco-primary-button (activated)="applyLocalSuggestion(issue, $index)">{{ suggestion ? 'Use “' + suggestion + '”' : 'Remove' }}</voco-primary-button>
+								}
+								<voco-secondary-button (activated)="ignoreLocalIssue(issue)">Ignore</voco-secondary-button>
+							</div>
+						</div>
+					} @else if (localAssistant.status() === 'ready' && response().trim()) {
+						<p class="text-body-secondary mb-0" role="status">Local writing check complete.</p>
+					}
+				</section>
+			}
 			@if (feedback(); as controller) {
 				<p class="text-body-secondary">Aim for up to {{ writingWordTarget() }} words. Feedback supports up to {{ controller.availability().maxWords }} words. You can save up to {{ controller.availability().maxCharacters }} characters.</p>
 				@if (response().length > controller.availability().maxCharacters || notes().length > 2000) {
-					<p role="alert">Your text is still here. Keep the response and planning notes within 2,000 characters each to save a feedback draft.</p>
+					<p role="alert">Your text is still here. Keep the response within {{ controller.availability().maxCharacters }} characters and planning notes within 2,000 characters.</p>
 				}
 				@if (controller.loading()) {
 					<p role="status">Restoring saved responses…</p>
@@ -77,7 +105,7 @@
 				@if (controller.active(); as active) {
 					<section class="d-flex flex-column gap-3 mt-3" aria-label="Writing feedback">
 						<p role="status" class="mb-0">{{ statusMessage(active) }}</p>
-						<p class="text-body-secondary mb-0">Use these suggestions to revise. No IELTS score is given.</p>
+						<p class="text-body-secondary mb-0">Use these suggestions to revise. {{ fullIeltsWriting() ? 'Any band shown is an estimate for this full IELTS task.' : 'No IELTS score is given.' }}</p>
 						@if (controller.submissions().length > 1) {
 							<mat-form-field appearance="outline">
 								<mat-label>Saved version</mat-label>
@@ -105,6 +133,9 @@
 							<voco-secondary-button [disabled]="controller.busy()" (activated)="controller.retry()">Retry feedback</voco-secondary-button>
 						}
 						@if (active.feedback; as result) {
+							@if (result.ielts_band !== null) {
+								<p class="mb-0"><strong>Estimated IELTS band:</strong> {{ result.ielts_band }}</p>
+							}
 							@if (result.not_assessed.includes('task_coverage')) {
 								<p class="text-body-secondary mb-0">Task requirements were not assessed.</p>
 							}

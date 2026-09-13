@@ -3,7 +3,7 @@ import { AppError, ValidationError } from "../../../../domain/errors.js";
 export const dateColumn = (column, alias) => `DATE_FORMAT(${column}, '%Y-%m-%dT%H:%i:%s.%fZ') AS ${alias}`;
 export function iso(value) {
   const date = new Date(value);
-  if (!Number.isFinite(date.valueOf())) throw new ValidationError("LOCAL_TEXT_INFERENCE_INVALID_TIME", "A valid inference timestamp is required.");
+  if (!Number.isFinite(date.valueOf())) throw new ValidationError("AI_EVALUATION_INVALID_TIME", "A valid inference timestamp is required.");
   return date.toISOString();
 }
 export const sqlTime = (value) => iso(value).replace("T", " ").replace("Z", "");
@@ -11,7 +11,7 @@ export const json = (value) => value == null ? null : JSON.stringify(value);
 export const parseJson = (value) => typeof value === "string" ? JSON.parse(value) : value ?? null;
 export const bounded = (value, fallback, maximum) => Number.isSafeInteger(value) && value > 0 ? Math.min(value, maximum) : fallback;
 
-export class LocalTextInferencePersistence {
+export class AiEvaluationPersistence {
   constructor(pool) { this.pool = pool; }
 
   async transaction(operation) {
@@ -22,7 +22,7 @@ export class LocalTextInferencePersistence {
         `SELECT id, job_id AS jobId, job_kind AS jobKind, lease_token AS leaseToken, ${dateColumn("lease_until", "leaseUntil")}
          FROM writing_feedback_gate WHERE id = 1 FOR UPDATE`,
       );
-      if (!rows[0]) throw new AppError(503, "LOCAL_TEXT_INFERENCE_STORAGE_UNAVAILABLE", "Local feedback storage is unavailable.");
+      if (!rows[0]) throw new AppError(503, "AI_EVALUATION_STORAGE_UNAVAILABLE", "Local feedback storage is unavailable.");
       const result = await operation(connection, rows[0]);
       await connection.commit();
       return result;

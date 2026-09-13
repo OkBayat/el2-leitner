@@ -12,7 +12,7 @@ async function settledWithin(promise, timeoutMs) {
   } finally { clearTimeout(timer); }
 }
 
-export class LocalTextInferenceWorker {
+export class AiEvaluationWorker {
   constructor({ repository, handlers, clock = () => new Date(), idFactory, timeoutMs = 120_000, cleanupTimeoutMs = 5000, pollIntervalMs = 1000, logger = console }) {
     Object.assign(this, { repository, handlers, clock, idFactory, timeoutMs, cleanupTimeoutMs, pollIntervalMs, logger });
     this.workerId = idFactory();
@@ -41,7 +41,7 @@ export class LocalTextInferenceWorker {
     const record = await this.repository.claim({ workerId: this.workerId, leaseToken, now, leaseUntil: requestedLeaseUntil, maxAttempts: 3, evaluationProfiles });
     if (!record) return;
     const handler = this.handlers[record.kind];
-    const prefix = handler?.prefix ?? "LOCAL_INFERENCE";
+    const prefix = handler?.prefix ?? 'AI_EVALUATION';
     const evaluationProfile = evaluationProfiles[record.kind];
     const controller = new AbortController();
     const active = { id: record.id, kind: record.kind, sessionId: record.sessionId, prefix, controller };
@@ -72,6 +72,11 @@ export class LocalTextInferenceWorker {
       });
       evaluation = Promise.resolve().then(() => handler.evaluate(record, controller.signal));
       ({ result, identity, metrics } = await Promise.race([evaluation, interruption]));
+      this.logger.info?.({ event: 'ai_evaluation_completed', feature: record.kind,
+        exerciseId: record.exerciseId ?? null, model: identity?.model ?? null,
+        durationMs: metrics?.durationMs ?? null, inputTokens: metrics?.inputTokens ?? null,
+        outputTokens: metrics?.outputTokens ?? null, totalTokens: metrics?.totalTokens ?? null,
+        queueLatencyMs: record.createdAt ? Math.max(0, this.clock().getTime() - Date.parse(record.createdAt)) : null });
     } catch (error) {
       errorCode = [`${prefix}_DISABLED`, `${prefix}_TIMEOUT`, `${prefix}_CANCELLED`, `${prefix}_PROFILE_CHANGED`].includes(error?.code) || handler?.isSafeError(error) ? error.code : `${prefix}_UNAVAILABLE`;
     } finally { clearTimeout(timeout); }
@@ -85,7 +90,8 @@ export class LocalTextInferenceWorker {
       // Keep the persisted lease while cleanup is unresolved. The next process
       // can reconcile expiry; this process remains closed to further inference.
       active.cleanup = evaluation.then(finish, finish).catch(() => {
-        this.logger.warn?.("Local text inference cleanup could not update its queue.");
+        this.logger.warn?.({ event: 'ai_evaluation_cleanup_failed', feature: record.kind,
+          exerciseId: record.exerciseId ?? null });
       });
       return;
     }
@@ -105,7 +111,7 @@ export class LocalTextInferenceWorker {
     this.started = true;
     this.stopping = false;
     const tick = async () => {
-      try { await this.runOnce(); } catch { this.logger.warn?.("Local text inference worker could not access its queue."); }
+      try { await this.runOnce(); } catch { this.logger.warn?.({ event: 'ai_evaluation_queue_unavailable' }); }
       if (this.started) {
         this.timer = setTimeout(tick, this.pollIntervalMs);
         this.timer.unref?.();

@@ -101,6 +101,8 @@ function parseLabeling(value: unknown): LabelingSlideData {
 	templateUrl: './labeling-slide.component.html',
 	styleUrls: [
 		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
 		'./labeling-slide.component.scss',
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,

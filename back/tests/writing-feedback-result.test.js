@@ -80,6 +80,18 @@ test('abstention is explicit and cannot carry contradictory assessed findings', 
   assert.throws(() => validateWritingFeedbackResult(model, 'It increased.'), { code: 'WRITING_FEEDBACK_INVALID_RESULT' });
 });
 
+test('does not fabricate a band for an insufficient full IELTS response', () => {
+  const model = available(); Object.assign(model, {
+    assessment_status: 'insufficient_evidence', abstention_reason: 'The response is too short to assess.',
+    task_relevance: 'not_assessed', issues: [], revision_actions: ['Write enough to address the task.'],
+  });
+  assert.equal(validateWritingFeedbackResult(model, 'One sentence.', { mode: 'task2-essay' }).ielts_band, null);
+  model.ielts_band = 5;
+  model.not_assessed = [];
+  assert.throws(() => validateWritingFeedbackResult(model, 'One sentence.', { mode: 'task2-essay' }),
+    { code: 'WRITING_FEEDBACK_INVALID_RESULT' });
+});
+
 test('preserves codepoint distinctions instead of silently normalizing evidence', () => {
   const model = available(); model.issues[0].quoted_text = 'é';
   assert.throws(() => validateWritingFeedbackResult(model, 'e\u0301'), { code: 'WRITING_FEEDBACK_INVALID_RESULT' });

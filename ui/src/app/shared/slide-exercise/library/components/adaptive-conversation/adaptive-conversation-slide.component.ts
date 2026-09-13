@@ -11,7 +11,12 @@ import { parseAdaptiveConversation } from './adaptive-conversation.definition';
 @Component({
   selector: 'app-adaptive-conversation-slide', standalone: true,
   imports: [VocoPrimaryButtonComponent, VocoSecondaryButtonComponent],
-  templateUrl: './adaptive-conversation-slide.component.html', styleUrl: '../../slide-library.component.scss',
+  templateUrl: './adaptive-conversation-slide.component.html',
+  styleUrls: [
+    '../../slide-library.component.scss',
+    '../../slide-library-language.component.scss',
+    '../../slide-library-supporting.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdaptiveConversationSlideComponent implements SlideContentComponent, OnDestroy {

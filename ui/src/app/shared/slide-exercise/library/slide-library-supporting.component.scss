@@ -1,0 +1,232 @@
+.field-list mat-form-field,
+.word-family-grid mat-form-field,
+.structured-fields mat-form-field,
+.slide-interaction > mat-form-field {
+	width: 100%;
+}
+
+.cloze-choice-grid {
+	margin-top: var(--vocora-space-4);
+}
+
+.word-family-grid,
+.structured-fields[data-layout='form'] {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.structured-fields[data-layout='flowchart'],
+.structured-fields[data-layout='timeline'] {
+	padding-left: var(--vocora-space-4);
+	border-left: 3px solid var(--vocora-information);
+}
+
+.table-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--vocora-surface-base);
+}
+
+th,
+td {
+	padding: var(--vocora-space-3);
+	border: 1px solid var(--vocora-border);
+	text-align: left;
+	vertical-align: middle;
+}
+
+td mat-form-field {
+	min-width: 160px;
+	width: 100%;
+}
+
+.teaching-grid {
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.teaching-card__lead {
+	max-width: 68ch;
+	margin: 0;
+	color: var(--vocora-text-secondary);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.teaching-markdown {
+	max-width: 72ch;
+	display: grid;
+	gap: var(--vocora-space-3);
+	color: var(--vocora-text-secondary);
+	font-size: 17px;
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+}
+
+.teaching-markdown h3,
+.teaching-markdown h4,
+.teaching-markdown p,
+.teaching-markdown ul,
+.teaching-markdown ol {
+	margin: 0;
+}
+
+.teaching-markdown h3,
+.teaching-markdown h4 {
+	color: var(--vocora-text-primary);
+}
+
+.teaching-markdown h3 {
+	font-size: 22px;
+	line-height: 1.35;
+}
+
+.teaching-markdown h4 {
+	font-size: 18px;
+	line-height: 1.4;
+}
+
+.teaching-markdown ul,
+.teaching-markdown ol {
+	padding-inline-start: var(--vocora-space-6);
+}
+
+.teaching-markdown li + li {
+	margin-top: var(--vocora-space-2);
+}
+
+:host ::ng-deep .teaching-markdown .teaching-markdown__known {
+	color: var(--vocora-action-primary);
+}
+
+.teaching-block,
+.answer-review,
+blockquote {
+	padding: var(--vocora-space-4);
+	border: 1px solid var(--vocora-border);
+	border-radius: var(--vocora-radius-lg);
+	background: var(--vocora-surface-subtle);
+}
+
+.teaching-block[data-kind='warning'],
+.teaching-block[data-kind='correction'] {
+	border-color: var(--vocora-warning);
+}
+
+.teaching-block p,
+.teaching-block h2 {
+	margin: 0;
+}
+
+.teaching-block {
+	display: grid;
+	gap: var(--vocora-space-2);
+}
+
+blockquote {
+	display: grid;
+	gap: var(--vocora-space-2);
+	font-size: 18px;
+}
+
+blockquote span,
+.mode-label {
+	color: var(--vocora-text-secondary);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.answer-review {
+	display: grid;
+	gap: var(--vocora-space-2);
+	border-color: var(--vocora-information);
+}
+
+.answer-review--hidden {
+	visibility: hidden;
+}
+
+.slide-explanation,
+.timer {
+	padding: var(--vocora-space-3);
+	border-radius: var(--vocora-radius-md);
+	background: var(--vocora-surface-subtle);
+}
+
+.timer {
+	width: fit-content;
+	margin: 0;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+}
+
+.inline-error {
+	color: var(--vocora-error);
+}
+
+.recording-controls audio {
+	max-width: 100%;
+}
+
+button:focus-visible,
+audio:focus-visible,
+textarea:focus-visible,
+input:focus-visible,
+[tabindex='0']:focus-visible {
+	outline: 3px solid var(--vocora-focus-ring);
+	outline-offset: 3px;
+}
+
+@media (min-width: 840px) {
+	.slide-type:has(> app-slide-stimulus) {
+		grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+		align-items: start;
+	}
+}
+
+@media (max-width: 620px) {
+	.matching-grid,
+	.bucket-grid,
+	.word-family-grid,
+	.structured-fields[data-layout='form'] {
+		grid-template-columns: 1fr;
+	}
+
+	.matching-grid {
+		row-gap: var(--vocora-space-6);
+	}
+
+	.cloze-content {
+		font-size: 22px;
+		line-height: 1.7;
+	}
+
+	.inline-field {
+		display: block;
+		margin: var(--vocora-space-2) 0;
+	}
+
+	.inline-field--text {
+		display: inline-block;
+		margin: 0 var(--vocora-space-1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.choice-option {
+		transition: none;
+	}
+
+	.cloze-input,
+	.cloze-choice-blank,
+	.cloze-playback-token,
+	.cloze-content--spoken .inline-field,
+	.pronunciation-waveform span {
+		transition: none;
+	}
+}

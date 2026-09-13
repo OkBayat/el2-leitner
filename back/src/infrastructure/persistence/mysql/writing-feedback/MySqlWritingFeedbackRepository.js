@@ -1,6 +1,6 @@
 import { WritingFeedbackRepository } from "../../../../application/writing-feedback/ports/WritingFeedbackRepository.js";
 import { AppError, ConflictError, NotFoundError, ValidationError } from "../../../../domain/errors.js";
-import { LocalTextInferencePersistence } from "../local-text-inference/LocalTextInferencePersistence.js";
+import { AiEvaluationPersistence } from "../ai-evaluation/AiEvaluationPersistence.js";
 
 const dateColumn = (column, alias) => `DATE_FORMAT(${column}, '%Y-%m-%dT%H:%i:%s.%fZ') AS ${alias}`;
 export const writingFeedbackColumns = `id, user_id AS userId, request_hash AS requestHash, idempotency_key AS idempotencyKey,
@@ -34,7 +34,7 @@ const missing = () => new NotFoundError("WRITING_FEEDBACK_NOT_FOUND", "Writing f
 const queueFull = () => new AppError(429, "WRITING_FEEDBACK_QUEUE_FULL", "Writing feedback is busy. Try again later.");
 
 export class MySqlWritingFeedbackRepository extends WritingFeedbackRepository {
-  constructor(pool) { super(); this.pool = pool; this.shared = new LocalTextInferencePersistence(pool); }
+  constructor(pool) { super(); this.pool = pool; this.shared = new AiEvaluationPersistence(pool); }
 
   async transaction(operation) {
     return this.shared.transaction(operation);

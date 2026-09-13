@@ -17,9 +17,17 @@ function locateQuote(draft, quote, occurrence) {
     end: Array.from(draft.slice(0, cursor)).length, indexing: 'unicode-code-points' };
 }
 
-export function validateWritingFeedbackResult(value, draftText) {
-  if (typeof draftText !== 'string' || !matchesClosedSchema(WRITING_FEEDBACK_SCHEMA, value)
-      || !value.not_assessed.includes('ielts_band')) invalid();
+export function validateWritingFeedbackResult(value, draftText, taskContext = {}) {
+  if (typeof draftText !== 'string' || !matchesClosedSchema(WRITING_FEEDBACK_SCHEMA, value)) invalid();
+  if (new Set(value.revision_actions).size !== value.revision_actions.length
+      || new Set(value.not_assessed).size !== value.not_assessed.length) invalid();
+  const fullIeltsTask = ['task1-chart', 'task1-process', 'task2-essay', 'general-letter'].includes(taskContext.mode);
+  const bandNotAssessed = value.not_assessed.includes('ielts_band');
+  if (value.assessment_status === 'insufficient_evidence') {
+    if (value.ielts_band !== null || !bandNotAssessed) invalid();
+  } else if (fullIeltsTask) {
+    if (value.ielts_band === null || bandNotAssessed) invalid();
+  } else if (value.ielts_band !== null || !bandNotAssessed) invalid();
   if (value.assessment_status === 'feedback_available' && value.abstention_reason !== null) invalid();
   if (value.assessment_status === 'insufficient_evidence'
       && (typeof value.abstention_reason !== 'string' || !value.abstention_reason.trim()

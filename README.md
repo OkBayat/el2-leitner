@@ -247,9 +247,8 @@ Story Studio فعلی بدون تغییر رفتار آموزشی باقی ما�
 bash scripts/deploy.sh
 ```
 
-The script skips unchanged builds and an already installed Qwen model, while
-always running the idempotent database synchronization. See the
-[deployment guide](docs/DEPLOYMENT.md) for per-environment CORS and Ollama/Qwen
-configuration.
+The script skips unchanged builds while always running the idempotent database
+synchronization. See the [deployment guide](docs/DEPLOYMENT.md) for
+per-environment CORS and server-only OpenAI configuration.
 
 متن کامل transcript وارد دیتابیس نمی‌شود. نمونه‌های BBC در ریپازیتوری و ZIP نمایشی فقط فایل ارجاع به transcript رسمی دارند؛ برای اضافه‌کردن متن کاملِ دارای مجوز، ابزار `import-transcript` در راهنما توضیح داده شده است.

@@ -6,8 +6,7 @@ import { MySqlWritingFeedbackRepository } from "../../infrastructure/persistence
 import { MySqlLearningPathDefinitionQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathDefinitionQueryRepository.js";
 import { MySqlLearningPathProgressQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathProgressQueryRepository.js";
 import { MySqlLearningPathAccessQueryRepository } from "../../infrastructure/persistence/mysql/collection-learning-path/MySqlLearningPathAccessQueryRepository.js";
-import { OllamaWritingFeedbackProvider } from "../../infrastructure/ai/OllamaWritingFeedbackProvider.js";
-import { WritingFeedbackTokenizer } from "../../infrastructure/ai/WritingFeedbackTokenizer.js";
+import { OpenAIWritingFeedbackProvider } from '../../infrastructure/ai/OpenAIWritingFeedbackProvider.js';
 import { createWritingFeedbackTaskRouter, createWritingFeedbackJobRouter } from "../../interfaces/http/writing-feedback/writingFeedbackRouter.js";
 
 export function createWritingFeedbackModule({ pool, config = {}, adapters = {}, logger = console, sharedClient, createWorker = true, cancelWork }) {
@@ -22,10 +21,8 @@ export function createWritingFeedbackModule({ pool, config = {}, adapters = {}, 
     accessReader: adapters.learningPathAccessReader ?? new MySqlLearningPathAccessQueryRepository(pool),
     hashFactory,
   });
-  const provider = enabled ? adapters.writingFeedbackProvider ?? new OllamaWritingFeedbackProvider(sharedClient ? { client: sharedClient } : {
-    baseUrl: config.providerUrl, model: config.model, modelDigest: config.modelDigest,
-    tokenizer: adapters.writingFeedbackTokenizer ?? new WritingFeedbackTokenizer(config.tokenizer),
-    timeoutMs: config.timeoutMs,
+  const provider = enabled ? adapters.writingFeedbackProvider ?? new OpenAIWritingFeedbackProvider(sharedClient ? { client: sharedClient } : {
+    apiKey: config.apiKey, model: config.model, timeoutMs: config.timeoutMs,
   }) : null;
   const worker = createWorker ? new WritingFeedbackWorker({ repository, provider, enabled, clock, idFactory, timeoutMs: config.timeoutMs, pollIntervalMs: enabled ? 1000 : 60_000, logger }) : null;
   const service = new WritingFeedback({

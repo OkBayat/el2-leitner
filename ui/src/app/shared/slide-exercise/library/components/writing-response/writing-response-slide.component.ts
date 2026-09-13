@@ -1,7 +1,10 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
 	OnDestroy,
+	ViewChild,
+	computed,
 	signal,
 } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -19,6 +22,7 @@ import type {
 import { ScoredSlideBase } from '../../scored-slide.base';
 import type { WritingResponseSlideData } from '../../slide-library.models';
 import { SlideStimulusComponent } from '../../slide-stimulus.component';
+import { WritingAssistantService, type WritingAssistantController, type WritingAssistantIssue } from '../../../../../core/writing-assistant/writing-assistant.service';
 import {
 	common,
 	inputValue,
@@ -38,9 +42,6 @@ function parseWriting(value: unknown): WritingResponseSlideData {
 	const minimum = Number(source['recommendedMinimumWords']);
 	const wordLimit = source['wordLimit'];
 	const writingFeedback = parseWritingFeedback(source['writingFeedback']);
-	if (writingFeedback && !['sentence', 'paragraph'].includes(String(source['mode'] ?? 'sentence'))) {
-		throw new Error('Writing feedback supports sentence and paragraph responses.');
-	}
 	return {
 		...common(source),
 		writingFeedback,
@@ -89,13 +90,21 @@ function parseWriting(value: unknown): WritingResponseSlideData {
 		SlideStimulusComponent,
 	],
 	templateUrl: './writing-response-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WritingResponseSlideComponent
 	extends ScoredSlideBase<WritingResponseSlideData>
 	implements SlideContentComponent, OnDestroy
 {
+	constructor(private readonly writingAssistant: WritingAssistantService = new WritingAssistantService()) {
+		super();
+	}
+	@ViewChild('responseEditor') private responseEditor?: ElementRef<HTMLTextAreaElement>;
 	private timer: ReturnType<typeof setInterval> | null = null;
 	readonly response = signal('');
 	readonly notes = signal('');
@@ -107,6 +116,8 @@ export class WritingResponseSlideComponent
 	readonly revisionText = signal('');
 	readonly revisionNotes = signal('');
 	readonly selectedEdits = signal<readonly number[]>([]);
+	readonly assistant = signal<WritingAssistantController | null>(null);
+	readonly localIssue = computed(() => this.assistant()?.issues()[0] ?? null);
 	readonly statusMessage = writingStatusMessage;
 	private generation = 0;
 	private originalAttempted = false;
@@ -123,6 +134,8 @@ export class WritingResponseSlideComponent
 	load(context: SlideContentContext): void {
 		const data = parseWriting(context.data);
 		this.feedback()?.dispose();
+		this.assistant()?.dispose();
+		this.assistant.set(this.writingAssistant.create());
 		this.generation += 1;
 		this.feedback.set(null);
 		this.original.set(null);
@@ -157,7 +170,32 @@ export class WritingResponseSlideComponent
 	setResponse(value: string): void {
 		if (this.originalLocked()) return;
 		this.response.set(value);
+		this.assistant()?.update(value);
 		this.updateReady();
+	}
+	showLocalIssue(issue: WritingAssistantIssue): void {
+		const editor = this.responseEditor?.nativeElement;
+		if (!editor) return;
+		editor.focus();
+		editor.setSelectionRange(issue.start, issue.end);
+	}
+	async applyLocalSuggestion(issue: WritingAssistantIssue, suggestionIndex: number): Promise<void> {
+		const replacement = issue.suggestions[suggestionIndex] ?? '';
+		const next = await this.assistant()?.apply(issue.id, suggestionIndex);
+		if (next === null || next === undefined || this.originalLocked()) return;
+		this.response.set(next);
+		this.updateReady();
+		requestAnimationFrame(() => {
+			const editor = this.responseEditor?.nativeElement;
+			if (!editor) return;
+			editor.focus();
+			const cursor = issue.start + replacement.length;
+			editor.setSelectionRange(cursor, cursor);
+		});
+	}
+	ignoreLocalIssue(issue: WritingAssistantIssue): void {
+		this.assistant()?.ignore(issue.id);
+		this.responseEditor?.nativeElement.focus();
 	}
 	setNotes(value: string): void {
 		if (this.originalLocked()) return;
@@ -169,6 +207,9 @@ export class WritingResponseSlideComponent
 	}
 	writingWordTarget(): number {
 		return this.data().wordLimit ?? this.feedback()?.availability().maxWords ?? 80;
+	}
+	fullIeltsWriting(): boolean {
+		return ['task1-chart', 'task1-process', 'task2-essay', 'general-letter'].includes(this.data().mode);
 	}
 	handleAction(actionId: string): void {
 		if (actionId !== 'submit' || this.interactionState() !== 'idle' || !this.response().trim() || this.saveInFlight) return;
@@ -307,6 +348,7 @@ export class WritingResponseSlideComponent
 	ngOnDestroy(): void {
 		this.generation += 1;
 		this.feedback()?.dispose();
+		this.assistant()?.dispose();
 		this.clearTimer();
 		this.destroy();
 	}

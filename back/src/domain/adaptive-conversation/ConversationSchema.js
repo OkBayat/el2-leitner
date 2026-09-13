@@ -13,7 +13,7 @@ export const CONVERSATION_SCHEMA = {
     feedback: text(600),
     nextQuestion: { anyOf: [text(240), { type: 'null' }] },
     endConversation: { type: 'boolean' },
-    notAssessed: { type: 'array', minItems: 3, maxItems: 3, uniqueItems: true,
+    notAssessed: { type: 'array', minItems: 3, maxItems: 3,
       items: { enum: [...CONVERSATION_NOT_ASSESSED] } },
   },
 };

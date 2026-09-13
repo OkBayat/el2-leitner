@@ -20,7 +20,7 @@
           @if (session.status === 'expired') { <p>This conversation expired. Start a new practice session.</p> }
           @if (control.audioError()) { <p role="status">{{ control.audioError() }}</p> }
           <div class="d-flex flex-wrap gap-3">
-            @if (control.audioPlaying()) {
+            @if (control.audioPlaying() || control.audioLoading()) {
               <voco-secondary-button (activated)="control.stopAudio()">Stop question audio</voco-secondary-button>
             } @else {
               <voco-secondary-button [disabled]="control.phase() !== 'idle' || control.contentChanged()" (activated)="control.listen()">Play question</voco-secondary-button>
@@ -31,6 +31,9 @@
               <voco-secondary-button [disabled]="control.phase() === 'uploading'" (activated)="control.cancelRecording()">Cancel recording</voco-secondary-button>
             }
           </div>
+          @if (control.audioLoading()) { <p role="status">Generating voice…</p> }
+          @if (control.audioPlaying()) { <p role="status">Playing question…</p> }
+          @if (control.canRecord()) { <p class="text-body-secondary mb-0" role="status">Your turn.</p> }
           @if (!control.supported && session.status === 'active') { <p role="status">Microphone practice needs a secure connection and a browser with Web Audio support.</p> }
           @if (control.phase() === 'requesting') { <p role="status">Allow microphone access when your browser asks. Preparing your recording…</p> }
           @if (control.phase() === 'recording') { <p role="status">Recording · {{ control.seconds().toFixed(1) }} of {{ session.responseSeconds }} seconds</p> }

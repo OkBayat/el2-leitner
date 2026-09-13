@@ -31,6 +31,7 @@ export class AdaptiveConversationSession implements AdaptiveConversationControll
   readonly seconds = signal(0);
   readonly error = signal('');
   readonly audioError = signal('');
+  readonly audioLoading = signal(false);
   readonly audioPlaying = signal(false);
   readonly pollingPaused = signal(false);
   readonly contentChanged = signal(false);
@@ -206,13 +207,14 @@ export class AdaptiveConversationSession implements AdaptiveConversationControll
   listen(): void {
     const session = this.session(); const turn = this.currentTurn();
     if (!session || !turn || this.disposed || this.audioPlaying() || this.phase() !== 'idle' || this.contentChanged()) return;
-    this.stopAudio(); this.audioError.set(''); this.audioPlaying.set(true);
-    const failed = () => { this.audioPlaying.set(false); this.audioError.set('Question audio is unavailable. Read the question above or try playback again.'); };
+    this.stopAudio(); this.audioError.set(''); this.audioLoading.set(true);
+    const failed = () => { this.audioLoading.set(false); this.audioPlaying.set(false); this.audioError.set('Question audio is unavailable. Read the question above or try playback again.'); };
     if (!this.speaker.playServerAudio(() => this.bounded(this.gateway.audio(session.id, turn.id)), {
+      onStart: () => { this.audioLoading.set(false); this.audioPlaying.set(true); },
       onEnd: () => this.audioPlaying.set(false), onError: failed,
     })) failed();
   }
-  stopAudio(): void { this.speaker.cancel(); this.audioPlaying.set(false); }
+  stopAudio(): void { this.speaker.cancel(); this.audioLoading.set(false); this.audioPlaying.set(false); }
 
   dispose(): void {
     if (this.disposed) return;

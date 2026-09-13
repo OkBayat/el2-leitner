@@ -19,8 +19,8 @@ export const WRITING_FEEDBACK_SCHEMA = object({
     replacement: nullableText(1000),
     explanation: text(600),
   }) },
-  revision_actions: { type: 'array', minItems: 1, maxItems: 2, uniqueItems: true, items: text(600) },
-  not_assessed: { type: 'array', minItems: 1, maxItems: 3, uniqueItems: true,
+  revision_actions: { type: 'array', minItems: 1, maxItems: 2, items: text(600) },
+  not_assessed: { type: 'array', minItems: 0, maxItems: 3,
     items: { enum: ['ielts_band', 'task_coverage', 'source_fidelity'] } },
-  ielts_band: { type: 'null' },
+  ielts_band: { anyOf: [{ type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 }, { type: 'null' }] },
 });

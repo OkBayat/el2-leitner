@@ -46,40 +46,25 @@ and its migrations and publishers are idempotent. Compose then reuses healthy
 provider and app containers when their image and configuration are unchanged;
 the deploy script does not force-recreate the app.
 
-Do not delete the MySQL, TTS, or Ollama volumes during a normal deploy.
+Do not delete the MySQL or TTS volumes during a normal deploy.
 
-## Private Ollama and Qwen provisioning
+## OpenAI educational feedback
 
-The deployment starts the opt-in `ollama` Compose service on the private app
-network. It has no host port, disables Ollama cloud behavior, and persists model
-data in the environment-local `ollama_models` volume. Normal `docker compose up`
-and CI do not start it because the service belongs to the `ai` profile; the
-deployment workflow targets it explicitly.
+Writing evaluation and adaptive speaking conversation use the server-side OpenAI
+Responses API. Configure the backend environment only:
 
 Defaults are configured through `.env`:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `OLLAMA_IMAGE_TAG` | `0.34.0` | Ollama container release used by this trial |
-| `OLLAMA_NO_CLOUD` | `1` | Prevent cloud fallback |
-| `OLLAMA_NUM_PARALLEL` | `1` | Bound CPU concurrency |
-| `OLLAMA_MAX_LOADED_MODELS` | `1` | Bound resident models |
-| `OLLAMA_MAX_QUEUE` | `8` | Bound queued inference |
-| `OLLAMA_KEEP_ALIVE` | `5m` | Release idle model memory |
+| `OPENAI_API_KEY` | none | Required when either AI feature is enabled; backend only |
+| `OPENAI_MODEL` | `gpt-5-nano` | Responses API model |
+| `OPENAI_TIMEOUT_MS` | `30000` | One bounded provider attempt; no automatic retry |
+| `WRITING_FEEDBACK_ENABLED` | `false` | Enable submitted Writing evaluation |
+| `ADAPTIVE_CONVERSATION_ENABLED` | `false` | Enable transcript-driven Speaking turns |
 
-The candidate tag `qwen3:4b-instruct-2507-q4_K_M` is fixed by Compose and the
-deployment script so an environment cannot silently substitute another model.
-The script also verifies its full manifest digest
-`0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0`.
-After the service is healthy, deployment skips the download only when both the
-tag and digest match. It pulls an absent or mismatched model, then fails closed
-if the resulting digest still differs. The first deployment therefore downloads
-the model; later deployments reuse the verified persistent volume.
-
-This is provisioning for the documented CPU and feedback-quality experiment,
-not an enabled learner feature or proof that the model meets IELTS quality or
-latency requirements. Record the resolved image/model identity and real
-target-host measurements before an inference adapter or learner workflow is
-released. The digest above binds this initial trial artifact; the complete
-release record must additionally capture the container digest, Ollama version,
-quantization, template, and benchmark evidence required by the IELTS plan.
+The key is never written to Angular environment files or returned by an API.
+CI and automated tests use injected provider doubles and do not need a key or
+make paid requests. Kokoro and the existing speech service remain private
+Compose services; conversational text is synthesized through the canonical TTS
+cache.

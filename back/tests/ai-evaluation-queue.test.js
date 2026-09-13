@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { MySqlLocalTextInferenceQueue } from "../src/infrastructure/persistence/mysql/local-text-inference/MySqlLocalTextInferenceQueue.js";
+import { MySqlAiEvaluationQueue } from "../src/infrastructure/persistence/mysql/ai-evaluation/MySqlAiEvaluationQueue.js";
 
 const NOW = "2026-09-12T12:00:00.000Z";
 const LATER = "2026-09-12T12:02:00.000Z";
@@ -30,9 +30,9 @@ class Pool {
   }
 }
 const locked = (extra = {}) => [/FROM writing_feedback_gate WHERE id = 1 FOR UPDATE/u, rows([{ id: 1, jobKind: null, jobId: null, leaseToken: null, leaseUntil: null, ...extra }])];
-const fixture = (steps) => { const pool = new Pool(steps); return { pool, queue: new MySqlLocalTextInferenceQueue(pool) }; };
+const fixture = (steps) => { const pool = new Pool(steps); return { pool, queue: new MySqlAiEvaluationQueue(pool) }; };
 
-describe("Shared local text inference queue", () => {
+describe("Shared AI evaluation queue", () => {
   it("rechecks the Writing job and shared gate together without opening a transaction", async () => {
     const { pool, queue } = fixture([[/FROM writing_feedback_submissions j/u, rows([{ id: "draft" }]), (values, sql) => {
       assert.match(sql, /JOIN writing_feedback_gate g ON g\.id = 1/u);

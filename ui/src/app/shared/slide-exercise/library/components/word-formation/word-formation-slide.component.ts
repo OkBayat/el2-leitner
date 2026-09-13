@@ -53,7 +53,11 @@ function parseWordFormation(value: unknown): WordFormationSlideData {
 	standalone: true,
 	imports: [MatFormFieldModule, MatInputModule, SlideStimulusComponent],
 	templateUrl: './word-formation-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WordFormationSlideComponent

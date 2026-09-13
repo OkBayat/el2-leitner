@@ -16,6 +16,7 @@ export function validateConversationResult(value, { config, currentQuestion, acc
   } catch { invalid(); }
   if (!Number.isSafeInteger(acceptedTurns) || acceptedTurns < 0 || acceptedTurns >= task.maximumTurns
     || !matchesClosedSchema(CONVERSATION_SCHEMA, value)) invalid();
+  if (new Set(value.notAssessed).size !== value.notAssessed.length) invalid();
   if (/[\u0000-\u001f\u007f]/u.test(value.feedback) || /<\/?[a-z][^>]*>/iu.test(value.feedback)
     || /<\|[^>]*\|>/u.test(value.feedback)) invalid();
   let nextQuestion = null;

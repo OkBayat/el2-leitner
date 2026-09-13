@@ -61,28 +61,23 @@ later lessons.
 
 ## Blocking release gates
 
-1. **Qwen Writing:** the short-text backend, immutable draft/revision storage,
-   strict provider, exact-tokenizer preflight and existing Writing slide integration
-   are implemented behind a disabled feature flag. The canonical JSON contains
+1. **OpenAI Writing:** the bounded backend, immutable draft/revision storage,
+   strict provider, strict structured-output validation and existing Writing slide integration
+   are implemented behind an environment-controlled feature flag. The canonical JSON contains
    educational task context for its two Writing responses. Synthetic tests verify
-   contracts and failure behavior; the optional native image, real token parity
-   and target-host output quality remain unverified. The 80-word pilot does not
-   support full-length Academic Writing tasks or numeric IELTS estimates.
+   contracts and failure behavior without paid calls. Full IELTS modes may return
+   a cautious band estimate; short exercises must not.
 2. **Adaptive Speaking:** the reusable `adaptive-conversation` slide, owned
-   session/API, persistence and PCM → Vosk → Qwen → Kokoro orchestration are
-   implemented behind a disabled feature flag. E09 is the first consumer. Writing
+   session/API, persistence and PCM → Vosk → OpenAI → Kokoro orchestration are
+   implemented behind an environment-controlled feature flag. E09 is the first consumer. Writing
    and conversation share one bounded text-inference queue and provider lease.
    Contract tests do not establish real recognition accuracy, relevant follow-up
    questions, correct feedback or acceptable target-host response times.
    Transcript-only feedback does not assess pronunciation or acoustic fluency.
-3. **Quality evidence:** WF-01 requires actual target-CPU measurements and
-   reviewed model outputs before a supported feedback pilot. The original
-   17-case Writing harness and 12-case synthetic conversation text-turn harness
-   are available in `ielts/evaluation/`; their default dry runs perform no
-   inference. The conversation harness exercises 11 model-request paths and one
-   server abstention; it does not measure ASR or TTS. The operator guide also
-   specifies recorded-speech scenarios. No target-host benchmark or reviewed
-   model output is available. Content validation cannot supply that evidence.
+3. **Quality evidence:** automated contract tests establish prompt boundaries,
+   schemas, error recovery and orchestration using provider doubles. They do not
+   establish live provider quality, ASR accuracy, or production latency; those
+   measurements remain an operational follow-up.
 
 Do not add unused evaluator metadata, count submitted text as mastery, or claim
 that disabled services have passed real-model evaluation. The accepted request permits the smallest

@@ -67,10 +67,11 @@ assert.throws(() => assertSnapshotFamilies('| `removed-interaction` | Recognitio
 assert.throws(() => assertSnapshotFamilies('', new Set(['choice']), 'snapshot'), /readable interaction inventory/u);
 assertSnapshotFamilies(lessonDesignContract, new Set(componentTypes), 'Provisional lesson design');
 assertSnapshotFamilies(okfCatalog, new Set(componentTypes), 'OKF');
-const sharedStyles = readFileSync(
-	join(libraryRoot, 'slide-library.component.scss'),
-	'utf8',
-);
+const sharedStyles = [
+	'slide-library.component.scss',
+	'slide-library-language.component.scss',
+	'slide-library-supporting.component.scss',
+].map((file) => readFileSync(join(libraryRoot, file), 'utf8')).join('\n');
 const materialComponents = readFileSync(
 	join(uiRoot, 'src/styles/_angular-material-components.scss'),
 	'utf8',

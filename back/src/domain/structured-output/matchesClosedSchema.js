@@ -3,7 +3,7 @@
 export function matchesClosedSchema(schema, value) {
   const keywords = new Set(['type', 'const', 'enum', 'anyOf', 'properties', 'required',
     'additionalProperties', 'minLength', 'maxLength', 'minItems', 'maxItems',
-    'uniqueItems', 'items', 'minimum', 'maximum']);
+    'uniqueItems', 'items', 'minimum', 'maximum', 'multipleOf']);
   if (Object.keys(schema).some(key => !keywords.has(key))) return false;
   if (Object.hasOwn(schema, 'const') && value !== schema.const) return false;
   if (schema.enum && !schema.enum.includes(value)) return false;
@@ -11,6 +11,9 @@ export function matchesClosedSchema(schema, value) {
   if (schema.type === 'boolean') return typeof value === 'boolean';
   if (schema.type === 'null') return value === null;
   if (schema.type === 'integer') return Number.isSafeInteger(value) && value >= schema.minimum && value <= schema.maximum;
+  if (schema.type === 'number') return Number.isFinite(value)
+    && value >= schema.minimum && value <= schema.maximum
+    && (schema.multipleOf === undefined || Number.isInteger(value / schema.multipleOf));
   if (schema.type === 'string') {
     if (typeof value !== 'string') return false;
     const chars = Array.from(value);

@@ -1,11 +1,11 @@
 import { AppError } from '../../domain/errors.js';
-import { createCanonicalTtsRequest } from '../../domain/text-to-speech/TtsRequest.js';
+import { createReadStream } from 'node:fs';
 import { requireConversationTurn } from './conversationState.js';
 
-/** Private turn audio has no shared text cache and keeps admission until upstream closes. */
+/** Authorizes a conversation turn, then reuses the canonical Kokoro cache. */
 export class ConversationQuestionAudio {
-  constructor({ sessions, provider, options }) {
-    Object.assign(this, { sessions, provider, options });
+  constructor({ sessions, synthesizeSpeech, options, logger = console }) {
+    Object.assign(this, { sessions, synthesizeSpeech, options, logger });
     this.active = new Map();
     this.stopping = false;
   }
@@ -15,7 +15,8 @@ export class ConversationQuestionAudio {
     if (signal?.aborted) throw new AppError(499, 'CONVERSATION_CANCELLED', 'Audio request was cancelled.');
     if (this.active.has(String(userId)) || this.active.size >= 2) throw new AppError(429, 'CONVERSATION_AUDIO_BUSY', 'Question audio is busy. Try again shortly.');
     const controller = new AbortController();
-    const entry = { sessionId, controller };
+    const entry = { sessionId, controller, stream: null };
+    controller.signal.addEventListener('abort', () => entry.stream?.destroy(), { once: true });
     this.active.set(String(userId), entry);
     const abort = () => controller.abort();
     signal?.addEventListener('abort', abort, { once: true });
@@ -24,11 +25,20 @@ export class ConversationQuestionAudio {
       if (this.active.get(String(userId)) === entry) this.active.delete(String(userId));
     };
     try {
+      const startedAt = performance.now();
       const session = await this.sessions.owned(userId, sessionId);
       if (controller.signal.aborted || this.stopping) throw new AppError(499, 'CONVERSATION_CANCELLED', 'Audio request was cancelled.');
       const turn = requireConversationTurn(session, turnId);
-      const request = createCanonicalTtsRequest({ text: turn.question, format: 'mp3', language: 'en-us' }, { ...this.options, maxTextLength: 240 });
-      const stream = await this.provider.generate(request, { signal: controller.signal, maxAudioBytes: 2 * 1024 * 1024 });
+      const audio = await this.synthesizeSpeech.execute({
+        text: turn.question, format: 'mp3', language: 'en-us',
+        voice: this.options.defaultVoice, speed: this.options.defaultSpeed,
+      });
+      this.logger.info?.({ event: 'speaking_tts_ready', feature: 'speaking',
+        exerciseId: session.exerciseId ?? null, durationMs: Math.round(performance.now() - startedAt),
+        cacheStatus: audio.cacheStatus });
+      if (controller.signal.aborted || this.stopping) throw new AppError(499, 'CONVERSATION_CANCELLED', 'Audio request was cancelled.');
+      const stream = createReadStream(audio.filePath);
+      entry.stream = stream;
       stream.once('close', release);
       // A consumed stream may end without autoDestroy on injected ports.
       stream.once('end', release);

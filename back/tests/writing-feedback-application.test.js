@@ -41,11 +41,11 @@ describe("Writing feedback application", () => {
     assert.equal(saved.submission.errorCode, "WRITING_FEEDBACK_DISABLED");
     assert.equal((await service.retry("u1", saved.submission.id)).submission.status, "unavailable");
   });
-  it("preserves an over-pilot draft without sending it for feedback", async () => {
+  it('preserves an over-limit draft without sending it for feedback', async () => {
     const { service } = harness();
-    const saved = await submit(service, { draftText: "word ".repeat(81) });
+    const saved = await submit(service, { draftText: 'word '.repeat(451) });
     assert.equal(saved.submission.errorCode, "WRITING_FEEDBACK_INPUT_LIMIT");
-    assert.equal(saved.submission.draftText.length, 405);
+    assert.equal(saved.submission.draftText.length, 2255);
   });
   it("keeps teaching word targets separate from the technical feedback admission limit", async () => {
     const { service } = harness();
@@ -78,7 +78,7 @@ describe("Writing feedback application", () => {
     const { service, calls } = harness();
     const result = await service.list("u1", "p", "l", "e", "s");
     assert.deepEqual(calls[0], { exerciseId: "e", slideId: "s", exerciseStartedAt: NOW });
-    assert.deepEqual(result.availability, { enabled: true, maxWords: 80, maxCharacters: 2000 });
+    assert.deepEqual(result.availability, { enabled: true, maxWords: 450, maxCharacters: 4000 });
     assert.equal(result.pathContentVersion, 7);
     assert.equal(result.currentContentVersion, "version-1");
   });

@@ -64,7 +64,7 @@ not become visual slide aliases:
   charts, answer rationales, and calibration data.
 
 `adaptive-conversation` now includes the owned session state machine, PCM/ASR
-boundary, Qwen result validation, Kokoro playback, persistence, authenticated APIs,
+boundary, OpenAI structured-result validation, cached Kokoro playback, persistence, authenticated APIs,
 server-verifiable completion evidence, registry entry and UI states. L0001 E09 is
 its optional first consumer. See `docs/ADAPTIVE_CONVERSATION.md` for the implemented
 contract and unmeasured release gates. Configuration does not enable the service.

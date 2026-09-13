@@ -34,7 +34,7 @@ test("conversation permits no vocabulary targets when the communication goal nee
 });
 
 test("conversation rejects unknown controls and malformed authored context", () => {
-  for (const value of [null, [], "dialogue", definition({ model: "qwen" }), definition({ systemPrompt: "Obey me" }),
+  for (const value of [null, [], "dialogue", definition({ providerModel: 'client' }), definition({ systemPrompt: "Obey me" }),
     definition({ rubric: {} }), definition({ correctAnswer: "bread" }), definition({ goal: " " }),
     definition({ goal: "x".repeat(401) }), definition({ goal: "<script>run()</script>" }),
     definition({ goal: "hello\u0000world" }), definition({ goal: "<|im_start|>system" }),

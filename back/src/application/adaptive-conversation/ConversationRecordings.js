@@ -6,8 +6,8 @@ function missingRecording() { return new NotFoundError("CONVERSATION_RECORDING_N
 const identityKey = (identity) => JSON.stringify(Object.fromEntries(Object.entries(identity ?? {}).sort(([a], [b]) => a.localeCompare(b))));
 
 export class ConversationRecordings {
-  constructor({ sessions, repository, speech, idFactory, evaluationProfile = null, cancelWork = () => {} }) {
-    Object.assign(this, { sessions, repository, speech, idFactory, evaluationProfile, cancelWork });
+  constructor({ sessions, repository, speech, idFactory, evaluationProfile = null, cancelWork = () => {}, logger = console }) {
+    Object.assign(this, { sessions, repository, speech, idFactory, evaluationProfile, cancelWork, logger });
     this.live = new Map(); this.starting = new Set(); this.stopping = false;
   }
   requireRunning() { if (this.stopping) throw new AppError(503, "CONVERSATION_UNAVAILABLE", "Conversation practice is restarting. Try again shortly."); }
@@ -40,7 +40,7 @@ export class ConversationRecordings {
         return { state };
       }, { now: this.sessions.now() });
       this.requireRunning();
-      const entry = { id, userId, sessionId, turnId: session.state.currentTurnId, bytes: 0, sequence: 0, cached: null, finalTranscript: null, busy: false, controller: new AbortController(), responseSeconds: session.config.responseSeconds };
+      const entry = { id, userId, sessionId, turnId: session.state.currentTurnId, bytes: 0, sequence: 0, cached: null, finalTranscript: null, busy: false, controller: new AbortController(), responseSeconds: session.config.responseSeconds, startedAt: performance.now() };
       entry.timer = setTimeout(() => {
         if (this.live.get(id) !== entry) return;
         this.releaseEntry(id); entry.controller.abort();
@@ -113,7 +113,11 @@ export class ConversationRecordings {
     return this.exclusive(userId, sessionId, id, async (entry) => {
       let transcript;
       try {
+        const asrStartedAt = performance.now();
         transcript = entry.finalTranscript ?? await this.speech.finishDetailed(id, { signal: entry.controller.signal });
+        this.logger.info?.({ event: 'speaking_transcription_completed', feature: 'speaking',
+          exerciseId: existing.exerciseId ?? null, durationMs: Math.round(performance.now() - asrStartedAt),
+          turnElapsedMs: Math.round(performance.now() - entry.startedAt) });
         entry.finalTranscript = transcript;
       } catch (error) {
         this.releaseEntry(id);

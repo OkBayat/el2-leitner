@@ -2,8 +2,8 @@ import { ValidationError } from "../errors.js";
 
 const TASK_ERROR = "INVALID_WRITING_FEEDBACK_TASK";
 const TASK_SCHEMA_VERSION = 1;
-export const MAXIMUM_PILOT_WORDS = 80;
-const PILOT_MODES = new Set(["sentence", "paragraph"]);
+export const MAXIMUM_WRITING_WORDS = 450;
+const WRITING_MODES = new Set(['sentence', 'paragraph', 'task1-chart', 'task1-process', 'task2-essay', 'general-letter']);
 const LEARNER_LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const REGISTERS = new Set(["formal", "informal", "neutral"]);
 const METADATA_FIELDS = new Set([
@@ -41,8 +41,8 @@ function textList(value, label, { maximumItems = 8, maximumLength = 300, optiona
 
 function wordLimit(value, label, fallback) {
   if (value === undefined) return fallback;
-  if (!Number.isSafeInteger(value) || value < 1 || value > MAXIMUM_PILOT_WORDS) {
-    invalid(`${label} must be an integer from 1 to ${MAXIMUM_PILOT_WORDS} for the short-text pilot.`);
+  if (!Number.isSafeInteger(value) || value < 1 || value > MAXIMUM_WRITING_WORDS) {
+    invalid(`${label} must be an integer from 1 to ${MAXIMUM_WRITING_WORDS}.`);
   }
   return value;
 }
@@ -59,10 +59,10 @@ export function parseWritingFeedbackTask(slideData) {
   }
   if (metadata.schemaVersion !== TASK_SCHEMA_VERSION) invalid("Writing feedback schemaVersion must be 1.");
   if (!LEARNER_LEVELS.has(metadata.learnerLevel)) invalid("Writing feedback learnerLevel must be a CEFR level.");
-  if (!PILOT_MODES.has(slideData.mode)) invalid("Writing feedback currently supports short sentences and paragraphs.");
+  if (!WRITING_MODES.has(slideData.mode)) invalid('Writing feedback mode is unsupported.');
   const register = slideData.register ?? "neutral";
   if (!REGISTERS.has(register)) invalid("Writing feedback register is unsupported.");
-  const maximumWords = wordLimit(slideData.wordLimit, "Writing wordLimit", MAXIMUM_PILOT_WORDS);
+  const maximumWords = wordLimit(slideData.wordLimit, 'Writing wordLimit', MAXIMUM_WRITING_WORDS);
   const recommendedMinimumWords = wordLimit(slideData.recommendedMinimumWords, "Writing recommendedMinimumWords");
   if (recommendedMinimumWords !== undefined && recommendedMinimumWords > maximumWords) {
     invalid("Writing recommendedMinimumWords must not exceed wordLimit.");

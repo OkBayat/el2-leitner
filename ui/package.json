@@ -60,6 +60,7 @@
         "@capgo/capacitor-updater": "8.51.15",
         "bootstrap": "5.3.8",
         "chart.js": "4.5.1",
+        "harper.js": "2.10.0",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0"
     },

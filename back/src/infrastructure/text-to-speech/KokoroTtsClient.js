@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 
 import { AppError } from "../../domain/errors.js";
 import { TTS_LANGUAGE_CODES } from "../../domain/text-to-speech/TtsRequest.js";
-import { privateServiceFetch, privateServiceUrl } from "../ai/PrivateOllamaTransport.js";
+import { privateServiceFetch, privateServiceUrl } from "../ai/PrivateServiceTransport.js";
 
 const MAX_AUDIO_BYTES = 64 * 1024 * 1024;
 

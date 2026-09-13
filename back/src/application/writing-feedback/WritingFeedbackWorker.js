@@ -1,4 +1,4 @@
-import { LocalTextInferenceWorker } from "../local-text-inference/LocalTextInferenceWorker.js";
+import { AiEvaluationWorker } from "../ai-evaluation/AiEvaluationWorker.js";
 import { WritingFeedbackError } from "../../domain/writing-feedback/WritingFeedbackError.js";
 
 export function writingFeedbackHandler(provider, enabled) {
@@ -6,7 +6,7 @@ export function writingFeedbackHandler(provider, enabled) {
     evaluate: (record, signal) => provider.evaluate({ draftText: record.draftText, draftVersion: record.id, taskContext: record.taskContext, contentVersion: record.contentVersion, locale: "en", signal }) };
 }
 /** Compatibility facade for isolated Writing consumers. Production uses one shared worker. */
-export class WritingFeedbackWorker extends LocalTextInferenceWorker {
+export class WritingFeedbackWorker extends AiEvaluationWorker {
   constructor({ repository, provider, enabled = false, ...options }) {
     super({ ...options, handlers: { "writing-feedback": writingFeedbackHandler(provider, enabled) }, repository: {
       purgeExpired: (...args) => repository.purgeExpired(...args),

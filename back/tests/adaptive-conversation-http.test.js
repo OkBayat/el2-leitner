@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { it } from 'node:test';
 import request from 'supertest';
-import { Readable } from 'node:stream';
+import { fileURLToPath } from 'node:url';
 import { createApp } from '../src/createApp.js';
-import { createLocalTextInferenceModule } from '../src/modules/local-text-inference/createLocalTextInferenceModule.js';
+import { createAiEvaluationModule } from '../src/modules/ai-evaluation/createAiEvaluationModule.js';
 import { createTestContext } from './helpers/fakes.js';
 import { ConversationMemory, config, transcript, NOW } from './helpers/conversationFakes.js';
 const TASK='/api/learning-paths/1/lessons/2/exercises/3/slides/conversation-1/conversation-sessions';
@@ -12,11 +12,11 @@ function harness(enabled=true){
  const evaluationProfile={model:'fixture'};
  const queue={async purgeExpired(){},async isClaimCurrent({id}){return repository.jobs.get(id)?.status==='running';},async claim(){const job=[...repository.jobs.values()].find(j=>j.status==='queued');if(!job)return null;job.status='running';job.attemptCount++;const row=repository.rows.get(job.sessionId);row.state.turns.find(t=>t.id===job.turnId).status='evaluating';return {...structuredClone(job),kind:'adaptive-conversation'};},async finish({id,applyConversationResult,...outcome}){const job=repository.jobs.get(id);const row=repository.rows.get(job.sessionId);Object.assign(job,outcome);const change=applyConversationResult(row,job,outcome);if(change){change.state.revision++;row.state=change.state;}return true;}};
  const {container}=createTestContext();
- const module=createLocalTextInferenceModule({pool:{},config:{writingFeedback:{enabled:false,timeoutMs:1000},adaptiveConversation:{enabled},tts:{allowedVoices:['af_heart'],defaultVoice:'af_heart',defaultSpeed:1,model:'kokoro'}},adapters:{
-  conversationRepository:repository,localTextInferenceQueue:queue,conversationClock:()=>new Date(NOW),localTextInferenceClock:()=>new Date(NOW),
+ const module=createAiEvaluationModule({pool:{},config:{writingFeedback:{enabled:false,timeoutMs:1000},adaptiveConversation:{enabled},tts:{allowedVoices:['af_heart'],defaultVoice:'af_heart',defaultSpeed:1,model:'kokoro'}},adapters:{
+  conversationRepository:repository,aiEvaluationQueue:queue,conversationClock:()=>new Date(NOW),aiEvaluationClock:()=>new Date(NOW),
   conversationTaskResolver:{execute:async()=>({pathId:'p',lessonId:'l',exerciseId:'e',slideId:'conversation-1',exerciseStartedAt:NOW,pathContentVersion:7,contentVersion:'hash',config})},
   conversationSpeech:{start:async()=>{},chunkDetailed:async()=>({...transcript,status:'partial'}),finishDetailed:async()=>{speechCalls.push('finish');return transcript;},cancel:async()=>{}},
-  conversationTts:{generate:async()=>Readable.from([Buffer.from('fixture-mp3')])},
+  conversationSpeechSynthesis:{execute:async()=>({filePath:fileURLToPath(import.meta.url),cacheStatus:'hit'})},
   conversationProvider:{getIdentity:()=>evaluationProfile,evaluate:async(input)=>{providerCalls.push(input);return {result:{schemaVersion:1,assessmentStatus:'feedback_available',taskResponse:'off_topic',formativeTaskScore:0,feedback:'Try another detail.',nextQuestion:input.acceptedTurns===1?null:'What do you drink?',endConversation:input.acceptedTurns===1,notAssessed:['ielts_band','pronunciation','fluency']},identity:evaluationProfile,metrics:{}};}},
  }});
  const app=createApp({container:{...container,writingFeedback:module.writingFeedback,adaptiveConversation:module.adaptiveConversation},staticDirectory:null});

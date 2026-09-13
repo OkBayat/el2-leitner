@@ -98,6 +98,9 @@ export function createApp({
       contentSecurityPolicy: {
         directives: {
           "media-src": ["'self'", "blob:"],
+          // Harper's bundled WorkerLinter creates an application-owned Blob
+          // worker. Script execution and network sources remain self-only.
+          "worker-src": ["'self'", "blob:"],
           // The documented Docker deployment is HTTP on localhost. Browsers
           // (notably Safari) may otherwise rewrite it to unavailable HTTPS.
           "upgrade-insecure-requests": null

@@ -28,7 +28,7 @@ export interface WritingFeedbackResult {
   readonly issues: readonly WritingFeedbackIssue[];
   readonly revision_actions: readonly string[];
   readonly not_assessed: readonly ('ielts_band' | 'task_coverage' | 'source_fidelity')[];
-  readonly ielts_band: null;
+  readonly ielts_band: number | null;
 }
 
 export interface WritingSubmission {

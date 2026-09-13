@@ -1,6 +1,6 @@
 import { ConversationRepository } from "../../../../application/adaptive-conversation/ports/ConversationRepository.js";
 import { AppError, ConflictError, NotFoundError, ValidationError } from "../../../../domain/errors.js";
-import { LocalTextInferencePersistence, bounded, dateColumn, iso, json, sqlTime } from "../local-text-inference/LocalTextInferencePersistence.js";
+import { AiEvaluationPersistence, bounded, dateColumn, iso, json, sqlTime } from "../ai-evaluation/AiEvaluationPersistence.js";
 import { boundedState, cancelConversationJobs, conversationColumns, conversationJobColumns, conversationMissing,
   mapConversation, mapConversationJob, ownedConversation, requirePrivateSession, saveCompletionEvidence,
   saveConversationState, synchronousTransform } from "./conversationPersistence.js";
@@ -9,7 +9,7 @@ const queueFull = () => new AppError(429, "CONVERSATION_QUEUE_FULL", "Local feed
 const sameTask = (a, b) => ["pathId", "lessonId", "exerciseId", "slideId", "exerciseStartedAt", "contentVersion", "pathContentVersion"].every((key) => String(a[key]) === String(b[key]));
 
 export class MySqlConversationRepository extends ConversationRepository {
-  constructor(pool) { super(); this.pool = pool; this.shared = new LocalTextInferencePersistence(pool); }
+  constructor(pool) { super(); this.pool = pool; this.shared = new AiEvaluationPersistence(pool); }
 
   async create(record, { now = new Date() } = {}) {
     return this.shared.transaction(async (connection) => {

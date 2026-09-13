@@ -33,7 +33,11 @@ const TRUTH_OPTIONS: Record<TruthSlideData['mode'], readonly SlideOption[]> = {
 	standalone: true,
 	imports: [VocoButtonInteractionDirective, VocoSecondaryButtonComponent, SlideStimulusComponent],
 	templateUrl: './truth-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruthSlideComponent extends ChoiceSlideComponent {

@@ -5,7 +5,7 @@ import { loadConfig } from "../../src/config/loadConfig.js";
 import { createPool } from "../../src/infrastructure/persistence/mysql/createPool.js";
 import { MySqlConversationRepository } from "../../src/infrastructure/persistence/mysql/adaptive-conversation/MySqlConversationRepository.js";
 import { MySqlWritingFeedbackRepository } from "../../src/infrastructure/persistence/mysql/writing-feedback/MySqlWritingFeedbackRepository.js";
-import { MySqlLocalTextInferenceQueue } from "../../src/infrastructure/persistence/mysql/local-text-inference/MySqlLocalTextInferenceQueue.js";
+import { MySqlAiEvaluationQueue } from "../../src/infrastructure/persistence/mysql/ai-evaluation/MySqlAiEvaluationQueue.js";
 
 const NOW = "2026-09-12T12:00:00.000Z";
 const NEXT = "2026-09-12T12:00:01.000Z";
@@ -21,8 +21,8 @@ test("Adaptive conversation persistence and shared scheduler execute against iso
   const pool = createPool(loadConfig(process.env).database);
   const sessions = new MySqlConversationRepository(pool);
   const writing = new MySqlWritingFeedbackRepository(pool);
-  const queue = new MySqlLocalTextInferenceQueue(pool);
-  const otherWorker = new MySqlLocalTextInferenceQueue(pool);
+  const queue = new MySqlAiEvaluationQueue(pool);
+  const otherWorker = new MySqlAiEvaluationQueue(pool);
   const userIds = [];
   const workerId = `conversation-ci-${randomUUID()}`;
   t.after(async () => {

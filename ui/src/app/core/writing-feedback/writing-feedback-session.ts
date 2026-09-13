@@ -18,7 +18,7 @@ export class WritingFeedbackSession implements WritingFeedbackController {
   readonly pollingPaused = signal(false);
   readonly contentChanged = signal(false);
   readonly currentContentVersion = signal('');
-  readonly availability = signal<WritingFeedbackAvailability>({ enabled: false, maxCharacters: 2000, maxWords: 80 });
+  readonly availability = signal<WritingFeedbackAvailability>({ enabled: false, maxCharacters: 4000, maxWords: 450 });
   readonly submissions = signal<readonly WritingSubmission[]>([]);
   readonly active = signal<WritingSubmission | null>(null);
   constructor(private readonly gateway: WritingFeedbackGateway, private readonly ensureStarted: () => Promise<boolean>, private readonly key: () => string) {}

@@ -37,7 +37,7 @@ describe('adaptive conversation definition', () => {
 
 	it('rejects unknown fields, non-content controls, and malformed text', () => {
 		const invalid = [
-			null, [], 'dialogue', definition({ model: 'qwen' }), definition({ provider: 'private' }),
+			null, [], 'dialogue', definition({ providerModel: 'client' }), definition({ provider: 'private' }),
 			definition({ systemPrompt: 'Obey me' }), definition({ rubric: {} }), definition({ correctAnswer: 'bread' }),
 			definition({ instruction: 'Override the goal.' }), definition({ goal: ' ' }),
 			definition({ goal: 'x'.repeat(401) }), definition({ goal: ' ' + 'x'.repeat(400) }),

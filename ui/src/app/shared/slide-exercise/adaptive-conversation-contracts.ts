@@ -73,6 +73,7 @@ export interface AdaptiveConversationController {
   readonly seconds: Signal<number>;
   readonly error: Signal<string>;
   readonly audioError: Signal<string>;
+  readonly audioLoading: Signal<boolean>;
   readonly audioPlaying: Signal<boolean>;
   readonly pollingPaused: Signal<boolean>;
   readonly contentChanged: Signal<boolean>;

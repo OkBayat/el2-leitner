@@ -61,7 +61,11 @@ function errorMessage(error: unknown): string {
 	standalone: true,
 	imports: [VocoButtonInteractionDirective],
 	templateUrl: './selection-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectionSlideComponent implements SlideContentComponent {

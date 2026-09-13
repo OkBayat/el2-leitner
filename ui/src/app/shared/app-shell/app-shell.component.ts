@@ -25,7 +25,7 @@ interface NavigationItem {
 	selector: 'app-shell',
 	imports: [RouterOutlet, RouterLink, RouterLinkActive, MatMenuModule, NavigationIconComponent],
 	templateUrl: 'app-shell.component.html',
-	styleUrl: 'app-shell.component.scss',
+	styleUrls: ['app-shell.component.scss', 'course-menu.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellComponent implements OnInit {

@@ -1,5 +1,5 @@
 import { ConflictError, NotFoundError, ValidationError } from "../../../../domain/errors.js";
-import { dateColumn, iso, json, parseJson, sqlTime } from "../local-text-inference/LocalTextInferencePersistence.js";
+import { dateColumn, iso, json, parseJson, sqlTime } from "../ai-evaluation/AiEvaluationPersistence.js";
 
 export const conversationColumns = `id, user_id AS userId, path_id AS pathId, lesson_id AS lessonId,
   exercise_id AS exerciseId, slide_id AS slideId, ${dateColumn("exercise_started_at", "exerciseStartedAt")},

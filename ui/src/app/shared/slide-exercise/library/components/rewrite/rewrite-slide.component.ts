@@ -69,7 +69,11 @@ function parseRewrite(value: unknown): RewriteSlideData {
 		SlideStimulusComponent,
 	],
 	templateUrl: './rewrite-slide.component.html',
-	styleUrl: '../../slide-library.component.scss',
+	styleUrls: [
+		'../../slide-library.component.scss',
+		'../../slide-library-language.component.scss',
+		'../../slide-library-supporting.component.scss',
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RewriteSlideComponent

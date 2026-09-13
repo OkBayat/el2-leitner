@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
-import { createPrivateServiceFetch, privateServiceUrl } from '../src/infrastructure/ai/PrivateOllamaTransport.js';
+import { createPrivateServiceFetch, privateServiceUrl } from '../src/infrastructure/ai/PrivateServiceTransport.js';
 
 test('private service URLs allow only the requested verified alias and private addresses', () => {
   assert.equal(privateServiceUrl('http://speech:8080', ['speech']).hostname, 'speech');
   assert.equal(privateServiceUrl('http://kokoro:8880', ['kokoro']).hostname, 'kokoro');
   for (const url of ['https://public.example', 'http://169.254.169.254', 'http://speech:8080/path',
     'http://user:secret@localhost', 'http://kokoro:8880']) {
-    assert.throws(() => privateServiceUrl(url, ['speech']), { code: 'STRUCTURED_INFERENCE_CONFIGURATION' });
+    assert.throws(() => privateServiceUrl(url, ['speech']), { code: 'PRIVATE_SERVICE_CONFIGURATION' });
   }
 });
 
@@ -20,7 +20,7 @@ test('private socket lookup rejects public or mixed DNS answers before connectin
     const fetch = createPrivateServiceFetch({ lookupImpl: (hostname, options, callback) => {
       assert.equal(hostname, 'speech'); assert.equal(options.all, true); resolved = true; callback(null, addresses);
     } });
-    await assert.rejects(fetch('http://speech:8080/health'), { code: 'STRUCTURED_INFERENCE_PROVIDER_UNAVAILABLE' });
+    await assert.rejects(fetch('http://speech:8080/health'), { code: 'PRIVATE_SERVICE_UNAVAILABLE' });
     assert.equal(resolved, true);
   }
 });
@@ -44,5 +44,5 @@ test('private transport pins the socket DNS result, does not redirect and cancel
   const controller = new AbortController(); const response = await fetch(`${base}/stream`, { signal: controller.signal });
   await started; const reading = response.text(); controller.abort();
   await assert.rejects(reading); await disconnected;
-  await assert.rejects(fetch('http://203.0.113.1/'), { code: 'STRUCTURED_INFERENCE_CONFIGURATION' });
+  await assert.rejects(fetch('http://203.0.113.1/'), { code: 'PRIVATE_SERVICE_CONFIGURATION' });
 });
